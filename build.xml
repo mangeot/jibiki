@@ -11,6 +11,9 @@ Id:
   
 Log:
    $Log$
+   Revision 1.8  2005/01/18 12:18:02  mangeot
+   Added the qclean target
+
    Revision 1.7  2005/01/15 17:43:19  mangeot
    Added cvs Id and Log on the files
 
@@ -34,6 +37,7 @@ Most useful targets:
  - dods     -> invoke dods to create and compile DODS generated java classes.
  - rebuild  -> create ./output from scratch (clean + make)
  - clean    -> remove all files from ./classes and ./output
+ - qclean   -> remove all files from ./classes and ./output except dods ones
  - compile  -> compile source to ./classes with javac and xmlc
  - javadocs -> creates the javadocs in "./output/javadocs"
  - gdef     -> create ./output for GDEF server
@@ -472,6 +476,20 @@ Most useful targets:
     	<fileset dir="." includes="*.uptodate" />
 		</delete>
 		<delete dir="${dodsbuild.dir}/classes"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Clean everything except DODS generated classes                      -->
+  <!-- =================================================================== -->
+  <target name="qclean">
+		<delete dir="${dir.lib}"/>
+		<delete dir="${dir.temp}"/>
+		<delete dir="${dir.output}"/>
+		<delete dir="${dir.xmlc}"/>
+	 	<delete quiet="true">
+    	<fileset dir="." includes="*.uptodate" />
+		</delete>
+		<!--delete dir="${dodsbuild.dir}/classes"/-->
   </target>
 
 </project>
