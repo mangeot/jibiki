@@ -44,11 +44,12 @@ Most useful targets:
   <property name="project.version" value="1.6a"/>
   <property name="project.year"    value="2004"/>
 
+  <!-- PAPILLON-SPECIFIC -->
+  <!-- Load the properties that are specific to the papillon conf -->
+  <property file="papillon.properties"/>
+
   <!-- directory locations -->
   <property name="dir.package"   value="fr/imag/clips/papillon"/>
-  <property name="enhydra.root"  value="/library/java/extensions/enhydra5.1"/>
-  <property name="enhydra.home"  value="/library/java/extensions/enhydra5.1"/>
-  <property name="enhydra.dir"   location="/library/java/extensions/enhydra5.1"/>
   <property name="dir.temp"      location="build" />
   <property name="dir.classes"   location="${dir.temp}/classes"/>
   <property name="dir.input"     location="input"/>
@@ -85,7 +86,7 @@ Most useful targets:
   <property name="xmlcbuild.dir" value="${dir.src}/fr/imag/clips/papillon/presentation"/>
   <property name="xmlcresources.dir" value="${dir.src}/fr/imag/clips/papillon/resources/"/>
   <property name="enhydra.liboutput" value="${dir.output}/lib"/>
-  <property name="library.dir" 	value="${enhydra.root}/lib"/>
+  <property name="library.dir" 	value="${enhydra.dir}/lib"/>
 
   <!-- 2 different dods compilations. -->
   <!-- The first one compiles using standard templates. -->
@@ -103,8 +104,6 @@ Most useful targets:
   <!-- =================================================================== -->
   <!-- Set up papillon-secific javac class path                            -->
   <!-- =================================================================== -->
-	<property file="papillon.properties"/>
-   
   <path id="papillon.javac.classpath">
     <pathelement path="${papillon.xalan.jar}"/>
     <pathelement path="${papillon.xerces.jar}"/>
@@ -333,7 +332,7 @@ Most useful targets:
   <!-- Prepare output files                                                -->
   <!-- =================================================================== -->
   <target name="output" depends="prepare">
-     <filter token="ENHYDRA_PATH" value="${enhydra.root}" />
+     <filter token="ENHYDRA_PATH" value="${enhydra.dir}" />
      <filter token="JAVA_PATH"    value="${dir.java}" />
      <filter token="DEPLOY_PATH"  value="${dir.output}" />
      <filter token="PROJECT_PATH" value="${dir.project}" />
