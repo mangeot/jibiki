@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2005/01/18 12:17:39  mangeot
+ * Put default values for MaxDisplayedEntries and MAxRetrievedEntries
+ *
  * Revision 1.3  2005/01/18 12:16:10  mangeot
  * Implemented the SQL LIMIT and OFFSET keywords. It allows us to retrieve the entries as blocks and page them. The LIMIT is the DictionariesFactory.MaxRetrievedEntries constant.
  * The implementation may need further tuning
@@ -71,8 +74,8 @@ import fr.imag.clips.papillon.business.utility.*;
  */
 public class DictionariesFactory {
 
-	public final static int MaxDisplayedEntries = 1;
-	public final static int MaxRetrievedEntries = 2;
+	public final static int MaxDisplayedEntries = 5;
+	public final static int MaxRetrievedEntries = 50;
     protected final static String DML_URI = "http://www-clips.imag.fr/geta/services/dml";
     protected final static String XLINK_URI = "http://www.w3.org/1999/xlink";
     protected final static String DICTIONARY_TAG="dictionary-metadata";
