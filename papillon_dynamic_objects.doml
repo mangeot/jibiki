@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE doml SYSTEM "file:////Library/Java/Extensions/enhydra5.1/dods/build/dtd/doml.dtd">
+<!--
+ * © Mathieu Mangeot & Gilles Sérasset - GETA CLIPS IMAG
+ * Projet Papillon Project
+ *************************************************
+ * $Id$
+ *************************************************
+ * $Log$
+ * Revision 1.3  2004/12/24 11:04:55  mangeot
+ * synchronized the files with the last version of Papillon5.0
+ *
+ *
+-->
 <doml>
   <database database="PostgreSQL" templateset="papillon_dynamic"> <!-- legal_values="Standard,InstantDB,Oracle,Informix,Msql,Sybase,PostgreSQL"-->
     <package id="fr">
@@ -10,7 +22,7 @@
         <table dbTableName="volume" id="fr.imag.clips.papillon.data.VolumeEntry">
           <column id="headword" usedForQuery="true">
             <javadoc>/**
- * the headword  isAbstract="true" éèà
+ * the headword  isAbstract="true"
  */</javadoc>
             <type canBeNull="true" dbType="LONGVARCHAR" javaType="String"/>
           </column>

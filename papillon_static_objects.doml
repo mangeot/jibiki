@@ -1,5 +1,25 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE doml SYSTEM "file:////Library/Java/Extensions/enhydra5.1/dods/build/dtd/doml.dtd">
+<!--
+ * © Mathieu Mangeot & Gilles Sérasset - GETA CLIPS IMAG
+ * Projet Papillon Project
+ *************************************************
+ * $Id$
+ *************************************************
+ * $Log$
+ * Revision 1.2  2004/12/24 11:04:55  mangeot
+ * synchronized the files with the last version of Papillon5.0
+ *
+ * Revision 1.13  2004/11/19 14:50:41  mangeot
+ * MM: added a new column called sourcelanguage in the contributions table.
+ * It indicates the source language of the contribution and it is mainly used for sorting the contributions.
+ * In order to update old papillon databases, you have to execute the following operations:
+ * alter table contributions add sourcelanguage varchar(255);
+ * update contributions set sourcelanguage=volumes.sourcelanguage where volumes.name=contributions.volume;
+ * alter table contributions alter sourcelanguage set not null;
+ *
+ *
+-->
 <doml>
   <database database="PostgreSQL" templateset="standard"> <!-- legal_values="Standard,InstantDB,Oracle,Informix,Msql,Sybase,PostgreSQL"-->
     <package id="fr">
@@ -141,7 +161,15 @@
  */</javadoc>
             <type dbType="VARCHAR" javaType="String" size="255"/>
           </column>
-          <column id="headword" usedForQuery="true">
+          <column id="sourceLanguage">
+            <javadoc>/**
+ * the source language of the contribution
+ * values taken from dml:lang type (mainly ISO 639-2/T)
+ * (eng, fra, jpn, etc.)
+ */</javadoc>
+            <type dbType="VARCHAR" javaType="String" size="255"/>
+          </column>
+           <column id="headword" usedForQuery="true">
             <javadoc>/**
  * the headword
  */</javadoc>
@@ -442,7 +470,7 @@
             <javadoc>/**
  * source language of the volume
  * values taken from dml:lang type
- * (eng, fra, jpn, etc.)
+ * (eng, fra, jpn, etc.)  (mainly ISO 639-2/T)
  */</javadoc>
             <type dbType="VARCHAR" javaType="String" size="255"/>
           </column>
@@ -450,7 +478,7 @@
             <javadoc>/**
  * target languages of the volume
  * values taken from dml:lang type
- * (eng, fra, jpn, etc.)
+ * (eng, fra, jpn, etc.)  (mainly ISO 639-2/T)
  */</javadoc>
             <type dbType="VARCHAR" javaType="String" size="255"/>
           </column>
