@@ -175,7 +175,7 @@ public class <xsl:value-of select="CLASS_NAME"/>Query implements Query {
      // GS: Constructor needs a tablename to work for dynamic papillon db.
 	public <xsl:value-of select="CLASS_NAME"/>Query( String tablename ) {
         this.dbtablename = tablename;
-		builder	= new QueryBuilder(	dbtablename, <xsl:value-of select="CLASS_NAME"/>DO.columnsNameString );
+		builder	= new QueryBuilder(	dbtablename, <xsl:value-of select="CLASS_NAME"/>DO.getColumnsNameString(dbtablename) );
 
 		String dbName =	<xsl:value-of select="CLASS_NAME"/>DO.get_logicalDBName();
 		try	{
@@ -204,7 +204,7 @@ public class <xsl:value-of select="CLASS_NAME"/>Query implements Query {
      // GS: Constructor needs a tablename to work for dynamic papillon db.
 	public <xsl:value-of select="CLASS_NAME"/>Query( String tablename, DBTransaction dbTrans ) {
         this.dbtablename = tablename;
-		builder	= new QueryBuilder(	dbtablename, <xsl:value-of select="CLASS_NAME"/>DO.columnsNameString );
+		builder	= new QueryBuilder(	dbtablename, <xsl:value-of select="CLASS_NAME"/>DO.getColumnsNameString(dbtablename) );
 
 		String dbName = null;
 		if(dbTrans!=null)
@@ -250,7 +250,7 @@ public class <xsl:value-of select="CLASS_NAME"/>Query implements Query {
 	throws AccessException {
         this.dbtablename = tablename;
 		assertQueryAccess( usr );
-		builder	= new QueryBuilder( dbtablename, <xsl:value-of select="CLASS_NAME"/>DO.columnsNameString);
+		builder	= new QueryBuilder( dbtablename, <xsl:value-of select="CLASS_NAME"/>DO.getColumnsNameString(dbtablename));
 		String dbName =	<xsl:value-of select="CLASS_NAME"/>DO.get_logicalDBName();
 		try	{
 			String vendor =	DODS.getDatabaseManager().logicalDatabaseType(dbName);
@@ -295,7 +295,7 @@ public class <xsl:value-of select="CLASS_NAME"/>Query implements Query {
         this.dbtablename = tablename;
 		assertQueryAccess( usr );
 		transaction = dbTrans;
-   	 builder	= new QueryBuilder(	dbtablename, <xsl:value-of select="CLASS_NAME"/>DO.columnsNameString );
+   	 builder	= new QueryBuilder(	dbtablename, <xsl:value-of select="CLASS_NAME"/>DO.getColumnsNameString(dbtablename) );
         String dbName = null;
 		if(dbTrans!=null)
 		    dbName = dbTrans.getDatabaseName();
@@ -340,7 +340,7 @@ public class <xsl:value-of select="CLASS_NAME"/>Query implements Query {
         this.dbtablename = tablename;
         if (dbName == null )
 		   dbName = getLogicalDatabase();
-	   	builder	= new QueryBuilder(	dbtablename, <xsl:value-of select="CLASS_NAME"/>DO.columnsNameString );
+	   	builder	= new QueryBuilder(	dbtablename, <xsl:value-of select="CLASS_NAME"/>DO.getColumnsNameString(dbtablename) );
 		try	{
 			String vendor =	DODS.getDatabaseManager().logicalDatabaseType(dbName);
 			if (vendor != null)	{
@@ -382,7 +382,7 @@ public class <xsl:value-of select="CLASS_NAME"/>Query implements Query {
 	throws AccessException,	DatabaseManagerException {
         this.dbtablename = tablename;
 		assertQueryAccess( usr );
-  		builder	= new QueryBuilder(	dbtablename, <xsl:value-of select="CLASS_NAME"/>DO.columnsNameString );
+  		builder	= new QueryBuilder(	dbtablename, <xsl:value-of select="CLASS_NAME"/>DO.getColumnsNameString(dbtablename) );
       if (dbName == null )
 			dbName = getLogicalDatabase();
 		try	{
@@ -1143,10 +1143,10 @@ public class <xsl:value-of select="CLASS_NAME"/>Query implements Query {
 				   boolean	bHasMoreResults	= false;
           if (( (<xsl:value-of select="CLASS_NAME"/>DO.getConfigurationAdministration(this.dbtablename).getTableConfiguration().isLazyLoading()) || isCaching()) &amp;&amp; (!builder.getPreventPrimaryKeySelect())  &amp;&amp; !loadData) {
 		         builder.resetSelectedFields();
-        		   builder.setSelectClause(&quot;<xsl:value-of select="TABLE_NAME"/>.&quot;+<xsl:value-of select="CLASS_NAME"/>DO.get_OIdColumnName()+&quot;, <xsl:value-of select="TABLE_NAME"/>.&quot;+<xsl:value-of select="CLASS_NAME"/>DO.get_versionColumnName());
+        		   builder.setSelectClause(dbtablename+<xsl:value-of select="CLASS_NAME"/>DO.get_OIdColumnName()+&quot;, &quot;+this.dbtablename+<xsl:value-of select="CLASS_NAME"/>DO.get_versionColumnName());
 		       }
 		       else
-		        builder.setSelectClause(<xsl:value-of select="CLASS_NAME"/>DO.columnsNameString);
+		        builder.setSelectClause(<xsl:value-of select="CLASS_NAME"/>DO.getColumnsNameString(dbtablename));
 				   dbQuery.query( this	);	  // invokes executeQuery
 
 

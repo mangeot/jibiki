@@ -157,8 +157,11 @@ import org.webdocwf.dods.access.*;
     /**
     * String with column names
     */
-	static String columnsNameString = null;
-
+	// static String columnsNameString = null;
+    public  String getColumnsNameString() {
+        return getColumnsNameString(this.dbtablename);
+    }
+    
     /**
     * Is DO first node in DELETE CASCADE sekvence
     */
@@ -1516,6 +1519,26 @@ import org.webdocwf.dods.access.*;
      * The cache is instantiated when the first DO instance is created.
      */
 
+    static {
+            String dbName = get_logicalDBName();
+        	useOrderedWithTable = null;
+        	try {
+                String orderedResultSetStr = ((StandardLogicalDatabase)DODS.getDatabaseManager()
+                        	                  .findLogicalDatabase(dbName)).getDriverProperty(Common.VENDOR_ORDERED_RESULT_SET);
+                if (orderedResultSetStr!=null){
+                	if (orderedResultSetStr.equalsIgnoreCase(&quot;oldStyle&quot;)){
+                	}else if (orderedResultSetStr.equalsIgnoreCase(&quot;withPrefix&quot;)){
+                        useOrderedWithTable = new Boolean(true);
+                	}else if (orderedResultSetStr.equalsIgnoreCase(&quot;noPrefix&quot;)){
+                        useOrderedWithTable = new Boolean(false);
+                	}else{
+                        DODS.getLogChannel().write(Logger.DEBUG,&quot;<xsl:value-of select="CLASS_NAME"/>DO : Invalid value for OrderedResultSet parameter. Using default. &quot;);
+                	}
+                }
+        	} catch (DatabaseManagerException e){
+                DODS.getLogChannel().write(Logger.DEBUG,&quot;<xsl:value-of select="CLASS_NAME"/>DO : Unable to read configuration for OrderedResultSet. Using default. &quot;);
+        	}
+    }
     /**
      * Class that contains unchanging (static) data from the database
      * will have a cache of DOs representing the entire contents of the table.
@@ -1525,28 +1548,6 @@ import org.webdocwf.dods.access.*;
  	   DataStructCache cache = null;
        try {
         	String dbName = get_logicalDBName();
-        	useOrderedWithTable = null;
-        	try {
-                String orderedResultSetStr = ((StandardLogicalDatabase)DODS.getDatabaseManager()
-                        	                  .findLogicalDatabase(dbName)).getDriverProperty(Common.VENDOR_ORDERED_RESULT_SET);
-                if (orderedResultSetStr!=null){
-                	if (orderedResultSetStr.equalsIgnoreCase(&quot;oldStyle&quot;)){
-                        initColumnsNameString((Boolean)null);
-                	}else if (orderedResultSetStr.equalsIgnoreCase(&quot;withPrefix&quot;)){
-                        useOrderedWithTable = new Boolean(true);
-                        initColumnsNameString(useOrderedWithTable);
-                	}else if (orderedResultSetStr.equalsIgnoreCase(&quot;noPrefix&quot;)){
-                        useOrderedWithTable = new Boolean(false);
-                        initColumnsNameString(useOrderedWithTable);
-                	}else{
-                        DODS.getLogChannel().write(Logger.DEBUG,&quot;<xsl:value-of select="CLASS_NAME"/>DO : Invalid value for OrderedResultSet parameter. Using default. &quot;);
-                	}
-                }else{
-                	initColumnsNameString((Boolean)null);
-                }
-        	} catch (DatabaseManagerException e){
-                DODS.getLogChannel().write(Logger.DEBUG,&quot;<xsl:value-of select="CLASS_NAME"/>DO : Unable to read configuration for OrderedResultSet. Using default. &quot;);
-        	}
 
             XMLConfig dodsConf = Common.getDodsConf();
             String cacheClassPath = null;
@@ -1577,6 +1578,9 @@ import org.webdocwf.dods.access.*;
            if (cache == null) {
                 cache = new QueryCacheImpl();
             }
+            
+            setCache(tablename, cache);
+
             readCacheConfiguration(tablename, get_logicalDBName());
             get_statistics(tablename); // set statistics
             refreshCache(tablename);

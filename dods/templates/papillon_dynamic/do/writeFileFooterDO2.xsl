@@ -10,16 +10,18 @@
         autoSaveAllowed = true;
     }
 
-    	private static void initColumnsNameString(Boolean para){
-    	if(para==null){
-    		columnsNameString=&quot;<xsl:value-of select="/TABLE/TABLE_NAME"/>.*&quot;;
+    	public static String getColumnsNameString(String dbtblname){
+        String columnsNameString = null;
+        
+    	if(useOrderedWithTable==null){
+    		columnsNameString=dbtblname+&quot;.*&quot;;
     	}else{
 			columnsNameString = &quot;&quot;;
    		String tableName;
-			if (para.booleanValue()){
-				tableName=&quot;@T@_<xsl:value-of select="/TABLE/TABLE_NAME"/>_@@.&quot;;
+			if (useOrderedWithTable.booleanValue()){
+				tableName=&quot;@T@_&quot;+dbtblname+&quot;_@@.&quot;;
 			}else{
-				tableName=&quot;@F@_<xsl:value-of select="/TABLE/TABLE_NAME"/>_@@.&quot;;
+				tableName=&quot;@F@_&quot;+dbtblname+&quot;_@@.&quot;;
 			}
 			String oidStr = <xsl:value-of select="/TABLE/CLASS_NAME"/>DO.get_OIdColumnName();
 			String verStr = <xsl:value-of select="/TABLE/CLASS_NAME"/>DO.get_versionColumnName();

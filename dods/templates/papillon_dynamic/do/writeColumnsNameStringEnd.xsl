@@ -8,6 +8,7 @@
 				columnsNameString = columnsNameString.substring(0,columnsNameString.length()-2);
 			}
 		}
+        return columnsNameString;
 	}
 </xsl:template>
 </xsl:stylesheet>
