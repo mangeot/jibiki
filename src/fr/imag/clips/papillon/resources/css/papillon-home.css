@@ -236,7 +236,9 @@ div.popupMenu ul li:hover {
 /* Main (central) part of the page      */
 /*--------------------------------------*/
 
-
+.mainBlock {
+	
+}
 
 /* styles for table cells */
 .headerRow	{ background: #4682b4; 
