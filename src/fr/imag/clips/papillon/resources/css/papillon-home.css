@@ -5,6 +5,12 @@
  * $Id$
  * ---------------------------------------------------
  *
+ * $Log$
+ * Revision 1.4  2005/01/15 17:43:19  mangeot
+ * Added cvs Id and Log on the files
+ * 
+ *
+ * ---------------------------------------------------
  * do not write .css at the top of the file
  * do not write font-size : 12 pt; but : 1em or : 100%;
  * do not write div.foo_one but div.foo-one even if _ is in the tag

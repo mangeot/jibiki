@@ -3,6 +3,18 @@
 
    Build file for Papillon
 
+   © Mathieu Mangeot & Gilles Sérasset - GETA CLIPS IMAG
+   Projet Papillon
+
+Id:
+   $Id$
+  
+Log:
+   $Log$
+   Revision 1.7  2005/01/15 17:43:19  mangeot
+   Added cvs Id and Log on the files
+
+
 Notes:
    This is a build file for use with the Jakarta Ant and the ant script
    provided with Enhydra Server.

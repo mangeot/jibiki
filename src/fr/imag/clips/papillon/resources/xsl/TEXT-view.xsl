@@ -1,4 +1,18 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+ *  © Mathieu Mangeot & Gilles Sérasset - GETA CLIPS IMAG
+ *  Projet Papillon
+ *
+ *  -----------------------------------------------
+ *  $Id$
+ *  -----------------------------------------------
+ *  $Log$
+ *  Revision 1.2  2005/01/15 17:43:19  mangeot
+ *  Added cvs Id and Log on the files
+ *
+ *
+ *  -----------------------------------------------
+-->
 <xsl:stylesheet version="1.0"
 	xmlns:d='http://www-clips.imag.fr/geta/services/dml' 
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"

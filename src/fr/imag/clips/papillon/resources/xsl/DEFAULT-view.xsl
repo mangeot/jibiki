@@ -1,4 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+ *  © Mathieu Mangeot & Gilles Sérasset - GETA CLIPS IMAG
+ *  Projet Papillon
+ *
+ *  -----------------------------------------------
+ *  $Id$
+ *  -----------------------------------------------
+ *  $Log$
+ *  Revision 1.3  2005/01/15 17:43:19  mangeot
+ *  Added cvs Id and Log on the files
+ *
+ *
+ *  -----------------------------------------------
+-->
 <!DOCTYPE xsl:stylesheet [
 	<!ENTITY nbsp " ">
 ]>
