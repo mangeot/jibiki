@@ -1,0 +1,72 @@
+<!doctype html PUBLIC "-//W3C//DTD html 4.0 transitional//EN">
+<html>
+  <head>
+     <link href="css/papillon.css" rel="StyleSheet" type="text/css">
+     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> 
+	 <meta name="author" CONTENT="Mathieu MANGEOT &amp; Gilles Sérasset">  
+	 
+	 <meta name="keywords" Content="Grand Dictionnaire Estonien Français"> 
+	 
+	 <meta name="description" Content="Le projet GDEF a pour but de créer un dictionnaire bilingue estonien-français">
+
+	 <meta name="generator" Content="Enhydra">
+	 
+	 <meta name="robots" Content="index, follow"> 
+ 
+     <title>GDEF: Grand Dictionnaire Estonien Français</title>
+     <script id="Script" language="JavaScript" type="text/javascript">
+<!--
+//-->
+</script>
+  </head>
+		<body  OnLoad="javascript:void(0);" bgcolor="#ffffff">
+		<a href="index.html"><input type="image" src="media/header-gdef.jpg" alt="Header"></a>
+		<table WIDTH="100%" summary="table" border="0" cellspacing="2" cellpadding="0">
+			<tr valign="top">
+				<td width="160"></td>
+				<td align="center" valign="middle">
+					<table WIDTH="100%" summary="table" border="0" cellspacing="0" cellpadding="3">
+						<tr>
+							<td align="center" valign="middle"><DIV id="HeaderPlace"></DIV></td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr  valign="top">
+				<td valign="top" width="160">
+					<DIV id="MenuPlace"></DIV>
+				</td>
+				<td bgcolor="white">
+					<table WIDTH="100%" summary="table" border="0" cellspacing="0" cellpadding="0">
+						<tr valign="top">
+							<td  height="4"></td>
+						</tr>
+					</table>
+					<table WIDTH="100%"  summary="table" border="1" cellspacing="0" cellpadding="4">
+						<tr valign="top">
+							<td valign="top" bgcolor="#faecc9"> 
+							<PRE class="adminMessage" id="AdminMessage"><SPAN id="AdminMessageText">Admin Message</SPAN></PRE>
+							<PRE class="userMessage" id="UserMessage"><SPAN id="UserMessageText">User Message</SPAN></PRE>
+	  <DIV id="ContentPlace"></DIV>
+						</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr valign="top">
+				<td width="160"></td>
+				<td align="center" valign="middle">
+					<table WIDTH="100%"  summary="table" border="0" cellspacing="0" cellpadding="7">
+						<tr valign="top">
+							<td align="center" valign="middle"><DIV id="FooterPlace"></DIV></td>
+						</tr>
+						<tr>
+						<td align="right">
+					<div class="copyright">© 2001-2003 <a href="mailto:MAthieu.MangeotATimag.fr?subject=GDEFServer&amp;body=replace&nbsp;AT&nbsp;by&nbsp;@&nbsp;in&nbsp;the&nbsp;email&nbsp;address">Mathieu Mangeot</a>, NII &amp; <a href="mailto:gilles.serassetATimag.fr?subject=GDEFServer&amp;body=replace&nbsp;AT&nbsp;by&nbsp;@&nbsp;in&nbsp;the&nbsp;email&nbsp;address">Gilles S&eacute;rasset</a>, GETA-CLIPS. All rights reserved.</div></td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+	</body>
+</html>

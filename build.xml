@@ -1,0 +1,419 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ===================================================================
+
+   Build file for Papillon
+
+Notes:
+   This is a build file for use with the Jakarta Ant and the ant script
+   provided with Enhydra Server.
+
+Build Instructions:
+   To build, run
+
+     <enhydra_root>bin/ant <target>
+
+   on the directory where this file is located with the target you want.
+
+Most useful targets:
+
+ - make     -> create ./output (default)
+ - rebuild  -> create ./output from scratch
+ - clean    -> remove all files from ./classes and ./output
+ - compile  -> compile source to ./classes with javac and xmlc
+ - javadocs -> creates the javadocs in "./output/javadocs"
+
+
+
+==================================================================== -->
+
+<project name="Papillon"
+         default="help"
+         basedir=".">
+
+  <!-- =================================================================== -->
+  <!-- Initialize the properties                                           -->
+  <!-- =================================================================== -->
+
+  <!-- Set up application values -->
+  <property name="project.name"    value="Papillon"/>
+  <property name="project.package" value="fr.imag.clips.papillon"/>
+  <property name="project.version" value="1.6a"/>
+  <property name="project.year"    value="2004"/>
+
+  <!-- directory locations -->
+  <property name="dir.package"   value="fr/imag/clips/papillon"/>
+  <property name="enhydra.root"  value="/library/java/extensions/enhydra5.1"/>
+  <property name="enhydra.home"  value="/library/java/extensions/enhydra5.1"/>
+  <property name="enhydra.dir"   location="/library/java/extensions/enhydra5.1"/>
+  <property name="regexp.dir"    location="/library/java/extensions/jakarta-regexp-1.2"/>
+  <property name="dir.temp"      location="build" />
+  <property name="dir.classes"   location="${dir.temp}/classes"/>
+  <property name="dir.input"     location="input"/>
+  <property name="dir.dods_templates"     location="dods/templates"/>
+  <property name="dir.java"      location="${java.home}/" />
+  <property name="dir.src"       location="src"/>
+  <property name="dir.output"    location="output"/>
+  <property name="dir.project"   location="."/>
+  <property name="dir.lib"       location="${dir.output}/lib"/>
+  <property name="dir.javadocs"  location="${dir.output}/javadocs"/>
+  <property name="dir.xmlc"      location="${dir.temp}/Generated_Source/"/>
+  <property name="dodsbuild.dir" location="${dir.temp}/Dods_Generated_Sources"/>
+  <property name="dir.sql"       location="${dir.src}/dods_sql/"/>
+  <!-- Local path to properties -->
+  <property name="path.properties" value="${dir.package}/properties"/>
+
+  
+	<taskdef name="xmlc" classname="org.enhydra.xml.xmlc.taskdef.Xmlc">
+		 <classpath>
+			 <path location="${enhydra.dir}/build/xmlc-taskdef.jar"/>	 
+		     <path location="${enhydra.dir}/lib/xhtml.jar"/>	
+		     <fileset dir="${enhydra.dir}/lib" >
+		          <include name="*.jar" />
+		     </fileset>
+	     </classpath>
+	</taskdef>
+	
+	<taskdef name="dods" classname="org.enhydra.ant.taskdefs.Dods">
+		<classpath>
+		 	<path location="${enhydra.dir}/dods/lib/dods.jar"/>	 
+	     </classpath>
+	</taskdef>
+  
+  <property name="xmlcbuild.dir" value="${dir.src}/fr/imag/clips/papillon/presentation"/>
+  <property name="xmlcresources.dir" value="${dir.src}/fr/imag/clips/papillon/resources"/>
+  <property name="enhydra.liboutput" value="${dir.output}/lib"/>
+  <property name="library.dir" 	value="${enhydra.root}/lib"/>
+
+  <!-- 2 different dods compilations. -->
+  <!-- The first one compiles using standard templates. -->
+  <!-- The second one uses papillon_dynamic templates. -->
+  <property name="dodsbuild.dir" value="${dir.temp}/Dods_Generated_Sources"/>
+	<property name="papillon.static_objects.doml"  value="papillon_static_objects.doml"/>
+	<property name="papillon.dynamic_objects.doml" value="papillon_dynamic_objects.doml"/>
+
+  <!-- debug setting -->
+  <property name="debug" value="on"/>
+
+  <!-- javadoc package -->
+  <property name="packages" value="fr.imag.clips.papillon.*"/>
+
+  <!-- =================================================================== -->
+  <!-- Set up papillon-secific javac class path                            -->
+  <!-- =================================================================== -->
+	<property file="papillon.properties"/>
+   
+  <path id="papillon.javac.classpath">
+    <pathelement path="${papillon.xalan.jar}"/>
+    <pathelement path="${papillon.xerces.jar}"/>
+    <pathelement path="${papillon.xmlapi.jar}"/>
+    <pathelement path="${papillon.regexp.jar}"/>
+    <pathelement path="${papillon.ant.jar}"/>
+    <pathelement path="${papillon.uigenerator.jar}"/>
+    <pathelement path="${papillon.concepts.jar}"/>
+<!--    <pathelement path="${papillon.jsse.jar}"/> -->
+    <pathelement path="${papillon.pgsql.jar}"/>
+  </path>
+
+    <path id="enhydra.classpath">
+    <fileset dir="${enhydra.liboutput}" >
+          <include name="*.jar" />
+     </fileset>
+     <fileset dir="${enhydra.dir}/lib/" >
+          <include name="*.jar" />
+     </fileset>
+     <fileset dir="${enhydra.dir}/dods/lib/" >
+          <include name="*.jar" />
+     </fileset>
+      <fileset dir="${enhydra.dir}/lib/dom" >
+          <include name="*.jar" />
+     </fileset> 
+  </path>
+  
+  <!-- =================================================================== -->
+  <!-- Set up javac class path                                             -->
+  <!-- =================================================================== -->
+  <path id="javac.classpath">
+    <path refid="papillon.javac.classpath" />
+    <path refid="enhydra.classpath"/>
+  </path>
+ 
+  <!-- =================================================================== -->
+  <!-- Help the user (default)                                             -->
+  <!-- =================================================================== -->
+  <target name="help" depends="">
+    <echo>
+Building Papillon project.
+
+Notes:
+   This is a build file for use with the Jakarta Ant and the ant script
+   provided with Enhydra 5.1 Server. Make sure you are using the correct ant
+   script and run:
+
+   /path/to/enhydra/5.1/bin/ant target
+
+   on the directory where this file is located with the target you want.
+
+Most useful targets:
+
+ - make     -> create ./output and compile everything
+ - quick    -> create .output without using DODS, should be called only when
+               dods files have already been processed.
+ - dods     -> invoke dods to create and compile DODS generated java classes.
+ - rebuild  -> create ./output from scratch (clean + make)
+ - clean    -> remove all files from ./classes and ./output
+ - compile  -> compile source to ./classes with javac and xmlc
+ - javadocs -> creates the javadocs in "./output/javadocs"
+
+    </echo>
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- Create output                                                       -->
+  <!-- =================================================================== -->
+  <target name="make" depends="archive,output" />
+  <target name="quick" depends="quick_archive,output" />
+
+  <!-- =================================================================== -->
+  <!-- Create output from scratch (no javadoc)                             -->
+  <!-- =================================================================== -->
+  <target name="rebuild" depends="clean,make" />
+
+  <!-- =================================================================== -->
+  <!-- Prepare the directory tree                                          -->
+  <!-- =================================================================== -->
+  <target name="prepare">
+     <mkdir dir="${dir.output}"/>
+     <mkdir dir="${dir.lib}"/>
+     <mkdir dir="${dir.temp}"/>
+     <mkdir dir="${dir.classes}"/>
+     <mkdir dir="${dir.xmlc}"/>
+     <mkdir dir="${dodsbuild.dir}"/>
+     <mkdir dir="${dodsbuild.dir}/static"/>
+     <mkdir dir="${dodsbuild.dir}/dynamic"/>
+
+			<!-- What is the script extension - OS dependant -->
+			<condition property="script_extension" value="">
+				<os family="unix"/>
+			</condition>
+			<condition property="script_extension" value=".bat">
+				<os family="windows"/>
+			</condition>
+
+  </target>
+
+
+	
+	<!-- ========================================================= -->
+	<!-- DODS: generate database manuplation java class            -->
+	<!-- ========================================================= -->
+	<target name="dods" depends="prepare, dods_static, dods_dynamic">
+
+	</target>
+   
+	<target name="dods_static" depends="prepare">
+    <dods domlfile="${dir.project}/${papillon.static_objects.doml}"
+	   			outputDir="${dodsbuild.dir}/static"
+	   			action="dods:build_all"/>
+ 	   <copy todir="${dir.classes}">
+	       <fileset dir="${dodsbuild.dir}/static/classes" />
+	   </copy>  </target>
+  
+  	<target name="dods_dynamic" depends="prepare">
+    <dods domlfile="${dir.project}/${papillon.dynamic_objects.doml}"
+	   			outputDir="${dodsbuild.dir}/dynamic"
+          templateDir="${dir.dods_templates}"
+          templateSet="papillon_dynamic"
+          action="dods:build_all"/>
+ 	   <copy todir="${dir.classes}">
+	       <fileset dir="${dodsbuild.dir}/dynamic/classes" />
+	   </copy> 
+   </target>
+  
+  <!-- ========================================================= -->
+	<!-- copy sql files to the sql directory                       -->
+	<!-- ========================================================= -->
+	<!-- Attention, à adapter car on a 2 doml qui génèrent des fichiers de meme nom... -->
+  <!-- <target name="sql" depends="dods">
+	   <copy todir="${dir.sql}">
+	       <fileset dir="${dodsbuild.dir}" includes="**/*.sql"/>
+	   </copy>
+	   <copy todir="${dir.sql}">
+	       <fileset dir="${dir.src}/sql"/>
+	   </copy>
+	</target>	
+	-->
+   
+  <!-- =================================================================== -->
+  <!-- Compile documents with XMLC                                         -->
+  <!-- =================================================================== -->
+
+  <target name="xmlc" depends="prepare">
+    <!-- Generate java classes with XMLC -->
+    <xmlc srcdir="${xmlcresources.dir}"
+       sourceout="${dir.xmlc}"
+       packagename="${project.package}.presentation"
+       options="options.xmlc"
+       compile="false"
+       includes="**/*.html">
+     <arg value="-d" />
+     <arg value="${dir.classes}" />
+   </xmlc>
+   <!-- Compile generated classes -->
+   <javac srcdir="${dir.xmlc}"
+          destdir="${dir.classes}"
+          excludes="**/StartServer.java"
+				  classpathref="javac.classpath"
+          debug="${debug}">
+     </javac>
+  </target>
+  
+  
+  <!-- =================================================================== -->
+  <!-- Compile the java source                                             -->
+  <!-- =================================================================== -->
+  <target name="compile" depends="dods, xmlc, compile_sources" />
+	<target name="compile_sources" depends=""> 
+
+<!--  <property name="compile_classpath" refid="javac.classpath"/>
+  <echo message="Classpath is ${compile_classpath}"/> -->
+     <!-- compile XMLC generated java -->
+    <javac srcdir="${dir.src}"
+            destdir="${dir.classes}"
+            excludes="**/StartServer.java"
+				    classpathref="javac.classpath"
+	    			debug="${debug}">
+        		<classpath>
+            	<pathelement location="${library.dir}/build/dods.jar" />
+        		</classpath>
+     </javac>
+
+     <!-- copy resource files -->
+     <copy todir="${dir.classes}/${dir.package}/presentation">
+        <fileset dir="${dir.src}/${dir.package}/resources">
+          <include name="**/*.gif"/>
+          <include name="**/*.jpg"/>
+          <include name="**/*.js"/>
+          <include name="**/*.css"/>
+          <include name="**/*.xsd"/>
+          <include name="**/*.ico"/>
+          <include name="**/*.png"/>
+          <include name="**/*.properties"/>
+        </fileset>
+     </copy>
+     
+     <!-- Copy and transliterate property files -->
+     	<!-- ATTENTION, les fichiers de Properties doivent contenir de l'ASCII et
+     les caractères unicodes doivent être mis en 'u' -->
+    <native2ascii encoding="UTF-8" src="${dir.src}/${path.properties}" dest="${dir.classes}/${path.properties}" 
+        includes="*.properties" ext=".properties" />
+        
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Prepare output files                                                -->
+  <!-- =================================================================== -->
+  <target name="output" depends="prepare">
+     <filter token="ENHYDRA_PATH" value="${enhydra.root}" />
+     <filter token="JAVA_PATH"    value="${dir.java}" />
+     <filter token="DEPLOY_PATH"  value="${dir.output}" />
+     <filter token="PROJECT_PATH" value="${dir.project}" />
+     <filter token="ENHYDRA_DIR" value="${enhydra.dir}" />
+     <!-- Papillon-specific filters -->
+     <filter token="ANT_LIB" value="${papillon.ant.jar}" />
+     <filter token="XALAN_LIB"    value="${papillon.xalan.jar}" />
+     <filter token="XERCES_LIB"  value="${papillon.xerces.jar}" />
+     <filter token="XMLAPI_LIB"  value="${papillon.xmlapi.jar}" />
+     <filter token="PGSQL_JDBC_DRIVER" value="${papillon.pgsql.jar}" />
+     <filter token="REGEXP_LIB" value="${papillon.regexp.jar}" />
+     <filter token="UIGENERATOR_LIB" value="${papillon.uigenerator.jar}" />
+     <filter token="CONCEPTS_LIB" value="${papillon.concepts.jar}" />
+     <!--filter token="JSSE_LIB" value="${papillon.jsse.jar}" /-->
+     <!-- /Papillon-specific filters -->
+
+     <copy todir="${dir.output}"
+           filtering="off">
+        <fileset dir="${dir.input}">
+           <exclude name="**/*.in"/>
+        </fileset>
+     </copy>
+
+     <copy todir="${dir.output}"
+           filtering="on">
+        <fileset dir="${dir.input}">
+           <include name="**/*.in"/>
+        </fileset>
+     </copy>
+     
+    <!-- ATTENTION, les fichiers de Properties doivent contenir de l'ASCII et
+     les caractères unicodes doivent être mis en 'u' -->
+    <native2ascii encoding="UTF-8" src="${dir.output}/conf" dest="${dir.output}/conf" 
+        includes="**/*.in" ext="" />
+    <delete>
+        <fileset dir="${dir.output}/conf" includes="**/*.in"/>
+    </delete>
+
+     <move file="${dir.output}/run.in"
+         tofile="${dir.output}/run"/>
+<!--      <move file="${dir.output}/conf/multiserver.conf.in"
+         tofile="${dir.output}/conf/multiserver.conf"/>
+     <move file="${dir.output}/conf/log4j.xml.in"
+         tofile="${dir.output}/conf/log4j.xml"/>
+     <move file="${dir.output}/conf/${project.name}.conf.in"
+         tofile="${dir.output}/conf/${project.name}.conf"/> -->
+
+
+     <chmod file="${dir.output}/run" perm="ugo+rx"/>
+
+  </target>
+
+  
+  <!-- =================================================================== -->
+  <!-- Create archive                                                      -->
+  <!-- =================================================================== -->
+  <target name="archive" depends="prepare, compile, quick_archive"/>
+  
+  <target name="quick_archive" depends="prepare,compile_sources">
+ 		<mkdir dir="${dir.lib}/tmp" />
+ 		<copy todir="${dir.lib}/tmp" includeEmptyDirs="false">
+ 					<fileset dir="${dir.classes}" 
+ 					excludes="**/*.java" />
+ 		</copy>
+    <jar jarfile="${dir.lib}/${project.name}.jar">
+        <fileset dir="${dir.lib}/tmp"
+                 excludes="**/*.java" />
+    </jar>
+    <delete dir="${dir.lib}/tmp" />
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Create the API documentation                                        -->
+  <!-- =================================================================== -->
+  <target name="javadocs" depends="prepare">
+     <mkdir dir="${dir.javadocs}"/>
+     <javadoc packagenames="${packages}"
+              sourcepath="${dir.src}"
+              destdir="${dir.javadocs}"
+              author="true"
+              version="true"
+              use="true"
+              windowtitle="${project.name} API"
+              doctitle="${project.name}"
+              bottom="Copyright (c); ${project.year}"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Clean everything                                                    -->
+  <!-- =================================================================== -->
+  <target name="clean">
+		<delete dir="${dir.lib}"/>
+		<delete dir="${dir.temp}"/>
+		<delete dir="${dir.output}"/>
+		<delete dir="${dir.xmlc}"/>
+	 	<delete quiet="true">
+    	<fileset dir="." includes="*.uptodate" />
+		</delete>
+		<delete dir="${dodsbuild.dir}/classes"/>
+  </target>
+
+</project>

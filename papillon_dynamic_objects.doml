@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE doml SYSTEM "file:////Library/Java/Extensions/enhydra5.1/dods/build/dtd/doml.dtd">
+<doml>
+  <database database="PostgreSQL" templateset="papillon_dynamic"> <!-- legal_values="Standard,InstantDB,Oracle,Informix,Msql,Sybase,PostgreSQL"-->
+    <package id="fr">
+    <package id="fr.imag">
+    <package id="fr.imag.clips">
+    <package id="fr.imag.clips.papillon">
+      <package id="fr.imag.clips.papillon.data">
+        <table dbTableName="volume" id="fr.imag.clips.papillon.data.VolumeEntry">
+          <column id="headword" usedForQuery="true">
+            <javadoc>/**
+ * the headword  isAbstract="true"
+ */</javadoc>
+            <type canBeNull="true" dbType="LONGVARCHAR" javaType="String"/>
+          </column>
+          <column id="id" usedForQuery="true">
+            <javadoc>/**
+ * the external id
+ */</javadoc>
+            <type canBeNull="true" dbType="VARCHAR" javaType="String" size="255"/>
+          </column>
+          <column id="pos" usedForQuery="true">
+            <javadoc>/**
+ * the part-of-speech
+ */</javadoc>
+            <type canBeNull="true" dbType="VARCHAR" javaType="String" size="255"/>
+          </column>
+          <column id="pronunciation" usedForQuery="true">
+            <javadoc>/**
+ * the pronunciation
+ */</javadoc>
+            <type canBeNull="true" dbType="VARCHAR" javaType="String" size="255"/>
+          </column>
+          <column id="reading" usedForQuery="true">
+            <javadoc>/**
+ * the reading
+ */</javadoc>
+            <type canBeNull="true" dbType="VARCHAR" javaType="String" size="255"/>
+          </column>
+          <column id="translation" usedForQuery="true">
+            <javadoc>/**
+ * the translation
+ */</javadoc>
+            <type canBeNull="true" dbType="LONGVARCHAR" javaType="String"/>
+          </column>
+          <column id="key1" usedForQuery="true">
+            <javadoc>/**
+ * Key1
+ */</javadoc>
+            <type canBeNull="true" dbType="VARCHAR" javaType="String" size="255"/>
+          </column>
+          <column id="key2" usedForQuery="true">
+            <javadoc>/**
+ * Key2
+ */</javadoc>
+            <type canBeNull="true" dbType="VARCHAR" javaType="String" size="255"/>
+          </column>
+          <column id="xmlCode" usedForQuery="true">
+            <javadoc>/**
+ * The XML code of the volume entry.
+ */</javadoc>
+            <type dbType="LONGVARCHAR" javaType="String"/>
+          </column>
+        </table>
+        <table id="fr.imag.clips.papillon.data.Index" dbTableName="index">
+          <column id="key" usedForQuery="true">
+            <javadoc>/**
+ * the key
+ */</javadoc>
+            <type canBeNull="true" dbType="VARCHAR" javaType="String" size="255"/>
+          </column>
+          <column id="entryId" usedForQuery="true">
+            <javadoc>/**
+ * the entry id
+ */</javadoc>
+            <type dbType="VARCHAR" javaType="String" size="255"/>
+          </column>
+		  <index id="index_key_idx" unique="true">
+          <indexColumn id="key"/>
+        </index>
+		  <index id="index_entryid_idx" unique="true">
+          <indexColumn id="entryId"/>
+        </index>
+        </table>
+    </package>
+    </package>
+    </package>
+    </package>
+    </package>
+  </database>
+</doml>

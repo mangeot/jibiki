@@ -1,0 +1,95 @@
+<!doctype HTML PUBLIC "-//W3C//DTD HTML 4.0 TRANSITIONAL//EN">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+   <title>Papillon</title>
+</head>
+<body>
+<DIV id="InfoContent" lang="fr">
+		<center>
+			<font size="6"><b>Grand dictionnaire estonien-fran&ccedil;ais</b></font></center>
+		<p><font size="1">&nbsp;</font></p>
+		<div align="justify">
+			<p><a href="#Anchor-49575">1. Objectif</a><br>
+			<a href="#Anchor-47857">2.&nbsp;N&eacute;cessit&eacute; d'un nouveau dictionnaire</a><br>
+			<a href="#Anchor-11481">3. Publics cibles</a><br>
+			<a href="#Anchor-35882">4.&nbsp;Aspects linguistiques</a><br>
+			<a href="#Anchor-14210">5.&nbsp;Aspects informatiques</a><br>
+			<a href="#Anchor-23240">6.&nbsp;Aspects institutionnels</a><br>
+			<a href="#Anchor-3800">7. D&eacute;bouch&eacute;s concrets</a><br>
+			<a href="#Credits">8. Crédits</a></p>
+			<hr>
+			<p><font size="4"><b><a name="Anchor-49575"></a>1. Objectif</b></font></p>
+			<p>L'objectif de ce projet est la r&eacute;alisation, en quatre ans (2004-2007), d'un dictionnaire estonien-fran&ccedil;ais d'environ 50&nbsp;000 entr&eacute;es, par une &eacute;quipe bilingue de linguistes et traducteurs professionnels et hautement qualifi&eacute;s.</p>
+			<p>R&eacute;alis&eacute; au format XML, ce dictionnaire est destin&eacute; &agrave; &ecirc;tre publi&eacute; sur papier et sur CD-ROM. Sa mise en ligne sur Internet pourra &eacute;galement &ecirc;tre envisag&eacute;e.</p>
+			<p>&nbsp;</p>
+			<p><font size="4"><b><a name="Anchor-47857"></a>2. N&eacute;cessit&eacute; d'un nouveau dictionnaire</b></font></p>
+			<p>&Agrave; l'heure o&ugrave; l'Estonie s'appr&ecirc;te &agrave; adh&eacute;rer &agrave; l'Union europ&eacute;enne et o&ugrave; l'enseignement du fran&ccedil;ais dans ce pays se d&eacute;veloppe &agrave; un rythme soutenu, la publication d'un nouveau dictionnaire estonien-fran&ccedil;ais appara&icirc;t comme une urgente n&eacute;cessit&eacute;. Il n'existe en effet aucun grand dictionnaire estonien-fran&ccedil;ais r&eacute;pondant aux exigence de la lexicographie moderne et refl&eacute;tant l'&eacute;tat actuel de la langue estonienne. Le seul dictionnaire d'une taille comparable (K.&nbsp;Kann et N.&nbsp;Kaplinski, <i>Eesti-prantsuse s&otilde;naramat</i>, Tallinn&nbsp;: Valgus, 1979) est entach&eacute; de graves d&eacute;fauts, auxquels il ne semble pas possible de rem&eacute;dier par une simple mise &agrave; jour&nbsp;:</p>
+			<ul>
+				<li>Publi&eacute; en 1979, il ne refl&egrave;te plus l'&eacute;tat actuel de la langue estonienne, dont le lexique a &eacute;t&eacute; consid&eacute;rablement&nbsp;modifi&eacute; et enrichi par les bouleversements politiques et &eacute;conomiques des ann&eacute;es 1990, ainsi que par les pr&eacute;paratifs en vue de l'adh&eacute;sion &agrave; l'Union europ&eacute;enne&nbsp;;
+				<li>R&eacute;dig&eacute; &agrave; une &eacute;poque o&ugrave; les auteurs avaient, par la force des circonstances, perdu le contact avec la langue fran&ccedil;aise vivante, il contient de nombreuses erreurs dans les traductions fran&ccedil;aises&nbsp;(fautes d'orthographe, mots archa&iuml;ques ou inexistants, erreurs de traduction) ;
+				<li>Les contextes d'emploi des &eacute;quivalents fran&ccedil;ais ne sont pas distingu&eacute;s avec suffisamment de pr&eacute;cision, ce qui rend ce dictionnaire tr&egrave;s difficile &agrave; utiliser par des Estoniens ayant besoin d'&eacute;crire un texte en fran&ccedil;ais&nbsp;;
+				<li>Le dictionnaire ne contient que tr&egrave;s peu d'indications sur la rection des mots fran&ccedil;ais et estoniens&nbsp;;
+				<li>Il contient un nombre tr&egrave;s insuffisant de locutions et d'expressions idiomatiques&nbsp;;
+				<li>Les mots sont pr&eacute;sent&eacute;s selon une disposition graphique peu claire (regroupement des mots compos&eacute;s dans l'article consacr&eacute; &agrave; leur premier constituant), ce qui rend la consultation fastidieuse&nbsp;;
+				<li>Con&ccedil;u exclusivement pour le public estonien, il ne r&eacute;pond pas de fa&ccedil;on satisfaisante aux besoin des francophones apprenant l'estonien comme langue &eacute;trang&egrave;re, public de plus en plus nombreux et qui devrait encore cro&icirc;tre dans les ann&eacute;es &agrave; venir, apr&egrave;s l'adh&eacute;sion de l'Estonie &agrave; l'Union europ&eacute;enne.
+			</ul>
+			<p><font face="Times">&nbsp;</font></p>
+			<p><font size="4"><b><a name="Anchor-11481"></a>3. Publics cibles</b></font></p>
+			<p>Le grand dictionnaire estonien-fran&ccedil;ais est destin&eacute; &agrave; r&eacute;pondre en priorit&eacute; aux besoins des publics suivants&nbsp;:</p>
+			<p><b>3.1.</b> <b>Apprenants de fran&ccedil;ais en Estonie</b></p>
+			<p>La n&eacute;cessit&eacute; d'un grand dictionnaire bilingue se fait sentir tout particuli&egrave;rement au niveau du lyc&eacute;e (3 derni&egrave;res classes de l'enseignement secondaire) et dans l'enseignement sup&eacute;rieur, o&ugrave; l'absence d'outil ad&eacute;quat complique singuli&egrave;rement la pratique du th&egrave;me fran&ccedil;ais et de la r&eacute;daction.</p>
+			<p>Le dictionnaire r&eacute;pondrait &eacute;galement aux besoins des apprenants adultes participant aux cours de l'Alliance fran&ccedil;aise d'Estonie et du Centre culturel fran&ccedil;ais, notamment les fonctionnaires estoniens qui b&eacute;n&eacute;ficient du programme d'apprentissage du fran&ccedil;ais mis en place par l'Ambassade de France.</p>
+			<p>&Agrave; l'issue des cours, l'existence d'un dictionnaire estonien-fran&ccedil;ais moderne et suffisamment complet est une condition indispensable &agrave; l'utilisation effective du fran&ccedil;ais par les fonctionnaires et responsables estoniens dans leur communication &eacute;crite avec leurs partenaires francophones.</p>
+			<p><b>3.2.</b><font face="Times">&nbsp;</font><b>Apprenants d'estonien francophones</b></p>
+			<p>Ce public, d&eacute;j&agrave; plus nombreux qu'on ne croit, est appel&eacute; &agrave; se d&eacute;velopper dans les ann&eacute;es &agrave; venir, apr&egrave;s l'adh&eacute;sion de l'Estonie &agrave; l'Union europ&eacute;enne. D'ores et d&eacute;j&agrave;, l'estonien est enseign&eacute; en France &agrave; l'Institut national des langues et civilisations orientales (une quinzaine d'&eacute;tudiants chaque ann&eacute;e), ainsi qu'&agrave; Bruxelles au sein des institutions europ&eacute;ennes (plusieurs groupes de traducteurs et interpr&egrave;tes rassemblant chacun une dizaine d'apprenants), o&ugrave; les cours sont actuellement donn&eacute;s en fran&ccedil;ais. Des francophones participent &eacute;galement aux cours organis&eacute;s en Estonie par l'Universit&eacute; de Tartu et l'Universit&eacute; p&eacute;dagogique de Tallinn. Le dictionnaire pourrait &eacute;galement &ecirc;tre utile au Canada, o&ugrave; vit une importante communaut&eacute; estonienne et o&ugrave; existent de nombreux cours d'estonien &agrave; diff&eacute;rents niveaux.</p>
+			<p><b>3.3.</b><font face="Times">&nbsp;</font><b>Traducteurs d'estonien</b></p>
+			<p>En l'absence de dictionnaire de d&eacute;finitions estonien comparable au Petit Robert, l'existence d'un grand dictionnaire bilingue estonien-fran&ccedil;ais refl&eacute;tant l'&eacute;tat actuel de la langue estonienne constituera un outil de travail indispensable pour les traducteurs francophones, notamment au sein des institutions europ&eacute;ennes.</p>
+			<p>&nbsp;</p>
+			<p><font size="4"><b><a name="Anchor-35882"></a>4. Aspects linguistiques</b></font></p>
+			<p><b>4.1. Nomenclature</b></p>
+			<p>Le grand dictionnaire estonien-fran&ccedil;ais comprendra environ 50&nbsp;000 entr&eacute;es, refl&eacute;tant aussi largement que possible le lexique estonien contemporain, dans tous ses emplois concernant le grand public&nbsp;: litt&eacute;rature &agrave; partir de 1925 (date de la standardisation de la langue), presse, vulgarisation scientifique et technique, langue parl&eacute;e. Il fournira pour ces mots estoniens les &eacute;quivalents utilis&eacute;s dans le fran&ccedil;ais standard de France, en s'attachant &agrave; distinguer avec pr&eacute;cision leurs nuances de sens et leurs contextes d'emploi.</p>
+			<p><b>4.2. Une &eacute;quipe bilingue</b></p>
+			<p>Le dictionnaire est r&eacute;dig&eacute; sous la direction d'Antoine Chalvin et d'Indrek Koff par une &eacute;quipe comprenant des Estoniens poss&eacute;dant une connaissance approfondie et active du fran&ccedil;ais vivant et des Fran&ccedil;ais poss&eacute;dant une connaissance approfondie et active de l'estonien.</p>
+			<p>La pr&eacute;sence dans l'&eacute;quipe de locuteurs des deux langues, condition indispensable pour la fiabilit&eacute; d'un tel dictionnaire, semble aujourd'hui aller de soi dans tout projet lexicographique bilingue s&eacute;rieux. Elle constitue n&eacute;anmoins une innovation radicale en Estonie, o&ugrave; les dictionnaires bilingues, y compris les plus r&eacute;cents, sont toujours r&eacute;dig&eacute;s par des Estoniens (souvent m&ecirc;me par un seul auteur).</p>
+			<p>&nbsp;</p>
+			<p><font size="4"><b><a name="Anchor-14210"></a>5. Aspects informatiques</b></font></p>
+			<p><b>5.1. Base de donn&eacute;es</b></p>
+			<p>Le dictionnaire est r&eacute;alis&eacute; sous la forme d'une base de donn&eacute;es XML comprenant deux sous-ensembles&nbsp;:</p>
+			<p>1) la base principale (dite &quot;&nbsp;volume estonien&nbsp;&quot;), contenant les articles du futur dictionnaire&nbsp;;</p>
+			<p>2)&nbsp;une base distincte (dite &quot;&nbsp;volume fran&ccedil;ais&nbsp;&quot;), contenant tous les mots fran&ccedil;ais cit&eacute;s comme &eacute;quivalents dans le volume estonien, ainsi que leurs informations annexes (genre des noms, type de conjugaison des verbes, auxiliaire utilis&eacute; &agrave; la conjugaison active, h aspir&eacute;, prononciation en cas d'irr&eacute;gularit&eacute;).</p>
+			<p>Les &eacute;quivalents fran&ccedil;ais et leurs informations annexes sont stock&eacute;s une fois pour toutes dans le volume fran&ccedil;ais. Leur insertion dans les articles du dictionnaire se fait au moyen de liens plac&eacute;s dans le volume estonien. Cette technique permet de ne saisir qu'une seule fois les informations concernant les mots fran&ccedil;ais, afin de minimiser les risques d'erreur et de faciliter les corrections.</p>
+			<p><b>5.2. Interface de saisie et de consultation</b></p>
+			<p>Afin de rem&eacute;dier &agrave; la dispersion g&eacute;ographique et &agrave; la mobilit&eacute; des r&eacute;dacteurs, la saisie des articles se fait sur Internet, au moyen d'une interface qui permet la conversion au format XML des donn&eacute;es saisies dans un formulaire, en garantissant le respect de la structure d'article (&eacute;diteur XML en ligne, fonctionnant au moyen d'un serveur web d'objets dynamiques java (Enhydra))<font size="4">.</font></p>
+			<p>Une autre interface permet aux r&eacute;dacteurs de consulter la base de donn&eacute;es lexicographique en cours d'&eacute;laboration.</p>
+			<p>Cette plateforme est une version modifi&eacute;e de la plateforme <a href="http://www.papillon-dictionary.org/" target="_blank">Papillon</a>, d&eacute;velopp&eacute;e par Mathieu Mangeot, Gilles S&eacute;rasset et David Th&eacute;venin.</p>
+			<p><font face="Times">&nbsp;</font></p>
+			<p><font size="4"><b><a name="Anchor-23240"></a>6. Aspects institutionnels</b></font></p>
+			<p>La r&eacute;alisation du projet est assur&eacute;e par l'Association franco-estonienne de lexicographie, avec le soutien de l'Ambassade de France en Estonie et du Centre culturel et de coop&eacute;ration fran&ccedil;ais de Tallinn, et en partenariat avec les institutions suivantes&nbsp;:</p>
+			<p><i>-&nbsp;pour la France&nbsp;:</i></p>
+			<ul>
+				<li><p>l'Institut national des langues et civilisations orientales (INALCO), 
+				<a href="http://www.inalco.fr/pub/enseignements/langues/eco/estonien/"
+				 target="_blank">section d'&eacute;tudes estoniennes</a>&nbsp;;</p></li>
+			</ul>
+			<p><i>- pour l'Estonie&nbsp;:</i></p>
+			<ul>
+					<li>le Centre d'&eacute;tudes francophones Robert Schuman de l'<a href="http://www.ut.ee/" target="_blank">Universit&eacute; de Tartu</a>&nbsp;;</li>
+					<li>l'<a href="http://www.eki.ee/" target="_blank">Institut de la langue estonienne</a> (Tallinn)&nbsp;;</li>
+					<li>la maison d'&eacute;dition Eesti Keele Sihtasutus (Tallinn).</li>
+			</ul>
+			<p><font size="4"><b><a name="Anchor-3800"></a>7. D&eacute;bouch&eacute;s concrets</b></font></p>
+			<p>- <b>Publication d'un dictionnaire papier.</b> Le grand dictionnaire estonien-fran&ccedil;ais sera publi&eacute; sous la forme d'un volume reli&eacute; et cartonn&eacute; par la maison d'&eacute;dition estonienne Eesti Keele Sihtasutus (&quot;&nbsp;Fondation de la langue estonienne&nbsp;&quot;), sp&eacute;cialis&eacute;e dans les dictionnaires.</p>
+			<p>- <b>Publication d'un CD-ROM</b>. La structure XML de la version &eacute;lectronique du dictionnaire rendra relativement ais&eacute;e la r&eacute;alisation d'un CD-ROM. Nous sommes &agrave; la recherche d'un &eacute;diteur multim&eacute;dia susceptible d'&ecirc;tre int&eacute;ress&eacute; par le projet. La t&acirc;che est cependant compliqu&eacute;e par le fait que l'&eacute;dition multim&eacute;dia est un secteur encore presque inexistant en Estonie. Dans l'hypoth&egrave;se o&ugrave; aucune entreprise sp&eacute;cialis&eacute;e ne verrait le jour en Estonie avant l'ach&egrave;vement du dictionnaire, nous pourrions envisager de r&eacute;aliser ce CD-ROM par nos propres moyens, sous r&eacute;serve de trouver un partenaire pour prendre en charge la commercialisation.</p>
+			<p>- <b>Mise en ligne.</b> La structure XML et la conception m&ecirc;me de la plateforme de saisie et de consultation en ligne utilis&eacute;e par les r&eacute;dacteurs rend possible, de fa&ccedil;on quasi imm&eacute;diate, la mise &agrave; disposition du dictionnaire en libre acc&egrave;s sur Internet. Cette option est cependant &agrave; n&eacute;gocier avec les &eacute;diteurs de la version papier et du CD-ROM.</div>
+
+			<p><font size="4"><b><a name="Credits"></a>8. Crédits</b></font></p>
+<ul>
+<li><b>Mathieu MANGEOT-NAGATA</b>: développeur principal;</li>
+<li><b>Gilles SÉRASSET</b>: premier design du site, modules de documentation et des archives de la liste de diffusion;</li>
+<li><b>David THEVENIN</b>: dernier design du site, module d'édition d'un article en ligne.</li>
+</ul>
+
+</DIV>
+</body>
+</html>

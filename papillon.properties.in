@@ -1,0 +1,43 @@
+# papillon.properties
+# -------------------
+#
+# This file contains the properties that are used when compiling/running the 
+# papillon application
+# Modify it according to your environment.
+
+###############################
+## typical values for MacOs X.
+###############################
+# Papillon jars
+#papillon.xalan.jar=/Library/Java/Extensions/xalan-j_2_4_1/bin/xalan.jar
+#papillon.xerces.jar=/Library/Java/Extensions/xalan-j_2_4_1/bin/xercesImpl.jar
+#papillon.xmlapi.jar=/Library/Java/Extensions/xalan-j_2_4_1/bin/xml-apis.jar
+#papillon.regexp.jar=/Library/Java/Extensions/jakarta-regexp-1.2/jakarta-regexp-1.2.jar
+#papillon.ant.jar=/Library/Java/Extensions/jakarta-ant-1.5.1/lib/ant.jar
+#papillon.pgsql.jar=/usr/local/pgsql/share/java/postgresql.jar
+
+# ArtStudio jars
+#papillon.uigenerator.jar=/Projects/ToolsForPapillon/UIGenerator/UIGenerator.jar
+#papillon.concepts.jar=/Projects/ToolsForPapillon/UIGenerator/Concepts.jar
+# Enhydra dirs
+# enhydra.root=/Library/Java/Extensions/enhydra5.1
+# enhydra.dir=/Library/Java/Extensions/enhydra5.1
+
+###############################
+## typical values for linux boxes (gohan & kome).
+###############################
+# Papillon jars
+papillon.xalan.jar=/usr/local/src/xalan-j_2_4_1/bin/xalan.jar
+papillon.xerces.jar=/usr/local/src/xalan-j_2_4_1/bin/xercesImpl.jar
+papillon.xmlapi.jar=/usr/local/src/xalan-j_2_4_1/bin/xml-apis.jar
+papillon.regexp.jar=/usr/local/src/jakarta-regexp-1.2/jakarta-regexp-1.2.jar
+papillon.ant.jar=/usr/local/src/jakarta-ant-1.5.1/lib/ant.jar
+papillon.pgsql.jar=/usr/share/pgsql/pg73b1jdbc3.jar
+
+# ArtStudio jars
+papillon.uigenerator.jar=/h/papillon/ToolsForPapillon/UIGenerator/UIGenerator.jar
+papillon.concepts.jar=/h/papillon/ToolsForPapillon/UIGenerator/Concepts.jar
+
+# Enhydra dirs
+enhydra.root=/usr/local/enhydra5.0-for-papillon
+enhydra.dir=/usr/local/enhydra5.0-for-papillon
