@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE doml SYSTEM "file:////Library/Java/Extensions/enhydra5.1/dods/build/dtd/doml.dtd">
+<!--DOCTYPE doml SYSTEM "file:////Library/Java/Extensions/enhydra5.1/dods/build/dtd/doml.dtd"-->
 <!--
  * © Mathieu Mangeot & Gilles Sérasset - GETA CLIPS IMAG
  * Projet Papillon Project
@@ -7,6 +7,9 @@
  * $Id$
  *************************************************
  * $Log$
+ * Revision 1.3  2005/01/15 16:36:35  mangeot
+ * Commented the link to the dtd because it is depdendent of the platform
+ *
  * Revision 1.2  2004/12/24 11:04:55  mangeot
  * synchronized the files with the last version of Papillon5.0
  *
