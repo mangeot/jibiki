@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.2  2005/02/16 16:34:49  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.1  2004/12/24 14:31:28  mangeot
  * I merged the latest developments of Papillon5.0 with this version 5.1.
  * Have to be tested more ...
@@ -163,11 +166,11 @@ public class AdminGroups extends BasePO {
                  theRemoveAnchor.setHref(this.getUrl() + "?" + REMOVE_PARAMETER +
                                         "=" + tempGroup.getHandle());
 
-                theRowParent.appendChild(theRow.cloneNode(true));
 				}
 				else {
 					theRemoveAnchor.setHref("");
 				}
+                theRowParent.appendChild(theRow.cloneNode(true));
             }
 
             theRowParent.removeChild(theRow);
