@@ -137,43 +137,43 @@ PresentationManager.CacheFiles = true
 # The actions to be taken when a specific Content-Type is encountered during a file upload.
 # WARNING: content types should be noted with _ (underscore) instead of - (minus).
 # The value should be the name of a class deriving from InformationFileAction
-Papillon.Informations.contentTypeHandler.text.html       = "main.business.informationfile.ImportHTMLFile"
-Papillon.Informations.contentTypeHandler.encoding.gzip   = "main.business.informationfile.ImportGZippedFile"
-Papillon.Informations.contentTypeHandler.application.x_gzip   = "main.business.informationfile.ImportGZippedFile"
-Papillon.Informations.contentTypeHandler.multipart.x_tar_gz   = "main.business.informationfile.ImportGZippedFile"
+Papillon.Informations.contentTypeHandler.text.html       = "fr.imag.clips.papillon.business.informationfile.ImportHTMLFile"
+Papillon.Informations.contentTypeHandler.encoding.gzip   = "fr.imag.clips.papillon.business.informationfile.ImportGZippedFile"
+Papillon.Informations.contentTypeHandler.application.x_gzip   = "fr.imag.clips.papillon.business.informationfile.ImportGZippedFile"
+Papillon.Informations.contentTypeHandler.multipart.x_tar_gz   = "fr.imag.clips.papillon.business.informationfile.ImportGZippedFile"
 # not using the zip handler to avoid uncompression of embedded zip files into a bigger archive
 # eg, I upload a file .ppt.zip and I don't want to uncompress it
-Papillon.Informations.contentTypeHandler.application.zip = "main.business.informationfile.ImportZipFile"
-Papillon.Informations.contentTypeHandler.application.pdf   = "main.business.informationfile.ImportMediaFile"
-Papillon.Informations.contentTypeHandler.application.tar = "main.business.informationfile.ImportTarFile"
-Papillon.Informations.contentTypeHandler.image.gif       = "main.business.informationfile.ImportMediaFile"
+Papillon.Informations.contentTypeHandler.application.zip = "fr.imag.clips.papillon.business.informationfile.ImportZipFile"
+Papillon.Informations.contentTypeHandler.application.pdf   = "fr.imag.clips.papillon.business.informationfile.ImportMediaFile"
+Papillon.Informations.contentTypeHandler.application.tar = "fr.imag.clips.papillon.business.informationfile.ImportTarFile"
+Papillon.Informations.contentTypeHandler.image.gif       = "fr.imag.clips.papillon.business.informationfile.ImportMediaFile"
 
 # The actions to be taken (same as above) when you don't know the content type, but only the file name.
 # The value should be the name of a class deriving from InformationFileAction
 # For HTML documents
-Papillon.Informations.fileExtensionHandler.html   = "main.business.informationfile.ImportHTMLFile"
-Papillon.Informations.fileExtensionHandler.htm    = "main.business.informationfile.ImportHTMLFile"
+Papillon.Informations.fileExtensionHandler.html   = "fr.imag.clips.papillon.business.informationfile.ImportHTMLFile"
+Papillon.Informations.fileExtensionHandler.htm    = "fr.imag.clips.papillon.business.informationfile.ImportHTMLFile"
 # For tar & gzip documents
-Papillon.Informations.fileExtensionHandler.gzip   = "main.business.informationfile.ImportGZippedFile"
+Papillon.Informations.fileExtensionHandler.gzip   = "fr.imag.clips.papillon.business.informationfile.ImportGZippedFile"
 # tgz does not work !
-# Papillon.Informations.fileExtensionHandler.tgz   =  "main.business.informationfile.ImportGZippedFile"
-Papillon.Informations.fileExtensionHandler.tar 	  = "main.business.informationfile.ImportTarFile"
-Papillon.Informations.fileExtensionHandler.gz     = "main.business.informationfile.ImportGZippedFile"
+# Papillon.Informations.fileExtensionHandler.tgz   =  "fr.imag.clips.papillon.business.informationfile.ImportGZippedFile"
+Papillon.Informations.fileExtensionHandler.tar 	  = "fr.imag.clips.papillon.business.informationfile.ImportTarFile"
+Papillon.Informations.fileExtensionHandler.gz     = "fr.imag.clips.papillon.business.informationfile.ImportGZippedFile"
 # For other documents
-Papillon.Informations.fileExtensionHandler.gif    = "main.business.informationfile.ImportMediaFile"
-Papillon.Informations.fileExtensionHandler.jpg    = "main.business.informationfile.ImportMediaFile"
-Papillon.Informations.fileExtensionHandler.jpeg   = "main.business.informationfile.ImportMediaFile"
-Papillon.Informations.fileExtensionHandler.pdf    = "main.business.informationfile.ImportMediaFile"
+Papillon.Informations.fileExtensionHandler.gif    = "fr.imag.clips.papillon.business.informationfile.ImportMediaFile"
+Papillon.Informations.fileExtensionHandler.jpg    = "fr.imag.clips.papillon.business.informationfile.ImportMediaFile"
+Papillon.Informations.fileExtensionHandler.jpeg   = "fr.imag.clips.papillon.business.informationfile.ImportMediaFile"
+Papillon.Informations.fileExtensionHandler.pdf    = "fr.imag.clips.papillon.business.informationfile.ImportMediaFile"
 # not using the zip handler to avoid uncompression of embedded zip files into a bigger archive
 # eg, I upload a file .ppt.zip and I don't want to uncompress it
-Papillon.Informations.fileExtensionHandler.zip     = "main.business.informationfile.ImportZipFile"
-#Papillon.Informations.fileExtensionHandler.zip     = "main.business.informationfile.ImportMediaFile"
+Papillon.Informations.fileExtensionHandler.zip     = "fr.imag.clips.papillon.business.informationfile.ImportZipFile"
+#Papillon.Informations.fileExtensionHandler.zip     = "fr.imag.clips.papillon.business.informationfile.ImportMediaFile"
 # importing other files as is.
-Papillon.Informations.fileExtensionHandler.ppt     = "main.business.informationfile.ImportMediaFile"
-Papillon.Informations.fileExtensionHandler.doc     = "main.business.informationfile.ImportMediaFile"
-Papillon.Informations.fileExtensionHandler.xml     = "main.business.informationfile.ImportMediaFile"
-Papillon.Informations.fileExtensionHandler.xsd     = "main.business.informationfile.ImportMediaFile"
-Papillon.Informations.fileExtensionHandler.xsl     = "main.business.informationfile.ImportMediaFile"
+Papillon.Informations.fileExtensionHandler.ppt     = "fr.imag.clips.papillon.business.informationfile.ImportMediaFile"
+Papillon.Informations.fileExtensionHandler.doc     = "fr.imag.clips.papillon.business.informationfile.ImportMediaFile"
+Papillon.Informations.fileExtensionHandler.xml     = "fr.imag.clips.papillon.business.informationfile.ImportMediaFile"
+Papillon.Informations.fileExtensionHandler.xsd     = "fr.imag.clips.papillon.business.informationfile.ImportMediaFile"
+Papillon.Informations.fileExtensionHandler.xsl     = "fr.imag.clips.papillon.business.informationfile.ImportMediaFile"
 
 
 # The information files admin directories. 
