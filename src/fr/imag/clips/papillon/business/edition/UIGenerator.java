@@ -113,8 +113,8 @@ public class UIGenerator {
 	
 	// Update an element in the XML entry entryElt with the new value value
 	public static boolean updateElement(String elementId, String value, Element entryElt) {
-		PapillonLogger.writeDebugMsg("updateElement: " + elementId + " value: " + value);	
 		boolean found = false;
+		PapillonLogger.writeDebugMsg("updateElement: " + elementId + " value: " + value);	
 		boolean isAttribute =  (elementId.indexOf(ID_SEPARATOR)!= elementId.lastIndexOf(ID_SEPARATOR));
 		String attrName = "";
 		
@@ -464,6 +464,30 @@ public class UIGenerator {
 				}
 			}
 			i++;	
+		}
+		if (!found) {
+			myNodeList = itfElt.getElementsByTagName ("textarea");
+			i=0;
+			while (i<myNodeList.getLength() && !found) {
+				Element currentElt = (Element) myNodeList.item(i);
+				String name = currentElt.getAttribute("name");
+				if (name !=null && name.equals(correspName)) {
+					currentElt.setAttribute("name", newId);
+					currentElt.setAttribute("id", newId);
+					NodeList childNodes = currentElt.getChildNodes();
+					int j=0;
+		// FIXME: Because of a problem with the textarea element, I have to put some text content
+		// (a unicde space) when I load it onto the server in order to avoid the problem.
+		// But I can delete the dummy text content here before displaying the element.
+					while (j<childNodes.getLength()) {
+						currentElt.removeChild(childNodes.item(j));
+					}
+					org.w3c.dom.Text textElt = currentElt.getOwnerDocument().createTextNode(value);
+					currentElt.appendChild(textElt);
+					found = true;
+				}
+				i++;	
+			}		
 		}
 		return found;
 	}
