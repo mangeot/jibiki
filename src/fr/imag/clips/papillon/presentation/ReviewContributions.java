@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2005/01/15 12:51:24  mangeot
+ * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
+ *
  * Revision 1.2  2004/12/24 14:31:28  mangeot
  * I merged the latest developments of Papillon5.0 with this version 5.1.
  * Have to be tested more ...
@@ -17,86 +20,7 @@
  * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
  * There are still bugs in the code.
  *
- * Revision 1.12  2004/10/28 10:44:12  mangeot
- * Added the possibility to sort by columns
- *
- * Revision 1.11  2004/10/16 09:47:47  mangeot
- * New mechanism for reviewing the contributions:
- * Step 1 revision, the status of the contrib is modified
- * Step 2 validation, the status of the contrib is modified
- * Step 3 integration into the database, the contrib is deleted and the entry inserted into the corresponding volume
- *
- * Revision 1.10  2004/09/18 17:26:20  mangeot
- * *** empty log message ***
- *
- * Revision 1.9  2004/03/11 16:12:23  mangeot
- * *** empty log message ***
- *
- * Revision 1.8  2004/03/11 15:13:32  mangeot
- * Finalisation de la revision des contributions
- *
- * Revision 1.7  2004/03/08 04:20:50  mangeot
- * *** empty log message ***
- *
- * Revision 1.6  2004/02/16 08:08:11  mangeot
- * bugs fix for reviewContributions
- *
- * Revision 1.5  2004/02/10 05:27:15  mangeot
- * The version UIGEN_V2 has been merged with the trunk by MM
- * Be careful because the Volumes and contributions database tables have been modified.
- * You have to drop and rebuild them unless you modify them by hands.
- *
- * Revision 1.4.2.1  2004/01/08 09:43:21  mangeot
- * Changed all the mechanism of the management of the contributions
- * Have to be tested
- *
- * Revision 1.4  2003/08/25 07:35:23  mangeot
- * *** empty log message ***
- *
- * Revision 1.3  2003/08/21 04:47:56  mangeot
- * Cleaning the new menu
- *
- * Revision 1.2  2003/08/14 08:30:18  mangeot
- * Important CVS commit
- * Attention, if you checkout this version, you must empty and
- *
- * for their work on the editor.
- * Important CVS commit
- * Attention, if you checkout this version, you must empty and
- * relaod all your database because the database schema has been modified a lot.
- * The entries must be relaoded, the users also
- * Merging between the stable branch and the development branch done by MM
- * and David Thevenin for their work on the editor.
- * It means a lot of improvements for this commit.
- * Furthermore, the internal structure of the database has been modified in order
- * to use index in separate db table when there is a query for an entry.
- *
- * Revision 1.1.2.8  2003/08/14 04:15:53  mangeot
- * *** empty log message ***
- *
- * Revision 1.1.2.7  2003/08/09 07:21:07  mangeot
- * Lots of improvements:
- * possible to create a new axie linking two contributions
- * possible to delete contributions
- *
- * Revision 1.1.2.6  2003/08/07 06:29:52  mangeot
- * *** empty log message ***
- *
- * Revision 1.1.2.5  2003/08/05 05:18:48  mangeot
- * *** empty log message ***
- *
- * Revision 1.1.2.4  2003/06/23 05:28:56  mangeot
- * *** empty log message ***
- *
- * Revision 1.1.2.3  2003/06/21 17:56:40  mangeot
- * *** empty log message ***
- *
- * Revision 1.1.2.2  2003/05/29 03:50:33  mangeot
- * *** empty log message ***
- *
- * Revision 1.1.2.1  2003/05/28 09:18:50  mangeot
- * *** empty log message ***
- *
+ *-----------------------------------------------
  */
 
 package fr.imag.clips.papillon.presentation;

@@ -3,71 +3,13 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.1  2004/12/06 16:38:38  serasset
- * Initial revision
+ * Revision 1.2  2005/01/15 12:51:24  mangeot
+ * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
  *
- * Revision 1.6  2004/02/10 05:27:14  mangeot
- * The version UIGEN_V2 has been merged with the trunk by MM
- * Be careful because the Volumes and contributions database tables have been modified.
- * You have to drop and rebuild them unless you modify them by hands.
+ * Revision 1.1.1.1  2004/12/06 16:38:38  serasset
+ * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
+ * There are still bugs in the code.
  *
- * Revision 1.5.2.1  2004/02/02 07:53:53  mangeot
- * Bug fixes in encoding and UserInterface
- *
- * Revision 1.5  2003/08/14 08:30:14  mangeot
- * Important CVS commit
- * Attention, if you checkout this version, you must empty and
- *
- * for their work on the editor.
- * Important CVS commit
- * Attention, if you checkout this version, you must empty and
- * relaod all your database because the database schema has been modified a lot.
- * The entries must be relaoded, the users also
- * Merging between the stable branch and the development branch done by MM
- * and David Thevenin for their work on the editor.
- * It means a lot of improvements for this commit.
- * Furthermore, the internal structure of the database has been modified in order
- * to use index in separate db table when there is a query for an entry.
- *
- * Revision 1.4  2003/03/27 06:54:56  mangeot
- * *** empty log message ***
- *
- * Revision 1.3  2003/03/26 04:20:50  mangeot
- * Added order in informationdocument and xslsheet queries
- *
- * Revision 1.2.2.1  2003/02/18 03:27:53  mangeot
- * Development for the editing interface
- *
- * Revision 1.2  2003/02/06 09:35:10  mangeot
- * *** empty log message ***
- *
- * Revision 1.1.1.1  2002/10/28 16:49:15  serasset
- * Creation of the papillon CVS repository for enhydra 5.0
- *
- * Revision 1.7  2002/05/10 16:43:18  mangeot
- * Integration of HTML code from remote dictionary servers on the Web
- * iUse of HTMLTidy, conversion problem remaining ...
- *
- * Revision 1.6  2002/04/17 20:44:01  mangeot
- * Now I load a XSL stylesheet from an URI instead of a file.
- * I load automatically XSL sheets included in dicts and vols metadata files
- *
- * Revision 1.5  2002/04/17 17:09:24  mangeot
- * Travail sur les stylesheets
- *
- * Revision 1.4  2002/03/20 09:36:21  mangeot
- * Now the consultation is done in a separate db table for each volume
- * A big pb remaining: the data directory has to be remodified by hands...
- *
- * Revision 1.3  2001/07/24 13:15:32  salvati
- * Adding the defaultxsl field in the database, adding the choice of
- * the default stylesheet when adding stylesheets.
- *
- * Revision 1.2  2001/07/18 12:35:31  serasset
- * Version demontree pendant les journees papillon 2001. Integration de la partie XML/XSL dans la BD.
- *
- * Revision 1.1  2001/07/12 16:55:52  salvati
- * Adding find by name.
  *
  *-----------------------------------------------
  * 

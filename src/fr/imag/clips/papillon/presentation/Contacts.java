@@ -9,50 +9,15 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.1  2004/12/06 16:38:42  serasset
- * Initial revision
+ * Revision 1.2  2005/01/15 12:51:24  mangeot
+ * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
  *
- * Revision 1.2  2003/08/14 08:30:17  mangeot
- * Important CVS commit
- * Attention, if you checkout this version, you must empty and
- *
- * for their work on the editor.
- * Important CVS commit
- * Attention, if you checkout this version, you must empty and
- * relaod all your database because the database schema has been modified a lot.
- * The entries must be relaoded, the users also
- * Merging between the stable branch and the development branch done by MM
- * and David Thevenin for their work on the editor.
- * It means a lot of improvements for this commit.
- * Furthermore, the internal structure of the database has been modified in order
- * to use index in separate db table when there is a query for an entry.
- *
- * Revision 1.1.1.1.2.1  2003/05/28 09:17:22  mangeot
- * Changement du copyright sur les fichiers
- *
- * Revision 1.1.1.1  2002/10/28 16:49:16  serasset
- * Creation of the papillon CVS repository for enhydra 5.0
- *
- * Revision 1.5  2002/07/26 10:00:23  serasset
- * Merging deplyement branch "PAPILLON_1_2_DEPLOY" with the main branch.
- *
- * Revision 1.4.2.1  2002/07/12 13:50:44  serasset
- * A new architecture for HTML template localization has been integrated.
- *
- * Revision 1.4  2002/06/10 13:26:04  mangeot
- * Continued the localization, added the lang string into the session data
- *
- * Revision 1.3  2002/05/23 16:14:42  mangeot
- * Adding admin group for presentation pages
- *
- * Revision 1.2  2002/01/25 17:26:38  serasset
- * *** empty log message ***
- *
- * Revision 1.1  2002/01/22 07:56:46  mangeot
- * *** empty log message ***
+ * Revision 1.1.1.1  2004/12/06 16:38:42  serasset
+ * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
+ * There are still bugs in the code.
  *
  *-----------------------------------------------
- * Papillon Home page.
+ * Papillon Contacts page.
  */
 
 package fr.imag.clips.papillon.presentation;

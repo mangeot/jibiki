@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2005/01/15 12:51:24  mangeot
+ * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
+ *
  * Revision 1.2  2004/12/24 14:31:28  mangeot
  * I merged the latest developments of Papillon5.0 with this version 5.1.
  * Have to be tested more ...
@@ -17,81 +20,6 @@
  * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
  * There are still bugs in the code.
  *
- * Revision 1.8  2004/10/28 10:56:21  mangeot
- * Added the list of connected users on AdminUsers.java,
- * Added the possibility to sort in columns for some pages
- * Added persistent preferences for the user. They are saved in the database and retrived when the user reconnects. The user is registered in the enhydra session.
- *
- * Revision 1.7  2003/10/19 13:25:20  mangeot
- * Do not display null user messages any more
- *
- * Revision 1.6  2003/10/03 05:34:10  mangeot
- * *** empty log message ***
- *
- * Revision 1.5  2003/08/23 03:58:05  mangeot
- * *** empty log message ***
- *
- * Revision 1.4  2003/08/20 08:15:39  mangeot
- * *** empty log message ***
- *
- * Revision 1.3  2003/08/14 08:30:18  mangeot
- * Important CVS commit
- * Attention, if you checkout this version, you must empty and
- *
- * for their work on the editor.
- * Important CVS commit
- * Attention, if you checkout this version, you must empty and
- * relaod all your database because the database schema has been modified a lot.
- * The entries must be relaoded, the users also
- * Merging between the stable branch and the development branch done by MM
- * and David Thevenin for their work on the editor.
- * It means a lot of improvements for this commit.
- * Furthermore, the internal structure of the database has been modified in order
- * to use index in separate db table when there is a query for an entry.
- *
- * Revision 1.2.2.3  2003/05/28 09:17:23  mangeot
- * Changement du copyright sur les fichiers
- *
- * Revision 1.2.2.2  2003/03/19 10:03:10  mangeot
- * *** empty log message ***
- *
- * Revision 1.2.2.1  2003/03/18 06:04:12  mangeot
- * *** empty log message ***
- *
- * Revision 1.2  2003/01/10 08:11:57  mangeot
- * Problem with labels and UTF-8 fixed for internet explorer and icab
- * Problem with language identification fixed eg: en-US
- *
- * Revision 1.1.1.1  2002/10/28 16:49:17  serasset
- * Creation of the papillon CVS repository for enhydra 5.0
- *
- * Revision 1.7  2002/09/16 13:34:24  mangeot
- * Merged DEV and DEPLOY versions + added Olivier Tache code
- *
- * Revision 1.6.2.1  2002/08/08 09:11:58  mangeot
- * New Home page with simplified interface a lot of work
- * + localization in german
- *
- * Revision 1.6  2002/07/26 10:00:29  serasset
- * Merging deplyement branch "PAPILLON_1_2_DEPLOY" with the main branch.
- *
- * Revision 1.5.2.1  2002/07/12 13:50:49  serasset
- * A new architecture for HTML template localization has been integrated.
- *
- * Revision 1.5  2002/06/10 13:26:09  mangeot
- * Continued the localization, added the lang string into the session data
- *
- * Revision 1.4  2002/05/22 08:56:19  mangeot
- * MML added user login and register:
- * LoginUser.po RegisterUser.po AdminUsers.po
- *
- * Revision 1.3  2002/04/26 11:33:36  serasset
- * MailingList managment and interface polished. Insertion of a new feature to display
- * messages to the user from most business objects (PapillonUserLogger class).
- *
- * Revision 1.2  2001/07/04 12:50:50  serasset
- * Creation du dossier CVS pour Papillon, Mise a jour de fichiers pour inclusion du log
- * et de l'Id, suppression du dossier enh-deme introduit par erreur.
  *
  *-----------------------------------------------
  * 

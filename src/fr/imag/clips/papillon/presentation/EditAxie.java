@@ -10,6 +10,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2005/01/15 12:51:24  mangeot
+ * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
+ *
  * Revision 1.2  2004/12/24 14:31:28  mangeot
  * I merged the latest developments of Papillon5.0 with this version 5.1.
  * Have to be tested more ...
@@ -17,58 +20,6 @@
  * Revision 1.1.1.1  2004/12/06 16:38:42  serasset
  * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
  * There are still bugs in the code.
- *
- * Revision 1.4  2004/02/10 05:27:15  mangeot
- * The version UIGEN_V2 has been merged with the trunk by MM
- * Be careful because the Volumes and contributions database tables have been modified.
- * You have to drop and rebuild them unless you modify them by hands.
- *
- * Revision 1.3.2.2  2004/01/08 09:43:21  mangeot
- * Changed all the mechanism of the management of the contributions
- * Have to be tested
- *
- * Revision 1.3.2.1  2004/01/06 09:07:02  mangeot
- * Added transitivity in Axies. I don't build a new axie if a lexie is already linked to an axie !
- * I corrected some bugs with axies and index
- *
- * Revision 1.3  2003/08/23 03:58:05  mangeot
- * *** empty log message ***
- *
- * Revision 1.2  2003/08/14 08:30:17  mangeot
- * Important CVS commit
- * Attention, if you checkout this version, you must empty and
- *
- * for their work on the editor.
- * Important CVS commit
- * Attention, if you checkout this version, you must empty and
- * relaod all your database because the database schema has been modified a lot.
- * The entries must be relaoded, the users also
- * Merging between the stable branch and the development branch done by MM
- * and David Thevenin for their work on the editor.
- * It means a lot of improvements for this commit.
- * Furthermore, the internal structure of the database has been modified in order
- * to use index in separate db table when there is a query for an entry.
- *
- * Revision 1.1.2.6  2003/08/14 04:15:52  mangeot
- * *** empty log message ***
- *
- * Revision 1.1.2.5  2003/08/11 10:24:52  mangeot
- * Debugging ...
- *
- * Revision 1.1.2.4  2003/08/09 07:21:07  mangeot
- * Lots of improvements:
- * possible to create a new axie linking two contributions
- * possible to delete contributions
- *
- * Revision 1.1.2.3  2003/08/07 06:29:52  mangeot
- * *** empty log message ***
- *
- * Revision 1.1.2.2  2003/07/31 06:25:56  mangeot
- * *** empty log message ***
- *
- * Revision 1.1.2.1  2003/06/21 17:58:04  mangeot
- * *** empty log message ***
- *
  *
  *
  */

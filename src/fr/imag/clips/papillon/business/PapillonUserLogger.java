@@ -9,37 +9,14 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.1  2004/12/06 16:38:31  serasset
- * Initial revision
+ * Revision 1.2  2005/01/15 12:51:24  mangeot
+ * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
  *
- * Revision 1.2  2003/08/14 08:30:10  mangeot
- * Important CVS commit
- * Attention, if you checkout this version, you must empty and
+ * Revision 1.1.1.1  2004/12/06 16:38:31  serasset
+ * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
+ * There are still bugs in the code.
  *
- * for their work on the editor.
- * Important CVS commit
- * Attention, if you checkout this version, you must empty and
- * relaod all your database because the database schema has been modified a lot.
- * The entries must be relaoded, the users also
- * Merging between the stable branch and the development branch done by MM
- * and David Thevenin for their work on the editor.
- * It means a lot of improvements for this commit.
- * Furthermore, the internal structure of the database has been modified in order
- * to use index in separate db table when there is a query for an entry.
- *
- * Revision 1.1.1.1.2.1  2003/05/28 09:17:15  mangeot
- * Changement du copyright sur les fichiers
- *
- * Revision 1.1.1.1  2002/10/28 16:49:12  serasset
- * Creation of the papillon CVS repository for enhydra 5.0
- *
- * Revision 1.2  2002/05/13 12:46:14  serasset
- * The mailing list presents only 20 mail headers in one page.
- *
- * Revision 1.1  2002/04/26 11:33:36  serasset
- * MailingList managment and interface polished. Insertion of a new feature to display
- * messages to the user from most business objects (PapillonUserLogger class).
- *
+ *-----------------------------------------------
  */
 package fr.imag.clips.papillon.business;
 import fr.imag.clips.papillon.business.PapillonLogger;

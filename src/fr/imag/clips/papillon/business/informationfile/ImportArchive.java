@@ -9,91 +9,12 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.1  2004/12/06 16:38:31  serasset
- * Initial revision
+ * Revision 1.2  2005/01/15 12:51:24  mangeot
+ * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
  *
- * Revision 1.4  2003/09/03 10:08:30  mangeot
- * reorganizing imports and using eclipse
- *
- * Revision 1.3  2003/08/14 10:36:49  mangeot
- * *** empty log message ***
- *
- * Revision 1.2  2003/08/14 08:30:12  mangeot
- * Important CVS commit
- * Attention, if you checkout this version, you must empty and
- *
- * for their work on the editor.
- * Important CVS commit
- * Attention, if you checkout this version, you must empty and
- * relaod all your database because the database schema has been modified a lot.
- * The entries must be relaoded, the users also
- * Merging between the stable branch and the development branch done by MM
- * and David Thevenin for their work on the editor.
- * It means a lot of improvements for this commit.
- * Furthermore, the internal structure of the database has been modified in order
- * to use index in separate db table when there is a query for an entry.
- *
- * Revision 1.1.1.1.2.1  2003/05/28 09:17:16  mangeot
- * Changement du copyright sur les fichiers
- *
- * Revision 1.1.1.1  2002/10/28 16:49:14  serasset
- * Creation of the papillon CVS repository for enhydra 5.0
- *
- * Revision 1.9  2002/10/25 14:10:30  mangeot
- * merge between PAPILLON_1_4 and trunk
- * CVg: 	papillon-enh-src/docs/Bugs-papillon.rtf
- *
- * Revision 1.8.2.4  2002/10/02 05:19:17  mangeot
- * The parser does not verify the encoding of the info_doc.xml file, thus I have to reparse
- * with the serializer the author, reference and title.
- *
- * Revision 1.8.2.3  2002/10/02 02:44:57  mangeot
- * Bugs corrected
- *
- * Revision 1.8.2.2  2002/10/01 10:44:16  mangeot
- * Modified to import archives with .ds_store in it
- *
- * Revision 1.8.2.1  2002/10/01 05:49:16  mangeot
- * Corrected a few bugs for AdminInformations.java
- *
- * Revision 1.8  2002/09/17 17:13:21  mangeot
- * Bouh, lots of improvements, version DEPLOY1_4 is almost ready !
- *
- * Revision 1.7  2002/09/16 13:34:21  mangeot
- * Merged DEV and DEPLOY versions + added Olivier Tache code
- *
- * Revision 1.6  2002/09/16 09:55:05  mangeot
- * added a field in informationdocument, the reference,
- * tested and modified olivier's code
- *
- * Revision 1.5  2002/08/19 11:14:12  tache
- * Minor corrections of code presentation (comments, etc).
- *
- * Revision 1.4  2002/08/16 11:46:09  tache
- * Improved errors handle. Now all kind of exceptions thrown during the
- * import are caught.
- *
- * Revision 1.3  2002/08/07 14:09:58  tache
- * The XML information file (info_doc.xml) now can be used for importing
- * monolingual archives and multilingual HTML archives.
- *
- * Revision 1.2  2002/08/01 12:39:59  tache
- * Cleaned up a lot of code in import classes. Moved HTML parsing methods from
- * ImportHTMLFile to new class HTMLParser to reuse them in ImportArchive.
- * Moved XMLTitleParser to fr.imag.clips.papillon.presentation.
- *
- * Revision 1.1  2002/07/26 16:51:10  tache
- * The document repository now manages multilingual documents.
- *
- * Revision 1.3  2001/11/15 15:13:41  serasset
- * Ajout de l'import d'un fichier image/pdf/autre par stockage sur disque dur.
- *
- * Revision 1.2  2001/10/30 15:23:00  serasset
- * Images and other format are now supported as media files (i.e. files that are locally saved in a special directory).
- *
- * Revision 1.1  2001/10/29 13:32:17  serasset
- * Information section is now managed with Documents containing files. We now allow the addition of tar.gz files
- * containing several html files. images are still not supported.
+ * Revision 1.1.1.1  2004/12/06 16:38:31  serasset
+ * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
+ * There are still bugs in the code.
  *
  *-----------------------------------------------
  * 

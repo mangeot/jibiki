@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2005/01/15 12:51:24  mangeot
+ * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
+ *
  * Revision 1.2  2004/12/24 14:31:28  mangeot
  * I merged the latest developments of Papillon5.0 with this version 5.1.
  * Have to be tested more ...
@@ -11,56 +14,6 @@
  * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
  * There are still bugs in the code.
  *
- * Revision 1.3  2003/09/03 10:08:29  mangeot
- * reorganizing imports and using eclipse
- *
- * Revision 1.2  2003/08/14 08:30:12  mangeot
- * Important CVS commit
- * Attention, if you checkout this version, you must empty and
- *
- * for their work on the editor.
- * Important CVS commit
- * Attention, if you checkout this version, you must empty and
- * relaod all your database because the database schema has been modified a lot.
- * The entries must be relaoded, the users also
- * Merging between the stable branch and the development branch done by MM
- * and David Thevenin for their work on the editor.
- * It means a lot of improvements for this commit.
- * Furthermore, the internal structure of the database has been modified in order
- * to use index in separate db table when there is a query for an entry.
- *
- * Revision 1.1.1.1.2.1  2003/06/25 09:54:57  mangeot
- * *** empty log message ***
- *
- * Revision 1.1.1.1  2002/10/28 16:49:13  serasset
- * Creation of the papillon CVS repository for enhydra 5.0
- *
- * Revision 1.4  2002/10/25 14:10:30  mangeot
- * merge between PAPILLON_1_4 and trunk
- * CVg: 	papillon-enh-src/docs/Bugs-papillon.rtf
- *
- * Revision 1.3.2.1  2002/10/23 09:51:07  serasset
- * Clean up of the source tree,
- *     Every source file is now encoded in ISO-Latin-1,
- *     Every html file is still encoded in UTF8.
- *
- * Revision 1.3  2002/09/16 13:34:21  mangeot
- * Merged DEV and DEPLOY versions + added Olivier Tache code
- *
- * Revision 1.2.8.2  2002/08/09 09:15:14  mangeot
- * Improvements for the simple consultation
- * adding text for help,
- * correcting consultation bugs
- *
- * Revision 1.2.8.1  2002/08/02 13:55:48  mangeot
- * Corrected the encoding problem while connection to the XRCE analyzers
- *
- * Revision 1.2  2002/05/10 16:43:18  mangeot
- * Integration of HTML code from remote dictionary servers on the Web
- * iUse of HTMLTidy, conversion problem remaining ...
- *
- * Revision 1.1  2002/05/02 07:02:58  mangeot
- * *** empty log message ***
  *
  *-----------------------------------------------
  *

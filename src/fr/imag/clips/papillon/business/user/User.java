@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2005/01/15 12:51:24  mangeot
+ * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
+ *
  * Revision 1.2  2004/12/24 14:31:28  mangeot
  * I merged the latest developments of Papillon5.0 with this version 5.1.
  * Have to be tested more ...
@@ -17,86 +20,6 @@
  * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
  * There are still bugs in the code.
  *
- * Revision 1.8  2004/10/30 10:26:06  mangeot
- * Fixed bug at init
- *
- * Revision 1.7  2004/10/28 10:35:01  mangeot
- * Some changes:
- * the User.java implements an enhydra interface in order to register users into enhydra sessions
- * the AdminUsers.java displays currently logged users
- *
- * Revision 1.6  2004/03/26 07:53:26  mangeot
- * *** empty log message ***
- *
- * Revision 1.5  2004/02/10 05:27:14  mangeot
- * The version UIGEN_V2 has been merged with the trunk by MM
- * Be careful because the Volumes and contributions database tables have been modified.
- * You have to drop and rebuild them unless you modify them by hands.
- *
- * Revision 1.4.2.4  2004/01/21 07:50:29  mangeot
- * Added confirm javascript for delete button
- *
- * Revision 1.4.2.3  2004/01/09 05:18:57  mangeot
- * Bugs fixes !
- *
- * Revision 1.4.2.2  2004/01/08 15:17:20  mangeot
- * Bugs fixed
- *
- * Revision 1.4.2.1  2004/01/08 09:43:19  mangeot
- * Changed all the mechanism of the management of the contributions
- * Have to be tested
- *
- * Revision 1.4  2003/08/14 08:30:13  mangeot
- * Important CVS commit
- * Attention, if you checkout this version, you must empty and
- *
- * for their work on the editor.
- * Important CVS commit
- * Attention, if you checkout this version, you must empty and
- * relaod all your database because the database schema has been modified a lot.
- * The entries must be relaoded, the users also
- * Merging between the stable branch and the development branch done by MM
- * and David Thevenin for their work on the editor.
- * It means a lot of improvements for this commit.
- * Furthermore, the internal structure of the database has been modified in order
- * to use index in separate db table when there is a query for an entry.
- *
- * Revision 1.3  2003/06/04 15:38:30  serasset
- * Mise en place du chinois et de la nouvelle version du login/register
- *
- * Revision 1.2.2.2  2003/07/31 04:30:49  mangeot
- * *** empty log message ***
- *
- * Revision 1.2.2.1  2003/05/28 09:17:20  mangeot
- * Changement du copyright sur les fichiers
- *
- * Revision 1.2  2002/11/26 06:38:47  mangeot
- * Work on RegisterUser: fixed bugs and clarified !
- *
- * Revision 1.1.1.1  2002/10/28 16:49:15  serasset
- * Creation of the papillon CVS repository for enhydra 5.0
- *
- * Revision 1.2  2002/10/25 14:10:32  mangeot
- * merge between PAPILLON_1_4 and trunk
- * CVg: 	papillon-enh-src/docs/Bugs-papillon.rtf
- *
- * Revision 1.1.10.3  2002/10/23 09:51:10  serasset
- * Clean up of the source tree,
- *     Every source file is now encoded in ISO-Latin-1,
- *     Every html file is still encoded in UTF8.
- *
- * Revision 1.1.10.2  2002/10/09 10:32:04  mangeot
- * Modified the database
- *
- * Revision 1.1.10.1  2002/10/09 06:18:06  mangeot
- * password encoding for protection
- *
- * Revision 1.1  2002/05/22 08:59:49  mangeot
- * *** empty log message ***
- *
- * Revision 1.2  2001/07/04 12:50:43  serasset
- * Creation du dossier CVS pour Papillon, Mise a jour de fichiers pour inclusion du log
- * et de l'Id, suppression du dossier enh-deme introduit par erreur.
  *
  *-----------------------------------------------
  * 

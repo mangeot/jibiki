@@ -9,70 +9,12 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.1  2004/12/06 16:38:42  serasset
- * Initial revision
+ * Revision 1.2  2005/01/15 12:51:24  mangeot
+ * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
  *
- * Revision 1.5  2003/08/14 08:30:18  mangeot
- * Important CVS commit
- * Attention, if you checkout this version, you must empty and
- *
- * for their work on the editor.
- * Important CVS commit
- * Attention, if you checkout this version, you must empty and
- * relaod all your database because the database schema has been modified a lot.
- * The entries must be relaoded, the users also
- * Merging between the stable branch and the development branch done by MM
- * and David Thevenin for their work on the editor.
- * It means a lot of improvements for this commit.
- * Furthermore, the internal structure of the database has been modified in order
- * to use index in separate db table when there is a query for an entry.
- *
- * Revision 1.4  2003/06/11 12:48:35  serasset
- * Correction bugs introduit par liu qui empechaient la compilation après un clean.
- * La classe Login n'est plus référencées nulle part.
- *
- * Revision 1.3  2003/06/04 15:37:46  serasset
- * Mise en place de la nouvelle version de la gestion des utilisateurs.
- *
- * Revision 1.2.2.1  2003/05/28 09:17:23  mangeot
- * Changement du copyright sur les fichiers
- *
- * Revision 1.2  2002/12/09 08:32:02  mangeot
- * Added a permanent cookie for indentification when reconnection
- *
- * Revision 1.1.1.1  2002/10/28 16:49:17  serasset
- * Creation of the papillon CVS repository for enhydra 5.0
- *
- * Revision 1.6  2002/10/25 14:10:34  mangeot
- * merge between PAPILLON_1_4 and trunk
- * CVg: 	papillon-enh-src/docs/Bugs-papillon.rtf
- *
- * Revision 1.5.2.2  2002/10/09 07:30:11  mangeot
- * Added the logout function
- *
- * Revision 1.5.2.1  2002/10/09 06:18:06  mangeot
- * password encoding for protection
- *
- * Revision 1.5  2002/07/26 16:51:12  tache
- * The document repository now manages multilingual documents.
- *
- * Revision 1.4  2002/07/26 10:00:27  serasset
- * Merging deplyement branch "PAPILLON_1_2_DEPLOY" with the main branch.
- *
- * Revision 1.3  2002/07/10 09:53:08  serasset
- * The Users is now redirected to his initial destination after login.
- *
- * Revision 1.2.6.2  2002/07/12 13:50:47  serasset
- * A new architecture for HTML template localization has been integrated.
- *
- * Revision 1.2.6.1  2002/07/09 08:32:59  serasset
- * Corrected a cross dependancy issue between LoginUser and BasePO.
- *
- * Revision 1.2  2002/05/23 16:14:42  mangeot
- * Adding admin group for presentation pages
- *
- * Revision 1.1  2002/05/22 08:58:19  mangeot
- * Added files for login user
+ * Revision 1.1.1.1  2004/12/06 16:38:42  serasset
+ * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
+ * There are still bugs in the code.
  *
  *-----------------------------------------------
  * Papillon Login page.

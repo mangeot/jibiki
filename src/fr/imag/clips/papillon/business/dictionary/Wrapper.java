@@ -9,107 +9,13 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.1  2004/12/06 16:38:31  serasset
- * Initial revision
+ * Revision 1.2  2005/01/15 12:51:24  mangeot
+ * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
  *
- * Revision 1.3  2003/09/03 10:08:29  mangeot
- * reorganizing imports and using eclipse
+ * Revision 1.1.1.1  2004/12/06 16:38:31  serasset
+ * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
+ * There are still bugs in the code.
  *
- * Revision 1.2  2003/08/14 08:30:11  mangeot
- * Important CVS commit
- * Attention, if you checkout this version, you must empty and
- *
- * for their work on the editor.
- * Important CVS commit
- * Attention, if you checkout this version, you must empty and
- * relaod all your database because the database schema has been modified a lot.
- * The entries must be relaoded, the users also
- * Merging between the stable branch and the development branch done by MM
- * and David Thevenin for their work on the editor.
- * It means a lot of improvements for this commit.
- * Furthermore, the internal structure of the database has been modified in order
- * to use index in separate db table when there is a query for an entry.
- *
- * Revision 1.1.1.1.2.2  2003/08/09 07:21:05  mangeot
- * Lots of improvements:
- * possible to create a new axie linking two contributions
- * possible to delete contributions
- *
- * Revision 1.1.1.1.2.1  2003/05/28 09:17:16  mangeot
- * Changement du copyright sur les fichiers
- *
- * Revision 1.1.1.1  2002/10/28 16:49:13  serasset
- * Creation of the papillon CVS repository for enhydra 5.0
- *
- * Revision 1.6  2002/10/25 14:10:30  mangeot
- * merge between PAPILLON_1_4 and trunk
- * CVg: 	papillon-enh-src/docs/Bugs-papillon.rtf
- *
- * Revision 1.5.2.1  2002/10/23 09:51:07  serasset
- * Clean up of the source tree,
- *     Every source file is now encoded in ISO-Latin-1,
- *     Every html file is still encoded in UTF8.
- *
- * Revision 1.5  2002/09/17 17:13:21  mangeot
- * Bouh, lots of improvements, version DEPLOY1_4 is almost ready !
- *
- * Revision 1.4  2002/09/16 13:34:21  mangeot
- * Merged DEV and DEPLOY versions + added Olivier Tache code
- *
- * Revision 1.3.8.2  2002/08/09 09:15:13  mangeot
- * Improvements for the simple consultation
- * adding text for help,
- * correcting consultation bugs
- *
- * Revision 1.3.8.1  2002/08/02 13:55:48  mangeot
- * Corrected the encoding problem while connection to the XRCE analyzers
- *
- * Revision 1.3  2002/05/22 12:43:12  mangeot
- * bugs correction ...
- *
- * Revision 1.2  2002/05/10 16:43:18  mangeot
- * Integration of HTML code from remote dictionary servers on the Web
- * iUse of HTMLTidy, conversion problem remaining ...
- *
- * Revision 1.1  2002/05/02 07:02:58  mangeot
- * *** empty log message ***
- *
- * Revision 1.4  2002/04/16 10:17:24  mangeot
- * *** empty log message ***
- *
- * Revision 1.3  2002/04/15 13:16:33  mangeot
- * *** empty log message ***
- *
- * Revision 1.2  2002/04/14 09:47:12  mangeot
- * lecture des elements CDM ds les fichiers volume-metadata
- * et upload des entrees
- *
- * Revision 1.1  2002/04/01 07:48:10  mangeot
- * Added these files to manage volume metadata files
- *
- * Revision 1.1  2002/03/11 11:15:48  mangeot
- * *** empty log message ***
- *
- * Revision 1.6  2001/12/18 13:41:36  serasset
- * *** empty log message ***
- *
- * Revision 1.5  2001/07/18 12:35:31  serasset
- * Version demontree pendant les journees papillon 2001. Integration de la partie XML/XSL dans la BD.
- *
- * Revision 1.4  2001/07/12 20:56:38  salvati
- * ratrapage de la perte du fichier
- *
- * Revision 1.4  2001/07/11 15:30:25  serasset
- * Suppression des tables author et threads. Utilisation d'une table unique "Volumes".
- *
- * Revision 1.3  2001/07/09 16:37:29  serasset
- * Liens entre l'application enhydra et la base de donnees PostgreSQL.
- * Suppression du dossier data de la hierarchie CVS
- * Premiere version de la mailing list.
- *
- * Revision 1.2  2001/07/04 12:50:43  serasset
- * Creation du dossier CVS pour Papillon, Mise a jour de fichiers pour inclusion du log
- * et de l'Id, suppression du dossier enh-deme introduit par erreur.
  *
  *-----------------------------------------------
  * 

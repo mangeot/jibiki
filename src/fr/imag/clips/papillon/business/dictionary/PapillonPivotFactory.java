@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2005/01/15 12:51:24  mangeot
+ * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
+ *
  * Revision 1.2  2004/12/24 14:31:28  mangeot
  * I merged the latest developments of Papillon5.0 with this version 5.1.
  * Have to be tested more ...
@@ -11,151 +14,6 @@
  * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
  * There are still bugs in the code.
  *
- * Revision 1.4  2004/10/28 10:38:11  mangeot
- * Fixed some bugs that affected the dictd server
- * Modified some methods in order to display a text entry in the dictd server
- *
- * Revision 1.3  2004/02/10 05:27:13  mangeot
- * The version UIGEN_V2 has been merged with the trunk by MM
- * Be careful because the Volumes and contributions database tables have been modified.
- * You have to drop and rebuild them unless you modify them by hands.
- *
- * Revision 1.2.2.5  2004/01/13 02:14:04  mangeot
- * Bug fixes :-(
- *
- * Revision 1.2.2.4  2004/01/09 05:18:57  mangeot
- * Bugs fixes !
- *
- * Revision 1.2.2.3  2004/01/08 15:17:20  mangeot
- * Bugs fixed
- *
- * Revision 1.2.2.2  2004/01/08 09:43:19  mangeot
- * Changed all the mechanism of the management of the contributions
- * Have to be tested
- *
- * Revision 1.2.2.1  2004/01/06 09:07:02  mangeot
- * Added transitivity in Axies. I don't build a new axie if a lexie is already linked to an axie !
- * I corrected some bugs with axies and index
- *
- * Revision 1.2  2003/08/14 08:30:11  mangeot
- * Important CVS commit
- * Attention, if you checkout this version, you must empty and
- *
- * for their work on the editor.
- * Important CVS commit
- * Attention, if you checkout this version, you must empty and
- * relaod all your database because the database schema has been modified a lot.
- * The entries must be relaoded, the users also
- * Merging between the stable branch and the development branch done by MM
- * and David Thevenin for their work on the editor.
- * It means a lot of improvements for this commit.
- * Furthermore, the internal structure of the database has been modified in order
- * to use index in separate db table when there is a query for an entry.
- *
- * Revision 1.1.1.1.2.8  2003/08/14 04:15:51  mangeot
- * *** empty log message ***
- *
- * Revision 1.1.1.1.2.7  2003/08/11 10:24:50  mangeot
- * Debugging ...
- *
- * Revision 1.1.1.1.2.6  2003/08/09 07:21:04  mangeot
- * Lots of improvements:
- * possible to create a new axie linking two contributions
- * possible to delete contributions
- *
- * Revision 1.1.1.1.2.5  2003/08/07 06:29:50  mangeot
- * *** empty log message ***
- *
- * Revision 1.1.1.1.2.4  2003/08/05 05:18:46  mangeot
- * *** empty log message ***
- *
- * Revision 1.1.1.1.2.3  2003/07/31 16:15:59  mangeot
- * *** empty log message ***
- *
- * Revision 1.1.1.1.2.2  2003/06/27 02:13:52  mangeot
- * *** empty log message ***
- *
- * Revision 1.1.1.1.2.1  2003/06/25 09:54:56  mangeot
- * *** empty log message ***
- *
- * Revision 1.1.1.1  2002/10/28 16:49:13  serasset
- * Creation of the papillon CVS repository for enhydra 5.0
- *
- * Revision 1.13  2002/09/17 20:29:32  mangeot
- * Bug corrected, version deploy 1_4 ready !
- *
- * Revision 1.12  2002/09/17 17:13:21  mangeot
- * Bouh, lots of improvements, version DEPLOY1_4 is almost ready !
- *
- * Revision 1.11  2002/09/16 13:34:21  mangeot
- * Merged DEV and DEPLOY versions + added Olivier Tache code
- *
- * Revision 1.10  2002/09/05 10:26:00  mangeot
- * dded AdminAxies
- *
- * Revision 1.9.8.1  2002/08/09 09:23:38  mangeot
- * compiling error
- *
- * Revision 1.9  2002/05/10 16:43:18  mangeot
- * Integration of HTML code from remote dictionary servers on the Web
- * iUse of HTMLTidy, conversion problem remaining ...
- *
- * Revision 1.8  2002/05/07 10:31:22  mangeot
- * The UTF-8 consultation is now OK,
- * I tested with omniweb, iexplorer and netscape latests versions on macosX
- *
- * Revision 1.7  2002/05/02 07:02:58  mangeot
- * *** empty log message ***
- *
- * Revision 1.6  2002/04/18 11:42:34  mangeot
- * Fait l'affichage des donnees XML metadata + stylesheets
- * Ameliore les stylesheets
- * corrige le bug du parsage du FeM
- *
- * Revision 1.5  2002/04/16 14:03:34  mangeot
- * A lot of work to upload dictionaries from metadata files and to parse them with
- * a SAX parser.
- *
- * Revision 1.4  2002/04/16 10:17:24  mangeot
- * *** empty log message ***
- *
- * Revision 1.3  2002/04/01 07:46:33  mangeot
- * Added a table for volumes metadata descriptions
- *
- * Revision 1.2  2002/03/27 09:51:28  mangeot
- * *** empty log message ***
- *
- * Revision 1.1  2002/03/25 09:53:21  mangeot
- * *** empty log message ***
- *
- * Revision 1.2  2002/03/20 09:36:20  mangeot
- * Now the consultation is done in a separate db table for each volume
- * A big pb remaining: the data directory has to be remodified by hands...
- *
- * Revision 1.1  2002/03/20 04:30:03  mangeot
- * *** empty log message ***
- *
- * Revision 1.7  2002/03/11 11:15:49  mangeot
- * *** empty log message ***
- *
- * Revision 1.6  2001/10/17 13:02:03  serasset
- * Distinction entre Doucmuent (abstrait) et fichier (qui constituent concretement un doucument)
- *
- * Revision 1.5  2001/07/19 17:07:44  salvati
- * Change the driver of database and adding namespace:too small place in db
- *
- * Revision 1.4  2001/07/18 12:35:31  serasset
- * Version demontree pendant les journees papillon 2001. Integration de la partie XML/XSL dans la BD.
- *
- * Revision 1.3  2001/07/12 20:38:45  salvati
- * Added Node2String function and use of it
- *
- * Revision 1.2  2001/07/12 17:58:00  salvati
- * end of debug
- * CV: ----------------------------------------------------------------------
- *
- * Revision 1.1  2001/07/12 17:38:08  salvati
- * Renaming DictionaryFactory in DictionarEntriesFactory
  *
  *-----------------------------------------------
  * 

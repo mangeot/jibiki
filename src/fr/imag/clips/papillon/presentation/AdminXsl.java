@@ -9,106 +9,12 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.1  2004/12/06 16:38:42  serasset
- * Initial revision
+ * Revision 1.2  2005/01/15 12:51:24  mangeot
+ * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
  *
- * Revision 1.4  2004/02/10 06:51:37  mangeot
- * *** empty log message ***
- *
- * Revision 1.3  2004/02/10 05:27:15  mangeot
- * The version UIGEN_V2 has been merged with the trunk by MM
- * Be careful because the Volumes and contributions database tables have been modified.
- * You have to drop and rebuild them unless you modify them by hands.
- *
- * Revision 1.2.2.1  2004/02/02 07:53:53  mangeot
- * Bug fixes in encoding and UserInterface
- *
- * Revision 1.2  2003/08/14 08:30:16  mangeot
- * Important CVS commit
- * Attention, if you checkout this version, you must empty and
- *
- * for their work on the editor.
- * Important CVS commit
- * Attention, if you checkout this version, you must empty and
- * relaod all your database because the database schema has been modified a lot.
- * The entries must be relaoded, the users also
- * Merging between the stable branch and the development branch done by MM
- * and David Thevenin for their work on the editor.
- * It means a lot of improvements for this commit.
- * Furthermore, the internal structure of the database has been modified in order
- * to use index in separate db table when there is a query for an entry.
- *
- * Revision 1.1.1.1.2.1  2003/05/28 09:17:21  mangeot
- * Changement du copyright sur les fichiers
- *
- * Revision 1.1.1.1  2002/10/28 16:49:16  serasset
- * Creation of the papillon CVS repository for enhydra 5.0
- *
- * Revision 1.18  2002/09/16 13:34:22  mangeot
- * Merged DEV and DEPLOY versions + added Olivier Tache code
- *
- * Revision 1.17.2.1  2002/08/02 08:25:10  mangeot
- * Replaced PAGENAME variable by this.getUrl() method
- *
- * Revision 1.17  2002/07/26 10:00:22  serasset
- * Merging deplyement branch "PAPILLON_1_2_DEPLOY" with the main branch.
- *
- * Revision 1.16.6.1  2002/07/12 13:50:43  serasset
- * A new architecture for HTML template localization has been integrated.
- *
- * Revision 1.16  2002/05/24 16:29:37  mangeot
- * Adding colspan for entries
- *
- * Revision 1.15  2002/05/23 16:14:41  mangeot
- * Adding admin group for presentation pages
- *
- * Revision 1.14  2002/05/22 08:56:18  mangeot
- * MML added user login and register:
- * LoginUser.po RegisterUser.po AdminUsers.po
- *
- * Revision 1.13  2002/05/10 16:43:19  mangeot
- * Integration of HTML code from remote dictionary servers on the Web
- * iUse of HTMLTidy, conversion problem remaining ...
- *
- * Revision 1.12  2002/04/18 11:42:35  mangeot
- * Fait l'affichage des donnees XML metadata + stylesheets
- * Ameliore les stylesheets
- * corrige le bug du parsage du FeM
- *
- * Revision 1.11  2002/04/17 20:44:01  mangeot
- * Now I load a XSL stylesheet from an URI instead of a file.
- * I load automatically XSL sheets included in dicts and vols metadata files
- *
- * Revision 1.10  2001/08/07 13:11:48  salvati
- * Adding ant.jar for untar tools.
- *
- * Revision 1.9  2001/07/31 13:54:20  salvati
- * Adding debug message.
- *
- * Revision 1.8  2001/07/31 08:36:37  serasset
- * enommage des fichiers HTML pour eviter un eventuel ecrasement par xmlc.
- *
- * Revision 1.7  2001/07/31 08:21:43  serasset
- * *** empty log message ***
- *
- * Revision 1.6  2001/07/27 10:45:54  serasset
- * On ne genere plus de lien "Make Default" lorsque la XSL est deja par defaut.
- *
- * Revision 1.5  2001/07/25 12:48:38  salvati
- * Adding StyleSheet choice in the standard consultation view with a menu on the right.
- *
- * Revision 1.4  2001/07/24 13:15:33  salvati
- * Adding the defaultxsl field in the database, adding the choice of
- * the default stylesheet when adding stylesheets.
- *
- * Revision 1.3  2001/07/19 17:07:44  salvati
- * Change the driver of database and adding namespace:too small place in db
- *
- * Revision 1.2  2001/07/18 12:35:31  serasset
- * Version demontree pendant les journees papillon 2001. Integration de la partie XML/XSL dans la BD.
- *
- * Revision 1.1  2001/07/12 17:02:57  salvati
- * Support adding sheets and empty db
+ * Revision 1.1.1.1  2004/12/06 16:38:42  serasset
+ * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
+ * There are still bugs in the code.
  *
  *-----------------------------------------------
  * Papillon Admin page.

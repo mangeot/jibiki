@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2005/01/15 12:51:24  mangeot
+ * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
+ *
  * Revision 1.2  2004/12/24 08:57:44  serasset
  * Premiere version de l'interface avec fond papillon et transparence.
  *
@@ -16,104 +19,6 @@
  * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
  * There are still bugs in the code.
  *
- * Revision 1.4  2003/09/27 04:39:41  mangeot
- * *** empty log message ***
- *
- * Revision 1.3  2003/09/24 15:29:14  serasset
- * Hiding of mail addresses in the Papillon Mailing List archive.
- *
- * Revision 1.2  2003/08/14 08:30:18  mangeot
- * Important CVS commit
- * Attention, if you checkout this version, you must empty and
- *
- * for their work on the editor.
- * Important CVS commit
- * Attention, if you checkout this version, you must empty and
- * relaod all your database because the database schema has been modified a lot.
- * The entries must be relaoded, the users also
- * Merging between the stable branch and the development branch done by MM
- * and David Thevenin for their work on the editor.
- * It means a lot of improvements for this commit.
- * Furthermore, the internal structure of the database has been modified in order
- * to use index in separate db table when there is a query for an entry.
- *
- * Revision 1.1.1.1.2.1  2003/05/28 09:17:23  mangeot
- * Changement du copyright sur les fichiers
- *
- * Revision 1.1.1.1  2002/10/28 16:49:17  serasset
- * Creation of the papillon CVS repository for enhydra 5.0
- *
- * Revision 1.20  2002/10/25 14:10:34  mangeot
- * merge between PAPILLON_1_4 and trunk
- * CVg: 	papillon-enh-src/docs/Bugs-papillon.rtf
- *
- * Revision 1.19.2.1  2002/10/02 16:26:46  serasset
- * Parameters are now correctly decoded.
- *
- * Revision 1.19  2002/09/16 13:34:23  mangeot
- * Merged DEV and DEPLOY versions + added Olivier Tache code
- *
- * Revision 1.18.2.1  2002/08/02 13:55:49  mangeot
- * Corrected the encoding problem while connection to the XRCE analyzers
- *
- * Revision 1.18  2002/07/26 10:00:27  serasset
- * Merging deplyement branch "PAPILLON_1_2_DEPLOY" with the main branch.
- *
- * Revision 1.17.2.1  2002/07/12 13:50:47  serasset
- * A new architecture for HTML template localization has been integrated.
- *
- * Revision 1.17  2002/06/12 14:44:39  serasset
- * Corrected bug in MailingList.po (with getacceptLanguage)
- *
- * Revision 1.16  2002/06/10 11:24:15  mangeot
- * *** empty log message ***
- *
- * Revision 1.15  2002/06/03 10:08:02  serasset
- * Managing pages when viewing messages in the mailing list.
- *
- * Revision 1.14  2002/05/23 16:14:43  mangeot
- * Adding admin group for presentation pages
- *
- * Revision 1.13  2002/05/13 12:46:15  serasset
- * The mailing list presents only 20 mail headers in one page.
- *
- * Revision 1.12  2002/04/26 11:33:36  serasset
- * MailingList managment and interface polished. Insertion of a new feature to display
- * messages to the user from most business objects (PapillonUserLogger class).
- *
- * Revision 1.11  2001/11/15 15:15:53  serasset
- * *** empty log message ***
- *
- * Revision 1.10  2001/07/12 16:36:46  serasset
- * Ajout des fonctionalites de recherche dans la mailing list.
- *
- * Revision 1.9  2001/07/11 15:30:26  serasset
- * Suppression des tables author et threads. Utilisation d'une table unique "messages".
- *
- * Revision 1.8  2001/07/11 15:08:11  serasset
- * Ajout des tris par date, auteur, sujet dans la liste des messages.
- *
- * Revision 1.7  2001/07/10 16:10:18  serasset
- * On insere maintenant les messages en tant que texte et non plus en les parsant.
- *
- * Revision 1.6  2001/07/10 13:15:12  serasset
- * Premiere version de l'affichage d'un message.
- *
- * Revision 1.5  2001/07/10 11:53:03  serasset
- * Ajout des scripts SL de maintenance de la base PostgreSGL.
- *
- * Revision 1.4  2001/07/10 10:15:49  serasset
- * Integration de xalan.
- * getContent retourne un NOde et non plus un HTMLElement.
- *
- * Revision 1.3  2001/07/09 16:37:31  serasset
- * Liens entre l'application enhydra et la base de donnees PostgreSQL.
- * Suppression du dossier data de la hierarchie CVS
- * Premiere version de la mailing list.
- *
- * Revision 1.2  2001/07/04 12:50:50  serasset
- * Creation du dossier CVS pour Papillon, Mise a jour de fichiers pour inclusion du log
- * et de l'Id, suppression du dossier enh-deme introduit par erreur.
  *
  *-----------------------------------------------
  * 

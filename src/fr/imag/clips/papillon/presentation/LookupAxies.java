@@ -9,124 +9,13 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.1  2004/12/06 16:38:42  serasset
- * Initial revision
+ * Revision 1.2  2005/01/15 12:51:24  mangeot
+ * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
  *
- * Revision 1.3  2004/02/10 05:27:15  mangeot
- * The version UIGEN_V2 has been merged with the trunk by MM
- * Be careful because the Volumes and contributions database tables have been modified.
- * You have to drop and rebuild them unless you modify them by hands.
+ * Revision 1.1.1.1  2004/12/06 16:38:42  serasset
+ * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
+ * There are still bugs in the code.
  *
- * Revision 1.2.2.2  2004/01/08 09:43:21  mangeot
- * Changed all the mechanism of the management of the contributions
- * Have to be tested
- *
- * Revision 1.2.2.1  2004/01/06 09:10:01  mangeot
- * Files not saved
- *
- * Revision 1.2  2003/08/22 05:46:22  mangeot
- * THE release !!!
- *
- * Revision 1.1  2003/08/21 09:12:02  mangeot
- * *** empty log message ***
- *
- * Revision 1.4  2003/08/21 04:47:56  mangeot
- * Cleaning the new menu
- *
- * Revision 1.3  2003/08/14 10:36:49  mangeot
- * *** empty log message ***
- *
- * Revision 1.2  2003/08/14 08:30:15  mangeot
- * Important CVS commit
- * Attention, if you checkout this version, you must empty and
- *
- * for their work on the editor.
- * Important CVS commit
- * Attention, if you checkout this version, you must empty and
- * relaod all your database because the database schema has been modified a lot.
- * The entries must be relaoded, the users also
- * Merging between the stable branch and the development branch done by MM
- * and David Thevenin for their work on the editor.
- * It means a lot of improvements for this commit.
- * Furthermore, the internal structure of the database has been modified in order
- * to use index in separate db table when there is a query for an entry.
- *
- * Revision 1.1.1.1.2.4  2003/08/09 07:21:06  mangeot
- * Lots of improvements:
- * possible to create a new axie linking two contributions
- * possible to delete contributions
- *
- * Revision 1.1.1.1.2.3  2003/08/07 06:29:51  mangeot
- * *** empty log message ***
- *
- * Revision 1.1.1.1.2.2  2003/08/05 05:18:47  mangeot
- * *** empty log message ***
- *
- * Revision 1.1.1.1.2.1  2003/05/28 09:17:20  mangeot
- * Changement du copyright sur les fichiers
- *
- * Revision 1.1.1.1  2002/10/28 16:49:16  serasset
- * Creation of the papillon CVS repository for enhydra 5.0
- *
- * Revision 1.4  2002/10/25 14:10:34  mangeot
- * merge between PAPILLON_1_4 and trunk
- * CVg: 	papillon-enh-src/docs/Bugs-papillon.rtf
- *
- * Revision 1.3.2.1  2002/10/23 09:51:11  serasset
- * Clean up of the source tree,
- *     Every source file is now encoded in ISO-Latin-1,
- *     Every html file is still encoded in UTF8.
- *
- * Revision 1.3  2002/09/17 17:13:23  mangeot
- * Bouh, lots of improvements, version DEPLOY1_4 is almost ready !
- *
- * Revision 1.2  2002/09/16 13:34:22  mangeot
- * Merged DEV and DEPLOY versions + added Olivier Tache code
- *
- * Revision 1.1  2002/09/05 10:26:00  mangeot
- * dded AdminAxies
- *
- * Revision 1.5  2002/08/15 07:14:37  mangeot
- * Modified start scripts : added a variable for te multiserver conf
- * Corrected URLs in HTML pages
- *
- * Revision 1.4  2002/08/10 12:07:01  mangeot
- * Fixed a problem in compilation priorities
- * no more package contribution
- *
- * Revision 1.3  2002/08/10 11:32:09  mangeot
- * Added pages to edit monolingual entries
- * it is very beta version
- *
- * Revision 1.2  2002/08/10 09:18:58  mangeot
- * Added funcitonalities to the AdminContributions page
- *
- * Revision 1.1  2002/08/10 00:07:43  mangeot
- * Added files for contributions
- *
- * Revision 1.5  2002/07/26 10:00:21  serasset
- * Merging deplyement branch "PAPILLON_1_2_DEPLOY" with the main branch.
- *
- * Revision 1.4.6.1  2002/07/12 13:50:41  serasset
- * A new architecture for HTML template localization has been integrated.
- *
- * Revision 1.4  2002/05/23 16:14:41  mangeot
- * Adding admin group for presentation pages
- *
- * Revision 1.3  2002/05/22 08:56:18  mangeot
- * MML added user login and register:
- * LoginUser.po RegisterUser.po AdminUsers.po
- *
- * Revision 1.2  2002/05/09 07:43:42  mangeot
- * Work on the data layer.
- * I am now able to send directly sql statements.
- * I use sql statements to create a table for the volumes
- * and to truncate or drop these tables.
- * I am now finally able to create dynamically a table for a new volume
- * I also added 2 scripts for dump/restore of the database in sql/ directory
- *
- * Revision 1.1  2002/05/09 06:00:38  mangeot
- * *** empty log message ***
  *-----------------------------------------------
  * Papillon Admin page.
  */

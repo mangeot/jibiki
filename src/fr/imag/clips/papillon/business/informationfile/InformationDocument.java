@@ -9,61 +9,12 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.1  2004/12/06 16:38:31  serasset
- * Initial revision
+ * Revision 1.2  2005/01/15 12:51:24  mangeot
+ * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
  *
- * Revision 1.6  2004/01/21 11:47:22  serasset
- * Merged Trunk with PAPILLON_DEBUG_FOR_JDK14
- *
- * Revision 1.5.4.1  2004/01/06 14:55:49  serasset
- * Suppressed late reencoding of large text data incorrectly read by DODS.
- * These text fields are now correctly encoded by the patched enhydra 5.0.
- *
- * Revision 1.5  2003/12/18 15:17:37  serasset
- * Titles are now correctly reencoded.
- *
- * Revision 1.4  2003/12/08 08:49:39  serasset
- * *** empty log message ***
- *
- * Revision 1.3  2003/08/14 08:30:12  mangeot
- * Important CVS commit
- * Attention, if you checkout this version, you must empty and
- *
- * for their work on the editor.
- * Important CVS commit
- * Attention, if you checkout this version, you must empty and
- * relaod all your database because the database schema has been modified a lot.
- * The entries must be relaoded, the users also
- * Merging between the stable branch and the development branch done by MM
- * and David Thevenin for their work on the editor.
- * It means a lot of improvements for this commit.
- * Furthermore, the internal structure of the database has been modified in order
- * to use index in separate db table when there is a query for an entry.
- *
- * Revision 1.2.2.1  2003/05/28 09:17:17  mangeot
- * Changement du copyright sur les fichiers
- *
- * Revision 1.2  2002/11/22 13:04:10  mangeot
- * Nouvelle version Papillon enhydra 5.0
- *
- * Revision 1.1.1.1  2002/10/28 16:49:14  serasset
- * Creation of the papillon CVS repository for enhydra 5.0
- *
- * Revision 1.4  2002/09/16 09:55:05  mangeot
- * added a field in informationdocument, the reference,
- * tested and modified olivier's code
- *
- * Revision 1.3  2001/11/15 15:13:41  serasset
- * Ajout de l'import d'un fichier image/pdf/autre par stockage sur disque dur.
- *
- * Revision 1.2  2001/10/29 13:32:17  serasset
- * Information section is now managed with Documents containing files. We now allow the addition of tar.gz files
- * containing several html files. images are still not supported.
- *
- * Revision 1.1  2001/10/17 12:59:56  serasset
- * L'ajout de document d'information se fait via une action specifique par type de fichier.
- * Distinction entre Document (abstrait) et Fichier (qui composent concretement un document).
- *
+ * Revision 1.1.1.1  2004/12/06 16:38:31  serasset
+ * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
+ * There are still bugs in the code.
  *
  *-----------------------------------------------
  * 

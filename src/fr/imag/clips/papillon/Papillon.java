@@ -9,69 +9,12 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.1  2004/12/06 16:38:31  serasset
- * Initial revision
+ * Revision 1.2  2005/01/15 12:51:24  mangeot
+ * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
  *
- * Revision 1.8  2003/10/03 16:02:39  serasset
- * Suppression du traitement specifique du volume Foks.
- *
- * Revision 1.7  2003/09/29 10:54:26  mangeot
- * *** empty log message ***
- *
- * Revision 1.6  2003/09/23 15:52:53  mangeot
- * *** empty log message ***
- *
- * Revision 1.5  2003/09/22 10:17:36  mangeot
- * *** empty log message ***
- *
- * Revision 1.4  2003/09/03 10:08:30  mangeot
- * reorganizing imports and using eclipse
- *
- * Revision 1.3  2003/08/14 08:30:09  mangeot
- * Important CVS commit
- * Attention, if you checkout this version, you must empty and
- *
- * for their work on the editor.
- * Important CVS commit
- * Attention, if you checkout this version, you must empty and
- * relaod all your database because the database schema has been modified a lot.
- * The entries must be relaoded, the users also
- * Merging between the stable branch and the development branch done by MM
- * and David Thevenin for their work on the editor.
- * It means a lot of improvements for this commit.
- * Furthermore, the internal structure of the database has been modified in order
- * to use index in separate db table when there is a query for an entry.
- *
- * Revision 1.2.2.3  2003/06/28 09:28:08  mangeot
- * *** empty log message ***
- *
- * Revision 1.2.2.2  2003/05/28 09:17:14  mangeot
- * Changement du copyright sur les fichiers
- *
- * Revision 1.2.2.1  2003/02/18 03:27:53  mangeot
- * Development for the editing interface
- *
- * Revision 1.2  2003/01/31 10:00:44  mangeot
- * Added Query Logs into the database
- * and 2 booleans in Papillon.conf to control
- * 1- the logs
- * 2- the dictd listening serverCVS: 
- *
- * Revision 1.1.1.1  2002/10/28 16:49:12  serasset
- * Creation of the papillon CVS repository for enhydra 5.0
- *
- * Revision 1.5  2002/09/11 17:35:08  mangeot
- * Added config from config file for dictd server
- *
- * Revision 1.4  2002/09/11 16:28:13  mangeot
- * Added classes to implement dict protocol rfc 2229
- *
- * Revision 1.3  2001/09/07 06:57:26  serasset
- * *** empty log message ***
- *
- * Revision 1.2  2001/07/04 12:50:42  serasset
- * Creation du dossier CVS pour Papillon, Mise a jour de fichiers pour inclusion du log
- * et de l'Id, suppression du dossier enh-deme introduit par erreur.
+ * Revision 1.1.1.1  2004/12/06 16:38:31  serasset
+ * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
+ * There are still bugs in the code.
  *
  *-----------------------------------------------
  * Papillon enhydra application.

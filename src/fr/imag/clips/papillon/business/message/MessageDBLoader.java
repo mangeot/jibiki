@@ -9,62 +9,12 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.1  2004/12/06 16:38:31  serasset
- * Initial revision
+ * Revision 1.2  2005/01/15 12:51:24  mangeot
+ * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
  *
- * Revision 1.2  2003/08/14 08:30:13  mangeot
- * Important CVS commit
- * Attention, if you checkout this version, you must empty and
- *
- * for their work on the editor.
- * Important CVS commit
- * Attention, if you checkout this version, you must empty and
- * relaod all your database because the database schema has been modified a lot.
- * The entries must be relaoded, the users also
- * Merging between the stable branch and the development branch done by MM
- * and David Thevenin for their work on the editor.
- * It means a lot of improvements for this commit.
- * Furthermore, the internal structure of the database has been modified in order
- * to use index in separate db table when there is a query for an entry.
- *
- * Revision 1.1.1.1.2.1  2003/05/28 09:17:18  mangeot
- * Changement du copyright sur les fichiers
- *
- * Revision 1.1.1.1  2002/10/28 16:49:15  serasset
- * Creation of the papillon CVS repository for enhydra 5.0
- *
- * Revision 1.9  2002/06/03 10:08:01  serasset
- * Managing pages when viewing messages in the mailing list.
- *
- * Revision 1.8  2002/05/08 13:14:46  mangeot
- * I rewrote some files of the data layer in order to be dependent
- * from the number of tables for the Volum Entries.
- * The next step is to generate tables on the fly with the pgsql jdbc driver
- *
- * Revision 1.7  2002/04/26 11:33:36  serasset
- * MailingList managment and interface polished. Insertion of a new feature to display
- * messages to the user from most business objects (PapillonUserLogger class).
- *
- * Revision 1.6  2001/07/11 15:30:25  serasset
- * Suppression des tables author et threads. Utilisation d'une table unique "messages".
- *
- * Revision 1.5  2001/07/11 15:07:38  serasset
- * Aucune exception ne bloque maintenant le processus d'import des messages.
- *
- * Revision 1.4  2001/07/11 09:16:52  serasset
- * Traitement de l'exception resultant d'un message malforme en UTF8.
- *
- * Revision 1.3  2001/07/10 13:14:36  serasset
- * On n'affiche pas de message d'exception nul.
- *
- * Revision 1.2  2001/07/10 12:51:04  serasset
- * On renvoie maintenant une exception correcte lorque le process n'a pas le droit d'ecrire
- * le fichier de lock dans le dossier a importer.
- *
- * Revision 1.1  2001/07/09 16:37:30  serasset
- * Liens entre l'application enhydra et la base de donnees PostgreSQL.
- * Suppression du dossier data de la hierarchie CVS
- * Premiere version de la mailing list.
+ * Revision 1.1.1.1  2004/12/06 16:38:31  serasset
+ * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
+ * There are still bugs in the code.
  *
  *-----------------------------------------------
  * 

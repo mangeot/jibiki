@@ -9,72 +9,15 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.1  2004/12/06 16:38:42  serasset
- * Initial revision
+ * Revision 1.2  2005/01/15 12:51:24  mangeot
+ * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
  *
- * Revision 1.5  2004/10/28 10:56:21  mangeot
- * Added the list of connected users on AdminUsers.java,
- * Added the possibility to sort in columns for some pages
- * Added persistent preferences for the user. They are saved in the database and retrived when the user reconnects. The user is registered in the enhydra session.
+ * Revision 1.1.1.1  2004/12/06 16:38:42  serasset
+ * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
+ * There are still bugs in the code.
  *
- * Revision 1.4  2003/08/14 08:30:16  mangeot
- * Important CVS commit
- * Attention, if you checkout this version, you must empty and
- *
- * for their work on the editor.
- * Important CVS commit
- * Attention, if you checkout this version, you must empty and
- * relaod all your database because the database schema has been modified a lot.
- * The entries must be relaoded, the users also
- * Merging between the stable branch and the development branch done by MM
- * and David Thevenin for their work on the editor.
- * It means a lot of improvements for this commit.
- * Furthermore, the internal structure of the database has been modified in order
- * to use index in separate db table when there is a query for an entry.
- *
- * Revision 1.3.2.3  2003/07/31 10:51:31  mangeot
- * *** empty log message ***
- *
- * Revision 1.3.2.2  2003/06/21 17:56:39  mangeot
- * *** empty log message ***
- *
- * Revision 1.3.2.1  2003/05/28 09:17:21  mangeot
- * Changement du copyright sur les fichiers
- *
- * Revision 1.3  2003/02/13 09:42:39  mangeot
- * *** empty log message ***
- *
- * Revision 1.2  2003/02/13 09:39:38  mangeot
- * Select the previously selected volume
- *
- * Revision 1.1.1.1  2002/10/28 16:49:16  serasset
- * Creation of the papillon CVS repository for enhydra 5.0
- *
- * Revision 1.5  2002/07/26 10:00:21  serasset
- * Merging deplyement branch "PAPILLON_1_2_DEPLOY" with the main branch.
- *
- * Revision 1.4.6.1  2002/07/12 13:50:41  serasset
- * A new architecture for HTML template localization has been integrated.
- *
- * Revision 1.4  2002/05/23 16:14:41  mangeot
- * Adding admin group for presentation pages
- *
- * Revision 1.3  2002/05/22 08:56:18  mangeot
- * MML added user login and register:
- * LoginUser.po RegisterUser.po AdminUsers.po
- *
- * Revision 1.2  2002/05/09 07:43:42  mangeot
- * Work on the data layer.
- * I am now able to send directly sql statements.
- * I use sql statements to create a table for the volumes
- * and to truncate or drop these tables.
- * I am now finally able to create dynamically a table for a new volume
- * I also added 2 scripts for dump/restore of the database in sql/ directory
- *
- * Revision 1.1  2002/05/09 06:00:38  mangeot
- * *** empty log message ***
  *-----------------------------------------------
- * Papillon Admin page.
+ * Papillon Admin Entries page.
  */
 
 package fr.imag.clips.papillon.presentation;

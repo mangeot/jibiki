@@ -9,68 +9,12 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.1  2004/12/06 16:38:31  serasset
- * Initial revision
+ * Revision 1.2  2005/01/15 12:51:24  mangeot
+ * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
  *
- * Revision 1.2  2003/08/14 08:30:12  mangeot
- * Important CVS commit
- * Attention, if you checkout this version, you must empty and
- *
- * for their work on the editor.
- * Important CVS commit
- * Attention, if you checkout this version, you must empty and
- * relaod all your database because the database schema has been modified a lot.
- * The entries must be relaoded, the users also
- * Merging between the stable branch and the development branch done by MM
- * and David Thevenin for their work on the editor.
- * It means a lot of improvements for this commit.
- * Furthermore, the internal structure of the database has been modified in order
- * to use index in separate db table when there is a query for an entry.
- *
- * Revision 1.1.2.1  2003/05/28 09:17:18  mangeot
- * Changement du copyright sur les fichiers
- *
- * Revision 1.1  2003/02/03 05:44:30  mangeot
- * *** empty log message ***
- *
- * Revision 1.1.1.1  2002/10/28 16:49:13  serasset
- * Creation of the papillon CVS repository for enhydra 5.0
- *
- * Revision 1.3  2002/10/25 14:10:29  mangeot
- * merge between PAPILLON_1_4 and trunk
- * CVg: 	papillon-enh-src/docs/Bugs-papillon.rtf
- *
- * Revision 1.2.10.1  2002/10/23 09:51:06  serasset
- * Clean up of the source tree,
- *     Every source file is now encoded in ISO-Latin-1,
- *     Every html file is still encoded in UTF8.
- *
- * Revision 1.2  2002/04/01 07:46:33  mangeot
- * Added a table for volumes metadata descriptions
- *
- * Revision 1.1  2002/03/11 11:15:48  mangeot
- * *** empty log message ***
- *
- * Revision 1.6  2001/12/18 13:41:36  serasset
- * *** empty log message ***
- *
- * Revision 1.5  2001/07/18 12:35:31  serasset
- * Version demontree pendant les journees papillon 2001. Integration de la partie XML/XSL dans la BD.
- *
- * Revision 1.4  2001/07/12 20:56:38  salvati
- * ratrapage de la perte du fichier
- *
- * Revision 1.4  2001/07/11 15:30:25  serasset
- * Suppression des tables author et threads. Utilisation d'une table unique "Dictionarys".
- *
- * Revision 1.3  2001/07/09 16:37:29  serasset
- * Liens entre l'application enhydra et la base de donnees PostgreSQL.
- * Suppression du dossier data de la hierarchie CVS
- * Premiere version de la mailing list.
- *
- * Revision 1.2  2001/07/04 12:50:43  serasset
- * Creation du dossier CVS pour Papillon, Mise a jour de fichiers pour inclusion du log
- * et de l'Id, suppression du dossier enh-deme introduit par erreur.
+ * Revision 1.1.1.1  2004/12/06 16:38:31  serasset
+ * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
+ * There are still bugs in the code.
  *
  *-----------------------------------------------
  * 
