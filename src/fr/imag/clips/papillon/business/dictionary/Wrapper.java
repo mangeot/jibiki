@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2005/01/23 17:21:16  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.2  2005/01/15 12:51:24  mangeot
  * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
  *
@@ -24,7 +27,6 @@
 package fr.imag.clips.papillon.business.dictionary;
 
 
-// For the HashMap & TreeSet
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;

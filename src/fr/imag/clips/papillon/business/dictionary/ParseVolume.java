@@ -96,7 +96,7 @@ public class ParseVolume {
                 buffer.close();
                 PapillonLogger.writeDebugMsg("Foks Volume Parsed, " + entry + " entries added!");
 		} catch (FileNotFoundException exp) {
-			throw new PapillonBusinessException("PArseVolume.parseFoksVolume, error FileNotFoundException: " + urlString);
+			throw new PapillonBusinessException("ParseVolume.parseFoksVolume, error FileNotFoundException: " + urlString);
 
 		} catch (IOException exp) {
                     throw new PapillonBusinessException("ParseVolume.parseFoksVolume, error IOException");
@@ -205,7 +205,7 @@ public class ParseVolume {
 						countEntries += parseEntry(entryBuffer.append(xmlFooter));
 						entryBuffer = new StringBuffer(xmlHeader);
 					}
-					entry = str.indexOf("<" + CDM_entry,entry+1+CDM_entry.length());
+					entry = str.indexOf("<" + CDM_entry,entry+CDM_entry.length()+1);
 				}
 				entryBuffer.append(str);
 				str = buffer.readLine();
