@@ -56,11 +56,23 @@ public class UIGenerator {
 		UIGenerator.fillTemplate(entryElt,correspItf, itfTemplate);
 	}
 	
-	public static boolean addElement(String elementName, String parentId, Element entryElt, Element entryTemplate) {
+	public static boolean addElement(String elementName, String parentId, Element entryElt, Element entryTemplate, String[] siblingIds) {
 		PapillonLogger.writeDebugMsg("addElement: " + elementName + " parent: " + parentId);	
 		boolean found = false;
-		
-		int indexOfPt = parentId.lastIndexOf(ID_SEPARATOR);
+		Element siblingElement = null;
+		int indexOfPt;
+		if (siblingIds.length>0) {
+			String siblingId = siblingIds[siblingIds.length-1]; 
+			indexOfPt = siblingId.lastIndexOf(ID_SEPARATOR);
+			if (indexOfPt>0) {
+				String siblingName = siblingId.substring(0,indexOfPt);
+				if (siblingName.equals(elementName)) {
+					String siblingNb = siblingId.substring(indexOfPt+1);
+					siblingElement =  findElementInEntry(siblingName, siblingNb, entryElt);
+				}
+			}
+		}
+		indexOfPt = parentId.lastIndexOf(ID_SEPARATOR);
 		String parentName = "";
 		String parentNb = "";
 		
@@ -72,7 +84,7 @@ public class UIGenerator {
 			if (parentElt!=null) {
 				found = true;
 				Element myElement = getTemplateEntryElement(elementName,parentName,entryTemplate);
-				insertEntryElement(parentElt,myElement);
+				insertEntryElement(parentElt,myElement,siblingElement);
 			}
 		}
 		return found;
@@ -474,14 +486,6 @@ public class UIGenerator {
 				if (name !=null && name.equals(correspName)) {
 					currentElt.setAttribute("name", newId);
 					currentElt.setAttribute("id", newId);
-					NodeList childNodes = currentElt.getChildNodes();
-					int j=0;
-		// FIXME: Because of a problem with the textarea element, I have to put some text content
-		// (a unicde space) when I load it onto the server in order to avoid the problem.
-		// But I can delete the dummy text content here before displaying the element.
-					while (j<childNodes.getLength()) {
-						currentElt.removeChild(childNodes.item(j));
-					}
 					org.w3c.dom.Text textElt = currentElt.getOwnerDocument().createTextNode(value);
 					currentElt.appendChild(textElt);
 					found = true;
@@ -635,39 +639,44 @@ public class UIGenerator {
 	}
 	
 	
-	protected static Element insertEntryElement(Element parentElement, Element newElement) {
+	protected static Element insertEntryElement(Element parentElement, Element newElement, Element siblingElement) {
 		//		PapillonLogger.writeDebugMsg("insertEntryElement: " + newElement.toString() + " parent: " + parentElement.toString());	
 		Vector nodeVector = new Vector();
 		
 		Element resElt = (Element) parentElement.getOwnerDocument().importNode(newElement,true);
 		resElt.setAttribute(TYPE_ATTR_NAME,NEW_BLOCK_ANCHOR);
-		NodeList childNodes = parentElement.getChildNodes();
-		boolean found = false;
-		int i=0;
-		while (i<childNodes.getLength () && !found) {
-			Node nodeItem = childNodes.item(i);
-			if (nodeItem.getNodeType()== Node.ELEMENT_NODE) {
-				Element currentElt = (Element) nodeItem;	
-				found = (currentElt.getNodeName().equals(resElt.getNodeName()));
-			}	
-			i++;	
-		}		
-		
-		boolean other = false;
-		while (i<childNodes.getLength () && !other) {
-			Node nodeItem = childNodes.item(i);
-			if (nodeItem.getNodeType()== Node.ELEMENT_NODE) {
-				Element currentElt = (Element) nodeItem;		
-				other = (!currentElt.getNodeName().equals(resElt.getNodeName()));
-			}	
-			i++;	
-		}		
-		i--;
-		if (i<childNodes.getLength ()) {
-			parentElement.insertBefore(resElt,childNodes.item(i));
+		if (siblingElement != null) {
+			parentElement.insertBefore(resElt,siblingElement);
 		}
 		else {
-			parentElement.appendChild(resElt);
+			NodeList childNodes = parentElement.getChildNodes();
+			boolean found = false;
+			int i=0;
+			while (i<childNodes.getLength () && !found) {
+				Node nodeItem = childNodes.item(i);
+				if (nodeItem.getNodeType()== Node.ELEMENT_NODE) {
+					Element currentElt = (Element) nodeItem;	
+					found = (currentElt.getNodeName().equals(resElt.getNodeName()));
+				}	
+				i++;	
+			}		
+		
+			boolean other = false;
+			while (i<childNodes.getLength () && !other) {
+				Node nodeItem = childNodes.item(i);
+				if (nodeItem.getNodeType()== Node.ELEMENT_NODE) {
+					Element currentElt = (Element) nodeItem;		
+					other = (!currentElt.getNodeName().equals(resElt.getNodeName()));
+				}	
+				i++;	
+			}		
+			i--;
+			if (i<childNodes.getLength ()) {
+				parentElement.insertBefore(resElt,childNodes.item(i));
+			}
+			else {
+				parentElement.appendChild(resElt);
+			}
 		}
 		return resElt;
 	}

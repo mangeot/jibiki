@@ -106,7 +106,7 @@ body {
 
 .popupMenu  a {
    padding: 0em 0.5em 0em 0.5em ;
-   text-decoration:none;
+   text-decoration: none;
 }
 
 .popupMenu  a:link {
@@ -305,7 +305,8 @@ A:hover {
 	text-decoration: underline; 
 	color: blue;
 	}
-
+/* for anchors we do not want to see */
+A.hide {text-decoration: none}
 
 
 /* For DEC-like entries */
@@ -352,7 +353,6 @@ A:hover {
 .eng	{
 	font-family: "Arial", sans-serif;
 	color: #006600;
- 
 	}
 
 .esp	{
@@ -364,7 +364,6 @@ A:hover {
 	font-family: sans-serif;
 	color: #FF9911;
 	}
-
 
 .fra	{
 	font-family: "Helvetica", sans-serif;
@@ -621,27 +620,7 @@ A:hover {
 	text-decoration: underline; 
 	color: blue;
 	}
-
 	
 /* Styles for FOKS results */
 TD.result {background: #e6e6fa; font-size: 11px;}
 TH.result {background: #fdcfcf;font-family: Arial, sans-serif; font-size: 11px;} 
-
-
-
-t-decoration: none; 
-	color: blue;
-	}
-.bodylink  A:hover {
-	font-weight: bold; 
-	text-decoration: underline; 
-	color: blue;
-	}
-
-	
-/* Styles for FOKS results */
-TD.result {background: #e6e6fa; font-size: 11px;}
-TH.result {background: #fdcfcf;font-family: Arial, sans-serif; font-size: 11px;} 
-
-
-

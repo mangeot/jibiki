@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2005/01/14 21:49:59  mangeot
+ * Modified the editor: when the user adds an item, it is added before the last selected sibling or at the end if nothing is selected.
+ *
  * Revision 1.2  2004/12/24 14:31:28  mangeot
  * I merged the latest developments of Papillon5.0 with this version 5.1.
  * Have to be tested more ...
@@ -142,15 +145,17 @@ public class EditEntry extends BasePO {
 				String newUrl = this.getUrl() + "?" + VolumeName_PARAMETER + "=" + volumeName 
 					+ "&" + EntryHandle_PARAMETER + "=" + entryHandle
 					+ "&" + AddCall_PARAMETER + "=" + myUrlEncode(submitAdd)
+					+ "&" + serializeParameterForUrl(Select_PARAMETER,myGetParameterValues(Select_PARAMETER))
 					+ "&" + Redirection_PARAMETER + "=" + "on"	
 					+ "#" + UIGenerator.NEW_BLOCK_ANCHOR;				
 				throw new ClientPageRedirectException(newUrl);
 			}
 			int plus =  submitAdd.indexOf(UIGenerator.PARAMETERS_SEPARATOR);
 			if (plus > 0) {
-				String selectedElement = submitAdd.substring(0,plus);
+				String elementName = submitAdd.substring(0,plus);
 				String parentElement = submitAdd.substring(plus+1);
-				UIGenerator.addElement(selectedElement,parentElement,myEntry, myTemplateEntry);
+				String[] siblingElements = myGetParameterValues(Select_PARAMETER);
+				UIGenerator.addElement(elementName,parentElement,myEntry, myTemplateEntry, siblingElements);
 			}
 		}
 		// deleteElements MUST be after updateElement because it modifies the element ids.

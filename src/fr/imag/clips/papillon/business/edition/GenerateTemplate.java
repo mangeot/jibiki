@@ -168,7 +168,7 @@ public class GenerateTemplate {
 				if (elementType==GenerateTemplate.LIST_ELEMENT) {
 					interfaceBuffer.write("  <tr bgcolor='#ffebdc'>\n");
 					interfaceBuffer.write("    <td align='center' valign='top' width='25'>\n");
-					interfaceBuffer.write("		 <a name=\"" + elementName + "\">");
+					interfaceBuffer.write("		 <a name=\"" + elementName + " \">");
 					interfaceBuffer.write("<input name=\"" + UIGenerator.SELECT_ATTR_NAME + "\" type=\"checkbox\" value=\"" + elementName + "\" />");
 					interfaceBuffer.write("</a>\n");
 					interfaceBuffer.write("    </td>\n");
