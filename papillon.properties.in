@@ -16,7 +16,6 @@
 #papillon.pgsql.jar=/usr/local/pgsql/share/java/postgresql.jar
 
 # Enhydra dirs
-# enhydra.root=/Library/Java/Extensions/enhydra5.1
 # enhydra.dir=/Library/Java/Extensions/enhydra5.1
 
 ###############################
@@ -30,5 +29,4 @@ papillon.ant.jar=/usr/local/src/jakarta-ant-1.5.1/lib/ant.jar
 papillon.pgsql.jar=/usr/share/pgsql/pg73b1jdbc3.jar
 
 # Enhydra dirs
-enhydra.root=/usr/local/enhydra5.0-for-papillon
 enhydra.dir=/usr/local/enhydra5.0-for-papillon
