@@ -10,6 +10,10 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.6  2005/01/18 12:16:10  mangeot
+ *  Implemented the SQL LIMIT and OFFSET keywords. It allows us to retrieve the entries as blocks and page them. The LIMIT is the DictionariesFactory.MaxRetrievedEntries constant.
+ *  The implementation may need further tuning
+ *
  *  Revision 1.5  2005/01/15 12:51:24  mangeot
  *  Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
  *
@@ -113,7 +117,6 @@ public class ConsultExpert extends BasePO {
      */
     protected final static String XSLID = "xslid";
 
-    //protected final static String RESOURCES_PARAMETER="RESOURCES";
     /**
      *  Description of the Field
      */
@@ -146,15 +149,6 @@ public class ConsultExpert extends BasePO {
     /**
      *  Description of the Field
      */
-    protected final static String SOURCE_PARAMETER = "AnyContains";
-    /**
-     *  Description of the Field
-     */
-    protected final static String TARGETS_PARAMETER = "AnyContains";
-
-    /**
-     *  Description of the Field
-     */
     protected final static String ContributionsURL = "AdminContributions.po";
     /**
      *  Description of the Field
@@ -169,6 +163,11 @@ public class ConsultExpert extends BasePO {
      *  Description of the Field
      */
     protected final static String ANY_TARGET = "*ANY*";
+
+	/**
+	*  Description of the Field
+	*/
+   protected final static String OFFSET_PARAMETER = "OFFSET";
 
     /**
      *  Description of the Field
@@ -420,6 +419,12 @@ public class ConsultExpert extends BasePO {
             strategy = Integer.parseInt(strategyString);
         }
 
+        int offset = 0;
+        String offsetString = myGetParameter(OFFSET_PARAMETER);
+        if (offsetString != null && !offsetString.equals("")) {
+            offset = Integer.parseInt(offsetString);
+		}
+
         String handle = myGetParameter(HANDLE);
         String xslid = myGetParameter(XSLID);
 
@@ -482,7 +487,7 @@ public class ConsultExpert extends BasePO {
                 Utility.removeElement(content.getElementVolumeEntries());
             } else {
                 // If there is a query, executing it
-                addEntries(resources, volume, sourceLanguage, targetLanguages, Headwords, strategy, posContains, pronContains, readingContains, transContains, anyContains, handle, xslid, this.getUser());
+                addEntries(resources, volume, sourceLanguage, targetLanguages, Headwords, strategy, posContains, pronContains, readingContains, transContains, anyContains, handle, xslid, this.getUser(), offset);
                 Utility.removeElement(content.getElementFoksEntries());
             }
         } else {
@@ -675,7 +680,7 @@ public class ConsultExpert extends BasePO {
      * @exception  javax.xml.transform.TransformerException        Description
      *      of the Exception
      */
-    protected void addEntries(String[] resources, String volume, String source, String[] targets, String[] Headwords, int strategy, String posContains, String pronContains, String readingContains, String transContains, String anyContains, String handle, String xslid, User myUser)
+    protected void addEntries(String[] resources, String volume, String source, String[] targets, String[] Headwords, int strategy, String posContains, String pronContains, String readingContains, String transContains, String anyContains, String handle, String xslid, User myUser, int offset)
              throws PapillonBusinessException,
             ClassNotFoundException,
             HttpPresentationException,
@@ -692,14 +697,14 @@ public class ConsultExpert extends BasePO {
         } else if (null != volume) {
             EntryCollection = VolumeEntriesFactory.getVolumeNameEntriesVector(volume, null, Headwords, strategy);
         } else {
-            EntryCollection = DictionariesFactory.getDictionariesEntriesCollection(resources, source, targets, Headwords, strategy, posContains, pronContains, readingContains, transContains, anyContains, myUser);
+            EntryCollection = DictionariesFactory.getDictionariesEntriesCollection(resources, source, targets, Headwords, strategy, posContains, pronContains, readingContains, transContains, anyContains, myUser, offset);
         }
         // If there are too much entries ie > DictionariesFactory.MaxDisplayedEntries,
         // we display a table of entries instead of the entries
         if (null != EntryCollection && EntryCollection.size() > 0) {
             if (EntryCollection.size() > DictionariesFactory.MaxDisplayedEntries) {
                 Utility.removeElement(content.getElementVolumeEntries());
-                addEntryTable(EntryCollection, targets);
+                addEntryTable(EntryCollection, targets, offset);
             } else {
                 Utility.removeElement(content.getElementEntryListTable());
                 addFewEntries(EntryCollection, xslid);
@@ -725,7 +730,7 @@ public class ConsultExpert extends BasePO {
      * @exception  java.io.UnsupportedEncodingException  Description of the
      *      Exception
      */
-    protected void addEntryTable(Collection EntryCollection, String[] targets)
+    protected void addEntryTable(Collection EntryCollection, String[] targets, int offset)
              throws PapillonBusinessException,
             java.io.UnsupportedEncodingException {
 
@@ -742,6 +747,10 @@ public class ConsultExpert extends BasePO {
         // Recuperating the elements for the formula
         XHTMLTableRowElement formulaRow = content.getElementFormulaRow();
         XHTMLElement formulaElement = content.getElementFormula();
+		
+		XHTMLElement entryNumberElement = content.getElementEntryNumber();
+		XHTMLAnchorElement previousEntriesAnchor = content.getElementPreviousEntriesAnchor();
+		XHTMLAnchorElement nextEntriesAnchor = content.getElementNextEntriesAnchor();
 
         //      we don't take off the id attribute because we will take the element off later...
         //      entryListRow.removeAttribute("id");
@@ -752,16 +761,42 @@ public class ConsultExpert extends BasePO {
         pos.removeAttribute("id");
         dictname.removeAttribute("id");
         formulaElement.removeAttribute("id");
+        entryNumberElement.removeAttribute("id");
+        previousEntriesAnchor.removeAttribute("id");
+        nextEntriesAnchor.removeAttribute("id");
+		
+		content.setTextEntryNumber(""+EntryCollection.size());
+		
+		
+        String href = this.getUrl() + "?"
+			+ serializeParameterForUrl(content.NAME_RESOURCES, originalResources)
+			+ content.NAME_search1 + "=" + search1 + "&"
+			+ content.NAME_search1text + "=" + search1text + "&"
+			+ content.NAME_search2 + "=" + search2 + "&"
+			+ content.NAME_search2text + "=" + search2text + "&"
+			+ content.NAME_SOURCE + "=" + sourceLanguage + "&"
+			+ serializeParameterForUrl(content.NAME_TARGETS, originalTargets)
+			+ content.NAME_Strategy + "=" + strategyString + "&"
+			+ content.NAME_lookup + "=" + content.NAME_lookup + "&"
+			+ OFFSET_PARAMETER + "=";
+		if (offset >= DictionariesFactory.MaxRetrievedEntries) {
+			int prevOffset = offset-DictionariesFactory.MaxRetrievedEntries;
+			previousEntriesAnchor.setHref(href+prevOffset);
+		}
+		else {
+			previousEntriesAnchor.setHref("");
+			content.setTextPreviousEntriesAnchor("");			
+		}
+		int nextOffset = offset+DictionariesFactory.MaxRetrievedEntries;
+		nextEntriesAnchor.setHref(href+nextOffset);
 
         // On récupère le noeud contenant la table...
         Node lexieTable = entryListRow.getParentNode();
         if (null != EntryCollection) {
             for (Iterator myIterator = EntryCollection.iterator(); myIterator.hasNext(); ) {
-                String href;
                 IAnswer myEntry = (IAnswer) myIterator.next();
 
                 // Le vocable
-                //            String vocable = theDicArray[i].getKey1();
                 content.setTextVocable(myEntry.getHeadwords());
 
                 // l'entry
@@ -770,8 +805,8 @@ public class ConsultExpert extends BasePO {
                          + myEntry.getVolumeName() + "&"
                          + HANDLE + "="
                          + myEntry.getHandle() + "&"
-                         + SOURCE_PARAMETER + "=" + myEntry.getSourceLanguage() + "&"
-                         + serializeParameterForUrl(TARGETS_PARAMETER, targets)
+                         + content.NAME_SOURCE + "=" + myEntry.getSourceLanguage() + "&"
+                         + serializeParameterForUrl(content.NAME_TARGETS, targets)
                          + content.NAME_Strategy + "="
                          + strategyString + "&"
                          + content.NAME_lookup + "="

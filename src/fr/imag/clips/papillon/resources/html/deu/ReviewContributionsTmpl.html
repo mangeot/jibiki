@@ -22,17 +22,29 @@
 		<input name="Lookup" type="Submit" value="Nachschlagen">
 		</TD>
 	<TD><label for="AUTHOR">Autor-Login:</label><br>
-		<input ID="AUTHOR" name="AUTHOR" size="15" type="text">
-		<br>
-		 (optional)
+		<input ID="AUTHOR" name="AUTHOR" size="12" type="text">
+		<br>(optional)
      </TD>
 	<TD><label for="HEADWORD">Stichwort:</label><br>
-	<input ID="HEADWORD" name="HEADWORD" size="15" type="text" value="">
+	<input ID="HEADWORD" name="HEADWORD" size="12" type="text" value="">
 	<label for="PartialMatch">
 	<INPUT id="PartialMatch" name="PartialMatch" type="checkbox" value="PartialMatch">
 	<font size="2">Teilweise&nbsp;Übereinstimmung</font></label>
-	<br>
-		 (optional)
+	<br>(optional)
+     </TD>
+	 	<TD><label for="STATUS">Status:</label><br>
+	<select id="STATUS" name="STATUS">
+		<option value="*ALL*" label="tous">all</option>
+		<option value="not finished" label="not finished">not finished</option>
+		<option value="finished" label="finished">finished</option>
+		<option value="revised" label="revised">revised</option>
+		<!--option value="validated" label="validees">validées</option-->
+    </select>
+	<br>(optional)
+     </TD>
+	<TD><label for="REVISOR">Revisor:</label><br>
+		<input id="REVISOR" name="REVISOR" size="12" type="text">
+		<br>(optional)
      </TD>
 </TR>
 </TABLE>

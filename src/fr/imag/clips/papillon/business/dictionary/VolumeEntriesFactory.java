@@ -3,6 +3,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2005/01/18 12:16:10  mangeot
+ * Implemented the SQL LIMIT and OFFSET keywords. It allows us to retrieve the entries as blocks and page them. The LIMIT is the DictionariesFactory.MaxRetrievedEntries constant.
+ * The implementation may need further tuning
+ *
  * Revision 1.3  2005/01/18 09:41:11  mangeot
  * Recoded the countRows method with a new method that appeared with DODS 5.1
  *
@@ -80,14 +84,14 @@ public class VolumeEntriesFactory {
 
     public static Vector getVolumeEntriesVector(Dictionary dict, Volume volume, String id, String[] Headwords, int strategy) throws PapillonBusinessException {
 		return getVolumeEntriesVector(dict, volume, id, Headwords, strategy,
-								null, null, null, null, null, null, null);
+								null, null, null, null, null, null, null,0);
 	}
 
- 		public static Vector getVolumeEntriesVector(Dictionary dict, Volume volume, String id, String[] Headwords, int strategy, String pos, String pron, String reading, String trans, String key1,String key2,String any) throws PapillonBusinessException {
+ 		public static Vector getVolumeEntriesVector(Dictionary dict, Volume volume, String id, String[] Headwords, int strategy, String pos, String pron, String reading, String trans, String key1,String key2,String any, int offset) throws PapillonBusinessException {
         Vector MyTable = null;
         if (null != volume) {
             if (volume.getLocation().equals(Volume.LOCAL_LOCATION)) {
-                MyTable = getDbTableEntriesVector(dict, volume,id,Headwords,strategy,pos,pron,reading,trans,key1,key2,any);
+                MyTable = getDbTableEntriesVector(dict, volume,id,Headwords,strategy,pos,pron,reading,trans,key1,key2,any, offset);
             }
             else if (volume.getLocation().equals(Volume.REMOTE_LOCATION)) {
                 MyTable = getRemoteVolumeEntriesVector(dict,volume,id,Headwords,pos,pron,reading, trans,key1,key2,any);
@@ -162,10 +166,10 @@ public class VolumeEntriesFactory {
             catch(Exception ex) {
                 throw new PapillonBusinessException("Exception in getVolumeNameEntriesVector()", ex);
             }
-            return getDbTableEntriesVector(dict, volume, id, Headwords, strategy, pos, pron, reading, trans, key1,key2,any);
+            return getDbTableEntriesVector(dict, volume, id, Headwords, strategy, pos, pron, reading, trans, key1,key2,any, 0);
         }
 
-    protected static Vector getDbTableEntriesVector(Dictionary dict, Volume volume, String id, String[] Headwords, int strategy, String pos, String pron, String reading, String trans, String key1,String key2,String any) throws PapillonBusinessException {
+    protected static Vector getDbTableEntriesVector(Dictionary dict, Volume volume, String id, String[] Headwords, int strategy, String pos, String pron, String reading, String trans, String key1,String key2,String any, int offset) throws PapillonBusinessException {
         Vector theEntries = new Vector();
 		
 		// In this cases, we can use the Index file !		
@@ -177,7 +181,7 @@ public class VolumeEntriesFactory {
 			 (trans == null || trans.equals("")) &&
 			 (any == null || any.equals("")))
 			) {
-			theEntries = IndexFactory.getEntriesVector(dict, volume, id, Headwords, strategy, pron, reading, key1, key2);
+			theEntries = IndexFactory.getEntriesVector(dict, volume, id, Headwords, strategy, pron, reading, key1, key2, offset);
 		}
 		else
 			
@@ -360,6 +364,8 @@ public class VolumeEntriesFactory {
 
                     // query.addOrderByHeadword(true);
 				//	query.getQueryBuilder().addEndClause("ORDER BY " + volume.getSourceLanguage()+"_sort(headword)");
+					query.getQueryBuilder().setMaxRows(DictionariesFactory.MaxRetrievedEntries);
+					query.getQueryBuilder().addEndClause("OFFSET " + offset);						
 					query.getQueryBuilder().addOrderByColumn(volume.getSourceLanguage()+"_sort(headword)","");
                     VolumeEntryDO[] DOarray = query.getDOArray();
                     if (null != DOarray) {
@@ -412,7 +418,7 @@ public class VolumeEntriesFactory {
 			Volume volume = VolumesFactory.findVolumeByName("JMDict_jpn_eng");
 			if (volume != null && !volume.IsEmpty()) {
 				Dictionary myDict = DictionariesFactory.findDictionaryByName(volume.getDictname());
-				theEntries = IndexFactory.getEntriesVector(myDict, volume, null, Headwords, IQuery.STRATEGY_EXACT, null, null, null, null);
+				theEntries = IndexFactory.getEntriesVector(myDict, volume, null, Headwords, IQuery.STRATEGY_EXACT, null, null, null, null,0);
 			}
 		}
 		catch(Exception ex) {

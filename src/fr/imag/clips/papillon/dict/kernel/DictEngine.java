@@ -242,7 +242,8 @@ public class DictEngine implements IDictEngine {
                                                                      null,
                                                                      null,
                                                                      null,
-                                                                     this.getUser());
+                                                                     this.getUser(),
+																	 0);
     }
 
     public String authenticate(String login, String password) {

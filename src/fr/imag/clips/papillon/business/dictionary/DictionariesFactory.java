@@ -3,6 +3,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2005/01/18 12:16:10  mangeot
+ * Implemented the SQL LIMIT and OFFSET keywords. It allows us to retrieve the entries as blocks and page them. The LIMIT is the DictionariesFactory.MaxRetrievedEntries constant.
+ * The implementation may need further tuning
+ *
  * Revision 1.2  2004/12/24 14:31:28  mangeot
  * I merged the latest developments of Papillon5.0 with this version 5.1.
  * Have to be tested more ...
@@ -67,7 +71,8 @@ import fr.imag.clips.papillon.business.utility.*;
  */
 public class DictionariesFactory {
 
-	public final static int MaxDisplayedEntries = 5;
+	public final static int MaxDisplayedEntries = 1;
+	public final static int MaxRetrievedEntries = 2;
     protected final static String DML_URI = "http://www-clips.imag.fr/geta/services/dml";
     protected final static String XLINK_URI = "http://www.w3.org/1999/xlink";
     protected final static String DICTIONARY_TAG="dictionary-metadata";
@@ -323,7 +328,8 @@ public class DictionariesFactory {
 															  readingContains,
                                                                   transContains,
                                                                   anyContains,
-                                                                  user));
+                                                                  user,
+																  0));
                 }
             }
             return entries;
@@ -339,7 +345,8 @@ public class DictionariesFactory {
                                                       String readingContains,
                                                       String transContains,
                                                       String anyContains,
-                                                      User user)
+                                                      User user,
+													  int offset)
         throws PapillonBusinessException {
 		Vector entries = new Vector();
 
@@ -355,7 +362,8 @@ public class DictionariesFactory {
 																	   readingContains,
 																	   transContains,
 																	   anyContains,
-																	   user);
+																	   user,
+																	   offset);
 				if (myColl!=null) {
 					entries.addAll(myColl);
 				}
@@ -374,14 +382,15 @@ public class DictionariesFactory {
                                                         String readingContains,
                                                         String transContains,
                                                         String anyContains,
-                                                        User user) throws PapillonBusinessException {
+                                                        User user,
+														int offset) throws PapillonBusinessException {
         Dictionary dict = findDictionaryByName(resource);
         return getDictionaryEntriesCollection(dict, source,
                                           targets,Headwords,
                                           strategy,posContains,
                                           pronContains,readingContains,
-																					transContains,
-                                          anyContains,user);
+										  transContains,anyContains,
+										  user, offset);
     }
 	
 
@@ -395,7 +404,8 @@ public class DictionariesFactory {
 															String readingContains,
 															String transContains,
 															String anyContains,
-															User user) throws PapillonBusinessException {
+															User user,
+															int offset) throws PapillonBusinessException {
 		Collection entriesCollection = null;
         if (null != dict 
 			&& Utility.IsInArray(source, dict.getSourceLanguagesArray())
@@ -406,7 +416,7 @@ public class DictionariesFactory {
                 for (int i=0;i<volumes.length;i++) {
                     // FIXME it depends on the architecture of the dictionaries !
                     if (!volumes[i].getName().equals(PAPILLONAXI)) {
-						Vector entriesVector = VolumeEntriesFactory.getVolumeEntriesVector(dict, volumes[i], "", Headwords, strategy, posContains, pronContains, readingContains, transContains, null, null, anyContains);
+						Vector entriesVector = VolumeEntriesFactory.getVolumeEntriesVector(dict, volumes[i], "", Headwords, strategy, posContains, pronContains, readingContains, transContains, null, null, anyContains, offset);
 						Collection tempCollection = ContributionsFactory.checkContributions(user, entriesVector);
                         String category = dict.getCategory();
                         if (!category.equals("monolingual")) {
@@ -454,7 +464,8 @@ public class DictionariesFactory {
 																						Headwords,
 																						strategy,
 																						null,null,null,null,null,
-																						user);
+																						user,
+																						0);
 			if (entries != null && entries.size()>0) {
 				for (Iterator myIterator = entries.iterator(); myIterator.hasNext();) {
 					axies.addAll(PapillonPivotFactory.findAxiesByLexie((IAnswer)myIterator.next(),user));

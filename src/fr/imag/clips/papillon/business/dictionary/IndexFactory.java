@@ -3,6 +3,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2005/01/18 12:16:10  mangeot
+ * Implemented the SQL LIMIT and OFFSET keywords. It allows us to retrieve the entries as blocks and page them. The LIMIT is the DictionariesFactory.MaxRetrievedEntries constant.
+ * The implementation may need further tuning
+ *
  * Revision 1.3  2005/01/15 12:51:24  mangeot
  * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
  *
@@ -61,7 +65,7 @@ public class IndexFactory {
 	protected final static String INDEXED_FIELD = "key";
 	protected final static String CONTRIB_SEP = "$";
 
-    protected static Vector getEntriesVector(Dictionary dict, Volume volume, String id, String[] Headwords, int strategy, String pron, String reading, String key1,String key2) throws PapillonBusinessException {
+    protected static Vector getEntriesVector(Dictionary dict, Volume volume, String id, String[] Headwords, int strategy, String pron, String reading, String key1,String key2, int offset) throws PapillonBusinessException {
         Vector theIndex = new Vector();
 
 		theIndex.add(id);
@@ -74,13 +78,14 @@ public class IndexFactory {
 				theIndex.add(Headwords[i]);
 			}
 		}
-		return getEntriesVector(dict, volume, strategy, theIndex);
+		return getEntriesVector(dict, volume, strategy, theIndex, offset);
 	}
 
-	protected static Vector getEntriesVector(Dictionary dict, Volume volume, int strategy, Vector theIndex) throws PapillonBusinessException {
-			Vector theEntries = new Vector();
-			VolumeEntry myEntry = null;
-
+	protected static Vector getEntriesVector(Dictionary dict, Volume volume, int strategy, Vector theIndex, int offset) throws PapillonBusinessException {
+		Vector theEntries = new Vector();
+		VolumeEntry myEntry = null;
+		
+		
 		String CSE = QueryBuilder.EQUAL;
 		String CSS = QueryBuilder.CASE_SENSITIVE_STARTS_WITH;
 		String cmp_op = CSE;
@@ -99,6 +104,9 @@ public class IndexFactory {
 						IndexQuery query = new IndexQuery(volume.getIndexDbname());
 						query.getQueryBuilder().addWhereClause("key", myString, cmp_op);
 						//query.addOrderByKey(true);
+						//query.getQueryBuilder().distinct();
+						query.getQueryBuilder().setMaxRows(DictionariesFactory.MaxRetrievedEntries);
+						query.getQueryBuilder().addEndClause("OFFSET " + offset);						
 						query.getQueryBuilder().addOrderByColumn(volume.getSourceLanguage()+"_sort(key)","");
 						IndexDO[] DOarray = query.getDOArray();
 						if (null != DOarray) {
@@ -106,7 +114,6 @@ public class IndexFactory {
 								Index myIndex = new Index(DOarray[j]);
 								myEntry = VolumeEntriesFactory.findEntryByHandle(dict, volume, myIndex.getEntryId());
 								theEntries.add(myEntry);
-							//	theEntries.put(myEntry.getHeadword(),myEntry);
 							}
 						}
 					}

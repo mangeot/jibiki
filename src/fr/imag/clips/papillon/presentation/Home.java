@@ -10,6 +10,10 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.4  2005/01/18 12:16:10  mangeot
+ *  Implemented the SQL LIMIT and OFFSET keywords. It allows us to retrieve the entries as blocks and page them. The LIMIT is the DictionariesFactory.MaxRetrievedEntries constant.
+ *  The implementation may need further tuning
+ *
  *  Revision 1.3  2004/12/24 14:31:28  mangeot
  *  I merged the latest developments of Papillon5.0 with this version 5.1.
  *  Have to be tested more ...
@@ -152,6 +156,11 @@ public class Home extends BasePO {
     /**
      *  Description of the Field
      */
+    protected final static String OFFSET_PARAMETER = "OFFSET";
+
+    /**
+     *  Description of the Field
+     */
     protected final static String ContributionsURL = "AdminContributions.po";
     /**
      *  Description of the Field
@@ -193,6 +202,12 @@ public class Home extends BasePO {
      *  Description of the Field
      */
     protected String[] allResources;
+	
+	protected String[] resources;
+	
+	protected String headword;
+	
+	protected String partialMatchString;
 
 
     /**
@@ -276,18 +291,23 @@ public class Home extends BasePO {
 
         String sourceLanguage = myGetParameter(SOURCE_PARAMETER);
         String targetLanguage = myGetParameter(TARGETS_PARAMETER);
-        String originalTargetLanguage = targetLanguage;
+		String originalTargetLanguage = targetLanguage;
         String volume = myGetParameter(VOLUME_PARAMETER);
-        String[] resources = myGetParameterValues(RESOURCES_PARAMETER);
+        resources = myGetParameterValues(RESOURCES_PARAMETER);
 
-        String headword = myGetParameter(HEADWORD_PARAMETER);
-        String partialMatchString = myGetParameter(PartialMatch_PARAMETER);
+        headword = myGetParameter(HEADWORD_PARAMETER);
+        partialMatchString = myGetParameter(PartialMatch_PARAMETER);
         boolean partialMatch = (null != partialMatchString && !partialMatchString.equals(""));
-
         int strategy = IQuery.STRATEGY_EXACT;
         if (partialMatch) {
             strategy = IQuery.STRATEGY_SUBSTRING;
         }
+		
+        int offset = 0;
+        String offsetString = myGetParameter(OFFSET_PARAMETER);
+        if (offsetString != null && !offsetString.equals("")) {
+            offset = Integer.parseInt(offsetString);
+		}
 
         String formname = myGetParameter(FORMNAME);
         String handle = myGetParameter(HANDLE);
@@ -329,7 +349,7 @@ public class Home extends BasePO {
                 this.setPreference(HEADWORD_PARAMETER, headword, false);
             }
             // If there is a query, executing it
-            return performAndDisplayQuery(resources, volume, sourceLanguage, originalTargetLanguage, targetLanguages, Headwords, strategy, handle, xslid, formname, this.getUser());
+            return performAndDisplayQuery(resources, volume, sourceLanguage, originalTargetLanguage, targetLanguages, Headwords, strategy, handle, xslid, formname, this.getUser(), offset);
         } else {
             // If there is no query, ie connection for the first time, adding the Home content
             return createHomeContent();
@@ -384,7 +404,7 @@ public class Home extends BasePO {
      * @exception  javax.xml.transform.TransformerException        Description
      *      of the Exception
      */
-    protected Node performAndDisplayQuery(String[] resources, String volume, String source, String originalTarget, String[] targets, String[] Headwords, int strategy, String handle, String xslid, String formname, User user)
+    protected Node performAndDisplayQuery(String[] resources, String volume, String source, String originalTarget, String[] targets, String[] Headwords, int strategy, String handle, String xslid, String formname, User user, int offset)
              throws PapillonBusinessException,
             ClassNotFoundException,
             HttpPresentationException,
@@ -402,7 +422,7 @@ public class Home extends BasePO {
         } else if (null != volume) {
             EntryCollection =  (Collection) VolumeEntriesFactory.getVolumeNameEntriesVector(volume, null, Headwords, strategy);
         } else {
-            EntryCollection = DictionariesFactory.getDictionariesEntriesCollection(resources, source, targets, Headwords, strategy, null, null, null, null, null, user);
+            EntryCollection = DictionariesFactory.getDictionariesEntriesCollection(resources, source, targets, Headwords, strategy, null, null, null, null, null, user,offset);
 
             QueryLogging = true;
         }
@@ -448,7 +468,7 @@ public class Home extends BasePO {
         if (EntryCollection != null && EntryCollection.size() > 0) {
             if (EntryCollection.size() > DictionariesFactory.MaxDisplayedEntries) {
                 Utility.removeElement(content.getElementVolumeEntriesTable());
-                addEntryTable(content, EntryCollection, originalTarget, strategy);
+                addEntryTable(content, EntryCollection, source, originalTarget, strategy, offset);
             } else {
                 Utility.removeElement(content.getElementEntryListTable());
                 addFewEntries(content, EntryCollection, xslid);
@@ -476,7 +496,7 @@ public class Home extends BasePO {
      * @exception  java.io.UnsupportedEncodingException  Description of the
      *      Exception
      */
-    protected void addEntryTable(ConsultXHTML content, Collection EntryCollection, String target, int strategy)
+    protected void addEntryTable(ConsultXHTML content, Collection EntryCollection, String source, String target, int strategy, int offset)
              throws PapillonBusinessException,
             java.io.UnsupportedEncodingException {
 
@@ -500,6 +520,9 @@ public class Home extends BasePO {
         XHTMLTableRowElement formulaRow = content.getElementFormulaRow();
         XHTMLElement formulaElement = content.getElementFormula();
 
+		XHTMLElement entryNumberElement = content.getElementEntryNumber();
+		XHTMLAnchorElement previousEntriesAnchor = content.getElementPreviousEntriesAnchor();
+		XHTMLAnchorElement nextEntriesAnchor = content.getElementNextEntriesAnchor();
         //      we don't take off the id attribute because we will take the element off later...
         //      entryListRow.removeAttribute("id");
         vocable.removeAttribute("id");
@@ -509,12 +532,36 @@ public class Home extends BasePO {
         contribAnchor.removeAttribute("id");
         dictname.removeAttribute("id");
         formulaElement.removeAttribute("id");
+        entryNumberElement.removeAttribute("id");
+        previousEntriesAnchor.removeAttribute("id");
+        nextEntriesAnchor.removeAttribute("id");
+		
+		content.setTextEntryNumber(""+EntryCollection.size());
+		
+		
+        String href = this.getUrl() + "?"
+			+ HEADWORD_PARAMETER + "=" + headword + "&"
+			+ serializeParameterForUrl(RESOURCES_PARAMETER, resources)
+			+ SOURCE_PARAMETER + "=" + source + "&"
+            + TARGETS_PARAMETER + "=" + target + "&"
+            + PartialMatch_PARAMETER + "=" + partialMatch + "&"
+            + LOOKUP_PARAMETER + "=" + LOOKUP_PARAMETER + "&"
+			+ OFFSET_PARAMETER + "=";
+		if (offset >= DictionariesFactory.MaxRetrievedEntries) {
+			int prevOffset = offset-DictionariesFactory.MaxRetrievedEntries;
+			previousEntriesAnchor.setHref(href+prevOffset);
+		}
+		else {
+			previousEntriesAnchor.setHref("");
+			content.setTextPreviousEntriesAnchor("");			
+		}
+		int nextOffset = offset+DictionariesFactory.MaxRetrievedEntries;
+		nextEntriesAnchor.setHref(href+nextOffset);
 
         // On récupère le noeud contenant la table...
         Node lexieTable = entryListRow.getParentNode();
         if (null != EntryCollection) {
             for (Iterator myIterator = EntryCollection.iterator(); myIterator.hasNext(); ) {
-                String href;
                 IAnswer myEntry = (IAnswer) myIterator.next();
 
                 // Le vocable
