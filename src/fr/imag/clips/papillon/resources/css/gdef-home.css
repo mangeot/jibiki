@@ -32,8 +32,20 @@ body {
 	background: white;
 }
 
+/*--------------------------------------*/
+/* For the editor */
+/*--------------------------------------*/
+TD.block {
+  /*  display: block; */
+    border-style: solid;
+    border-width: 1px;
+ /*   border-spacing: 5px; i*/
+    border-color: black;
+}
 
+/*--------------------------------------*/
 /* Columns */
+/*--------------------------------------*/
 
 .menuColumn {
    float: left;

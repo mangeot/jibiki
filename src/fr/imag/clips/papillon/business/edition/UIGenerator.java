@@ -486,6 +486,12 @@ public class UIGenerator {
 				if (name !=null && name.equals(correspName)) {
 					currentElt.setAttribute("name", newId);
 					currentElt.setAttribute("id", newId);
+					NodeList children = currentElt.getChildNodes();
+					int j=0;
+					while (j<children.getLength()) {
+						currentElt.removeChild(children.item(j));
+						j++;
+					}
 					org.w3c.dom.Text textElt = currentElt.getOwnerDocument().createTextNode(value);
 					currentElt.appendChild(textElt);
 					found = true;

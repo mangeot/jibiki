@@ -6,6 +6,9 @@
  * ---------------------------------------------------
  *
  * $Log$
+ * Revision 1.5  2005/01/15 18:36:12  mangeot
+ * Added the block border for the editor and the hack for the textarea bug
+ *
  * Revision 1.4  2005/01/15 17:43:19  mangeot
  * Added cvs Id and Log on the files
  * 
@@ -265,7 +268,9 @@ pre.userMessage {
     background: #DFDFDF;
 }
 
+/*--------------------------------------*/
 /* General */
+/*--------------------------------------*/
 
 h1 {
     font-family: Helvetica, Arial, sans-serif;
@@ -315,7 +320,9 @@ A:hover {
 A.hide {text-decoration: none}
 
 
+/*--------------------------------------*/
 /* For DEC-like entries */
+/*--------------------------------------*/
 .actor {
 	color: #00C6FF;
 }
@@ -335,7 +342,20 @@ A.hide {text-decoration: none}
 	}
 
 
+/*--------------------------------------*/
+/* For the editor */
+/*--------------------------------------*/
+TD.block {
+  /*  display: block; */
+    border-style: solid;
+    border-width: 1px;
+ /*   border-spacing: 5px; i*/
+    border-color: black;
+}
+
+/*--------------------------------------*/
 /* Language Styles */
+/*--------------------------------------*/
 
 /* The lang attribute with CSS2 :lang function */
 :lang(ar)       {font-family: "Traditional Arabic", serif; font-size: 1.2em;}
