@@ -10,6 +10,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2005/01/14 23:08:13  mangeot
+ * Fixed some bugs in ConsultExpert + code cleaning
+ *
  * Revision 1.2  2004/12/24 14:31:28  mangeot
  * I merged the latest developments of Papillon5.0 with this version 5.1.
  * Have to be tested more ...
@@ -131,8 +134,6 @@ public class UserProfile extends BasePO {
                 newpassword = myGetParameter(content.NAME_NewPassword);
                 newpassword2 = myGetParameter(content.NAME_NewPassword2);
                 
-                //System.out.println(login);
-
                 UserAnswer myUserAnswer = UsersFactory.changeUserPassword(login, password, newpassword, newpassword2);
                 if (!myUserAnswer.IsEmpty()) {
                     this.setUser(myUserAnswer.getUser());

@@ -79,7 +79,6 @@ public class GenerateTemplate {
 				myVolume.setXmuVisualisation(itfString);
 				myVolume.save();
 				//	PapillonLogger.writeDebugMsg("interface template generated: ");
-				//	System.out.println(itfString);
 			} catch (java.io.IOException ex) {
 				throw new PapillonBusinessException ("IOException in generateInterfaceTemplate ", ex);
 			} 

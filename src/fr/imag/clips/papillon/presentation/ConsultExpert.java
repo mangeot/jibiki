@@ -10,6 +10,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.4  2005/01/14 23:08:13  mangeot
+ *  Fixed some bugs in ConsultExpert + code cleaning
+ *
  *  Revision 1.3  2004/12/24 14:31:28  mangeot
  *  I merged the latest developments of Papillon5.0 with this version 5.1.
  *  Have to be tested more ...
@@ -643,7 +646,7 @@ public class ConsultExpert extends BasePO {
             UnsupportedEncodingException {
 
         // Content creation
-        content = (ConsultExpertXHTML) MultilingualXHtmlTemplateFactory.createTemplate("ConsultXExpertXHTML", this.getComms(), this.getSessionData());
+        content = (ConsultExpertXHTML) MultilingualXHtmlTemplateFactory.createTemplate("ConsultExpertXHTML", this.getComms(), this.getSessionData());
 
         // On regarde d'abord les parametres qui nous sont demandes.
         String submit = myGetParameter(content.NAME_lookup);
@@ -658,11 +661,6 @@ public class ConsultExpert extends BasePO {
         resources = myGetParameterValues(content.NAME_RESOURCES);
         originalResources = resources;
         String volume = myGetParameter(VOLUME_PARAMETER);
-        if (volume != null && !volume.equals("")) {
-            this.setPreference(VOLUME_PARAMETER, volume);
-        } else {
-            volume = this.getPreference(VOLUME_PARAMETER);
-        }
 
         search1 = myGetParameter(content.NAME_search1);
         if (search1 != null && !search1.equals("")) {
