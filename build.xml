@@ -424,20 +424,20 @@ Most useful targets:
   <!-- =================================================================== -->
   <target name="gdeftest">
   <!-- test if the htmlbackup directory exists -->
-  	<available file="${xmlcresources.dir}/htmlbackup" type="dir" property="htmlbackup.exists"/>
+  	<available file="${xmlcresources.dir}/xhtmlbackup" type="dir" property="xhtmlbackup.exists"/>
   </target>
-  <target name="gdefbefore" depends="gdeftest" unless="htmlbackup.exists">
-    <copy todir="${xmlcresources.dir}/htmlbackup" overwrite="false" preservelastmodified="true">
-  	  	<fileset dir="${xmlcresources.dir}/html"/>
+  <target name="gdefbefore" depends="gdeftest" unless="xhtmlbackup.exists">
+	  <copy todir="${xmlcresources.dir}/xhtmlbackup" overwrite="false" preservelastmodified="true">
+  	  	<fileset dir="${xmlcresources.dir}/xhtml"/>
   	</copy>
-  	<copy todir="${xmlcresources.dir}/html" overwrite="true" preservelastmodified="true">
-   		 <fileset dir="${xmlcresources.dir}/htmlgdef"/>
+  	<copy todir="${xmlcresources.dir}/xhtml" overwrite="true" preservelastmodified="true">
+   		 <fileset dir="${xmlcresources.dir}/xhtmlgdef"/>
  	</copy>
   </target>
 		 
-  <target name="gdefafter" depends="gdeftest" if="htmlbackup.exists">
- 	<move todir="${xmlcresources.dir}/html" overwrite="true" preservelastmodified="true">
-  	  <fileset dir="${xmlcresources.dir}/htmlbackup"/>
+  <target name="gdefafter" depends="gdeftest" if="xhtmlbackup.exists">
+ 	<move todir="${xmlcresources.dir}/xhtml" overwrite="true" preservelastmodified="true">
+  	  <fileset dir="${xmlcresources.dir}/xhtmlbackup"/>
   	</move>
   </target>
 		 
