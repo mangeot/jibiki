@@ -9,8 +9,12 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.1  2004/12/06 16:38:31  serasset
- * Initial revision
+ * Revision 1.2  2005/01/18 09:41:11  mangeot
+ * Recoded the countRows method with a new method that appeared with DODS 5.1
+ *
+ * Revision 1.1.1.1  2004/12/06 16:38:31  serasset
+ * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
+ * There are still bugs in the code.
  *
  * Revision 1.12  2004/02/12 14:45:02  mangeot
  * Added history directly in the entries
@@ -539,17 +543,7 @@ public class Volume {
 			}
 
     public int countEntries() throws PapillonBusinessException {
-        int entries = -1;
-        String dbname = this.getDbname();
-        if (null != dbname && !dbname.equals("")) {
-            try {
-                entries = ManageDatabase.countRows(dbname);
-            }
-            catch (java.sql.SQLException ex) {
-                throw new fr.imag.clips.papillon.business.PapillonBusinessException("Error in Volume.countEntries: ",ex);
-            }
-        }
-        return entries;
+        return VolumeEntriesFactory.getCount(this);
     }
     
 

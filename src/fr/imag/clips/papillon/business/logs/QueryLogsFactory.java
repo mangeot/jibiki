@@ -3,8 +3,12 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.1  2004/12/06 16:38:31  serasset
- * Initial revision
+ * Revision 1.2  2005/01/18 09:41:11  mangeot
+ * Recoded the countRows method with a new method that appeared with DODS 5.1
+ *
+ * Revision 1.1.1.1  2004/12/06 16:38:31  serasset
+ * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
+ * There are still bugs in the code.
  *
  * Revision 1.1  2003/02/03 05:44:30  mangeot
  * *** empty log message ***
@@ -112,16 +116,22 @@ public class QueryLogsFactory {
 
     public static int countEntries() throws PapillonBusinessException {
         int entries = -1;
-	QueryLog dummyLog = new QueryLog();
-        String dbname = dummyLog.getTableName();
-        if (null != dbname && !dbname.equals("")) {
-            try {
-                entries = ManageDatabase.countRows(dbname);
-            }
-            catch (java.sql.SQLException ex) {
-                throw new fr.imag.clips.papillon.business.PapillonBusinessException("Error in QueryLogsFactory.countEntries: ",ex);
-            }
-        }
+		QueryLogQuery myQLQuery = new QueryLogQuery();
+		try {
+			entries = myQLQuery.getCount();
+		}
+		catch (com.lutris.appserver.server.sql.DatabaseManagerException ex) {
+			throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Error in QueryLogsFactory.countEntries: ", ex);
+		}			
+		catch (java.sql.SQLException ex) {
+			throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Error in QueryLogsFactory.countEntries: ", ex);
+		}			
+		catch (com.lutris.dods.builder.generator.query.DataObjectException ex) {
+			throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Error in QueryLogsFactory.countEntries: ", ex);
+		}			
+		catch (com.lutris.dods.builder.generator.query.NonUniqueQueryException ex) {
+			throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Error in QueryLogsFactory.countEntries: ", ex);
+		}
         return entries;
     }
     

@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2005/01/18 09:41:11  mangeot
+ * Recoded the countRows method with a new method that appeared with DODS 5.1
+ *
  * Revision 1.2  2004/12/24 14:31:28  mangeot
  * I merged the latest developments of Papillon5.0 with this version 5.1.
  * Have to be tested more ...
@@ -651,6 +654,28 @@ public class VolumeEntriesFactory {
                 throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in emptyVolumeEntries with volume: " + volume, e);
             }
         }
+
+	public static int getCount(Volume myVolume) 
+        throws fr.imag.clips.papillon.business.PapillonBusinessException {
+		int count = -1;
+		try {
+                VolumeEntryQuery query = new VolumeEntryQuery(myVolume.getDbname());
+				count = query.getCount();
+		}
+		catch (com.lutris.appserver.server.sql.DatabaseManagerException e) {
+			throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in getCount with volume: " + myVolume.getName(), e);
+		}			
+		catch (java.sql.SQLException e) {
+			throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in getCount with volume: " + myVolume.getName(), e);
+		}			
+		catch (com.lutris.dods.builder.generator.query.DataObjectException e) {
+			throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in getCount with volume: " + myVolume.getName(), e);
+		}			
+		catch (com.lutris.dods.builder.generator.query.NonUniqueQueryException e) {
+			throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in getCount with volume: " + myVolume.getName(), e);
+		}			
+		return count;
+	}
 
 	public static void createVolumeTables(Volume volume)
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
