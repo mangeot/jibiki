@@ -92,13 +92,13 @@
         StringBuffer updateStmt = new StringBuffer();
         PreparedStatement stmt = null;
         if (isDeletedFromDatabase)
-            throw new SQLException("<xsl:value-of select="TABLE_NAME"/> ("
+            throw new SQLException(this.dbtablename + " ("
 					+get_OId()+") is already deleted, "
 					+"cannot lock it.");
 
         param = new int[1]; param[0] = 1;
         try {
-            updateStmt.append(&quot;Update <xsl:value-of select="TABLE_NAME"/> set &quot;);
+            updateStmt.append(&quot;Update &quot; + this.dbtablename + &quot; set &quot;);
             updateStmt.append(get_versionColumnName()).append(&quot; = ? &quot;);
             updateStmt.append(&quot; where <xsl:value-of select="dodst:updateWhereClause()"/>&quot;);
 
@@ -140,7 +140,7 @@
         data.set_Version(get_Version()+1);
         param = new int[1]; param[0] = 1;
         try {
-            updateStmt.append(&quot;Update <xsl:value-of select="TABLE_NAME"/> set &quot;);
+            updateStmt.append(&quot;Update &quot; + this.dbtablename + &quot; set &quot;);
             updateStmt.append(get_versionColumnName()).append(&quot; = ? &quot;);
 
 </xsl:if>

@@ -25,7 +25,7 @@
             throw new SQLException("Object "+get_OId()+" is already deleted");
 
         PreparedStatement stmt = conn.prepareStatement(  
-            &quot;insert into <xsl:value-of select="TABLE_NAME"/> ( <xsl:value-of select="dodst:insertColumnNames()"/> )&quot; +
+            &quot;insert into &quot; + this.dbtablename + &quot; ( <xsl:value-of select="dodst:insertColumnNames()"/> )&quot; +
             &quot;values ( <xsl:value-of select="dodst:insertQuestionMarks()"/> )&quot; 
         );
 

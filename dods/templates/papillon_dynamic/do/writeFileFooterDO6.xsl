@@ -30,16 +30,16 @@
         String sql="";
         if(isDeleteCheckVersion())
             sql =<xsl:if test="DO_IS_OID_BASED='true'">
-            &quot;delete from <xsl:value-of select="TABLE_NAME"/> \n&quot; +
+            &quot;delete from &quot; + this.dbtablename + &quot; \n&quot; +
             &quot;where &quot; + get_OIdColumnName() + &quot; = ? and &quot; + get_versionColumnName() + &quot; = ?&quot;;</xsl:if>
 <xsl:if test="DO_IS_OID_BASED='false'">
-            &quot;delete from <xsl:value-of select="TABLE_NAME"/> where <xsl:value-of select="dodst:updateWhereClause()"/>&quot;;</xsl:if>
+            &quot;delete from &quot; + this.dbtablename + &quot; where <xsl:value-of select="dodst:updateWhereClause()"/>&quot;;</xsl:if>
         else    
             sql =<xsl:if test="DO_IS_OID_BASED='true'">
-            &quot;delete from <xsl:value-of select="TABLE_NAME"/> \n&quot; +
+            &quot;delete from &quot; + this.dbtablename + &quot;\n&quot; +
             &quot;where &quot; + get_OIdColumnName() + &quot; = ?&quot;;</xsl:if>
 <xsl:if test="DO_IS_OID_BASED='false'">
-            &quot;delete from <xsl:value-of select="TABLE_NAME"/> where <xsl:value-of select="dodst:updateWhereClause()"/>&quot;;</xsl:if>
+            &quot;delete from &quot; + this.dbtablename + &quot; where <xsl:value-of select="dodst:updateWhereClause()"/>&quot;;</xsl:if>
         PreparedStatement stmt = conn.prepareStatement(sql);<xsl:if test="DO_IS_OID_BASED='true'">
         stmt.setBigDecimal(1, get_OId().toBigDecimal());</xsl:if>
         if(isDeleteCheckVersion()) {
