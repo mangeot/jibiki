@@ -18,6 +18,7 @@
         </layout>    
     </appender>
     <appender name="Console" class="org.apache.log4j.ConsoleAppender">
+        <param name="Threshold" value="INFO"/>
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d{ISO8601}: %c,%p,: %m%n"/>
         </layout>    
@@ -28,16 +29,6 @@
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d{ISO8601}: [%t], %p, %c: %m%n"/>
         </layout>    
-    </appender>
-    <appender name="XMLOutFormat" class="org.apache.log4j.FileAppender">
-        <param name="File" value="@DEPLOY_PATH@/chainsaw.log"/>
-        <param name="append" value="false"/>
-        <layout class="org.apache.log4j.xml.XMLLayout"/>
-    </appender>
-    <appender name="CHAINSAW_CLIENT" class="org.apache.log4j.net.SocketAppender">
-        <param name="RemoteHost" value="localhost"/>
-        <param name="Port" value="4445"/>
-        <param name="LocationInfo" value="true"/>
     </appender>
     <logger name="REQUEST">
         <appender-ref ref="ACCESS"/>
@@ -50,11 +41,5 @@
         <appender-ref ref="ROLL"/> 
         <appender-ref ref="ACCESS"/> 
         <appender-ref ref="Console"/>      
-<!--
-         
-        <appender-ref ref="EventViewer"/> 
-        <appender-ref ref="XMLOutFormat"/>
-        <appender-ref ref="CHAINSAW_CLIENT"/> 
--->
     </root> 
 </log4j:configuration>
