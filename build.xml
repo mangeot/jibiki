@@ -435,7 +435,11 @@ Most useful targets:
  	</copy>
   </target>
 		 
-  <target name="gdefafter" depends="gdeftest" if="xhtmlbackup.exists">
+  <target name="gdefretest">
+  <!-- test if the htmlbackup directory exists -->
+  	<available file="${xmlcresources.dir}/xhtmlbackup" type="dir" property="newxhtmlbackup.exists"/>
+  </target>
+  <target name="gdefafter" depends="gdefretest" if="newxhtmlbackup.exists">
  	<move todir="${xmlcresources.dir}/xhtml" overwrite="true" preservelastmodified="true">
   	  <fileset dir="${xmlcresources.dir}/xhtmlbackup"/>
   	</move>
