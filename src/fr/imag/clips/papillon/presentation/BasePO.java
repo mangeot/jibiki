@@ -9,6 +9,10 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.4  2005/01/14 22:33:57  mangeot
+ *  Fixed the BasePO.setSelected
+ *  It seems that the enhydra setSelectedIndex does not work any more with enhydra5.1
+ *
  *  Revision 1.3  2004/12/24 14:31:28  mangeot
  *  I merged the latest developments of Papillon5.0 with this version 5.1.
  *  Have to be tested more ...
@@ -788,7 +792,9 @@ public abstract class BasePO implements HttpPresentation {
             int i = 0;
             while (i < myCollection.getLength()) {
                 if (((XHTMLOptionElement) myCollection.item(i)).getValue().equals(myValue)) {
-                    mySelect.setSelectedIndex(i);
+                   // This method does not work any more with enhydra5.1...
+				   // mySelect.setSelectedIndex(i);
+					((XHTMLOptionElement) myCollection.item(i)).setSelected(true);
                     break;
                 }
                 i++;

@@ -9,6 +9,10 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.3  2005/01/14 22:33:57  mangeot
+ *  Fixed the BasePO.setSelected
+ *  It seems that the enhydra setSelectedIndex does not work any more with enhydra5.1
+ *
  *  Revision 1.2  2004/12/24 08:57:44  serasset
  *  Premiere version de l'interface avec fond papillon et transparence.
  *
@@ -287,6 +291,7 @@ public class StdLayout {
         if (!sessionData.getClientWithLabelDisplayProblems()) {
             BasePO.setUnicodeLabels(langSelectElement);
         }
+		BasePO.setSelected(langSelectElement, sessionData.getUserPreferredLanguage());
 
         LangAndUserXHTML userMenu = (LangAndUserXHTML) MultilingualXHtmlTemplateFactory.createTemplate("LangAndUserXHTML", comms, sessionData);
         // I add the LangSelectElement in the menu
