@@ -10,8 +10,13 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.1  2004/12/06 16:38:42  serasset
- * Initial revision
+ * Revision 1.2  2004/12/24 14:31:28  mangeot
+ * I merged the latest developments of Papillon5.0 with this version 5.1.
+ * Have to be tested more ...
+ *
+ * Revision 1.1.1.1  2004/12/06 16:38:42  serasset
+ * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
+ * There are still bugs in the code.
  *
  * Revision 1.4  2004/02/10 05:27:15  mangeot
  * The version UIGEN_V2 has been merged with the trunk by MM
@@ -101,7 +106,6 @@ import fr.imag.clips.papillon.business.dictionary.*;
 import fr.imag.clips.papillon.business.transformation.XslTransformation;
 import fr.imag.clips.papillon.business.user.User;
 import fr.imag.clips.papillon.business.utility.Utility;
-import fr.imag.clips.papillon.business.xmlschema.XmlSchemaFactory;
 
 
 public class EditAxie extends BasePO {

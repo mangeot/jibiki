@@ -4,31 +4,13 @@
 *$Id$
 *------------------------------------------
 *$Log$
-*Revision 1.1  2004/12/06 16:38:32  serasset
-*Initial revision
+*Revision 1.2  2004/12/24 14:31:28  mangeot
+*I merged the latest developments of Papillon5.0 with this version 5.1.
+*Have to be tested more ...
 *
-*Revision 1.12  2004/05/17 15:38:59  mangeot
-*Added links for bilingual direct dictionaries type GDEF
-*
-*Revision 1.11  2004/05/11 16:15:47  serasset
-*The database now bear a <?xml instruction in the beginning of newly created
-*files.Hence, when building a fake Papillon entry 1 source -> n targets, each
-*translation is preceded by an invalid instruction. Hence the entry could not
-*be parsed for Xsl transformation. As a result, Papillon returned a null pointer
-*exception. Fixed with a hack that suppress the instruction directly in the xml
-*code when the fake entry is built.
-*
-*Revision 1.10  2004/03/15 09:21:07  mangeot
-**** empty log message ***
-*
-*Revision 1.9  2004/02/12 15:55:48  mangeot
-*Added functionnalities for the GDEF
-*
-*Revision 1.8  2004/02/10 05:27:14  mangeot
-*The version UIGEN_V2 has been merged with the trunk by MM
-*Be careful because the Volumes and contributions database tables have been modified.
-*You have to drop and rebuild them unless you modify them by hands.
-*
+*Revision 1.1.1.1  2004/12/06 16:38:32  serasset
+*Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
+*There are still bugs in the code.
 *
 *--------------------------------------
 */
@@ -653,12 +635,12 @@ public class Utility {
                 
 /*                //pour l encodage
                 Node [] encodeDef=encodingDefList(myDoc);
-                PapillonLogger.writeDebugMsg(encodeDef.length+" encodage a modifié");
+                PapillonLogger.writeDebugMsg(encodeDef.length+" encodage a modifiÈ");
                 for(int j=0;j<encodeDef.length;j++)
                 {   
                     Node curDef=encodeDef[j];                
-                    PapillonLogger.writeDebugMsg("encodage précédent :"+curDef.getNodeValue());
-                    PapillonLogger.writeDebugMsg("encodage modifié");
+                    PapillonLogger.writeDebugMsg("encodage prÈcÈdent :"+curDef.getNodeValue());
+                    PapillonLogger.writeDebugMsg("encodage modifiÈ");
 
                     curDef.setNodeValue("text/html; charset=utf-8");
                     PapillonLogger.writeDebugMsg("nouvel encodage :"+curDef.getNodeValue());
@@ -855,28 +837,8 @@ public class Utility {
      */
     public static String convertToUrlForEncoding(String str, String encoding) throws java.io.UnsupportedEncodingException {
 
-        byte[] theBytestream = str.getBytes(encoding);
-        return java.net.URLEncoder.encode(new String(theBytestream));
+        return java.net.URLEncoder.encode(str,encoding);
     }
-
-		/**
-     * converts a table of Strings for writing an URL
-     *
-     * @return a String
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-     *   error).
-     */
-	public static String serializeParameterForUrl(String parameter, String[] table)  throws java.io.UnsupportedEncodingException {
-		String result = "";
-		if (table != null) {
-			for (int i=0;i<table.length;i++) {
-				result += parameter + "=" + convertToUrlForEncoding(table[i], "UTF-8") + "&";
-			}
-		}
-		return result;
-	}
-
 
 		/**
      * normalize all spaces into only one space character

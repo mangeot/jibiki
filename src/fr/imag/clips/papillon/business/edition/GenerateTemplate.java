@@ -28,7 +28,6 @@ public class GenerateTemplate {
 	
 	protected final static String DefaultEncoding = "UTF-8";
 	
-	
 	protected final static String xmlHeader = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
 		"<html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:d=\"http://www-clips.imag.fr/geta/services/dml\">\n" +
 		"<head>\n" +
@@ -165,10 +164,15 @@ public class GenerateTemplate {
 			String elementName = declaration.getName();
 			// discard history and modifications tags
 			if (!elementName.equals(HistoryTag)) {		
-				interfaceBuffer.write("<" + UIGenerator.ITF_ELT_NAME + " " + UIGenerator.ITF_ATTR_NAME  + "=\"" + elementName + "\">" + "\n");			
-				
+				interfaceBuffer.write("<" + UIGenerator.ITF_ELT_NAME + " " + UIGenerator.ITF_ATTR_NAME  + "=\"" + elementName + "\">" + "\n");
 				if (elementType==GenerateTemplate.LIST_ELEMENT) {
-					interfaceBuffer.write("<input name=\"" + UIGenerator.SELECT_ATTR_NAME + "\" type=\"checkbox\" value=\"" + elementName + "\" />\n");
+					interfaceBuffer.write("  <tr bgcolor='#ffebdc'>\n");
+					interfaceBuffer.write("    <td align='center' valign='top' width='25'>\n");
+					interfaceBuffer.write("		 <a name=\"" + elementName + "\">");
+					interfaceBuffer.write("<input name=\"" + UIGenerator.SELECT_ATTR_NAME + "\" type=\"checkbox\" value=\"" + elementName + "\" />");
+					interfaceBuffer.write("</a>\n");
+					interfaceBuffer.write("    </td>\n");
+					interfaceBuffer.write("    <td  align='center' valign='top'  class='block'>\n");
 				}
 				else if (elementType==GenerateTemplate.CHOICE_ELEMENT) {
 					interfaceBuffer.write("<label for=\"" + elementName + "\">"+ elementName + ":</label>\n");
@@ -189,7 +193,7 @@ public class GenerateTemplate {
 					parseSimpleTypeDeclaration (interfaceBuffer,(XSSimpleTypeDefinition) baseType,elementName);
 				}
 				else if (baseType instanceof XSComplexTypeDefinition) {
-					interfaceBuffer.write("  <blockquote>\n");	
+					//	interfaceBuffer.write("  <blockquote>\n");	
 					PapillonLogger.writeDebugMsg("Complex type definition");
 					complexType = (XSComplexTypeDefinition) baseType; 
 					
@@ -208,36 +212,37 @@ public class GenerateTemplate {
 							}
 						}
 					}
-					
+					XSSimpleTypeDefinition simpleTypeDefinition;
 					switch (complexType.getContentType ()) {
 						case XSComplexTypeDefinition.CONTENTTYPE_SIMPLE:
-							PapillonLogger.writeDebugMsg ("************************CONTENTTYPE_SIMPLE" );
+				//			PapillonLogger.writeDebugMsg ("************************CONTENTTYPE_SIMPLE" );
 							/* SimpleContent */
-							XSSimpleTypeDefinition simpleTypeDefinition = complexType.getSimpleType ();
+							simpleTypeDefinition = complexType.getSimpleType ();
 							if (simpleTypeDefinition != null) {
-								PapillonLogger.writeDebugMsg ("PB in constructComplexType: a simpleTypeDefinition not managed: " + simpleTypeDefinition);
+								parseSimpleTypeDeclaration (interfaceBuffer,simpleTypeDefinition,elementName);
+								//PapillonLogger.writeDebugMsg ("PB in constructComplexType: a simpleTypeDefinition not managed: " + simpleTypeDefinition);
 							}
-								break;
+							break;
 							
 						case XSComplexTypeDefinition.CONTENTTYPE_MIXED:
-							PapillonLogger.writeDebugMsg ("************************CONTENTTYPE_MIXED" );
+					//		PapillonLogger.writeDebugMsg ("************************CONTENTTYPE_MIXED" );
 							particle = complexType.getParticle ();
-							/* Case where there are not element. In this case I simmulate the mixed contentType
-							as a string */
+							/* Case where there are no child elements */
 							if (particle == null) {
-							}
-								else {
-									particle = complexType.getParticle ();
-									if (particle != null) {
-										if (!(particle instanceof XSParticleDecl)) {
-											PapillonLogger.writeDebugMsg ("-------- PB in constructComplexType: particle have a bad type.");
-										}
-										else {
-											//					attribute = constructAttributeFromParticle ((XSParticleDecl) particle);
-										}
-									}
+								simpleTypeDefinition = complexType.getSimpleType ();
+								if (simpleTypeDefinition != null) {
+									parseSimpleTypeDeclaration (interfaceBuffer,simpleTypeDefinition,elementName);
 								}
-								break;
+								else {
+									// I simulate the content as a string
+									addStringTypeDefinition(interfaceBuffer, elementName);
+								}
+							}
+							else {
+								// I simulate the content as a string
+								addStringTypeDefinition(interfaceBuffer, elementName);
+							}
+							break;
 							
 						case XSComplexTypeDefinition.CONTENTTYPE_ELEMENT:
 							//	PapillonLogger.writeDebugMsg ("************************CONTENTTYPE_ELEMENT" );
@@ -249,33 +254,40 @@ public class GenerateTemplate {
 									// PapillonLogger.writeDebugMsg ("XSModelGroup ");
 									modelGroup = (XSModelGroup) term;
 									if (modelGroup.getCompositor()==XSModelGroup.COMPOSITOR_SEQUENCE) {
-										//	PapillonLogger.writeDebugMsg ("Compositor sequence");
+										PapillonLogger.writeDebugMsg ("Compositor sequence");
 										XSObjectList myList = modelGroup.getParticles();
 										for (int j=0;j<myList.getLength();j++) {
 											XSParticle tempParticle = (XSParticle)myList.getItem(j);
 											term = tempParticle.getTerm();
 											int newTypeElement = DEFAULT_ELEMENT;
-											if (tempParticle.getIsMaxOccursUnbounded()) {
+											if (tempParticle.getIsMaxOccursUnbounded() && term.getName()!=null) {
 												// list	
-												interfaceBuffer.write("  List of " +  term.getName() + "s:\n");
-												interfaceBuffer.write("  <input name=\"" + elementName + "\" onclick=\"this.form.AddCall.value='" + ((XSElementDeclaration) term).getName() + UIGenerator.PARAMETERS_SEPARATOR + "\" type=\"submit\" value=\"+\" />\n");
-												interfaceBuffer.write("  <input name=\"" + elementName + "\" onclick=\"this.form.DelCall.value='" + ((XSElementDeclaration) term).getName() + UIGenerator.PARAMETERS_SEPARATOR + "\" type=\"submit\" value=\"-\" />\n");
-												interfaceBuffer.write("  <br />\n");
-												PapillonLogger.writeDebugMsg(" list element: " + ((XSElementDeclaration) term).getName());
+												interfaceBuffer.write("<table align='center' border='0' cellpadding='5' cellspacing='2' summary='List of " + term.getName() + "s' width='100%'>\n");
+												interfaceBuffer.write("  <tr bgcolor='#fbbe78'>\n");
+												interfaceBuffer.write("    <td align='center' width='25'>\n");
+												interfaceBuffer.write("      <input name='" + elementName + "' onclick=\"this.form.AddCall.value='" + term.getName() + UIGenerator.PARAMETERS_SEPARATOR + "\" type=\"submit\" value=\"+\" />\n");
+												interfaceBuffer.write("      <input name='" + elementName + "' onclick=\"this.form.DelCall.value='" + term.getName() + UIGenerator.PARAMETERS_SEPARATOR + "\" type=\"submit\" value=\"-\" />\n");
+												interfaceBuffer.write("    </td>\n");
+												interfaceBuffer.write("    <th align='center'>List of " +  term.getName() + "s:</th>\n");
+												interfaceBuffer.write("  </tr>\n");
+												PapillonLogger.writeDebugMsg(" list element: " + term.getName());
 												newTypeElement = LIST_ELEMENT;
 											}
 											if (term instanceof XSElementDeclaration) {
 												parseElementDeclaration(interfaceBuffer, volumeName, 
 																		(XSElementDeclaration) term, newTypeElement);
 											}	
+											if (newTypeElement == LIST_ELEMENT) {
+												interfaceBuffer.write("</table>\n");
+											}
 										}																					
 									}
 									else if (modelGroup.getCompositor()==XSModelGroup.COMPOSITOR_CHOICE) {
 										PapillonLogger.writeDebugMsg ("Compositor choice");
 										// choice
 										interfaceBuffer.write("  <span title=\"" +  
-											UIGenerator.CHOICE_NODE_NAME + UIGenerator.PARAMETERS_SEPARATOR + elementName
-											+ "\">\n");
+															  UIGenerator.CHOICE_NODE_NAME + UIGenerator.PARAMETERS_SEPARATOR + elementName
+															  + "\">\n");
 										interfaceBuffer.write("  Choice for " +  elementName + ":\n");
 										interfaceBuffer.write("  <input name=\"" + elementName + "\" onclick=\"this.form.ChooseCall.value='" + elementName + UIGenerator.PARAMETERS_SEPARATOR + "\" type=\"submit\" value=\"||\" />\n");
 										interfaceBuffer.write("  <br />\n</span>\n");
@@ -307,10 +319,13 @@ public class GenerateTemplate {
 							/* Complex type definied only with attibutes */
 							break;
 		}
-					interfaceBuffer.write("  </blockquote>\n");	
+					//				interfaceBuffer.write("  </blockquote>\n");	
 	}
 				if (elementType==GenerateTemplate.CHOICE_ELEMENT) {
-					interfaceBuffer.write("</span>\n");
+					interfaceBuffer.write("</" + UIGenerator.ITF_ELT_NAME + ">\n");	
+				}
+				else if (elementType==GenerateTemplate.LIST_ELEMENT) {
+					interfaceBuffer.write("    </td>\n  </tr>\n");
 				}
 				interfaceBuffer.write("</" + UIGenerator.ITF_ELT_NAME + ">\n");	
 		}
@@ -354,4 +369,12 @@ public class GenerateTemplate {
 				}
 			}
 	
+		
+	protected static void addStringTypeDefinition(BufferedWriter interfaceBuffer, String elementName) 
+		throws java.io.IOException {
+			interfaceBuffer.write("  <label for=\"" + elementName + "\" >" + elementName + ":</label>\n");	
+			interfaceBuffer.write("    <input name=\"" + elementName + "\" type=\"text\" value=\"\" />" + "\n");			
+			interfaceBuffer.write("<br />\n");			
 		}
+		
+	}

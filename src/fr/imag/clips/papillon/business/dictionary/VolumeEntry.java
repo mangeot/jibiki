@@ -9,8 +9,13 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.1  2004/12/06 16:38:31  serasset
- * Initial revision
+ * Revision 1.2  2004/12/24 14:31:28  mangeot
+ * I merged the latest developments of Papillon5.0 with this version 5.1.
+ * Have to be tested more ...
+ *
+ * Revision 1.1.1.1  2004/12/06 16:38:31  serasset
+ * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
+ * There are still bugs in the code.
  *
  * Revision 1.12  2004/10/28 10:38:11  mangeot
  * Fixed some bugs that affected the dictd server
@@ -33,10 +38,6 @@ package fr.imag.clips.papillon.business.dictionary;
 
 import java.util.Locale;
 import java.util.Vector;
-
-import org.apache.regexp.RE;
-import org.apache.regexp.ReaderCharacterIterator;
-import org.apache.regexp.RESyntaxException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -537,14 +538,8 @@ public class VolumeEntry implements IAnswer {
 	
 	protected String[] getIndexArray() throws PapillonBusinessException {
 		String indexString = this.getHeadwordString() + this.getPronunciationString() + this.getReadingString() + this.getTranslationString() + this.getKey1String() + this.getKey2String();
-			 try {
-					org.apache.regexp.RE myRegExp = new org.apache.regexp.RE("#");
-					return myRegExp.split(indexString);
-				}
-				catch(RESyntaxException ex) {
-					throw new PapillonBusinessException("Error building the regular expression volumeEntry", ex);
-				}
-	}
+		return indexString.split("#");	 
+		}
 	
 	public Vector getIndexVector()  throws PapillonBusinessException {
 		Vector myVect = new Vector();
@@ -619,6 +614,30 @@ public class VolumeEntry implements IAnswer {
 			}
 			return myValues;
 		}
+	
+	
+    /**
+     * getParticule
+     *
+	 * function specific for the GDEF dictionary
+	 * retrives the value of the <particule> tag.
+	 * 
+     * @exception PapillonBusinessException if an error occurs
+     *   replacing data (usually due to an underlying data layer
+	 *   error).
+     */
+	 public String getParticule() throws fr.imag.clips.papillon.business.PapillonBusinessException {
+		String res = "";
+		
+		if (getTableName().equals("gdefest")) {
+			String tmp = getValue(Utility.buildDOMTree(getXmlCode()),"particule",null);
+			if (tmp!=null) {
+				res = tmp;
+			}
+		}
+		
+		return res;
+	 }
 	
 	
     /**

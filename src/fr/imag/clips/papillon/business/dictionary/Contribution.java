@@ -9,8 +9,25 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.1  2004/12/06 16:38:31  serasset
- * Initial revision
+ * Revision 1.2  2004/12/24 14:31:28  mangeot
+ * I merged the latest developments of Papillon5.0 with this version 5.1.
+ * Have to be tested more ...
+ *
+ * Revision 1.1.1.1  2004/12/06 16:38:31  serasset
+ * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
+ * There are still bugs in the code.
+ *
+ * Revision 1.9  2004/11/19 15:14:31  mangeot
+ * Modified these sources in order to use a specific sort function in the database.
+ * The lexicographic order depends on the language, thus I wrote a special function for sorting words.
+ * In order to use this function, I had to add a column in the contributions table. This column is called sourcelanguage and is used to store the source language of the contrib.
+ * Old papillon databases have to be updated this way:
+ *
+ * alter table contributions add sourcelanguage varchar(255);
+ * update contributions set sourcelanguage=volumes.sourcelanguage where volumes.name=contributions.volume;
+ * alter table contributions alter sourcelanguage set not null;
+ *
+ * and the sql script src/sql/multilingual_sort.sql has to be loaded into the database!
  *
  * Revision 1.6  2004/10/16 09:47:47  mangeot
  * New mechanism for reviewing the contributions:
@@ -33,15 +50,12 @@ import java.util.Vector;
 
 import fr.imag.clips.papillon.data.*;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
+import fr.imag.clips.papillon.business.user.User;
 import fr.imag.clips.papillon.business.utility.Utility;
 
 import com.lutris.appserver.server.sql.DatabaseManagerException;
 import com.lutris.appserver.server.sql.ObjectIdException;
 import com.lutris.dods.builder.generator.query.DataObjectException;
-
-/* for regular expressions */
-import org.apache.regexp.RE;
-import org.apache.regexp.RESyntaxException;
 
 
 /**
@@ -54,9 +68,6 @@ public class Contribution {
 		public final static String REVISED_STATUS = "revised";
 		public final static String VALIDATED_STATUS = "validated";
 		public final static String INTEGRATED_STATUS = "integrated";
-
-		protected static final String GROUPS_SEPARATOR_STRING = "#";
-
 
     /**
      * The DO of the Dictionary.
@@ -151,13 +162,7 @@ public class Contribution {
                 String[] Groups = null;
                 String groups = getGroups();
                 if (null != groups && !groups.equals("")){
-                    org.apache.regexp.RE myRegExp = null;
-                    try {
-                        myRegExp = new org.apache.regexp.RE(GROUPS_SEPARATOR_STRING);
-                    } catch(RESyntaxException ex) {
-                        throw new PapillonBusinessException("Error building the regular expression in getGroupsArray", ex);
-                    }
-                    Groups = myRegExp.split(groups);
+                    Groups = groups.split(User.GROUPS_SEPARATOR_STRING);
                 }
                 return Groups;
             }
@@ -185,7 +190,7 @@ public class Contribution {
                 String groups = null;
                 if (null != groups && Groups.length >0) {
                     for (int i=0; i< Groups.length; i++) {
-                        groups = groups + GROUPS_SEPARATOR_STRING + Groups[i];
+                        groups = groups + User.GROUPS_SEPARATOR_STRING + Groups[i];
                     }
                 }
                 groups.trim();
@@ -216,6 +221,33 @@ public class Contribution {
                 throw new PapillonBusinessException("Error setting contribution's volume", ex);
             }
         }
+
+    /**
+        * Gets the source language of the contribution
+     *
+     * @return the subject.
+     * @exception PapillonBusinessException if an error occurs
+     *   retrieving data (usually due to an underlying data layer
+                          *   error).
+     */
+    public String getSourceLanguage()
+        throws PapillonBusinessException {
+            try {
+                return myDO.getSourceLanguage();
+            } catch(DataObjectException ex) {
+                throw new PapillonBusinessException("Error getting contribution's source language", ex);
+            }
+        }
+
+    public void setSourceLanguage(String lang)
+        throws PapillonBusinessException {
+            try {
+                myDO.setSourceLanguage(lang);
+            } catch(DataObjectException ex) {
+                throw new PapillonBusinessException("Error setting contribution's source language", ex);
+            }
+        }
+
     /**
         * Gets the headword of the volume
      *

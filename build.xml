@@ -16,12 +16,16 @@ Build Instructions:
 
 Most useful targets:
 
- - make     -> create ./output (default)
- - rebuild  -> create ./output from scratch
+ - make     -> create ./output and compile everything
+ - quick    -> create .output without using DODS, should be called only when
+               dods files have already been processed.
+ - dods     -> invoke dods to create and compile DODS generated java classes.
+ - rebuild  -> create ./output from scratch (clean + make)
  - clean    -> remove all files from ./classes and ./output
  - compile  -> compile source to ./classes with javac and xmlc
  - javadocs -> creates the javadocs in "./output/javadocs"
-
+ - gdef     -> create ./output for GDEF server
+ - gquick   -> create ./output for GDEF server without using DODS.
 
 
 ==================================================================== -->
@@ -45,7 +49,6 @@ Most useful targets:
   <property name="enhydra.root"  value="/library/java/extensions/enhydra5.1"/>
   <property name="enhydra.home"  value="/library/java/extensions/enhydra5.1"/>
   <property name="enhydra.dir"   location="/library/java/extensions/enhydra5.1"/>
-  <property name="regexp.dir"    location="/library/java/extensions/jakarta-regexp-1.2"/>
   <property name="dir.temp"      location="build" />
   <property name="dir.classes"   location="${dir.temp}/classes"/>
   <property name="dir.input"     location="input"/>
@@ -163,6 +166,8 @@ Most useful targets:
  - clean    -> remove all files from ./classes and ./output
  - compile  -> compile source to ./classes with javac and xmlc
  - javadocs -> creates the javadocs in "./output/javadocs"
+ - gdef     -> create ./output for GDEF server
+ - gquick   -> create ./output for GDEF server without using DODS.
 
     </echo>
   </target>
@@ -172,7 +177,7 @@ Most useful targets:
   <!-- Create output                                                       -->
   <!-- =================================================================== -->
   <target name="make" depends="archive,output" />
-  <target name="quick" depends="quick_archive,output" />
+  <target name="quick" depends="xmlc,quick_archive,output" />
 
   <!-- =================================================================== -->
   <!-- Create output from scratch (no javadoc)                             -->
@@ -287,7 +292,7 @@ Most useful targets:
   <!-- Compile the java source                                             -->
   <!-- =================================================================== -->
   <target name="compile" depends="dods, xmlc, compile_sources" />
-	<target name="compile_sources" depends=""> 
+  <target name="compile_sources" depends=""> 
 
 <!--  <property name="compile_classpath" refid="javac.classpath"/>
   <echo message="Classpath is ${compile_classpath}"/> -->
@@ -339,8 +344,6 @@ Most useful targets:
      <filter token="XERCES_LIB"  value="${papillon.xerces.jar}" />
      <filter token="XMLAPI_LIB"  value="${papillon.xmlapi.jar}" />
      <filter token="PGSQL_JDBC_DRIVER" value="${papillon.pgsql.jar}" />
-     <filter token="REGEXP_LIB" value="${papillon.regexp.jar}" />
-     <filter token="UIGENERATOR_LIB" value="${papillon.uigenerator.jar}" />
      <filter token="CONCEPTS_LIB" value="${papillon.concepts.jar}" />
      <!--filter token="JSSE_LIB" value="${papillon.jsse.jar}" /-->
      <!-- /Papillon-specific filters -->
@@ -387,7 +390,7 @@ Most useful targets:
   <!-- =================================================================== -->
   <target name="archive" depends="prepare, compile, quick_archive"/>
   
-  <target name="quick_archive" depends="prepare,compile_sources">
+  <target name="quick_archive" depends="prepare,xmlc,compile_sources">
  		<mkdir dir="${dir.lib}/tmp" />
  		<copy todir="${dir.lib}/tmp" includeEmptyDirs="false">
  					<fileset dir="${dir.classes}" 
@@ -415,6 +418,32 @@ Most useful targets:
               doctitle="${project.name}"
               bottom="Copyright (c); ${project.year}"/>
   </target>
+
+ <!-- =================================================================== -->
+  <!-- Special targets for GDEF project									   -->
+  <!-- =================================================================== -->
+  <target name="gdeftest">
+  <!-- test if the htmlbackup directory exists -->
+  	<available file="${xmlcresources.dir}/htmlbackup" type="dir" property="htmlbackup.exists"/>
+  </target>
+  <target name="gdefbefore" depends="gdeftest" unless="htmlbackup.exists">
+    <copy todir="${xmlcresources.dir}/htmlbackup" overwrite="false" preservelastmodified="true">
+  	  	<fileset dir="${xmlcresources.dir}/html"/>
+  	</copy>
+  	<copy todir="${xmlcresources.dir}/html" overwrite="true" preservelastmodified="true">
+   		 <fileset dir="${xmlcresources.dir}/htmlgdef"/>
+ 	</copy>
+  </target>
+		 
+  <target name="gdefafter" depends="gdeftest" if="htmlbackup.exists">
+ 	<move todir="${xmlcresources.dir}/html" overwrite="true" preservelastmodified="true">
+  	  <fileset dir="${xmlcresources.dir}/htmlbackup"/>
+  	</move>
+  </target>
+		 
+  <target name="gdef" depends="gdefbefore,make,gdefafter"/>
+  
+  <target name="gquick" depends="gdefbefore,quick,gdefafter"/>
 
   <!-- =================================================================== -->
   <!-- Clean everything                                                    -->

@@ -10,8 +10,13 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.1  2004/12/06 16:38:42  serasset
- * Initial revision
+ * Revision 1.2  2004/12/24 14:31:28  mangeot
+ * I merged the latest developments of Papillon5.0 with this version 5.1.
+ * Have to be tested more ...
+ *
+ * Revision 1.1.1.1  2004/12/06 16:38:42  serasset
+ * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
+ * There are still bugs in the code.
  *
  * Revision 1.4  2004/10/28 10:56:21  mangeot
  * Added the list of connected users on AdminUsers.java,
@@ -157,6 +162,15 @@ public class UserProfile extends BasePO {
 								this.setUser(myUserAnswer.getUser());
 							}
 							userMessage = myUserAnswer.getMessage();
+            }
+			
+						/* Deleting a user from a group */
+            if (null != myGetParameter(content.NAME_DelGroup)) {
+							group = myGetParameter(content.NAME_Group);
+							groupPassword = myGetParameter(content.NAME_GroupPassword);
+
+						UserAnswer myUserAnswer = UsersFactory.removeUserFromGroup(this.getUser(), group, groupPassword);
+						userMessage = myUserAnswer.getMessage();
             }
 						
 						/* Deleting a user */

@@ -3,8 +3,13 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.1  2004/12/06 16:38:31  serasset
- * Initial revision
+ * Revision 1.2  2004/12/24 14:31:28  mangeot
+ * I merged the latest developments of Papillon5.0 with this version 5.1.
+ * Have to be tested more ...
+ *
+ * Revision 1.1.1.1  2004/12/06 16:38:31  serasset
+ * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
+ * There are still bugs in the code.
  *
  * Revision 1.3  2003/09/03 10:08:29  mangeot
  * reorganizing imports and using eclipse
@@ -68,8 +73,6 @@ import java.util.TreeSet;
 
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 
-
-
 /**
 * Used to manage wrappers.
  */
@@ -119,17 +122,10 @@ public class WrappersFactory {
 
 		public static String[] getXRCEAnalyzerAnswers(String response)
     throws fr.imag.clips.papillon.business.PapillonBusinessException {
-        org.apache.regexp.RE spaceRegExp = null;
         String[] Array = null;
         String[] ArrayResponse = null;
         int offset;
-        try {
-            spaceRegExp = new org.apache.regexp.RE("[:space:]");
-            //          myRegExp = new org.apache.regexp.RE("¥n");
-        } catch(Exception ex) {
-            throw new PapillonBusinessException("Error building the regular expression in parseXRCEAnalyzerResponse", ex);
-        }
-        Array = spaceRegExp.split(response);
+        Array = response.split("\\s");
         TreeSet mySet = new TreeSet();
         String word;
         

@@ -97,4 +97,11 @@
 
 <xsl:template match="d:space">&nbsp;</xsl:template>
 
+ <xsl:template name="alternated-row">
+        <xsl:attribute name="class">
+            <xsl:if test="position() mod 2 = 1">oddrow</xsl:if>
+            <xsl:if test="position() mod 2 = 0">evenrow</xsl:if>
+        </xsl:attribute>
+</xsl:template>
+
 </xsl:stylesheet> 

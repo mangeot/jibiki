@@ -9,8 +9,13 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.1  2004/12/06 16:38:42  serasset
- * Initial revision
+ * Revision 1.2  2004/12/24 14:31:28  mangeot
+ * I merged the latest developments of Papillon5.0 with this version 5.1.
+ * Have to be tested more ...
+ *
+ * Revision 1.1.1.1  2004/12/06 16:38:42  serasset
+ * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
+ * There are still bugs in the code.
  *
  * Revision 1.8  2004/10/28 10:56:21  mangeot
  * Added the list of connected users on AdminUsers.java,
@@ -99,9 +104,6 @@ import fr.imag.clips.papillon.business.user.User;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
-// for user interface
-import fr.imag.clips.papillon.business.xmlschema.UserInterface;
-
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 
 
@@ -122,7 +124,6 @@ public class PapillonSessionData {
     protected StringBuffer userMessage = null;
     protected ArrayList acceptLanguages = new ArrayList();
     protected boolean ClientWithLabelDisplayProblems = false;
-	protected UserInterface editLexieUserInterface = null;
 	protected Hashtable PreferencesTable = null;
     
     public PapillonSessionData(User myUser, ArrayList userAcceptLanguage, String requestHeader)
@@ -165,15 +166,6 @@ public class PapillonSessionData {
         this.ClientWithLabelDisplayProblems = (requestHeader.indexOf("MSIE") > 0
                                                 || requestHeader.indexOf("iCab") > 0);
     }	
-    
-    public UserInterface getEditLexieUserInterface() {
-        return this.editLexieUserInterface;
-    }
-    
-    public void setEditLexieUserInterface(UserInterface newUserInterface) {
-			this.editLexieUserInterface = newUserInterface;
-    }
-
     /**
         * Sets the person object
      *

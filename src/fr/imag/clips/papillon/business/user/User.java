@@ -9,8 +9,13 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.1  2004/12/06 16:38:32  serasset
- * Initial revision
+ * Revision 1.2  2004/12/24 14:31:28  mangeot
+ * I merged the latest developments of Papillon5.0 with this version 5.1.
+ * Have to be tested more ...
+ *
+ * Revision 1.1.1.1  2004/12/06 16:38:32  serasset
+ * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
+ * There are still bugs in the code.
  *
  * Revision 1.8  2004/10/30 10:26:06  mangeot
  * Fixed bug at init
@@ -119,9 +124,6 @@ import com.lutris.appserver.server.sql.DatabaseManagerException;
 import com.lutris.appserver.server.sql.ObjectIdException;
 import com.lutris.dods.builder.generator.query.DataObjectException;
 
-/* for regular expressions */
-import org.apache.regexp.*;
-
 /* for XML management */
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -136,12 +138,12 @@ public class User implements com.lutris.appserver.server.user.User {
     public final static String SPECIALIST_GROUP = "specialist";
     public final static String VALIDATOR_GROUP = "validator";
     public final static String KEY_SEP = "?";
+    public final static String GROUPS_SEPARATOR_STRING = "#";
 
     protected final static String PASSWORD_STRING = "Papillon.Users.Groups.Password";
     protected final static String PASSWORD_ENCODING = "US-ASCII";
     protected final static String PASSWORD_DIGEST = "SHA";
     protected final static int PASSWORD_DIGEST_LENGTH = 30;
-    protected final static String GROUPS_SEPARATOR_STRING = "#";
 	
 	protected final static String USER_TAG = "user";
 	protected final static String PREFERENCES_TAG = "preferences";
@@ -351,13 +353,11 @@ public class User implements com.lutris.appserver.server.user.User {
 			String[] Groups = null;
 			String groups = getGroups();
 			if (null != groups && !groups.equals("")){
-				org.apache.regexp.RE myRegExp = null;
-				try {
-					myRegExp = new org.apache.regexp.RE(GROUPS_SEPARATOR_STRING);
-				} catch(RESyntaxException ex) {
-					throw new PapillonBusinessException("Error building the regular expression in getGroupsArray", ex);
+			// delete the first separator in order to avoid an empty group
+				if (groups.indexOf(GROUPS_SEPARATOR_STRING) ==0) {
+					groups = groups.substring(GROUPS_SEPARATOR_STRING.length());
 				}
-				Groups = myRegExp.split(groups);
+				Groups = groups.split(GROUPS_SEPARATOR_STRING);
 			}
 			return Groups;
 		}
@@ -466,6 +466,30 @@ public class User implements com.lutris.appserver.server.user.User {
 			return answer;
 		}
 	
+	
+	public boolean IsInNormalGroups(String[] groups) 
+		throws PapillonBusinessException {
+			boolean answer = false;
+			String[] myGroups = this.getGroupsArray();			
+			if (myGroups != null && myGroups.length>0
+				&& groups !=null && groups.length>0) {
+				int i=0;
+				while (!answer && i<myGroups.length) {
+					String myGroup = myGroups[i];
+					if (!myGroup.equals(ADMIN_GROUP) &&
+						!myGroup.equals(SPECIALIST_GROUP) &&
+						!myGroup.equals(VALIDATOR_GROUP)) {
+						int j=0;
+						while (!answer && j<groups.length) {
+							answer = myGroup.equals(groups[j]);
+							j++;
+						}
+					}
+					i++;
+				}
+			}
+			return answer;
+		}
 	
 	public boolean IsInGroup(String group)
 		throws PapillonBusinessException {

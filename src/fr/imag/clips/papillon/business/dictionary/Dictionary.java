@@ -9,8 +9,13 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.1  2004/12/06 16:38:31  serasset
- * Initial revision
+ * Revision 1.2  2004/12/24 14:31:28  mangeot
+ * I merged the latest developments of Papillon5.0 with this version 5.1.
+ * Have to be tested more ...
+ *
+ * Revision 1.1.1.1  2004/12/06 16:38:31  serasset
+ * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
+ * There are still bugs in the code.
  *
  * Revision 1.5  2004/02/10 05:27:12  mangeot
  * The version UIGEN_V2 has been merged with the trunk by MM
@@ -30,9 +35,8 @@ import com.lutris.appserver.server.sql.DatabaseManagerException;
 import com.lutris.appserver.server.sql.ObjectIdException;
 import com.lutris.dods.builder.generator.query.DataObjectException;
 
-/* for regular expressions */
-import org.apache.regexp.*;
 import java.util.Vector;
+
 
 /**
  * Represents a Dictionary. 
@@ -42,7 +46,7 @@ public class Dictionary {
      * The DO of the Dictionary.
      */
     protected DictionaryDO myDO = null;
-
+	
     /**
      * The public constructor.
      */
@@ -209,13 +213,7 @@ public class Dictionary {
 		
 		public String[] getSourceLanguagesArray()
 			throws PapillonBusinessException {
-        try {
-					org.apache.regexp.RE myRegExp = new org.apache.regexp.RE("[:space:]");
-					return myRegExp.split(getSourceLanguages());
-				}
-				catch(RESyntaxException ex) {
-					throw new PapillonBusinessException("Error building the regular expression in Dictionary.getTargetLanguages", ex);
-				}
+					return getSourceLanguages().split("\\s");
 			}
 
 		public void setSourceLanguages(String sources) 
@@ -237,15 +235,8 @@ public class Dictionary {
         }
 			}
 
-		public String[] getTargetLanguagesArray() 
-        throws PapillonBusinessException {
-        try {
-					org.apache.regexp.RE myRegExp = new org.apache.regexp.RE("[:space:]");
-					return myRegExp.split(getTargetLanguages());
-				}
-					catch(RESyntaxException ex) {
-						throw new PapillonBusinessException("Error building the regular expression in Dictionary.getTargetLanguages", ex);
-					}
+		public String[] getTargetLanguagesArray() throws PapillonBusinessException {
+			return getTargetLanguages().split("\\s");
     }
 		
 	 public void setTargetLanguages(String targets) 

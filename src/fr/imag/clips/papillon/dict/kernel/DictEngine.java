@@ -68,6 +68,9 @@ public class DictEngine implements IDictEngine {
 				else if (view.equals(IDictEngine.HTML_view)) {
 					res = XslTransformation.applyXslSheetsAndSerialize(entry);
 				}
+				else {
+					res = entry.getXmlCode();
+				}
 			}
 			else { 
 				res = entry.getXmlCode();

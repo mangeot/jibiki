@@ -9,6 +9,10 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.3  2004/12/24 14:31:28  mangeot
+ *  I merged the latest developments of Papillon5.0 with this version 5.1.
+ *  Have to be tested more ...
+ *
  *  Revision 1.2  2004/12/24 08:57:44  serasset
  *  Premiere version de l'interface avec fond papillon et transparence.
  *
@@ -21,183 +25,6 @@
  *  Added the possibility to sort in columns for some pages
  *  Added persistent preferences for the user. They are saved in the database and retrived when the user reconnects. The user is registered in the enhydra session.
  *
- *  Revision 1.13  2004/09/18 17:26:20  mangeot
- *  *** empty log message ***
- *
- *  Revision 1.12  2004/02/10 05:27:15  mangeot
- *  The version UIGEN_V2 has been merged with the trunk by MM
- *  Be careful because the Volumes and contributions database tables have been modified.
- *  You have to drop and rebuild them unless you modify them by hands.
- *
- *  Revision 1.11.2.2  2004/01/22 05:36:05  mangeot
- *  Improving accessibility for non javascripts enabled users and added confirmations for javacsripts enabled browsers
- *
- *  Revision 1.11.2.1  2004/01/08 15:17:21  mangeot
- *  Bugs fixed
- *
- *  Revision 1.11  2003/11/20 05:34:23  mangeot
- *  Bug fixes in the parameters
- *
- *  Revision 1.10  2003/10/11 02:59:15  mangeot
- *  *** empty log message ***
- *
- *  Revision 1.9  2003/10/03 05:34:09  mangeot
- *  *** empty log message ***
- *
- *  Revision 1.8  2003/08/20 08:15:39  mangeot
- *  *** empty log message ***
- *
- *  Revision 1.7  2003/08/14 08:30:16  mangeot
- *  Important CVS commit
- *  Attention, if you checkout this version, you must empty and
- *
- *  for their work on the editor.
- *  Important CVS commit
- *  Attention, if you checkout this version, you must empty and
- *  relaod all your database because the database schema has been modified a lot.
- *  The entries must be relaoded, the users also
- *  Merging between the stable branch and the development branch done by MM
- *  and David Thevenin for their work on the editor.
- *  It means a lot of improvements for this commit.
- *  Furthermore, the internal structure of the database has been modified in order
- *  to use index in separate db table when there is a query for an entry.
- *
- *  Revision 1.6  2003/06/24 09:05:42  serasset
- *  The user is now correctly redirected to the LoginUser.po page when a login is required.
- *
- *  Revision 1.5  2003/06/04 15:37:46  serasset
- *  Mise en place de la nouvelle version de la gestion des utilisateurs.
- *
- *  Revision 1.4.2.3  2003/07/31 04:30:50  mangeot
- *  *** empty log message ***
- *
- *  Revision 1.4.2.2  2003/06/30 13:25:27  mangeot
- *  *** empty log message ***
- *
- *  Revision 1.4.2.1  2003/05/28 09:17:21  mangeot
- *  Changement du copyright sur les fichiers
- *
- *  Revision 1.4  2003/01/10 08:11:57  mangeot
- *  Problem with labels and UTF-8 fixed for internet explorer and icab
- *  Problem with language identification fixed eg: en-US
- *
- *  Revision 1.3  2003/01/09 09:38:59  mangeot
- *  Testing the browser for label display problems
- *
- *  Revision 1.2  2002/12/09 08:32:02  mangeot
- *  Added a permanent cookie for indentification when reconnection
- *
- *  Revision 1.1.1.1  2002/10/28 16:49:16  serasset
- *  Creation of the papillon CVS repository for enhydra 5.0
- *
- *  Revision 1.23  2002/10/25 14:10:34  mangeot
- *  merge between PAPILLON_1_4 and trunk
- *  CVg: 	papillon-enh-src/docs/Bugs-papillon.rtf
- *
- *  Revision 1.22.2.1  2002/10/23 09:51:12  serasset
- *  Clean up of the source tree,
- *  Every source file is now encoded in ISO-Latin-1,
- *  Every html file is still encoded in UTF8.
- *
- *  Revision 1.22  2002/09/16 13:34:23  mangeot
- *  Merged DEV and DEPLOY versions + added Olivier Tache code
- *
- *  Revision 1.21  2002/08/16 11:42:33  tache
- *  Now the <body> of an HTML document is placed in a <div> tag when the
- *  document is visualized.
- *
- *  Revision 1.20.2.6  2002/09/12 09:45:33  mangeot
- *  Modified HTML in order to query the server with Sherlock plugin
- *
- *  Revision 1.20.2.5  2002/08/08 09:11:57  mangeot
- *  New Home page with simplified interface a lot of work
- *  + localization in german
- *
- *  Revision 1.20.2.4  2002/08/02 13:55:49  mangeot
- *  Corrected the encoding problem while connection to the XRCE analyzers
- *
- *  Revision 1.20.2.3  2002/08/02 08:25:10  mangeot
- *  Replaced PAGENAME variable by this.getUrl() method
- *
- *  Revision 1.20.2.2  2002/08/02 08:12:22  mangeot
- *  *** empty log message ***
- *
- *  Revision 1.20.2.1  2002/08/01 10:52:10  mangeot
- *  added the language shift directly into BasePo
- *  Modified the consult html
- *  added the login user into stdlayout
- *
- *  Revision 1.20  2002/07/26 10:00:23  serasset
- *  Merging deplyement branch "PAPILLON_1_2_DEPLOY" with the main branch.
- *
- *  Revision 1.19  2002/07/10 09:53:07  serasset
- *  The Users is now redirected to his initial destination after login.
- *
- *  Revision 1.18.2.3  2002/07/12 13:50:43  serasset
- *  A new architecture for HTML template localization has been integrated.
- *
- *  Revision 1.18.2.2  2002/07/09 08:32:59  serasset
- *  Corrected a cross dependancy issue between LoginUser and BasePO.
- *
- *  Revision 1.18.2.1  2002/07/08 16:43:32  serasset
- *  The Login page now redirects the user to the originaly requested page after a successful log in.
- *
- *  Revision 1.18  2002/06/12 14:44:39  serasset
- *  Corrected bug in MailingList.po (with getacceptLanguage)
- *
- *  Revision 1.17  2002/06/10 13:26:02  mangeot
- *  Continued the localization, added the lang string into the session data
- *
- *  Revision 1.16  2002/06/10 11:07:57  mangeot
- *  I began to implement the localization but very rapidly ...
- *
- *  Revision 1.15  2002/05/23 16:14:41  mangeot
- *  Adding admin group for presentation pages
- *
- *  Revision 1.14  2002/05/22 08:56:19  mangeot
- *  MML added user login and register:
- *  LoginUser.po RegisterUser.po AdminUsers.po
- *
- *  Revision 1.13  2002/05/07 10:31:22  mangeot
- *  The UTF-8 consultation is now OK,
- *  I tested with omniweb, iexplorer and netscape latests versions on macosX
- *
- *  Revision 1.12  2002/05/02 16:31:01  serasset
- *  myUrlencode and myGetParameter added. These method allows the encoding/decoding of UTF-8
- *  strings for/from CGI parameters.
- *
- *  Revision 1.11  2002/04/26 11:33:36  serasset
- *  MailingList managment and interface polished. Insertion of a new feature to display
- *  messages to the user from most business objects (PapillonUserLogger class).
- *
- *  Revision 1.10  2002/03/11 11:13:55  mangeot
- *  *** empty log message ***
- *
- *  Revision 1.9  2001/11/15 15:15:53  serasset
- *  *** empty log message ***
- *
- *  Revision 1.8  2001/08/07 13:11:48  salvati
- *  Adding ant.jar for untar tools.
- *
- *  Revision 1.7  2001/07/27 14:41:15  salvati
- *  Adding the possibility to Upload A File...
- *
- *  Revision 1.6  2001/07/25 12:48:38  salvati
- *  Adding StyleSheet choice in the standard consultation view with a menu on the right.
- *
- *  Revision 1.5  2001/07/18 12:35:31  serasset
- *  Version demontree pendant les journees papillon 2001. Integration de la partie XML/XSL dans la BD.
- *
- *  Revision 1.4  2001/07/10 10:15:49  serasset
- *  Integration de xalan.
- *  getContent retourne un NOde et non plus un HTMLElement.
- *
- *  Revision 1.3  2001/07/05 15:53:09  salvati
- *  integration d un mot et changement de HTMLElement en Node
- *
- *  Revision 1.2  2001/07/04 12:50:50  serasset
- *  Creation du dossier CVS pour Papillon, Mise a jour de fichiers pour inclusion du log
- *  et de l'Id, suppression du dossier enh-deme introduit par erreur.
  *
  *  -----------------------------------------------
  *  Abstract class implementing the Base layout of all presentations.
@@ -692,28 +519,34 @@ public abstract class BasePO implements HttpPresentation {
 
 
     /**
-     *  Method to write a debugging message to the debug log channel when the
-     *  DEBUG flag is turned on
+     *  Method 
      *
-     * @param  str                                       Description of the
-     *      Parameter
-     * @return                                           Description of the
-     *      Return Value
-     * @exception  java.io.UnsupportedEncodingException  Description of the
-     *      Exception
+     * @param  str 
+     * @return
+	 * @exception  java.io.UnsupportedEncodingException 
+	 */
+
+	public static String myUrlEncode(String str) throws java.io.UnsupportedEncodingException {
+		return java.net.URLEncoder.encode(str, "UTF-8");
+	}
+
+   /**
+     * converts a table of Strings for writing an URL
+     *
+     * @return a String
+     * @exception PapillonBusinessException if an error occurs
+     *   retrieving data (usually due to an underlying data layer
+     *   error).
      */
-    /*
-     *  public static void writeDebugMsg(String msg) {
-     *  Enhydra.getLogChannel().write(Logger.DEBUG,msg);
-     *  }
-     */
-    public String myUrlEncode(String str) throws java.io.UnsupportedEncodingException {
-
-        byte[] theBytestream = str.getBytes("UTF-8");
-
-        return java.net.URLEncoder.encode(new String(theBytestream));
-    }
-
+	public static String serializeParameterForUrl(String parameter, String[] table)  throws java.io.UnsupportedEncodingException {
+		String result = "";
+		if (table != null) {
+			for (int i=0;i<table.length;i++) {
+				result += parameter + "=" + myUrlEncode(table[i]) + "&";
+			}
+		}
+		return result;
+	}
 
     /**
      *  Description of the Method

@@ -3,8 +3,13 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.1  2004/12/06 16:38:31  serasset
- * Initial revision
+ * Revision 1.2  2004/12/24 14:31:28  mangeot
+ * I merged the latest developments of Papillon5.0 with this version 5.1.
+ * Have to be tested more ...
+ *
+ * Revision 1.1.1.1  2004/12/06 16:38:31  serasset
+ * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
+ * There are still bugs in the code.
  *
  * Revision 1.4  2004/10/28 10:38:11  mangeot
  * Fixed some bugs that affected the dictd server
@@ -304,14 +309,14 @@ public class PapillonPivotFactory {
 
     public static Collection findAxiesByLexieID(Dictionary dict, String lexieId, User myUser)
     throws PapillonBusinessException {
-		Hashtable axiesTable = null;
+		Vector axiesTable = null;
 		Collection axiesCollection = null;
 		//FIXME:  Here there should be some generic code
 		// in order to find the name of the pivot volume in a pivot dictionary
 		if (dict.getName().equals(DICTNAME)) {
 		//	Papillon_axi
 			Volume myVolume = VolumesFactory.findVolumeByName(VOLUMENAME);
-			axiesTable = IndexFactory.getAxiesHashtable(dict, myVolume,lexieId);
+			axiesTable = IndexFactory.getAxiesVector(dict, myVolume,lexieId);
 			axiesCollection = ContributionsFactory.checkContributions(myUser, axiesTable);
 			}
 		return axiesCollection;
@@ -337,9 +342,9 @@ public class PapillonPivotFactory {
         }
 			// Is it necessary to check if the user is authorized to see the lexie ?
 			//myCollection = ContributionsFactory.checkContributions(myUser, myEntryTable);
-				myCollection = myEntryTable.values();
-        return myCollection;
-			}
+		myCollection = myEntryTable.values();
+		return myCollection;
+	}
 			            
     public static Axie newAxie(Dictionary dict, Volume volume, String id, String xmlCode, String semanticCat, Vector synonyms, Hashtable lexies)
         throws fr.imag.clips.papillon.business.PapillonBusinessException {

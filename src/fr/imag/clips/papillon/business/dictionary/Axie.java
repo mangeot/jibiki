@@ -9,8 +9,13 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.1  2004/12/06 16:38:31  serasset
- * Initial revision
+ * Revision 1.2  2004/12/24 14:31:28  mangeot
+ * I merged the latest developments of Papillon5.0 with this version 5.1.
+ * Have to be tested more ...
+ *
+ * Revision 1.1.1.1  2004/12/06 16:38:31  serasset
+ * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
+ * There are still bugs in the code.
  *
  * Revision 1.6  2004/02/10 05:27:12  mangeot
  * The version UIGEN_V2 has been merged with the trunk by MM
@@ -46,10 +51,6 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-
-/* for regular expressions */
-import org.apache.regexp.RE;
-import org.apache.regexp.RESyntaxException;
 
 /**
  * Represents a Mailing list Dictionary. 
@@ -276,13 +277,7 @@ public class Axie implements IAnswer {
 						String[] Synonyms = null;
 						String synonymsString = getSynonymsString();
 						if (null != synonymsString && !synonymsString.equals("")){
-								org.apache.regexp.RE myRegExp = null;
-								try {
-										myRegExp = new org.apache.regexp.RE(SYNONYMS_SEPARATOR_STRING);
-								} catch(RESyntaxException ex) {
-										throw new PapillonBusinessException("Error building the regular expression in getGroupsArray", ex);
-								}
-								Synonyms = myRegExp.split(synonymsString);
+								Synonyms = synonymsString.split(SYNONYMS_SEPARATOR_STRING);
 						}
 						if (Synonyms !=null && Synonyms.length>0) {
 							for (int i=0;i<Synonyms.length;i++) {

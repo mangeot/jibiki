@@ -9,8 +9,13 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.1  2004/12/06 16:38:42  serasset
- * Initial revision
+ * Revision 1.2  2004/12/24 14:31:28  mangeot
+ * I merged the latest developments of Papillon5.0 with this version 5.1.
+ * Have to be tested more ...
+ *
+ * Revision 1.1.1.1  2004/12/06 16:38:42  serasset
+ * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
+ * There are still bugs in the code.
  *
  * Revision 1.12  2004/10/28 10:44:12  mangeot
  * Added the possibility to sort by columns
@@ -156,18 +161,15 @@ public class ReviewContributions extends BasePO {
 	protected final static int STEP_REMOVE = 4;
 	protected final static int STEP_REVISE = 5;
 	protected final static int STEP_VALIDATE = 6;
-	protected final static int STEP_INTEGRATE = 7;
 
-	protected final static String EditURL="ConsultEdit.po";
-	protected final static String EditVolumeParameter="VOLUME";
-	protected final static String EditHandleParameter="handle";
-	protected final static String EditStepParameter="STEP";
+	protected final static String EditURL="EditEntry.po";
+	protected final static String EditVolumeParameter=EditEntry.VolumeName_PARAMETER;
+	protected final static String EditHandleParameter=EditEntry.EntryHandle_PARAMETER;
 
 	protected final static String VIEW_CONTRIB_PARAMETER="ViewContrib";
 	protected final static String REMOVE_CONTRIB_PARAMETER="RemoveContrib";
 	protected final static String REVISE_CONTRIB_PARAMETER="ReviseContrib";
 	protected final static String VALIDATE_CONTRIB_PARAMETER="ValidateContrib";
-	protected final static String INTEGRATE_CONTRIB_PARAMETER="IntegrateContrib";
 	protected final static String CONTRIBID_PARAMETER="ContribId";
     protected final static String XSLID_PARAMETER="xslid";
     protected final static String SORTBY_PARAMETER="SortBy";
@@ -249,9 +251,6 @@ public class ReviewContributions extends BasePO {
 		else if (null != contribid && null != myGetParameter(VALIDATE_CONTRIB_PARAMETER)) {
 			step = STEP_VALIDATE;
 		}
-		else if (null != contribid && null != myGetParameter(INTEGRATE_CONTRIB_PARAMETER)) {
-			step = STEP_INTEGRATE;
-		}
 
 		String userMessage = null;
 
@@ -300,32 +299,13 @@ public class ReviewContributions extends BasePO {
 				addContributions(volume, author, headword, strategy, sortBy, queryString);
 				break;
 			case STEP_VALIDATE:
-				contribid = myGetParameter(CONTRIBID_PARAMETER);
-				if (contribid !=null && !contribid.equals("") && this.getUser().IsValidator()) {
-					Contribution myContrib = ContributionsFactory.findContributionByHandle(contribid);
-					if (null != myContrib && !myContrib.IsEmpty()
-					&& null != myContrib.getStatus() && myContrib.getStatus().equals(Contribution.REVISED_STATUS)) {
-						VolumeEntry myEntry = VolumeEntriesFactory.findEntryByHandle(myContrib.getVolumeName(),myContrib.getEntryHandle());
-						//Adding modifications in the XML code
-						IAnswerFactory.setModification(myEntry,this.getUser().getLogin(),Contribution.VALIDATED_STATUS);
-						myEntry.save();
-						myContrib.setStatus(Contribution.VALIDATED_STATUS);
-						myContrib.save();
-						userMessage = "Contribution " +  myContrib.getHandle() + " / " +
-						myContrib.getHeadword() + " validated";
-						volume = myContrib.getVolumeName();
-					}
-				}
-				addContributions(volume, author, headword, strategy, sortBy, queryString);
-				break;
-			case STEP_INTEGRATE:
 				if (contribid !=null && !contribid.equals("") && this.getUser().IsValidator()) {
 					Contribution myContrib = ContributionsFactory.findContributionByHandle(contribid);
 					if (null != myContrib && !myContrib.IsEmpty() &&
-						null != myContrib.getStatus() && myContrib.getStatus().equals(Contribution.VALIDATED_STATUS)) {
+						null != myContrib.getStatus() && myContrib.getStatus().equals(Contribution.REVISED_STATUS)) {
 						VolumeEntry myEntry = VolumeEntriesFactory.findEntryByHandle(myContrib.getVolumeName(),myContrib.getEntryHandle());
 						//Adding modifications in the XML code
-						IAnswerFactory.setModification(myEntry,this.getUser().getLogin(),Contribution.INTEGRATED_STATUS);
+						IAnswerFactory.setModification(myEntry,this.getUser().getLogin(),Contribution.VALIDATED_STATUS);
 						if (!myContrib.IsNewEntry()) {
 							VolumeEntry origEntry = VolumeEntriesFactory.findEntryByHandle(myContrib.getVolumeName(),myContrib.getOriginalHandle());
 							origEntry.replaceData(myEntry);
@@ -460,7 +440,7 @@ public class ReviewContributions extends BasePO {
         throws PapillonBusinessException,
         java.io.UnsupportedEncodingException {
 
-            // On récupère les éléments du layout
+            // On rÈcupËre les ÈlÈments du layout
 			
 			HTMLAnchorElement volumeHeader = content.getElementVolumeHeaderAnchor();
 			volumeHeader.setHref(volumeHeader.getHref()+queryString);
@@ -485,7 +465,6 @@ public class ReviewContributions extends BasePO {
             HTMLAnchorElement removeContribAnchor = content.getElementRemoveContribAnchor();
             HTMLAnchorElement reviseContribAnchor = content.getElementReviseContribAnchor();
             HTMLAnchorElement validateContribAnchor = content.getElementValidateContribAnchor();
-            HTMLAnchorElement integrateContribAnchor = content.getElementIntegrateContribAnchor();
             HTMLElement removeMessageElement = content.getElementRemoveMessage();
 
             theDate.removeAttribute("id");
@@ -495,24 +474,34 @@ public class ReviewContributions extends BasePO {
             removeContribAnchor.removeAttribute("id");
             reviseContribAnchor.removeAttribute("id");
             validateContribAnchor.removeAttribute("id");
-            integrateContribAnchor.removeAttribute("id");
             removeMessageElement.removeAttribute("id");
+			
 						
 			String removeMessage = Utility.getText(removeMessageElement);
 
-            // On récupère le noeud contenant la table...
+            // On rÈcupËre le noeud contenant la table...
             Node entryTable = entryListRow.getParentNode();
-						PapillonLogger.writeDebugMsg("addEntryTable " + EntryCollection.size());
-            if (null != EntryCollection) {
-								for(Iterator entriesIterator = EntryCollection.iterator(); entriesIterator.hasNext();) {
+            if (null != EntryCollection && EntryCollection.size()>0) {
+				PapillonLogger.writeDebugMsg("addEntryTable " + EntryCollection.size());
+				content.setTextContributionsCount("" + EntryCollection.size());
+				for(Iterator entriesIterator = EntryCollection.iterator(); entriesIterator.hasNext();) {
                     Contribution myContrib = (Contribution) entriesIterator.next();
                         XslSheet xmlSheet = XslSheetFactory.findXslSheetByName("XML");
                         String xslid = "";
                         if (null != xmlSheet && !xmlSheet.IsEmpty()) {
                             xslid = xmlSheet.getHandle();
-                        } 
-
-                        String headword = myContrib.getHeadword();
+                        } 					
+					// FIXME: hack for the GDEF estonian volume
+						String headword = myContrib.getHeadword();
+						if (myContrib.getVolumeName().equals("GDEF_est")) {
+							VolumeEntry myEntry = VolumeEntriesFactory.findEntryByHandle(myContrib.getVolumeName(),myContrib.getEntryHandle());
+							if (myEntry!=null && !myEntry.IsEmpty()) {
+								String particule = myEntry.getParticule();
+								if(particule!=null && !particule.equals("")) {
+									headword = particule + " " + headword;
+								}
+							}
+						}
                         content.setTextViewContribText(headword);
                         viewContribAnchor.setHref(this.getUrl() + "?"
 												  + VIEW_CONTRIB_PARAMETER + "=on&"
@@ -535,22 +524,23 @@ public class ReviewContributions extends BasePO {
 												
 						// edit contrib
 						// FIXME hack because we cannot reedit yet axies ...
-						if (myContrib.getVolumeName().equals(PapillonPivotFactory.VOLUMENAME)) {
-							content.setTextEditMessage("");
-						}
-						else {
-                        editContribAnchor.setHref(EditURL + "?"
+						if (!myContrib.getVolumeName().equals(PapillonPivotFactory.VOLUMENAME)
+							&& (this.getUser().IsInNormalGroups(myContrib.getGroupsArray())
+							|| this.getUser().IsValidator())) {
+							editContribAnchor.setHref(EditURL + "?"
                                                   + EditVolumeParameter + "="
                                                   + myContrib.getVolumeName() + "&"
                                                   + EditHandleParameter + "="
-                                                  + myContrib.getEntryHandle() + "&"
-												  + EditStepParameter + "="
-												  + ConsultEdit.STEP_EDIT);
+                                                  + myContrib.getEntryHandle());
+						}
+						else {
+							content.setTextEditMessage("");
 						}
 						
 						// remove contrib
 						if (this.getUser().getLogin().equals(myContrib.getAuthor())
-							|| this.getUser().IsInGroups(myContrib.getGroupsArray())) {
+							|| this.getUser().IsInNormalGroups(myContrib.getGroupsArray())
+							|| this.getUser().IsValidator()) {
 							removeContribAnchor.setHref(this.getUrl() + "?"
 								   + REMOVE_CONTRIB_PARAMETER + "=on&"
 								   + CONTRIBID_PARAMETER + "="
@@ -574,7 +564,8 @@ public class ReviewContributions extends BasePO {
 						// action on contrib
 						if (myContrib.getStatus()!=null) {
 							if (myContrib.getStatus().equals(Contribution.FINISHED_STATUS)
-								&& this.getUser().IsSpecialist()) {
+								&& this.getUser().IsSpecialist() 
+								&& this.getUser().IsInNormalGroups(myContrib.getGroupsArray())) {
 								reviseContribAnchor.setHref(this.getUrl() + "?"
 									 + REVISE_CONTRIB_PARAMETER + "=on&"
 									 + CONTRIBID_PARAMETER + "="
@@ -596,18 +587,6 @@ public class ReviewContributions extends BasePO {
 							}
 							else {
 								validateContribAnchor.setAttribute("class","hidden");	 
-							}
-							if (myContrib.getStatus().equals(Contribution.VALIDATED_STATUS)
-								&& this.getUser().IsValidator()) {
-								integrateContribAnchor.setHref(this.getUrl() + "?"
-									 + INTEGRATE_CONTRIB_PARAMETER + "=on&"
-									 + CONTRIBID_PARAMETER + "="
-									 + myContrib.getHandle()
-									 + queryString);
-								integrateContribAnchor.removeAttribute("class");	 
-							}
-							else {
-								integrateContribAnchor.setAttribute("class","hidden");	 
 							}
 						}
                         

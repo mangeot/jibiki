@@ -9,8 +9,13 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.1  2004/12/06 16:38:42  serasset
- * Initial revision
+ * Revision 1.2  2004/12/24 14:31:28  mangeot
+ * I merged the latest developments of Papillon5.0 with this version 5.1.
+ * Have to be tested more ...
+ *
+ * Revision 1.1.1.1  2004/12/06 16:38:42  serasset
+ * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
+ * There are still bugs in the code.
  *
  * Revision 1.4  2004/01/21 11:47:22  serasset
  * Merged Trunk with PAPILLON_DEBUG_FOR_JDK14
@@ -165,7 +170,6 @@ import fr.imag.clips.papillon.business.dictionary.*;
 import fr.imag.clips.papillon.data.*;
 import fr.imag.clips.papillon.business.utility.Utility;
 import fr.imag.clips.papillon.business.transformation.*;
-import fr.imag.clips.papillon.business.xmlschema.XmlSchemaFactory;
 import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 

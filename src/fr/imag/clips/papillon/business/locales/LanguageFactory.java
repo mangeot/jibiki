@@ -9,8 +9,13 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.1  2004/12/06 16:38:31  serasset
- * Initial revision
+ * Revision 1.2  2004/12/24 14:31:28  mangeot
+ * I merged the latest developments of Papillon5.0 with this version 5.1.
+ * Have to be tested more ...
+ *
+ * Revision 1.1.1.1  2004/12/06 16:38:31  serasset
+ * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
+ * There are still bugs in the code.
  *
  * Revision 1.6  2003/09/22 10:17:36  mangeot
  * *** empty log message ***
@@ -143,26 +148,13 @@ public class LanguageFactory {
         ArrayList result = new ArrayList(); 
 
         if (null == languages) return result;
-
-        org.apache.regexp.RE myCommaRegExp = null;
-        org.apache.regexp.RE myDotCommaRegExp = null;
-        try {
-            myCommaRegExp = new org.apache.regexp.RE(",");
-            myDotCommaRegExp = new org.apache.regexp.RE(";");
-        } catch(org.apache.regexp.RESyntaxException ex) {
-            // Problem initializing the reg exp
-            PapillonLogger.writeDebugMsg("Error initializing regular expression for language detection.");
-            PapillonLogger.writeDebugMsg("   -> Check the installation of the Regular Expression matcher package.");
-            return result;
-        }
-
-        String[] languagesArray = myCommaRegExp.split(languages);
+        String[] languagesArray = languages.split(",");
 
         if (null == languagesArray) return result;
 
         for (int i=0; i<languagesArray.length; i++) {
             String lang =  languagesArray[i];
-            String[] langSplit = myDotCommaRegExp.split(lang);
+            String[] langSplit = lang.split(";");
             lang = (null == langSplit || 0 == langSplit.length) ? "" : langSplit[0];
 
             result.add(getISO3LanguageCode(lang));

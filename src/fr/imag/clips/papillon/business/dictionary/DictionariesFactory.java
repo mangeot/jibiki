@@ -3,8 +3,13 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.1  2004/12/06 16:38:31  serasset
- * Initial revision
+ * Revision 1.2  2004/12/24 14:31:28  mangeot
+ * I merged the latest developments of Papillon5.0 with this version 5.1.
+ * Have to be tested more ...
+ *
+ * Revision 1.1.1.1  2004/12/06 16:38:31  serasset
+ * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
+ * There are still bugs in the code.
  *
  * Revision 1.18  2004/10/28 10:38:11  mangeot
  * Fixed some bugs that affected the dictd server
@@ -401,8 +406,8 @@ public class DictionariesFactory {
                 for (int i=0;i<volumes.length;i++) {
                     // FIXME it depends on the architecture of the dictionaries !
                     if (!volumes[i].getName().equals(PAPILLONAXI)) {
-						Hashtable entriesHashtable = VolumeEntriesFactory.getVolumeEntriesHashtable(dict, volumes[i], "", Headwords, strategy, posContains, pronContains, readingContains, transContains, null, null, anyContains);
-						Collection tempCollection = ContributionsFactory.checkContributions(user, entriesHashtable);
+						Vector entriesVector = VolumeEntriesFactory.getVolumeEntriesVector(dict, volumes[i], "", Headwords, strategy, posContains, pronContains, readingContains, transContains, null, null, anyContains);
+						Collection tempCollection = ContributionsFactory.checkContributions(user, entriesVector);
                         String category = dict.getCategory();
                         if (!category.equals("monolingual")) {
                             String type = dict.getType();
@@ -421,9 +426,10 @@ public class DictionariesFactory {
         return entriesCollection;
     }
 
+
 		public static Collection getVolumeEntriesCollection(String volumeName, User user, String[] Headwords, int strategy) throws PapillonBusinessException {
 			Collection entriesCollection = null;
-			Hashtable entriesTable = null;
+			Vector entriesTable = null;
 			Volume volume = null;
 			Dictionary dict = null;
 			try {
@@ -433,7 +439,7 @@ public class DictionariesFactory {
 			catch(Exception ex) {
 				throw new PapillonBusinessException("Exception in getVolumeNameEntriesVector()", ex);
 			}
-			entriesTable = VolumeEntriesFactory.getVolumeEntriesHashtable(dict, volume, null, Headwords, strategy);
+			entriesTable = VolumeEntriesFactory.getVolumeEntriesVector(dict, volume, null, Headwords, strategy);
 			entriesCollection = ContributionsFactory.checkContributions(user, entriesTable);
 			return entriesCollection;
 		}
@@ -578,7 +584,7 @@ public class DictionariesFactory {
 							for (int j=0;j<targets.length;j++) {
 								Volume[] volumes = VolumesFactory.getVolumesArray(myDictionary.getName(), targets[j], null);
 							if (volumes!=null && volumes.length>0) {
-							Hashtable myTable = VolumeEntriesFactory.getVolumeEntriesHashtable(myDictionary, volumes[0],
+							Vector myTable = VolumeEntriesFactory.getVolumeEntriesVector(myDictionary, volumes[0],
 												word,
 												null,
 												IQuery.STRATEGY_EXACT);
@@ -603,6 +609,7 @@ public class DictionariesFactory {
 		}
 			return entries;
 		}
+
 
 	protected static String purgeXmlEncodingFlag(String xmlCode) {
 		// Suppress the <?xml version="1.0" encoding="UTF-8"?> from the xml if necessary

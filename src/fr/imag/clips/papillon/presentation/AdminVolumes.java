@@ -9,8 +9,13 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.1  2004/12/06 16:38:42  serasset
- * Initial revision
+ * Revision 1.2  2004/12/24 14:31:28  mangeot
+ * I merged the latest developments of Papillon5.0 with this version 5.1.
+ * Have to be tested more ...
+ *
+ * Revision 1.1.1.1  2004/12/06 16:38:42  serasset
+ * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
+ * There are still bugs in the code.
  *
  * Revision 1.9  2004/10/28 10:56:21  mangeot
  * Added the list of connected users on AdminUsers.java,
@@ -205,8 +210,6 @@ import fr.imag.clips.papillon.business.utility.Utility;
 import fr.imag.clips.papillon.business.transformation.*;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.PapillonLogger;
-import fr.imag.clips.papillon.business.xmlschema.UserInterface;
-import fr.imag.clips.papillon.business.xmlschema.XmlSchemaFactory;
 
 import fr.imag.clips.papillon.presentation.html.orig.*;
 
@@ -284,7 +287,6 @@ public class AdminVolumes extends BasePO {
                 Volume myVolume = VolumesFactory.parseVolumeMetadata(dict, myURL,req.getParameter(content.NAME_AddEntries));
                 if (null != myVolume && !myVolume.IsEmpty()) {
                         userMessage = "adding "+ myVolume.getName() + " volume" + " // " + myVolume.getDictname() + " // "  + myVolume.getDbname() + " // " + myVolume.getSourceLanguage() + " // " + myVolume.getTargetLanguages() + " // " + myVolume.getVolumeRef();
-						UserInterface.resetCache();
 						fr.imag.clips.papillon.business.edition.UITemplates.resetCache();
                     }
                 else {
@@ -364,7 +366,6 @@ public class AdminVolumes extends BasePO {
                 String handle = myGetParameter(GENERATE_XNF_PARAMETER);
                 Volume volume = VolumesFactory.findVolumeByID(handle);
                 // generating an XNF interface description
-				XmlSchemaFactory.generateXnf(volume);
 				volume.save();
             }
 			if (userMessage != null) {
@@ -609,7 +610,6 @@ public class AdminVolumes extends BasePO {
 				else {
 						result = "Nothing uploaded";
 				}
-				UserInterface.resetCache();
 				fr.imag.clips.papillon.business.edition.UITemplates.resetCache();
 				myVolume.save();
 			}

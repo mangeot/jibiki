@@ -9,8 +9,13 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.1  2004/12/06 16:38:31  serasset
- * Initial revision
+ * Revision 1.2  2004/12/24 14:31:28  mangeot
+ * I merged the latest developments of Papillon5.0 with this version 5.1.
+ * Have to be tested more ...
+ *
+ * Revision 1.1.1.1  2004/12/06 16:38:31  serasset
+ * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
+ * There are still bugs in the code.
  *
  * Revision 1.3  2003/09/03 10:08:30  mangeot
  * reorganizing imports and using eclipse
@@ -75,11 +80,11 @@ package fr.imag.clips.papillon.business.informationfile;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import java.util.regex.*;
+
 import fr.imag.clips.papillon.business.PapillonImportException;
 import fr.imag.clips.papillon.business.PapillonLogger;
 
-import org.apache.regexp.RE;
-import org.apache.regexp.ReaderCharacterIterator;
 import org.w3c.dom.Document;
 import org.w3c.tidy.Configuration;
 import org.w3c.tidy.Tidy;
@@ -89,6 +94,7 @@ public class HTMLParser {
 
     public final static String FILE_VIEWER_URL="ConsultInformations.po?fileid="; 
 
+	protected final static Pattern encodingHeaderRegex = Pattern.compile("content=\\\"text/html;\\s*charset=([^\\\"]*)\\\"");
 
     // Constructor...
     public HTMLParser() {
@@ -139,17 +145,20 @@ public class HTMLParser {
         // Pretend the stream is iso latin 1...
         int res = Configuration.UTF8;
         try {
-            InputStreamReader ir = new InputStreamReader(is, "ISO-8859-1");
+			java.io.BufferedReader inBuff = new java.io.BufferedReader(new InputStreamReader(is, "ISO-8859-1"));
     
             // First, search for a encoding declaration. If present, it should be something like:
             // <META content="text/html; charset=UTF-8" http-equiv="Content-Type"> 
             // WARNING, will will only search for \"text/html; charset=...\"
-            RE r = new RE("content=\"text/html;[:space:]*charset=([^\"]*)\"");
-            ReaderCharacterIterator sci = new ReaderCharacterIterator(ir);
-            
-            boolean matched = r.match(sci, 0);
-            if (matched) {
-                String enc = r.getParen(1);
+			boolean eof = false;
+			CharSequence line = (CharSequence) inBuff.readLine();
+			Matcher encodingMatcher = encodingHeaderRegex.matcher((CharSequence) inBuff.readLine());
+			while (!encodingMatcher.matches() && line!=null) {
+				line = (CharSequence) inBuff.readLine();
+				encodingMatcher = encodingHeaderRegex.matcher(line);
+			}
+			if (line!=null) {
+                String enc = encodingMatcher.group();
                 if (enc.equalsIgnoreCase("UTF-8")) {
                     res = Configuration.UTF8;
                 } else if (enc.equalsIgnoreCase("ISO-8859-1")) {
@@ -160,8 +169,6 @@ public class HTMLParser {
             }
         } catch (java.io.UnsupportedEncodingException e) {
             PapillonLogger.writeDebugMsg("unsupported encoding.");
-        } catch (org.apache.regexp.RESyntaxException e) {
-            PapillonLogger.writeDebugMsg("WARN : Expression Syntax Error !!!");	   
         } catch (java.io.IOException e) {
 	    PapillonLogger.writeDebugMsg("Error closing InputStreamReader.");
 	}

@@ -3,8 +3,13 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.1  2004/12/06 16:38:31  serasset
- * Initial revision
+ * Revision 1.2  2004/12/24 14:31:28  mangeot
+ * I merged the latest developments of Papillon5.0 with this version 5.1.
+ * Have to be tested more ...
+ *
+ * Revision 1.1.1.1  2004/12/06 16:38:31  serasset
+ * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
+ * There are still bugs in the code.
  *
  * Revision 1.7  2004/10/28 10:38:11  mangeot
  * Fixed some bugs that affected the dictd server
@@ -225,12 +230,14 @@ public class ContributionsFactory {
 
     protected final static String DML_URI = "http://www-clips.imag.fr/geta/services/dml";
 
-    public static Contribution newContribution(String volumeName, String author, String groups, String headword, String entryId, String entryHandle, String status, boolean newEntry, String originalHandle)
+    public static Contribution newContribution(String volumeName, String srclang, String author, String groups, String headword, String entryId, String entryHandle, String status, boolean newEntry, String originalHandle)
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
             //
             Contribution newContrib=new Contribution();
             // external id
             newContrib.setAuthor(author);
+            // source language of the contrib
+            newContrib.setSourceLanguage(srclang);
             // external id
             newContrib.setGroups(groups);
             // external id
@@ -247,9 +254,9 @@ public class ContributionsFactory {
             newContrib.setCreationDate(new Date());
             //xml code
             newContrib.setNewEntry(newEntry);
-						if (!newEntry) {
+			if (!newEntry) {
 						newContrib.setOriginalHandle(originalHandle);
-						}
+			}
             return newContrib;
         }
 
@@ -328,25 +335,27 @@ public class ContributionsFactory {
             return theContribVector;
         }
 				
-			public static Collection checkContributions(User user, Hashtable entriesTable) throws PapillonBusinessException {
-				for (Enumeration handles = entriesTable.keys(); handles.hasMoreElements();) {					
-					String handle = (String) handles.nextElement();
-					Contribution myContrib = findContributionByEntryHandle(handle);
+		public static Collection checkContributions(User user, Vector entriesTable) throws PapillonBusinessException {
+				for (int i=0; i< entriesTable.size();i++) {					
+					IAnswer myAnswer = (IAnswer) entriesTable.elementAt(i);
+					Contribution myContrib = findContributionByEntryHandle(myAnswer.getHandle());
 					// There is an existing contribution
 					if (myContrib != null && !myContrib.IsEmpty()) {
 					// the author is not the current user
 						if (user==null || user.IsEmpty()) {
-								entriesTable.remove(handle);
+								entriesTable.remove(myAnswer);
+								i--;
 						}
-						else if (user !=null && !user.IsEmpty() && !myContrib.getAuthor().equals(user.getLogin())) {
+						else if (!myContrib.getAuthor().equals(user.getLogin())) {
 						// the current user is not in the same groups as the author
-							if (!user.IsInGroups(myContrib.getGroupsArray())) {
-								entriesTable.remove(handle);
+							if (!user.IsInNormalGroups(myContrib.getGroupsArray())) {
+								entriesTable.remove(myAnswer);
+								i--;
 							}
 						}
 					}
 				}
-				return entriesTable.values();
+				return (Collection) entriesTable;
 			}
 
 			public static IAnswer myFirstContribution(Collection entriesCollection, User user) throws PapillonBusinessException {
@@ -421,7 +430,8 @@ public class ContributionsFactory {
 							query.addOrderByReviewDate(true);
 						}
 					}
-				query.addOrderByHeadword(true);
+				// query.addOrderByHeadword(true);
+				query.getQueryBuilder().addOrderByColumn("multilingual_sort(sourcelanguage,headword)","");
 				ContributionDO[] DOarray = query.getDOArray();
 				if (null != DOarray) {
 					for (int j=0; j < DOarray.length; j++) {
@@ -496,7 +506,8 @@ public class ContributionsFactory {
 							query.addOrderByReviewDate(true);
 						}
 					}
-				query.addOrderByHeadword(true);
+//				query.addOrderByHeadword(true);
+				query.getQueryBuilder().addOrderByColumn("multilingual_sort(sourcelanguage,headword)","");
 				ContributionDO[] DOarray = query.getDOArray();
 				if (null != DOarray) {
 					for (int j=0; j < DOarray.length; j++) {
@@ -530,7 +541,8 @@ public class ContributionsFactory {
 							query.addOrderByReviewDate(true);
 						}
 					}
-				query.addOrderByHeadword(true);
+//				query.addOrderByHeadword(true);
+				query.getQueryBuilder().addOrderByColumn("multilingual_sort(sourcelanguage,headword)","");
 				ContributionDO[] DOarray = query.getDOArray();
 				if (null != DOarray) {
 					for (int j=0; j < DOarray.length; j++) {
@@ -596,7 +608,7 @@ throws fr.imag.clips.papillon.business.PapillonBusinessException {
 	Contribution myContrib = null;
 	PapillonLogger.writeDebugMsg("New contrib author: " + myUser.getLogin() + " volume: " + myAxie.getVolumeName() +
 							  " headword: " + myAxie.getHeadword() + " entryid: " + myAxie.getId());
-	myContrib = newContribution(myAxie.getVolumeName(), myUser.getLogin(), myUser.getGroups(), myAxie.getHeadword(), myAxie.getId(), myAxie.getHandle(), Contribution.NOT_FINISHED_STATUS, true, null);
+	myContrib = newContribution(myAxie.getVolumeName(), myAxie.getSourceLanguage(), myUser.getLogin(), myUser.getGroups(), myAxie.getHeadword(), myAxie.getId(), myAxie.getHandle(), Contribution.NOT_FINISHED_STATUS, true, null);
 	if (null != myContrib && !myContrib.IsEmpty()) {
 		myContrib.save();
 	}
@@ -609,7 +621,7 @@ throws fr.imag.clips.papillon.business.PapillonBusinessException {
 	boolean newEntry = (originalHandle == null || originalHandle.equals(""));
 	PapillonLogger.writeDebugMsg("New contrib author: " + myUser.getLogin() + " volume: " + myEntry.getVolumeName() +
 							  " headword: " + myEntry.getHeadword() + " entryid: " + myEntry.getId());
-	myContrib = newContribution(myEntry.getVolumeName(), myUser.getLogin(), myUser.getGroups(),  myEntry.getHeadword(), myEntry.getId(), myEntry.getHandle(), Contribution.NOT_FINISHED_STATUS, newEntry, originalHandle);
+	myContrib = newContribution(myEntry.getVolumeName(), myEntry.getSourceLanguage(), myUser.getLogin(), myUser.getGroups(),  myEntry.getHeadword(), myEntry.getId(), myEntry.getHandle(), Contribution.NOT_FINISHED_STATUS, newEntry, originalHandle);
 	if (null != myContrib && !myContrib.IsEmpty()) {
 		myContrib.save();
 	}

@@ -9,8 +9,13 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.1  2004/12/06 16:38:42  serasset
- * Initial revision
+ * Revision 1.2  2004/12/24 14:31:28  mangeot
+ * I merged the latest developments of Papillon5.0 with this version 5.1.
+ * Have to be tested more ...
+ *
+ * Revision 1.1.1.1  2004/12/06 16:38:42  serasset
+ * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
+ * There are still bugs in the code.
  *
  * Revision 1.3  2004/10/28 10:43:36  mangeot
  * Fixed some bugs
@@ -56,6 +61,7 @@ public class EditEntry extends BasePO {
     public static String EntryHandle_PARAMETER = "EntryHandle";
     public static String Headword_PARAMETER = "Headword";
     public static String VolumeName_PARAMETER = "VolumeName";  
+    public static String Redirection_PARAMETER = "Redirection";  
 	
     protected static String AddCall_PARAMETER = "AddCall";
     protected static String DelCall_PARAMETER = "DelCall";
@@ -130,6 +136,16 @@ public class EditEntry extends BasePO {
 		
 		// addElement
 		if (submitAdd!=null && !submitAdd.equals("")) {
+			String redirected = myGetParameter(Redirection_PARAMETER);
+			if (redirected == null || redirected.equals("")) {
+				saveDOMModifications(myVolumeEntry, myEntry);
+				String newUrl = this.getUrl() + "?" + VolumeName_PARAMETER + "=" + volumeName 
+					+ "&" + EntryHandle_PARAMETER + "=" + entryHandle
+					+ "&" + AddCall_PARAMETER + "=" + myUrlEncode(submitAdd)
+					+ "&" + Redirection_PARAMETER + "=" + "on"	
+					+ "#" + UIGenerator.NEW_BLOCK_ANCHOR;				
+				throw new ClientPageRedirectException(newUrl);
+			}
 			int plus =  submitAdd.indexOf(UIGenerator.PARAMETERS_SEPARATOR);
 			if (plus > 0) {
 				String selectedElement = submitAdd.substring(0,plus);
@@ -140,6 +156,17 @@ public class EditEntry extends BasePO {
 		// deleteElements MUST be after updateElement because it modifies the element ids.
 		else if (submitDelete!=null && !submitDelete.equals("")
 					&& select != null && !select.equals("")) {
+			String redirected = myGetParameter(Redirection_PARAMETER);
+			if (redirected == null || redirected.equals("")) {
+				saveDOMModifications(myVolumeEntry, myEntry);
+				String newUrl = this.getUrl() + "?" + VolumeName_PARAMETER + "=" + volumeName 
+					+ "&" + EntryHandle_PARAMETER + "=" + entryHandle
+					+ "&" + DelCall_PARAMETER + "=" + myUrlEncode(submitDelete)
+					+ "&" + serializeParameterForUrl(Select_PARAMETER,myGetParameterValues(Select_PARAMETER))
+					+ Redirection_PARAMETER + "=" + "on"	
+					+ "#" + UIGenerator.NEW_BLOCK_ANCHOR;				
+				throw new ClientPageRedirectException(newUrl);
+			}
 			int plus =  submitDelete.indexOf(UIGenerator.PARAMETERS_SEPARATOR);
 			if (plus > 0) {
 				String elementName = submitDelete.substring(0,plus);
@@ -162,12 +189,10 @@ public class EditEntry extends BasePO {
 		
 	// saveModifiedEntry
 		if (submitSave!=null && !submitSave.equals("")) {
+		    saveDOMModifications(myVolumeEntry, myEntry);
 			saveEntry(myVolumeEntry, myEntry, this.getUser().getLogin(),saveComment);
 		}
 
-	// saveDOMModifications
-		saveDOMModifications(myVolumeEntry, myEntry);
-	
 			// fill template
 		Element myInterface = UITemplates.getInterface(volumeName, UITemplates.DEFAULT_FORM,languages); 
 		Element myItfTemplate = null;	
@@ -186,6 +211,9 @@ public class EditEntry extends BasePO {
 
 	//	System.out.println(Utility.NodeToString(myEntry));
 	//	System.out.println(Utility.NodeToString(myInterface));
+	// saveDOMModifications at the end because fillTemplate modifies the entry DOM
+	// when there is a block anchor
+		saveDOMModifications(myVolumeEntry, myEntry);
 		
 		return myInterface;
 	}

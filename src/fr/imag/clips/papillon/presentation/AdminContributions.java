@@ -9,8 +9,13 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.1  2004/12/06 16:38:42  serasset
- * Initial revision
+ * Revision 1.2  2004/12/24 14:31:28  mangeot
+ * I merged the latest developments of Papillon5.0 with this version 5.1.
+ * Have to be tested more ...
+ *
+ * Revision 1.1.1.1  2004/12/06 16:38:42  serasset
+ * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
+ * There are still bugs in the code.
  *
  * Revision 1.10  2004/10/28 10:56:21  mangeot
  * Added the list of connected users on AdminUsers.java,
@@ -240,10 +245,9 @@ public class AdminContributions extends BasePO {
     protected final static int MaxDisplayedEntries= 5;
 	
 	
-	protected final static String EditURL="ConsultEdit.po";
-	protected final static String EditVolumeParameter=ConsultEditTmplHTML.NAME_VOLUME;
-	protected final static String EditHandleParameter=ConsultEdit.HANDLE_PARAMETER;
-	protected final static String EditStepParameter="STEP";
+	protected final static String EditURL="EditEntry.po";
+	protected final static String EditVolumeParameter=EditEntry.VolumeName_PARAMETER;
+	protected final static String EditHandleParameter=EditEntry.EntryHandle_PARAMETER;
 	
 	protected final static String REMOVE_CONTRIB_PARAMETER="RemoveContrib";
 	protected final static String MARK_FINISHED_PARAMETER="MarkFinished";
@@ -502,12 +506,27 @@ public class AdminContributions extends BasePO {
             // On récupère le noeud contenant la table...
             Node entryTable = entryListRow.getParentNode();
             if (null != ContribVector && ContribVector.size()>0) {
+				content.setTextContributionsCount("" + ContribVector.size());
                 for(int i = 0; i < ContribVector.size(); i++) {
 					Contribution myContrib = (Contribution) ContribVector.elementAt(i);
 					
 					// view contrib
 					if (myContrib!=null && !myContrib.IsEmpty()) {
-						content.setTextViewContribText(myContrib.getHeadword());
+
+					// FIXME: hack for the GDEF estonian volume
+						String headword = myContrib.getHeadword();
+						if (myContrib.getVolumeName().equals("GDEF_est")) {
+							VolumeEntry myEntry = VolumeEntriesFactory.findEntryByHandle(myContrib.getVolumeName(),myContrib.getEntryHandle());
+							if (myEntry!=null && !myEntry.IsEmpty()) {
+								String particule = myEntry.getParticule();
+								if(particule!=null && !particule.equals("")) {
+									headword = particule + " " + headword;
+								}
+							}
+						}
+
+
+						content.setTextViewContribText(headword);
 						viewContribAnchor.setHref(this.getUrl() + "?"
 												  + ENTRYID + "="
 												  + myContrib.getHandle()
@@ -557,9 +576,7 @@ public class AdminContributions extends BasePO {
 													  + EditVolumeParameter + "="
 													  + myContrib.getVolumeName() + "&"
 													  + EditHandleParameter + "="
-													  + myContrib.getEntryHandle() + "&"
-													  + EditStepParameter + "="
-													  + ConsultEdit.STEP_EDIT);
+													  + myContrib.getEntryHandle());
 						}
 						
 						// remove contrib

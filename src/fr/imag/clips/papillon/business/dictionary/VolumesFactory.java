@@ -3,8 +3,13 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.1  2004/12/06 16:38:31  serasset
- * Initial revision
+ * Revision 1.2  2004/12/24 14:31:28  mangeot
+ * I merged the latest developments of Papillon5.0 with this version 5.1.
+ * Have to be tested more ...
+ *
+ * Revision 1.1.1.1  2004/12/06 16:38:31  serasset
+ * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
+ * There are still bugs in the code.
  *
  * Revision 1.7  2004/10/28 10:38:11  mangeot
  * Fixed some bugs that affected the dictd server
@@ -189,7 +194,6 @@ import com.lutris.appserver.server.sql.ObjectId;
 import java.util.*;
 
 import fr.imag.clips.papillon.business.utility.Utility;
-import fr.imag.clips.papillon.business.xmlschema.XmlSchemaFactory;
 
 /**
  * Used to find the instances of xslsheet.

@@ -3,8 +3,13 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.1  2004/12/06 16:38:31  serasset
- * Initial revision
+ * Revision 1.2  2004/12/24 14:31:28  mangeot
+ * I merged the latest developments of Papillon5.0 with this version 5.1.
+ * Have to be tested more ...
+ *
+ * Revision 1.1.1.1  2004/12/06 16:38:31  serasset
+ * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
+ * There are still bugs in the code.
  *
  * Revision 1.3  2004/02/10 05:27:12  mangeot
  * The version UIGEN_V2 has been merged with the trunk by MM
@@ -310,7 +315,7 @@ public class IndexFactory {
 	protected final static String INDEXED_FIELD = "key";
 	protected final static String CONTRIB_SEP = "$";
 
-    protected static Hashtable getEntriesHashtable(Dictionary dict, Volume volume, String id, String[] Headwords, int strategy, String pron, String reading, String key1,String key2) throws PapillonBusinessException {
+    protected static Vector getEntriesVector(Dictionary dict, Volume volume, String id, String[] Headwords, int strategy, String pron, String reading, String key1,String key2) throws PapillonBusinessException {
         Vector theIndex = new Vector();
 
 		theIndex.add(id);
@@ -323,11 +328,11 @@ public class IndexFactory {
 				theIndex.add(Headwords[i]);
 			}
 		}
-		return getEntriesHashtable(dict, volume, strategy, theIndex);
+		return getEntriesVector(dict, volume, strategy, theIndex);
 	}
 
-	protected static Hashtable getEntriesHashtable(Dictionary dict, Volume volume, int strategy, Vector theIndex) throws PapillonBusinessException {
-			Hashtable theEntries = new Hashtable();
+	protected static Vector getEntriesVector(Dictionary dict, Volume volume, int strategy, Vector theIndex) throws PapillonBusinessException {
+			Vector theEntries = new Vector();
 			VolumeEntry myEntry = null;
 
 		String CSE = QueryBuilder.EQUAL;
@@ -347,18 +352,20 @@ public class IndexFactory {
 						fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Indexed request table: " + volume.getIndexDbname() + " word: " + myString);
 						IndexQuery query = new IndexQuery(volume.getIndexDbname());
 						query.getQueryBuilder().addWhereClause("key", myString, cmp_op);
-						query.addOrderByKey(true);
+						//query.addOrderByKey(true);
+						query.getQueryBuilder().addOrderByColumn(volume.getSourceLanguage()+"_sort(key)","");
 						IndexDO[] DOarray = query.getDOArray();
 						if (null != DOarray) {
 							for (int j=0; j < DOarray.length; j++) {
 								Index myIndex = new Index(DOarray[j]);
 								myEntry = VolumeEntriesFactory.findEntryByHandle(dict, volume, myIndex.getEntryId());
-								theEntries.put(myEntry.getHandle(),myEntry);
+								theEntries.add(myEntry);
+							//	theEntries.put(myEntry.getHeadword(),myEntry);
 							}
 						}
 					}
 					catch(Exception ex) {
-						throw new PapillonBusinessException("Exception in getEntriesHashtable()", ex);
+						throw new PapillonBusinessException("Exception in getEntriesVector()", ex);
 					}
 				}
 			}
@@ -366,8 +373,8 @@ public class IndexFactory {
 		return theEntries;
     }
 		
-	protected static Hashtable getAxiesHashtable(Dictionary dict, Volume volume, String id) throws PapillonBusinessException {
-        Hashtable theEntries = new Hashtable();
+	protected static Vector getAxiesVector(Dictionary dict, Volume volume, String id) throws PapillonBusinessException {
+        Vector theEntries = new Vector();
 
 		String cmp_op = QueryBuilder.EQUAL;
 
@@ -380,7 +387,7 @@ public class IndexFactory {
 					for (int j=0; j < DOarray.length; j++) {
 						Index myIndex = new Index(DOarray[j]);
 						Axie myAxie = PapillonPivotFactory.findAxieByHandle(dict, volume, myIndex.getEntryId());
-						theEntries.put(myAxie.getHandle(),myAxie);
+						theEntries.add(myAxie);
 					}
 				}
 			}

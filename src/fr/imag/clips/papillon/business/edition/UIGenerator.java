@@ -29,6 +29,10 @@ public class UIGenerator {
 	
 	// constants
 	
+	public static final String NEW_BLOCK_ANCHOR = "NewBlock";
+	public static final String TYPE_SEP_ANCHOR = ".";
+	public static final String TYPE_PARENT_ANCHOR = "parent";
+
 	public static final String ID_SEPARATOR = ".";
 	public static final String PARAMETERS_SEPARATOR = "+";
 	public static final String ITF_ELT_NAME = "span";
@@ -37,6 +41,7 @@ public class UIGenerator {
 	public static final String SELECT_ATTR_NAME = "select";
 	public static final String CHOOSE_ATTR_NAME = "choose";
 	public static final String BOOLEAN_ATTR_NAME = "boolean";
+	public static final String TYPE_ATTR_NAME = "type";
 	
 	public static final String CHOICE_NODE_NAME = "xsd:choice";
 	
@@ -70,7 +75,6 @@ public class UIGenerator {
 				insertEntryElement(parentElt,myElement);
 			}
 		}
-		
 		return found;
 	}
 	
@@ -147,11 +151,11 @@ public class UIGenerator {
 	}
 	
 	public static void deleteElements(String elementName, String[] elementIds, Element entryElt) {
-		//	PapillonLogger.writeDebugMsg("deleteElements: " + elementName);
 		NodeList myNodeList = entryElt.getElementsByTagName (elementName);
 		Vector removeNodes = new Vector();
 		for (int i=0; i<elementIds.length;i++) {
 			String elementId = elementIds[i];
+//			PapillonLogger.writeDebugMsg("deleteElement: " + elementName + " eltId: " + elementId);
 			int indexOfPt = elementId.lastIndexOf(ID_SEPARATOR);
 			String currentName = "";
 			String currentNb = "";
@@ -166,10 +170,14 @@ public class UIGenerator {
 				removeNodes.add(resultElt);
 			}
 		}
-		
+		Node parentNode = null;
 		for (int i=0; i<removeNodes.size();i++) {
 			Element removeElt = (Element) removeNodes.elementAt(i);
-			removeElt.getParentNode().removeChild(removeElt);
+			parentNode = removeElt.getParentNode();
+			parentNode.removeChild(removeElt);
+		}
+		if (parentNode !=null && parentNode.getNodeType()==Node.ELEMENT_NODE) {
+			((Element)parentNode).setAttribute(TYPE_ATTR_NAME,NEW_BLOCK_ANCHOR);
 		}
 	}
 	
@@ -207,6 +215,7 @@ public class UIGenerator {
 			String entryNodeName = entryNode.getNodeName();
 			PapillonLogger.writeDebugMsg("fillTemplate Node: " + entryNodeName + " ID: " + newId);
 			
+			setNameCorrespondingAnchor(entryNode, itfElt, newId);
 			setIdCorrespondingSubmitInputs(entryNodeName, itfElt, newId);
 			setIdCorrespondingLabel(entryNodeName, itfElt, newId);
 			setIdCorrespondingSelectCheckbox(entryNodeName,itfElt, newId);
@@ -358,6 +367,32 @@ public class UIGenerator {
 		} 
 		return resultElt;
 	}
+		
+	protected static boolean setNameCorrespondingAnchor(Node entryNode, Element itfElt, String newId) {
+		//	PapillonLogger.writeDebugMsg("setNameCorrespondingAnchor: " + entryNodeName);
+		boolean found = false;
+		if (entryNode.getNodeType() == Node.ELEMENT_NODE) {
+			Element entryElt = (Element) entryNode;
+			String typeName = entryElt.getTagName();
+			String type = entryElt.getAttribute(TYPE_ATTR_NAME);
+			if (type!=null && !type.equals("")) {
+				NodeList myNodeList = itfElt.getElementsByTagName ("a");
+				int i=0;
+				while (i<myNodeList.getLength () && !found) {
+					Element currentElt = (Element) myNodeList.item(i);
+					String name = currentElt.getAttribute("name");
+					if (name !=null && name.equals(typeName)) {
+						currentElt.setAttribute("name", NEW_BLOCK_ANCHOR);
+						entryElt.removeAttribute(TYPE_ATTR_NAME);
+						found = true;
+					}
+				i++;	
+				}
+			}
+		}
+		return found;
+	}
+	
 	
 	protected static boolean setIdCorrespondingLabel(String label, Element itfElt, String newId) {
 		//	PapillonLogger.writeDebugMsg("setIdCorrespondingLabel: " + label);
@@ -581,6 +616,7 @@ public class UIGenerator {
 		Vector nodeVector = new Vector();
 		
 		Element resElt = (Element) parentElement.getOwnerDocument().importNode(newElement,true);
+		resElt.setAttribute(TYPE_ATTR_NAME,NEW_BLOCK_ANCHOR);
 		NodeList childNodes = parentElement.getChildNodes();
 		boolean found = false;
 		int i=0;
@@ -613,11 +649,18 @@ public class UIGenerator {
 	}
 	
 	protected static Element getTemplateEntryElement(String elementName, String parentName, Element entryTemplate) {
-		PapillonLogger.writeDebugMsg("getTemplateEntryElement: " + elementName + " parent: " + parentName + " tmpl: " + entryTemplate.toString());
 		Element resElt = null;
-		NodeList parentNodes = entryTemplate.getElementsByTagName(parentName);
-		if (parentNodes.getLength()>0) {
-			Element myParent = (Element) parentNodes.item(0);
+		Element myParent = null;
+		if (entryTemplate.getTagName().equals(parentName)) {
+			myParent = entryTemplate;
+		}
+		else {
+			NodeList parentNodes = entryTemplate.getElementsByTagName(parentName);
+			if (parentNodes.getLength()>0) {
+				myParent = (Element) parentNodes.item(0);
+			}
+		}
+		if (myParent !=null) {
 			NodeList myNodes = myParent.getElementsByTagName(elementName);
 			if (myNodes.getLength()>0) {
 				resElt = (Element)myNodes.item(0);
@@ -629,12 +672,18 @@ public class UIGenerator {
 	protected static Element findElementInEntry(String eltName, String eltNb, Element entryElt) {
 		Element resultElt = null;
 		boolean found = false;
-		NodeList myNodeList = entryElt.getElementsByTagName (eltName);
-		int i=0;
-		while (i<myNodeList.getLength() && !found) {
-			resultElt = (Element) myNodeList.item(i);
-			found = eltNb.equals(i + "");
-			i++;
+		if (entryElt.getTagName().equals(eltName)) {
+			resultElt = entryElt;
+			found = true;
+		}
+		else {
+			NodeList myNodeList = entryElt.getElementsByTagName (eltName);
+			int i=0;
+			while (i<myNodeList.getLength() && !found) {
+				resultElt = (Element) myNodeList.item(i);
+				found = eltNb.equals(i + "");
+				i++;
+			}
 		}
 		return resultElt;
 	}

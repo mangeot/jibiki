@@ -10,6 +10,10 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.3  2004/12/24 14:31:28  mangeot
+ *  I merged the latest developments of Papillon5.0 with this version 5.1.
+ *  Have to be tested more ...
+ *
  *  Revision 1.2  2004/12/24 08:57:44  serasset
  *  Premiere version de l'interface avec fond papillon et transparence.
  *
@@ -1008,7 +1012,7 @@ public class ConsultExpert extends BasePO {
         if (null != handle && null != volume) {
             EntryCollection = DictionariesFactory.findAnswerAndTranslations(volume, handle, targets, myUser);
         } else if (null != volume) {
-            EntryCollection = VolumeEntriesFactory.getVolumeNameEntriesHashtable(volume, null, Headwords, strategy).values();
+            EntryCollection = VolumeEntriesFactory.getVolumeNameEntriesVector(volume, null, Headwords, strategy);
         } else {
             EntryCollection = DictionariesFactory.getDictionariesEntriesCollection(resources, source, targets, Headwords, strategy, posContains, pronContains, readingContains, transContains, anyContains, myUser);
         }
@@ -1089,7 +1093,7 @@ public class ConsultExpert extends BasePO {
                          + HANDLE + "="
                          + myEntry.getHandle() + "&"
                          + SOURCE_PARAMETER + "=" + myEntry.getSourceLanguage() + "&"
-                         + Utility.serializeParameterForUrl(TARGETS_PARAMETER, targets)
+                         + serializeParameterForUrl(TARGETS_PARAMETER, targets)
                          + content.NAME_Strategy + "="
                          + strategyString + "&"
                          + content.NAME_lookup + "="
@@ -1196,8 +1200,8 @@ public class ConsultExpert extends BasePO {
                 href = this.getUrl() + "?"
                          + content.NAME_SOURCE + "="
                          + sourceLanguage + "&"
-                         + Utility.serializeParameterForUrl(content.NAME_TARGETS, originalTargets)
-                         + Utility.serializeParameterForUrl(content.NAME_RESOURCES, originalResources)
+                         + serializeParameterForUrl(content.NAME_TARGETS, originalTargets)
+                         + serializeParameterForUrl(content.NAME_RESOURCES, originalResources)
                          + content.NAME_search1 + "=" + VocContains_PARAMETER + "&"
                          + content.NAME_search1text + "="
                          + Utility.convertToUrlForEncoding(headword, "UTF-8") + "&"

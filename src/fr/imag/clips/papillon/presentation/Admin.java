@@ -9,8 +9,13 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.1  2004/12/06 16:38:42  serasset
- * Initial revision
+ * Revision 1.2  2004/12/24 14:31:28  mangeot
+ * I merged the latest developments of Papillon5.0 with this version 5.1.
+ * Have to be tested more ...
+ *
+ * Revision 1.1.1.1  2004/12/06 16:38:42  serasset
+ * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
+ * There are still bugs in the code.
  *
  * Revision 1.9  2004/10/28 10:56:21  mangeot
  * Added the list of connected users on AdminUsers.java,
@@ -118,8 +123,6 @@ import java.text.DateFormat;
 
 // importing the classes where the caches are
 import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
-import fr.imag.clips.papillon.business.xmlschema.UserInterface;
-import fr.imag.clips.papillon.business.xmlschema.XmlSchemaFactory;
 import fr.imag.clips.papillon.business.transformation.XslTransformation;
 import fr.imag.clips.papillon.business.locales.Languages;
 
@@ -170,7 +173,6 @@ public class Admin extends BasePO {
             } else if (null != req.getParameter(content.NAME_ResetEntriesCountCache)) {
 		VolumesFactory.resetCountEntriesCache();
             } else if (null != req.getParameter(content.NAME_ResetInterfaceDescriptionCache)) {
-				UserInterface.resetCache();
 				fr.imag.clips.papillon.business.edition.UITemplates.resetCache();
             }
 			else if (null != req.getParameter(content.NAME_ResetXslSheetTransformersCache)) {
