@@ -10,7 +10,7 @@
         <table dbTableName="volume" id="fr.imag.clips.papillon.data.VolumeEntry">
           <column id="headword" usedForQuery="true">
             <javadoc>/**
- * the headword  isAbstract="true"
+ * the headword  isAbstract="true" éèà
  */</javadoc>
             <type canBeNull="true" dbType="LONGVARCHAR" javaType="String"/>
           </column>

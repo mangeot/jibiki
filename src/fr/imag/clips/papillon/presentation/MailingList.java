@@ -9,8 +9,12 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.1  2004/12/06 16:38:42  serasset
- * Initial revision
+ * Revision 1.2  2004/12/24 08:57:44  serasset
+ * Premiere version de l'interface avec fond papillon et transparence.
+ *
+ * Revision 1.1.1.1  2004/12/06 16:38:42  serasset
+ * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
+ * There are still bugs in the code.
  *
  * Revision 1.4  2003/09/27 04:39:41  mangeot
  * *** empty log message ***
@@ -136,7 +140,8 @@ import java.io.*;
 
 //import com.lutris.xml.xmlc.*;
 import com.lutris.appserver.server.httpPresentation.*;
-import org.w3c.dom.html.*;
+//import org.w3c.dom.html.*;
+import org.enhydra.xml.xhtml.dom.*;
 import org.w3c.dom.*;
 
 import org.enhydra.xml.io.OutputOptions;
@@ -152,7 +157,7 @@ import fr.imag.clips.papillon.business.message.*;
 import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 
-import fr.imag.clips.papillon.presentation.html.orig.*;
+import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
 public class MailingList extends BasePO {
     protected final static String ID="Id";
@@ -239,21 +244,21 @@ public class MailingList extends BasePO {
                                                     thread, sort);
         
         //Pass the array to the formatter
-        MessageListHTML messageList = getMessageList(theMessageArray);
+        MessageListXHTML messageList = getMessageList(theMessageArray);
         
         //Then, set the appropriate values in the form elements
-        HTMLInputElement authorContainsInput = messageList.getElementAuthorContains();
-        HTMLInputElement subjectContainsInput = messageList.getElementSubjectContains();
-        HTMLInputElement messageContainsInput = messageList.getElementMessageContains();
-        HTMLOptionElement dateOption= messageList.getElementSortByDate();
-        HTMLOptionElement subjectOption= messageList.getElementSortBySubject();
-        HTMLOptionElement authorOption= messageList.getElementSortByAuthor();
+        XHTMLInputElement authorContainsInput = messageList.getElementAuthorContains();
+        XHTMLInputElement subjectContainsInput = messageList.getElementSubjectContains();
+        XHTMLInputElement messageContainsInput = messageList.getElementMessageContains();
+        XHTMLOptionElement dateOption= messageList.getElementSortByDate();
+        XHTMLOptionElement subjectOption= messageList.getElementSortBySubject();
+        XHTMLOptionElement authorOption= messageList.getElementSortByAuthor();
 
-        HTMLInputElement currentLimitInput = messageList.getElementCurrentLimit();
-        HTMLInputElement currentOffsetInput = messageList.getElementCurrentOffset();
+        XHTMLInputElement currentLimitInput = messageList.getElementCurrentLimit();
+        XHTMLInputElement currentOffsetInput = messageList.getElementCurrentOffset();
         
-        HTMLInputElement buttonPrevious = messageList.getElementButtonPrevious();
-        HTMLInputElement buttonNext = messageList.getElementButtonNext();
+        XHTMLInputElement buttonPrevious = messageList.getElementButtonPrevious();
+        XHTMLInputElement buttonNext = messageList.getElementButtonNext();
         
         authorContainsInput.setValue(authorcontains);
         subjectContainsInput.setValue(subjectcontains);
@@ -289,27 +294,27 @@ public class MailingList extends BasePO {
         return messageList.getElementDiscussion();
     }
     
-    public MessageListHTML getMessageList(Message[] theMessageArray)
+    public MessageListXHTML getMessageList(Message[] theMessageArray)
         throws HttpPresentationException, IOException, DataObjectException
     {
-        MessageListHTML messageList;
+        MessageListXHTML messageList;
                 
         // On initialise le layout
-        messageList = (MessageListHTML)MultilingualHtmlTemplateFactory.createTemplate("MessageListHTML", this.getComms(), this.getSessionData());
+        messageList = (MessageListXHTML)MultilingualXHtmlTemplateFactory.createTemplate("MessageListXHTML", this.getComms(), this.getSessionData());
 
         // On récupère les éléments du layout
-	HTMLTableRowElement templateRow = messageList.getElementTemplateRow();
-        HTMLElement dateCellTemplate = messageList.getElementDate();
-        HTMLInputElement autInput = messageList.getElementAuthorInput();
-        HTMLElement auteurCellTemplate = messageList.getElementAuthor();
-        HTMLAnchorElement sujAnchor = messageList.getElementSubjectAnchor();
-        HTMLElement sujetCellTemplate = messageList.getElementSubject();
-        HTMLAnchorElement threadAnchor = messageList.getElementThreadAnchor();
-        HTMLElement threadCellTemplate = messageList.getElementThreads();
+        XHTMLTableRowElement templateRow = messageList.getElementTemplateRow();
+        XHTMLElement dateCellTemplate = messageList.getElementDate();
+        XHTMLInputElement autInput = messageList.getElementAuthorInput();
+        XHTMLElement auteurCellTemplate = messageList.getElementAuthor();
+        XHTMLAnchorElement sujAnchor = messageList.getElementSubjectAnchor();
+        XHTMLElement sujetCellTemplate = messageList.getElementSubject();
+        XHTMLAnchorElement threadAnchor = messageList.getElementThreadAnchor();
+        XHTMLElement threadCellTemplate = messageList.getElementThreads();
 	
         // On supprime les identificateurs de ces éléments, car on va les dupliquer
         // et il ne peut y avoir 2 éléments de même id dans un document XML
-	templateRow.removeAttribute("id");
+        templateRow.removeAttribute("id");
         dateCellTemplate.removeAttribute("id");
         autInput.removeAttribute("id");
         auteurCellTemplate.removeAttribute("id");
@@ -367,14 +372,14 @@ public class MailingList extends BasePO {
                                     IOException, 
                                     DataObjectException
                                     {
-        MessageHTML messageLayout;
+        MessageXHTML messageLayout;
         HttpPresentationRequest req = this.getComms().request;
 
         // Récupération du message demandé.
         Message theMessage = MessageFactory.findMessageByID(req.getParameter(ID));
         
         // Création du layout
-        messageLayout = (MessageHTML)MultilingualHtmlTemplateFactory.createTemplate("MessageHTML", this.getComms(), this.getSessionData());
+        messageLayout = (MessageXHTML)MultilingualXHtmlTemplateFactory.createTemplate("MessageXHTML", this.getComms(), this.getSessionData());
 
         //la date
         java.sql.Date date = theMessage.getDate();
@@ -382,7 +387,7 @@ public class MailingList extends BasePO {
         messageLayout.setTextDate(df.format(date));
             
         // L'auteur
-        HTMLInputElement autInput = messageLayout.getElementAuthorInput();
+        XHTMLInputElement autInput = messageLayout.getElementAuthorInput();
 
         String authorName = theMessage.getAuthor();
         String authorAddress = theMessage.getAuthorAddress();
@@ -441,7 +446,7 @@ public class MailingList extends BasePO {
         // else present the message list.
         if (null != req.getParameter(ID)) { 
             //Insertion du contenu sans corps de message dans le document vide.
-            stdLayout.getLayout().getElementContentPlace().appendChild(
+            stdLayout.getLayout().getElementMainColumn().appendChild(
                 stdLayout.getLayout().importNode(this.getMessage(),true));
             
             // Handling user Messages
@@ -464,7 +469,7 @@ public class MailingList extends BasePO {
             buffer = resStr.getBytes("UTF-8");
         } else {
             //Insertion du contenu dans le document vide.
-            stdLayout.getLayout().getElementContentPlace().appendChild(
+            stdLayout.getLayout().getElementMainColumn().appendChild(
                 stdLayout.getLayout().importNode(this.getMessageList(),true));
             
             // Handling user Messages

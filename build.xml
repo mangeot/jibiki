@@ -80,7 +80,7 @@ Most useful targets:
 	</taskdef>
   
   <property name="xmlcbuild.dir" value="${dir.src}/fr/imag/clips/papillon/presentation"/>
-  <property name="xmlcresources.dir" value="${dir.src}/fr/imag/clips/papillon/resources"/>
+  <property name="xmlcresources.dir" value="${dir.src}/fr/imag/clips/papillon/resources/"/>
   <property name="enhydra.liboutput" value="${dir.output}/lib"/>
   <property name="library.dir" 	value="${enhydra.root}/lib"/>
 
@@ -245,7 +245,7 @@ Most useful targets:
 	-->
    
   <!-- =================================================================== -->
-  <!-- Compile documents with XMLC                                         -->
+  <!-- Compile html documents with XMLC                                         -->
   <!-- =================================================================== -->
 
   <target name="xmlc" depends="prepare">
@@ -259,6 +259,21 @@ Most useful targets:
      <arg value="-d" />
      <arg value="${dir.classes}" />
    </xmlc>
+   <!-- Generate xhtml java classes with XMLC -->
+   <xmlc srcdir="${xmlcresources.dir}"
+       sourceout="${dir.xmlc}"
+       packagename="${project.package}.presentation"
+       options="options.xmlc"
+  	   markup="XHTML"
+       compile="false"
+       includes="**/*.xhtml">
+     <arg value="-d" />
+     <arg value="${dir.classes}" />
+  	 <arg value="-domfactory"/>
+     <arg value="org.enhydra.xml.xhtml.XHTMLDomFactory"/>
+     <arg value="-classpath" />
+     <arg value="${enhydra.dir}/lib/xmlc.jar${path_separator}${enhydra.dir}/lib/xhtml.jar"/>
+   </xmlc>
    <!-- Compile generated classes -->
    <javac srcdir="${dir.xmlc}"
           destdir="${dir.classes}"
@@ -267,7 +282,6 @@ Most useful targets:
           debug="${debug}">
      </javac>
   </target>
-  
   
   <!-- =================================================================== -->
   <!-- Compile the java source                                             -->
