@@ -9,6 +9,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.5  2005/01/15 20:02:19  mangeot
+ *  Added new search options for ReviewContributions
+ *
  *  Revision 1.4  2005/01/14 22:33:57  mangeot
  *  Fixed the BasePO.setSelected
  *  It seems that the enhydra setSelectedIndex does not work any more with enhydra5.1
@@ -57,6 +60,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.html.HTMLCollection;
+import org.w3c.dom.html.HTMLOptionElement;
+import org.w3c.dom.html.HTMLSelectElement;
 
 import org.enhydra.xml.xhtml.dom.*;
 
@@ -795,6 +800,29 @@ public abstract class BasePO implements HttpPresentation {
                    // This method does not work any more with enhydra5.1...
 				   // mySelect.setSelectedIndex(i);
 					((XHTMLOptionElement) myCollection.item(i)).setSelected(true);
+                    break;
+                }
+                i++;
+            }
+        }
+    }
+
+
+    /**
+     *  Sets the selected attribute of the BasePO class
+     *
+     * @param  mySelect  The new selected value
+     * @param  myValue   The new selected value
+     */
+    public static void setSelected(HTMLSelectElement mySelect, String myValue) {
+        if (myValue != null && !myValue.equals("")) {
+            HTMLCollection myCollection = mySelect.getOptions();
+            int i = 0;
+            while (i < myCollection.getLength()) {
+                if (((HTMLOptionElement) myCollection.item(i)).getValue().equals(myValue)) {
+                   // This method does not work any more with enhydra5.1...
+				   // mySelect.setSelectedIndex(i);
+					((HTMLOptionElement) myCollection.item(i)).setSelected(true);
                     break;
                 }
                 i++;

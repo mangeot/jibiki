@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2005/01/15 20:02:19  mangeot
+ * Added new search options for ReviewContributions
+ *
  * Revision 1.3  2005/01/15 12:51:24  mangeot
  * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
  *
@@ -86,6 +89,7 @@ public class ReviewContributions extends BasePO {
 	protected final static int STEP_REVISE = 5;
 	protected final static int STEP_VALIDATE = 6;
 
+	protected final static String ALL="*ALL*";
 	protected final static String EditURL="EditEntry.po";
 	protected final static String EditVolumeParameter=EditEntry.VolumeName_PARAMETER;
 	protected final static String EditHandleParameter=EditEntry.EntryHandle_PARAMETER;
@@ -128,20 +132,13 @@ public class ReviewContributions extends BasePO {
 
         HttpPresentationRequest req = this.getComms().request;
         
-           // decoding the CGI arguments
-		String volume = myGetParameter(content.NAME_VOLUME);
-		String author = myGetParameter(content.NAME_AUTHOR);
-		String contribid = myGetParameter(CONTRIBID_PARAMETER);
-		String xslid = myGetParameter(XSLID_PARAMETER);
-		String headword = myGetParameter(content.NAME_HEADWORD);
-		String partialMatch = myGetParameter(content.NAME_PartialMatch);
-		String sortBy = myGetParameter(SORTBY_PARAMETER);
+		// decoding the CGI arguments
 		String queryString = "";
-		int strategy = IQuery.STRATEGY_EXACT;
-		if (null != partialMatch && !partialMatch.equals("")) {
-			strategy = IQuery.STRATEGY_SUBSTRING;
-			queryString += "&" + content.NAME_PartialMatch + "=" + partialMatch;
-		}
+		
+		// lookup
+		String lookup = myGetParameter(content.NAME_Lookup);
+		// volume
+		String volume = myGetParameter(content.NAME_VOLUME);
 		if (volume!=null &&!volume.equals("")) {
 			this.setPreference(content.NAME_VOLUME,volume);
 		}
@@ -151,16 +148,78 @@ public class ReviewContributions extends BasePO {
 		if (volume !=null && !volume.equals("")) {
 			queryString += "&" + content.NAME_VOLUME + "=" + volume;
 		}
+		
+		//author
+		String author = myGetParameter(content.NAME_AUTHOR);
+		if (lookup!=null &&!lookup.equals("")) {
+			this.setPreference(content.NAME_AUTHOR,author);
+		}
+		else {
+			author = this.getPreference(content.NAME_AUTHOR);
+		}
 		if (author !=null && !author.equals("")) {
 			queryString += "&" + content.NAME_AUTHOR + "=" + author;
+		}
+
+		// headword
+		String headword = myGetParameter(content.NAME_HEADWORD);
+		if (lookup!=null &&!lookup.equals("")) {
+			this.setPreference(content.NAME_HEADWORD,headword);
+		}
+		else {
+			headword = this.getPreference(content.NAME_HEADWORD);
 		}
 		if (headword !=null && !headword.equals("")) {
 			queryString += "&" + content.NAME_HEADWORD + "=" + headword;
 		}
+		String partialMatch = myGetParameter(content.NAME_PartialMatch);
+		if (lookup!=null &&!lookup.equals("")) {
+			this.setPreference(content.NAME_PartialMatch,partialMatch);
+		}
+		else {
+			partialMatch = this.getPreference(content.NAME_PartialMatch);
+		}
+		int strategy = IQuery.STRATEGY_EXACT;
+		if (null != partialMatch && !partialMatch.equals("")) {
+			strategy = IQuery.STRATEGY_SUBSTRING;
+			queryString += "&" + content.NAME_PartialMatch + "=" + partialMatch;
+		}
+
+		// status
+		String status = myGetParameter(content.NAME_STATUS);
+		if (status!=null && !status.equals("")) {
+			this.setPreference(content.NAME_STATUS,status);
+			if (status.equals(ALL)) {
+				status = null;
+			}
+		}
+		else {
+			status =  this.getPreference(content.NAME_STATUS);
+		}
+		if (status !=null && !status.equals("")) {
+			queryString += "&" + content.NAME_STATUS + "=" + status;
+		}
+
+		// revisor
+		String revisor = myGetParameter(content.NAME_REVISOR);
+		if (lookup!=null &&!lookup.equals("")) {
+			this.setPreference(content.NAME_REVISOR,revisor);
+		}
+		else {
+			revisor =  this.getPreference(content.NAME_REVISOR);
+		}
+		if (revisor !=null && !revisor.equals("")) {
+			queryString += "&" + content.NAME_REVISOR + "=" + revisor;
+		}
+
+		// hidden arguments
+		String contribid = myGetParameter(CONTRIBID_PARAMETER);
+		String xslid = myGetParameter(XSLID_PARAMETER);
+		String sortBy = myGetParameter(SORTBY_PARAMETER);
 
 		int step = STEP_DEFAULT;
 
-		if (null != myGetParameter(content.NAME_Lookup)) {
+		if (null != lookup) {
 			step = STEP_LOOKUP;
 		}
 		else if (null != contribid && null != myGetParameter(VIEW_CONTRIB_PARAMETER)) {
@@ -180,10 +239,10 @@ public class ReviewContributions extends BasePO {
 
 		switch (step) {
 			case STEP_DEFAULT:
-				addContributions(volume, author, headword, strategy, sortBy, queryString);
+				//addContributions(volume, author, headword, strategy, sortBy, queryString);
 				break;
 			case STEP_LOOKUP:
-				addContributions(volume, author, headword, strategy, sortBy, queryString);
+				addContributions(volume, author, headword, strategy, status, revisor, sortBy, queryString);
 				break;
 			case STEP_VIEW:
 				addContribution(contribid, xslid, queryString);
@@ -199,7 +258,7 @@ public class ReviewContributions extends BasePO {
 						myContrib.delete();
 					}
 				}
-				addContributions(volume, author, headword, strategy, sortBy, queryString);
+				addContributions(volume, author, headword, strategy, status, revisor, sortBy, queryString);
 				break;
 			case STEP_REVISE:
 				contribid = myGetParameter(CONTRIBID_PARAMETER);
@@ -220,7 +279,7 @@ public class ReviewContributions extends BasePO {
 						volume = myContrib.getVolumeName();
 					}
 				}
-				addContributions(volume, author, headword, strategy, sortBy, queryString);
+				addContributions(volume, author, headword, strategy, status, revisor, sortBy, queryString);
 				break;
 			case STEP_VALIDATE:
 				if (contribid !=null && !contribid.equals("") && this.getUser().IsValidator()) {
@@ -245,7 +304,7 @@ public class ReviewContributions extends BasePO {
 						myContrib.delete();
 					}
 				}
-				addContributions(volume, author, headword, strategy, sortBy, queryString);
+				addContributions(volume, author, headword, strategy, status, revisor, sortBy, queryString);
 				break;
 			default:
 				break;
@@ -256,25 +315,24 @@ public class ReviewContributions extends BasePO {
                 PapillonLogger.writeDebugMsg(userMessage);
             }
            
-        addConsultForm(volume);
+        addConsultForm(volume, author, headword, partialMatch, status, revisor);
 
-        
         removeTemplateRows();
         
         //On rend le contenu correct
         return content.getElementFormulaire();
     }
-        protected void addConsultForm(String volume) 
+        protected void addConsultForm(String volume, String author, String headword, String strategy, String status, String revisor) 
         throws fr.imag.clips.papillon.business.PapillonBusinessException, 
                 HttpPresentationException,
         java.io.UnsupportedEncodingException {
                     
-                    // Adding the user name
-                    User user = getUser();
+        // Adding the user name
+		User user = getUser();
 
-                    if (null != user && !user.IsEmpty()) {
-                        content.setTextUserName(user.getName());
-                    }
+		if (null != user && !user.IsEmpty()) {
+			content.setTextUserName(user.getName());
+		}
                     
            // Adding the appropriate source languages to the source list
         HTMLOptionElement volumeOptionTemplate = content.getElementVolumeOptionTemplate();
@@ -302,6 +360,24 @@ public class ReviewContributions extends BasePO {
         }
 				}
         volumeSelect.removeChild(volumeOptionTemplate);
+
+		HTMLInputElement authorInput = content.getElementAUTHOR();
+		authorInput.setValue(author);
+
+		HTMLInputElement headwordInput = content.getElementHEADWORD();
+		headwordInput.setValue(headword);
+		
+		if (strategy !=null && !strategy.equals("")) {
+			HTMLInputElement strategyInput = content.getElementPartialMatch();
+			strategyInput.setValue(strategy);		
+		}
+		
+		HTMLSelectElement statusSelect = (HTMLSelectElement) content.getElementSTATUS();
+		setSelected(statusSelect,status);
+		
+		HTMLInputElement revisorInput = content.getElementREVISOR();
+		revisorInput.setValue(revisor);
+		
     }
 
     protected void addContribution(String contribid, String xslid, String queryString)
@@ -318,7 +394,7 @@ public class ReviewContributions extends BasePO {
 			addContributions(EntryVector, xslid, queryString);
 		}
 
-    protected void addContributions(String volume, String author, String headword, int strategy, String sortBy, String queryString)
+    protected void addContributions(String volume, String author, String headword, int strategy, String status, String revisor, String sortBy, String queryString)
         throws PapillonBusinessException,
         ClassNotFoundException,
         HttpPresentationException,
@@ -331,7 +407,7 @@ public class ReviewContributions extends BasePO {
 				if (headword!=null && !headword.equals("")) {
 					Headwords = new String[]{headword};
 				}
-			Collection EntryCollection = ContributionsFactory.getContributions(volume, author, strategy, Headwords, sortBy);
+			Collection EntryCollection = ContributionsFactory.getContributions(volume, author, strategy, Headwords, status, revisor, sortBy);
 			addContributions(EntryCollection, null, queryString);
 		}
 

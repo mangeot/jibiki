@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2005/01/15 20:02:19  mangeot
+ * Added new search options for ReviewContributions
+ *
  * Revision 1.3  2005/01/15 12:51:24  mangeot
  * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
  *
@@ -264,7 +267,7 @@ public class ContributionsFactory {
 			return theContribs;
 		}
 
-	public static Vector getContributions(String volumeName, String author, int strategy, String[] Headwords, String sortBy)
+	public static Vector getContributions(String volumeName, String author, int strategy, String[] Headwords, String status, String revisor, String sortBy)
 		throws PapillonBusinessException {
             Vector theContribs = new Vector();
             try {
@@ -274,8 +277,13 @@ public class ContributionsFactory {
 				query.getQueryBuilder().addWhereClause("volume", volumeName,
 										   QueryBuilder.EQUAL);
 				if (author != null && !author.equals("")) {
-					query.getQueryBuilder().addWhereClause("author", author,
-											QueryBuilder.EQUAL);
+					query.getQueryBuilder().addWhereClause("author", author,QueryBuilder.EQUAL);
+				}
+				if (revisor != null && !revisor.equals("")) {
+					query.getQueryBuilder().addWhereClause("reviewer", revisor,QueryBuilder.EQUAL);
+				}
+				if (status != null && !status.equals("")) {
+					query.getQueryBuilder().addWhereClause("status", status,QueryBuilder.EQUAL);
 				}
 				if (Headwords != null && Headwords.length>0) {
 				for (int i=0;i<Headwords.length;i++) {

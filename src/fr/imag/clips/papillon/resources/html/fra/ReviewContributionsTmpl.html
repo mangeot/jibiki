@@ -21,18 +21,30 @@
 	<br>
 		<input name="Lookup" type="Submit" value="Consulter">
 		</TD>
-	<TD><label for="AUTHOR">Login de l'auteur&nbsp;:</label><br>
-		<input ID="AUTHOR" name="AUTHOR" size="15" type="text">
-		<br>
-		 (optionnel)
+	<TD><label for="AUTHOR">Auteur&nbsp;:</label><br>
+		<input id="AUTHOR" name="AUTHOR" size="12" type="text">
+		<br>(optionnel)
      </TD>
 	<TD><label for="HEADWORD">Mot-vedette&nbsp;:</label><br>
-	<input ID="HEADWORD" name="HEADWORD" size="15" type="text" value="">
+	<input id="HEADWORD" name="HEADWORD" size="12" type="text" value="">
 	<label for="PartialMatch">
 	<INPUT id="PartialMatch" name="PartialMatch" type="checkbox" value="PartialMatch">
-	<font size="2">Sous-chaîne</font></label>
-	<br>
-		 (optionnel)
+	<font size="2">partiel</font></label>
+	<br>(optionnel)
+     </TD>
+	<TD><label for="STATUS">Statut&nbsp;:</label><br>
+	<select id="STATUS" name="STATUS">
+		<option value="*ALL*" label="tous">toutes</option>
+		<option value="not finished" label="non finies">non finies</option>
+		<option value="finished" label="finies">finies</option>
+		<option value="revised" label="revisees">révisées</option>
+		<!--option value="validated" label="validees">validées</option-->
+    </select>
+	<br>(optionnel)
+     </TD>
+	<TD><label for="REVISOR">Réviseur&nbsp;:</label><br>
+		<input id="REVISOR" name="REVISOR" size="12" type="text">
+		<br>(optionnel)
      </TD>
 </TR>
 </TABLE>
