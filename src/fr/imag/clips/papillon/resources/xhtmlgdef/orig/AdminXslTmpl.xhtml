@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+   <title>Papillon</title>
+</head>
+<body>
+<div id="Formulaire" lang="en">
+
+   <h1 style="text-align:center">Manage the XSLSheets</h1>
+
+
+<!-- formulaire de voir mot-->          
+
+<form accept-charset="UTF-8" action="AdminXsl.po" method="get">
+<table width="600" border="0" cellspacing="0" cellpadding="0" summary="Formulaire">
+<tr>	
+	<td><b>Name:&nbsp;</b></td>
+	<td><input name="name" type="text" size="64" value=""/></td>
+</tr>
+<tr>
+	<td><b>Description:&nbsp; </b></td>
+	<td><input name="description" type="text" size="64" value=""/></td>
+</tr>
+<tr>
+	<td><b>URL: &nbsp;</b></td>
+	<td><input name="url" type="text" size="64" value=""/></td>
+</tr>
+<tr>
+    <td><b>Is Default: &nbsp;</b></td>     
+    <td><input name="type" type="checkbox" value="Default StyleSheet"/></td>
+</tr>
+<tr>
+	<td colspan="2"><input name="Add" type="submit" value="Add"/></td>
+</tr>
+</table>
+</form> 
+
+<table summary="Existing XSL Sheets">
+<tr><th colspan="4">XSL sheets currently in the database:</th></tr>
+<tr id="TemplateRow">
+	<td><span id="XslName">name</span> (<span id="XslDesc">description</span>) <b><span id="XslDefault">default</span></b></td>
+	<td><a href="" id="SeeAnchor">See</a></td>
+	<td><a href="" id="RemoveAnchor" onclick="return confirm('Are you sure you want to remove the Xsl Sheet?')">Remove</a></td>
+	<td><a href="" id="DefaultAnchor">Make Default</a></td>
+</tr>
+</table>
+<div>
+<div id="Xml">
+</div>
+</div>
+</div>
+</body>
+</html>
