@@ -41,7 +41,7 @@ public class UITemplates {
 			if (typeTable == null) {
 				Volume myVolume = fr.imag.clips.papillon.business.dictionary.VolumesFactory.findVolumeByName(volumeName);
 			//	initElt = Utility.buildDOMTreeFromUrl("file:///Projects/NewUIGenerator/interface.xhtml").getDocumentElement();
-				initElt = Utility.buildDOMTree(myVolume.getXmuVisualisation()).getDocumentElement();
+				initElt = Utility.buildDOMTree(myVolume.getTemplateInterface()).getDocumentElement();
 				if (initElt!=null) {
 					initInterfaceTable(initElt,volumeName);
 				}

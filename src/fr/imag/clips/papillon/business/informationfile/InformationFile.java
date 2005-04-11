@@ -9,6 +9,18 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2005/04/11 12:29:59  mangeot
+ * Merge between the XPathAndMultipleKeys branch and the main trunk
+ *
+ * Revision 1.2.2.2  2005/03/29 09:41:32  serasset
+ * Added transaction support. Use CurrentDBTransaction class to define a transaction
+ * context in which all db commands will be executed.
+ *
+ * Revision 1.2.2.1  2005/03/16 13:24:31  serasset
+ * Modified all boolean fields in table to CHAR(1) in order to be more db independant.
+ * Suppressed ant.jar from class path, informationfiles (which rely on it) should be corrected.
+ * The version of Xerces is now displayed on application init.
+ *
  * Revision 1.2  2005/01/15 12:51:24  mangeot
  * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
  *
@@ -21,9 +33,11 @@
  */
 
 package fr.imag.clips.papillon.business.informationfile;
+
 import fr.imag.clips.papillon.data.*;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.informationfile.MediaPreferences;
+import fr.imag.clips.papillon.CurrentDBTransaction;
 
 import com.lutris.appserver.server.sql.DatabaseManagerException;
 import com.lutris.appserver.server.sql.ObjectIdException;
@@ -41,7 +55,7 @@ public class InformationFile {
      */
     public InformationFile() throws PapillonBusinessException {
         try {
-            this.myDO = InformationFileDO.createVirgin();  
+            this.myDO = InformationFileDO.createVirgin(CurrentDBTransaction.get());  
         } catch(DatabaseManagerException ex) {
             throw new PapillonBusinessException("Error creating empty InformationFile", ex);
         } catch(ObjectIdException ex) {
@@ -278,7 +292,8 @@ public class InformationFile {
     */
     public boolean getIsIndexFile () throws PapillonBusinessException {
         try {
-            return this.myDO.getIsIndexFile();
+            String idx =  this.myDO.getIsIndexFile();
+            return ((idx != null) && idx.equals("Y"));
         } catch(DataObjectException  ex) {
             throw new PapillonBusinessException("Error getting InformationFile's isIndexFile", ex);
         }
@@ -295,7 +310,7 @@ public class InformationFile {
     */
     public void setIsIndexFile ( boolean isIndexFile ) throws PapillonBusinessException {
         try {
-            myDO.setIsIndexFile(isIndexFile);   
+            myDO.setIsIndexFile(isIndexFile ? "Y" : "N");   
         } catch(DataObjectException ex) {
             throw new PapillonBusinessException("Error setting InformationFile's isIndexFile", ex);
         }

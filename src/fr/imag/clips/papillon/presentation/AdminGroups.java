@@ -9,11 +9,14 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2005/04/11 12:29:59  mangeot
+ * Merge between the XPathAndMultipleKeys branch and the main trunk
+ *
  * Revision 1.3  2005/04/11 08:01:02  fbrunet
  * Passage en xhtml des ressources Papillon.
  *
- * Revision 1.2  2005/02/16 16:34:49  mangeot
- * *** empty log message ***
+ * Revision 1.1.2.1  2005/02/25 10:22:08  mangeot
+ * Bug fixes and added the use of referrer when exiting from Reviewcontributions.po
  *
  * Revision 1.1  2004/12/24 14:31:28  mangeot
  * I merged the latest developments of Papillon5.0 with this version 5.1.
@@ -138,11 +141,11 @@ public class AdminGroups extends BasePO {
 
             Group[] GroupsTable=GroupsFactory.getGroupsArray();
             //where we must insert the form
-            HTMLTableRowElement theRow = content.getElementTemplateRow();
+            HTMLTableRowElement theRow = content.getElementGrpTemplateRow();
             HTMLElement theCount = content.getElementExistingGroups();
-            HTMLElement theName = content.getElementName();
-            HTMLElement theAdmins = content.getElementAdmins();
-            HTMLAnchorElement theRemoveAnchor = content.getElementRemoveAnchor();
+            HTMLElement theName = content.getElementGrpName();
+            HTMLElement theAdmins = content.getElementGrpAdmins();
+            HTMLAnchorElement theRemoveAnchor = content.getElementGrpRemoveAnchor();
 
             Node theRowParent = theRow.getParentNode();
 
@@ -157,13 +160,13 @@ public class AdminGroups extends BasePO {
             //adding the volumes description
             for ( int i = 0; i < GroupsTable.length; i++ ) {
 				Group tempGroup = GroupsTable[i];
-                content.setTextName(tempGroup.getName());
+                content.setTextGrpName(tempGroup.getName());
 				String[] adminsArray = tempGroup.getAdminsArray();
 				String groupsString = "";
 				for (int j=0;j< adminsArray.length;j++) {
 					groupsString += adminsArray[j] + "";
 				}
-                content.setTextAdmins(groupsString);
+                content.setTextGrpAdmins(groupsString);
 
 			if (tempGroup.IsAdmin(this.getUser().getLogin())) {
                  theRemoveAnchor.setHref(this.getUrl() + "?" + REMOVE_PARAMETER +

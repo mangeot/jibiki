@@ -10,6 +10,30 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.5  2005/04/11 12:29:59  mangeot
+ *  Merge between the XPathAndMultipleKeys branch and the main trunk
+ *
+ *  Revision 1.4.2.5  2005/04/01 15:16:05  mangeot
+ *  Added validated contributions count on GDEF homepage
+ *
+ *  Revision 1.4.2.4  2005/02/25 10:22:08  mangeot
+ *  Bug fixes and added the use of referrer when exiting from Reviewcontributions.po
+ *
+ *  Revision 1.4.2.3  2005/02/06 22:43:49  mangeot
+ *  Merged the 2 Hashtables CDM Elements and XPaths into one
+ *  Added a boolean (reverse-lookup) in the volume metadata and functionalities in order to perform a reverse lookup when no direct lookup result is found
+ *  Added a boolean (index) in the volume metadata for indexing the only specified CDM Elements
+ *
+ *  Revision 1.4.2.2  2005/01/28 19:45:55  mangeot
+ *  First version that runs basically.
+ *  Should compile after an ant clean.
+ *  XPath loading and virtual volumes for terminological lexicons are OK.
+ *  Bugs remain, needs more testings like the editor for example.
+ *
+ *  Revision 1.4.2.1  2005/01/27 19:29:21  mangeot
+ *  Implemented the HtmlDom cache, it increases speed drastically.
+ *  Still does not compile after an ant clean
+ *
  *  Revision 1.4  2005/01/18 12:16:10  mangeot
  *  Implemented the SQL LIMIT and OFFSET keywords. It allows us to retrieve the entries as blocks and page them. The LIMIT is the DictionariesFactory.MaxRetrievedEntries constant.
  *  The implementation may need further tuning
@@ -296,6 +320,7 @@ public class Home extends BasePO {
         resources = myGetParameterValues(RESOURCES_PARAMETER);
 
         headword = myGetParameter(HEADWORD_PARAMETER);
+
         partialMatchString = myGetParameter(PartialMatch_PARAMETER);
         boolean partialMatch = (null != partialMatchString && !partialMatchString.equals(""));
         int strategy = IQuery.STRATEGY_EXACT;
@@ -415,6 +440,7 @@ public class Home extends BasePO {
             javax.xml.transform.TransformerException {
 
         Collection EntryCollection = null;
+		boolean reverseLookup = false;
         boolean QueryLogging = false;
 
         if (null != handle && null != volume) {
@@ -423,7 +449,11 @@ public class Home extends BasePO {
             EntryCollection =  (Collection) VolumeEntriesFactory.getVolumeNameEntriesVector(volume, null, Headwords, strategy);
         } else {
             EntryCollection = DictionariesFactory.getDictionariesEntriesCollection(resources, source, targets, Headwords, strategy, null, null, null, null, null, user,offset);
-
+			if (EntryCollection==null || EntryCollection.size()==0) {
+				PapillonLogger.writeDebugMsg("EntryCollection null, getDictionariesReverseEntriesCollection");
+				EntryCollection = DictionariesFactory.getDictionariesReverseEntriesCollection(resources, source, targets, Headwords, strategy, null, null, null, null, null, user,offset);
+				reverseLookup = (EntryCollection!=null && EntryCollection.size()>0);
+			}
             QueryLogging = true;
         }
 
@@ -466,6 +496,10 @@ public class Home extends BasePO {
         // If there are too much entries ie > MaxDisplayedEntries,
         // we display a table of entries instead of the entries
         if (EntryCollection != null && EntryCollection.size() > 0) {
+			if (reverseLookup) {
+				XHTMLElement reverseLookupMsg = content.getElementReverseLookupMessage();
+				reverseLookupMsg.setAttribute("class","");
+			}
             if (EntryCollection.size() > DictionariesFactory.MaxDisplayedEntries) {
                 Utility.removeElement(content.getElementVolumeEntriesTable());
                 addEntryTable(content, EntryCollection, source, originalTarget, strategy, offset);
@@ -566,7 +600,7 @@ public class Home extends BasePO {
 
                 // Le vocable
                 //            String vocable = theDicArray[i].getKey1();
-                content.setTextVocable(myEntry.getHeadwords());
+                content.setTextVocable(myEntry.getHeadword());
 
                 // l'entry id
                 href = this.getUrl() + "?"
@@ -577,8 +611,12 @@ public class Home extends BasePO {
                          + PartialMatch_PARAMETER + "=" + partialMatch + "&"
                          + LOOKUP_PARAMETER + "=" + LOOKUP_PARAMETER;
                 entryAnchor.setHref(href);
-
-                content.setTextEntryIdList(myEntry.getId());
+				
+				String id = myEntry.getId();
+                if (id == null) {
+					id = "";
+				}
+				content.setTextEntryIdList(id);
 
                 // The contribution
                 if (myEntry.getType() == IAnswer.Contribution) {
@@ -597,7 +635,7 @@ public class Home extends BasePO {
                 // Le pos
                 String posstr = null;
                 if (myEntry.getType() == IAnswer.LocalEntry) {
-                    posstr = ((VolumeEntry) myEntry).getPoss();
+					posstr = ((VolumeEntry) myEntry).getPos();
                 }
                 if (null == posstr || posstr.equals("")) {
                     posstr = "+";
@@ -608,7 +646,10 @@ public class Home extends BasePO {
                 content.setTextDictionaryName(myEntry.getDictionaryName());
 
                 // The formula
-                content.setTextFormula(IAnswerFactory.getDefinitionString(myEntry));
+                  if (myEntry.getType() == IAnswer.LocalEntry) {
+					 content.setTextFormula(((VolumeEntry) myEntry).getDefinition());
+                }
+             
 
                 XHTMLElement cloneEntry = (XHTMLElement) entryListRow.cloneNode(true);
                 XHTMLElement cloneFormula = (XHTMLElement) formulaRow.cloneNode(true);
@@ -677,21 +718,46 @@ public class Home extends BasePO {
      *      Description of the Exception
      */
     protected void addFewEntries(ConsultXHTML content, Collection EntryCollection, String xslid)
-             throws fr.imag.clips.papillon.business.PapillonBusinessException {
+		throws fr.imag.clips.papillon.business.PapillonBusinessException {
         if (EntryCollection != null && EntryCollection.size() > 0) {
             for (Iterator myIterator = EntryCollection.iterator(); myIterator.hasNext(); ) {
-
-                IAnswer myEntry = (IAnswer) myIterator.next();
-                addElement(content, XslTransformation.applyXslSheets(myEntry, xslid),
-                        myEntry.getDictionaryName());
-            }
+				addEntry(content, (IAnswer) myIterator.next(), xslid);
+             }
         } else {
             Utility.removeElement(content.getElementEntryListTable());
         }
         Utility.removeElement(content.getElementEntryRow());
     }
 
-
+    /**
+     *  Adds an Entry to the Home object
+     *
+     * @param  EntryCollection
+     *      The feature to be added to the FewEntries attribute
+     * @param  xslid
+     *      The feature to be added to the FewEntries attribute
+     * @exception  fr.imag.clips.papillon.business.PapillonBusinessException
+     *      Description of the Exception
+     */
+    protected void addEntry(ConsultXHTML content, IAnswer myEntry, String xslid)
+		throws fr.imag.clips.papillon.business.PapillonBusinessException {
+			org.w3c.dom.Element myHtmlElt = null;
+			org.w3c.dom.Document myHtmlDoc = myEntry.getHtmlDom();
+			if (xslid != null || myHtmlDoc == null) {
+				myHtmlElt = XslTransformation.applyXslSheets(myEntry, xslid);
+				myHtmlDoc = myHtmlElt.getOwnerDocument();
+				if (xslid == null) {
+					myEntry.setHtmlDom(myHtmlDoc);
+					myEntry.save();
+				}
+			}
+			else {
+				myHtmlElt = myHtmlDoc.getDocumentElement();
+			}
+			addElement(content, myHtmlElt, myEntry.getDictionaryName());
+		}
+	
+	
     /**
      *  Adds a feature to the HomeContent attribute of the Home object
      *
@@ -738,6 +804,17 @@ public class Home extends BasePO {
                 pNodes.remove(temppNode);
             }
         }
+		// code spécifique pour le GDEF
+		Element GDEFEntryCountFra = home.getOwnerDocument().getElementById("GDEFEntryCountFra");
+		Element GDEFEntryCountEst = home.getOwnerDocument().getElementById("GDEFEntryCountEst");
+		if (GDEFEntryCountFra != null && GDEFEntryCountEst != null ) {
+			Volume GDEFVolume = VolumesFactory.findVolumeByName("GDEF_est");
+			if (GDEFVolume!=null) {
+				Utility.setText(GDEFEntryCountFra,"" + ContributionsFactory.getCount(GDEFVolume));
+				Utility.setText(GDEFEntryCountEst,"" + ContributionsFactory.getCount(GDEFVolume));
+			}
+		}
+		
         //Element homeParent = content.getElementHomeContent();
         //homeParent.appendChild(content.importNode(home, true));
         //homeParent.removeAttribute("id");

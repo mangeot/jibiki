@@ -9,8 +9,25 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.1  2004/12/06 16:38:31  serasset
- * Initial revision
+ * Revision 1.2  2005/04/11 12:29:59  mangeot
+ * Merge between the XPathAndMultipleKeys branch and the main trunk
+ *
+ * Revision 1.1.1.1.2.3  2005/01/28 19:45:55  mangeot
+ * First version that runs basically.
+ * Should compile after an ant clean.
+ * XPath loading and virtual volumes for terminological lexicons are OK.
+ * Bugs remain, needs more testings like the editor for example.
+ *
+ * Revision 1.1.1.1.2.2  2005/01/27 19:29:21  mangeot
+ * Implemented the HtmlDom cache, it increases speed drastically.
+ * Still does not compile after an ant clean
+ *
+ * Revision 1.1.1.1.2.1  2005/01/25 13:54:54  mangeot
+ * changed the volume volumeEntry and index objects. Does not compile but need a backup...
+ *
+ * Revision 1.1.1.1  2004/12/06 16:38:31  serasset
+ * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
+ * There are still bugs in the code.
  *
  * Revision 1.7  2004/10/28 10:38:11  mangeot
  * Fixed some bugs that affected the dictd server
@@ -66,20 +83,22 @@ public interface IAnswer {
 
     String getId() throws fr.imag.clips.papillon.business.PapillonBusinessException;
 
-    String createNewId() throws fr.imag.clips.papillon.business.PapillonBusinessException;
-
-    String createNewId(String headword) throws fr.imag.clips.papillon.business.PapillonBusinessException;
-
-    void setId(String newId) throws fr.imag.clips.papillon.business.PapillonBusinessException;
+    void setId() throws fr.imag.clips.papillon.business.PapillonBusinessException;
 
     String getHeadword() throws fr.imag.clips.papillon.business.PapillonBusinessException;
 
-    String getHeadwords() throws fr.imag.clips.papillon.business.PapillonBusinessException;
-
     String getHandle() throws fr.imag.clips.papillon.business.PapillonBusinessException;
+
+    org.w3c.dom.Document getDom() throws fr.imag.clips.papillon.business.PapillonBusinessException;
+
+    void setDom(org.w3c.dom.Document myDoc) throws fr.imag.clips.papillon.business.PapillonBusinessException;
+
+    org.w3c.dom.Document getHtmlDom() throws fr.imag.clips.papillon.business.PapillonBusinessException;
+
+    void setHtmlDom(org.w3c.dom.Document myDoc) throws fr.imag.clips.papillon.business.PapillonBusinessException;
 		
     void delete() throws fr.imag.clips.papillon.business.PapillonBusinessException;
 
-    void save() throws fr.imag.clips.papillon.business.PapillonBusinessException;
+    boolean save() throws fr.imag.clips.papillon.business.PapillonBusinessException;
 
 }

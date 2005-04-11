@@ -9,6 +9,16 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2005/04/11 12:29:59  mangeot
+ * Merge between the XPathAndMultipleKeys branch and the main trunk
+ *
+ * Revision 1.2.2.2  2005/03/29 09:41:32  serasset
+ * Added transaction support. Use CurrentDBTransaction class to define a transaction
+ * context in which all db commands will be executed.
+ *
+ * Revision 1.2.2.1  2005/01/25 13:54:54  mangeot
+ * changed the volume volumeEntry and index objects. Does not compile but need a backup...
+ *
  * Revision 1.2  2005/01/15 12:51:24  mangeot
  * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
  *
@@ -24,6 +34,7 @@ package fr.imag.clips.papillon.business.dictionary;
 
 import fr.imag.clips.papillon.data.*;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
+import fr.imag.clips.papillon.CurrentDBTransaction;
 
 import com.lutris.appserver.server.sql.DatabaseManagerException;
 import com.lutris.appserver.server.sql.ObjectIdException;
@@ -50,7 +61,7 @@ public class Index {
 
     public Index(String tableName) throws PapillonBusinessException {
         try {
-            this.myDO = IndexDO.createVirgin(tableName);
+            this.myDO = IndexDO.createVirgin(tableName, CurrentDBTransaction.get());
         }
         catch(DatabaseManagerException ex) {
             throw new PapillonBusinessException("Error creating empty index", ex);
@@ -130,33 +141,109 @@ public class Index {
         }
 
     /**
-		* Gets the key of the index
+		* Gets the language of the key
      *
-     * @return the subject.
+     * @return the language as an ISO-639/2T 3 letters language code (fra, deu, eng, etc.).
      * @exception PapillonBusinessException if an error occurs
      *   retrieving data (usually due to an underlying data layer
 						  *   error).
+     */
+	public String getLang()
+        throws PapillonBusinessException {
+			try {
+				return myDO.getLang();
+			} catch(DataObjectException ex) {
+				throw new PapillonBusinessException("Error getting index's lang", ex);
+			}
+		}
+
+    /**
+		* Sets the language of the key
+     *
+     * @param the language as an ISO-639/2T 3 letters language code (fra, deu, eng, etc.).
+     * @exception PapillonBusinessException if an error occurs
+     *   retrieving data (usually due to an underlying data layer
+	 *   error).
+     */
+    public void setLang(String lang)
+        throws PapillonBusinessException {
+            try {
+                myDO.setLang(lang);
+            } catch(DataObjectException ex) {
+                throw new PapillonBusinessException("Error setting index lang", ex);
+            }
+        }
+
+    /**
+		* Gets the value of the key
+     *
+     * @return the value as a String.
+     * @exception PapillonBusinessException if an error occurs
+     *   retrieving data (usually due to an underlying data layer
+						  *   error).
+     */
+	public String getValue()
+        throws PapillonBusinessException {
+			try {
+				return myDO.getValue();
+			} catch(DataObjectException ex) {
+				throw new PapillonBusinessException("Error getting index's value", ex);
+			}
+		}
+
+    /**
+		* Sets the value of the key
+     *
+     * @param the value as a String.
+     * @exception PapillonBusinessException if an error occurs
+     *   retrieving data (usually due to an underlying data layer
+	 *   error).
+     */
+    public void setValue(String value)
+        throws PapillonBusinessException {
+            try {
+                myDO.setValue(value);
+            } catch(DataObjectException ex) {
+                throw new PapillonBusinessException("Error setting index value", ex);
+            }
+        }
+
+    /**
+     * Gets the EntryId
+	 *
+     * @return the entry id.
+     * @exception PapillonBusinessException if an error occurs
+     *   retrieving data (usually due to an underlying data layer
+	 *   error).
      */
 	public String getEntryId()
         throws PapillonBusinessException {
 			try {
 				return myDO.getEntryId();
 			} catch(DataObjectException ex) {
-				throw new PapillonBusinessException("Error getting index's entry", ex);
+				throw new PapillonBusinessException("Error getting index's entry id", ex);
 			}
 		}
 
-    public void setEntryId(String entryId)
+    /**
+	 * Sets the entry id
+     *
+     * @param the entry id.
+     * @exception PapillonBusinessException if an error occurs
+     *   retrieving data (usually due to an underlying data layer
+	 *   error).
+     */
+     public void setEntryId(String entryId)
         throws PapillonBusinessException {
             try {
                 myDO.setEntryId(entryId);
             } catch(DataObjectException ex) {
-                throw new PapillonBusinessException("Error setting index's entry", ex);
+                throw new PapillonBusinessException("Error setting index's entry id", ex);
             }
         }
 
     /**
-        * Saves the volume entry from the database.
+        * Saves the index to the database.
      *
      * @exception PapillonBusinessException if an error occurs
      *   deleting data (usually due to an underlying data layer

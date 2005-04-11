@@ -9,8 +9,18 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.4  2005/04/11 12:29:59  mangeot
+ *  Merge between the XPathAndMultipleKeys branch and the main trunk
+ *
  *  Revision 1.3  2005/04/11 08:01:02  fbrunet
  *  Passage en xhtml des ressources Papillon.
+ *
+ *  Revision 1.2.2.2  2005/03/29 09:50:57  serasset
+ *  Added transaction rollback in AdminDictionaries.
+ *
+ *  Revision 1.2.2.1  2005/03/29 09:41:33  serasset
+ *  Added transaction support. Use CurrentDBTransaction class to define a transaction
+ *  context in which all db commands will be executed.
  *
  *  Revision 1.2  2004/12/24 14:31:28  mangeot
  *  I merged the latest developments of Papillon5.0 with this version 5.1.
@@ -41,6 +51,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.Text;
 
 import fr.imag.clips.papillon.business.message.MessageDBLoader;
+import fr.imag.clips.papillon.CurrentDBTransaction;
+import com.lutris.appserver.server.sql.DBTransaction;
+import fr.imag.clips.papillon.business.PapillonBusinessException;
 
 //import com.lutris.appserver.server.httpPresentation.HttpPresentationOutputStream;
 //import com.lutris.appserver.server.httpPresentation.HttpPresentationResponse;
@@ -52,6 +65,7 @@ import java.text.DateFormat;
 import java.io.*;
 
 import java.net.URL;
+import java.net.MalformedURLException;
 
 //pour les dictionary
 import fr.imag.clips.papillon.business.dictionary.*;
@@ -138,7 +152,7 @@ public class AdminDictionaries extends BasePO {
      */
     public Node getContent()
              throws javax.xml.parsers.ParserConfigurationException, HttpPresentationException,
-            IOException, org.xml.sax.SAXException, javax.xml.transform.TransformerException {
+            IOException, org.xml.sax.SAXException, javax.xml.transform.TransformerException, PapillonBusinessException {
 
         // Création du contenu
         content = (AdminDictionariesXHTML) MultilingualXHtmlTemplateFactory.createTemplate("AdminDictionariesXHTML", this.getComms(), this.getSessionData());
@@ -151,19 +165,8 @@ public class AdminDictionaries extends BasePO {
             String userMessage = "";
             String urlString = req.getParameter(content.NAME_url);
             if (null != urlString && !urlString.equals("")) {
-                URL myURL = new URL(urlString);
-                PapillonLogger.writeDebugMsg(myURL.toString());
-
-                Dictionary myDict = DictionariesFactory.parseDictionaryMetadata(myURL,
-                        req.getParameter(content.NAME_AddVolumes),
-                        req.getParameter(content.NAME_AddVolumesAndEntries));
-
-                if (null != myDict && !myDict.IsEmpty()) {
-                    userMessage = "adding " + myDict.getName() + " dictionary" + " // " + myDict.getCategory() + " // " + myDict.getType() + " // " + myDict.getDomain() + " // " + myDict.getLegal() + " // " + myDict.getSourceLanguages() + " // " + myDict.getTargetLanguages();
-                    myDict.save();
-                } else {
-                    userMessage = "Ignoring dictionary";
-                }
+                // The user asked for a dictionary to be uploaded
+                userMessage = handleDictionaryAddition(req);
             } else if (null != req.getParameter(SEE_PARAMETER)) {
                 String handle = req.getParameter(SEE_PARAMETER);
                 Dictionary dict = DictionariesFactory.findDictionaryByID(handle);
@@ -195,6 +198,40 @@ public class AdminDictionaries extends BasePO {
         return content.getElementFormulaire();
     }
 
+    protected String handleDictionaryAddition(HttpPresentationRequest req) throws PapillonBusinessException, HttpPresentationException, java.net.MalformedURLException {
+        String userMessage;
+        String urlString = req.getParameter(content.NAME_url);
+        URL myURL = new URL(urlString);
+        PapillonLogger.writeDebugMsg(myURL.toString());
+        
+        // Create and Register the transaction
+        CurrentDBTransaction.registerNewDBTransaction();
+        try {
+            Dictionary myDict = DictionariesFactory.parseDictionaryMetadata(myURL,
+                                                                            req.getParameter(content.NAME_AddVolumes),
+                                                                            req.getParameter(content.NAME_AddVolumesAndEntries));
+            if (null != myDict && !myDict.IsEmpty()) {
+                userMessage = "adding " + myDict.getName() + " dictionary" + " // " + myDict.getCategory() + " // " + myDict.getType() + " // " + myDict.getDomain() + " // " + myDict.getLegal() + " // " + myDict.getSourceLanguages() + " // " + myDict.getTargetLanguages();
+                myDict.save();
+            } else {
+                userMessage = "Ignoring dictionary";
+            }
+            // everything was correct, commit the transaction...
+            ((DBTransaction) CurrentDBTransaction.get()).commit();
+        } catch (Exception e) {
+            userMessage = "Problems while adding the specified dictionary.\n";
+            userMessage = userMessage + e.getMessage();
+            userMessage = userMessage + "\nAll changes to the database have been rolled back.";
+            try {
+                ((DBTransaction) CurrentDBTransaction.get()).rollback();
+            } catch (java.sql.SQLException sqle) {
+                PapillonLogger.writeDebugMsg("AdminDictionaries: SQLException while rolling back failed transaction.");
+            }
+        } finally {
+            CurrentDBTransaction.releaseCurrentDBTransaction();
+        }
+        return userMessage;
+    }
 
     /**
      *  Adds a feature to the Xml attribute of the AdminDictionaries object

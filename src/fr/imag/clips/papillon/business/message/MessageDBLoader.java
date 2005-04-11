@@ -9,6 +9,13 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2005/04/11 12:29:59  mangeot
+ * Merge between the XPathAndMultipleKeys branch and the main trunk
+ *
+ * Revision 1.2.2.1  2005/03/29 09:41:33  serasset
+ * Added transaction support. Use CurrentDBTransaction class to define a transaction
+ * context in which all db commands will be executed.
+ *
  * Revision 1.2  2005/01/15 12:51:24  mangeot
  * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
  *
@@ -30,6 +37,7 @@ import java.io.*;
 
 import fr.imag.clips.papillon.business.message.*;
 import fr.imag.clips.papillon.business.*;
+import fr.imag.clips.papillon.CurrentDBTransaction;
 
 import fr.imag.clips.papillon.data.*;
 
@@ -188,7 +196,7 @@ public class MessageDBLoader extends PapillonUserLogger {
         
             // The msgid field is unique... So first check that is is not in the database already
             // Can't this be done at the database level ?
-            MessageQuery mq = new MessageQuery();
+            MessageQuery mq = new MessageQuery(CurrentDBTransaction.get());
             mq.setQueryMsgid(new String(msg.msgId));
             // Throw an exception if more than one message is found
             mq.requireUniqueInstance();
@@ -199,7 +207,7 @@ public class MessageDBLoader extends PapillonUserLogger {
             }
             
             String authorName;
-            theMessageDO = MessageDO.createVirgin();
+            theMessageDO = MessageDO.createVirgin(CurrentDBTransaction.get());
             if ((null == msg.auteur) || (msg.auteur.trim().equals(""))) {
                 authorName = new String(msg.adresseAuteur);
             } else {

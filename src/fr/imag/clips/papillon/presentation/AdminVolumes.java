@@ -9,8 +9,20 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.5  2005/04/11 12:29:59  mangeot
+ * Merge between the XPathAndMultipleKeys branch and the main trunk
+ *
  * Revision 1.4  2005/04/11 08:01:02  fbrunet
  * Passage en xhtml des ressources Papillon.
+ *
+ * Revision 1.3.2.2  2005/03/31 09:10:31  mangeot
+ * (re) added the code for loading the volume metadata only
+ *
+ * Revision 1.3.2.1  2005/01/28 19:45:55  mangeot
+ * First version that runs basically.
+ * Should compile after an ant clean.
+ * XPath loading and virtual volumes for terminological lexicons are OK.
+ * Bugs remain, needs more testings like the editor for example.
  *
  * Revision 1.3  2005/01/15 12:51:24  mangeot
  * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
@@ -72,23 +84,16 @@ public class AdminVolumes extends BasePO {
     protected final static String SEE_METADATA_PARAMETER="SeeMetadata";
     protected final static String SEE_SCHEMA_PARAMETER="SeeSchema";
     protected final static String SEE_TEMPLATE_PARAMETER="SeeTemplate";
-    protected final static String SEE_XMU_EDIT_PARAMETER="SeeXmuEdit";
-    protected final static String SEE_XMU_VIEW_PARAMETER="SeeXmuView";
-    protected final static String SEE_XNF_CONCEPT_PARAMETER="SeeXnfConcept";
-    protected final static String SEE_XNF_INTERFACE_PARAMETER="SeeXnfInterface";
-    protected final static String GENERATE_XNF_PARAMETER="GenerateXnf";
-    protected final static String GENERATE_XMU_PARAMETER="GenerateXmu";
+    protected final static String SEE_INTERFACE_PARAMETER="SeeInterface";
+    protected final static String GENERATE_INTERFACE_PARAMETER="GenerateItf";
     protected final static String REMOVE_METADATA_PARAMETER="RemoveMetadata";
     protected final static String REMOVE_ALL_PARAMETER="RemoveAll";
     protected final static String FLUSH_PARAMETER="Flush";
 		
-		protected final static String Object_Metadata="Metadata";
-		protected final static String Object_Schema="Schema";
-		protected final static String Object_Template="Template";
-		protected final static String Object_XmuEdit="XmuEdit";
-		protected final static String Object_XmuView="XmuView";
-		protected final static String Object_XnfConcept="XnfConcept";
-		protected final static String Object_XnfInterface="XnfInterface";
+	protected final static String Object_Metadata="Metadata";
+	protected final static String Object_Schema="Schema";
+	protected final static String Object_Template="Template";
+	protected final static String Object_Interface="Interface";
 
     
     protected final static String URL_PARAMETER="url";
@@ -185,41 +190,17 @@ public class AdminVolumes extends BasePO {
                 //adding an XML file
                 addXml(volume.getTemplateEntry());
             }
-            else if (null != myGetParameter(SEE_XMU_EDIT_PARAMETER)) {
-                String handle = myGetParameter(SEE_XMU_EDIT_PARAMETER);
+            else if (null != myGetParameter(SEE_INTERFACE_PARAMETER)) {
+                String handle = myGetParameter(SEE_INTERFACE_PARAMETER);
                 Volume volume = VolumesFactory.findVolumeByID(handle);
                 //adding an XML file
-                addXml(volume.getXmuEdition());
+                addXml(volume.getTemplateInterface());
             }
-            else if (null != myGetParameter(SEE_XMU_VIEW_PARAMETER)) {
-                String handle = myGetParameter(SEE_XMU_VIEW_PARAMETER);
-                Volume volume = VolumesFactory.findVolumeByID(handle);
-                //adding an XML file
-                addXml(volume.getXmuVisualisation());
-            }
-            else if (null != myGetParameter(GENERATE_XMU_PARAMETER)) {
-                String handle = myGetParameter(GENERATE_XMU_PARAMETER);
+            else if (null != myGetParameter(GENERATE_INTERFACE_PARAMETER)) {
+                String handle = myGetParameter(GENERATE_INTERFACE_PARAMETER);
                 Volume volume = VolumesFactory.findVolumeByID(handle);
                 // generating an XNF interface description
 				GenerateTemplate.generateInterfaceTemplate(volume);
-            }
-            else if (null != myGetParameter(SEE_XNF_CONCEPT_PARAMETER)) {
-                String handle = myGetParameter(SEE_XNF_CONCEPT_PARAMETER);
-                Volume volume = VolumesFactory.findVolumeByID(handle);
-                //adding an XML file
-                addXml(volume.getXnfConcept());
-            }
-            else if (null != myGetParameter(SEE_XNF_INTERFACE_PARAMETER)) {
-                String handle = myGetParameter(SEE_XNF_INTERFACE_PARAMETER);
-                Volume volume = VolumesFactory.findVolumeByID(handle);
-                //adding an XML file
-                addXml(volume.getXnfInterface());
-            }
-            else if (null != myGetParameter(GENERATE_XNF_PARAMETER)) {
-                String handle = myGetParameter(GENERATE_XNF_PARAMETER);
-                Volume volume = VolumesFactory.findVolumeByID(handle);
-                // generating an XNF interface description
-				volume.save();
             }
 			if (userMessage != null) {
 				this.getSessionData().writeUserMessage(userMessage);
@@ -253,10 +234,7 @@ public class AdminVolumes extends BasePO {
         HTMLAnchorElement theSeeSchemaAnchor = content.getElementSeeSchemaAnchor();
 		HTMLElement theSeeSchema = content.getElementSeeSchema();
 		HTMLAnchorElement theSeeTemplateAnchor = content.getElementSeeTemplateAnchor();
-        HTMLAnchorElement theSeeXmuEditAnchor = content.getElementSeeXmuEditAnchor();
-        HTMLAnchorElement theSeeXmuViewAnchor = content.getElementSeeXmuViewAnchor();
-        HTMLAnchorElement theSeeXnfConceptAnchor = content.getElementSeeXnfConceptAnchor();
-        HTMLAnchorElement theSeeXnfInterfaceAnchor = content.getElementSeeXnfInterfaceAnchor();
+        HTMLAnchorElement theSeeInterfaceAnchor = content.getElementSeeInterfaceAnchor();
         HTMLAnchorElement theRemoveMetadataAnchor = content.getElementRemoveMetadataAnchor();
         HTMLAnchorElement theRemoveAllAnchor = content.getElementRemoveAllAnchor();
 
@@ -272,26 +250,15 @@ public class AdminVolumes extends BasePO {
 				
         theSeeSchemaAnchor.removeAttribute("id");
         content.getElementSeeSchema().removeAttribute("id");
-        theSeeTemplateAnchor.removeAttribute("id");
+        
+		theSeeTemplateAnchor.removeAttribute("id");
         content.getElementSeeTemplate().removeAttribute("id");
-        theSeeXmuEditAnchor.removeAttribute("id");
-        content.getElementSeeXmuEdit().removeAttribute("id");
-        theSeeXmuViewAnchor.removeAttribute("id");
-        content.getElementSeeXmuView().removeAttribute("id");
-				theSeeXnfConceptAnchor.removeAttribute("id");
-        content.getElementSeeXnfConcept().removeAttribute("id");
-        theSeeXnfInterfaceAnchor.removeAttribute("id");
-        content.getElementSeeXnfInterface().removeAttribute("id");
+       
+		 theSeeInterfaceAnchor.removeAttribute("id");
+        content.getElementSeeInterface().removeAttribute("id");
 
         theRemoveMetadataAnchor.removeAttribute("id");
         theRemoveAllAnchor.removeAttribute("id");
-				
-				theSeeSchema.removeAttribute("id");
-        content.getElementSeeTemplate().removeAttribute("id");
-        content.getElementSeeXmuEdit().removeAttribute("id");
-        content.getElementSeeXmuView().removeAttribute("id");
-        content.getElementSeeXnfConcept().removeAttribute("id");
-
 
         //adding the volumes description
 	for ( int i = 0; i < VolumesTable.length; i++ ) {
@@ -319,46 +286,17 @@ public class AdminVolumes extends BasePO {
 					theSeeTemplateAnchor.setHref(this.getUrl() + "?" + SEE_TEMPLATE_PARAMETER + "=" + handle);
 				}
 				
-				object = VolumesTable[i].getXmuEdition();
-				content.setTextSeeXmuEdit("");
+				object = VolumesTable[i].getTemplateInterface();
+				content.setTextSeeInterface("");
 				if (object !=null && !object.equals("")) {
-					content.setTextSeeXmuEdit("See");
-					theSeeXmuEditAnchor.setHref(this.getUrl() + "?" + SEE_XMU_EDIT_PARAMETER + "=" + handle);
-				}
-				
-				object = VolumesTable[i].getXmuVisualisation();
-				content.setTextSeeXmuView("");
-				if (object !=null && !object.equals("")) {
-					content.setTextSeeXmuView("See");
-					theSeeXmuViewAnchor.setHref(this.getUrl() + "?" + SEE_XMU_VIEW_PARAMETER + "=" + handle);
+					content.setTextSeeInterface("See");
+					theSeeInterfaceAnchor.setHref(this.getUrl() + "?" + SEE_INTERFACE_PARAMETER + "=" + handle);
 				}
 				else if (schema !=null && !schema.equals("")) {
-					content.setTextSeeXmuView("Generate");
-					theSeeXmuViewAnchor.setHref(this.getUrl() + "?" + GENERATE_XMU_PARAMETER + "=" + handle);
+					content.setTextSeeInterface("Generate");
+					theSeeInterfaceAnchor.setHref(this.getUrl() + "?" + GENERATE_INTERFACE_PARAMETER + "=" + handle);
 				}
-				
-				object = VolumesTable[i].getXnfConcept();
-				content.setTextSeeXnfConcept("");
-				if (object !=null && !object.equals("")) {
-					content.setTextSeeXnfConcept("See");
-					theSeeXnfConceptAnchor.setHref(this.getUrl() + "?" + SEE_XNF_CONCEPT_PARAMETER + "=" + handle);
-				}
-				else if (schema !=null && !schema.equals("")) {
-					content.setTextSeeXnfConcept("Generate");
-					theSeeXnfConceptAnchor.setHref(this.getUrl() + "?" + GENERATE_XNF_PARAMETER + "=" + handle);
-				}
-				
-				object = VolumesTable[i].getXnfInterface();
-				content.setTextSeeXnfInterface("");
-				if (object !=null && !object.equals("")) {
-					content.setTextSeeXnfInterface("See");
-					theSeeXnfInterfaceAnchor.setHref(this.getUrl() + "?" + SEE_XNF_INTERFACE_PARAMETER + "=" + handle);
-				}
-				else if (schema !=null && !schema.equals("")) {
-					content.setTextSeeXnfInterface("Generate");
-					theSeeXnfInterfaceAnchor.setHref(this.getUrl() + "?" + GENERATE_XNF_PARAMETER + "=" + handle);
-				}
-				
+								
         theRemoveMetadataAnchor.setHref(this.getUrl() + "?" + REMOVE_METADATA_PARAMETER + "=" + handle);
         theRemoveAllAnchor.setHref(this.getUrl() + "?" + REMOVE_ALL_PARAMETER + "=" + handle);
             
@@ -445,20 +383,14 @@ public class AdminVolumes extends BasePO {
 				if (object.equals(Object_Schema)) {
 					myVolume.setXmlSchema(objectResult);
 				}
+				else if (object.equals(Object_Metadata)) {
+					myVolume.setXmlCode(objectResult);
+				}
 				else if (object.equals(Object_Template)) {
 					myVolume.setTemplateEntry(objectResult);
 				}
-				else if (object.equals(Object_XmuEdit)) {
-					myVolume.setXmuEdition(objectResult);
-				}
-				else if (object.equals(Object_XmuView)) {
-					myVolume.setXmuVisualisation(objectResult);
-				}
-				else if (object.equals(Object_XnfConcept)) {
-					myVolume.setXnfConcept(objectResult);
-				}
-				else if (object.equals(Object_XnfInterface)) {
-					myVolume.setXnfInterface(objectResult);
+				else if (object.equals(Object_Interface)) {
+					myVolume.setTemplateInterface(objectResult);
 				}
 				else {
 						result = "Nothing uploaded";

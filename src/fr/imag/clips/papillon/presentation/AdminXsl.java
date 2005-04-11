@@ -9,8 +9,21 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2005/04/11 12:29:59  mangeot
+ * Merge between the XPathAndMultipleKeys branch and the main trunk
+ *
  * Revision 1.3  2005/04/11 08:01:02  fbrunet
  * Passage en xhtml des ressources Papillon.
+ *
+ * Revision 1.2.2.2  2005/01/28 19:45:55  mangeot
+ * First version that runs basically.
+ * Should compile after an ant clean.
+ * XPath loading and virtual volumes for terminological lexicons are OK.
+ * Bugs remain, needs more testings like the editor for example.
+ *
+ * Revision 1.2.2.1  2005/01/27 15:56:21  mangeot
+ * Able to load a volume with XPointers, cannot lookup the result yet.
+ * Does not compile but commit for backup
  *
  * Revision 1.2  2005/01/15 12:51:24  mangeot
  * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
@@ -57,7 +70,6 @@ import java.net.URL;
 //pour les stylesheet
 import fr.imag.clips.papillon.business.xsl.XslSheet;
 import fr.imag.clips.papillon.business.xsl.XslSheetFactory;
-import fr.imag.clips.papillon.business.xsl.XslSheetDBop;
 
 import fr.imag.clips.papillon.data.*;
 import fr.imag.clips.papillon.business.transformation.*;
@@ -106,7 +118,7 @@ public class AdminXsl extends BasePO {
         if (req.getParameterNames().hasMoreElements()) {
             String userMessage = null;
             if (null != req.getParameter(FLUSH_PARAMETER)) {
-                XslSheetDBop.EmptyDatabase();
+                XslSheetFactory.emptyDatabase();
                 userMessage = "All XslSheets removed...";
             } 
             else if ((null != req.getParameter(NAME_PARAMETER)) && 
@@ -130,7 +142,7 @@ public class AdminXsl extends BasePO {
                         defaultXsl=false;
                     }
 										if (leCode !=null && !leCode.equals("")) {
-											XslSheetDBop.AddAndReplaceXslSheet(Nom,Description,leCode,defaultXsl);
+											XslSheetFactory.AddAndReplaceXslSheet(Nom,Description,leCode,defaultXsl);
 											userMessage = "XslSheet " + Nom + " added...";
 										}
 										else {

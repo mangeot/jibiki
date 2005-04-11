@@ -3,6 +3,22 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2005/04/11 12:29:59  mangeot
+ * Merge between the XPathAndMultipleKeys branch and the main trunk
+ *
+ * Revision 1.2.2.3  2005/03/29 09:41:33  serasset
+ * Added transaction support. Use CurrentDBTransaction class to define a transaction
+ * context in which all db commands will be executed.
+ *
+ * Revision 1.2.2.2  2005/03/16 13:24:31  serasset
+ * Modified all boolean fields in table to CHAR(1) in order to be more db independant.
+ * Suppressed ant.jar from class path, informationfiles (which rely on it) should be corrected.
+ * The version of Xerces is now displayed on application init.
+ *
+ * Revision 1.2.2.1  2005/01/27 15:56:21  mangeot
+ * Able to load a volume with XPointers, cannot lookup the result yet.
+ * Does not compile but commit for backup
+ *
  * Revision 1.2  2005/01/15 12:51:24  mangeot
  * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
  *
@@ -19,6 +35,7 @@ package fr.imag.clips.papillon.business.xsl;
 
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.PapillonLogger;
+import fr.imag.clips.papillon.CurrentDBTransaction;
 
 import fr.imag.clips.papillon.business.utility.*;
 
@@ -64,7 +81,7 @@ public class XslSheetFactory {
         XslSheet[] theXslArray = null;
         
         try {
-            XslSheetQuery query = new XslSheetQuery();
+            XslSheetQuery query = new XslSheetQuery(CurrentDBTransaction.get());
 	    query.addOrderByName(true);
             XslSheetDO[] DOarray = query.getDOArray();
             theXslArray = new XslSheet[ DOarray.length ];
@@ -115,7 +132,7 @@ public class XslSheetFactory {
         XslSheet theXsl = null;
         
         try {
-            XslSheetQuery query = new XslSheetQuery();
+            XslSheetQuery query = new XslSheetQuery(CurrentDBTransaction.get());
             //set query
             query.setQueryOId(new ObjectId(id));
             // Throw an exception if more than one message is found
@@ -134,9 +151,9 @@ public class XslSheetFactory {
         XslSheet theXsl = null;
         
         try {
-            XslSheetQuery query = new XslSheetQuery();
+            XslSheetQuery query = new XslSheetQuery(CurrentDBTransaction.get());
             //set query
-            query.setQueryDefaultxsl(true);
+            query.setQueryDefaultxsl("Y");
             // Throw an exception if more than one message is found
             query.requireUniqueInstance();
             XslSheetDO theXslSheetDO = query.getNextDO();
@@ -156,7 +173,7 @@ public class XslSheetFactory {
         XslSheet theXsl = null;
         
         try {
-            XslSheetQuery query = new XslSheetQuery();
+            XslSheetQuery query = new XslSheetQuery(CurrentDBTransaction.get());
             //set query
             query.setQueryName(Name);
             // Throw an exception if more than one message is found
@@ -168,5 +185,64 @@ public class XslSheetFactory {
         }
         return theXsl;
     }
+	
+	public static void AddXslSheet(String name,String description,String code,boolean defaultXsl)
+    throws fr.imag.clips.papillon.business.PapillonBusinessException{
+        if ((name!=null) && (code!=null)) {
+            //search for an existing
+            XslSheetFactory XslFactory=new XslSheetFactory();
+            XslSheet Existe=XslFactory.findXslSheetByName(name);
+            if (Existe.IsEmpty()) {
+                XslSheet mySheet=new XslSheet();
+                mySheet.setName(name);
+                mySheet.setDescription(description);
+                mySheet.setCode(code);
+                mySheet.setDefaultxsl(defaultXsl);
+                mySheet.save();
+                PapillonLogger.writeDebugMsg("XslSheet: " + mySheet.getName() + " is stored in the database");
+            }
+            else {
+                PapillonLogger.writeDebugMsg("Existing XslSheet in the database");
+                PapillonLogger.writeDebugMsg("Name: "+Existe.getName());
+                PapillonLogger.writeDebugMsg("Description: "+Existe.getDescription());
+            }
+        }
+        else {
+            PapillonLogger.writeDebugMsg("XslSheet ignored");
+        }
+    }
+
+
+    public static void AddAndReplaceXslSheet(String name,String description,String code,boolean defaultXsl)
+    throws fr.imag.clips.papillon.business.PapillonBusinessException {
+        if ((name!=null) && (code!=null)) {
+            //search for an existing
+            XslSheetFactory XslFactory=new XslSheetFactory();
+            XslSheet Existe=XslFactory.findXslSheetByName(name);
+            if (!Existe.IsEmpty()) {
+                Existe.delete();
+				fr.imag.clips.papillon.business.transformation.XslTransformation.resetCache();
+			}
+			XslSheet mySheet=new XslSheet();
+			mySheet.setName(name);
+			mySheet.setDescription(description);
+			mySheet.setCode(code);
+			mySheet.setDefaultxsl(defaultXsl);
+			mySheet.save();
+            PapillonLogger.writeDebugMsg("XslSheet: " + name + " is stored in the database");
+        }
+        else {
+            PapillonLogger.writeDebugMsg("XslSheet ignored");
+        }        
+    }
+
+    public static void emptyDatabase()
+    throws fr.imag.clips.papillon.business.PapillonBusinessException {
+        XslSheet[]	TheXslSheets= XslSheetFactory.getXslSheetsArray();
+        for ( int i = 0; i < TheXslSheets.length; i++ ) {
+            TheXslSheets[i].delete();
+        }
+    }
+	
 }
 

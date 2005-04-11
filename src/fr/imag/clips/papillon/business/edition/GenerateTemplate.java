@@ -64,19 +64,18 @@ public class GenerateTemplate {
 			BufferedWriter bufferInterface;
 			
 			try {
-				myVolume.loadCDMElements();
-				HistoryTag = myVolume.CDM_history;
+				HistoryTag = myVolume.getCdmHistory();
 				ByteArrayOutputStream interfaceOS = new ByteArrayOutputStream();
 				OutputStreamWriter interfaceWriter =
 					new OutputStreamWriter(interfaceOS, DefaultEncoding);
 				// throws UnsupportedEncodingException
 				bufferInterface = new BufferedWriter(interfaceWriter);
 				PapillonLogger.writeDebugMsg("Generating interface template from XML schema");
-				produceInterfaceTemplate(bufferInterface, myVolume.getXmlSchema(), myVolume.CDM_entry, myVolume.getName());
+				produceInterfaceTemplate(bufferInterface, myVolume.getXmlSchema(), myVolume.getCdmEntry(), myVolume.getName());
 				bufferInterface.close();
 				interfaceOS.flush();
 				String itfString = interfaceOS.toString(DefaultEncoding);
-				myVolume.setXmuVisualisation(itfString);
+				myVolume.setTemplateInterface(itfString);
 				myVolume.save();
 				//	PapillonLogger.writeDebugMsg("interface template generated: ");
 			} catch (java.io.IOException ex) {
@@ -163,21 +162,25 @@ public class GenerateTemplate {
 			String elementName = declaration.getName();
 			// discard history and modifications tags
 			if (!elementName.equals(HistoryTag)) {		
-				interfaceBuffer.write("<" + UIGenerator.ITF_ELT_NAME + " " + UIGenerator.ITF_ATTR_NAME  + "=\"" + elementName + "\">" + "\n");
 				if (elementType==GenerateTemplate.LIST_ELEMENT) {
-					interfaceBuffer.write("  <tr bgcolor='#ffebdc'>\n");
+					interfaceBuffer.write("  <tr " +  UIGenerator.ITF_ATTR_NAME  + "=\"" + elementName + "\" bgcolor='#ffebdc'>\n");
 					interfaceBuffer.write("    <td align='center' valign='top' width='25'>\n");
-					interfaceBuffer.write("		 <a name=\"" + elementName + "> </a>");
+					interfaceBuffer.write("		 <a name=\"" + elementName + "\"> </a>");
 					interfaceBuffer.write("<input name=\"" + UIGenerator.SELECT_ATTR_NAME + "\" type=\"checkbox\" value=\"" + elementName + "\" />");
-					interfaceBuffer.write("</a>\n");
+					interfaceBuffer.write("\n");
 					interfaceBuffer.write("    </td>\n");
 					interfaceBuffer.write("    <td  align='center' valign='top'  class='block'>\n");
+                    interfaceBuffer.write("      <h4 class='blockTitle'>" + elementName + "</h4>\n");
 				}
 				else if (elementType==GenerateTemplate.CHOICE_ELEMENT) {
+					interfaceBuffer.write("<" + UIGenerator.ITF_ELT_NAME + " " + UIGenerator.ITF_ATTR_NAME  + "=\"" + elementName + "\">" + "\n");
 					interfaceBuffer.write("<label for=\"" + elementName + "\">"+ elementName + ":</label>\n");
 					interfaceBuffer.write("<input name=\"" + UIGenerator.CHOOSE_ATTR_NAME + "\" type=\"checkbox\" value=\"" + elementName + "\" />\n");
 					interfaceBuffer.write("<br />\n");
 					interfaceBuffer.write("<span title=\"" + elementName + "\" class=\"" + UIGenerator.ITF_HIDDEN_STYLE + "\">\n");
+				}
+				else {
+					interfaceBuffer.write("<" + UIGenerator.ITF_ELT_NAME + " " + UIGenerator.ITF_ATTR_NAME  + "=\"" + elementName + "\">" + "\n");
 				}
 				baseType = declaration.getTypeDefinition ();
 				String typeName = declaration.getName() + "Type";
@@ -206,6 +209,7 @@ public class GenerateTemplate {
 								String attrName = attributePSVI.getName();
 								// avoid special attributes
 								if (!attrName.equals("id")) {
+								    attrName = elementName + UIGenerator.ID_SEPARATOR + attrName;
 									parseSimpleTypeDeclaration (interfaceBuffer,attributePSVI.getTypeDefinition(),attrName);
 								}
 							}
@@ -322,11 +326,14 @@ public class GenerateTemplate {
 	}
 				if (elementType==GenerateTemplate.CHOICE_ELEMENT) {
 					interfaceBuffer.write("</" + UIGenerator.ITF_ELT_NAME + ">\n");	
+					interfaceBuffer.write("</" + UIGenerator.ITF_ELT_NAME + ">\n");	
 				}
 				else if (elementType==GenerateTemplate.LIST_ELEMENT) {
 					interfaceBuffer.write("    </td>\n  </tr>\n");
 				}
-				interfaceBuffer.write("</" + UIGenerator.ITF_ELT_NAME + ">\n");	
+				else  {
+					interfaceBuffer.write("</" + UIGenerator.ITF_ELT_NAME + ">\n");	
+				}
 		}
 		}
 		catch (java.io.IOException IOEx) {

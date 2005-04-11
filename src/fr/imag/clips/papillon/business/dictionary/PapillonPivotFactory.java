@@ -3,6 +3,19 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2005/04/11 12:29:59  mangeot
+ * Merge between the XPathAndMultipleKeys branch and the main trunk
+ *
+ * Revision 1.3.2.2  2005/03/29 09:41:32  serasset
+ * Added transaction support. Use CurrentDBTransaction class to define a transaction
+ * context in which all db commands will be executed.
+ *
+ * Revision 1.3.2.1  2005/01/28 19:45:55  mangeot
+ * First version that runs basically.
+ * Should compile after an ant clean.
+ * XPath loading and virtual volumes for terminological lexicons are OK.
+ * Bugs remain, needs more testings like the editor for example.
+ *
  * Revision 1.3  2005/01/15 12:51:24  mangeot
  * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
  *
@@ -22,6 +35,7 @@
 package fr.imag.clips.papillon.business.dictionary;
 
 import fr.imag.clips.papillon.data.*;
+import fr.imag.clips.papillon.CurrentDBTransaction;
 
 //pour les nouvelles entrees faire le nettoyage un jour ...
 import org.w3c.dom.*;
@@ -57,7 +71,7 @@ public class PapillonPivotFactory {
         Collection theAxieVector = null;
         
         try {
-            PapillonAxiQuery query = new PapillonAxiQuery();
+            PapillonAxiQuery query = new PapillonAxiQuery(CurrentDBTransaction.get());
             if ((null != id) && (!id.trim().equals(""))) {
                 query.getQueryBuilder().addWhereClause("id", id, 
                     QueryBuilder.CASE_INSENSITIVE_CONTAINS);
@@ -113,7 +127,7 @@ public class PapillonPivotFactory {
 			}
 
 			try {
-				PapillonAxiQuery query = new PapillonAxiQuery();
+				PapillonAxiQuery query = new PapillonAxiQuery(CurrentDBTransaction.get());
 				//set query
 				query.setQueryOId(new ObjectId(intId));
 				// Throw an exception if more than one message is found
@@ -145,7 +159,7 @@ public class PapillonPivotFactory {
 			PapillonAxiDO theAxieDO = null;
 
 			try {
-				PapillonAxiQuery query = new PapillonAxiQuery();
+				PapillonAxiQuery query = new PapillonAxiQuery(CurrentDBTransaction.get());
 				//set query
 				query.setQueryId(id);
 				// Throw an exception if more than one message is found
@@ -204,7 +218,7 @@ public class PapillonPivotFactory {
 		return myCollection;
 	}
 			            
-    public static Axie newAxie(Dictionary dict, Volume volume, String id, String xmlCode, String semanticCat, Vector synonyms, Hashtable lexies)
+    public static Axie newAxie(Dictionary dict, Volume volume, String id, org.w3c.dom.Document docDom, String semanticCat, Vector synonyms, Hashtable lexies)
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
         // 
         Axie newAxie=new Axie(dict, volume);
@@ -216,28 +230,28 @@ public class PapillonPivotFactory {
         newAxie.setSynonyms(synonyms);
         //Key1 
         newAxie.setLexies(lexies);
-        //xml code
-        newAxie.setXmlCode(xmlCode);
+        //dom 
+        newAxie.setDom(docDom);
         return newAxie;
     }
 
-			public static Axie newAxieFromExisting(Axie existingAxie) throws fr.imag.clips.papillon.business.PapillonBusinessException {
-				Axie newAxie = newAxie(existingAxie.getDictionary(), existingAxie.getVolume(), null, existingAxie.getXmlCode(), existingAxie.getSemanticCat(), existingAxie.getSynonymsVector(), existingAxie.getLexies());
-				IAnswerFactory.checkAndSetNewId(newAxie);
-				return newAxie;
-			}
-
-
-	public static Axie createAndSaveAxie (Dictionary dict, Volume volume, String id, String xmlCode, String semanticCat, Vector synonyms, Hashtable lexies)
+	public static Axie newAxieFromExisting(Axie existingAxie) throws fr.imag.clips.papillon.business.PapillonBusinessException {
+		Axie newAxie = newAxie(existingAxie.getDictionary(), existingAxie.getVolume(), null, existingAxie.getDom(), existingAxie.getSemanticCat(), existingAxie.getSynonymsVector(), existingAxie.getLexies());
+		newAxie.setId();
+		return newAxie;
+	}
+	
+	
+	public static Axie createAndSaveAxie (Dictionary dict, Volume volume, String id, org.w3c.dom.Document docdom, String semanticCat, Vector synonyms, Hashtable lexies)
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
-			Axie myAxie = newAxie(dict, volume, id, xmlCode, semanticCat, synonyms, lexies);
+			Axie myAxie = newAxie(dict, volume, id, docdom, semanticCat, synonyms, lexies);
 			if (myAxie.IsEmpty()) {
 				myAxie = null;
 			}
 			else {
 				// FIXME: small hack, only Papillon volume entries must have an id!
 				if (dict.getName().equals(PapillonPivotFactory.DICTNAME)) {
-					IAnswerFactory.checkAndSetNewId(myAxie);
+					myAxie.setId();
 				}
 				myAxie.save();
 			}
@@ -265,7 +279,7 @@ public class PapillonPivotFactory {
 		xmlDoc = Axie.addLanguageLink(xmlDoc,answer1.getSourceLanguage(),answer1.getId());
 		xmlDoc = Axie.addLanguageLink(xmlDoc,answer2.getSourceLanguage(),answer2.getId());
 		
-		Axie myAxie = createAndSaveAxie(axieDict,axieVolume, null, Utility.NodeToString(xmlDoc), semCat, null,lexies);
+		Axie myAxie = createAndSaveAxie(axieDict,axieVolume, null, xmlDoc, semCat, null,lexies);
 
 		return myAxie;
 	}
@@ -304,7 +318,7 @@ public class PapillonPivotFactory {
 				// if the axie is linking only 2 lexies, we delete it anyway!
 					if (lexies.values().size()<3) {
 						PapillonLogger.writeDebugMsg("Delete axie: " + myAxie.getHandle());
-						IAnswerFactory.deleteVector(ContributionsFactory.getContributionsByEntryId(null, myAxie.getHandle()));
+						deleteVector(ContributionsFactory.getContributionsByEntryId(null, myAxie.getHandle()));
 						myAxie.delete();
 					}
 					// if the axie is linking more than 2 lexies, we delete the link only!
@@ -318,6 +332,14 @@ public class PapillonPivotFactory {
 			}
 			return res;
 		}
+			
+	protected static int deleteVector(Vector TheAnswers)
+	throws fr.imag.clips.papillon.business.PapillonBusinessException {
+		for ( int i = 0; i < TheAnswers.size(); i++ ) {
+			((IAnswer)TheAnswers.elementAt(i)).delete();
+		}
+		return TheAnswers.size();
+	}
 
 
 	public static int emptyDatabase()
@@ -337,7 +359,7 @@ public class PapillonPivotFactory {
 		
 		public static boolean addLanguageLink(Axie myAxie, String lang, String lexieID) throws PapillonBusinessException {
 			myAxie.addLanguageLink(lang, lexieID);
-			Index myIndex = IndexFactory.newIndex(myAxie.getVolume().getIndexDbname(), lexieID,myAxie.getHandle());
+			Index myIndex = IndexFactory.newIndex(myAxie.getVolume().getIndexDbname(), Volume.CDM_axiReflexie, lang, lexieID,myAxie.getHandle());
 			myIndex.save();
 			return true;
 		}

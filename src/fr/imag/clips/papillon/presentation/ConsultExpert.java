@@ -10,6 +10,24 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.7  2005/04/11 12:29:59  mangeot
+ *  Merge between the XPathAndMultipleKeys branch and the main trunk
+ *
+ *  Revision 1.6.2.3  2005/02/06 22:43:49  mangeot
+ *  Merged the 2 Hashtables CDM Elements and XPaths into one
+ *  Added a boolean (reverse-lookup) in the volume metadata and functionalities in order to perform a reverse lookup when no direct lookup result is found
+ *  Added a boolean (index) in the volume metadata for indexing the only specified CDM Elements
+ *
+ *  Revision 1.6.2.2  2005/01/28 19:45:55  mangeot
+ *  First version that runs basically.
+ *  Should compile after an ant clean.
+ *  XPath loading and virtual volumes for terminological lexicons are OK.
+ *  Bugs remain, needs more testings like the editor for example.
+ *
+ *  Revision 1.6.2.1  2005/01/27 19:29:21  mangeot
+ *  Implemented the HtmlDom cache, it increases speed drastically.
+ *  Still does not compile after an ant clean
+ *
  *  Revision 1.6  2005/01/18 12:16:10  mangeot
  *  Implemented the SQL LIMIT and OFFSET keywords. It allows us to retrieve the entries as blocks and page them. The LIMIT is the DictionariesFactory.MaxRetrievedEntries constant.
  *  The implementation may need further tuning
@@ -691,6 +709,7 @@ public class ConsultExpert extends BasePO {
             javax.xml.transform.TransformerException {
 
         Collection EntryCollection = null;
+		boolean reverseLookup = false;
 
         if (null != handle && null != volume) {
             EntryCollection = DictionariesFactory.findAnswerAndTranslations(volume, handle, targets, myUser);
@@ -698,10 +717,19 @@ public class ConsultExpert extends BasePO {
             EntryCollection = VolumeEntriesFactory.getVolumeNameEntriesVector(volume, null, Headwords, strategy);
         } else {
             EntryCollection = DictionariesFactory.getDictionariesEntriesCollection(resources, source, targets, Headwords, strategy, posContains, pronContains, readingContains, transContains, anyContains, myUser, offset);
-        }
+ 			if (EntryCollection==null || EntryCollection.size()==0) {
+				PapillonLogger.writeDebugMsg("EntryCollection null, getDictionariesReverseEntriesCollection");
+				EntryCollection = DictionariesFactory.getDictionariesReverseEntriesCollection(resources, source, targets, Headwords, strategy, posContains, pronContains, readingContains, transContains, anyContains,myUser,offset);
+				reverseLookup = (EntryCollection!=null && EntryCollection.size()>0);
+			}
+       }
         // If there are too much entries ie > DictionariesFactory.MaxDisplayedEntries,
         // we display a table of entries instead of the entries
         if (null != EntryCollection && EntryCollection.size() > 0) {
+			if (reverseLookup) {
+				XHTMLElement reverseLookupMsg = content.getElementReverseLookupMessage();
+				reverseLookupMsg.setAttribute("class","");
+			}
             if (EntryCollection.size() > DictionariesFactory.MaxDisplayedEntries) {
                 Utility.removeElement(content.getElementVolumeEntries());
                 addEntryTable(EntryCollection, targets, offset);
@@ -797,7 +825,7 @@ public class ConsultExpert extends BasePO {
                 IAnswer myEntry = (IAnswer) myIterator.next();
 
                 // Le vocable
-                content.setTextVocable(myEntry.getHeadwords());
+                content.setTextVocable(myEntry.getHeadword());
 
                 // l'entry
                 href = this.getUrl() + "?"
@@ -831,7 +859,7 @@ public class ConsultExpert extends BasePO {
                 // Le pos
                 String posstr = null;
                 if (myEntry.getType() == IAnswer.LocalEntry) {
-                    posstr = ((VolumeEntry) myEntry).getPoss();
+					posstr = ((VolumeEntry) myEntry).getPos();
                 }
                 if (null == posstr || posstr.equals("")) {
                     posstr = "+";
@@ -842,7 +870,9 @@ public class ConsultExpert extends BasePO {
                 content.setTextDictionaryName(myEntry.getDictionaryName());
 
                 // The formula
-                content.setTextFormula(IAnswerFactory.getDefinitionString(myEntry));
+                 if (myEntry.getType() == IAnswer.LocalEntry) {
+					 content.setTextFormula(((VolumeEntry) myEntry).getDefinition());
+                }
 
                 XHTMLElement cloneEntry = (XHTMLElement) entryListRow.cloneNode(true);
                 XHTMLElement cloneFormula = (XHTMLElement) formulaRow.cloneNode(true);
@@ -901,10 +931,7 @@ public class ConsultExpert extends BasePO {
                 if (myWritingEntry != null && !myWritingEntry.IsEmpty()) {
                     //NOTE: I store the writing of the Japanese entries in the Key1 field.
                     // The reading field is used for transcriptions like romaji
-                    String writing = myWritingEntry.getKey1();
-                    if (writing != null) {
-                        myWriting = writing;
-                    }
+					myWriting = ParseVolume.getCdmString(myWritingEntry,Volume.CDM_writing,"jpn");
                 }
                 content.setTextFoksWriting(myWriting);
                 // Le grade
@@ -1084,8 +1111,7 @@ public class ConsultExpert extends BasePO {
              throws fr.imag.clips.papillon.business.PapillonBusinessException {
         if (EntryCollection != null && EntryCollection.size() > 0) {
             for (Iterator myIterator = EntryCollection.iterator(); myIterator.hasNext(); ) {
-                IAnswer myEntry = (IAnswer) myIterator.next();
-                addElement(XslTransformation.applyXslSheets(myEntry, xslid), myEntry.getVolumeName(), myEntry.getHandle(), myEntry.getDictionaryName(), myEntry.getType());
+				addEntry((IAnswer) myIterator.next(), xslid);
             }
         } else {
             Utility.removeElement(content.getElementEntryListTable());
@@ -1095,7 +1121,34 @@ public class ConsultExpert extends BasePO {
         Utility.removeElement(content.getElementEntryRow());
     }
 
-
+    /**
+     *  Adds an Entry to the Home object
+     *
+     * @param  EntryCollection
+     *      The feature to be added to the FewEntries attribute
+     * @param  xslid
+     *      The feature to be added to the FewEntries attribute
+     * @exception  fr.imag.clips.papillon.business.PapillonBusinessException
+     *      Description of the Exception
+     */
+    protected void addEntry(IAnswer myEntry, String xslid)
+		throws fr.imag.clips.papillon.business.PapillonBusinessException {
+			org.w3c.dom.Element myHtmlElt = null;
+			org.w3c.dom.Document myHtmlDoc = myEntry.getHtmlDom();
+			if (xslid != null || myHtmlDoc == null) {
+				myHtmlElt = XslTransformation.applyXslSheets(myEntry, xslid);
+				myHtmlDoc = myHtmlElt.getOwnerDocument();
+				if (xslid == null) {
+					myEntry.setHtmlDom(myHtmlDoc);
+					myEntry.save();
+				}
+			}
+			else {
+				myHtmlElt = myHtmlDoc.getDocumentElement();
+			}
+			addElement(myHtmlElt, myEntry.getVolumeName(), myEntry.getHandle(),  myEntry.getDictionaryName(), myEntry.getType());
+		}
+	
     /**
      *  Description of the Method
      *

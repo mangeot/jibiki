@@ -9,6 +9,50 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2005/04/11 12:29:59  mangeot
+ * Merge between the XPathAndMultipleKeys branch and the main trunk
+ *
+ * Revision 1.2.2.11  2005/03/30 11:17:07  mangeot
+ * Modified table contributions: replaced originalhandle by originalid
+ * Corrected a few bugs when validating an already existing entry
+ *
+ * Revision 1.2.2.10  2005/03/29 15:27:09  mangeot
+ * Bug fix when trying to create a contribution from an existing entry
+ *
+ * Revision 1.2.2.9  2005/03/29 09:41:32  serasset
+ * Added transaction support. Use CurrentDBTransaction class to define a transaction
+ * context in which all db commands will be executed.
+ *
+ * Revision 1.2.2.8  2005/03/14 08:47:11  mangeot
+ * MemoryOverflow bug resolved. Occured wuth the XPathContext. It stores its context each time an execute is executed so it is better to create a new XPathContext everytime.
+ *
+ * Revision 1.2.2.7  2005/01/28 23:01:09  mangeot
+ * Fixed bugs in the editor. It seems to work now. More testing needed anyway...
+ *
+ * Revision 1.2.2.6  2005/01/28 19:45:55  mangeot
+ * First version that runs basically.
+ * Should compile after an ant clean.
+ * XPath loading and virtual volumes for terminological lexicons are OK.
+ * Bugs remain, needs more testings like the editor for example.
+ *
+ * Revision 1.2.2.5  2005/01/27 23:55:13  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.2.2.4  2005/01/27 19:29:21  mangeot
+ * Implemented the HtmlDom cache, it increases speed drastically.
+ * Still does not compile after an ant clean
+ *
+ * Revision 1.2.2.3  2005/01/27 18:09:28  mangeot
+ * Simple dictionary lookup is now working for GDEF.
+ * Does not compile yet but cvs commit for backup
+ *
+ * Revision 1.2.2.2  2005/01/27 15:56:21  mangeot
+ * Able to load a volume with XPointers, cannot lookup the result yet.
+ * Does not compile but commit for backup
+ *
+ * Revision 1.2.2.1  2005/01/25 13:54:54  mangeot
+ * changed the volume volumeEntry and index objects. Does not compile but need a backup...
+ *
  * Revision 1.2  2004/12/24 14:31:28  mangeot
  * I merged the latest developments of Papillon5.0 with this version 5.1.
  * Have to be tested more ...
@@ -45,6 +89,7 @@ import org.w3c.dom.NodeList;
 
 import fr.imag.clips.papillon.data.*;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
+import fr.imag.clips.papillon.CurrentDBTransaction;
 
 import com.lutris.appserver.server.sql.DatabaseManagerException;
 import com.lutris.appserver.server.sql.ObjectIdException;
@@ -54,26 +99,31 @@ import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.utility.Utility;
 
 /**
- * Represents a Dictionary Entry. 
+* Represents a Dictionary Entry. 
  */
 public class VolumeEntry implements IAnswer {    
+
+	public static boolean CACHE_HTMLDOM = true; 
+
     /**
-     * The DO of the Dictionary.
+	* The DO of the Dictionary.
      */
+    protected org.w3c.dom.Document dom = null;
+    protected org.w3c.dom.Document htmldom = null;
     protected Dictionary theDictionary;
     protected Volume theVolume;
     
     protected VolumeEntryDO myDO = null;
-
+	
     /**
-     * The public constructor.
+		* The public constructor.
      * Should find a better method instead of these if elsif elsif
      * How to do it ?
      */
-
+	
     public VolumeEntry(Dictionary newDict, Volume newVolume) throws PapillonBusinessException {
         try {
-            this.myDO = VolumeEntryDO.createVirgin(newVolume.getDbname());
+            this.myDO = VolumeEntryDO.createVirgin(newVolume.getDbname(), CurrentDBTransaction.get());
 			this.setVolume(newVolume);
 			this.setDictionary(newDict);
         }
@@ -83,561 +133,276 @@ public class VolumeEntry implements IAnswer {
             throw new PapillonBusinessException("Error creating empty Volume", ex);
         }
     }
-
+	
     /** The protected constructor
-     *
-     * @param theDisc. The data object of the Volume.
-     */
-    protected VolumeEntry(Dictionary newDict, Volume newVolume, VolumeEntryDO theVolumeDO) 
+		*
+		* @param theDisc. The data object of the Volume.
+		*/
+    protected VolumeEntry(Dictionary newDict, Volume newVolume, VolumeEntryDO theVolumeEntryDO) 
         throws PapillonBusinessException  {
-			this.myDO = theVolumeDO;
-			this.setVolume(newVolume);
-			this.setDictionary(newDict);
+			try {
+				this.myDO = theVolumeEntryDO;
+				this.dom = Utility.deSerializeDocument(theVolumeEntryDO.getDom());
+				this.htmldom = Utility.deSerializeDocument(theVolumeEntryDO.getHtmldom());
+				this.setVolume(newVolume);
+				this.setDictionary(newDict);
+			}
+			catch(DataObjectException ex) {
+				throw new PapillonBusinessException("Error creating axie ", ex);
+			}
+			
 		}
-
-    public boolean IsEmpty() {
-        return (this.myDO==null) ;
-    }
-
-
-    /**
-     * Gets the object id for the Dictionary
-     *
-     * @return the object id.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-     *   error).
-     */
-    public String getHandle()
-        throws PapillonBusinessException {
-        try {
-            return this.myDO.getHandle();
-        } 
-        catch(DatabaseManagerException ex) {
-            throw new PapillonBusinessException("Error getting Volume's handle", ex);
-        }
-    }
-
-    /**
-     * Gets the subject of the Dictionary
-     *
-     * @return the subject.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-     *   error).
-     */
-    public String getTableName() {
-        return this.myDO.getTableName(); 
-    }
-  
-    /**
-     * Gets the headword of the volume
-     *
-     * @return the subject.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-     *   error).
-     */
-	protected String getHeadwordString() throws PapillonBusinessException {
-        try {
-					return this.myDO.getHeadword();
-        } catch(DataObjectException ex) {
-            throw new PapillonBusinessException("Error getting volume's headword", ex);
-        } 
-    }
-	    
-	public String getHeadword () throws PapillonBusinessException {
-		return getFirstItem(this.getHeadwordString());
-	}
-
-	public String getHeadwords () throws PapillonBusinessException {
-		String headword = this.getHeadwordString();
-		return headword.replace('#',' ').trim();
-	}
-
-    public void setHeadwords(Vector headwords)
-        throws PapillonBusinessException {
-            this.setHeadwords(concatenateVector(headwords));
-        }
 	
-    public void setHeadwords(String words)
-        throws PapillonBusinessException {
-            try {
-                myDO.setHeadword(words);
-            } catch(DataObjectException ex) {
-                throw new PapillonBusinessException("Error setting volume's headword", ex);
-            }
-        }
-    /**
-     * Gets the id of the entry
-     *
-     * @return the subject.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-     *   error).
-     */
-    public String getId()
-        throws PapillonBusinessException {
-        try {
-            return this.myDO.getId();   
-        } catch(DataObjectException ex) {
-            throw new PapillonBusinessException("Error getting volume's id", ex);
-        }
-    }
-
-    public void setId(String id)
-        throws PapillonBusinessException {
-        try {
-		  		myDO.setId(id);   
-        } catch(DataObjectException ex) {
-            throw new PapillonBusinessException("Error setting entry id", ex);
-        }
-    }
-
-    /**
-		* Gets the pronunciation of the volume
-     *
-     * @return the subject.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-						  *   error).
-     */
-    protected String getPronunciationString() throws PapillonBusinessException {
-		try {
-            return this.myDO.getPronunciation();
-        } catch(DataObjectException ex) {
-            throw new PapillonBusinessException("Error getting volume pronunciation", ex);
-        }
-    }
-
-	public String getPronunciation () throws PapillonBusinessException {
-		return getFirstItem(this.getPronunciationString());
+	public boolean IsEmpty() {
+		return (this.myDO==null) ;
 	}
-
-	public String getPronunciations () throws PapillonBusinessException {
-		String myString = this.getPronunciationString();
-		return myString.replace('#',' ').trim();
-	}
-
-    public void setPronunciations(Vector words)
-        throws PapillonBusinessException {
-            this.setPronunciations(concatenateVector(words));
-        }
-
-    public void setPronunciations(String words)
-        throws PapillonBusinessException {
-            try {
-                myDO.setPronunciation(words);
-            } catch(DataObjectException ex) {
-                throw new PapillonBusinessException("Error setting volume's Pronunciation", ex);
-            }
-        }
 	
-    /**
-		* Gets the reading of the volume
-     *
-     * @return the subject.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-						  *   error).
-     */
-    protected String getReadingString() throws PapillonBusinessException {
-		try {
-            return this.myDO.getReading();
-        } catch(DataObjectException ex) {
-            throw new PapillonBusinessException("Error getting volume reading", ex);
-        }
-    }
-
-	public String getReading () throws PapillonBusinessException {
-		return getFirstItem(this.getReadingString());
-	}
-
-	public String getReadings () throws PapillonBusinessException {
-		String myString = this.getReadingString();
-		return myString.replace('#',' ').trim();
-	}
-
-    public void setReadings(Vector words)
-        throws PapillonBusinessException {
-            this.setReadings(concatenateVector(words));
-        }
-
-    public void setReadings(String words)
-        throws PapillonBusinessException {
-            try {
-                myDO.setReading(words);
-            } catch(DataObjectException ex) {
-                throw new PapillonBusinessException("Error setting volume's Reading", ex);
-            }
-        }
 	
-    /**
-     * Gets the pos of the volume
-     *
-     * @return the subject.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-     *   error).
-     */
-    protected String getPosString() throws PapillonBusinessException {
-		try {
-            return this.myDO.getPos();
-        } catch(DataObjectException ex) {
-            throw new PapillonBusinessException("Error getting volume pos", ex);
-        }
-    }
-
-	public String getPos () throws PapillonBusinessException {
-		return getFirstItem(this.getPosString());
-	}
-
-	public String getPoss () throws PapillonBusinessException {
-		String myString = this.getPosString();
-		return myString.replace('#',' ').trim();
-	}
-
-    public void setPoss(Vector words)
-        throws PapillonBusinessException {
-            this.setPoss(concatenateVector(words));
-        }
-
-    public void setPoss(String words)
-        throws PapillonBusinessException {
-            try {
-                myDO.setPos(words);
-            } catch(DataObjectException ex) {
-                throw new PapillonBusinessException("Error setting volume's Pos", ex);
-            }
-        }
-
-
 	/**
-        * Gets the translation of the volume
-     *
-     * @return the subject.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-                          *   error).
-     */
-    protected String getTranslationString() throws PapillonBusinessException {
-        try {
-	    return this.myDO.getTranslation();
-        } catch(DataObjectException ex) {
-            throw new PapillonBusinessException("Error getting volume's Translation", ex);
-        } 
-    }
- 
-		public String getTranslation () throws PapillonBusinessException {
-		return getFirstItem(this.getTranslationString());
-	}
-
-	public String getTranslations () throws PapillonBusinessException {
-		String myString = this.getTranslationString();
-		return myString.replace('#',' ').trim();
-	}
-
-    public void setTranslations(Vector words)
-        throws PapillonBusinessException {
-            this.setTranslations(concatenateVector(words));
-        }
-
-    public void setTranslations(String words)
-        throws PapillonBusinessException {
-            try {
-                myDO.setTranslation(words);
-            } catch(DataObjectException ex) {
-                throw new PapillonBusinessException("Error setting volume's Translation", ex);
-            }
-        }
-
+		* Gets the object id for the Dictionary
+	 *
+	 * @return the object id.
+	 * @exception PapillonBusinessException if an error occurs
+	 *   retrieving data (usually due to an underlying data layer
+						  *   error).
+	 */
+	public String getHandle()
+		throws PapillonBusinessException {
+			try {
+				return this.myDO.getHandle();
+			} 
+			catch(DatabaseManagerException ex) {
+				throw new PapillonBusinessException("Error getting Volume's handle", ex);
+			}
+		}
+	
 	/**
-        * Gets the xmlCode of the volume
-     *
-     * @return the subject.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-                          *   error).
-     */
+		* Gets the subject of the Dictionary
+	 *
+	 * @return the subject.
+	 * @exception PapillonBusinessException if an error occurs
+	 *   retrieving data (usually due to an underlying data layer
+						  *   error).
+	 */
+	public String getTableName() {
+		return this.myDO.getTableName(); 
+	}
+	
+	/**
+		* Gets the headword of the volumeEntry
+	 *
+	 * @return the subject.
+	 * @exception PapillonBusinessException if an error occurs
+	 *   retrieving data (usually due to an underlying data layer
+						  *   error).
+	 */
+	public String getHeadword() throws PapillonBusinessException {
+		try {
+			return this.myDO.getHeadword();
+		} catch(DataObjectException ex) {
+			throw new PapillonBusinessException("Error getting volumeEntry's headword", ex);
+		} 
+	}
+	
+	public void setHeadword(String word)
+		throws PapillonBusinessException {
+			try {
+				myDO.setHeadword(word);
+			} catch(DataObjectException ex) {
+				throw new PapillonBusinessException("Error setting volumeEntry's headword", ex);
+			}
+		}
+	
+	/**
+		* Gets the dom of the entry
+	 *
+	 * @return the dom of the entry.
+	 * @exception PapillonBusinessException if an error occurs
+	 *   retrieving data (usually due to an underlying data layer
+						  *   error).
+	 **/
+	public org.w3c.dom.Document getDom() {
+		return this.dom;
+	}
+	
+	/**
+		* Sets the dom of the entry
+	 *
+	 * @return void.
+	 * @exception PapillonBusinessException if an error occurs
+	 *   retrieving data (usually due to an underlying data layer
+						  *   error).
+	 **/
+	public void setDom(org.w3c.dom.Document myDoc) {
+		this.dom = myDoc;
+	}
+	
+	
+	/**
+		* Gets the html dom of the entry
+	 *
+	 * @return the html dom of the entry.
+	 * @exception PapillonBusinessException if an error occurs
+	 *   retrieving data (usually due to an underlying data layer
+						  *   error).
+	 **/
+	public org.w3c.dom.Document getHtmlDom() {
+		if (CACHE_HTMLDOM) {
+			return this.htmldom;
+		}
+		else {
+			return null;
+		}
+	}
+	
+	/**
+		* Sets the html dom of the entry
+	 *
+	 * @return void.
+	 * @exception PapillonBusinessException if an error occurs
+	 *   retrieving data (usually due to an underlying data layer
+						  *   error).
+	 **/
+	public void setHtmlDom(org.w3c.dom.Document myDoc) {
+		this.htmldom = myDoc;
+	}
+	
+	
+	/**
+		* Gets the xmlCode of the volumeEntry
+	 *
+	 * @return the subject.
+	 * @exception PapillonBusinessException if an error occurs
+	 *   retrieving data (usually due to an underlying data layer
+						  *   error).
+	 */
 	public String getXmlCode()
-        throws PapillonBusinessException {
-        try {
-	    return this.myDO.getXmlCode();
-        } catch(DataObjectException ex) {
-            throw new PapillonBusinessException("Error getting volume's xml code", ex);
-        } 
-    }
-      
-    public void setXmlCode(String code)
-        throws PapillonBusinessException {
-        try {
-            myDO.setXmlCode(code);   
-         } catch(DataObjectException ex) {
-            throw new PapillonBusinessException("Error setting entry xmlcode", ex);
-        }
-    }
-
-	/**
-        * Gets the key1 of the volume
-     *
-     * @return the subject.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-                          *   error).
-     */
-	protected String getKey1String() throws PapillonBusinessException {
-		try {
-            return this.myDO.getKey1();
-        } catch(DataObjectException ex) {
-            throw new PapillonBusinessException("Error getting volume key1", ex);
-        }
+		throws PapillonBusinessException {
+			try {
+				return this.myDO.getXmlCode();
+			} catch(DataObjectException ex) {
+				throw new PapillonBusinessException("Error getting volume's xml code", ex);
+			} 
+		}
+	
+	public void setXmlCode(String code)
+		throws PapillonBusinessException {
+			try {
+				myDO.setXmlCode(code);   
+			} catch(DataObjectException ex) {
+				throw new PapillonBusinessException("Error setting entry xmlcode", ex);
+			}
+		}
+	
+	/* Methods added for compatibility with IAnswer interface */
+	public void setId() throws PapillonBusinessException {
+		this.setId(this.createNewId());
+	}
+	
+	protected void setId(String newId) throws PapillonBusinessException {
+		org.w3c.dom.Node idNode = ParseVolume.getCdmElement(this, Volume.CDM_entryId);
+		if (idNode != null) {
+			idNode.setNodeValue(newId);
+		}
+	}
+	
+	public String getId()  throws PapillonBusinessException {
+		return ParseVolume.getCdmString(this, Volume.CDM_entryId);
 	}
 
-	public String getKey1 () throws PapillonBusinessException {
-		return getFirstItem(this.getKey1String());
+	public String getPos()  throws PapillonBusinessException {
+		return ParseVolume.getCdmString(this, Volume.CDM_pos,this.getSourceLanguage());
 	}
-
-	public String getKey1s () throws PapillonBusinessException {
-		String myString = this.getKey1String();
-		return myString.replace('#',' ').trim();
+	
+	protected void setDictionary(Dictionary dict) {
+		theDictionary = dict;
 	}
-
-    public void setKey1s(Vector words)
-        throws PapillonBusinessException {
-            this.setKey1s(concatenateVector(words));
-        }
-
-    public void setKey1s(String words)
-        throws PapillonBusinessException {
-            try {
-                myDO.setKey1(words);
-            } catch(DataObjectException ex) {
-                throw new PapillonBusinessException("Error setting volume's Key1", ex);
-            }
-        }
-
-
-	/**
-        * Gets the Key2 of the volume
-     *
-     * @return the subject.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-                          *   error).
-     */
-	protected String getKey2String() throws PapillonBusinessException {
-		try {
-            return this.myDO.getKey2();
-        } catch(DataObjectException ex) {
-            throw new PapillonBusinessException("Error getting volume key2", ex);
-        }
-    }
-
-	public String getKey2 () throws PapillonBusinessException {
-		return getFirstItem(this.getKey2String());
-	}
-
-	public String getKey2s () throws PapillonBusinessException {
-		String myString = this.getKey2String();
-		return myString.replace('#',' ').trim();
-	}
-
-    public void setKey2s(Vector words)
-        throws PapillonBusinessException {
-            this.setKey2s(concatenateVector(words));
-        }
-
-    public void setKey2s(String words)
-        throws PapillonBusinessException {
-            try {
-                myDO.setKey2(words);
-            } catch(DataObjectException ex) {
-                throw new PapillonBusinessException("Error setting volume's Key2", ex);
-            }
-        }
-
-
-    /* Methods added for compatibility with IAnswer interface */
-    protected void setDictionary(Dictionary dict) {
-        theDictionary = dict;
-    }
-
+	
 	public Dictionary getDictionary() {
 		return theDictionary;
 	}
-
-    public Volume getVolume() {
-        return theVolume;
-    }
-
-    protected void setVolume(Volume volume) {
-        theVolume = volume;
-    }
-
-    public String getDictionaryName() throws PapillonBusinessException {
-        return theDictionary.getName();
-    }
-
-    public String getDictionaryFullName() throws PapillonBusinessException {
-        return theDictionary.getFullName();
-    }
-
-    public String getVolumeName() throws PapillonBusinessException {
-        return theVolume.getName();
-    }
-
-    public String getSourceLanguage() throws PapillonBusinessException {
-        return theVolume.getSourceLanguage();
-    }
-
-    public int getType() {
-        return IAnswer.LocalEntry;
-    }
-
-		public String createNewId (String headword) throws PapillonBusinessException {
-			String entryId = this.getSourceLanguage() + "." +
-			headword + "." + this.getHandle();
-			entryId = entryId.replace(' ', '_');
-			return Utility.encodeXMLEntities(entryId);
-		}
-		
-		public String createNewId () throws PapillonBusinessException {
-			return createNewId(this.getHeadword());
-		}
-		
-		protected static String getFirstItem(String myString) {
-		if (myString != null && myString.length()>2) {
-			if (myString.startsWith("#")) {
-				myString =  myString.substring(1);
-			}
-			if (myString.endsWith("#")) {
-				myString =  myString.substring(0,myString.indexOf('#'));
-			}
-		}
-		return myString;
-	}
-
-	protected static String concatenateVector(Vector myVector) {
-		String res = "";
-		String end = "";
-		if (myVector != null && myVector.size()>0) {
-			for (int i=0; i< myVector.size();i++) {
-				Object myObject =  myVector.elementAt(i);
-				if (myObject != null) {
-					String myString = (String) myObject;
-					if (!myString.equals("")) {
-						res += "#" + myString;
-						end = "#";
-					}
-				}
-			}
-			res += end;
-		}
-		return res;
+	
+	public Volume getVolume() {
+		return theVolume;
 	}
 	
-	protected String[] getIndexArray() throws PapillonBusinessException {
-		String indexString = this.getHeadwordString() + this.getPronunciationString() + this.getReadingString() + this.getTranslationString() + this.getKey1String() + this.getKey2String();
-		return indexString.split("#");	 
-		}
-	
-	public Vector getIndexVector()  throws PapillonBusinessException {
-		Vector myVect = new Vector();
-		String[] array = this.getIndexArray();
-		for (int i=0;i<array.length;i++) {
-			myVect.add(array[i]);
-		}
-		
-		myVect.add(this.getId());
-		
-		return myVect;
+	protected void setVolume(Volume volume) {
+		theVolume = volume;
 	}
 	
-		public void extractDataFromDOM(Document docXml) throws fr.imag.clips.papillon.business.PapillonBusinessException {
-			try {
-
-				Volume volume  = this.getVolume();
-				volume.loadCDMElements();
-
-	//	PapillonLogger.writeDebugMsg("The xml code:");
-	//	PapillonLogger.writeDebugMsg(Utility.NodeToString(docXml));
-				Vector myHeadwords = getValues(docXml, volume.CDM_headword, volume.CDM_headword_attribute);
-				myHeadwords.addAll(getValues(docXml, volume.CDM_headwordVariant, volume.CDM_headwordVariant_attribute));				
-				myHeadwords.addAll(getValues(docXml, volume.CDM_writing, volume.CDM_writing_attribute));				
-				this.setHeadwords(myHeadwords);
-				
-				String newId =	IAnswerFactory.checkAndSetNewId(this, volume, docXml, this.getHeadword());
-				this.setId(newId);
-				
-				this.setPronunciations(getValues(docXml, volume.CDM_pronunciation, volume.CDM_pronunciation_attribute));
-				this.setReadings(getValues(docXml, volume.CDM_reading, volume.CDM_reading_attribute));
-				this.setPoss(getValues(docXml, volume.CDM_pos, volume.CDM_pos_attribute));
-				this.setTranslations(getValues(docXml, volume.CDM_translation, volume.CDM_translation_attribute));
-				this.setKey1s(getValues(docXml, volume.CDM_databaseKey1, volume.CDM_databaseKey1_attribute));
-				this.setKey2s(getValues(docXml, volume.CDM_databaseKey2, volume.CDM_databaseKey2_attribute));
-				this.setXmlCode(Utility.NodeToString(docXml));
-				}
-				catch(Exception ex) {
-					throw new PapillonBusinessException("Exception in extractDataFromDOM()", ex);
-				}
-			}
+	public String getDictionaryName() throws PapillonBusinessException {
+		return theDictionary.getName();
+	}
 	
-		public static String getValue(Document docXml, String myTag, String myTagAttribute) {
-			Vector res = getValues( docXml, myTag, myTagAttribute);
-			String resString = null;
-				if (res.size()>0) {
-					resString = (String) res.firstElement();
-				}
-				return resString;
-			}
-				
-			// Recuperation of a value
-		public static Vector getValues(Document docXml, String myTag, String myTagAttribute) {
-			Vector myValues = new Vector();
-			if (myTag!=null && !myTag.equals("")) {
-			NodeList myNodes = docXml.getElementsByTagName(myTag);
-			if (myNodes!=null && myNodes.getLength()>0) {
-				for (int i=0;i< myNodes.getLength();i++) {
-					Element myElem =(Element) myNodes.item(i);
-					if (myElem != null) {
-						if (null != myTagAttribute && !myTagAttribute.equals("")) {
-							myValues.add(myElem.getAttribute(myTagAttribute));
-						}
-						else {
-							if (myElem.hasChildNodes()) {
-								myValues.add(myElem.getFirstChild().getNodeValue());
-							}
-						}
-					}
-				}
-			}
-			}
-			return myValues;
+	public String getDictionaryFullName() throws PapillonBusinessException {
+		return theDictionary.getFullName();
+	}
+	
+	public String getVolumeName() throws PapillonBusinessException {
+		return theVolume.getName();
+	}
+	
+	public String getSourceLanguage() throws PapillonBusinessException {
+		return theVolume.getSourceLanguage();
+	}
+	
+	public int getType() {
+		return IAnswer.LocalEntry;
+	}
+	
+	protected String createNewId (String headword) throws PapillonBusinessException {
+		String entryId = this.getSourceLanguage() + "." +
+		headword + "." + this.getHandle();
+		entryId = entryId.replace(' ', '_');
+		return Utility.encodeXMLEntities(entryId);
+	}
+	
+	protected String createNewId () throws PapillonBusinessException {
+		return createNewId(this.getHeadword());
+	}
+	
+	public void setModification(String author, String comment) throws PapillonBusinessException {
+		Volume myVolume = this.getVolume();	
+		Document myDocument = this.getDom();	
+		org.w3c.dom.Node myEntry = ParseVolume.getCdmElement(this, Volume.CDM_entry);
+		fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("setModification: " + Volume.CDM_entry);
+		org.w3c.dom.Node myHistory = ParseVolume.getCdmElement(this, Volume.CDM_history);
+		if (myHistory == null) {
+			fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("setModification: myHistory null");
+			myHistory = myDocument.createElement(myVolume.getCdmHistory());
+			myEntry.appendChild(myHistory);			
 		}
-	
+		org.w3c.dom.Node myModification = myDocument.createElement(myVolume.getCdmModification());
+		org.w3c.dom.Element myAuthor = myDocument.createElement(myVolume.getCdmAuthor());
+		org.w3c.dom.Element myComment = myDocument.createElement(myVolume.getCdmComment());
+		org.w3c.dom.Element myDate = myDocument.createElement(myVolume.getCdmDate());
+		Utility.setText(myAuthor,author);
+		Utility.setText(myDate,new java.util.Date().toString());
+		Utility.setText(myComment,comment);
+		myModification.appendChild(myAuthor);
+		myModification.appendChild(myComment);
+		myModification.appendChild(myDate);
+		myHistory.appendChild(myModification);
+	}
 	
     /**
-     * getParticule
+     * getDefinition
      *
-	 * function specific for the GDEF dictionary
-	 * retrives the value of the <particule> tag.
+	 * function 
+	 * retrives the definition.
 	 * 
      * @exception PapillonBusinessException if an error occurs
      *   replacing data (usually due to an underlying data layer
 	 *   error).
      */
-	 public String getParticule() throws fr.imag.clips.papillon.business.PapillonBusinessException {
-		String res = "";
-		
-		if (getTableName().equals("gdefest")) {
-			String tmp = getValue(Utility.buildDOMTree(getXmlCode()),"particule",null);
-			if (tmp!=null) {
-				res = tmp;
-			}
+	public String getDefinition() throws PapillonBusinessException {
+		String definition = "   ";
+		org.w3c.dom.Node myNode = ParseVolume.getCdmElement(this,Volume.CDM_definition);
+		if (myNode != null) {
+			definition = myNode.getNodeValue();
 		}
-		
-		return res;
-	 }
+		return definition;
+	}
 	
 	
     /**
@@ -651,89 +416,101 @@ public class VolumeEntry implements IAnswer {
 		boolean res = false;
 		if (getVolumeName().equals(otherEntry.getVolumeName()) &&
 			getTableName().equals(otherEntry.getTableName())) {
-			setHeadwords(otherEntry.getHeadwordString());
-			setId(otherEntry.getId());
-			setPronunciations(otherEntry.getPronunciationString());
-			setReadings(otherEntry.getReadingString());
-			setPoss(otherEntry.getPosString());
-			setTranslations(otherEntry.getTranslationString());
-			setXmlCode(otherEntry.getXmlCode());
-			setKey1s(otherEntry.getKey1String());
-			setKey2s(otherEntry.getKey2String());
+			setHeadword(otherEntry.getHeadword());
+			// Do we have to copy the id? Quid of the existing links?
+			// setId(otherEntry.getId());
+			String oldId = this.getId();
+			setDom((org.w3c.dom.Document) otherEntry.getDom().cloneNode(true));
+			setId(oldId);
+			setHtmlDom(otherEntry.getHtmlDom());
 			res= true;
 		}
 		return res;
 	 }
 
     /**
-        * Saves the volume entry from the database.
+     * getParticule
      *
+	 * function specific for the GDEF dictionary
+	 * retrives the value of the <particule> tag.
+	 * 
      * @exception PapillonBusinessException if an error occurs
-     *   deleting data (usually due to an underlying data layer
-                        *   error).
+     *   replacing data (usually due to an underlying data layer
+	 *   error).
      */
-		public void save() throws PapillonBusinessException {
-			Volume myVolume = this.getVolume();
-			if (myVolume == null || myVolume.IsEmpty()) {
-					myVolume = VolumesFactory.findVolumeByDbname(this.getTableName());
-			}
-			if (myVolume!=null && ! myVolume.IsEmpty()) {
-				this.save(this.getVolume().getIndexDbname());
-			}
-			else {
-				try {
-							this.myDO.commit();
-					} catch(Exception ex) {
-							throw new PapillonBusinessException("Error saving volumeEntry", ex);
-					}
-				throw new PapillonBusinessException("Error saving volumeEntry, there is no volume so no index entered!");
+	 public String getParticule() throws fr.imag.clips.papillon.business.PapillonBusinessException {
+		String res = "";
+		
+		if (this.getVolumeName().equals("GDEF_est")) {
+			org.w3c.dom.Node myNode = ParseVolume.getCdmElement(this,Volume.CDM_gdefEstParticule,this.getSourceLanguage());
+			if (myNode != null) {
+				res = myNode.getNodeValue();
 			}
 		}
-
-    public void save(String volumeIndexDbname) 
-        throws PapillonBusinessException {
-        try {
-					IndexFactory.deleteIndexForEntryId(volumeIndexDbname, this.getHandle());
-					IndexFactory.createIndexFromVector(volumeIndexDbname,this.getIndexVector(),this.getHandle());
-		            this.myDO.commit();
-        } catch(Exception ex) {
-            throw new PapillonBusinessException("Error saving volumeEntry", ex);
-        }
-    }
-    
-    /**
-     * Deletes the volume entry from the database.
-     *
-     * @exception PapillonBusinessException if an error occurs
-     *   deleting data (usually due to an underlying data layer
-     *   error).
-     */
-    public void delete() 
-        throws PapillonBusinessException {
-				Volume myVolume = this.getVolume();
-				if (myVolume == null || myVolume.IsEmpty()) {
-					myVolume = VolumesFactory.findVolumeByDbname(this.getTableName());
-				}
+		return res;
+	 }
+	
+	public static void setCacheHtmlDom(boolean cache) {
+		CACHE_HTMLDOM = cache;
+	}
+	
+	
+	/**
+		* Saves the volume entry into the database.
+	 *
+	 * @exception PapillonBusinessException if an error occurs
+	 *   deleting data (usually due to an underlying data layer
+						*   error).
+	 */	
+	public boolean save() 
+		throws PapillonBusinessException {
+			boolean res = false;
+			try {
+				IndexFactory.deleteIndexForEntryId(this.getVolume().getIndexDbname(), this.getHandle());
+				res = ParseVolume.parseEntry(this);
+				this.myDO.setXmlCode(Utility.NodeToString(this.dom));
+				this.myDO.setDom(Utility.serializeDocument(this.dom));
+				this.myDO.setHtmldom(Utility.serializeDocument(this.htmldom));
+				this.myDO.commit();
+			} catch(Exception ex) {
+				throw new PapillonBusinessException("Error saving volumeEntry", ex);
+			}
+			return res;
+		}
+	
+	/**
+		* Deletes the volume entry from the database.
+	 *
+	 * @exception PapillonBusinessException if an error occurs
+	 *   deleting data (usually due to an underlying data layer
+						*   error).
+	 */
+	public void delete() 
+		throws PapillonBusinessException {
+			Volume myVolume = this.getVolume();
+			if (myVolume == null || myVolume.IsEmpty()) {
+				myVolume = VolumesFactory.findVolumeByDbname(this.getTableName());
+			}
 			if (myVolume!=null && ! myVolume.IsEmpty()) {
 				this.delete(myVolume.getIndexDbname());
 			}
 			else {
 				try {
-							this.myDO.commit();
-					} catch(Exception ex) {
-							throw new PapillonBusinessException("Error saving volumeEntry", ex);
-					}
+					this.myDO.commit();
+				} catch(Exception ex) {
+					throw new PapillonBusinessException("Error saving volumeEntry", ex);
+				}
 				throw new PapillonBusinessException("Error saving volumeEntry, there is no volume so no index entered!");
 			}
 		}
-				
-    public void delete(String indexDbname) 
-        throws PapillonBusinessException {
-        try {
-						IndexFactory.deleteIndexForEntryId(indexDbname, this.getHandle());
-            this.myDO.delete();
-        } catch(Exception ex) {
-            throw new PapillonBusinessException("Error deleting volume", ex);
-        }
-    }
+	
+	public void delete(String indexDbname) 
+		throws PapillonBusinessException {
+			try {
+				IndexFactory.deleteIndexForEntryId(indexDbname, this.getHandle());
+				this.myDO.delete();
+			} catch(Exception ex) {
+				throw new PapillonBusinessException("Error deleting VolumeEntry", ex);
+			}
+		}
 }

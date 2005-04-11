@@ -7,8 +7,16 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.1  2004/12/06 16:38:31  serasset
- * Initial revision
+ * Revision 1.2  2005/04/11 12:29:59  mangeot
+ * Merge between the XPathAndMultipleKeys branch and the main trunk
+ *
+ * Revision 1.1.1.1.2.1  2005/03/29 09:41:32  serasset
+ * Added transaction support. Use CurrentDBTransaction class to define a transaction
+ * context in which all db commands will be executed.
+ *
+ * Revision 1.1.1.1  2004/12/06 16:38:31  serasset
+ * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
+ * There are still bugs in the code.
  *
  * Revision 1.8  2003/08/25 08:27:27  mangeot
  * *** empty log message ***
@@ -109,6 +117,7 @@ package fr.imag.clips.papillon.business.informationfile;
 import com.lutris.appserver.server.httpPresentation.ClientPageRedirectException;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.data.*;
+import fr.imag.clips.papillon.CurrentDBTransaction;
 
 
 // classes for creation of an XML Document
@@ -148,7 +157,7 @@ public class InformationDocumentFactory {
         InformationDocument[] theDocArray = null;
         
         try {
-            InformationDocumentQuery query = new InformationDocumentQuery();
+            InformationDocumentQuery query = new InformationDocumentQuery(CurrentDBTransaction.get());
 	    query.addOrderByAuthor(true);
             InformationDocumentDO[] DOarray = query.getDOArray();
             theDocArray = new InformationDocument[ DOarray.length ];
@@ -176,7 +185,7 @@ public class InformationDocumentFactory {
         InformationDocument[] theDocArray = null;
         
         try {
-            InformationDocumentQuery query = new InformationDocumentQuery();
+            InformationDocumentQuery query = new InformationDocumentQuery(CurrentDBTransaction.get());
             query.setQuerySection(section);
 	    query.addOrderByAuthor(true);
             String CIC=QueryBuilder.CASE_INSENSITIVE_CONTAINS;
@@ -223,7 +232,7 @@ public class InformationDocumentFactory {
         InformationDocument theDoc = null;
         
         try {
-            InformationDocumentQuery query = new InformationDocumentQuery();
+            InformationDocumentQuery query = new InformationDocumentQuery(CurrentDBTransaction.get());
             //set query
             query.setQueryOId(new ObjectId(id));
             // Throw an exception if more than one message is found

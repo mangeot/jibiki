@@ -9,8 +9,20 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.5  2005/04/11 12:29:59  mangeot
+ * Merge between the XPathAndMultipleKeys branch and the main trunk
+ *
  * Revision 1.4  2005/04/11 08:01:02  fbrunet
  * Passage en xhtml des ressources Papillon.
+ *
+ * Revision 1.3.2.2  2005/04/09 14:51:47  mangeot
+ * Added more consult options for AdminContributions page
+ *
+ * Revision 1.3.2.1  2005/01/28 19:45:55  mangeot
+ * First version that runs basically.
+ * Should compile after an ant clean.
+ * XPath loading and virtual volumes for terminological lexicons are OK.
+ * Bugs remain, needs more testings like the editor for example.
  *
  * Revision 1.3  2005/01/15 12:51:24  mangeot
  * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
@@ -88,6 +100,7 @@ public class AdminContributions extends BasePO {
 	protected final static String EditVolumeParameter=EditEntry.VolumeName_PARAMETER;
 	protected final static String EditHandleParameter=EditEntry.EntryHandle_PARAMETER;
 	
+	protected final static String ALL="*ALL*";
 	protected final static String REMOVE_CONTRIB_PARAMETER="RemoveContrib";
 	protected final static String MARK_FINISHED_PARAMETER="MarkFinished";
 	protected final static String ENTRYID="entryid";
@@ -127,7 +140,9 @@ public class AdminContributions extends BasePO {
 		//TEMPORAIRE :avec l URL
 		//AJOUT D ENTREE DE DICO
 		
-		String URL = req.getParameter(content.NAME_URL);
+		//String URL = req.getParameter(content.NAME_URL);
+		String URL = null;
+		String lookup = req.getParameter(content.NAME_LOOKUP);
 		String volumeString = req.getParameter(content.NAME_VOLUME);
 		String entryid = req.getParameter(ENTRYID);
 		String xslid = req.getParameter(XSLID);
@@ -145,8 +160,47 @@ public class AdminContributions extends BasePO {
 			queryString += "&" + content.NAME_VOLUME + "=" + volumeString;
 		}
 		
+		// headword
+		String headword = myGetParameter(content.NAME_HEADWORD);
+		if (lookup!=null &&!lookup.equals("")) {
+			this.setPreference(content.NAME_HEADWORD,headword);
+		}
+		else {
+			headword = this.getPreference(content.NAME_HEADWORD);
+		}
+		if (headword !=null && !headword.equals("")) {
+			queryString += "&" + content.NAME_HEADWORD + "=" + headword;
+		}
+		String partialMatch = myGetParameter(content.NAME_PartialMatch);
+		if (lookup!=null && !lookup.equals("")) {
+			this.setPreference(content.NAME_PartialMatch,partialMatch);
+		}
+		else {
+			partialMatch = this.getPreference(content.NAME_PartialMatch);
+		}
+		int strategy = IQuery.STRATEGY_EXACT;
+		if (null != partialMatch && !partialMatch.equals("")) {
+			strategy = IQuery.STRATEGY_SUBSTRING;
+			queryString += "&" + content.NAME_PartialMatch + "=" + partialMatch;
+		}
+
+		// status
+		String status = myGetParameter(content.NAME_STATUS);
+		if (lookup!=null &&!lookup.equals("")) {
+			this.setPreference(content.NAME_STATUS,status);
+		}
+		else {
+			status =  this.getPreference(content.NAME_STATUS);
+		}
+		if (status !=null && !status.equals("")) {
+			queryString += "&" + content.NAME_STATUS + "=" + status;
+		}
+		if (status != null && status.equals(ALL)) {
+			status = null;
+		}
+
 		String userMessage = null;
-		if (null != req.getParameter(content.NAME_ADD) &&
+		if (null != req.getParameter("ADD") &&
 			null != URL) {
 			Contribution[] Contribs = null;
 			//         Contribution[] Contribs = ContributionsFactory.parseCreateContributionsURL(getUser().getLogin(),
@@ -163,7 +217,7 @@ public class AdminContributions extends BasePO {
 				}
 			}
 		}
-		else if (null != req.getParameter(content.NAME_EMPTY)) {
+		else if (null != req.getParameter("EMPTY")) {
 			ContributionsFactory.removeContributions(this.getUser().getLogin(), volumeString);
 			userMessage = "Volume " + volumeString + " contributions removed...";
 		}
@@ -193,7 +247,7 @@ public class AdminContributions extends BasePO {
 					&& null != myContrib.getStatus() && myContrib.getStatus().equals(Contribution.NOT_FINISHED_STATUS)) {
 						VolumeEntry myEntry = VolumeEntriesFactory.findEntryByHandle(myContrib.getVolumeName(),myContrib.getEntryHandle());
 						//Adding modifications in the XML code
-						IAnswerFactory.setModification(myEntry,this.getUser().getLogin(),Contribution.FINISHED_STATUS);
+						myEntry.setModification(this.getUser().getLogin(),Contribution.FINISHED_STATUS);
 						myEntry.save();
 						myContrib.setStatus(Contribution.FINISHED_STATUS);
 						myContrib.save();
@@ -208,16 +262,16 @@ public class AdminContributions extends BasePO {
 			PapillonLogger.writeDebugMsg(userMessage);
 		}
 		
-        addConsultForm(volumeString);
+        addConsultForm(volumeString, headword, partialMatch, status);
 		
-        addContributions(entryid, volumeString, this.getUser(), xslid, sortBy, queryString);
-        
+        addContributions(entryid, volumeString, this.getUser(), headword, strategy, status, xslid, sortBy, queryString);
+
         removeTemplateRows();
         
         //On rend le contenu correct
         return content.getElementFormulaire();
     }
-	protected void addConsultForm(String volume) 
+	protected void addConsultForm(String volume, String headword, String strategy, String status) 
         throws fr.imag.clips.papillon.business.PapillonBusinessException, 
 		HttpPresentationException,
         java.io.UnsupportedEncodingException {
@@ -254,9 +308,23 @@ public class AdminContributions extends BasePO {
 				}
 			}
 			volumeSelect.removeChild(volumeOptionTemplate);
+			
+			
+		HTMLInputElement headwordInput = content.getElementHEADWORD();
+		headwordInput.setValue(headword);
+		
+		if (strategy !=null && !strategy.equals("")) {
+			HTMLInputElement strategyInput = content.getElementPartialMatch();
+			strategyInput.setChecked(true);		
+		}
+		
+		HTMLSelectElement statusSelect = (HTMLSelectElement) content.getElementSTATUS();
+		setSelected(statusSelect,status);
+		
+
 		}
 	
-    protected void addContributions(String entryid, String volumeString, User myUser, String xslid, String sortBy, String queryString)
+    protected void addContributions(String entryid, String volumeString, User myUser, String headword, int strategy, String status, String xslid, String sortBy, String queryString)
         throws PapillonBusinessException,
         ClassNotFoundException,
         HttpPresentationException,
@@ -266,12 +334,17 @@ public class AdminContributions extends BasePO {
         javax.xml.parsers.ParserConfigurationException,
         javax.xml.transform.TransformerException {
 			
-            Vector ContribVector = new Vector();
+   			String[] Headwords = null;
+				if (headword!=null && !headword.equals("")) {
+					Headwords = new String[]{headword};
+				}
+	
+			Vector ContribVector = new Vector();
             if (null != entryid && !entryid.equals("")) {
                 ContribVector.add(ContributionsFactory.findContributionByHandle(entryid));
             }
             else {
-                ContribVector = ContributionsFactory.getContributions(volumeString, myUser, sortBy);
+         			ContribVector = ContributionsFactory.getContributions(volumeString, myUser.getLogin(), strategy, Headwords, status, null, sortBy);
             }
             // If there are too much entries ie > MaxDisplayedEntries,
             // we display a table of entries instead of the entries

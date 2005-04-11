@@ -3,6 +3,13 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2005/04/11 12:29:59  mangeot
+ * Merge between the XPathAndMultipleKeys branch and the main trunk
+ *
+ * Revision 1.2.2.1  2005/03/29 09:41:33  serasset
+ * Added transaction support. Use CurrentDBTransaction class to define a transaction
+ * context in which all db commands will be executed.
+ *
  * Revision 1.2  2004/12/24 14:31:28  mangeot
  * I merged the latest developments of Papillon5.0 with this version 5.1.
  * Have to be tested more ...
@@ -18,6 +25,7 @@
 package fr.imag.clips.papillon.business.user;
 
 import fr.imag.clips.papillon.data.*;
+import fr.imag.clips.papillon.CurrentDBTransaction;
 
 //for URLs
 import java.net.*;
@@ -82,7 +90,7 @@ public class GroupsFactory{
         Group theGroup = null;
 
         try {
-            GroupQuery query = new GroupQuery();
+            GroupQuery query = new GroupQuery(CurrentDBTransaction.get());
             //set query
             query.setQueryName(name);
             // Throw an exception if more than one message is found
@@ -100,7 +108,7 @@ public class GroupsFactory{
         Group theGroup = null;
 
         try {
-            GroupQuery query = new GroupQuery();
+            GroupQuery query = new GroupQuery(CurrentDBTransaction.get());
             //set query
             query.setQueryOId(new ObjectId(handle));
             // Throw an exception if more than one message is found
@@ -242,7 +250,7 @@ public class GroupsFactory{
         Group[] theDictArray = null;
         
         try {
-            GroupQuery query = new GroupQuery();
+            GroupQuery query = new GroupQuery(CurrentDBTransaction.get());
             
             if ((null != name) && (!name.trim().equals(""))) {
                 query.getQueryBuilder().addWhereClause("name", name, 

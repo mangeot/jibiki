@@ -10,8 +10,24 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2005/04/11 12:29:59  mangeot
+ * Merge between the XPathAndMultipleKeys branch and the main trunk
+ *
  * Revision 1.3  2005/04/11 08:01:02  fbrunet
  * Passage en xhtml des ressources Papillon.
+ *
+ * Revision 1.2.2.3  2005/03/30 11:17:07  mangeot
+ * Modified table contributions: replaced originalhandle by originalid
+ * Corrected a few bugs when validating an already existing entry
+ *
+ * Revision 1.2.2.2  2005/03/29 15:27:09  mangeot
+ * Bug fix when trying to create a contribution from an existing entry
+ *
+ * Revision 1.2.2.1  2005/01/28 19:45:55  mangeot
+ * First version that runs basically.
+ * Should compile after an ant clean.
+ * XPath loading and virtual volumes for terminological lexicons are OK.
+ * Bugs remain, needs more testings like the editor for example.
  *
  * Revision 1.2  2004/12/24 14:31:28  mangeot
  * I merged the latest developments of Papillon5.0 with this version 5.1.
@@ -74,7 +90,6 @@ import fr.imag.clips.papillon.business.xsl.XslSheetFactory;
 public class EditEntryInit extends BasePO {
 
     protected final static String HANDLE_PARAMETER = "handle";
-    protected final static String EDIT_PARAMETER = "Edit";
 
     protected final static String ContributionsURL = "AdminContributions.po";
     protected final static String ContributionsVolumeParameter = "VOLUME";
@@ -83,7 +98,7 @@ public class EditEntryInit extends BasePO {
     protected final static String ConsultExpertVolumeParameter = "VOLUME";
     protected final static String ConsultExpertHandleParameter = "handle";
     protected final static String ConsultExpertXslidParameter = "xslid";
-	protected final static String EditEntryURL = "EditEntry.po"; 
+    protected final static String EditEntryURL = "EditEntry.po";
 
     protected final static int STEP_INIT = 1;
     protected final static int STEP_LOOKUP_EDIT = 2;
@@ -116,7 +131,6 @@ public class EditEntryInit extends BasePO {
 	    // On regarde d'abord les parametres qui nous sont demandes.
 		String submitLookupEdit = myGetParameter(content.NAME_LookupEdit);
 		String submitCreate = myGetParameter(content.NAME_CreateAnyway);		
-		String submitEdit = myGetParameter(EDIT_PARAMETER);		
 		String volume = myGetParameter(content.NAME_VOLUME);
 		String headword = myGetParameter(content.NAME_Headword);
 		String partialMatch = myGetParameter(content.NAME_PartialMatch);
@@ -145,8 +159,7 @@ public class EditEntryInit extends BasePO {
 			&& headword!=null && !headword.equals("")) {
 			step = STEP_CREATE;
 		}
-		else if (submitEdit!=null && !submitEdit.equals("")
-			&& volume!=null && !volume.equals("") 
+		else if (volume!=null && !volume.equals("") 
 			&& entryHandle!=null && !entryHandle.equals("")) {
 			step = STEP_EDIT;
 		}
@@ -156,7 +169,7 @@ public class EditEntryInit extends BasePO {
 	    }
 		VolumeEntry myEntry = null;
 		Contribution myContrib = null;
-		
+				
 	    switch (step) {
 		case STEP_LOOKUP_EDIT:
 		    volume = myGetParameter(content.NAME_VOLUME);
@@ -164,10 +177,10 @@ public class EditEntryInit extends BasePO {
 		    break;
 		case STEP_CREATE:
 			myEntry = VolumeEntriesFactory.createEmptyEntry(volume);
-			IAnswerFactory.checkAndSetNewId(myEntry,headword);
-			myContrib = ContributionsFactory.createContributionFromVolumeEntry(myEntry, myUser, null);
-			myContrib.setHeadword(headword);
+			myEntry.setHeadword(headword);
+			myEntry.setId();
 			myEntry.save();
+			myContrib = ContributionsFactory.createContributionFromVolumeEntry(myEntry, myUser, null);
 			myContrib.save();
 			String headwordParam = myUrlEncode(headword);
 		    throw new ClientPageRedirectException(EditEntryURL + "?" + EditEntry.VolumeName_PARAMETER + "=" + volume + 
@@ -188,9 +201,8 @@ public class EditEntryInit extends BasePO {
 			// if it is a modification of an existing entry and myUser has no previous contributions on it
 			else {
 				VolumeEntry newEntry = VolumeEntriesFactory.newEntryFromExisting(myEntry);
-				newEntry.extractDataFromDOM(Utility.buildDOMTree(myEntry.getXmlCode()));
-				myContrib = ContributionsFactory.createContributionFromVolumeEntry(newEntry, myUser, newEntry.getHandle());
 				newEntry.save();
+				myContrib = ContributionsFactory.createContributionFromVolumeEntry(newEntry, myUser, myEntry.getId());
 				myContrib.save();
 				throw new ClientPageRedirectException(EditEntryURL + "?" + EditEntry.VolumeName_PARAMETER + "=" + newEntry.getVolumeName() + 
 				"&" + EditEntry.EntryHandle_PARAMETER + "=" + newEntry.getHandle());
@@ -224,9 +236,9 @@ public class EditEntryInit extends BasePO {
 
 	    for (int i = 0; i < AllVolumes.length; i++) {
 		Volume myVolume = AllVolumes[i];
-		String visu = myVolume.getXmuVisualisation();
+		String itf = myVolume.getTemplateInterface();
 		// FIXME: trick to avoid displaying Papillon axies...
-		if (visu != null && !visu.equals("") && !myVolume.getName().equals(PapillonPivotFactory.VOLUMENAME)) {
+		if (itf != null && !itf.equals("") && !myVolume.getName().equals(PapillonPivotFactory.VOLUMENAME)) {
 		    volumeOptionTemplate.setValue(myVolume.getName());
 		    volumeOptionTemplate.setLabel(myVolume.getName());
 		    // Je dois ici mettre un text dans l'OPTION, car les browser PC ne sont pas conformes aux
@@ -293,7 +305,7 @@ public class EditEntryInit extends BasePO {
 		    VolumeEntry myEntry = (VolumeEntry)entriesIterator.next();
 
 		    // The headword
-		    content.setTextHeadwordList(myEntry.getHeadwords());
+		    content.setTextHeadwordList(myEntry.getHeadword());
 
 			// The entry id
 		    String href = ConsultExpertURL + "?"
@@ -322,13 +334,13 @@ public class EditEntryInit extends BasePO {
 					
 
 		    // The pos
-					content.setTextPosList(myEntry.getPos());
+			content.setTextPosList(myEntry.getPos());
 
 		    // The edit anchor
-		   href = EditEntryURL + "?"
-			+ EditEntry.VolumeName_PARAMETER + "="
+		   href = this.getUrl() + "?"
+			+ content.NAME_VOLUME + "="
 			+ myEntry.getVolumeName() + "&"
-			+ EditEntry.EntryHandle_PARAMETER + "="
+			+ HANDLE_PARAMETER + "="
 			+ myEntry.getHandle();
 		    editAnchor.setHref(href);
 
@@ -349,7 +361,7 @@ public class EditEntryInit extends BasePO {
 			viewXmlAnchor.setHref(href);
 
 			// The formula
-			content.setTextFormula(IAnswerFactory.getDefinitionString(myEntry));
+			content.setTextFormula(myEntry.getDefinition());
 
 
 			HTMLElement cloneEntry = (HTMLElement)entryListRow.cloneNode(true);

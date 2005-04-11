@@ -9,6 +9,13 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2005/04/11 12:29:59  mangeot
+ * Merge between the XPathAndMultipleKeys branch and the main trunk
+ *
+ * Revision 1.2.2.1  2005/03/29 09:41:32  serasset
+ * Added transaction support. Use CurrentDBTransaction class to define a transaction
+ * context in which all db commands will be executed.
+ *
  * Revision 1.2  2005/01/15 12:51:24  mangeot
  * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
  *
@@ -24,6 +31,7 @@ package fr.imag.clips.papillon.business.logs;
 
 import fr.imag.clips.papillon.data.*;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
+import fr.imag.clips.papillon.CurrentDBTransaction;
 
 import com.lutris.appserver.server.sql.DatabaseManagerException;
 import com.lutris.appserver.server.sql.ObjectIdException;
@@ -49,7 +57,7 @@ public class QueryLog {
      */
     public QueryLog() throws PapillonBusinessException {
         try {
-            this.myDO = QueryLogDO.createVirgin();  
+            this.myDO = QueryLogDO.createVirgin(CurrentDBTransaction.get());  
         } catch(DatabaseManagerException ex) {
             throw new PapillonBusinessException("Error creating empty QueryLog", ex);
         } catch(ObjectIdException ex) {

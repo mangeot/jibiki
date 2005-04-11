@@ -9,6 +9,22 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2005/04/11 12:29:59  mangeot
+ * Merge between the XPathAndMultipleKeys branch and the main trunk
+ *
+ * Revision 1.2.2.3  2005/03/30 11:17:07  mangeot
+ * Modified table contributions: replaced originalhandle by originalid
+ * Corrected a few bugs when validating an already existing entry
+ *
+ * Revision 1.2.2.2  2005/03/29 09:41:32  serasset
+ * Added transaction support. Use CurrentDBTransaction class to define a transaction
+ * context in which all db commands will be executed.
+ *
+ * Revision 1.2.2.1  2005/03/16 13:24:31  serasset
+ * Modified all boolean fields in table to CHAR(1) in order to be more db independant.
+ * Suppressed ant.jar from class path, informationfiles (which rely on it) should be corrected.
+ * The version of Xerces is now displayed on application init.
+ *
  * Revision 1.2  2004/12/24 14:31:28  mangeot
  * I merged the latest developments of Papillon5.0 with this version 5.1.
  * Have to be tested more ...
@@ -52,6 +68,7 @@ import fr.imag.clips.papillon.data.*;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.user.User;
 import fr.imag.clips.papillon.business.utility.Utility;
+import fr.imag.clips.papillon.CurrentDBTransaction;
 
 import com.lutris.appserver.server.sql.DatabaseManagerException;
 import com.lutris.appserver.server.sql.ObjectIdException;
@@ -79,7 +96,7 @@ public class Contribution {
      */
     public Contribution() throws PapillonBusinessException {
         try {
-			this.myDO = ContributionDO.createVirgin();
+			this.myDO = ContributionDO.createVirgin(CurrentDBTransaction.get());
 
         }
         catch(DatabaseManagerException ex) {
@@ -157,15 +174,18 @@ public class Contribution {
      *   retrieving data (usually due to an underlying data layer
                           *   error).
      */
-        public String[] getGroupsArray()
-            throws PapillonBusinessException {
-                String[] Groups = null;
-                String groups = getGroups();
-                if (null != groups && !groups.equals("")){
-                    Groups = groups.split(User.GROUPS_SEPARATOR_STRING);
-                }
-                return Groups;
-            }
+		public String[] getGroupsArray() throws PapillonBusinessException {
+			String[] Groups = null;
+			String groups = getGroups();
+			if (null != groups && !groups.equals("")){
+			// delete the first separator in order to avoid an empty group
+				if (groups.indexOf(User.GROUPS_SEPARATOR_STRING) ==0) {
+					groups = groups.substring(User.GROUPS_SEPARATOR_STRING.length());
+				}
+				Groups = groups.split(User.GROUPS_SEPARATOR_STRING);
+			}
+			return Groups;
+		}
         
         protected String getGroups()
             throws PapillonBusinessException {
@@ -492,7 +512,8 @@ public class Contribution {
      */
  public boolean IsNewEntry () throws PapillonBusinessException {
         try {
-            return this.myDO.getNewEntry();
+            String ne = this.myDO.getNewEntry();
+            return ((ne != null) && ne.equals("Y"));
         } catch(DataObjectException  ex) {
             throw new PapillonBusinessException("Error getting contribution newEntry", ex);
         }
@@ -501,35 +522,35 @@ public class Contribution {
  
     public void setNewEntry (boolean newEntry) throws PapillonBusinessException {
         try {
-            myDO.setNewEntry(newEntry);   
+            myDO.setNewEntry(newEntry ? "Y" : "N");   
         } catch(DataObjectException ex) {
             throw new PapillonBusinessException("Error setting contribution newEntry", ex);
         }
     }
    
     /**
-     * Gets the handle of the original entry that has been modified with this contribution
+     * Gets the id of the original entry that has been modified with this contribution
      *
      * @return the subject.
      * @exception PapillonBusinessException if an error occurs
      *   retrieving data (usually due to an underlying data layer
      *   error).
      */
-    public String getOriginalHandle()
+    public String getOriginalId()
         throws PapillonBusinessException {
         try {
-            return this.myDO.getOriginalHandle();   
+            return this.myDO.getOriginalId();   
         } catch(DataObjectException ex) {
-            throw new PapillonBusinessException("Error getting contribution original entry handle", ex);
+            throw new PapillonBusinessException("Error getting contribution original entry id", ex);
         }
     }
 
-		public void setOriginalHandle(String entryHandle)
+		public void setOriginalId(String entryId)
         throws PapillonBusinessException {
         try {
-		  		myDO.setOriginalHandle(entryHandle);   
+		  		myDO.setOriginalId(entryId);   
         } catch(DataObjectException ex) {
-            throw new PapillonBusinessException("Error setting contribution original entry handle", ex);
+            throw new PapillonBusinessException("Error setting contribution original entry id", ex);
         }
     }
 

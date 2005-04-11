@@ -3,6 +3,13 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2005/04/11 12:29:59  mangeot
+ * Merge between the XPathAndMultipleKeys branch and the main trunk
+ *
+ * Revision 1.2.2.1  2005/03/29 09:41:32  serasset
+ * Added transaction support. Use CurrentDBTransaction class to define a transaction
+ * context in which all db commands will be executed.
+ *
  * Revision 1.2  2005/01/18 09:41:11  mangeot
  * Recoded the countRows method with a new method that appeared with DODS 5.1
  *
@@ -22,6 +29,7 @@ package fr.imag.clips.papillon.business.logs;
 
 import fr.imag.clips.papillon.data.*;
 import fr.imag.clips.papillon.papillon_data.*;
+import fr.imag.clips.papillon.CurrentDBTransaction;
 
 
 //import com.lutris.appserver.server.sql.DBConnection;
@@ -116,7 +124,7 @@ public class QueryLogsFactory {
 
     public static int countEntries() throws PapillonBusinessException {
         int entries = -1;
-		QueryLogQuery myQLQuery = new QueryLogQuery();
+		QueryLogQuery myQLQuery = new QueryLogQuery(CurrentDBTransaction.get());
 		try {
 			entries = myQLQuery.getCount();
 		}

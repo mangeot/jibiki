@@ -9,6 +9,18 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2005/04/11 12:29:59  mangeot
+ * Merge between the XPathAndMultipleKeys branch and the main trunk
+ *
+ * Revision 1.2.2.2  2005/03/29 09:41:33  serasset
+ * Added transaction support. Use CurrentDBTransaction class to define a transaction
+ * context in which all db commands will be executed.
+ *
+ * Revision 1.2.2.1  2005/03/16 13:24:31  serasset
+ * Modified all boolean fields in table to CHAR(1) in order to be more db independant.
+ * Suppressed ant.jar from class path, informationfiles (which rely on it) should be corrected.
+ * The version of Xerces is now displayed on application init.
+ *
  * Revision 1.2  2005/01/15 12:51:24  mangeot
  * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
  *
@@ -23,6 +35,7 @@
 package fr.imag.clips.papillon.business.xsl;
 import fr.imag.clips.papillon.data.*;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
+import fr.imag.clips.papillon.CurrentDBTransaction;
 
 import com.lutris.appserver.server.sql.DatabaseManagerException;
 import com.lutris.appserver.server.sql.ObjectIdException;
@@ -44,7 +57,7 @@ public class XslSheet {
      */
     public XslSheet() throws PapillonBusinessException {
         try {
-            this.myDO = XslSheetDO.createVirgin();  
+            this.myDO = XslSheetDO.createVirgin(CurrentDBTransaction.get());  
         } catch(DatabaseManagerException ex) {
             throw new PapillonBusinessException("Error creating empty XslSheet", ex);
         } catch(ObjectIdException ex) {
@@ -122,7 +135,8 @@ public class XslSheet {
 ////////////////////////// data member Default
  public boolean getDefaultxsl () throws PapillonBusinessException {
         try {
-            return this.myDO.getDefaultxsl();
+            String def =  this.myDO.getDefaultxsl();
+            return ((def != null) && (def.equals("Y")));
         } catch(DataObjectException  ex) {
             throw new PapillonBusinessException("Error getting XslSheet's defaultxls", ex);
         }
@@ -131,7 +145,7 @@ public class XslSheet {
  
     public void setDefaultxsl (boolean Defaultxsl) throws PapillonBusinessException {
         try {
-            myDO.setDefaultxsl(Defaultxsl);   
+            myDO.setDefaultxsl(Defaultxsl ? "Y" : "N");   
         } catch(DataObjectException ex) {
             throw new PapillonBusinessException("Error setting XslSheet's defaultxsl", ex);
         }

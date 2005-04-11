@@ -9,8 +9,17 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.5  2005/04/11 12:29:59  mangeot
+ * Merge between the XPathAndMultipleKeys branch and the main trunk
+ *
  * Revision 1.4  2005/04/11 08:01:02  fbrunet
  * Passage en xhtml des ressources Papillon.
+ *
+ * Revision 1.3.2.1  2005/01/28 19:45:55  mangeot
+ * First version that runs basically.
+ * Should compile after an ant clean.
+ * XPath loading and virtual volumes for terminological lexicons are OK.
+ * Bugs remain, needs more testings like the editor for example.
  *
  * Revision 1.3  2005/01/15 12:51:24  mangeot
  * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
@@ -106,6 +115,14 @@ public class Admin extends BasePO {
             }
 			else if (null != req.getParameter(content.NAME_ResetLanguagesCache)) {
 				Languages.resetCache();
+            }
+			else if (null != req.getParameter(content.NAME_SetHTMLDomCaches)) {
+				fr.imag.clips.papillon.business.dictionary.VolumeEntry.setCacheHtmlDom(true);
+                this.getSessionData().writeUserMessage("HTML DOM will be cached");
+            }
+			else if (null != req.getParameter(content.NAME_UnsetHTMLDomCaches)) {
+				fr.imag.clips.papillon.business.dictionary.VolumeEntry.setCacheHtmlDom(false);
+                this.getSessionData().writeUserMessage("HTML DOM will not be cached");
             }
         }
 

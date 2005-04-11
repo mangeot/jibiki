@@ -17,6 +17,16 @@ import fr.imag.clips.papillon.dict.kernel.IDictEngine;
 * @author: Administrator
 */
 public class RFC2229 implements Runnable {
+    protected static java.io.PrintStream myOutStream = new java.io.PrintStream(System.out, true);
+	{
+		try {
+			myOutStream = new java.io.PrintStream(System.out, true, "UTF-8");
+		}
+		catch (java.io.UnsupportedEncodingException ex) {
+			;
+		}
+	}
+
     protected final static String CRLF = "\r\n";
     protected final static String MimeHeader = "Content-type: text/plain; charset=utf-8" +
 		CRLF +
@@ -151,6 +161,7 @@ public class RFC2229 implements Runnable {
         sendLine("MATCH database strategy word -- match word in database using strategy");
         sendLine("                             -- The MATCH command returns up to 20 matches");
         sendLine("OPTION MIME                  -- use MIME headers");
+        sendLine("OPTION VIEW (TEXT|XML|HTML)  -- toggle between output formats");
         sendLine("SHOW DB                      -- list all accessible databases");
         sendLine("SHOW DATABASES               -- list all accessible databases");
         sendLine("SHOW STRAT                   -- list available matching strategies");
@@ -441,14 +452,12 @@ public class RFC2229 implements Runnable {
     public void run() {
         try {
             this.fEngine.initialize();
-           InputStreamReader myReader = new InputStreamReader(fSocket.getInputStream(), "UTF-8");
-            // InputStreamReader myReader = new InputStreamReader(fSocket.getInputStream());
-      //      System.out.println(myReader.getEncoding());
+            InputStreamReader myReader = new InputStreamReader(fSocket.getInputStream(), "UTF-8");
             BufferedReader in = new BufferedReader(myReader);
             String inputLine;
             processCommand(null);
             while ((inputLine = in.readLine()) != null) {
-                System.out.println(new Date().toString() + ": JDictd user command: " + inputLine);
+                myOutStream.println(new Date().toString() + ": JDictd user command: " + inputLine);
                 processCommand(inputLine);
                 if ("QUIT".equalsIgnoreCase(inputLine) ||
 					"EXIT".equalsIgnoreCase(inputLine)) {
@@ -478,7 +487,7 @@ public class RFC2229 implements Runnable {
         out.write(CRLF.getBytes("UTF-8"));
     }
     void trace(String s) {
-        System.out.println(s);
+        myOutStream.println(s);
     }
 	protected String getWhat(java.util.StringTokenizer st) {
 		String what = st.nextToken();

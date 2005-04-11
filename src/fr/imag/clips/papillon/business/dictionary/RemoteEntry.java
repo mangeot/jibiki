@@ -9,8 +9,18 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.1  2004/12/06 16:38:31  serasset
- * Initial revision
+ * Revision 1.2  2005/04/11 12:29:59  mangeot
+ * Merge between the XPathAndMultipleKeys branch and the main trunk
+ *
+ * Revision 1.1.1.1.2.1  2005/01/28 19:45:55  mangeot
+ * First version that runs basically.
+ * Should compile after an ant clean.
+ * XPath loading and virtual volumes for terminological lexicons are OK.
+ * Bugs remain, needs more testings like the editor for example.
+ *
+ * Revision 1.1.1.1  2004/12/06 16:38:31  serasset
+ * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
+ * There are still bugs in the code.
  *
  * Revision 1.5  2004/02/10 05:27:13  mangeot
  * The version UIGEN_V2 has been merged with the trunk by MM
@@ -98,17 +108,26 @@ public class RemoteEntry implements IAnswer {
         this.theId = newId;
     }
 
-	public String createNewId (String headword) throws PapillonBusinessException {
-		String entryId = this.getSourceLanguage() + "." +
-		headword + ".";
-		entryId = entryId.replace(' ', '_');
-		return Utility.encodeXMLEntities(entryId);
+	public void setId() throws PapillonBusinessException {
+        this.theId = "";
+    }
+
+    public org.w3c.dom.Document getDom() throws fr.imag.clips.papillon.business.PapillonBusinessException {
+		return null;
 	}
 
-		public String createNewId () throws PapillonBusinessException {
-					return createNewId(this.getHeadword());
-				}		
-	
+    public void setDom(org.w3c.dom.Document myDoc) throws fr.imag.clips.papillon.business.PapillonBusinessException {
+		;
+	}
+
+    public org.w3c.dom.Document getHtmlDom() throws fr.imag.clips.papillon.business.PapillonBusinessException {
+		return null;
+	}
+
+    public void setHtmlDom(org.w3c.dom.Document myDoc) throws fr.imag.clips.papillon.business.PapillonBusinessException {
+		;
+	}
+			
     public void setHeadword(String headword) {
         this.theHeadword = headword;
     }
@@ -117,16 +136,12 @@ public class RemoteEntry implements IAnswer {
 			return this.theHeadword;
     }
 
-    public String getHeadwords() {
-			return this.theHeadword;
-    }
-
     public int getType() {
         return IAnswer.RemoteEntry;
     }
 	
-	public void save() {
-		;
+	public boolean save() {
+		return true;
 	}
 	public void delete() {
 		this.xmlCode =null;

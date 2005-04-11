@@ -9,8 +9,16 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.1  2004/12/06 16:38:31  serasset
- * Initial revision
+ * Revision 1.2  2005/04/11 12:29:59  mangeot
+ * Merge between the XPathAndMultipleKeys branch and the main trunk
+ *
+ * Revision 1.1.1.1.2.1  2005/03/29 09:41:32  serasset
+ * Added transaction support. Use CurrentDBTransaction class to define a transaction
+ * context in which all db commands will be executed.
+ *
+ * Revision 1.1.1.1  2004/12/06 16:38:31  serasset
+ * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
+ * There are still bugs in the code.
  *
  * Revision 1.1  2003/10/04 03:19:18  mangeot
  * FoksEntry is a special entry designed for the FoksEdict volume created
@@ -30,6 +38,7 @@ package fr.imag.clips.papillon.business.dictionary;
 
 import fr.imag.clips.papillon.data.*;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
+import fr.imag.clips.papillon.CurrentDBTransaction;
 
 import com.lutris.appserver.server.sql.DatabaseManagerException;
 import com.lutris.appserver.server.sql.ObjectIdException;
@@ -54,7 +63,7 @@ public class FoksEntry {
 
     public FoksEntry() throws PapillonBusinessException {
         try {
-            this.myDO = FoksEntryDO.createVirgin();
+            this.myDO = FoksEntryDO.createVirgin(CurrentDBTransaction.get());
         }
         catch(DatabaseManagerException ex) {
             throw new PapillonBusinessException("Error creating empty index", ex);
@@ -65,7 +74,7 @@ public class FoksEntry {
 
     public FoksEntry(String id, String headword, String reading, String score) throws PapillonBusinessException {
         try {
-            this.myDO = FoksEntryDO.createVirgin();
+            this.myDO = FoksEntryDO.createVirgin(CurrentDBTransaction.get());
             this.setId(id);
             this.setHeadword(headword);
             this.setReading(reading);

@@ -3,6 +3,20 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.5  2005/04/11 12:29:59  mangeot
+ * Merge between the XPathAndMultipleKeys branch and the main trunk
+ *
+ * Revision 1.4.2.3  2005/04/01 15:16:05  mangeot
+ * Added validated contributions count on GDEF homepage
+ *
+ * Revision 1.4.2.2  2005/03/30 11:17:07  mangeot
+ * Modified table contributions: replaced originalhandle by originalid
+ * Corrected a few bugs when validating an already existing entry
+ *
+ * Revision 1.4.2.1  2005/03/29 09:41:32  serasset
+ * Added transaction support. Use CurrentDBTransaction class to define a transaction
+ * context in which all db commands will be executed.
+ *
  * Revision 1.4  2005/01/15 20:02:19  mangeot
  * Added new search options for ReviewContributions
  *
@@ -24,6 +38,7 @@
 package fr.imag.clips.papillon.business.dictionary;
 
 import fr.imag.clips.papillon.data.*;
+import fr.imag.clips.papillon.CurrentDBTransaction;
 
 //for URLs
 import java.net.*;
@@ -52,7 +67,7 @@ public class ContributionsFactory {
 
     protected final static String DML_URI = "http://www-clips.imag.fr/geta/services/dml";
 
-    public static Contribution newContribution(String volumeName, String srclang, String author, String groups, String headword, String entryId, String entryHandle, String status, boolean newEntry, String originalHandle)
+    public static Contribution newContribution(String volumeName, String srclang, String author, String groups, String headword, String entryId, String entryHandle, String status, boolean newEntry, String originalId)
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
             //
             Contribution newContrib=new Contribution();
@@ -77,7 +92,7 @@ public class ContributionsFactory {
             //xml code
             newContrib.setNewEntry(newEntry);
 			if (!newEntry) {
-						newContrib.setOriginalHandle(originalHandle);
+						newContrib.setOriginalId(originalId);
 			}
             return newContrib;
         }
@@ -96,7 +111,7 @@ public class ContributionsFactory {
             }
 						
             try {
-                ContributionQuery query = new ContributionQuery();
+                ContributionQuery query = new ContributionQuery(CurrentDBTransaction.get());
                 //set query
                 query.setQueryOId(new ObjectId(intId));
                 // Throw an exception if more than one message is found
@@ -118,7 +133,7 @@ public class ContributionsFactory {
             ContributionDO theContributionDO = null;
 						
             try {
-                ContributionQuery query = new ContributionQuery();
+                ContributionQuery query = new ContributionQuery(CurrentDBTransaction.get());
                 //set query
                 query.setQueryEntryHandle(handle);
                 // Throw an exception if more than one message is found
@@ -138,7 +153,7 @@ public class ContributionsFactory {
         throws PapillonBusinessException {
             Vector theContribVector = new Vector();
             try {
-                ContributionQuery query = new ContributionQuery();
+                ContributionQuery query = new ContributionQuery(CurrentDBTransaction.get());
 				if (author !=null && !author.equals("")) {
 					query.getQueryBuilder().addWhereClause("author", author,
                                                        QueryBuilder.EQUAL);
@@ -221,7 +236,7 @@ public class ContributionsFactory {
 						String author = myUser.getLogin();
             try {
 				// consultation of a local volume
-				ContributionQuery query = new ContributionQuery();
+				ContributionQuery query = new ContributionQuery(CurrentDBTransaction.get());
 
 				query.getQueryBuilder().addWhereClause("volume", volumeName,
 										   QueryBuilder.EQUAL);
@@ -272,7 +287,7 @@ public class ContributionsFactory {
             Vector theContribs = new Vector();
             try {
 				// consultation of a local volume
-				ContributionQuery query = new ContributionQuery();
+				ContributionQuery query = new ContributionQuery(CurrentDBTransaction.get());
 
 				query.getQueryBuilder().addWhereClause("volume", volumeName,
 										   QueryBuilder.EQUAL);
@@ -389,7 +404,7 @@ public class ContributionsFactory {
 		Vector theContribs = new Vector();
 		try {
 			// consultation of a local volume
-			ContributionQuery query = new ContributionQuery();
+			ContributionQuery query = new ContributionQuery(CurrentDBTransaction.get());
 
 			query.getQueryBuilder().addWhereClause("entryid", entryid,
 										  QueryBuilder.EQUAL);
@@ -442,19 +457,45 @@ throws fr.imag.clips.papillon.business.PapillonBusinessException {
 	return myContrib;
 }
 
-public static Contribution createContributionFromVolumeEntry (VolumeEntry myEntry, User myUser, String originalHandle)
+public static Contribution createContributionFromVolumeEntry (VolumeEntry myEntry, User myUser, String originalId)
 throws fr.imag.clips.papillon.business.PapillonBusinessException {
 	Contribution myContrib = null;
-	boolean newEntry = (originalHandle == null || originalHandle.equals(""));
+	boolean newEntry = (originalId == null || originalId.equals(""));
 	PapillonLogger.writeDebugMsg("New contrib author: " + myUser.getLogin() + " volume: " + myEntry.getVolumeName() +
-							  " headword: " + myEntry.getHeadword() + " entryid: " + myEntry.getId());
-	myContrib = newContribution(myEntry.getVolumeName(), myEntry.getSourceLanguage(), myUser.getLogin(), myUser.getGroups(),  myEntry.getHeadword(), myEntry.getId(), myEntry.getHandle(), Contribution.NOT_FINISHED_STATUS, newEntry, originalHandle);
+							  " headword: " + myEntry.getHeadword() + " entryid: " + myEntry.getId() + " originalId: " + originalId);
+	myContrib = newContribution(myEntry.getVolumeName(), myEntry.getSourceLanguage(), myUser.getLogin(), myUser.getGroups(),  myEntry.getHeadword(), myEntry.getId(), myEntry.getHandle(), Contribution.NOT_FINISHED_STATUS, newEntry, originalId);
 	if (null != myContrib && !myContrib.IsEmpty()) {
 		myContrib.save();
 	}
 	return myContrib;
 }
 
+	public static int getCount(Volume myVolume) 
+        throws fr.imag.clips.papillon.business.PapillonBusinessException {
+			int count = -1;
+			try {
+                VolumeEntryQuery volumeQuery = new VolumeEntryQuery(myVolume.getDbname(), CurrentDBTransaction.get());
+				count = volumeQuery.getCount();
+				ContributionQuery contribsQuery = new ContributionQuery(CurrentDBTransaction.get());
+				contribsQuery.getQueryBuilder().addWhereClause("volume", myVolume.getName(),
+										   QueryBuilder.EQUAL);
+				count -= contribsQuery.getCount();
+			}
+			catch (com.lutris.appserver.server.sql.DatabaseManagerException e) {
+				throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in getCount with volume: " + myVolume.getName(), e);
+			}			
+			catch (java.sql.SQLException e) {
+				throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in getCount with volume: " + myVolume.getName(), e);
+			}			
+			catch (com.lutris.dods.builder.generator.query.DataObjectException e) {
+				throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in getCount with volume: " + myVolume.getName(), e);
+			}			
+			catch (com.lutris.dods.builder.generator.query.NonUniqueQueryException e) {
+				throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in getCount with volume: " + myVolume.getName(), e);
+			}			
+			return count;
+		}
+	
 
 }
 

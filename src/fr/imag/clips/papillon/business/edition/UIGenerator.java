@@ -36,6 +36,7 @@ public class UIGenerator {
 	public static final String ID_SEPARATOR = ".";
 	public static final String PARAMETERS_SEPARATOR = "+";
 	public static final String ITF_ELT_NAME = "span";
+	public static final String ITF_DUPLICATE_ELT_NAME = "tr";
 	public static final String ITF_ATTR_NAME = "class";
 	public static final String ITF_HIDDEN_STYLE = "hidden";
 	public static final String SELECT_ATTR_NAME = "select";
@@ -51,13 +52,12 @@ public class UIGenerator {
 	/******************************************************/
 	
 	public static void fillInterfaceTemplate(Element entryElt, Element rootItfElt,Element itfTemplate) {
-		Element correspItf = UIGenerator.findCorrespondingElement(entryElt,rootItfElt, "root.0");
-		
+		Element correspItf = UIGenerator.findCorrespondingElement(entryElt,rootItfElt);
 		UIGenerator.fillTemplate(entryElt,correspItf, itfTemplate);
 	}
 	
 	public static boolean addElement(String elementName, String parentId, Element entryElt, Element entryTemplate, String[] siblingIds) {
-		PapillonLogger.writeDebugMsg("addElement: " + elementName + " parent: " + parentId);	
+		// PapillonLogger.writeDebugMsg("addElement: " + elementName + " parent: " + parentId);	
 		boolean found = false;
 		Element siblingElement = null;
 		int indexOfPt;
@@ -225,8 +225,10 @@ public class UIGenerator {
 		if (itfElt !=null) {
 			String newId = createId(entryNode, oldId);
 			String entryNodeName = entryNode.getNodeName();
-			PapillonLogger.writeDebugMsg("fillTemplate Node: " + entryNodeName + " ID: " + newId);
-			
+			if (entryNode.getNodeType()==Node.ATTRIBUTE_NODE) {
+				entryNodeName = ((Attr) entryNode).getOwnerElement().getNodeName() + ID_SEPARATOR + entryNodeName;
+			}
+			// PapillonLogger.writeDebugMsg("fillTemplate Node: " + entryNodeName + " ID: " + newId);
 			setNameCorrespondingAnchor(entryNode, itfElt, newId);
 			setIdCorrespondingSubmitInputs(entryNodeName, itfElt, newId);
 			setIdCorrespondingLabel(entryNodeName, itfElt, newId);
@@ -264,7 +266,7 @@ public class UIGenerator {
 						// so, this case should not be present 
 						// attributes are computed later
 						case  Node.ATTRIBUTE_NODE:
-							fillTemplate(nodeItem, itfElt, itfTemplate, newId);
+							fillTemplate((Attr) nodeItem, itfElt, itfTemplate, newId);
 							break;
 							// this case case should not be present.
 						case  Node.DOCUMENT_NODE:
@@ -273,11 +275,11 @@ public class UIGenerator {
 						case  Node.ELEMENT_NODE:
 							// If the previous node is of the same type, then duplicate the previous corresponding interface node 
 							if (previousNode!=null && nodeItem.getNodeName().equals(previousNode.getNodeName())) {
-								correspItf = findCorrespondingElement((Element) previousNode,itfElt, newId);
-								correspItf = duplicateInterfaceElement((Element) nodeItem,correspItf,itfTemplate, newId);
+								correspItf = findCorrespondingElement((Element) previousNode,itfElt, ITF_DUPLICATE_ELT_NAME);
+								correspItf = duplicateInterfaceElement((Element) nodeItem,correspItf,itfTemplate);
 							}
 							else {
-								correspItf = findCorrespondingElement((Element) nodeItem,itfElt, newId);
+								correspItf = findCorrespondingElement((Element) nodeItem,itfElt);
 							}
 							previousNode = nodeItem;
 							fillTemplate(nodeItem,correspItf, itfTemplate, newId);
@@ -343,37 +345,36 @@ public class UIGenerator {
 		return idString;
 	}
 	
-	public static Element findCorrespondingElement(Element entryElt, Element itfElt, String newId) {
-		return findCorrespondingElement(entryElt, itfElt, newId, false);
+	protected static Element findCorrespondingElement(Element entryElt, Element itfElt) {
+		return findCorrespondingElement(entryElt, itfElt, ITF_ELT_NAME);
 	}
 	
-	protected static Element findCorrespondingElement(Element entryElt, Element itfElt, String newId, boolean template) {
-		//	PapillonLogger.writeDebugMsg("findCorrespondingElement " + entryElt.getNodeName() + " id: " + newId + " itfelt: " + itfElt.getNodeName() + " class: " + itfElt.getAttribute("class"));
-		int entryElementNumber = getElementNumber(entryElt);
+	protected static Element findCorrespondingElement(Element entryElt, Element itfElt, String itfEltName) {
+		return findCorrespondingElement(entryElt, itfElt, itfEltName, false);
+	}
+	
+	protected static Element findCorrespondingElement(Element entryElt, Element itfElt, String itfEltName, boolean template) {
+		// if template is true, it means that if nothing is found, the result is null
+		// instead of the parent interface element.
+		// PapillonLogger.writeDebugMsg("findCorrespondingElement " + entryElt.getNodeName() + " itfelt: " + itfElt.getNodeName() + " class: " + itfElt.getAttribute(ITF_ATTR_NAME));
 		Element resultElt = null;
 		String entryEltName = entryElt.getNodeName();
-		NodeList myNodeList = itfElt.getElementsByTagName (ITF_ELT_NAME);
+		NodeList myNodeList = itfElt.getElementsByTagName (itfEltName);
 		int i=0;
-		int itfElementNumber = 0;
 		while (i<myNodeList.getLength () && resultElt==null) {
 			Element currentElt = (Element) myNodeList.item(i);
 			String myAttr = currentElt.getAttribute(ITF_ATTR_NAME);
 			if (myAttr !=null) {
 				if (myAttr.equals(entryEltName)) {
-					// When the interface element comes from the interface template
-					if (template) {
-						resultElt = currentElt;
-					}
-					else if (itfElementNumber==entryElementNumber) {
-						resultElt = currentElt;
-					}
-					else {
-						itfElementNumber++;
-					}
+					// In any case, we take the first corresponding child
+					// because after we duplicate from an empty template 
+					resultElt = currentElt;
 				}
 			}	
 			i++;	
 		}
+		// if template is true, it means that if nothing is found, the result is null
+		// instead of the parent interface element.
 		if (resultElt==null && !template) {
 			resultElt = itfElt;
 		} 
@@ -526,7 +527,7 @@ public class UIGenerator {
 	}
 	
 	protected static boolean setIdValueCorrespondingBooleanCheckbox(String correspName, Element itfElt, String newId, String newValue) {
-		PapillonLogger.writeDebugMsg("setIdValueCorrespondingBooleanCheckbox: " + correspName + " id: " + newId + " value: " + newValue);
+		// PapillonLogger.writeDebugMsg("setIdValueCorrespondingBooleanCheckbox: " + correspName + " id: " + newId + " value: " + newValue);
 		boolean found = false;
 		NodeList myNodeList = itfElt.getElementsByTagName ("input");
 		int i=0;
@@ -592,11 +593,14 @@ public class UIGenerator {
 	}
 	
 	
-	protected static Element duplicateInterfaceElement(Element entryElt, Element itfElt, Element itfTemplate,String newId) {
-		PapillonLogger.writeDebugMsg("duplicateInterfaceElement: " + entryElt.getNodeName() + " itf: " + itfElt.getNodeName());	
+	protected static Element duplicateInterfaceElement(Element entryElt, Element itfElt, Element itfTemplate) {
+		// PapillonLogger.writeDebugMsg("duplicateInterfaceElement: " + entryElt.getNodeName() + " itf: " + itfElt.getNodeName());	
 		Vector nodeVector = new Vector();
 		boolean template = true;
-		Element resElt = (Element) findCorrespondingElement(entryElt,itfTemplate, newId, template);
+		Element resElt = (Element) findCorrespondingElement(entryElt,itfTemplate, ITF_DUPLICATE_ELT_NAME, template);
+		if (resElt ==null) {
+			resElt = (Element) findCorrespondingElement(entryElt,itfTemplate, ITF_ELT_NAME, template);
+		}
 		if (resElt !=null) {
 			
 			Document itfDoc = itfElt.getOwnerDocument();
@@ -616,8 +620,7 @@ public class UIGenerator {
 					}
 				}	
 				i++;	
-			}		
-			
+			}					
 			boolean other = false;
 			while (i<childNodes.getLength () && !other) {
 				Node nodeItem = childNodes.item(i);
@@ -646,7 +649,7 @@ public class UIGenerator {
 	
 	
 	protected static Element insertEntryElement(Element parentElement, Element newElement, Element siblingElement) {
-		//		PapillonLogger.writeDebugMsg("insertEntryElement: " + newElement.toString() + " parent: " + parentElement.toString());	
+		PapillonLogger.writeDebugMsg("insertEntryElement: " + newElement.toString() + " parent: " + parentElement.toString());	
 		Vector nodeVector = new Vector();
 		
 		Element resElt = (Element) parentElement.getOwnerDocument().importNode(newElement,true);

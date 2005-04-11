@@ -4,8 +4,18 @@
  *$Id$
  *------------------------
  *$Log$
- *Revision 1.1  2004/12/06 16:38:31  serasset
- *Initial revision
+ *Revision 1.2  2005/04/11 12:29:59  mangeot
+ *Merge between the XPathAndMultipleKeys branch and the main trunk
+ *
+ *Revision 1.1.1.1.2.1  2005/01/28 19:45:55  mangeot
+ *First version that runs basically.
+ *Should compile after an ant clean.
+ *XPath loading and virtual volumes for terminological lexicons are OK.
+ *Bugs remain, needs more testings like the editor for example.
+ *
+ *Revision 1.1.1.1  2004/12/06 16:38:31  serasset
+ *Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
+ *There are still bugs in the code.
  *
  *Revision 1.15  2004/10/28 10:36:13  mangeot
  *MM: I added a transformation method in order to produce a text version from an XML entry. It is used in dictd to display a text entry
@@ -76,7 +86,7 @@ public class XslTransformation {
 	/**
     Transform the xml source by processing it with an xsl sheet.
 	 */
-    public static Document Transform(Node xmlSource, XslSheet xslSheet)
+    protected static Document Transform(Node xmlSource, XslSheet xslSheet)
 		throws fr.imag.clips.papillon.business.PapillonBusinessException,
 		javax.xml.transform.TransformerConfigurationException,
 		javax.xml.parsers.ParserConfigurationException,
@@ -100,7 +110,7 @@ public class XslTransformation {
 			return newDocument;
 		}
 
-    public static String TransformToText(Node xmlSource, XslSheet xslSheet)
+    protected static String TransformToText(Node xmlSource, XslSheet xslSheet)
 		throws fr.imag.clips.papillon.business.PapillonBusinessException,
 		javax.xml.transform.TransformerConfigurationException,
 		javax.xml.parsers.ParserConfigurationException,
@@ -132,51 +142,23 @@ public class XslTransformation {
 	
 	public static String applyXslSheetsAndSerialize(IAnswer answer)
     throws fr.imag.clips.papillon.business.PapillonBusinessException {
-		return Utility.NodeToString(applyXslSheets(answer.getXmlCode(), answer));
+		return Utility.NodeToString(applyXslSheets(answer));
 	}
-
+	
 	public static Element applyXslSheets(IAnswer answer)
-    throws fr.imag.clips.papillon.business.PapillonBusinessException {
-		return applyXslSheets(answer.getXmlCode(), answer);
-	}
-
-    public static Element applyXslSheets(IAnswer answer, String xslid)
-    throws fr.imag.clips.papillon.business.PapillonBusinessException {
-        Element result = null;
-		if (answer!=null && !answer.IsEmpty()) {
-			if (null != xslid && !xslid.equals("")) {
-				result = applyXslSheets(answer.getXmlCode(), xslid);
-			}
-			else {
-				result = applyXslSheets(answer.getXmlCode(), answer);
-			}
-		}
-        return result;
-    }
-
-    public static Element applyXslSheets(String xml, IAnswer answer)
-    throws fr.imag.clips.papillon.business.PapillonBusinessException {
-
-        Document result = null;
-
-        if (null != xml && !xml.equals("") && answer!=null && !answer.IsEmpty()) {
+	throws fr.imag.clips.papillon.business.PapillonBusinessException {
+		org.w3c.dom.Document result = answer.getDom();
             try {
-                
-				//PapillonLogger.writeDebugMsg("XML Code:\n" + xml);
-				result = Utility.buildDOMTree(xml);
 				// We apply cascades of XSL
 				// First, the one for the dictionary if there is
 				XslSheet theXslSheet = XslSheetFactory.findXslSheetByName(answer.getDictionaryName());
 				if (!theXslSheet.IsEmpty()) {
-					
-					result = Transform((Node)result, theXslSheet);
-					
+					result = Transform((Node)result, theXslSheet);					
 					// Second, the one for the volume if there is
 					theXslSheet = XslSheetFactory.findXslSheetByName(answer.getVolumeName());
 					if (null != theXslSheet && !theXslSheet.IsEmpty()) {
 						result = Transform((Node)result, theXslSheet);
 					}
-					
 					// Last, the default one
 					theXslSheet = XslSheetFactory.findDefaultXslSheet();
 					if (!theXslSheet.IsEmpty()) {
@@ -186,19 +168,14 @@ public class XslTransformation {
 			}
 			catch(Exception ex) {
 				throw new fr.imag.clips.papillon.business.PapillonBusinessException("Exception in applyXslSheets()", ex);
-			}
-		}
-		return result.getDocumentElement();
+			}	
+			return result.getDocumentElement();
 	}
-	
-	public static Element applyXslSheets(String xml, String xslid)
+
+	public static Element applyXslSheets(IAnswer answer, String xslid)
 	throws fr.imag.clips.papillon.business.PapillonBusinessException {
-
-		Document result = null;
-
-		if (null != xml && !xml.equals("")) {
+				org.w3c.dom.Document result = answer.getDom();
 			try {
-				result = Utility.buildDOMTree(xml);
 
 				XslSheet theXslSheet;
 
@@ -207,14 +184,15 @@ public class XslTransformation {
 					theXslSheet = XslSheetFactory.findXslSheetByID(xslid);
 					result = XslTransformation.Transform((Node)result, theXslSheet);
 				}
+				else {
+					return applyXslSheets(answer);
+				} 
 			}
 			catch(Exception ex) {
 				throw new fr.imag.clips.papillon.business.PapillonBusinessException("Exception in applyXslSheets()", ex);
 			}
-		}
-		return result.getDocumentElement();
+			return result.getDocumentElement();
 	}
-
 
 	public static Node applyXslSheetForXml(String xmlString)
 	throws fr.imag.clips.papillon.business.PapillonBusinessException {
@@ -247,7 +225,6 @@ public class XslTransformation {
 	public static String applyXslSheetForText(IAnswer answer)
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 			
-			String xmlString = answer.getXmlCode();
 			String result = "";
 			XslSheet theXslSheet;
 			try {
@@ -263,11 +240,11 @@ public class XslTransformation {
 				}
 				// Last, the default one
 				if (!theXslSheet.IsEmpty()) {	
-					Document resultDoc = Utility.buildDOMTree(xmlString);				
+					Document resultDoc = answer.getDom();				
 					result = TransformToText((Node)resultDoc, theXslSheet);
 				}
 				else {
-					result = xmlString;
+					result = answer.getXmlCode();
 				}
 			}
 			catch(Exception ex) {

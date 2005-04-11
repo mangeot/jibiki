@@ -9,6 +9,17 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2005/04/11 12:29:59  mangeot
+ * Merge between the XPathAndMultipleKeys branch and the main trunk
+ *
+ * Revision 1.3.2.2  2005/03/30 11:17:07  mangeot
+ * Modified table contributions: replaced originalhandle by originalid
+ * Corrected a few bugs when validating an already existing entry
+ *
+ * Revision 1.3.2.1  2005/03/29 09:41:33  serasset
+ * Added transaction support. Use CurrentDBTransaction class to define a transaction
+ * context in which all db commands will be executed.
+ *
  * Revision 1.3  2005/01/15 12:51:24  mangeot
  * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
  *
@@ -29,6 +40,7 @@ package fr.imag.clips.papillon.business.user;
 
 import fr.imag.clips.papillon.data.*;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
+import fr.imag.clips.papillon.CurrentDBTransaction;
 
 /* for password encryption */
 import java.io.*;
@@ -87,7 +99,7 @@ public class User implements com.lutris.appserver.server.user.User {
 	 */
 	public User() throws PapillonBusinessException {
 		try {
-			this.myDO = UserDO.createVirgin();
+			this.myDO = UserDO.createVirgin(CurrentDBTransaction.get());
 		} catch(DatabaseManagerException ex) {
 			throw new PapillonBusinessException("Error creating empty user", ex);
 		} catch(ObjectIdException ex) {
@@ -393,22 +405,27 @@ public class User implements com.lutris.appserver.server.user.User {
 	public boolean IsInNormalGroups(String[] groups) 
 		throws PapillonBusinessException {
 			boolean answer = false;
-			String[] myGroups = this.getGroupsArray();			
-			if (myGroups != null && myGroups.length>0
-				&& groups !=null && groups.length>0) {
-				int i=0;
-				while (!answer && i<myGroups.length) {
-					String myGroup = myGroups[i];
-					if (!myGroup.equals(ADMIN_GROUP) &&
-						!myGroup.equals(SPECIALIST_GROUP) &&
-						!myGroup.equals(VALIDATOR_GROUP)) {
-						int j=0;
-						while (!answer && j<groups.length) {
-							answer = myGroup.equals(groups[j]);
-							j++;
-						}
+			java.util.Vector groupsVector = new java.util.Vector();
+			for (int i=0;i<groups.length;i++) {
+				String tmpGroup = groups[i];
+				if (!tmpGroup.equals("") &&
+						!tmpGroup.equals(ADMIN_GROUP) &&
+						!tmpGroup.equals(SPECIALIST_GROUP) &&
+						!tmpGroup.equals(VALIDATOR_GROUP)) {
+							groupsVector.add(tmpGroup);
+				}
+			}
+			if (groupsVector.size()==0) {
+				answer = true;
+			}
+			else {
+				String[] myGroups = this.getGroupsArray();			
+				if (myGroups != null && myGroups.length>0) {
+					int i=0;
+					while (!answer && i<myGroups.length) {
+						answer = (groupsVector.contains(myGroups[i]));
+						i++;
 					}
-					i++;
 				}
 			}
 			return answer;

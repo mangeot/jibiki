@@ -10,8 +10,17 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.5  2005/04/11 12:29:59  mangeot
+ * Merge between the XPathAndMultipleKeys branch and the main trunk
+ *
  * Revision 1.4  2005/04/11 08:01:02  fbrunet
  * Passage en xhtml des ressources Papillon.
+ *
+ * Revision 1.3.2.1  2005/01/28 19:45:55  mangeot
+ * First version that runs basically.
+ * Should compile after an ant clean.
+ * XPath loading and virtual volumes for terminological lexicons are OK.
+ * Bugs remain, needs more testings like the editor for example.
  *
  * Revision 1.3  2005/01/15 12:51:24  mangeot
  * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
@@ -424,8 +433,8 @@ public class EditAxie extends BasePO {
 			radioEntryElement2.setChecked(checked);
 			
 		    // The headword
-			content.setTextHeadwordList1(myEntry1.getHeadwords());
-			content.setTextHeadwordList2(myEntry2.getHeadwords());
+			content.setTextHeadwordList1(myEntry1.getHeadword());
+			content.setTextHeadwordList2(myEntry2.getHeadword());
 
 			// The entryId1 anchor
 			href = this.getUrl() + "?"
@@ -451,21 +460,21 @@ public class EditAxie extends BasePO {
 
 			// The pos1			
 			if (myEntry1.getType() == IAnswer.LocalEntry) {
-				String pos = ((VolumeEntry)myEntry1).getPoss();
+				String pos = ((VolumeEntry)myEntry1).getPos();
 				if (pos != null)
 					content.setTextPosList1(pos);
 			}	
 
 			// The pos2
 			if (myEntry2.getType() == IAnswer.LocalEntry) {
-				String pos = ((VolumeEntry)myEntry2).getPoss();
+				String pos = ((VolumeEntry)myEntry2).getPos();
 				if (pos != null)
 					content.setTextPosList2(pos);
 			}
 
 			// The formula
-			content.setTextFormula1(IAnswerFactory.getDefinitionString(myEntry1));
-			content.setTextFormula2(IAnswerFactory.getDefinitionString(myEntry2));
+			content.setTextFormula1(((VolumeEntry)myEntry1).getDefinition());
+			content.setTextFormula2(((VolumeEntry)myEntry2).getDefinition());
 			
 
 
@@ -494,7 +503,7 @@ public class EditAxie extends BasePO {
 
 
 			// The headword
-			content.setTextHeadwordList1(myEntry1.getHeadwords());
+			content.setTextHeadwordList1(myEntry1.getHeadword());
 			content.setTextHeadwordList2("");
 
 			// The entryId1 anchor
@@ -510,7 +519,7 @@ public class EditAxie extends BasePO {
 			content.setTextEntryIdList1(myEntry1.getId());
 
 			if (myEntry1.getType() == IAnswer.LocalEntry) {
-				String pos = ((VolumeEntry)myEntry1).getPoss();
+				String pos = ((VolumeEntry)myEntry1).getPos();
 				if (pos != null)
 					content.setTextPosList1(pos);
 			}
@@ -518,7 +527,7 @@ public class EditAxie extends BasePO {
 			content.setTextEntryIdList2("");
 
 			// The formula
-			content.setTextFormula1(IAnswerFactory.getDefinitionString(myEntry1));
+			content.setTextFormula1(((VolumeEntry)myEntry1).getDefinition());
 			content.setTextFormula2("");			
 
 
@@ -548,7 +557,7 @@ public class EditAxie extends BasePO {
 				radioEntryElement2.setChecked(checked);
 
 				// The headword
-				content.setTextHeadwordList2(myEntry2.getHeadwords());
+				content.setTextHeadwordList2(myEntry2.getHeadword());
 				content.setTextHeadwordList1("");
 
 				// The entryId2 anchor
@@ -564,7 +573,7 @@ public class EditAxie extends BasePO {
 
 				// The pos2
 				if (myEntry2.getType() == IAnswer.LocalEntry) {
-					String pos = ((VolumeEntry)myEntry2).getPoss();
+					String pos = ((VolumeEntry)myEntry2).getPos();
 					if (pos != null)
 						content.setTextPosList2(pos);
 				}
@@ -572,7 +581,7 @@ public class EditAxie extends BasePO {
 				content.setTextEntryIdList1("");
 
 				// The formula
-				content.setTextFormula2(IAnswerFactory.getDefinitionString(myEntry2));
+				content.setTextFormula2(((VolumeEntry)myEntry2).getDefinition());
 				content.setTextFormula1("");
 
 

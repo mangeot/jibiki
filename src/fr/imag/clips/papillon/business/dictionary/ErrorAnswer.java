@@ -54,25 +54,34 @@ public class ErrorAnswer implements IAnswer {
 		return null;
 	}
 
-    public String createNewId() throws fr.imag.clips.papillon.business.PapillonBusinessException {
-		return null;
-	}
-
-    public String createNewId(String headword) throws fr.imag.clips.papillon.business.PapillonBusinessException {
-		return null;
-	}
-
     public void setId(String newId) throws fr.imag.clips.papillon.business.PapillonBusinessException {
+		;
+	}
+
+    public void setId() throws fr.imag.clips.papillon.business.PapillonBusinessException {
 		;
 	}
 
     public String getHeadword() throws fr.imag.clips.papillon.business.PapillonBusinessException {
 		return null;
 	}
-
-    public String getHeadwords() throws fr.imag.clips.papillon.business.PapillonBusinessException {
+	
+    public org.w3c.dom.Document getDom() throws fr.imag.clips.papillon.business.PapillonBusinessException {
 		return null;
 	}
+
+    public void setDom(org.w3c.dom.Document myDoc) throws fr.imag.clips.papillon.business.PapillonBusinessException {
+		;
+	}
+
+    public org.w3c.dom.Document getHtmlDom() throws fr.imag.clips.papillon.business.PapillonBusinessException {
+		return null;
+	}
+
+    public void setHtmlDom(org.w3c.dom.Document myDoc) throws fr.imag.clips.papillon.business.PapillonBusinessException {
+		;
+	}
+		
 
     public String getHandle() throws fr.imag.clips.papillon.business.PapillonBusinessException {
 		return null;
@@ -82,8 +91,8 @@ public class ErrorAnswer implements IAnswer {
 		;
 	}
 
-    public void save() throws fr.imag.clips.papillon.business.PapillonBusinessException {
-		;
+    public boolean save() throws fr.imag.clips.papillon.business.PapillonBusinessException {
+		return false;
 	}
 
 }

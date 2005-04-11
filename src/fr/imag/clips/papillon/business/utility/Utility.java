@@ -4,6 +4,16 @@
 *$Id$
 *------------------------------------------
 *$Log$
+*Revision 1.3  2005/04/11 12:29:59  mangeot
+*Merge between the XPathAndMultipleKeys branch and the main trunk
+*
+*Revision 1.2.2.2  2005/01/27 15:56:21  mangeot
+*Able to load a volume with XPointers, cannot lookup the result yet.
+*Does not compile but commit for backup
+*
+*Revision 1.2.2.1  2005/01/25 13:54:54  mangeot
+*changed the volume volumeEntry and index objects. Does not compile but need a backup...
+*
 *Revision 1.2  2004/12/24 14:31:28  mangeot
 *I merged the latest developments of Papillon5.0 with this version 5.1.
 *Have to be tested more ...
@@ -919,4 +929,93 @@ public class Utility {
 				myParent.removeChild(elem);
 		}
 	}
+	
+	/**
+     * Serialize a Hashtable into a byte array
+     *
+     * @return a byte array
+     * @exception PapillonBusinessException if an error occurs
+     *   retrieving data (usually due to an underlying data layer
+     *   error).
+     */
+	public static byte[] serializeHashtable(java.util.Hashtable myTable) throws fr.imag.clips.papillon.business.PapillonBusinessException {
+		byte[] resultArray = null;
+		try {
+			ByteArrayOutputStream myByteArrayOutputStream = new ByteArrayOutputStream();
+			ObjectOutputStream myObjectOutputStream = new ObjectOutputStream(myByteArrayOutputStream);
+			myObjectOutputStream.writeObject (myTable);
+			resultArray = myByteArrayOutputStream.toByteArray();
+			myByteArrayOutputStream.flush();
+		}
+		catch(Exception ex) {
+            throw new fr.imag.clips.papillon.business.PapillonBusinessException("Error in Utility.deSerializeHashtable", ex);
+        }
+		return resultArray;
+	}
+	
+	/**
+     * deSerialize a Hashtable from a byte array
+     *
+     * @return a hashtable
+     * @exception PapillonBusinessException if an error occurs
+     *   retrieving data (usually due to an underlying data layer
+     *   error).
+     */
+	public static java.util.Hashtable deSerializeHashtable(byte[] myByteArray) throws fr.imag.clips.papillon.business.PapillonBusinessException {
+		java.util.Hashtable myRes = null;
+		if (myByteArray != null) {
+		try {
+			ObjectInputStream myOIStream = new ObjectInputStream(new ByteArrayInputStream(myByteArray));
+			myRes = (java.util.Hashtable) myOIStream.readObject();
+		}
+		catch(Exception ex) {
+            throw new fr.imag.clips.papillon.business.PapillonBusinessException("Error in Utility.deSerializeHashtable", ex);
+        }
+		}
+		return myRes;
+	}
+
+	/**
+     * Serialize a DOM Document into a byte array
+     *
+     * @return a byte array
+     * @exception PapillonBusinessException if an error occurs
+     *   retrieving data (usually due to an underlying data layer
+     *   error).
+     */
+	public static byte[] serializeDocument(org.w3c.dom.Document myDoc) throws fr.imag.clips.papillon.business.PapillonBusinessException {
+		byte[] resultArray = null;
+		try {
+			ByteArrayOutputStream myByteArrayOutputStream = new ByteArrayOutputStream();
+			ObjectOutputStream myObjectOutputStream = new ObjectOutputStream(myByteArrayOutputStream);
+			myObjectOutputStream.writeObject (myDoc);
+			resultArray = myByteArrayOutputStream.toByteArray();
+			myByteArrayOutputStream.flush();
+		}
+		catch(Exception ex) {
+            throw new fr.imag.clips.papillon.business.PapillonBusinessException("Error in Utility.deSerializeHashtable", ex);
+        }
+		return resultArray;
+	}
+	
+	/**
+     * deSerialize a DOM Document  from a byte array
+     *
+     * @return a DOM Document 
+     * @exception PapillonBusinessException if an error occurs
+     *   retrieving data (usually due to an underlying data layer
+     *   error).
+     */
+	public static org.w3c.dom.Document deSerializeDocument(byte[] myByteArray) throws fr.imag.clips.papillon.business.PapillonBusinessException {
+		org.w3c.dom.Document myRes = null;
+		try {
+			ObjectInputStream myOIStream = new ObjectInputStream(new ByteArrayInputStream(myByteArray));
+			myRes = (org.w3c.dom.Document) myOIStream.readObject();
+		}
+		catch(Exception ex) {
+            throw new fr.imag.clips.papillon.business.PapillonBusinessException("Error in Utility.deSerializeHashtable", ex);
+        }
+		return myRes;
+	}
+
 }

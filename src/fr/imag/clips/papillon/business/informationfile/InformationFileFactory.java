@@ -7,8 +7,21 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.1  2004/12/06 16:38:31  serasset
- * Initial revision
+ * Revision 1.2  2005/04/11 12:29:59  mangeot
+ * Merge between the XPathAndMultipleKeys branch and the main trunk
+ *
+ * Revision 1.1.1.1.2.2  2005/03/29 09:41:32  serasset
+ * Added transaction support. Use CurrentDBTransaction class to define a transaction
+ * context in which all db commands will be executed.
+ *
+ * Revision 1.1.1.1.2.1  2005/03/16 13:24:31  serasset
+ * Modified all boolean fields in table to CHAR(1) in order to be more db independant.
+ * Suppressed ant.jar from class path, informationfiles (which rely on it) should be corrected.
+ * The version of Xerces is now displayed on application init.
+ *
+ * Revision 1.1.1.1  2004/12/06 16:38:31  serasset
+ * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
+ * There are still bugs in the code.
  *
  * Revision 1.1.1.1  2002/10/28 16:49:14  serasset
  * Creation of the papillon CVS repository for enhydra 5.0
@@ -50,6 +63,7 @@ package fr.imag.clips.papillon.business.informationfile;
 
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.data.*;
+import fr.imag.clips.papillon.CurrentDBTransaction;
 
 import fr.imag.clips.papillon.business.PapillonLogger;
 
@@ -76,7 +90,7 @@ public class InformationFileFactory {
         InformationFile[] theFileArray = null;
         
         try {
-            InformationFileQuery query = new InformationFileQuery();
+            InformationFileQuery query = new InformationFileQuery(CurrentDBTransaction.get());
          
             InformationFileDO[] DOarray = query.getDOArray();
             theFileArray = new InformationFile[ DOarray.length ];
@@ -110,7 +124,7 @@ public class InformationFileFactory {
         InformationFile theFile = null;
         
         try {
-            InformationFileQuery query = new InformationFileQuery();
+            InformationFileQuery query = new InformationFileQuery(CurrentDBTransaction.get());
             //set query
             query.setQueryOId(new ObjectId(id));
             // Throw an exception if more than one message is found
@@ -129,7 +143,7 @@ public class InformationFileFactory {
         InformationFile theFile = null;
         
         try {
-            InformationFileQuery query = new InformationFileQuery();
+            InformationFileQuery query = new InformationFileQuery(CurrentDBTransaction.get());
             //set query
             query.setQueryFilename(name);
             // Throw an exception if more than one message is found
@@ -162,11 +176,11 @@ public class InformationFileFactory {
         InformationFile theFile = null;
         
         try {
-            InformationFileQuery query = new InformationFileQuery();
+            InformationFileQuery query = new InformationFileQuery(CurrentDBTransaction.get());
             //set query
             query.setQueryDocument(doc.myDO);
-            query.setQueryIsIndexFile(true);
-	    query.setQueryLanguage(lang);
+            query.setQueryIsIndexFile("Y");
+            query.setQueryLanguage(lang);
             // Throw an exception if more than one message is found
             query.requireUniqueInstance();
             InformationFileDO theInformationFileDO = query.getNextDO();
@@ -212,7 +226,7 @@ public class InformationFileFactory {
         InformationFile[] theFileArray = null;
         
         try {
-            InformationFileQuery query = new InformationFileQuery();
+            InformationFileQuery query = new InformationFileQuery(CurrentDBTransaction.get());
             //set query
             query.setQueryDocument(doc.myDO);
  

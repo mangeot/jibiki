@@ -13,6 +13,17 @@ import com.lutris.appserver.server.Application;
  * For the format of the ini file see DatabaseFactory.
  */
 public class JDictd implements Runnable {
+
+    protected static java.io.PrintStream myOutStream = new java.io.PrintStream(System.out, true);
+	{
+		try {
+			myOutStream = new java.io.PrintStream(System.out, true, "UTF-8");
+		}
+		catch (java.io.UnsupportedEncodingException ex) {
+			;
+		}
+	}
+
 	public static final String SERVER_NAME = "Papillon DICT server";
 	public static final String SERVER_VERSION = "1.2";
         //	private static boolean fSilent = Boolean.getBoolean("silent");
@@ -41,12 +52,12 @@ public class JDictd implements Runnable {
         new Thread(r, SERVER_NAME).start();
         trace(new Date().toString() + ": JDictd started at " + port);
     } catch (Exception e) {
-        System.out.println("Cannot init: " + e);
+        myOutStream.println("Cannot init: " + e);
     }
 }
 public static void log(String msg, String file) {
 	if (!fSilent) {
-		System.out.println(msg);
+		myOutStream.println(msg);
 		return;
 	}
 	try {
@@ -60,7 +71,7 @@ public static void log(String msg, String file) {
 }
 public static void main(String args[]) {
     if (args.length == 0) {
-        System.out.println("Usage: java ...JDictd configFile");
+        myOutStream.println("Usage: java ...JDictd configFile");
         System.exit(0);
     }
     listen(DEFAULT_PORT,null, DEFAULT_TIMEOUT);

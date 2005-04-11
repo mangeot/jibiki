@@ -9,6 +9,14 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2005/04/11 12:29:59  mangeot
+ * Merge between the XPathAndMultipleKeys branch and the main trunk
+ *
+ * Revision 1.2.2.1  2005/03/16 13:24:31  serasset
+ * Modified all boolean fields in table to CHAR(1) in order to be more db independant.
+ * Suppressed ant.jar from class path, informationfiles (which rely on it) should be corrected.
+ * The version of Xerces is now displayed on application init.
+ *
  * Revision 1.2  2005/01/15 12:51:24  mangeot
  * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
  *
@@ -25,6 +33,7 @@ package fr.imag.clips.papillon;
 import com.lutris.appserver.server.*;
 import com.lutris.appserver.server.httpPresentation.*;
 import com.lutris.util.*;
+import com.lutris.logging.Logger;
 
 /* For JDictd */
 import fr.imag.clips.papillon.dict.server.JDictd;
@@ -40,7 +49,7 @@ import fr.imag.clips.papillon.business.locales.*;
  * Application-wide data would go here.
  */
 public class Papillon extends StandardApplication {
-
+    
     /*
      *  A few methods you might want to add to.
      *  See StandardApplication for more details.
@@ -49,40 +58,43 @@ public class Papillon extends StandardApplication {
         super.startup(appConfig);
         //  Here is where you would read application-specific settings from
         //  your config file.
-
+        
+        // Look at the Xerces version that is currently loaded and display it...
+        Enhydra.getLogChannel().write(Logger.INFO, org.apache.xerces.impl.Version.getVersion());
+        
 		//tests
-	//	ParseVolume.parseVolume("essai.xml");
-			
+        //	ParseVolume.parseVolume("essai.xml");
+        
         //  Dictd specific settings.
-	boolean listen = false; 
-	try {
-	    listen =  Enhydra.getApplication().getConfig().getBoolean(JDictd.LISTEN_STRING);
-	} catch (ConfigException e) {
+        boolean listen = false; 
+        try {
+            listen =  Enhydra.getApplication().getConfig().getBoolean(JDictd.LISTEN_STRING);
+        } catch (ConfigException e) {
             throw new ApplicationException("Dictd parameters not found. Check the application config file.", e);
         }
-	if (listen) {
-
-	    int port = 2628;
-	    int timeout = 50000;
-	    try {
-		port =  Enhydra.getApplication().getConfig().getInt(JDictd.PORT_STRING);
-		timeout =  Enhydra.getApplication().getConfig().getInt(JDictd.TIMEOUT_STRING);
-	    }
-	    catch (ConfigException e) {
-		throw new ApplicationException("Dictd parameters not found. Check the application config file.", e);
-	    }
-	    // Here is where I startup JDictd server
-	    JDictd.listen(port,Enhydra.getApplication(),timeout);
-	}
+        if (listen) {
+            
+            int port = 2628;
+            int timeout = 50000;
+            try {
+                port =  Enhydra.getApplication().getConfig().getInt(JDictd.PORT_STRING);
+                timeout =  Enhydra.getApplication().getConfig().getInt(JDictd.TIMEOUT_STRING);
+            }
+            catch (ConfigException e) {
+                throw new ApplicationException("Dictd parameters not found. Check the application config file.", e);
+            }
+            // Here is where I startup JDictd server
+            JDictd.listen(port,Enhydra.getApplication(),timeout);
+        }
     }
-        
+    
     public boolean requestPreprocessor(HttpPresentationComms comms)
-                   throws Exception {
+    throws Exception {
         return super.requestPreprocessor(comms);
     }
-
+    
     /**
-     * This is an optional function, used only by the Multiserver's graphical
+    * This is an optional function, used only by the Multiserver's graphical
      * administration. This bit of HTML appears in the status page for this
      * application. You could add extra status info, for example
      * a list of currently logged in users.

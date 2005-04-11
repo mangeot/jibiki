@@ -9,6 +9,12 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2005/04/11 12:29:59  mangeot
+ * Merge between the XPathAndMultipleKeys branch and the main trunk
+ *
+ * Revision 1.3.2.1  2005/02/25 10:22:08  mangeot
+ * Bug fixes and added the use of referrer when exiting from Reviewcontributions.po
+ *
  * Revision 1.3  2005/01/15 12:51:24  mangeot
  * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
  *
@@ -167,7 +173,9 @@ public class PapillonSessionData {
 
     public void setPreference(String url, String name, String value, boolean persistent) 
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
-		if (value !=null) {
+			if (value == null) {
+				value = "";
+			}
 			if (this.PreferencesTable ==null) {
 				if (this.myUser!=null && persistent) {
 					this.PreferencesTable = this.myUser.getPreferences();
@@ -185,6 +193,5 @@ public class PapillonSessionData {
 					}
 				}
 			}
-		}	
-	}
+		}
 }

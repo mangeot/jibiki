@@ -9,8 +9,30 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.6  2005/04/11 12:29:59  mangeot
+ * Merge between the XPathAndMultipleKeys branch and the main trunk
+ *
  * Revision 1.5  2005/04/11 08:01:02  fbrunet
  * Passage en xhtml des ressources Papillon.
+ *
+ * Revision 1.4.2.5  2005/04/09 14:51:47  mangeot
+ * Added more consult options for AdminContributions page
+ *
+ * Revision 1.4.2.4  2005/03/30 11:17:07  mangeot
+ * Modified table contributions: replaced originalhandle by originalid
+ * Corrected a few bugs when validating an already existing entry
+ *
+ * Revision 1.4.2.3  2005/03/16 09:05:01  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.4.2.2  2005/02/25 10:22:08  mangeot
+ * Bug fixes and added the use of referrer when exiting from Reviewcontributions.po
+ *
+ * Revision 1.4.2.1  2005/01/28 19:45:55  mangeot
+ * First version that runs basically.
+ * Should compile after an ant clean.
+ * XPath loading and virtual volumes for terminological lexicons are OK.
+ * Bugs remain, needs more testings like the editor for example.
  *
  * Revision 1.4  2005/01/15 20:02:19  mangeot
  * Added new search options for ReviewContributions
@@ -139,7 +161,7 @@ public class ReviewContributions extends BasePO {
 		String queryString = "";
 		
 		// lookup
-		String lookup = myGetParameter(content.NAME_Lookup);
+		String lookup = myGetParameter(content.NAME_LOOKUP);
 		// volume
 		String volume = myGetParameter(content.NAME_VOLUME);
 		if (volume!=null &&!volume.equals("")) {
@@ -176,7 +198,7 @@ public class ReviewContributions extends BasePO {
 			queryString += "&" + content.NAME_HEADWORD + "=" + headword;
 		}
 		String partialMatch = myGetParameter(content.NAME_PartialMatch);
-		if (lookup!=null &&!lookup.equals("")) {
+		if (lookup!=null && !lookup.equals("")) {
 			this.setPreference(content.NAME_PartialMatch,partialMatch);
 		}
 		else {
@@ -190,14 +212,14 @@ public class ReviewContributions extends BasePO {
 
 		// status
 		String status = myGetParameter(content.NAME_STATUS);
-		if (status!=null && !status.equals("")) {
+		if (lookup!=null &&!lookup.equals("")) {
 			this.setPreference(content.NAME_STATUS,status);
-			if (status.equals(ALL)) {
-				status = null;
-			}
 		}
 		else {
 			status =  this.getPreference(content.NAME_STATUS);
+		}
+		if (status != null && status.equals(ALL)) {
+			status = null;
 		}
 		if (status !=null && !status.equals("")) {
 			queryString += "&" + content.NAME_STATUS + "=" + status;
@@ -221,8 +243,7 @@ public class ReviewContributions extends BasePO {
 		String sortBy = myGetParameter(SORTBY_PARAMETER);
 
 		int step = STEP_DEFAULT;
-
-		if (null != lookup) {
+		if (null != lookup || this.getReferrer().indexOf(EditURL)>0) {
 			step = STEP_LOOKUP;
 		}
 		else if (null != contribid && null != myGetParameter(VIEW_CONTRIB_PARAMETER)) {
@@ -269,9 +290,9 @@ public class ReviewContributions extends BasePO {
 					Contribution myContrib = ContributionsFactory.findContributionByHandle(contribid);
 					if (null != myContrib && !myContrib.IsEmpty()
 					&& null != myContrib.getStatus() && myContrib.getStatus().equals(Contribution.FINISHED_STATUS)) {
-						VolumeEntry myEntry = VolumeEntriesFactory.findEntryByHandle(myContrib.getVolumeName(),myContrib.getEntryHandle());
+						VolumeEntry myEntry = VolumeEntriesFactory.findEntryByEntryId(myContrib.getVolumeName(),myContrib.getEntryId());
 						//Adding modifications in the XML code
-						IAnswerFactory.setModification(myEntry,this.getUser().getLogin(),Contribution.REVISED_STATUS);
+						myEntry.setModification(this.getUser().getLogin(),Contribution.REVISED_STATUS);
 						myEntry.save();
 						myContrib.setReviewer(this.getUser().getLogin());
 						myContrib.setReviewDate(new Date());
@@ -289,20 +310,22 @@ public class ReviewContributions extends BasePO {
 					Contribution myContrib = ContributionsFactory.findContributionByHandle(contribid);
 					if (null != myContrib && !myContrib.IsEmpty() &&
 						null != myContrib.getStatus() && myContrib.getStatus().equals(Contribution.REVISED_STATUS)) {
-						VolumeEntry myEntry = VolumeEntriesFactory.findEntryByHandle(myContrib.getVolumeName(),myContrib.getEntryHandle());
+						VolumeEntry myEntry = VolumeEntriesFactory.findEntryByEntryId(myContrib.getVolumeName(),myContrib.getEntryId());
 						//Adding modifications in the XML code
-						IAnswerFactory.setModification(myEntry,this.getUser().getLogin(),Contribution.VALIDATED_STATUS);
+						myEntry.setModification(this.getUser().getLogin(),Contribution.VALIDATED_STATUS);
 						if (!myContrib.IsNewEntry()) {
-							VolumeEntry origEntry = VolumeEntriesFactory.findEntryByHandle(myContrib.getVolumeName(),myContrib.getOriginalHandle());
+							VolumeEntry origEntry = VolumeEntriesFactory.findEntryByEntryId(myContrib.getVolumeName(),myContrib.getOriginalId());
 							origEntry.replaceData(myEntry);
 							origEntry.save();
 							myEntry.delete();
+							userMessage = "Data of entry " + origEntry.getHeadword() + " / " + origEntry.getId() + " replaced by data of contribution " +  myEntry.getId() +
+							" in the dictionary...";
 						}
 						else {
 							myEntry.save();
+							userMessage = "Contribution " +  myEntry.getId() + " / " +
+							myContrib.getHeadword() + " integrated in the dictionary...";
 						}
-						userMessage = "Contribution " +  myContrib.getHandle() + " / " +
-						myContrib.getHeadword() + " integrated in the dictionary...";
 						volume = myContrib.getVolumeName();
 						myContrib.delete();
 					}
@@ -372,7 +395,7 @@ public class ReviewContributions extends BasePO {
 		
 		if (strategy !=null && !strategy.equals("")) {
 			HTMLInputElement strategyInput = content.getElementPartialMatch();
-			strategyInput.setValue(strategy);		
+			strategyInput.setChecked(true);		
 		}
 		
 		HTMLSelectElement statusSelect = (HTMLSelectElement) content.getElementSTATUS();

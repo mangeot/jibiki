@@ -9,6 +9,24 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2005/04/11 12:29:59  mangeot
+ * Merge between the XPathAndMultipleKeys branch and the main trunk
+ *
+ * Revision 1.3.2.4  2005/04/08 08:23:04  mangeot
+ * Added referrer when redirection is on
+ *
+ * Revision 1.3.2.3  2005/02/25 10:22:08  mangeot
+ * Bug fixes and added the use of referrer when exiting from Reviewcontributions.po
+ *
+ * Revision 1.3.2.2  2005/01/28 19:45:55  mangeot
+ * First version that runs basically.
+ * Should compile after an ant clean.
+ * XPath loading and virtual volumes for terminological lexicons are OK.
+ * Bugs remain, needs more testings like the editor for example.
+ *
+ * Revision 1.3.2.1  2005/01/27 23:55:13  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.3  2005/01/14 21:49:59  mangeot
  * Modified the editor: when the user adds an item, it is added before the last selected sibling or at the end if nothing is selected.
  *
@@ -48,7 +66,6 @@ import java.util.ArrayList;
 // internal imports
 import fr.imag.clips.papillon.business.dictionary.Contribution;
 import fr.imag.clips.papillon.business.dictionary.ContributionsFactory;
-import fr.imag.clips.papillon.business.dictionary.IAnswerFactory;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory;
 import fr.imag.clips.papillon.business.edition.UIGenerator;
@@ -65,6 +82,7 @@ public class EditEntry extends BasePO {
     public static String Headword_PARAMETER = "Headword";
     public static String VolumeName_PARAMETER = "VolumeName";  
     public static String Redirection_PARAMETER = "Redirection";  
+	public static String Referrer_PARAMETER = "Referrer";
 	
     protected static String AddCall_PARAMETER = "AddCall";
     protected static String DelCall_PARAMETER = "DelCall";
@@ -77,7 +95,8 @@ public class EditEntry extends BasePO {
     protected static String SaveComment_PARAMETER = "SaveComment";  
 	
 	protected final static String EditEntryInitURL = "EditEntryInit.po";
-	protected final static String ContributionsURL = "AdminContributions.po";
+	protected final static String AdminContributionsURL = "AdminContributions.po";
+	protected final static String ReviewContributionsURL = "ReviewContributions.po";
     protected final static String ContributionsVolumeParameter = "VOLUME";
 
 	
@@ -97,7 +116,7 @@ public class EditEntry extends BasePO {
 		throws java.io.UnsupportedEncodingException, 
 			HttpPresentationException {
 
-        // Management of the paremeters
+        // Management of the parameters
 	    String submitAdd = myGetParameter(AddCall_PARAMETER);
 	    String submitDelete = myGetParameter(DelCall_PARAMETER);
 	    String submitChoose = myGetParameter(ChooseCall_PARAMETER);
@@ -109,8 +128,12 @@ public class EditEntry extends BasePO {
 	    String submitUpdate = myGetParameter(Update_PARAMETER);
 	    String submitSave = myGetParameter(Save_PARAMETER);
 	    String saveComment = myGetParameter(SaveComment_PARAMETER);
+	    String referrer = myGetParameter(Referrer_PARAMETER);
 		
 		// Recuperation of parameters
+		if (referrer== null || referrer.equals("")) {
+			referrer = this.getReferrer();
+		}
 		ArrayList languages = this.getSessionData().getUserAcceptLanguages();
 
 		Element myEntry = null;
@@ -118,7 +141,7 @@ public class EditEntry extends BasePO {
 		if (volumeName!=null && !volumeName.equals("")
 			&& entryHandle!=null &&!entryHandle.equals("")) {
 			myVolumeEntry = VolumeEntriesFactory.findEntryByHandle(volumeName,entryHandle);
-			myEntry = Utility.buildDOMTree(myVolumeEntry.getXmlCode()).getDocumentElement();
+			myEntry = myVolumeEntry.getDom().getDocumentElement();
 		}
 		// TODO answer if no arguments
 		else {
@@ -128,8 +151,7 @@ public class EditEntry extends BasePO {
 		
 		// if a new entry is created, we add the headword
 		if (headword !=null && !headword.equals("")) {
-			myVolumeEntry.getVolume().loadCDMElements();
-			UIGenerator.updateElement(myVolumeEntry.getVolume().CDM_headword + UIGenerator.ID_SEPARATOR + "0",headword,myEntry);
+			UIGenerator.updateElement(myVolumeEntry.getVolume().getCdmHeadword() + UIGenerator.ID_SEPARATOR + "0",headword,myEntry);
 		}
 		
 		// updateElement
@@ -141,10 +163,12 @@ public class EditEntry extends BasePO {
 		if (submitAdd!=null && !submitAdd.equals("")) {
 			String redirected = myGetParameter(Redirection_PARAMETER);
 			if (redirected == null || redirected.equals("")) {
-				saveDOMModifications(myVolumeEntry, myEntry);
+				VolumeEntriesFactory.setGDEFFrenchTranslations(myVolumeEntry);
+				myVolumeEntry.save();
 				String newUrl = this.getUrl() + "?" + VolumeName_PARAMETER + "=" + volumeName 
 					+ "&" + EntryHandle_PARAMETER + "=" + entryHandle
 					+ "&" + AddCall_PARAMETER + "=" + myUrlEncode(submitAdd)
+					+ "&" + Referrer_PARAMETER + "=" + referrer
 					+ "&" + serializeParameterForUrl(Select_PARAMETER,myGetParameterValues(Select_PARAMETER))
 					+ "&" + Redirection_PARAMETER + "=" + "on"	
 					+ "#" + UIGenerator.NEW_BLOCK_ANCHOR;				
@@ -163,10 +187,12 @@ public class EditEntry extends BasePO {
 					&& select != null && !select.equals("")) {
 			String redirected = myGetParameter(Redirection_PARAMETER);
 			if (redirected == null || redirected.equals("")) {
-				saveDOMModifications(myVolumeEntry, myEntry);
+				VolumeEntriesFactory.setGDEFFrenchTranslations(myVolumeEntry);
+				myVolumeEntry.save();
 				String newUrl = this.getUrl() + "?" + VolumeName_PARAMETER + "=" + volumeName 
 					+ "&" + EntryHandle_PARAMETER + "=" + entryHandle
 					+ "&" + DelCall_PARAMETER + "=" + myUrlEncode(submitDelete)
+					+ "&" + Referrer_PARAMETER + "=" + referrer
 					+ "&" + serializeParameterForUrl(Select_PARAMETER,myGetParameterValues(Select_PARAMETER))
 					+ Redirection_PARAMETER + "=" + "on"	
 					+ "#" + UIGenerator.NEW_BLOCK_ANCHOR;				
@@ -194,8 +220,8 @@ public class EditEntry extends BasePO {
 		
 	// saveModifiedEntry
 		if (submitSave!=null && !submitSave.equals("")) {
-		    saveDOMModifications(myVolumeEntry, myEntry);
-			saveEntry(myVolumeEntry, myEntry, this.getUser().getLogin(),saveComment);
+		    VolumeEntriesFactory.setGDEFFrenchTranslations(myVolumeEntry);
+			saveEntry(myVolumeEntry, this.getUser().getLogin(),saveComment, referrer);
 		}
 
 			// fill template
@@ -210,15 +236,18 @@ public class EditEntry extends BasePO {
 	// add volume name & entry handle in the form	
 		UIGenerator.setValueInput(myInterface, VolumeName_PARAMETER, volumeName);
 		UIGenerator.setValueInput(myInterface, EntryHandle_PARAMETER, entryHandle);
+		UIGenerator.setValueInput(myInterface, Referrer_PARAMETER, referrer);
+		
 				
 	// fillInterfaceTemplate
 		UIGenerator.fillInterfaceTemplate(myEntry,myInterface, myItfTemplate);
 
 	//	System.out.println(Utility.NodeToString(myEntry));
 	//	System.out.println(Utility.NodeToString(myInterface));
-	// saveDOMModifications at the end because fillTemplate modifies the entry DOM
+	// save at the end because fillTemplate modifies the entry DOM
 	// when there is a block anchor
-		saveDOMModifications(myVolumeEntry, myEntry);
+		VolumeEntriesFactory.setGDEFFrenchTranslations(myVolumeEntry);
+		myVolumeEntry.save();
 		
 		return myInterface;
 	}
@@ -247,27 +276,22 @@ public class EditEntry extends BasePO {
 		updateBooleanElements(myGetParameterValues(Boolean_PARAMETER),entryElt);
 	}
 			
-	protected void saveDOMModifications(VolumeEntry myVolumeEntry,  Element myDOMEntry) 
-		throws fr.imag.clips.papillon.business.PapillonBusinessException {
-		Document myDOMDoc = myDOMEntry.getOwnerDocument();
-		myVolumeEntry.extractDataFromDOM(myDOMDoc);
-		myVolumeEntry.save();
-		VolumeEntriesFactory.setGDEFFrenchTranslations(myVolumeEntry,myDOMDoc);		
-	}
-				
-	protected void saveEntry(VolumeEntry myVolumeEntry, Element myDOMEntry, String author, String saveComment) 
+	protected void saveEntry(VolumeEntry myVolumeEntry, String author, String saveComment, String referrer) 
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 		if (myVolumeEntry!=null) {
-			Document myDOMDoc = myDOMEntry.getOwnerDocument();
-			IAnswerFactory.setModification(myVolumeEntry,myDOMDoc,author,saveComment);
-			myVolumeEntry.extractDataFromDOM(myDOMDoc);
+			myVolumeEntry.setModification(author,saveComment);
 			myVolumeEntry.save();
 			Contribution myContrib = ContributionsFactory.findContributionByEntryHandle(myVolumeEntry.getHandle());
 			myContrib.setHeadword(myVolumeEntry.getHeadword());
 			myContrib.setEntryId(myVolumeEntry.getId());
 			myContrib.save();
 		}
-		throw new ClientPageRedirectException(ContributionsURL + "?" + ContributionsVolumeParameter + "=" + myVolumeEntry.getVolumeName());
+		if (referrer.indexOf(ReviewContributionsURL)>0) {
+			throw new ClientPageRedirectException(ReviewContributionsURL);
+		}
+		else {
+			throw new ClientPageRedirectException(AdminContributionsURL + "?" + ContributionsVolumeParameter + "=" + myVolumeEntry.getVolumeName());
+		}
 	}
        
 }

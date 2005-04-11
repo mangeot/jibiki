@@ -9,8 +9,15 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2005/04/11 12:29:59  mangeot
+ * Merge between the XPathAndMultipleKeys branch and the main trunk
+ *
  * Revision 1.3  2005/04/11 08:01:02  fbrunet
  * Passage en xhtml des ressources Papillon.
+ *
+ * Revision 1.2.2.1  2005/01/27 15:56:21  mangeot
+ * Able to load a volume with XPointers, cannot lookup the result yet.
+ * Does not compile but commit for backup
  *
  * Revision 1.2  2005/01/15 12:51:24  mangeot
  * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
@@ -96,9 +103,9 @@ public class AdminEntries extends BasePO {
             String userMessage = null;
             if (null != req.getParameter(ADD_PARAMETER) &&
                 null != req.getParameter(URL_PARAMETER)) {
-                String URL = req.getParameter(URL_PARAMETER);
-                VolumeEntriesFactory.parseVolume(volumeString, URL);
-                userMessage = "Volume: " + volumeString + " / URL: " + URL + " downloaded...";
+                String myURLString = req.getParameter(URL_PARAMETER);
+                ParseVolume.parseVolume(volumeString, myURLString);
+                userMessage = "Volume: " + volumeString + " / URL: " + myURLString + " downloaded...";
             }
             else if (null != req.getParameter(EMPTY_PARAMETER)) {
                 Volume myVolume = VolumesFactory.findVolumeByName(volumeString);

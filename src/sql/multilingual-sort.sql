@@ -1,5 +1,5 @@
 -- $Id$
--- in order to load this function, execute: createlanguage plpgsql papillon
+-- in order to load this function, execute: createlang plpgsql papillon
 -- then use as is:
 -- select headword from gdefest order by est_sort(headword);
 -- or create an index:
@@ -12,16 +12,17 @@
 -- (a ä) b c d e f g h i j k l m n (o ö) p q r (s ß) t (u ü) v w x y z
 -- for the moment do nothing
 -- todo: umlaut and other diacritics ...
+
 CREATE OR REPLACE FUNCTION deu_sort( varchar ) 
  RETURNS varchar AS '
 
  DECLARE
+ i		integer;
   tmp		varchar;
   result	varchar := '''';
   length	integer;
  BEGIN
- BEGIN
- 	length = char_length($1);
+ 	length := char_length($1);
   	FOR i IN 1.. length LOOP
   		tmp := SUBSTR( $1, i, 1 );
   IF tmp = ''A''  THEN

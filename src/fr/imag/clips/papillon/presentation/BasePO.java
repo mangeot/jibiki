@@ -9,6 +9,16 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.6  2005/04/11 12:29:59  mangeot
+ *  Merge between the XPathAndMultipleKeys branch and the main trunk
+ *
+ *  Revision 1.5.2.2  2005/03/29 09:41:33  serasset
+ *  Added transaction support. Use CurrentDBTransaction class to define a transaction
+ *  context in which all db commands will be executed.
+ *
+ *  Revision 1.5.2.1  2005/02/25 10:21:21  mangeot
+ *  Added a new method getReferrer in order to get the client referrer
+ *
  *  Revision 1.5  2005/01/15 20:02:19  mangeot
  *  Added new search options for ReviewContributions
  *
@@ -309,6 +319,8 @@ public abstract class BasePO implements HttpPresentation {
     public void run(HttpPresentationComms comms)
              throws HttpPresentationException, IOException, Exception {
 
+		//System.out.println(Thread.currentThread());
+
         // Initialize new or get the existing session data
         initSessionData(comms);
         // Check if the user needs to be logged in for this request.
@@ -368,6 +380,9 @@ public abstract class BasePO implements HttpPresentation {
         options.setDropHtmlSpanIds(true);
         options.setXmlEncoding("UTF-8");
         DOMFormatter fFormatter = new DOMFormatter(options);
+
+		//System.out.println(Thread.currentThread());
+
 
         buffer = fFormatter.toBytes(stdLayout.getLayout());
         comms.response.setContentLength(buffer.length);
@@ -694,6 +709,25 @@ public abstract class BasePO implements HttpPresentation {
         return this.getSessionData().getUserPreferredLanguage();
     }
 
+
+    /**
+     *  Gets the referrer request-header field that allows the client to specify,  
+	 *  for the server's benefit, the address (URI) of the resource from  which the
+	 *  Request-URI was obtained (the "referrer", although the  header field is misspelled.)
+     *
+     * @return  String  The referrer value
+     */
+    public String getReferrer() throws
+            fr.imag.clips.papillon.business.PapillonBusinessException {
+			String referrer = "";
+			try {
+				referrer = this.getComms().request.getHeader("Referer");
+			}
+			catch (com.lutris.appserver.server.httpPresentation.HttpPresentationException ex) {
+				throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Error in BasePO.getReferrer: ", ex);
+			}
+        return referrer;
+	}
 
     /**
      *  Gets the url attribute of the BasePO object

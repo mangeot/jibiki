@@ -9,6 +9,13 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2005/04/11 12:29:59  mangeot
+ * Merge between the XPathAndMultipleKeys branch and the main trunk
+ *
+ * Revision 1.2.2.1  2005/03/29 09:41:33  serasset
+ * Added transaction support. Use CurrentDBTransaction class to define a transaction
+ * context in which all db commands will be executed.
+ *
  * Revision 1.2  2005/01/15 12:51:24  mangeot
  * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
  *
@@ -23,6 +30,7 @@
 package fr.imag.clips.papillon.business.message;
 
 import fr.imag.clips.papillon.business.PapillonBusinessException;
+import fr.imag.clips.papillon.CurrentDBTransaction;
 
 import fr.imag.clips.papillon.data.MessageDO;
 import fr.imag.clips.papillon.data.MessageQuery;
@@ -66,7 +74,7 @@ public class MessageFactory {
         Message[] theMessageArray = null;
         
         try {
-            MessageQuery query = new MessageQuery();
+            MessageQuery query = new MessageQuery(CurrentDBTransaction.get());
             
             if ((null != thread) && ("" != thread.trim())) {
                 query.setQueryThread(thread);
@@ -204,7 +212,7 @@ public class MessageFactory {
         Message theMessage = null;
         
         try {
-            MessageQuery query = new MessageQuery();
+            MessageQuery query = new MessageQuery(CurrentDBTransaction.get());
             //set query
             query.setQueryOId(new ObjectId(id));
             // Throw an exception if more than one message is found
