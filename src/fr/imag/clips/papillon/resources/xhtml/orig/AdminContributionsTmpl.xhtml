@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//Dtd XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/Dtd/xhtml1-strict.dtd">
 <html>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -15,19 +15,32 @@
 <form action="AdminContributions.po" method="get">
 <table width="600" border="0" cellspacing="0" cellpadding="10" summary="Formulaire">
 <tr>
-     <!-- Warning, make sure the option element contains a Text and only a Text (no other child) -->
-	<td colspan="2"><b>Choose a volume</b><br/></td>
-	</tr>
-	<tr>
         <td><b><label for="VOLUME">Volume:</label></b></td>
         <td>
             <select id="VOLUME" name="VOLUME" onchange="document.MainForm.submit()">
             <option id="VolumeOptionTemplate" value="NONE" label="NONE">NONE</option>
         </select>
-		<input type="submit" value="Go"/>
+	<br/>
+		<input id="LOOKUP" name="LOOKUP" type="submit" value="Lookup"/>
 </td>
+	<td><label for="HEADWORD">Headword:</label><br/>
+	<input id="HEADWORD" name="HEADWORD" size="12" type="text" value=""/>
+	<br/>
+	<label for="PartialMatch">
+	<input id="PartialMatch" name="PartialMatch" type="checkbox" value="PartialMatch"/>
+	<small>Substring</small></label>
+     </td>
+	<td><label for="STATUS">Status:</label><br/>
+	<select id="STATUS" name="STATUS">
+		<option value="*ALL*" label="tous">all</option>
+		<option value="not finished" label="not finished">not finished</option>
+		<option value="finished" label="finished">finished</option>
+		<option value="revised" label="revised">revised</option>
+		<!--option value="validated" label="validees">validées</option-->
+    </select>
+     </td>
 </tr>
-<tr>	
+<!--tr>	
 	<td colspan="2"><b>Upload existing contributions on selected volume</b></td>
 </tr>
 <tr>	
@@ -36,7 +49,7 @@
 				<br/>
         <input name="ADD" type="submit" value="Download"/>
 				</td>
-</tr>
+</tr-->
 </table>
 </form>
 <form action="AdminContributions.po" method="get" onsubmit="return confirm('Are you sure you want to remove your contributions on selected volume?')">

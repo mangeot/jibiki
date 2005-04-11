@@ -13,32 +13,35 @@
 <!-- formulaire de voir mot-->
 <FORM NAME="MainForm" ACTION="AdminContributions.po" METHOD="GET">
 <table WIDTH="600" BORDER="0" CELLSPACING="0" CELLPADDING="10" Summary="Formulaire">
-<TR>
-     <!-- Warning, make sure the option element contains a Text and only a Text (no other child) -->
-	<TD colspan="2"><b>Choisissez un volume</b><br></TD>
-	</TR>
 	<TR>
         <TD><B><label for="VOLUME">Volume&nbsp;:</label></B></TD>
         <TD>
             <SELECT id="VOLUME" NAME="VOLUME" onChange="document.MainForm.submit()">
             <OPTION ID="VolumeOptionTemplate" VALUE="NONE" LABEL="NONE">NONE</OPTION>
         </SELECT>
-		<input type="submit" value="Go">
+		<br>
+		<input name="LOOKUP" id="LOOKUP" type="submit" value="Consulter">
 </TD>
-</TR>
-<TR>	
-	<TD colspan="2"><b>Télécharger des contributions existantes sur le volume sélectionné</b></TD>
-</TR>
-<TR>	
-        <TD><B><label for="URL">Url&nbsp;:</label></B></TD>
-				<TD><INPUT ID="URL" NAME="URL" TYPE="text" SIZE="60" VALUE="">
-				<BR>
-        <INPUT NAME="ADD" TYPE="submit" VALUE="Télécharger">
-				</TD>
+	<TD><label for="HEADWORD">Mot-vedette :</label><br>
+	<input id="HEADWORD" name="HEADWORD" size="12" type="text" value="">
+	<br>
+	<label for="PartialMatch">
+	<INPUT id="PartialMatch" name="PartialMatch" type="checkbox" value="PartialMatch">
+	<font size="2">sous-chaîne</font></label>
+     </TD>
+	<TD><label for="STATUS">Statut :</label><br>
+	<select id="STATUS" name="STATUS">
+		<option value="*ALL*" label="tous">tous</option>
+		<option value="not finished" label="non finie">non finie</option>
+		<option value="finished" label="finie">finie</option>
+		<option value="revised" label="revisee">révisée</option>
+		<!--option value="validated" label="validees">validées</option-->
+    </select>
+     </TD>
 </TR>
 </TABLE>
 </FORM>
-<FORM NAME="RemoveContribForm" ACTION="AdminContributions.po" METHOD="GET" onsubmit="return confirm('Êtes-vous sûr de détruire vos contributions sur le volume sélectionné ?')">
+<!--FORM NAME="RemoveContribForm" ACTION="AdminContributions.po" METHOD="GET" onsubmit="return confirm('Êtes-vous sûr de détruire vos contributions sur le volume sélectionné ?')">
 <table WIDTH="600" BORDER="0" CELLSPACING="0" CELLPADDING="10" Summary="RemoveContrib">
 <TR>
 	<TD><b><label for="EMPTY">Détruire les contributions sur le volume sélectionné</label></b></TD>
@@ -47,7 +50,7 @@
         </TD>
 </TR>
 </TABLE>
-</FORM>
+</FORM-->
 <hr>
 <h2>Voir les <span id="ContributionsCount">0</span> contributions</h2>
 <table id="ContribList" width="100%" frame="hsides"  border="0" summary="entries" bgcolor="#faecc9">

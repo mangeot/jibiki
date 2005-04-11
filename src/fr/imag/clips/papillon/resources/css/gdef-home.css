@@ -37,10 +37,16 @@ body {
 /*--------------------------------------*/
 TD.block {
   /*  display: block; */
+    text-align: center;
     border-style: solid;
     border-width: 1px;
  /*   border-spacing: 5px; i*/
     border-color: black;
+}
+
+H4.blockTitle {
+	text-align: center; 
+	color:blue;
 }
 
 /*--------------------------------------*/
@@ -484,7 +490,6 @@ A.hide {text-decoration: none}
 }
 
 .example {
-	display: block;
 	font-style: italic;
 }
 
