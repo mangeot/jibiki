@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2005/04/11 08:01:02  fbrunet
+ * Passage en xhtml des ressources Papillon.
+ *
  * Revision 1.3  2005/01/15 12:51:24  mangeot
  * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
  *
@@ -61,7 +64,7 @@ import fr.imag.clips.papillon.business.transformation.*;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.PapillonLogger;
 
-import fr.imag.clips.papillon.presentation.html.orig.*;
+import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
 
 public class AdminVolumes extends BasePO {
@@ -95,7 +98,7 @@ public class AdminVolumes extends BasePO {
     protected final static String ADD_ENTRIES_PARAMETER="AddEntries";
 
     
-    protected static AdminVolumesHTML content;
+    protected static AdminVolumesXHTML content;
 
 
     protected boolean loggedInUserRequired() {
@@ -118,7 +121,7 @@ public class AdminVolumes extends BasePO {
     {
         
         // Création du contenu
-        content = (AdminVolumesHTML)MultilingualHtmlTemplateFactory.createTemplate("AdminVolumesHTML", this.getComms(), this.getSessionData());
+        content = (AdminVolumesXHTML)MultilingualXHtmlTemplateFactory.createTemplate("AdminVolumesXHTML", this.getComms(), this.getSessionData());
 		  
         HttpPresentationRequest req = this.getComms().request;
 				String dictName = myGetParameter(content.NAME_Dictionary);

@@ -41,13 +41,13 @@ import fr.imag.clips.papillon.business.utility.Utility;
 import fr.imag.clips.papillon.business.transformation.*;
 import fr.imag.clips.papillon.business.PapillonLogger;
 
-import fr.imag.clips.papillon.presentation.html.orig.*;
+import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
 
 public class Register extends BasePO{
 
 
-    protected static RegisterHTML content;
+    protected static RegisterXHTML content;
 
     protected static String REGISTER_PAGE = "ReNuser";
 
@@ -71,7 +71,7 @@ public class Register extends BasePO{
         javax.xml.transform.TransformerException
     {
         // Création du contenu
-        content = (RegisterHTML)MultilingualHtmlTemplateFactory.createTemplate("RegisterHTML", this.getComms(), this.getSessionData());
+        content = (RegisterXHTML)MultilingualXHtmlTemplateFactory.createTemplate("RegisterXHTML", this.getComms(), this.getSessionData());
 
         HttpPresentationRequest req = this.getComms().request;
 

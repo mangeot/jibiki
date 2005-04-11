@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2005/04/11 08:01:02  fbrunet
+ * Passage en xhtml des ressources Papillon.
+ *
  * Revision 1.3  2005/01/15 12:51:24  mangeot
  * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
  *
@@ -58,7 +61,7 @@ import fr.imag.clips.papillon.business.transformation.*;
 import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 
-import fr.imag.clips.papillon.presentation.html.orig.*;
+import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
 
 public class DrillGenerator extends BasePO {
@@ -67,7 +70,7 @@ public class DrillGenerator extends BasePO {
 
     protected static String[] Entries = {"ABDIQUER.1","ACCUSER.1","COLLER.1","CRIER.1","REGRETTER.1"};
 
-    protected static DrillGeneratorHTML content;
+    protected static DrillGeneratorXHTML content;
 
     protected boolean loggedInUserRequired() {
         return false;
@@ -87,7 +90,7 @@ public class DrillGenerator extends BasePO {
     {
         
         // Création du contenu
-        content = (DrillGeneratorHTML)MultilingualHtmlTemplateFactory.createTemplate("DrillGeneratorHTML", this.getComms(), this.getSessionData());
+        content = (DrillGeneratorXHTML)MultilingualXHtmlTemplateFactory.createTemplate("DrillGeneratorXHTML", this.getComms(), this.getSessionData());
                            
         HttpPresentationRequest req = this.getComms().request;
         // If the page is called with parameters, take the requested action

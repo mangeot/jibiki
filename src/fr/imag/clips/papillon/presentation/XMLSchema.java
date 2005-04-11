@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.text.DateFormat;
 
-import fr.imag.clips.papillon.presentation.html.orig.*;
+import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
 public class XMLSchema extends BasePO {
 
@@ -39,7 +39,7 @@ public class XMLSchema extends BasePO {
 
         Node contentNode;
 
-        XMLSchemaContentHTML content = (XMLSchemaContentHTML)MultilingualHtmlTemplateFactory.createTemplate("XMLSchemaContentHTML", this.getComms(), this.getSessionData());
+        XMLSchemaContentXHTML content = (XMLSchemaContentXHTML)MultilingualXHtmlTemplateFactory.createTemplate("XMLSchemaContentXHTML", this.getComms(), this.getSessionData());
         contentNode = content.getElementXMLSchemaContent();
         
         //On rend le contenu correct

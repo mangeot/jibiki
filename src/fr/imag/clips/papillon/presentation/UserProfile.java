@@ -10,6 +10,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2005/04/11 08:01:02  fbrunet
+ * Passage en xhtml des ressources Papillon.
+ *
  * Revision 1.3  2005/01/14 23:08:13  mangeot
  * Fixed some bugs in ConsultExpert + code cleaning
  *
@@ -84,11 +87,11 @@ import fr.imag.clips.papillon.business.utility.Utility;
 import fr.imag.clips.papillon.business.transformation.*;
 import fr.imag.clips.papillon.business.PapillonLogger;
 
-import fr.imag.clips.papillon.presentation.html.orig.*;
+import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
 public class UserProfile extends BasePO {
    
-   protected static UserProfileHTML content;
+   protected static UserProfileXHTML content;
 
 
     protected boolean loggedInUserRequired() {
@@ -110,7 +113,7 @@ public class UserProfile extends BasePO {
         javax.xml.transform.TransformerException
     {
         // Création du contenu
-        content = (UserProfileHTML)MultilingualHtmlTemplateFactory.createTemplate("UserProfileHTML", this.getComms(), this.getSessionData());
+        content = (UserProfileXHTML)MultilingualXHtmlTemplateFactory.createTemplate("UserProfileXHTML", this.getComms(), this.getSessionData());
         
         HttpPresentationRequest req = this.getComms().request;
         String login= this.getUser().getLogin();

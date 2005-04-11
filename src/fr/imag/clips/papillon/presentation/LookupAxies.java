@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2005/04/11 08:01:02  fbrunet
+ * Passage en xhtml des ressources Papillon.
+ *
  * Revision 1.2  2005/01/15 12:51:24  mangeot
  * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
  *
@@ -56,7 +59,7 @@ import fr.imag.clips.papillon.business.xsl.*;
 import fr.imag.clips.papillon.business.locales.Languages;
 
 
-import fr.imag.clips.papillon.presentation.html.orig.*;
+import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
 // Imported JAVA API for XML Parsing classes
 import javax.xml.parsers.DocumentBuilder;
@@ -82,7 +85,7 @@ public class LookupAxies extends BasePO {
     protected final static String XSLID="xslid";
 
 
-    protected static LookupAxiesTmplHTML content;
+    protected static LookupAxiesTmplXHTML content;
 
     protected boolean loggedInUserRequired() {
         return true;
@@ -108,7 +111,7 @@ public class LookupAxies extends BasePO {
         PapillonBusinessException {
 
             // Création du contenu
-            content = (LookupAxiesTmplHTML)MultilingualHtmlTemplateFactory.createTemplate("LookupAxiesTmplHTML", this.getComms(), this.getSessionData());
+            content = (LookupAxiesTmplXHTML)MultilingualXHtmlTemplateFactory.createTemplate("LookupAxiesTmplXHTML", this.getComms(), this.getSessionData());
 
             HttpPresentationRequest req = this.getComms().request;
 

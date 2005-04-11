@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2005/04/11 08:01:02  fbrunet
+ * Passage en xhtml des ressources Papillon.
+ *
  * Revision 1.2  2005/01/15 12:51:24  mangeot
  * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
  *
@@ -55,7 +58,7 @@ import fr.imag.clips.papillon.business.utility.Utility;
 import fr.imag.clips.papillon.business.transformation.*;
 import fr.imag.clips.papillon.business.PapillonLogger;
 
-import fr.imag.clips.papillon.presentation.html.orig.*;
+import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
 
 public class LoginUser extends BasePO {
@@ -68,7 +71,7 @@ public class LoginUser extends BasePO {
 
     protected final static String SUBMIT_PARAMETER="Submit";
     
-    protected static LoginUserTmplHTML content;
+    protected static LoginUserTmplXHTML content;
 
 
     protected boolean loggedInUserRequired() {
@@ -91,7 +94,7 @@ public class LoginUser extends BasePO {
     {
 
         // Création du contenu
-        content = (LoginUserTmplHTML)MultilingualHtmlTemplateFactory.createTemplate("LoginUserTmplHTML", this.getComms(), this.getSessionData());
+        content = (LoginUserTmplXHTML)MultilingualXHtmlTemplateFactory.createTemplate("LoginUserTmplXHTML", this.getComms(), this.getSessionData());
 
         HttpPresentationRequest req = this.getComms().request;
 

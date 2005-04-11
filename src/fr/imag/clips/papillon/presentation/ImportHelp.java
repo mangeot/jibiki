@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.text.DateFormat;
 
-import fr.imag.clips.papillon.presentation.html.orig.*;
+import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
 public class ImportHelp extends BasePO {
 
@@ -39,7 +39,7 @@ public class ImportHelp extends BasePO {
 
         Node contentNode;
 
-        ImportHelpContentHTML content = (ImportHelpContentHTML)MultilingualHtmlTemplateFactory.createTemplate("ImportHelpContentHTML", this.getComms(), this.getSessionData());
+        ImportHelpContentXHTML content = (ImportHelpContentXHTML)MultilingualXHtmlTemplateFactory.createTemplate("ImportHelpContentXHTML", this.getComms(), this.getSessionData());
         contentNode = content.getElementImportHelpContent();
         
         //On rend le contenu correct

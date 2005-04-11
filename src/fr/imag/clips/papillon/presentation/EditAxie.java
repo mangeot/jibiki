@@ -10,6 +10,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2005/04/11 08:01:02  fbrunet
+ * Passage en xhtml des ressources Papillon.
+ *
  * Revision 1.3  2005/01/15 12:51:24  mangeot
  * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
  *
@@ -48,7 +51,7 @@ import com.lutris.appserver.server.httpPresentation.ClientPageRedirectException;
 
 
 // HTML source import
-import fr.imag.clips.papillon.presentation.html.orig.*;
+import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
 //local imports
 import fr.imag.clips.papillon.business.PapillonBusinessException;
@@ -76,7 +79,7 @@ public class EditAxie extends BasePO {
     protected final static int STEP_VIEW = 4;
     protected final static int STEP_CONFIRM = 9;
 
-    protected EditAxieTmplHTML content;
+    protected EditAxieTmplXHTML content;
 
     protected boolean loggedInUserRequired() {
         return true;
@@ -98,7 +101,7 @@ public class EditAxie extends BasePO {
 	fr.imag.clips.papillon.business.PapillonBusinessException {
 
 	    // Content creation
-	    content = (EditAxieTmplHTML)MultilingualHtmlTemplateFactory.createTemplate("EditAxieTmplHTML", this.getComms(), this.getSessionData());
+	    content = (EditAxieTmplXHTML)MultilingualXHtmlTemplateFactory.createTemplate("EditAxieTmplXHTML", this.getComms(), this.getSessionData());
 
 	    // On regarde d'abord les parametres qui nous sont demandes.
 		String submitLookup = myGetParameter(content.NAME_Lookup);

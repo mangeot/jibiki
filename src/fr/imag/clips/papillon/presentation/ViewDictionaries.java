@@ -9,6 +9,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.3  2005/04/11 08:01:02  fbrunet
+ *  Passage en xhtml des ressources Papillon.
+ *
  *  Revision 1.2  2005/01/15 12:51:24  mangeot
  *  Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
  *
@@ -49,7 +52,7 @@ import fr.imag.clips.papillon.business.utility.Utility;
 import fr.imag.clips.papillon.business.transformation.*;
 import fr.imag.clips.papillon.business.PapillonLogger;
 
-import fr.imag.clips.papillon.presentation.html.orig.*;
+import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
 /**
  *  Description of the Class
@@ -71,7 +74,7 @@ public class ViewDictionaries extends BasePO {
     /**
      *  Description of the Field
      */
-    protected static ViewDictionariesHTML content;
+    protected static ViewDictionariesXHTML content;
 
 
     /**
@@ -125,7 +128,7 @@ public class ViewDictionaries extends BasePO {
             IOException, org.xml.sax.SAXException, javax.xml.transform.TransformerException {
 
         // Création du contenu
-        content = (ViewDictionariesHTML) MultilingualHtmlTemplateFactory.createTemplate("ViewDictionariesHTML", this.getComms(), this.getSessionData());
+        content = (ViewDictionariesXHTML) MultilingualXHtmlTemplateFactory.createTemplate("ViewDictionariesXHTML", this.getComms(), this.getSessionData());
 
         HttpPresentationRequest req = this.getComms().request;
         // If the page is called with parameters, take the requested action

@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2005/04/11 08:01:02  fbrunet
+ * Passage en xhtml des ressources Papillon.
+ *
  * Revision 1.2  2005/02/16 16:34:49  mangeot
  * *** empty log message ***
  *
@@ -52,7 +55,7 @@ import java.io.*;
 
 // for users
 import fr.imag.clips.papillon.business.user.*;
-import fr.imag.clips.papillon.presentation.html.orig.AdminGroupsTmplHTML;
+import fr.imag.clips.papillon.presentation.xhtml.orig.AdminGroupsTmplXHTML;
 
 import fr.imag.clips.papillon.data.*;
 import fr.imag.clips.papillon.business.utility.Utility;
@@ -64,7 +67,7 @@ public class AdminGroups extends BasePO {
 
     protected final static String REMOVE_PARAMETER="Remove";
     
-    protected static AdminGroupsTmplHTML content;
+    protected static AdminGroupsTmplXHTML content;
 
     protected boolean loggedInUserRequired() {
         return true;
@@ -86,7 +89,7 @@ public class AdminGroups extends BasePO {
 			fr.imag.clips.papillon.presentation.PapillonPresentationException {
         
         // Création du contenu
-        content = (AdminGroupsTmplHTML)MultilingualHtmlTemplateFactory.createTemplate("AdminGroupsTmplHTML", this.getComms(), this.getSessionData());
+        content = (AdminGroupsTmplXHTML)MultilingualXHtmlTemplateFactory.createTemplate("AdminGroupsTmplXHTML", this.getComms(), this.getSessionData());
 	  
         HttpPresentationRequest req = this.getComms().request;
 

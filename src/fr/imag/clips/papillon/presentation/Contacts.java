@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2005/04/11 08:01:02  fbrunet
+ * Passage en xhtml des ressources Papillon.
+ *
  * Revision 1.2  2005/01/15 12:51:24  mangeot
  * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
  *
@@ -37,7 +40,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.text.DateFormat;
 
-import fr.imag.clips.papillon.presentation.html.orig.*;
+import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
 public class Contacts extends BasePO {
 
@@ -61,8 +64,8 @@ public class Contacts extends BasePO {
         Node contentNode;
 
         // Création du contenu
-        ContactsContentHTML content =
-            (ContactsContentHTML)MultilingualHtmlTemplateFactory.createTemplate("ContactsContentHTML", this.getComms(), this.getSessionData());
+        ContactsContentXHTML content =
+            (ContactsContentXHTML)MultilingualXHtmlTemplateFactory.createTemplate("ContactsContentXHTML", this.getComms(), this.getSessionData());
         contentNode = content.getElementContactsContent();
 
         //On rend le contenu correct

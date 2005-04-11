@@ -9,6 +9,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.3  2005/04/11 08:01:02  fbrunet
+ *  Passage en xhtml des ressources Papillon.
+ *
  *  Revision 1.2  2004/12/24 14:31:28  mangeot
  *  I merged the latest developments of Papillon5.0 with this version 5.1.
  *  Have to be tested more ...
@@ -58,7 +61,7 @@ import fr.imag.clips.papillon.business.utility.Utility;
 import fr.imag.clips.papillon.business.transformation.*;
 import fr.imag.clips.papillon.business.PapillonLogger;
 
-import fr.imag.clips.papillon.presentation.html.orig.*;
+import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
 /**
  *  Description of the Class
@@ -84,7 +87,7 @@ public class AdminDictionaries extends BasePO {
     /**
      *  Description of the Field
      */
-    protected static AdminDictionariesHTML content;
+    protected static AdminDictionariesXHTML content;
 
 
     /**
@@ -138,7 +141,7 @@ public class AdminDictionaries extends BasePO {
             IOException, org.xml.sax.SAXException, javax.xml.transform.TransformerException {
 
         // Création du contenu
-        content = (AdminDictionariesHTML) MultilingualHtmlTemplateFactory.createTemplate("AdminDictionariesHTML", this.getComms(), this.getSessionData());
+        content = (AdminDictionariesXHTML) MultilingualXHtmlTemplateFactory.createTemplate("AdminDictionariesXHTML", this.getComms(), this.getSessionData());
 
         HttpPresentationRequest req = this.getComms().request;
         // If the page is called with parameters, take the requested action

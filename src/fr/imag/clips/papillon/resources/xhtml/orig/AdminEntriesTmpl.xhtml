@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+   <title>Papillon</title>
+</head>
+<body>
+<div id="Formulaire" lang="en">
+
+   <h1 style="text-align:center">Admin XML entries</h1>
+
+
+<!-- formulaire de voir mot-->
+
+<form action="AdminEntries.po" method="get">
+<table width="600" border="0" cellspacing="0" cellpadding="10" summary="Formulaire">
+<tr>
+     <!-- Warning, make sure the option element contains a Text and only a Text (no other child) -->
+	<td><b>Volume:</b></td>
+        <td>
+            <select name="VOLUME">
+            <option id="VolumeOptionTemplate" value="NONE" label="NONE">NONE</option>
+        </select></td>
+</tr>
+<tr>	
+	<td><b>Url:&nbsp;</b></td>
+	<td><input name="url" type="text" size="64" value=""/></td>
+</tr>
+
+<tr>
+	<td colspan="2"><input name="Add" type="submit" value="Add"/></td>
+</tr>
+<tr>
+	<td colspan="2"><input name="Empty" type="submit" value="Empty"/></td>
+</tr>
+</table>
+</form>
+<div id="Xml">
+
+</div>
+
+</div>
+</body>
+</html>

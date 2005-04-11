@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2005/04/11 08:01:02  fbrunet
+ * Passage en xhtml des ressources Papillon.
+ *
  * Revision 1.3  2005/01/15 12:51:24  mangeot
  * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
  *
@@ -58,7 +61,7 @@ import fr.imag.clips.papillon.business.transformation.*;
 import fr.imag.clips.papillon.business.xsl.*;
 
 
-import fr.imag.clips.papillon.presentation.html.orig.*;
+import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
 // Imported JAVA API for XML Parsing classes
 import javax.xml.parsers.DocumentBuilder;
@@ -91,7 +94,7 @@ public class AdminContributions extends BasePO {
     protected final static String XSLID="xslid";
     protected final static String SORTBY_PARAMETER="SortBy";
     
-    protected static AdminContributionsTmplHTML content;
+    protected static AdminContributionsTmplXHTML content;
 	
     protected boolean loggedInUserRequired() {
         return true;
@@ -117,7 +120,7 @@ public class AdminContributions extends BasePO {
         PapillonBusinessException {
         
         // Création du contenu
-        content = (AdminContributionsTmplHTML)MultilingualHtmlTemplateFactory.createTemplate("AdminContributionsTmplHTML", this.getComms(), this.getSessionData());
+        content = (AdminContributionsTmplXHTML)MultilingualXHtmlTemplateFactory.createTemplate("AdminContributionsTmplXHTML", this.getComms(), this.getSessionData());
 		
         HttpPresentationRequest req = this.getComms().request;
         

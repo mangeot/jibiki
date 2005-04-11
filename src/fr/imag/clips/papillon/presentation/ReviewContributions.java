@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.5  2005/04/11 08:01:02  fbrunet
+ * Passage en xhtml des ressources Papillon.
+ *
  * Revision 1.4  2005/01/15 20:02:19  mangeot
  * Added new search options for ReviewContributions
  *
@@ -59,7 +62,7 @@ import fr.imag.clips.papillon.business.transformation.*;
 import fr.imag.clips.papillon.business.xsl.*;
 
 
-import fr.imag.clips.papillon.presentation.html.orig.*;
+import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
 // Imported JAVA API for XML Parsing classes
 import javax.xml.parsers.DocumentBuilder;
@@ -102,7 +105,7 @@ public class ReviewContributions extends BasePO {
     protected final static String XSLID_PARAMETER="xslid";
     protected final static String SORTBY_PARAMETER="SortBy";
     
-    protected static ReviewContributionsTmplHTML content;
+    protected static ReviewContributionsTmplXHTML content;
 
     protected boolean loggedInUserRequired() {
         return true;
@@ -128,7 +131,7 @@ public class ReviewContributions extends BasePO {
         PapillonBusinessException {
         
         // Création du contenu
-        content = (ReviewContributionsTmplHTML)MultilingualHtmlTemplateFactory.createTemplate("ReviewContributionsTmplHTML", this.getComms(), this.getSessionData());
+        content = (ReviewContributionsTmplXHTML)MultilingualXHtmlTemplateFactory.createTemplate("ReviewContributionsTmplXHTML", this.getComms(), this.getSessionData());
 
         HttpPresentationRequest req = this.getComms().request;
         

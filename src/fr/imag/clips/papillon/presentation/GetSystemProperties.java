@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2005/04/11 08:01:02  fbrunet
+ * Passage en xhtml des ressources Papillon.
+ *
  * Revision 1.2  2005/01/15 12:51:24  mangeot
  * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
  *
@@ -42,7 +45,7 @@ import java.lang.System;
 import java.util.Properties;
 import java.util.Enumeration;
 
-import fr.imag.clips.papillon.presentation.html.orig.*;
+import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
 public class GetSystemProperties extends BasePO {
 
@@ -61,9 +64,9 @@ public class GetSystemProperties extends BasePO {
     public Node getContent()
     throws HttpPresentationException, IOException, SessionException {
 
-        SystemPropertiesListHTML content;
+        SystemPropertiesListXHTML content;
         // Création du contenu
-        content = (SystemPropertiesListHTML)MultilingualHtmlTemplateFactory.createTemplate("SystemPropertiesListHTML", this.getComms(), this.getSessionData());
+        content = (SystemPropertiesListXHTML)MultilingualXHtmlTemplateFactory.createTemplate("SystemPropertiesListXHTML", this.getComms(), this.getSessionData());
 
         // Enter Session Properties
 		SessionManager mySessionManager = Enhydra.getSessionManager();

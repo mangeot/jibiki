@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2005/04/11 08:01:02  fbrunet
+ * Passage en xhtml des ressources Papillon.
+ *
  * Revision 1.2  2005/01/15 12:51:24  mangeot
  * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
  *
@@ -61,7 +64,7 @@ import fr.imag.clips.papillon.business.transformation.*;
 import fr.imag.clips.papillon.business.utility.Utility;
 import fr.imag.clips.papillon.business.PapillonLogger;
 
-import fr.imag.clips.papillon.presentation.html.orig.*;
+import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
 public class AdminXsl extends BasePO {
     
@@ -77,7 +80,7 @@ public class AdminXsl extends BasePO {
     protected final static String DEFAULT_XSL="defaultxsl";
     protected final static String TYPE_XSL="type";    
 
-    protected static AdminXslTmplHTML content;
+    protected static AdminXslTmplXHTML content;
 
     protected boolean loggedInUserRequired() {
         return true;
@@ -96,7 +99,7 @@ public class AdminXsl extends BasePO {
     {
 
         // Création du contenu
-        content = (AdminXslTmplHTML)MultilingualHtmlTemplateFactory.createTemplate("AdminXslTmplHTML", this.getComms(), this.getSessionData());
+        content = (AdminXslTmplXHTML)MultilingualXHtmlTemplateFactory.createTemplate("AdminXslTmplXHTML", this.getComms(), this.getSessionData());
 		  
         HttpPresentationRequest req = this.getComms().request;
         // If the page is called with parameters, take the requested action

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+   <title>Papillon</title>
+</head>
+<body>
+<div id="HomeContent" lang="en">
+<h1>Managing Caches and Archives</h1>
+ 
+
+<!-- Begining administration form -->
+<form action="Admin.po" method="get">
+<h3>Administative Message</h3>
+<div><label for="AdminMessage">Text: </label>
+<input name="AdminMessage" id="AdminMessage" type="text"/>
+<br/>
+(will be displayed by all http responses)<br/>
+<input name="AdminMessageSubmit" type="submit" value="Set"/>
+</div>
+<h3>Papillon mailing list archive</h3>
+<table width="600" border="0" cellspacing="0" cellpadding="0" summary="Formulaire">
+  <tr>
+    <td><b>Folder:</b></td> 
+    <td><input name="Folder" type="text" size="64" value=""/></td> 
+  </tr>
+<!--  <TR>
+    <TD WIDTH="25%"><B>Database URL&nbsp;:<br/>(not available)</B></TD> 
+    <TD WIDTH="75"><INPUT NAME="DbUrl" TYPE="text" SIZE="64" VALUE=""></TD> 
+  </TR>-->
+  <tr>
+    <td><b>&nbsp;Action:</b></td> 
+    <td>
+	<input name="Flush" type="submit" value="Flush"/>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<input name="Update" type="submit" value="Update"/>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+     	<input name="Reload" type="submit" value="Flush &amp; Reload"/></td> 
+  </tr>
+</table>
+
+<h3>Volumes Entries Count Cache</h3>
+<table width="600" border="0" cellspacing="0" cellpadding="0" summary="Formulaire">
+  <tr>
+    <td><b>&nbsp;Action:</b></td> 
+    <td><input name="ResetEntriesCountCache" type="submit" value="Reset"/></td> 
+  </tr>
+</table>
+	
+
+<h3>Edition Interface Description Cache</h3>
+<table width="600" border="0" cellspacing="0" cellpadding="0" summary="Formulaire">
+  <tr>
+    <td><b>&nbsp;Action:</b></td> 
+    <td><input name="ResetInterfaceDescriptionCache" type="submit" value="Reset"/></td> 
+  </tr>
+</table>
+
+
+<h3>XslSheet transformers Cache</h3>
+<table width="600" border="0" cellspacing="0" cellpadding="0" summary="Formulaire">
+  <tr>
+    <td><b>&nbsp;Action:</b></td> 
+    <td><input name="ResetXslSheetTransformersCache" type="submit" value="Reset"/></td> 
+  </tr>
+</table>
+
+
+<h3>Languages Cache</h3>
+<table width="600" border="0" cellspacing="0" cellpadding="0" summary="Formulaire">
+  <tr>
+    <td><b>&nbsp;Action:</b></td> 
+    <td><input name="ResetLanguagesCache" type="submit" value="Reset"/></td> 
+  </tr>
+</table>
+
+</form>
+</div>
+  </body>
+</html>  

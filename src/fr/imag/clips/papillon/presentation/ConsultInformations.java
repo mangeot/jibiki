@@ -59,7 +59,7 @@ import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.utility.*;
 
 import de.opus5.servlet.*;
-import fr.imag.clips.papillon.presentation.html.orig.*;
+import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 import fr.imag.clips.papillon.presentation.XMLTitleParser;
 
 import fr.imag.clips.papillon.business.PapillonBusinessException;
@@ -75,7 +75,7 @@ public class ConsultInformations extends BasePO {
     /* The any contains is not yet implemented because we need to query informationFile instead of informationDocument */
     protected final static String ANY_CONTAINS_PARAMETER="anycontains";
 
-    ConsultInformationsTmplHTML content;        
+    ConsultInformationsTmplXHTML content;        
 
 
     public ConsultInformations () {
@@ -107,7 +107,7 @@ public Node getContent() throws javax.xml.parsers.ParserConfigurationException,
     HttpPresentationComms comms=this.getComms();
 
     // Création du contenu
-    content = (ConsultInformationsTmplHTML)MultilingualHtmlTemplateFactory.createTemplate("ConsultInformationsTmplHTML", this.getComms(), this.getSessionData());
+    content = (ConsultInformationsTmplXHTML)MultilingualXHtmlTemplateFactory.createTemplate("ConsultInformationsTmplXHTML", this.getComms(), this.getSessionData());
 
     String fileId=req.getParameter(prefs.FILE_ID_PARAMETER);
     String docId = req.getParameter(prefs.DOC_ID_PARAMETER);
@@ -145,7 +145,7 @@ public Node getInformationDocument(String docId, String lang) throws
     InformationFile theIndex = InformationFileFactory.findLocIndexFileForDocument(theDoc, lang);
     
     if (theIndex.isAnImage()) {
-        HTMLPaletteHTML palette = (HTMLPaletteHTML)MultilingualHtmlTemplateFactory.createTemplate("HTMLPaletteHTML", this.getComms(), this.getSessionData());
+        HTMLPaletteXHTML palette = (HTMLPaletteXHTML)MultilingualXHtmlTemplateFactory.createTemplate("HTMLPaletteXHTML", this.getComms(), this.getSessionData());
 
         HTMLImageElement img = palette.getElementHTMLImageElementTemplate();
         img.removeAttribute("id");

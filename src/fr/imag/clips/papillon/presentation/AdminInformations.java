@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2005/04/11 08:01:02  fbrunet
+ * Passage en xhtml des ressources Papillon.
+ *
  * Revision 1.2  2005/01/15 12:51:24  mangeot
  * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
  *
@@ -78,7 +81,7 @@ import de.opus5.servlet.*;
 import fr.imag.clips.papillon.business.PapillonImportException;
 
 import fr.imag.clips.papillon.presentation.PapillonPresentationException;
-import fr.imag.clips.papillon.presentation.html.orig.*;
+import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 import fr.imag.clips.papillon.presentation.XMLTitleParser;
 
 public class AdminInformations extends BasePO {
@@ -106,7 +109,7 @@ public class AdminInformations extends BasePO {
 
     protected fr.imag.clips.papillon.business.informationfile.MediaPreferences prefs;
 
-    protected AdminInformationsTmplHTML content;
+    protected AdminInformationsTmplXHTML content;
 
     protected Languages Languages;
 
@@ -202,7 +205,7 @@ public class AdminInformations extends BasePO {
         /*********************************/
         // Creating the document Layout
         /*********************************/
-        content = (AdminInformationsTmplHTML)MultilingualHtmlTemplateFactory.createTemplate("AdminInformationsTmplHTML", this.getComms(), this.getSessionData());
+        content = (AdminInformationsTmplXHTML)MultilingualXHtmlTemplateFactory.createTemplate("AdminInformationsTmplXHTML", this.getComms(), this.getSessionData());
 
         addConsultForm();
 

@@ -10,6 +10,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2005/04/11 08:01:02  fbrunet
+ * Passage en xhtml des ressources Papillon.
+ *
  * Revision 1.2  2004/12/24 14:31:28  mangeot
  * I merged the latest developments of Papillon5.0 with this version 5.1.
  * Have to be tested more ...
@@ -55,7 +58,7 @@ import com.lutris.appserver.server.httpPresentation.ClientPageRedirectException;
 
 
 // HTML source import
-import fr.imag.clips.papillon.presentation.html.orig.*;
+import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
 //local imports
 import fr.imag.clips.papillon.business.PapillonBusinessException;
@@ -87,7 +90,7 @@ public class EditEntryInit extends BasePO {
     protected final static int STEP_CREATE = 3;
     protected final static int STEP_EDIT = 4;
 
-    protected EditEntryInitHTML content;
+    protected EditEntryInitXHTML content;
 
     protected boolean loggedInUserRequired() {
         return true;
@@ -108,7 +111,7 @@ public class EditEntryInit extends BasePO {
 	fr.imag.clips.papillon.business.PapillonBusinessException {
 
 	    // Content creation
-	    content = (EditEntryInitHTML)MultilingualHtmlTemplateFactory.createTemplate("EditEntryInitHTML", this.getComms(), this.getSessionData());
+	    content = (EditEntryInitXHTML)MultilingualXHtmlTemplateFactory.createTemplate("EditEntryInitXHTML", this.getComms(), this.getSessionData());
 
 	    // On regarde d'abord les parametres qui nous sont demandes.
 		String submitLookupEdit = myGetParameter(content.NAME_LookupEdit);
