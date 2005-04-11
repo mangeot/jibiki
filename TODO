@@ -1,0 +1,4 @@
+- Supprimer la table "contributions" du fichier doml.
+- traiter papillonaxi comme n'importe quelle autre volume pivot.
+- Supprimer la dépendance avec ant dans la section informationfiles.
+- Revoir la partie XSLSheet pour des formes plus sympas...

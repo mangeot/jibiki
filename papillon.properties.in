@@ -12,7 +12,7 @@
 #papillon.xalan.jar=/Library/Java/Extensions/xalan-j_2_4_1/bin/xalan.jar
 #papillon.xerces.jar=/Library/Java/Extensions/xalan-j_2_4_1/bin/xercesImpl.jar
 #papillon.xmlapi.jar=/Library/Java/Extensions/xalan-j_2_4_1/bin/xml-apis.jar
-#papillon.ant.jar=/Library/Java/Extensions/jakarta-ant-1.5.1/lib/ant.jar
+#UNUSED:papillon.ant.jar=/Library/Java/Extensions/jakarta-ant-1.5.1/lib/ant.jar
 #papillon.pgsql.jar=/usr/local/pgsql/share/java/postgresql.jar
 
 # Enhydra dirs
@@ -25,7 +25,7 @@
 papillon.xalan.jar=/usr/local/src/xalan-j_2_4_1/bin/xalan.jar
 papillon.xerces.jar=/usr/local/src/xalan-j_2_4_1/bin/xercesImpl.jar
 papillon.xmlapi.jar=/usr/local/src/xalan-j_2_4_1/bin/xml-apis.jar
-papillon.ant.jar=/usr/local/src/jakarta-ant-1.5.1/lib/ant.jar
+#UNUSED: papillon.ant.jar=/usr/local/src/jakarta-ant-1.5.1/lib/ant.jar
 papillon.pgsql.jar=/usr/share/pgsql/pg73b1jdbc3.jar
 
 # Enhydra dirs

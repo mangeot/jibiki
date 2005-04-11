@@ -1,0 +1,7 @@
+Modifications since Papillon5.0 :
+  - Adapted Papillon source to compile with enhydra 5.1
+  - All entries are now stored as contributions, even original ones.
+  - Interface is now generated and should be modified by hand...
+  - Metadata now make use of XPath to indicate elements that should be indexed.
+  - Reverse lookup may be authorized for a dictionary by way of the d:reverse attribute.
+  - upload de dictionnaire/volume/etc. dans une transaction + rollback en cas de pb.

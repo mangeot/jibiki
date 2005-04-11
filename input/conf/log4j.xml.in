@@ -18,7 +18,7 @@
         </layout>    
     </appender>
     <appender name="Console" class="org.apache.log4j.ConsoleAppender">
-        <param name="Threshold" value="INFO"/>
+        <param name="Threshold" value="INFO"/> <!-- INFO -->
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d{ISO8601}: %c,%p,: %m%n"/>
         </layout>    

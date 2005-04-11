@@ -7,6 +7,16 @@
  * $Id$
  *************************************************
  * $Log$
+ * Revision 1.5  2005/04/11 12:32:29  mangeot
+ * Merge between the XPathAndMultipleKeys branch and the trunk
+ *
+ * Revision 1.4.2.2  2005/03/29 09:41:32  serasset
+ * Added transaction support. Use CurrentDBTransaction class to define a transaction
+ * context in which all db commands will be executed.
+ *
+ * Revision 1.4.2.1  2005/01/25 13:54:54  mangeot
+ * changed the volume volumeEntry and index objects. Does not compile but need a backup...
+ *
  * Revision 1.4  2005/01/15 16:36:35  mangeot
  * Commented the link to the dtd because it is depdendent of the platform
  *
@@ -16,7 +26,7 @@
  *
 -->
 <doml>
-  <database database="PostgreSQL" templateset="papillon_dynamic"> <!-- legal_values="Standard,InstantDB,Oracle,Informix,Msql,Sybase,PostgreSQL"-->
+  <database database="PostgreSQL" templateset="papillon_dynamic" dirtyDOs="Deprecate"> <!-- legal_values="Standard,InstantDB,Oracle,Informix,Msql,Sybase,PostgreSQL"-->
     <package id="fr">
     <package id="fr.imag">
     <package id="fr.imag.clips">
@@ -25,51 +35,15 @@
         <table dbTableName="volume" id="fr.imag.clips.papillon.data.VolumeEntry">
           <column id="headword" usedForQuery="true">
             <javadoc>/**
- * the headword  isAbstract="true"
+ * the headword 
  */</javadoc>
             <type canBeNull="true" dbType="LONGVARCHAR" javaType="String"/>
           </column>
-          <column id="id" usedForQuery="true">
+          <column id="dom">
             <javadoc>/**
- * the external id
+ * the entry as a dom document node
  */</javadoc>
-            <type canBeNull="true" dbType="VARCHAR" javaType="String" size="255"/>
-          </column>
-          <column id="pos" usedForQuery="true">
-            <javadoc>/**
- * the part-of-speech
- */</javadoc>
-            <type canBeNull="true" dbType="VARCHAR" javaType="String" size="255"/>
-          </column>
-          <column id="pronunciation" usedForQuery="true">
-            <javadoc>/**
- * the pronunciation
- */</javadoc>
-            <type canBeNull="true" dbType="VARCHAR" javaType="String" size="255"/>
-          </column>
-          <column id="reading" usedForQuery="true">
-            <javadoc>/**
- * the reading
- */</javadoc>
-            <type canBeNull="true" dbType="VARCHAR" javaType="String" size="255"/>
-          </column>
-          <column id="translation" usedForQuery="true">
-            <javadoc>/**
- * the translation
- */</javadoc>
-            <type canBeNull="true" dbType="LONGVARCHAR" javaType="String"/>
-          </column>
-          <column id="key1" usedForQuery="true">
-            <javadoc>/**
- * Key1
- */</javadoc>
-            <type canBeNull="true" dbType="VARCHAR" javaType="String" size="255"/>
-          </column>
-          <column id="key2" usedForQuery="true">
-            <javadoc>/**
- * Key2
- */</javadoc>
-            <type canBeNull="true" dbType="VARCHAR" javaType="String" size="255"/>
+            <type dbType="LONGVARBINARY" javaType="byte[]"/>
           </column>
           <column id="xmlCode" usedForQuery="true">
             <javadoc>/**
@@ -77,11 +51,29 @@
  */</javadoc>
             <type dbType="LONGVARCHAR" javaType="String"/>
           </column>
+          <column id="htmldom">
+            <javadoc>/**
+ * the entry formatted in html as a dom document node
+ */</javadoc>
+            <type canBeNull="true" dbType="LONGVARBINARY" javaType="byte[]"/>
+          </column>
         </table>
         <table id="fr.imag.clips.papillon.data.Index" dbTableName="index">
           <column id="key" usedForQuery="true">
             <javadoc>/**
- * the key
+ * the name of the key
+ */</javadoc>
+            <type canBeNull="true" dbType="VARCHAR" javaType="String" size="255"/>
+          </column>
+          <column id="lang" usedForQuery="true">
+            <javadoc>/**
+ * the language of the value of the key
+ */</javadoc>
+            <type canBeNull="true" dbType="VARCHAR" javaType="String" size="3"/>
+          </column>
+          <column id="value" usedForQuery="true">
+            <javadoc>/**
+ * the value of the key
  */</javadoc>
             <type canBeNull="true" dbType="VARCHAR" javaType="String" size="255"/>
           </column>
@@ -91,10 +83,12 @@
  */</javadoc>
             <type dbType="VARCHAR" javaType="String" size="255"/>
           </column>
-		  <index id="index_key_idx" unique="true">
+		  <index id="key_idx">
           <indexColumn id="key"/>
+          <indexColumn id="lang"/>
+          <indexColumn id="value"/>
         </index>
-		  <index id="index_entryid_idx" unique="true">
+		  <index id="entryid_idx">
           <indexColumn id="entryId"/>
         </index>
         </table>

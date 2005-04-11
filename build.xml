@@ -11,6 +11,14 @@ Id:
   
 Log:
    $Log$
+   Revision 1.9  2005/04/11 12:32:29  mangeot
+   Merge between the XPathAndMultipleKeys branch and the trunk
+
+   Revision 1.8.2.1  2005/03/16 13:24:31  serasset
+   Modified all boolean fields in table to CHAR(1) in order to be more db independant.
+   Suppressed ant.jar from class path, informationfiles (which rely on it) should be corrected.
+   The version of Xerces is now displayed on application init.
+
    Revision 1.8  2005/01/18 12:18:02  mangeot
    Added the qclean target
 
@@ -125,7 +133,7 @@ Most useful targets:
     <pathelement path="${papillon.xerces.jar}"/>
     <pathelement path="${papillon.xmlapi.jar}"/>
     <pathelement path="${papillon.regexp.jar}"/>
-    <pathelement path="${papillon.ant.jar}"/>
+    <!-- <pathelement path="${papillon.ant.jar}"/> -->
     <pathelement path="${papillon.uigenerator.jar}"/>
     <pathelement path="${papillon.concepts.jar}"/>
 <!--    <pathelement path="${papillon.jsse.jar}"/> -->
@@ -354,7 +362,7 @@ Most useful targets:
      <filter token="PROJECT_PATH" value="${dir.project}" />
      <filter token="ENHYDRA_DIR" value="${enhydra.dir}" />
      <!-- Papillon-specific filters -->
-     <filter token="ANT_LIB" value="${papillon.ant.jar}" />
+     <!-- <filter token="ANT_LIB" value="${papillon.ant.jar}" /> -->
      <filter token="XALAN_LIB"    value="${papillon.xalan.jar}" />
      <filter token="XERCES_LIB"  value="${papillon.xerces.jar}" />
      <filter token="XMLAPI_LIB"  value="${papillon.xmlapi.jar}" />

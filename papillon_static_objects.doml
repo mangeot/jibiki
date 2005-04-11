@@ -7,6 +7,38 @@
  * $Id$
  *************************************************
  * $Log$
+ * Revision 1.4  2005/04/11 12:32:29  mangeot
+ * Merge between the XPathAndMultipleKeys branch and the trunk
+ *
+ * Revision 1.3.2.7  2005/03/30 11:35:55  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.3.2.6  2005/03/29 09:41:32  serasset
+ * Added transaction support. Use CurrentDBTransaction class to define a transaction
+ * context in which all db commands will be executed.
+ *
+ * Revision 1.3.2.5  2005/03/16 13:24:31  serasset
+ * Modified all boolean fields in table to CHAR(1) in order to be more db independant.
+ * Suppressed ant.jar from class path, informationfiles (which rely on it) should be corrected.
+ * The version of Xerces is now displayed on application init.
+ *
+ * Revision 1.3.2.4  2005/02/06 22:39:30  mangeot
+ * Volume table modified: merged the CDM elements and XPath hashtables into one,
+ * added a boolean for reverse lookup
+ *
+ * Revision 1.3.2.3  2005/01/28 19:45:55  mangeot
+ * First version that runs basically.
+ * Should compile after an ant clean.
+ * XPath loading and virtual volumes for terminological lexicons are OK.
+ * Bugs remain, needs more testings like the editor for example.
+ *
+ * Revision 1.3.2.2  2005/01/27 18:09:28  mangeot
+ * Simple dictionary lookup is now working for GDEF.
+ * Does not compile yet but cvs commit for backup
+ *
+ * Revision 1.3.2.1  2005/01/25 13:54:54  mangeot
+ * changed the volume volumeEntry and index objects. Does not compile but need a backup...
+ *
  * Revision 1.3  2005/01/15 16:36:35  mangeot
  * Commented the link to the dtd because it is depdendent of the platform
  *
@@ -24,7 +56,7 @@
  *
 -->
 <doml>
-  <database database="PostgreSQL" templateset="standard"> <!-- legal_values="Standard,InstantDB,Oracle,Informix,Msql,Sybase,PostgreSQL"-->
+  <database database="PostgreSQL" templateset="standard" dirtyDOs="Deprecate"> <!-- legal_values="Standard,InstantDB,Oracle,Informix,Msql,Sybase,PostgreSQL"-->
     <package id="fr">
     <package id="fr.imag">
     <package id="fr.imag.clips">
@@ -55,7 +87,7 @@
           <column id="thread" usedForQuery="true">
             <type dbType="VARCHAR" javaType="String" size="255"/>
           </column>
-		  <index id="messages_msgid_idx" unique="true">
+		  <index id="msgid_idx" unique="true">
           <indexColumn id="msgid"/>
         </index>
         </table>
@@ -76,7 +108,7 @@
             <type dbType="LONGVARCHAR" javaType="String"/>
           </column>
           <column id="defaultxsl" usedForQuery="true">
-            <type dbType="BIT" javaType="boolean"/>
+            <type dbType="CHAR" javaType="String" size="1"/>
           </column>
         </table>
         <table dbTableName="informationdocument" id="fr.imag.clips.papillon.data.InformationDocument">
@@ -136,7 +168,7 @@
  * States if the file is the index of its document
  * Only one file per document should be the index file...
  */</javadoc>
-            <type dbType="BIT" javaType="boolean"/>
+            <type dbType="CHAR" javaType="String" size="1"/>
           </column>
           <column id="language" usedForQuery="true">
             <javadoc>/**
@@ -217,32 +249,32 @@
 		  <column id="newEntry" usedForQuery="true">
             <javadoc>/**
  * true = contribution is built from scratch (new entry)
- * false = contribution is a modification of an existing entry with id in (originalHandle)
+ * false = contribution is a modification of an existing entry with id in (originalId)
  */</javadoc>
-            <type dbType="BIT" javaType="boolean"/>
+            <type dbType="CHAR" javaType="String" size="1"/>
           </column>
-		  <column id="originalHandle" usedForQuery="true">
+		  <column id="originalId" usedForQuery="true">
             <javadoc>/**
- * the original entry handle corresponding to the contribution
+ * the original entry id corresponding to the contribution
  */</javadoc>
             <type  canBeNull="true" dbType="VARCHAR" javaType="String" size="255"/>
           </column> 
-		  <index id="contributions_author_idx" unique="true">
+		  <index id="author_idx">
           <indexColumn id="author"/>
         </index>
-		  <index id="contributions_volume_idx" unique="true">
+		  <index id="volume_idx">
           <indexColumn id="volume"/>
         </index>
-		  <index id="contributions_headword_idx" unique="true">
+		  <index id="headword_idx">
           <indexColumn id="headword"/>
         </index>
-		  <index id="contributions_entryhandle_idx" unique="true">
+		  <index id="entryhandle_idx">
           <indexColumn id="entryHandle"/>
         </index>
-		  <index id="contributions_entryid_idx" unique="true">
+		  <index id="entryid_idx">
           <indexColumn id="entryId"/>
         </index>
-		  <index id="contributions_originalhandle_idx" unique="true">
+		  <index id="originalhandle_idx">
           <indexColumn id="originalHandle"/>
         </index>
         </table>
@@ -260,17 +292,17 @@
  */</javadoc>
             <type canBeNull="true" dbType="VARCHAR" javaType="String" size="255"/>
           </column>
-          <column id="key1" usedForQuery="true">
+          <column id="dom">
             <javadoc>/**
- * Key1
+ * the entry as a dom document node
  */</javadoc>
-            <type canBeNull="true" dbType="VARCHAR" javaType="String" size="255"/>
+            <type dbType="LONGVARBINARY" javaType="byte[]"/>
           </column>
-          <column id="key2" usedForQuery="true">
+          <column id="htmldom">
             <javadoc>/**
- * Key2
+ * the entry formatted in html as a dom document node
  */</javadoc>
-            <type canBeNull="true" dbType="VARCHAR" javaType="String" size="255"/>
+            <type canBeNull="true" dbType="LONGVARBINARY" javaType="byte[]"/>
           </column>
           <column id="xmlCode" usedForQuery="true">
             <javadoc>/**
@@ -290,7 +322,7 @@
  */</javadoc>
             <type canBeNull="true" dbType="VARCHAR" javaType="String" size="255"/>
           </column>
-		  <index id="papillonaxi_id_idx" unique="true">
+		  <index id="id_idx">
           <indexColumn id="id"/>
         </index>
         </table>
@@ -337,10 +369,10 @@
  */</javadoc>
             <type  canBeNull="true" dbType="LONGVARCHAR" javaType="String"/>
           </column>
-		<index id="users_name_idx" unique="true">
+		<index id="name_idx" unique="true">
           <indexColumn id="name"/>
         </index>
-		<index id="users_login_idx" unique="true">
+		<index id="login_idx" unique="true">
           <indexColumn id="login"/>
         </index>
         </table>
@@ -369,7 +401,7 @@
  */</javadoc>
             <type canBeNull="true" dbType="LONGVARCHAR" javaType="String" />
           </column>
-		<index id="groups_name_idx" unique="true">
+		<index id="name_idx" unique="true">
           <indexColumn id="name"/>
         </index>
         </table>
@@ -437,10 +469,10 @@
  */</javadoc>
             <type dbType="LONGVARCHAR" javaType="String"/>
           </column>
-		  <index id="dictionaries_fullname_idx" unique="true">
+		  <index id="fullname_idx" unique="true">
             <indexColumn id="fullname"/>
           </index>
-		  <index id="dictionaries_name_idx" unique="true">
+		  <index id="name_idx" unique="true">
             <indexColumn id="name"/>
           </index>
         </table>
@@ -475,7 +507,7 @@
  * values taken from dml:lang type
  * (eng, fra, jpn, etc.)  (mainly ISO 639-2/T)
  */</javadoc>
-            <type dbType="VARCHAR" javaType="String" size="255"/>
+            <type dbType="VARCHAR" javaType="String" size="3"/>
           </column>
           <column id="targetLanguages" usedForQuery="true">
             <javadoc>/**
@@ -491,6 +523,14 @@
  */</javadoc>
             <type dbType="VARCHAR" javaType="String" size="255"/>
           </column>
+          <column id="cdmElements">
+            <javadoc>/**
+ * the CDM elements stored in a Hashtable
+ * table schema:
+ * String lang (ISO 639-2/T) -> CDM_element -> Vector (String xpath, boolean is_index, XPath xpath_compiled) 
+ */</javadoc>
+            <type dbType="LONGVARBINARY" javaType="byte[]"/>
+          </column>
           <column id="xmlCode" usedForQuery="true">
             <javadoc>/**
  * The XML code of the volume metadata.
@@ -503,27 +543,9 @@
 */</javadoc>
             <type canBeNull="true" dbType="LONGVARCHAR" javaType="String"/>
           </column>
-          <column id="xmuEdition">
+          <column id="templateItf">
             <javadoc>/**
- * The XML code of the XMU interface description file used in the online Edition interface module
-*/</javadoc>
-            <type canBeNull="true" dbType="LONGVARCHAR" javaType="String"/>
-          </column>
-          <column id="xmuVisualisation">
-            <javadoc>/**
- * The XML code of the XMU interface description file used in the online Visualisation interface module
-*/</javadoc>
-            <type canBeNull="true" dbType="LONGVARCHAR" javaType="String"/>
-          </column>
-          <column id="xnfConcept">
-            <javadoc>/**
- * The XML code of the XNF concept instance list for the online Edition interface module
-*/</javadoc>
-            <type canBeNull="true" dbType="LONGVARCHAR" javaType="String"/>
-          </column>
-          <column id="xnfInterface">
-            <javadoc>/**
- * The XML code of the XNF interface instance list for the online Edition interface module
+ * The XML code of the interface template used in the online Edition interface module
 */</javadoc>
             <type canBeNull="true" dbType="LONGVARCHAR" javaType="String"/>
           </column>
@@ -533,13 +555,19 @@
 */</javadoc>
             <type canBeNull="true" dbType="LONGVARCHAR" javaType="String"/>
           </column>
-		  <index id="volumes_name_idx" unique="true">
+          <column id="reverse" usedForQuery="true">
+            <javadoc>/**
+* indicates if the volume can be reversed for lookup ie: target words searched as source words.
+*/</javadoc>
+            <type dbType="CHAR" javaType="String" size="1"/>
+          </column>
+		  <index id="name_idx" unique="true">
             <indexColumn id="name"/>
           </index>
-		  <index id="volumes_dictname_idx" unique="true">
+		  <index id="dictname_idx">
             <indexColumn id="dictname"/>
           </index>
-		  <index id="volumes_dbname_idx" unique="true">
+		  <index id="dbname_idx">
             <indexColumn id="dbname"/>
           </index>
         </table>
@@ -577,16 +605,16 @@
           <column id="queryString" usedForQuery="true">
             <type dbType="LONGVARCHAR" javaType="String"/>
           </column>
-		  <index id="querylogs_login_idx" unique="true">
+		  <index id="login_idx">
             <indexColumn id="login"/>
           </index>
-		  <index id="querylogs_formName_idx" unique="true">
+		  <index id="formName_idx">
             <indexColumn id="formName"/>
           </index>
-		  <index id="querylogs_query_idx" unique="true">
+		  <index id="query_idx">
             <indexColumn id="query"/>
           </index>
-		  <index id="querylogs_queryString_idx" unique="true">
+		  <index id="queryString_idx">
             <indexColumn id="queryString"/>
           </index>
         </table>
@@ -615,7 +643,7 @@
  */</javadoc>
             <type canBeNull="true" dbType="REAL" javaType="float"/>
           </column>
-		 <index id="foksentry_reading_idx" unique="true">
+		 <index id="reading_idx">
           <indexColumn id="reading"/>
         </index>
         </table>
