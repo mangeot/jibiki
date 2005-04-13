@@ -10,6 +10,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.8  2005/04/13 14:34:38  mangeot
+ *  Simplified the expert lookup. Now lookup directly the cdm element name
+ *
  *  Revision 1.7  2005/04/11 12:29:59  mangeot
  *  Merge between the XPathAndMultipleKeys branch and the main trunk
  *
@@ -139,26 +142,6 @@ public class ConsultExpert extends BasePO {
      *  Description of the Field
      */
     protected final static String VOLUME_PARAMETER = "VOLUME";
-    /**
-     *  Description of the Field
-     */
-    protected final static String VocContains_PARAMETER = "VocContains";
-    /**
-     *  Description of the Field
-     */
-    protected final static String PosContains_PARAMETER = "PosContains";
-    /**
-     *  Description of the Field
-     */
-    protected final static String TransContains_PARAMETER = "TransContains";
-    /**
-     *  Description of the Field
-     */
-    protected final static String PronContains_PARAMETER = "PronContains";
-    /**
-     *  Description of the Field
-     */
-    protected final static String ReadingContains_PARAMETER = "ReadingContains";
     /**
      *  Description of the Field
      */
@@ -376,53 +359,18 @@ public class ConsultExpert extends BasePO {
 
         search2text = myGetParameter(content.NAME_search2text);
 
-        String vocContains = myGetParameter(VocContains_PARAMETER);
-        String posContains = null;
-        String pronContains = null;
-        String readingContains = null;
-        String transContains = null;
         String anyContains = null;
 
 
         if (null != search1 && null != search1text && !search1text.equals("")) {
-            if (search1.equals(VocContains_PARAMETER)) {
-                vocContains = search1text;
-            }
-            if (search1.equals(PosContains_PARAMETER)) {
-                posContains = search1text;
-            }
-            if (search1.equals(PronContains_PARAMETER)) {
-                pronContains = search1text;
-            }
-            if (search1.equals(ReadingContains_PARAMETER)) {
-                readingContains = search1text;
-            }
             if (search1.equals(AnyContains_PARAMETER)) {
                 anyContains = search1text;
-            }
-            if (search1.equals(TransContains_PARAMETER)) {
-                transContains = search1text;
             }
         }
 
         if (null != search2 && null != search2text && !search2text.equals("")) {
-            if (search2.equals(VocContains_PARAMETER)) {
-                vocContains = search2text;
-            }
-            if (search2.equals(PosContains_PARAMETER)) {
-                posContains = search2text;
-            }
-            if (search2.equals(PronContains_PARAMETER)) {
-                pronContains = search2text;
-            }
-            if (search2.equals(ReadingContains_PARAMETER)) {
-                readingContains = search2text;
-            }
             if (search2.equals(AnyContains_PARAMETER)) {
                 anyContains = search2text;
-            }
-            if (search2.equals(TransContains_PARAMETER)) {
-                transContains = search2text;
             }
         }
         strategyString = myGetParameter(content.NAME_Strategy);
@@ -452,7 +400,17 @@ public class ConsultExpert extends BasePO {
 
         // Consultation of several headwords at one time
         String[] Headwords = new String[1];
-        Headwords[0] = vocContains;
+		if (search1.equals(Volume.CDM_headword)) {
+			Headwords[0] = search1text;
+			search1text = "";
+		}
+		else if (search2.equals(Volume.CDM_headword)) {
+			Headwords[0] = search2text;
+			search2text = "";
+		}
+		else {
+			Headwords = new String[0];
+		}
 
         // FIXME: Just get the first language for the moment. Architecture of this part should be revised.
         MyAvailableLanguages = new AvailableLanguages();
@@ -492,8 +450,7 @@ public class ConsultExpert extends BasePO {
             }
             // Using FOKS module Testing phase ...
             if (strategy == IQuery.STRATEGY_FOKS && sourceLanguage.equals("jpn")) {
-                Vector foksVector = VolumeEntriesFactory.getFoksEntriesVector(vocContains);
-
+                Vector foksVector = VolumeEntriesFactory.getFoksEntriesVector(Headwords[0]);
                 if (foksVector != null && foksVector.size() > 0) {
                     addFoksEntryTable(foksVector);
                     strategy = IQuery.STRATEGY_EXACT;
@@ -505,7 +462,29 @@ public class ConsultExpert extends BasePO {
                 Utility.removeElement(content.getElementVolumeEntries());
             } else {
                 // If there is a query, executing it
-                addEntries(resources, volume, sourceLanguage, targetLanguages, Headwords, strategy, posContains, pronContains, readingContains, transContains, anyContains, handle, xslid, this.getUser(), offset);
+				// constructions of the Keys vector
+				Vector myKeys = new Vector();
+				if (!search1.equals("")  && !search1text.equals("")) {
+					String[] key1 = new String[3];
+					key1[0] = search1;
+					key1[2] = search1text;
+					myKeys.add(key1);
+				}
+				if (!search2.equals("") && !search2text.equals("")) {
+					String[] key2 = new String[3];
+					key2[0] = search2;
+					key2[2] = search2text;
+					myKeys.add(key2);
+				}
+				for (int i=0; i< Headwords.length;i++) {
+					String[] Headword = new String[3];
+					Headword[0] = Volume.CDM_headword;
+					Headword[1] = sourceLanguage;
+					Headword[2] = Headwords[i];
+					myKeys.add(Headword);
+				}
+
+                addEntries(resources, volume, sourceLanguage, targetLanguages, myKeys, anyContains, strategy, handle, xslid, this.getUser(), offset);
                 Utility.removeElement(content.getElementFoksEntries());
             }
         } else {
@@ -626,7 +605,7 @@ public class ConsultExpert extends BasePO {
 
         // Search1 field
         if (search1 == null || search1.equals("")) {
-            search1 = VocContains_PARAMETER;
+            search1 = Volume.CDM_headword;
         }
         if (!this.IsClientWithLabelDisplayProblems()) {
             this.setUnicodeLabels(content.getElementSearch1());
@@ -638,7 +617,7 @@ public class ConsultExpert extends BasePO {
 
         // Search2 field
         if (search2 == null || search2.equals("")) {
-            search2 = PosContains_PARAMETER;
+            search2 = Volume.CDM_pos;
         }
         if (!this.IsClientWithLabelDisplayProblems()) {
             this.setUnicodeLabels(content.getElementSearch2());
@@ -698,7 +677,7 @@ public class ConsultExpert extends BasePO {
      * @exception  javax.xml.transform.TransformerException        Description
      *      of the Exception
      */
-    protected void addEntries(String[] resources, String volume, String source, String[] targets, String[] Headwords, int strategy, String posContains, String pronContains, String readingContains, String transContains, String anyContains, String handle, String xslid, User myUser, int offset)
+    protected void addEntries(String[] resources, String volume, String source, String[] targets, Vector myKeys,  String anyContains, int strategy, String handle, String xslid, User myUser, int offset)
              throws PapillonBusinessException,
             ClassNotFoundException,
             HttpPresentationException,
@@ -714,12 +693,12 @@ public class ConsultExpert extends BasePO {
         if (null != handle && null != volume) {
             EntryCollection = DictionariesFactory.findAnswerAndTranslations(volume, handle, targets, myUser);
         } else if (null != volume) {
-            EntryCollection = VolumeEntriesFactory.getVolumeNameEntriesVector(volume, null, Headwords, strategy);
+            EntryCollection = VolumeEntriesFactory.getVolumeNameEntriesVector(volume, myKeys, null, strategy);
         } else {
-            EntryCollection = DictionariesFactory.getDictionariesEntriesCollection(resources, source, targets, Headwords, strategy, posContains, pronContains, readingContains, transContains, anyContains, myUser, offset);
+            EntryCollection = DictionariesFactory.getDictionariesEntriesCollection(resources, source, targets, myKeys, anyContains, strategy, myUser, offset);
  			if (EntryCollection==null || EntryCollection.size()==0) {
 				PapillonLogger.writeDebugMsg("EntryCollection null, getDictionariesReverseEntriesCollection");
-				EntryCollection = DictionariesFactory.getDictionariesReverseEntriesCollection(resources, source, targets, Headwords, strategy, posContains, pronContains, readingContains, transContains, anyContains,myUser,offset);
+				EntryCollection = DictionariesFactory.getDictionariesReverseEntriesCollection(resources, source, targets, myKeys, anyContains, strategy, myUser,offset);
 				reverseLookup = (EntryCollection!=null && EntryCollection.size()>0);
 			}
        }
@@ -942,7 +921,7 @@ public class ConsultExpert extends BasePO {
                          + sourceLanguage + "&"
                          + serializeParameterForUrl(content.NAME_TARGETS, originalTargets)
                          + serializeParameterForUrl(content.NAME_RESOURCES, originalResources)
-                         + content.NAME_search1 + "=" + VocContains_PARAMETER + "&"
+                         + content.NAME_search1 + "=" + Volume.CDM_headword + "&"
                          + content.NAME_search1text + "="
                          + Utility.convertToUrlForEncoding(headword, "UTF-8") + "&"
                          + content.NAME_Strategy + "="

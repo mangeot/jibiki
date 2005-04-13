@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.6  2005/04/13 14:34:38  mangeot
+ * Simplified the expert lookup. Now lookup directly the cdm element name
+ *
  * Revision 1.5  2005/04/11 12:29:59  mangeot
  * Merge between the XPathAndMultipleKeys branch and the main trunk
  *
@@ -346,13 +349,9 @@ public class DictionariesFactory {
             return names;
         }
 	
-    public static Collection getAllDictionariesEntriesCollection(String[] Headwords,
-																 int strategy,
-																 String posContains,
-																 String pronContains,
-																 String readingContains,
-																 String transContains,
+    public static Collection getAllDictionariesEntriesCollection(Vector Keys,
 																 String anyContains,
+																 int strategy,
 																 User user)
         throws PapillonBusinessException {
             Vector entries = new Vector();
@@ -362,13 +361,9 @@ public class DictionariesFactory {
                     entries.addAll(getDictionaryEntriesCollection(resources[i],
                                                                   null,
                                                                   null,
-                                                                  Headwords,
+                                                                  Keys,
+																  anyContains,
                                                                   strategy,
-                                                                  posContains,
-																  pronContains,
-																  readingContains,
-                                                                  transContains,
-                                                                  anyContains,
                                                                   user,
 																  0));
                 }
@@ -379,13 +374,9 @@ public class DictionariesFactory {
     public static Collection getDictionariesEntriesCollection(String [] resources,
 															  String source,
 															  String[] targets,
-															  String[] Headwords,
-															  int strategy,
-															  String posContains,
-															  String pronContains,
-															  String readingContains,
-															  String transContains,
+															  Vector Keys,
 															  String anyContains,
+															  int strategy,
 															  User user,
 															  int offset)
         throws PapillonBusinessException {
@@ -396,13 +387,9 @@ public class DictionariesFactory {
 					Collection myColl = getDictionaryNameEntriesCollection(resources[i],
 																		   source,
 																		   targets,
-																		   Headwords,
-																		   strategy,
-																		   posContains,
-																		   pronContains,
-																		   readingContains,
-																		   transContains,
+																		   Keys,
 																		   anyContains,
+																		   strategy,
 																		   user,
 																		   offset);
 					if (myColl!=null) {
@@ -416,75 +403,63 @@ public class DictionariesFactory {
     public static Collection getDictionaryNameEntriesCollection(String resource,
 																String source,
 																String[] targets,
-																String[] Headwords,
-																int strategy,
-																String posContains,
-																String pronContains,
-																String readingContains,
-																String transContains,
+																Vector Keys,
 																String anyContains,
+																int strategy,
 																User user,
-																int offset) throws PapillonBusinessException {
-																	Dictionary dict = findDictionaryByName(resource);
-																	return getDictionaryEntriesCollection(dict, source,
-																										  targets,Headwords,
-																										  strategy,posContains,
-																										  pronContains,readingContains,
-																										  transContains,anyContains,
-																										  user, offset);
-																}
+																int offset) 
+		throws PapillonBusinessException {
+			Dictionary dict = findDictionaryByName(resource);
+			return getDictionaryEntriesCollection(dict, source,
+												  targets,Keys,
+												  anyContains, strategy,
+												  user, offset);
+		}
 	
 	
     public static Collection getDictionaryEntriesCollection(Dictionary dict,
 															String source,
 															String[] targets,
-															String[] Headwords,
-															int strategy,
-															String posContains,
-															String pronContains,
-															String readingContains,
-															String transContains,
+															Vector Keys,
 															String anyContains,
+															int strategy,
 															User user,
-															int offset) throws PapillonBusinessException {
-																Collection entriesCollection = null;
-																if (null != dict 
-																	&& Utility.IsInArray(source, dict.getSourceLanguagesArray())
-																	&& Utility.IsInArray(targets, dict.getTargetLanguagesArray())) {
-																	Volume[] volumes = VolumesFactory.getVolumesArray(dict.getName(), source, null);
-																	if (null != volumes && volumes.length > 0) {
-																		entriesCollection = (Collection) new Vector();
-																		for (int i=0;i<volumes.length;i++) {
-																			// FIXME it depends on the architecture of the dictionaries !
-																			if (!volumes[i].getName().equals(PAPILLONAXI)) {
-																				Vector entriesVector = VolumeEntriesFactory.getVolumeEntriesVector(dict, volumes[i], "", Headwords, strategy, posContains, pronContains, readingContains, transContains, null, null, null, anyContains, offset);
-																				Collection tempCollection = ContributionsFactory.checkContributions(user, entriesVector);
-																				String category = dict.getCategory();
-																				if (!category.equals("monolingual")) {
-																					String type = dict.getType();
-																					if (type.equals("pivot")) {
-																						tempCollection = addPivotTranslations(tempCollection, source, targets, user);
-																					}
-																					if (type.equals("direct")) {
-																						tempCollection = addDirectTranslations(tempCollection, source, targets, user);
-																					}
-																				}
-																				entriesCollection.addAll(tempCollection);
-																			}
-																		}
-																	}
-																}
-																return entriesCollection;
-															}
+															int offset) 
+		throws PapillonBusinessException {
+			Collection entriesCollection = null;
+			if (null != dict 
+				&& Utility.IsInArray(source, dict.getSourceLanguagesArray())
+				&& Utility.IsInArray(targets, dict.getTargetLanguagesArray())) {
+				Volume[] volumes = VolumesFactory.getVolumesArray(dict.getName(), source, null);
+				if (null != volumes && volumes.length > 0) {
+					entriesCollection = (Collection) new Vector();
+					for (int i=0;i<volumes.length;i++) {
+						// FIXME it depends on the architecture of the dictionaries !
+						if (!volumes[i].getName().equals(PAPILLONAXI)) {
+							Vector entriesVector = VolumeEntriesFactory.getVolumeEntriesVector(dict, volumes[i], Keys, anyContains, strategy, offset);
+							Collection tempCollection = ContributionsFactory.checkContributions(user, entriesVector);
+							String category = dict.getCategory();
+							if (!category.equals("monolingual")) {
+								String type = dict.getType();
+								if (type.equals("pivot")) {
+									tempCollection = addPivotTranslations(tempCollection, source, targets, user);
+								}
+								if (type.equals("direct")) {
+									tempCollection = addDirectTranslations(tempCollection, source, targets, user);
+								}
+							}
+							entriesCollection.addAll(tempCollection);
+						}
+					}
+				}
+			}
+			return entriesCollection;
+		}
 	
 	
-    public static Collection getAllDictionariesReverseEntriesCollection(String[] Headwords,
-																 int strategy,
-																 String posContains,
-																 String pronContains,
-																 String readingContains,
-																 String transContains,
+    public static Collection getAllDictionariesReverseEntriesCollection(Vector Keys,
 																 String anyContains,
+																 int strategy,
 																 User user)
         throws PapillonBusinessException {
             Vector entries = new Vector();
@@ -494,13 +469,9 @@ public class DictionariesFactory {
                     entries.addAll(getDictionaryReverseEntriesCollection(resources[i],
                                                                   null,
                                                                   null,
-                                                                  Headwords,
-                                                                  strategy,
-                                                                  posContains,
-																  pronContains,
-																  readingContains,
-                                                                  transContains,
+                                                                  Keys,
                                                                   anyContains,
+                                                                  strategy,
                                                                   user,
 																  0));
                 }
@@ -511,13 +482,9 @@ public class DictionariesFactory {
     public static Collection getDictionariesReverseEntriesCollection(String [] resources,
 															  String source,
 															  String[] targets,
-															  String[] Headwords,
-															  int strategy,
-															  String posContains,
-															  String pronContains,
-															  String readingContains,
-															  String transContains,
+															  Vector Keys,
 															  String anyContains,
+															  int strategy,
 															  User user,
 															  int offset)
         throws PapillonBusinessException {
@@ -528,13 +495,9 @@ public class DictionariesFactory {
 					Collection myColl = getDictionaryNameReverseEntriesCollection(resources[i],
 																		   source,
 																		   targets,
-																		   Headwords,
-																		   strategy,
-																		   posContains,
-																		   pronContains,
-																		   readingContains,
-																		   transContains,
+																		   Keys,
 																		   anyContains,
+																		   strategy,
 																		   user,
 																		   offset);
 					if (myColl!=null) {
@@ -546,68 +509,67 @@ public class DictionariesFactory {
 		}
 	
     public static Collection getDictionaryNameReverseEntriesCollection(String resource,
-																String source,
-																String[] targets,
-																String[] Headwords,
-																int strategy,
-																String posContains,
-																String pronContains,
-																String readingContains,
-																String transContains,
-																String anyContains,
-																User user,
-																int offset) throws PapillonBusinessException {
-																	Dictionary dict = findDictionaryByName(resource);
-																	return getDictionaryReverseEntriesCollection(dict, source,
-																										  targets,Headwords,
-																										  strategy,posContains,
-																										  pronContains,readingContains,
-																										  transContains,anyContains,
-																										  user, offset);
-																}
+																	   String source,
+																	   String[] targets,
+																	   Vector Keys,
+																	   String anyContains,
+																	   int strategy,
+																	   User user,
+																	   int offset) 
+		throws PapillonBusinessException {
+			Dictionary dict = findDictionaryByName(resource);
+			return getDictionaryReverseEntriesCollection(dict, source,
+														 targets,Keys,
+														 anyContains,strategy,
+														 user, offset);
+		}
 	
 	
-   public static Collection getDictionaryReverseEntriesCollection(Dictionary dict,
-															String source,
-															String[] targets,
-															String[] Headwords,
-															int strategy,
-															String posContains,
-															String pronContains,
-															String readingContains,
-															String transContains,
-															String anyContains,
-															User user,
-															int offset) throws PapillonBusinessException {
-																Collection entriesCollection = null;
-																if (null != dict
-																	&& Utility.IsInArray(source, dict.getTargetLanguagesArray())) {
-																	Volume[] volumes = VolumesFactory.getVolumesArray(dict.getName(), null, null);
-																	if (null != volumes && volumes.length > 0) {
-																		entriesCollection = (Collection) new Vector();
-																		for (int i=0;i<volumes.length;i++) {
-																			// FIXME it depends on the architecture of the dictionaries !
-																			Volume myVolume = volumes[i];
-																			if (myVolume.IsReverseLookup() 
-																				&& !volumes[i].getName().equals(PAPILLONAXI)
-																				&& Utility.IsInArray(source, myVolume.getTargetLanguagesArray())  
-																				&& Utility.IsInArray(myVolume.getSourceLanguage(), targets)
-																				&& Headwords.length>0) {
-																				PapillonLogger.writeDebugMsg("Volume Reverse Lookup: " + myVolume.getName() + " " + source + " -> " + myVolume.getSourceLanguage());
-																			    String translation = Headwords[0];
-																				Headwords = null;
-																				Vector entriesVector = VolumeEntriesFactory.getVolumeEntriesVector(dict, myVolume, "", Headwords, strategy, posContains, pronContains, readingContains, translation, source, null, null, anyContains, offset);
-																				Collection tempCollection = ContributionsFactory.checkContributions(user, entriesVector);
-																				entriesCollection.addAll(tempCollection);
-																			}
-																		}
-																	}
-																}
-																return entriesCollection;
-															}
+	public static Collection getDictionaryReverseEntriesCollection(Dictionary dict,
+																   String source,
+																   String[] targets,
+																   Vector theKeys,
+																   String anyContains,
+																   int strategy,
+																   User user,
+																   int offset) 
+		throws PapillonBusinessException {
+			Collection entriesCollection = null;
+			if (null != dict
+				&& Utility.IsInArray(source, dict.getTargetLanguagesArray())) {
+				Volume[] volumes = VolumesFactory.getVolumesArray(dict.getName(), null, null);
+				if (null != volumes && volumes.length > 0) {
+					entriesCollection = (Collection) new Vector();
+					for (int i=0;i<volumes.length;i++) {
+						// FIXME it depends on the architecture of the dictionaries !
+						Volume myVolume = volumes[i];
+						if (myVolume.IsReverseLookup() 
+							&& !volumes[i].getName().equals(PAPILLONAXI)
+							&& Utility.IsInArray(source, myVolume.getTargetLanguagesArray())  
+							&& Utility.IsInArray(myVolume.getSourceLanguage(), targets)
+							&& theKeys.size()>0) {
+							PapillonLogger.writeDebugMsg("Volume Reverse Lookup: " + myVolume.getName() + " " + source + " -> " + myVolume.getSourceLanguage());
+							for (java.util.Enumeration enumKeys = theKeys.elements(); enumKeys.hasMoreElements();) {
+								//myKey[0] = key
+								//myKey[1] = lang
+								//myKey[2] = value
+								String[] myKey = (String[]) enumKeys.nextElement();
+								if (myKey[0].equals(Volume.CDM_headword)) {
+									myKey[0]= Volume.CDM_translation;
+								}
+							}
+							Vector entriesVector = VolumeEntriesFactory.getVolumeEntriesVector(dict, myVolume, theKeys, anyContains, strategy, offset);
+							Collection tempCollection = ContributionsFactory.checkContributions(user, entriesVector);
+							entriesCollection.addAll(tempCollection);
+						}
+					}
+				}
+			}
+			return entriesCollection;
+		}
 	
 	
-	public static Collection getVolumeEntriesCollection(String volumeName, User user, String[] Headwords, int strategy) throws PapillonBusinessException {
+	public static Collection getVolumeEntriesCollection(String volumeName, User user, Vector Keys, int strategy) throws PapillonBusinessException {
 		Collection entriesCollection = null;
 		Vector entriesTable = null;
 		Volume volume = null;
@@ -619,21 +581,30 @@ public class DictionariesFactory {
 		catch(Exception ex) {
 			throw new PapillonBusinessException("Exception in getVolumeNameEntriesVector()", ex);
 		}
-		entriesTable = VolumeEntriesFactory.getVolumeEntriesVector(dict, volume, null, Headwords, strategy);
+		entriesTable = VolumeEntriesFactory.getVolumeEntriesVector(dict, volume,Keys, null, strategy,0);
 		entriesCollection = ContributionsFactory.checkContributions(user, entriesTable);
 		return entriesCollection;
 	}
 	
 	public static Collection getAxiesCollectionByHeadword(Dictionary dict, String source, User user, String headword, int strategy) throws PapillonBusinessException {
 		Collection axies = new Vector();
-		String[] Headwords = {headword};
+		String[] Headword = new String[3];
+			//Headword[0] = key
+			//Headword[1] = lang
+			//Headword[2] = value
+		Headword[0] = Volume.CDM_headword;
+		Headword[1] = source;
+		Headword[2] = headword;
 		
+		Vector myKey = new Vector();
+		myKey.add(Headword);
+				
 		Collection entries = getDictionaryEntriesCollection(dict,
 															source,
 															null,
-															Headwords,
+															myKey,
+															null,
 															strategy,
-															null,null,null,null,null,
 															user,
 															0);
 		if (entries != null && entries.size()>0) {
@@ -758,10 +729,16 @@ public class DictionariesFactory {
 										if (word !=null && !word.equals("")) {
 											Volume[] volumes = VolumesFactory.getVolumesArray(myDictionary.getName(), targets[j], null);
 											if (volumes!=null && volumes.length>0) {
-												Vector myTable = VolumeEntriesFactory.getVolumeEntriesVector(myDictionary, volumes[0],
+												VolumeEntry myEntry = VolumeEntriesFactory.findEntryByEntryId(myDictionary, volumes[0], word);
+												Vector myTable = new Vector();
+												if (myEntry!=null && !myEntry.IsEmpty()) {
+													myTable.add(myEntry);
+												}
+												/*Vector myTable = VolumeEntriesFactory.getVolumeEntriesVector(myDictionary, volumes[0],
 																											 word,
 																											 null,
-																											 IQuery.STRATEGY_EXACT);
+																											 IQuery.STRATEGY_EXACT,
+																										 0); */
 												if (myTable.size()>0) {
 													if (myNode.getNodeType()==Node.TEXT_NODE) {
 														Node textNode = myNode;

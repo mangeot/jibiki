@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.6  2005/04/13 14:34:38  mangeot
+ * Simplified the expert lookup. Now lookup directly the cdm element name
+ *
  * Revision 1.5  2005/04/11 12:29:59  mangeot
  * Merge between the XPathAndMultipleKeys branch and the main trunk
  *
@@ -100,65 +103,8 @@ public class IndexFactory {
 	protected final static String VALUE_FIELD = "value";
 	protected final static String ENTRYID_FIELD = "entryid";
 	protected final static String CONTRIB_SEP = "$";
-	
-    protected static Vector getEntriesVector(Dictionary dict, Volume volume, String id, String[] Headwords, int strategy, String pron, String reading, String trans, String transLang, String key1,String key2, int offset) throws PapillonBusinessException {
-        Hashtable theIndex = new Hashtable();
-        Hashtable theLang = new Hashtable();
-        Hashtable theDefault = new Hashtable();
 		
-		String headword = "";
-		if (Headwords != null && Headwords.length>0) {
-			headword = Headwords[0];
-		}
-		else {
-			headword = trans;
-		}
-		
-		PapillonLogger.writeDebugMsg("IndexFactory.getEntriesVector: " + volume.getName() + " hw: " + headword + " lang:" + volume.getSourceLanguage());
-
-		if (pron != null && !pron.equals("")) {
-			theLang.put(Volume.CDM_pronunciation,pron);
-		}
-		if (reading != null && !reading.equals("")) {
-			theLang.put(Volume.CDM_reading,reading);
-		}
-		if (key1 != null && !key1.equals("")) {
-			theLang.put(Volume.CDM_key1,key1);
-		}
-		if (key2 != null && !key2.equals("")) {
-			theLang.put(Volume.CDM_key2,key2);
-		}
-		if (Headwords != null && Headwords.length>0) {
-			for (int i=0; i< Headwords.length;i++) {
-				String headtmp = Headwords[i];
-				if (headtmp != null && !headtmp.equals("")) {
-					theLang.put(Volume.CDM_headword,headtmp);
-				}
-			}
-		}
-		theIndex.put(volume.getSourceLanguage(),theLang);
-		if (id != null && !id.equals("")) {
-			theDefault.put(Volume.CDM_entryId,id);
-		}
-		theIndex.put(Volume.DEFAULT_LANG,theDefault);
-		if (trans != null && !trans.equals("")) {
-			Hashtable theTrans = new Hashtable();
-			theTrans.put(Volume.CDM_translation,trans);
-			if (transLang != null) {
-				theIndex.put(transLang,theTrans);
-			}
-			else {
-				String[] targets = volume.getTargetLanguagesArray();
-				for (int i=0;i<targets.length;i++) {
-					theIndex.put(targets[i],theTrans);
-				}
-			}
-		}
-		
-		return getEntriesVector(dict, volume, strategy, theIndex, offset);
-	}
-	
-	protected static Vector getEntriesVector(Dictionary dict, Volume volume, int strategy, Hashtable theIndex, int offset) throws PapillonBusinessException {
+	protected static Vector getEntriesVector(Dictionary dict, Volume volume, Vector theKeys, int strategy, int offset) throws PapillonBusinessException {
 		Vector theEntries = new Vector();
 		VolumeEntry myEntry = null;
 		
@@ -171,35 +117,34 @@ public class IndexFactory {
 			cmp_op = CSS;
 		}
 		
-		for (java.util.Enumeration langKeys = theIndex.keys(); langKeys.hasMoreElements();) {
-			String lang = (String) langKeys.nextElement();
-			java.util.Hashtable tmpTable =  (java.util.Hashtable) theIndex.get(lang);
-			java.util.Hashtable newTmpTable =  new java.util.Hashtable();
-			for (java.util.Enumeration keys = tmpTable.keys(); keys.hasMoreElements();) {
-				String CDM_element = (String) keys.nextElement();
-				String myString = (String) tmpTable.get(CDM_element);
-				if (!myString.equals("")) {
-					try {
-						fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Indexed request table: " + volume.getIndexDbname() + " word: " + myString);
-						IndexQuery query = new IndexQuery(volume.getIndexDbname(), CurrentDBTransaction.get());
-						query.getQueryBuilder().addWhereClause("key", CDM_element, QueryBuilder.EQUAL);
-						query.getQueryBuilder().addWhereClause("lang", lang, QueryBuilder.EQUAL);
-						query.getQueryBuilder().addWhereClause("value", myString, cmp_op);
-						query.getQueryBuilder().setMaxRows(DictionariesFactory.MaxRetrievedEntries);
-						query.getQueryBuilder().addEndClause("OFFSET " + offset);
-						query.getQueryBuilder().addOrderByColumn("multilingual_sort(lang,value)","");
-						IndexDO[] DOarray = query.getDOArray();
-						if (null != DOarray) {
-							for (int j=0; j < DOarray.length; j++) {
-								Index myIndex = new Index(DOarray[j]);
-								myEntry = VolumeEntriesFactory.findEntryByHandle(dict, volume, myIndex.getEntryId());
-								theEntries.add(myEntry);
-							}
+		for (java.util.Enumeration enumKeys = theKeys.elements(); enumKeys.hasMoreElements();) {
+			//myKey[0] = key
+			//myKey[1] = lang
+			//myKey[2] = value
+			String[] myKey = (String[]) enumKeys.nextElement();
+			if (myKey[2] !=null && !myKey[2].equals("")) {
+				try {
+					fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Indexed request table: " + volume.getIndexDbname() + " :: " +  myKey[0] + "/" + myKey[1] + "/" + myKey[2]);
+					IndexQuery query = new IndexQuery(volume.getIndexDbname(), CurrentDBTransaction.get());
+					query.getQueryBuilder().addWhereClause(KEY_FIELD, myKey[0], QueryBuilder.EQUAL);
+					if (myKey[1] !=null && !myKey[1].equals("")) {
+						query.getQueryBuilder().addWhereClause(LANG_FIELD, myKey[1], QueryBuilder.EQUAL);
+					}
+					query.getQueryBuilder().addWhereClause(VALUE_FIELD, myKey[2], cmp_op);
+					query.getQueryBuilder().setMaxRows(DictionariesFactory.MaxRetrievedEntries);
+					query.getQueryBuilder().addEndClause("OFFSET " + offset);
+					query.getQueryBuilder().addOrderByColumn("multilingual_sort(lang,value)","");
+					IndexDO[] DOarray = query.getDOArray();
+					if (null != DOarray) {
+						for (int j=0; j < DOarray.length; j++) {
+							Index myIndex = new Index(DOarray[j]);
+							myEntry = VolumeEntriesFactory.findEntryByHandle(dict, volume, myIndex.getEntryId());
+							theEntries.add(myEntry);
 						}
 					}
-					catch(Exception ex) {
-						throw new PapillonBusinessException("Exception in getEntriesVector()", ex);
-					}
+				}
+				catch(Exception ex) {
+					throw new PapillonBusinessException("Exception in getEntriesVector()", ex);
 				}
 			}
 		}
@@ -214,9 +159,9 @@ public class IndexFactory {
 		if (id != null && !id.equals("")) {
 			try {
 				IndexQuery query = new IndexQuery(volume.getIndexDbname(), CurrentDBTransaction.get());
-				query.getQueryBuilder().addWhereClause("key", Volume.CDM_entryId, QueryBuilder.EQUAL);
-				query.getQueryBuilder().addWhereClause("lang", Axie.LANG, QueryBuilder.EQUAL);
-				query.getQueryBuilder().addWhereClause("value", id, cmp_op);
+				query.getQueryBuilder().addWhereClause(KEY_FIELD, Volume.CDM_entryId, QueryBuilder.EQUAL);
+				query.getQueryBuilder().addWhereClause(LANG_FIELD, Axie.LANG, QueryBuilder.EQUAL);
+				query.getQueryBuilder().addWhereClause(VALUE_FIELD, id, cmp_op);
 				IndexDO[] DOarray = query.getDOArray();
 				if (null != DOarray) {
 					for (int j=0; j < DOarray.length; j++) {

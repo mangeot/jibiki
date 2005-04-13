@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.6  2005/04/13 14:34:38  mangeot
+ * Simplified the expert lookup. Now lookup directly the cdm element name
+ *
  * Revision 1.5  2005/04/11 12:29:59  mangeot
  * Merge between the XPathAndMultipleKeys branch and the main trunk
  *
@@ -123,28 +126,15 @@ public class VolumeEntriesFactory {
      */
 	
 	
-	
-    public static Vector getVolumeEntriesVector(Dictionary dict, Volume volume, String id, String[] Headwords, int strategy) throws PapillonBusinessException {
-		return getVolumeEntriesVector(dict, volume, id, Headwords, strategy,
-									  null, null, null, null, null, null, null, null,0);
-	}
-	
-	public static Vector getVolumeEntriesVector(Dictionary dict, Volume volume, String id, String[] Headwords, int strategy, String pos, String pron, String reading, String trans, String transLang, String key1,String key2,String any, int offset) throws PapillonBusinessException {
+	public static Vector getVolumeEntriesVector(Dictionary dict, Volume volume, Vector Keys,String any, int strategy, int offset) throws PapillonBusinessException {
         Vector MyTable = null;
-		String headword = "";
-		if (Headwords != null && Headwords.length>0) {
-			headword = Headwords[0];
-		}
-		else {
-			headword = trans;
-		}
-		PapillonLogger.writeDebugMsg("getVolumeEntriesVector: " + volume.getName() + " hw:" + headword);
+		PapillonLogger.writeDebugMsg("getVolumeEntriesVector: " + volume.getName());
         if (null != volume) {
             if (volume.getLocation().equals(Volume.LOCAL_LOCATION)) {
-                MyTable = getDbTableEntriesVector(dict, volume,id,Headwords,strategy,pos,pron,reading,trans,transLang, key1,key2,any, offset);
+                MyTable = getDbTableEntriesVector(dict, volume,Keys,any,strategy, offset);
             }
             else if (volume.getLocation().equals(Volume.REMOTE_LOCATION)) {
-                MyTable = getRemoteVolumeEntriesVector(dict,volume,id,Headwords,pos,pron,reading, trans,transLang, key1,key2,any);
+                MyTable = getRemoteVolumeEntriesVector(dict, volume, Keys, any);
             }
         }
         return MyTable;
@@ -153,61 +143,35 @@ public class VolumeEntriesFactory {
 	
     public static Vector getRemoteVolumeEntriesVector(Dictionary dict,
                                                       Volume volume,
-                                                      String id,
-                                                      String[] Headwords,
-                                                      String pos,
-                                                      String pron,
-                                                      String reading,
-                                                      String trans,
-                                                      String transLang,
-                                                      String key1,
-                                                      String key2,
-                                                      String any) throws PapillonBusinessException {
-														  Vector theEntries = new Vector();
-														  try {
-															  if (null != volume) {
-																  fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Remote Volume: " + volume.getName());
-																  if (volume.getName().equals("Lexico_eng")) {
-																	  Wrapper myWrapper = WrappersFactory.createLexicoWrapper();
-																	  RemoteEntry myEntry = new RemoteEntry();
-																	  myEntry.setDictionary(dict);
-																	  myEntry.setVolume(volume);
-																	  if (null != Headwords && Headwords.length >0) {
-																		  myEntry.setHeadword(Headwords[0]);
-																	  }
-																	  myEntry.setXmlCode(myWrapper.getResultXmlCode(Headwords));
-																	  //               theEntries.put(myEntry.getHandle(),myEntry);
-																	  theEntries.add(myEntry);
-																  }
-															  }
-														  }
-														  catch(Exception ex) {
-															  throw new PapillonBusinessException("Exception in getVolumeEntriesArray()", ex);
-														  }
-														  return theEntries;
-													  }
-	
-	public static Vector getVolumeNameEntriesVector(String volumeName,
-													String id,
-													String[] Headwords,
-													int strategy)
+                                                      Vector Keys,
+                                                      String any) 
 		throws PapillonBusinessException {
-			return getVolumeNameEntriesVector(volumeName, id, Headwords, strategy,
-											  null, null, null, null, null, null, null, null);
+			Vector theEntries = new Vector();
+			try {
+				if (null != volume) {
+					fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Remote Volume: " + volume.getName());
+					if (volume.getName().equals("Lexico_eng")) {
+						Wrapper myWrapper = WrappersFactory.createLexicoWrapper();
+						RemoteEntry myEntry = new RemoteEntry();
+						myEntry.setDictionary(dict);
+						myEntry.setVolume(volume);
+						// myEntry.setXmlCode(myWrapper.getResultXmlCode(Headwords));
+						//               theEntries.put(myEntry.getHandle(),myEntry);
+						//theEntries.add(myEntry);
+					}
+				}
+			}
+			catch(Exception ex) {
+				throw new PapillonBusinessException("Exception in getVolumeEntriesArray()", ex);
+			}
+			return theEntries;
 		}
 	
     public static Vector getVolumeNameEntriesVector(String volumeName,
-                                                    String id,
-                                                    String[] Headwords,
-                                                    int strategy,
-													String pos,
-                                                    String pron,
-                                                    String reading,
-                                                    String trans,
-                                                    String transLang,
-                                                    String key1,
-                                                    String key2,
-                                                    String any)
+                                                    Vector Keys,
+													String any,
+                                                    int strategy
+                                                    )
         throws PapillonBusinessException {
             Volume volume;
             Dictionary dict;
@@ -218,95 +182,40 @@ public class VolumeEntriesFactory {
             catch(Exception ex) {
                 throw new PapillonBusinessException("Exception in getVolumeNameEntriesVector()", ex);
             }
-            return getDbTableEntriesVector(dict, volume, id, Headwords, strategy, pos, pron, reading, trans, transLang, key1,key2,any, 0);
+            return getDbTableEntriesVector(dict, volume, Keys, any, strategy, 0);
         }
 	
-    protected static Vector getDbTableEntriesVector(Dictionary dict, Volume volume, String id, String[] Headwords, int strategy, String pos, String pron, String reading, String trans, String transLang, String key1,String key2,String any, int offset) throws PapillonBusinessException {
+    protected static Vector getDbTableEntriesVector(Dictionary dict, Volume volume, Vector Keys, String any, int strategy, int offset) throws PapillonBusinessException {
         Vector theEntries = new Vector();
 		
-		// In this case, we can use the Index file !		
-		//	((pos == null || pos.equals("")) &&
-		//	 (trans == null || trans.equals("")) &&
 		if	 (any == null || any.equals("")) {
-			theEntries = IndexFactory.getEntriesVector(dict, volume, id, Headwords, strategy, pron, reading, trans, transLang, key1, key2, offset);
+			theEntries = IndexFactory.getEntriesVector(dict, volume, Keys, strategy, offset);
 		}
 		// MM-FIXME: a revoir
-		/*		else
+		else
 			try {
 				String volumeTable = volume.getDbname();
 				if (null != volumeTable) {
-					// I know, it is an uggly code !
-					// If you have a nicer solution...
-					if (null == Headwords || Headwords.length == 0) {
-						Headwords = new String[1];
-						Headwords[0] = null;
-					}
-					String CIC = QueryBuilder.CASE_INSENSITIVE_CONTAINS;
 					String CSC = QueryBuilder.CASE_SENSITIVE_CONTAINS;
-					String CIE = QueryBuilder.CASE_INSENSITIVE_EQUAL;
-					String CSE = QueryBuilder.EQUAL;
-					String CIS = QueryBuilder.CASE_INSENSITIVE_STARTS_WITH;
-					String CSS = QueryBuilder.CASE_SENSITIVE_STARTS_WITH;
-					String cmp_op = CIE;
-					
-					// initialization of the variables
-					// the headword is initialized afterwards
-					for (int i=0; i < Headwords.length; i++) {
-						String headword = Headwords[i];
-						fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Sequencial request table: " + volumeTable + " word: " + headword);
+					fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Sequencial request table: " + volumeTable + " any: " + any);
 						
-						// consultation of a local volume
-						VolumeEntryQuery query = new VolumeEntryQuery(volumeTable, CurrentDBTransaction.get());
+					// consultation of a local volume
+					VolumeEntryQuery query = new VolumeEntryQuery(volumeTable, CurrentDBTransaction.get());
 						
-						if (null == headword) {headword = "";}
-						else {headword = headword.trim();}
+					if (!any.equals("")) {
+						query.getQueryBuilder().addWhereClause("xmlcode", any, CSC);
+					}
 						
-						// Different strategies
-						if (strategy == IQuery.STRATEGY_EXACT) {
-							cmp_op = CSS;
-						}
-						else if (strategy == IQuery.STRATEGY_PREFIX) {
-							cmp_op = CSS;
-						}
-						else if (strategy == IQuery.STRATEGY_SUFFIX) {
-							cmp_op = CSC;
-						}
-						if (strategy == IQuery.STRATEGY_INSENSITIVE_EXACT) {
-							cmp_op = CIS;
-						}
-						else if (strategy == IQuery.STRATEGY_INSENSITIVE_PREFIX) {
-							cmp_op = CIS;
-						}
-						else if (strategy == IQuery.STRATEGY_INSENSITIVE_SUFFIX) {
-							cmp_op = CIC;
-						}
-						else if (strategy == IQuery.STRATEGY_INSENSITIVE_SUBSTRING) {
-							cmp_op = CIC;
-						}
-						else {
-							cmp_op = CIC;
-						}
-						
-						
-						// building the query
-						if (!headword.equals("")) {
-							query.getQueryBuilder().addWhereClause("headword", headword, cmp_op);
-						}
-						if (!any.equals("")) {
-							query.getQueryBuilder().addWhereClause("xmlcode", any, CIC);
-						}
-						
-						// query.addOrderByHeadword(true);
-						//	query.getQueryBuilder().addEndClause("ORDER BY " + volume.getSourceLanguage()+"_sort(headword)");
-						query.getQueryBuilder().setMaxRows(DictionariesFactory.MaxRetrievedEntries);
-						query.getQueryBuilder().addEndClause("OFFSET " + offset);						
-						//		query.getQueryBuilder().addOrderByColumn(volume.getSourceLanguage()+"_sort(headword)","");
-						VolumeEntryDO[] DOarray = query.getDOArray();
-						if (null != DOarray) {
-							for (int j=0; j < DOarray.length; j++) {
-								VolumeEntry tempEntry = new VolumeEntry(dict, volume,DOarray[j]);
-								theEntries.add(tempEntry);
-							}
+					//query.addOrderByHeadword(true);
+					query.getQueryBuilder().addEndClause("ORDER BY " + volume.getSourceLanguage()+"_sort(headword)");
+					query.getQueryBuilder().setMaxRows(DictionariesFactory.MaxRetrievedEntries);
+					query.getQueryBuilder().addEndClause("OFFSET " + offset);
+					query.getQueryBuilder().addOrderByColumn("multilingual_sort(lang,value)","");
+					VolumeEntryDO[] DOarray = query.getDOArray();
+					if (null != DOarray) {
+						for (int j=0; j < DOarray.length; j++) {
+							VolumeEntry tempEntry = new VolumeEntry(dict, volume,DOarray[j]);
+							theEntries.add(tempEntry);
 						}
 					}
 				}
@@ -314,7 +223,6 @@ public class VolumeEntriesFactory {
         catch(Exception ex) {
             throw new PapillonBusinessException("Exception in getDbtableEntriesVector()", ex);
         }
-		*/
         return theEntries;
     }
 	
@@ -348,12 +256,20 @@ public class VolumeEntriesFactory {
 		// FIXME: special code depending on FoksEdict and JmDict dictionaries
         VolumeEntry myAnswer = null;
 		Vector theEntries = null;
-		String[] Headwords = new String[] {headword};
+			//Headword[0] = key
+			//Headword[1] = lang
+			//Headword[2] = value
+		String[] Headword = new String[3];
+		Headword[0] = Volume.CDM_headword;
+		Headword[1] = "jpn";
+		Headword[2] = headword;
+		Vector myVector = new Vector();
+		myVector.add(Headword);
         try {
 			Volume volume = VolumesFactory.findVolumeByName("JMDict_jpn_eng");
 			if (volume != null && !volume.IsEmpty()) {
 				Dictionary myDict = DictionariesFactory.findDictionaryByName(volume.getDictname());
-				theEntries = IndexFactory.getEntriesVector(myDict, volume, null, Headwords, IQuery.STRATEGY_EXACT, null, null, null, null, null, null,0);
+				theEntries = IndexFactory.getEntriesVector(myDict, volume, myVector, IQuery.STRATEGY_EXACT,0);
 			}
 		}
 		catch(Exception ex) {
@@ -432,11 +348,13 @@ public class VolumeEntriesFactory {
 			try {
 				IndexQuery query = new IndexQuery(myVolume.getIndexDbname(), CurrentDBTransaction.get());
 				query.getQueryBuilder().addWhereClause("key", key, QueryBuilder.EQUAL);
-				query.getQueryBuilder().addWhereClause("lang", lang, QueryBuilder.EQUAL);
+				if (lang != null) {
+					query.getQueryBuilder().addWhereClause("lang", lang, QueryBuilder.EQUAL);
+				}
 				query.getQueryBuilder().addWhereClause("value", value, QueryBuilder.EQUAL);
 				query.getQueryBuilder().setMaxRows(1);
 				IndexDO[] DOarray = query.getDOArray();
-				if (null != DOarray) {
+				if (null != DOarray && DOarray.length>0) {
 					Index myIndex = new Index(DOarray[0]);
 					resEntry = findEntryByHandle(myDict, myVolume, myIndex.getEntryId());
 				}
@@ -626,7 +544,14 @@ public class VolumeEntriesFactory {
         }
 	
 	public static void setGDEFFrenchTranslations(IAnswer myAnswer) throws PapillonBusinessException {
-		
+					//Headword[0] = key
+			//Headword[1] = lang
+			//Headword[2] = value
+		String[] Headword = new String[3];
+		Headword[0] = Volume.CDM_headword;
+		Headword[1] = "";
+		Headword[2] = "";
+
 		Volume myVolume = myAnswer.getVolume();
 		if (myVolume.getName().equals(VOLUME_GDEF_est)) {
 			NodeList myNodeList = ParseVolume.getCdmElements((VolumeEntry)myAnswer,Volume.CDM_translation,"fra");
@@ -643,10 +568,12 @@ public class VolumeEntriesFactory {
 						if (lastchar>=0 && word.length()>lastchar) {
 							word = word.substring(lastchar+1);
 						}
-						String[] Headwords = new String[]{word};
+						Headword[2] = word;
+						Vector myVector = new Vector();
+						myVector.add(Headword);
 						Vector myTable = getVolumeNameEntriesVector(VOLUME_GDEF_fra,
+																	myVector,
 																	null,
-																	Headwords,
 																	IQuery.STRATEGY_EXACT);
 						if (myTable.size()==1) {
 							IAnswer newAnswer = (IAnswer) myTable.elements().nextElement();

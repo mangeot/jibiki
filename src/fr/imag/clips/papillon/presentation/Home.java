@@ -10,6 +10,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.6  2005/04/13 14:34:38  mangeot
+ *  Simplified the expert lookup. Now lookup directly the cdm element name
+ *
  *  Revision 1.5  2005/04/11 12:29:59  mangeot
  *  Merge between the XPathAndMultipleKeys branch and the main trunk
  *
@@ -18,7 +21,7 @@
  *
  *  Revision 1.4.2.4  2005/02/25 10:22:08  mangeot
  *  Bug fixes and added the use of referrer when exiting from Reviewcontributions.po
- *
+ * 
  *  Revision 1.4.2.3  2005/02/06 22:43:49  mangeot
  *  Merged the 2 Hashtables CDM Elements and XPaths into one
  *  Added a boolean (reverse-lookup) in the volume metadata and functionalities in order to perform a reverse lookup when no direct lookup result is found
@@ -340,10 +343,6 @@ public class Home extends BasePO {
 
         String login = null;
 
-        // Consultation of several headwords at one time
-        String[] Headwords = new String[]{headword};
-
-        // Consultation of several headwords at one time
         String[] targetLanguages = null;
 
         if (targetLanguage == null || targetLanguage.equals("")) {
@@ -374,7 +373,7 @@ public class Home extends BasePO {
                 this.setPreference(HEADWORD_PARAMETER, headword, false);
             }
             // If there is a query, executing it
-            return performAndDisplayQuery(resources, volume, sourceLanguage, originalTargetLanguage, targetLanguages, Headwords, strategy, handle, xslid, formname, this.getUser(), offset);
+            return performAndDisplayQuery(resources, volume, sourceLanguage, originalTargetLanguage, targetLanguages, headword, strategy, handle, xslid, formname, this.getUser(), offset);
         } else {
             // If there is no query, ie connection for the first time, adding the Home content
             return createHomeContent();
@@ -429,7 +428,7 @@ public class Home extends BasePO {
      * @exception  javax.xml.transform.TransformerException        Description
      *      of the Exception
      */
-    protected Node performAndDisplayQuery(String[] resources, String volume, String source, String originalTarget, String[] targets, String[] Headwords, int strategy, String handle, String xslid, String formname, User user, int offset)
+    protected Node performAndDisplayQuery(String[] resources, String volume, String source, String originalTarget, String[] targets, String headword, int strategy, String handle, String xslid, String formname, User user, int offset)
              throws PapillonBusinessException,
             ClassNotFoundException,
             HttpPresentationException,
@@ -442,16 +441,27 @@ public class Home extends BasePO {
         Collection EntryCollection = null;
 		boolean reverseLookup = false;
         boolean QueryLogging = false;
+		
+		//Headword[0] = key
+		//Headword[1] = lang
+		//Headword[2] = value
+		String[] Headword = new String[3];
+		Headword[0] = Volume.CDM_headword;
+		Headword[1] = source;
+		Headword[2] = headword;
+		Vector myKey = new Vector();
+		myKey.add(Headword);
+
 
         if (null != handle && null != volume) {
             EntryCollection = DictionariesFactory.findAnswerAndTranslations(volume, handle, targets, user);
         } else if (null != volume) {
-            EntryCollection =  (Collection) VolumeEntriesFactory.getVolumeNameEntriesVector(volume, null, Headwords, strategy);
+            EntryCollection =  (Collection) VolumeEntriesFactory.getVolumeNameEntriesVector(volume, myKey, null, strategy);
         } else {
-            EntryCollection = DictionariesFactory.getDictionariesEntriesCollection(resources, source, targets, Headwords, strategy, null, null, null, null, null, user,offset);
+            EntryCollection = DictionariesFactory.getDictionariesEntriesCollection(resources, source, targets, myKey, null, strategy, user,offset);
 			if (EntryCollection==null || EntryCollection.size()==0) {
 				PapillonLogger.writeDebugMsg("EntryCollection null, getDictionariesReverseEntriesCollection");
-				EntryCollection = DictionariesFactory.getDictionariesReverseEntriesCollection(resources, source, targets, Headwords, strategy, null, null, null, null, null, user,offset);
+				EntryCollection = DictionariesFactory.getDictionariesReverseEntriesCollection(resources, source, targets, myKey, null, strategy, user,offset);
 				reverseLookup = (EntryCollection!=null && EntryCollection.size()>0);
 			}
             QueryLogging = true;
@@ -480,7 +490,7 @@ public class Home extends BasePO {
             QueryLog myQueryLog = QueryLogsFactory.newQueryLog(login,
                     this.getUrl(),
                     this.getUserPreferredLanguage(),
-                    Headwords[0],
+                    headword,
                     results,
                     source,
                     targets,
