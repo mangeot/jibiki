@@ -10,6 +10,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.6  2005/04/13 15:47:41  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.5  2005/04/11 12:29:59  mangeot
  * Merge between the XPathAndMultipleKeys branch and the main trunk
  *
@@ -315,11 +318,24 @@ public class EditAxie extends BasePO {
 		java.io.UnsupportedEncodingException,
 		HttpPresentationException {
 
-			String[] Headwords1 = {headword1};
-			String[] Headwords2 = {headword2};
+			//Headword[0] = key
+			//Headword[1] = lang
+			//Headword[2] = value
+			String[] Headword1 = new String[3];
+			Headword1[0] = Volume.CDM_headword;
+			Headword1[2] = headword1;
+			Vector myVector1 = new Vector();
+			myVector1.add(Headword1);
 
-			Collection EntryVector1 = DictionariesFactory.getVolumeEntriesCollection(volumeName1, myUser, Headwords1, strategy1);
-			Collection EntryVector2 = DictionariesFactory.getVolumeEntriesCollection(volumeName2, myUser, Headwords2, strategy2);
+			String[] Headword2 = new String[3];
+			Headword2[0] = Volume.CDM_headword;
+			Headword2[2] = headword2;
+			Vector myVector2 = new Vector();
+			myVector2.add(Headword2);
+
+
+			Collection EntryVector1 = DictionariesFactory.getVolumeEntriesCollection(volumeName1, myUser, myVector1, strategy1);
+			Collection EntryVector2 = DictionariesFactory.getVolumeEntriesCollection(volumeName2, myUser, myVector2, strategy2);
 
 			addEntriesTable(EntryVector1, EntryVector2, false);
 		}

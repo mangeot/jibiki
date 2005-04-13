@@ -184,14 +184,21 @@ public class DictEngine implements IDictEngine {
 
     public IAnswer[] lookupAll(String lang, String word, int strategy) {
         Collection Answers = null;
+		Vector theEntries = null;
+			//Headword[0] = key
+			//Headword[1] = lang
+			//Headword[2] = value
+		String[] Headword = new String[3];
+		Headword[0] = Volume.CDM_headword;
+		Headword[1] = lang;
+		Headword[2] = word;
+		Vector myVector = new Vector();
+		myVector.add(Headword);
+		
         try {
-            Answers = DictionariesFactory.getAllDictionariesEntriesCollection(new String[]{word},
+            Answers = DictionariesFactory.getAllDictionariesEntriesCollection(myVector,
+																	null,
                                                                      strategy,
-																		  null,
-																		  null,
-                                                                     null,
-                                                                     null,
-                                                                     null,
                                                                      this.getUser());
         }
         catch (Exception e) {
@@ -232,16 +239,23 @@ public class DictEngine implements IDictEngine {
     public Collection lookupDict(Dictionary dict, String lang, String word, int strategy) 
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 		System.out.println("lookupDict user: " + this.getUser());
+		Vector theEntries = null;
+			//Headword[0] = key
+			//Headword[1] = lang
+			//Headword[2] = value
+		String[] Headword = new String[3];
+		Headword[0] = Volume.CDM_headword;
+		Headword[1] = lang;
+		Headword[2] = word;
+		Vector myVector = new Vector();
+		myVector.add(Headword);
+		
             return DictionariesFactory.getDictionaryEntriesCollection(dict,
                                                                      lang,
+																	 null,
+                                                                     myVector,
                                                                      null,
-                                                                     new String[]{word},
                                                                      strategy,
-                                                                     null,
-                                                                     null,
-                                                                     null,
-                                                                     null,
-                                                                     null,
                                                                      this.getUser(),
 																	 0);
     }

@@ -10,6 +10,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.5  2005/04/13 15:47:41  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.4  2005/04/11 12:29:59  mangeot
  * Merge between the XPathAndMultipleKeys branch and the main trunk
  *
@@ -256,9 +259,17 @@ public class EditEntryInit extends BasePO {
 	java.io.UnsupportedEncodingException,
 	HttpPresentationException {
 
-	    String[] Headwords = {headword};
+			//Headword[0] = key
+			//Headword[1] = lang
+			//Headword[2] = value
+		String[] Headword = new String[3];
+		Headword[0] = Volume.CDM_headword;
+		Headword[1] = lang;
+		Headword[2] = headword;
+		Vector myVector = new Vector();
+		myVector.add(Headword);
 
-	    Collection EntryCollection = DictionariesFactory.getVolumeEntriesCollection(volumeName, this.getUser(), Headwords, strategy);
+	    Collection EntryCollection = DictionariesFactory.getVolumeEntriesCollection(volumeName, this.getUser(), myVector, strategy);
 
 
 	    if (EntryCollection != null && EntryCollection.size()>0) {
