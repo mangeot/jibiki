@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Consultation of Papillon Lexical Database</title>
+  </head>
+  <body>
+    <div id="ConsultContent"  xml:lang="et" lang="et">
+      <form id="ConsultForm" action="ConsultExpert.po">
+        <table width="100%" style="border:1; bordercolor:white; bgcolor:#eeeecc;" summary="Search form">
+          <tr>
+     <!-- Warning, make sure the option element contains a Text and only a Text (no other child) -->
+            <td>
+              <b>
+                <label for="SOURCE">Keelest:</label>
+              </b>
+            <!-- select name="SOURCE" onChange="UpdateList(document.ConsultForm);" -->
+              <select id="SOURCE" name="SOURCE">
+                <option id="SourceOptionTemplate" value="NONE" label="NONE">NONE</option>
+              </select>
+              <br />
+
+              <b>
+                <label for="Strategy">Strateegia:</label>
+              </b>
+              <select id="Strategy" name="Strategy">
+                <option value="0" label="exact match">täpne otsing</option>
+                <option value="1" label="prefix">prefiks</option>
+                <option value="2" label="suffix">sufiks</option>
+                <option value="3" label="substring">alamstring</option>
+                <option value="4" label="case insensitive">tõstutundetu</option>
+                <option value="5" label="insensitive prefix">tõstutundetu prefiks</option>
+                <option value="6" label="insensitive suffix">tõstutndetu sufiks</option>
+                <option value="7" label="insensitive substring">tõstutundetu alamstring</option>
+                <option value="8" label="lemmatize">lemmatize</option>
+                <option value="9" label="foks">FOKS Japanese</option>
+              </select>
+              <br />
+              <a href="http://www.foks.info">foksi info</a>
+            </td>
+
+
+<!-- Warning, do not modify the content of the td element -->
+            <td valign="middle">
+              <b>
+                <label for="Targets">Keelde:</label>
+              </b>
+              <select id="Targets" name="TARGETS" size="3" multiple="multiple">
+<!-- selected="yes" -->
+                <option value="*ANY*" label="ANY">ANY</option>
+                <option id="TargetOptionTemplate" value="NONE" label="NONE">NONE</option>
+              </select>
+            </td>
+            <td valign="middle">
+              <b>
+                <label for="Resources">Sõnastikud:</label>
+              </b>
+              <select id="Resources" name="RESOURCES" size="3" multiple="multiple">
+    <!-- selected="yes" -->
+                <option value="*ANY*" label="ANY">ANY</option>
+                <option id="ResourceOptionTemplate" value="NONE" label="NONE">NONE</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td style="bgcolor:#4682b4;">
+              <select id="search1" name="search1">
+                <option value="VocContains" label="Headword">Võtmesõna</option>
+                <option value="PosContains" label="Part-of-speech">Part-of-speech</option>
+                <option value="PronContains" label="Pronunciation">Hääldus</option>
+                <option value="ReadingContains" label="Reading">Lugemine</option>
+                <option value="TransContains" label="Translation">Tõlge</option>
+                <option value="AnyContains" label="Any part">Mistahes osa</option>
+              </select>
+              <label for="search1text">sisaldab</label>
+              <input id="search1text" name="search1text" type="text" size="15" value="" />
+            </td>
+            <td style="bgcolor:#4682b4;">
+              <select id="search2" name="search2">
+                <option value="VocContains" label="Headword">Võtmesõna</option>
+                <option value="PosContains" label="Part-of-speech">Part-of-speech</option>
+                <option value="PronContains" label="Pronunciation">Hääldus</option>
+                <option value="ReadingContains" label="Reading">Lugemine</option>
+                <option value="TransContains" label="Translation">Tõlge</option>
+                <option value="AnyContains" label="Any part">Mistahes osa</option>
+              </select>
+              <label for="search2text">sisaldab</label>
+              <input id="search2text" name="search2text" type="text" size="15" value="" />
+            </td>
+            <td style="bgcolor:#4682b4;">
+              <input name="lookup" value="Otsi" type="submit" />
+            </td>
+          </tr>
+        </table>
+      </form>
+      <br />
+      <div id="SorryMessage" style="align:center;">Kahjuks sellist kirjet ei ole, aga Sa saad selle ise <a href="ConsultEdit.po?STEP=1&amp;InitType=create">lisada</a> sõnastikku!</div>
+	  <div id="ReverseLookupMessage" class="hidden" style="align: center"><p style="align: center">Otsese otsinguga tulemust ei saadud, kuid järgmised kirjed leiti kaudse otsinguga, mistõttu tõlge võib ebatäpne olla.</p></div>      
+      <table id="EntryListTable" width="100%" frame="hsides" style="border:0; bgcolor:#faecc9" summary="entries">
+        <thead>
+		 <tr>
+			<td colspan="5"><span id="EntryNumber">0</span> kirjet saadi:</td>
+		 </tr>
+          <tr>
+            <th>Võtmesõna</th>
+            <th>Kirje id</th>
+            <th>Kaastöö</th>
+            <th>Part-of-Speech</th>
+            <th>Sõnastik</th>
+          </tr>
+		  <tr>
+			<td colspan="5" align="center"><a href="" id="PreviousEntriesAnchor">&lt;&lt; Eelmisele kirjele &lt;&lt;</a></td>
+		  </tr>
+        </thead>
+	    <tfoot>
+		  <tr>
+			<td colspan="5" align="center"><a href="" id="NextEntriesAnchor">&gt;&gt; Järgmisele kirjele &gt;&gt;</a></td>
+		  </tr>
+	    </tfoot>
+        <tbody>
+          <tr id="EntryListRow" style="bgcolor:#eeeecc">
+  <!-- resultItemStart -->
+            <td>
+              <span class="bodylink">
+                <a href="" id="EntryAnchor">
+                  <span id="Vocable">Vocable</span>
+                </a>
+              </span>
+            </td>
+            <td>
+              <span id="EntryIdList">Vocable</span>
+            </td>
+            <td>
+              <a href="" id="ContribAnchor">
+                <span id="Contribution">Kaastöö</span>
+              </a>
+            </td>
+            <td>
+              <span id="PosEntry">pos</span>
+            </td>
+            <td>
+              <span id="DictionaryName">Sõnastik</span>
+            </td>
+    <!-- resultItemEnd -->
+          </tr>
+          <tr id="FormulaRow">
+            <td colspan="5">&nbsp;&nbsp;&nbsp;&nbsp;<span id="Formula">Valem</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div>
+        <table summary="Foks Entries" id="FoksEntries" class="result" style="align:center;bgcolor:e6e6fa;" cellpadding="1" cellspacing="1" border="0" width="90%">
+          <thead>
+            <tr>
+              <th class="result">Kirje</th>
+              <th class="result">Kirjapilt</th>
+              <th class="result">Grade</th>
+              <th class="result">Link</th>
+            </tr>
+          </thead>
+          <tfoot>
+            <tr>
+              <td colspan="4" align="right">
+                <hr />
+                <div class="copyright">© 2002-2003 <a href="mailto:sbilacATcl.cs.titech.ac.jp?subject=PapillonServer&amp;body=replace&nbsp;AT&nbsp;by&nbsp;@&nbsp;in&nbsp;the&nbsp;email&nbsp;address">Slaven Bilac</a>,  Tokyo Institute of Technology. All rights reserved.</div>
+              </td>
+            </tr>
+          </tfoot>
+          <tbody>
+            <tr id="FoksRow">
+              <td class="result" align="center" style="nowrap:nowrap">
+                <span id="FoksEntry">Kirje</span>
+              </td>
+              <td class="result" align="center" style="nowrap:nowrap">
+                <span id="FoksWriting">Kirjapilt</span>
+              </td>
+              <td class="result" align="center" style="nowrap:nowrap">
+                <span id="FoksGrade">Grade</span>
+              </td>
+              <td class="result" align="center" style="nowrap:nowrap">
+                <a id="FoksHref" href="EditLexie.po">Tõlge</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <table width="100%" id="VolumeEntries" frame="hsides" border="0" style="bordercolor:white" summary="dicocontent">
+        <tr id="StylesheetRow" style="bgcolor:#eeeecc">
+          <td id="StylesheetCell"></td>
+        </tr>
+        <tr id="EntryRow">
+          <td valign="top">
+            <p style="align:right">
+              <b>
+                <span id="resourceName">resurss</span>
+              </b>
+            </p>
+            <p style="align:justify" id="EntryDiv"></p>
+            <p style="align:right">
+              <a href="#_top">
+                <img src="media/top.gif" alt="top" height="16" width="16" />
+              </a>
+            </p>
+            <hr />
+          </td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>
+
