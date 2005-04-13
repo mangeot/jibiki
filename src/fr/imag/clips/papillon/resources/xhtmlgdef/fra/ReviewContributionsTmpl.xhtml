@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+   <title>Papillon</title>
+</head>
+<body>
+<div id="Formulaire" lang="en">
+
+<h1>Interface de <span id="UserName">Name</span> pour réviser les contributions</h1>
+
+<!-- formulaire de voir mot-->
+<form  action="ReviewContributions.po" method="get">
+<table width="600" border="0" cellspacing="0" cellpadding="10" summary="Formulaire">
+<tr>
+     <!-- Warning, make sure the option element contains a Text and only a Text (no other child) -->
+	<td><b><label for="VOLUME">Volume&nbsp;:</label></b><br/>
+	   <select id="VOLUME" name="VOLUME">
+            <option id="VolumeOptionTemplate" value="NONE" label="NONE">NONE</option>
+        </select>
+	<br/>
+		<input name="LOOKUP" type="submit" value="Lookup"/>
+		</td>
+	<td><label for="AUTHOR">Auteur&nbsp;:</label><br/>
+		<input id="AUTHOR" name="AUTHOR" size="12" type="text"/>
+     </td>
+	<td><label for="HEADWORD">Mot-vedette&nbsp;:</label><br/>
+	<input id="HEADWORD" name="HEADWORD" size="12" type="text" value=""/>
+	<br/>
+	<label for="PartialMatch">
+	<input id="PartialMatch" name="PartialMatch" type="checkbox" value="PartialMatch"/>
+partiel</label>
+     </td>
+	<td><label for="STATUS">Statut&nbsp;:</label><br/>
+	<select id="STATUS" name="STATUS">
+		<option value="*ALL*" label="toutes">toutes</option>
+		<option value="not finished" label="non finies">non finies</option>
+		<option value="finished" label="finies">finies</option>
+		<option value="revised" label="révisées">révisées</option>
+		<!--option value="validated" label="validees">validées</option-->
+    </select>
+     </td>
+	<td><label for="REVISOR">Réviseur&nbsp;:</label><br/>
+		<input id="REVISOR" name="REVISOR" size="12" type="text"/>
+     </td>
+</tr>
+</table>
+</form>
+
+<h2>Voir les <span id="ContributionsCount">0</span> contributions</h2>
+<table id="ContribList" width="100%" frame="hsides" border="0" summary="entries" >
+  <tr>
+   <th><a id="VolumeHeaderAnchor" href="ReviewContributions.po?SortBy=volume">Volume</a></th>
+   <th><a id="AuthorHeaderAnchor" href="ReviewContributions.po?SortBy=author">Auteur</a></th>
+   <th><a id="HeadwordHeaderAnchor" href="ReviewContributions.po?SortBy=headword">Voir</a></th>
+   <th><a id="CreationdateHeaderAnchor" href="ReviewContributions.po?SortBy=creationdate">Création</a></th>
+   <th><a id="StatusHeaderAnchor" href="ReviewContributions.po?SortBy=status">Statut</a></th>
+   <th>XML</th>
+   <th>Éditer</th>
+   <th>Supprimer</th>
+   <th><a id="ReviewerHeaderAnchor" href="ReviewContributions.po?SortBy=reviewer">Réviseur</a></th>
+   <th><a id="ReviewdateHeaderAnchor" href="ReviewContributions.po?SortBy=reviewdate">Révision</a></th>
+   <th>Action</th>
+  </tr>
+  <tr id="EntryListRow">
+    <td><span id="VolumeName">Volume</span></td>
+    <td><span id="Author">Auteur</span></td>
+    <td><a href="" id="ViewContribAnchor"><span id="ViewContribText">Contrib</span></a></td>
+    <td><span id="CreationDate">Date</span></td>
+    <td><span id="Status">Statut</span></td>
+    <td><a href="" id="ViewXmlAnchor">Voir</a></td>
+    <td><a href="" id="EditContribAnchor"><span id="EditMessage">Éditer</span></a></td>
+    <td><a href="" id="RemoveContribAnchor" onclick="return confirm('Êtes-vous sûr[e] de vouloir supprimer la contribution ?')"><span id="RemoveMessage">Supprimer</span></a></td>
+    <td><span id="Reviewer">Réviseur</span></td>
+    <td><span id="ReviewDate">Date</span></td>
+    <td><a href="" class="hidden" id="ReviseContribAnchor">Réviser</a>
+		<a href="" class="hidden" id="ValidateContribAnchor">Valider</a>
+		<a href="" class="hidden" id="IntegrateContribAnchor">Intégrer</a></td>
+  </tr>
+</table>
+<table id="Contributions" width="100%" frame="hsides" border="0" summary="dicocontent" >       
+<tr id="EntryRow">
+    <td id="EntryCell" valign="top" ></td>        
+</tr>
+</table>
+
+</div>
+</body>
+</html>
