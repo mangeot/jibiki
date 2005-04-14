@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.6  2005/04/14 09:21:02  mangeot
+ * Changed redirections after marked finish and save a contribution
+ *
  * Revision 1.5  2005/04/11 12:29:59  mangeot
  * Merge between the XPathAndMultipleKeys branch and the main trunk
  *
@@ -253,6 +256,7 @@ public class AdminContributions extends BasePO {
 						myContrib.save();
 						userMessage = "Contribution " +  myContrib.getHandle() + " / " +
 						myContrib.getHeadword() + " finished";
+						headword="";
 						volumeString = myContrib.getVolumeName();
 					}
 				}

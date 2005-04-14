@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.5  2005/04/14 09:21:04  mangeot
+ * Changed redirections after marked finish and save a contribution
+ *
  * Revision 1.4  2005/04/11 12:29:59  mangeot
  * Merge between the XPathAndMultipleKeys branch and the main trunk
  *
@@ -97,6 +100,8 @@ public class EditEntry extends BasePO {
 	protected final static String EditEntryInitURL = "EditEntryInit.po";
 	protected final static String AdminContributionsURL = "AdminContributions.po";
 	protected final static String ReviewContributionsURL = "ReviewContributions.po";
+    protected final static String ContributionsLookupParameter = "LOOKUP";
+    protected final static String ContributionsHeadwordParameter = "HEADWORD";
     protected final static String ContributionsVolumeParameter = "VOLUME";
 
 	
@@ -287,10 +292,14 @@ public class EditEntry extends BasePO {
 			myContrib.save();
 		}
 		if (referrer.indexOf(ReviewContributionsURL)>0) {
-			throw new ClientPageRedirectException(ReviewContributionsURL);
+			throw new ClientPageRedirectException(ReviewContributionsURL+ "?" + ContributionsVolumeParameter + "=" + myVolumeEntry.getVolumeName()
+			+ "&" + ContributionsHeadwordParameter + "=" + myVolumeEntry.getHeadword()
+			+ "&" + ContributionsLookupParameter + "=on");
 		}
 		else {
-			throw new ClientPageRedirectException(AdminContributionsURL + "?" + ContributionsVolumeParameter + "=" + myVolumeEntry.getVolumeName());
+			throw new ClientPageRedirectException(AdminContributionsURL + "?" + ContributionsVolumeParameter + "=" + myVolumeEntry.getVolumeName()
+			+ "&" + ContributionsHeadwordParameter + "=" + myVolumeEntry.getHeadword()
+			+ "&" + ContributionsLookupParameter + "=on");
 		}
 	}
        
