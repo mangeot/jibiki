@@ -10,6 +10,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.6  2005/04/14 09:02:40  mangeot
+ * Bug fix for headword lookup, wrong source language
+ *
  * Revision 1.5  2005/04/13 15:47:41  mangeot
  * *** empty log message ***
  *
@@ -264,7 +267,7 @@ public class EditEntryInit extends BasePO {
 			//Headword[2] = value
 		String[] Headword = new String[3];
 		Headword[0] = Volume.CDM_headword;
-		Headword[1] = lang;
+		Headword[1] = null;
 		Headword[2] = headword;
 		Vector myVector = new Vector();
 		myVector.add(Headword);
