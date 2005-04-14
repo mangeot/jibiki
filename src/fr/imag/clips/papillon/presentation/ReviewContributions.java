@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.7  2005/04/14 08:25:12  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.6  2005/04/11 12:29:59  mangeot
  * Merge between the XPathAndMultipleKeys branch and the main trunk
  *
@@ -454,7 +457,7 @@ public class ReviewContributions extends BasePO {
 				if (EntryCollection.size() < MaxDisplayedEntries) {
 					for(Iterator entriesIterator = EntryCollection.iterator(); entriesIterator.hasNext();) {
 						Contribution myContrib = (Contribution)entriesIterator.next();
-						IAnswer myAnswer = DictionariesFactory.findAnswerByHandle(myContrib.getVolumeName(),myContrib.getEntryHandle());
+						IAnswer myAnswer = DictionariesFactory.findEntryByEntryId(myContrib.getVolumeName(),myContrib.getEntryId());
 						addElement(XslTransformation.applyXslSheets(myAnswer, xslid),myAnswer.getVolumeName(),myAnswer.getHandle());
 					}
 				}
