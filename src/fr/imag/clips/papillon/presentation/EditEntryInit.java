@@ -10,6 +10,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.7  2005/04/14 13:08:25  mangeot
+ * Deleted all references to findContributionByEntryHandle
+ *
  * Revision 1.6  2005/04/14 09:02:40  mangeot
  * Bug fix for headword lookup, wrong source language
  *
@@ -195,7 +198,7 @@ public class EditEntryInit extends BasePO {
 		case STEP_EDIT:
 			myEntry = VolumeEntriesFactory.findEntryByHandle(volume, entryHandle);
 			// if myAnswer is contribution
-			myContrib = ContributionsFactory.findContributionByEntryHandle(entryHandle);
+			myContrib = ContributionsFactory.findContributionByEntryId(myEntry.getId());
 			boolean isMyContrib =  (myContrib !=null && !myContrib.IsEmpty() && myContrib.getAuthor().equals(this.getUser().getLogin()));
 			
 			// if there is an existing contribution and it is myUser's one
@@ -333,7 +336,7 @@ public class EditEntryInit extends BasePO {
 			content.setTextEntryIdList(myEntry.getId());
 			
 			// The Contribution text and anchor
-			Contribution myContrib = ContributionsFactory.findContributionByEntryHandle(myEntry.getHandle());
+			Contribution myContrib = ContributionsFactory.findContributionByEntryId(myEntry.getId());
 			boolean IsContrib = (myContrib != null && !myContrib.IsEmpty());
 			if (IsContrib) {
 					content.setTextContribution(new Boolean(IsContrib).toString() + " " + myContrib.getAuthor() + " " + myContrib.getCreationDate().toString());			

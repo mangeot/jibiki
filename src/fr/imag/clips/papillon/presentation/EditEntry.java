@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.6  2005/04/14 13:08:25  mangeot
+ * Deleted all references to findContributionByEntryHandle
+ *
  * Revision 1.5  2005/04/14 09:21:04  mangeot
  * Changed redirections after marked finish and save a contribution
  *
@@ -286,7 +289,7 @@ public class EditEntry extends BasePO {
 		if (myVolumeEntry!=null) {
 			myVolumeEntry.setModification(author,saveComment);
 			myVolumeEntry.save();
-			Contribution myContrib = ContributionsFactory.findContributionByEntryHandle(myVolumeEntry.getHandle());
+			Contribution myContrib = ContributionsFactory.findContributionByEntryId(myVolumeEntry.getId());
 			myContrib.setHeadword(myVolumeEntry.getHeadword());
 			myContrib.setEntryId(myVolumeEntry.getId());
 			myContrib.save();

@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.6  2005/04/14 13:08:25  mangeot
+ * Deleted all references to findContributionByEntryHandle
+ *
  * Revision 1.5  2005/04/11 12:29:59  mangeot
  * Merge between the XPathAndMultipleKeys branch and the main trunk
  *
@@ -127,28 +130,6 @@ public class ContributionsFactory {
             return theContribution;
         }
 
-    public static Contribution findContributionByEntryHandle(String handle)
-        throws PapillonBusinessException {
-            Contribution theContribution = null;
-            ContributionDO theContributionDO = null;
-						
-            try {
-                ContributionQuery query = new ContributionQuery(CurrentDBTransaction.get());
-                //set query
-                query.setQueryEntryHandle(handle);
-                // Throw an exception if more than one message is found
-             //   query.requireUniqueInstance();
-                theContributionDO = query.getNextDO();
-							if (theContributionDO != null) {
-								theContribution = new Contribution(theContributionDO);
-							}
-            }
-            catch(Exception ex) {
-                throw new PapillonBusinessException("Exception in findContributionByHandle()", ex);
-            }
-            return theContribution;
-        }
-
     protected static Vector getContributionsForDeletion(String author, String volume)
         throws PapillonBusinessException {
             Vector theContribVector = new Vector();
@@ -175,7 +156,7 @@ public class ContributionsFactory {
 		public static Collection checkContributions(User user, Vector entriesTable) throws PapillonBusinessException {
 				for (int i=0; i< entriesTable.size();i++) {					
 					IAnswer myAnswer = (IAnswer) entriesTable.elementAt(i);
-					Contribution myContrib = findContributionByEntryHandle(myAnswer.getHandle());
+					Contribution myContrib = findContributionByEntryId(myAnswer.getId());
 					// There is an existing contribution
 					if (myContrib != null && !myContrib.IsEmpty()) {
 					// the author is not the current user
@@ -200,7 +181,7 @@ public class ContributionsFactory {
 					Iterator entriesIterator = entriesCollection.iterator();
 					while (myAnswer == null && entriesIterator.hasNext()) {					
 					IAnswer tempAnswer = (IAnswer) entriesIterator.next();
-					Contribution myContrib = findContributionByEntryHandle(tempAnswer.getHandle());
+					Contribution myContrib = findContributionByEntryId(tempAnswer.getId());
 					// There is an existing contribution
 					if (myContrib != null && !myContrib.IsEmpty()) {
 					// the author is the current user
@@ -217,7 +198,7 @@ public class ContributionsFactory {
 					Iterator entriesIterator = entriesCollection.iterator();
 					while (myAnswer == null && entriesIterator.hasNext()) {					
 					IAnswer tempAnswer = (IAnswer) entriesIterator.next();
-					Contribution myContrib = findContributionByEntryHandle(tempAnswer.getHandle());
+					Contribution myContrib = findContributionByEntryId(tempAnswer.getId());
 					// There is an existing contribution
 					if (myContrib != null && !myContrib.IsEmpty()) {
 					// the author is the user groups
@@ -399,6 +380,17 @@ public class ContributionsFactory {
 			return theContribs;
         }
 				
+	// convenience method, must be changed for the new verison of the contribs
+    public static Contribution findContributionByEntryId(String id)
+        throws PapillonBusinessException {
+			Vector myVector = getContributionsByEntryId(null, id);
+			Contribution myContrib = null;
+			if (myVector != null && myVector.size()>0) {
+				myContrib = (Contribution) myVector.elementAt(0);
+			}
+            return myContrib;
+        }
+
 
 	public static Vector getContributionsByEntryId(String author, String entryid) throws PapillonBusinessException {
 		Vector theContribs = new Vector();

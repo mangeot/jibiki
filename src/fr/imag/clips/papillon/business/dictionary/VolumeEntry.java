@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2005/04/14 13:08:25  mangeot
+ * Deleted all references to findContributionByEntryHandle
+ *
  * Revision 1.3  2005/04/11 12:29:59  mangeot
  * Merge between the XPathAndMultipleKeys branch and the main trunk
  *
@@ -103,7 +106,8 @@ import fr.imag.clips.papillon.business.utility.Utility;
  */
 public class VolumeEntry implements IAnswer {    
 
-	public static boolean CACHE_HTMLDOM = true; 
+	// by default, the HTML DOM is not cached
+	public static boolean CACHE_HTMLDOM = false; 
 
     /**
 	* The DO of the Dictionary.
