@@ -7,6 +7,9 @@
  * $Id$
  *************************************************
  * $Log$
+ * Revision 1.5  2005/04/15 11:59:18  mangeot
+ * Deleted column entryHandle from table contributions
+ *
  * Revision 1.4  2005/04/11 12:32:29  mangeot
  * Merge between the XPathAndMultipleKeys branch and the trunk
  *
@@ -210,12 +213,6 @@
  */</javadoc>
             <type dbType="VARCHAR" javaType="String" size="255"/>
           </column>
-          <column id="entryHandle" usedForQuery="true">
-            <javadoc>/**
- * the entry handle corresponding to the contribution
- */</javadoc>
-            <type dbType="VARCHAR" javaType="String" size="255"/>
-          </column>          
           <column id="entryId" usedForQuery="true">
             <javadoc>/**
  * the entry id corresponding to the contribution
@@ -268,14 +265,8 @@
 		  <index id="headword_idx">
           <indexColumn id="headword"/>
         </index>
-		  <index id="entryhandle_idx">
-          <indexColumn id="entryHandle"/>
-        </index>
 		  <index id="entryid_idx">
           <indexColumn id="entryId"/>
-        </index>
-		  <index id="originalhandle_idx">
-          <indexColumn id="originalHandle"/>
         </index>
         </table>
         <table dbTableName="history" id="fr.imag.clips.papillon.data.History"/>
