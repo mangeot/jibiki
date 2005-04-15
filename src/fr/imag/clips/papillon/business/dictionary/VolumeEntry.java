@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.6  2005/04/15 14:36:01  mangeot
+ * Added setIdIfNull
+ *
  * Revision 1.5  2005/04/15 13:20:08  mangeot
  * Added setIdIfNull
  *
@@ -487,7 +490,6 @@ public class VolumeEntry implements IAnswer {
 			try {
 				IndexFactory.deleteIndexForEntryId(this.getVolume().getIndexDbname(), this.getHandle());
 				res = ParseVolume.parseEntry(this);
-				this.setIdIfNull();
 				this.myDO.setXmlCode(Utility.NodeToString(this.dom));
 				this.myDO.setDom(Utility.serializeDocument(this.dom));
 				this.myDO.setHtmldom(Utility.serializeDocument(this.htmldom));
