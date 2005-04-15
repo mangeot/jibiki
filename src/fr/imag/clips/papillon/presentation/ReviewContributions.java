@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.9  2005/04/15 13:20:08  mangeot
+ * Added setIdIfNull
+ *
  * Revision 1.8  2005/04/15 11:38:05  mangeot
  * Fixed a bug, not using entryHandle from contributions table any more
  *
@@ -378,9 +381,9 @@ public class ReviewContributions extends BasePO {
         Volume[] AllVolumes = VolumesFactory.getVolumesArray();
         
         for (int i = 0; i < AllVolumes.length; i++) {
-					Volume myVolume = AllVolumes[i];
-					String schema = myVolume.getXmlSchema();
-					if (schema != null && !schema.equals("")) {
+			Volume myVolume = AllVolumes[i];
+			String schema = myVolume.getXmlSchema();
+			if (schema != null && !schema.equals("")) {
 
             volumeOptionTemplate.setValue(myVolume.getName());
             volumeOptionTemplate.setLabel(myVolume.getName());
@@ -389,8 +392,8 @@ public class ReviewContributions extends BasePO {
             volumeOptionTemplate.setSelected(myVolume.getName().equals(volume));
             volumeTextTemplate.setData(myVolume.getName());
             volumeSelect.appendChild(volumeOptionTemplate.cloneNode(true));
-        }
-				}
+			}
+		}
         volumeSelect.removeChild(volumeOptionTemplate);
 
 		HTMLInputElement authorInput = content.getElementAUTHOR();

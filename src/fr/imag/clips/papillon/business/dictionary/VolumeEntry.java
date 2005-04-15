@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.5  2005/04/15 13:20:08  mangeot
+ * Added setIdIfNull
+ *
  * Revision 1.4  2005/04/14 13:08:25  mangeot
  * Deleted all references to findContributionByEntryHandle
  *
@@ -268,7 +271,12 @@ public class VolumeEntry implements IAnswer {
 						  *   error).
 	 **/
 	public void setHtmlDom(org.w3c.dom.Document myDoc) {
-		this.htmldom = myDoc;
+		if (CACHE_HTMLDOM) {
+			this.htmldom = myDoc;
+		}
+		else {
+			this.htmldom = null;
+		}
 	}
 	
 	
@@ -313,6 +321,13 @@ public class VolumeEntry implements IAnswer {
 	public String getId()  throws PapillonBusinessException {
 		return ParseVolume.getCdmString(this, Volume.CDM_entryId);
 	}
+	
+	public void setIdIfNull() throws PapillonBusinessException {
+		if (this.getId()==null || this.getId().equals("")) {
+			this.setId(this.createNewId());
+		}
+	}
+	
 
 	public String getPos()  throws PapillonBusinessException {
 		return ParseVolume.getCdmString(this, Volume.CDM_pos,this.getSourceLanguage());
@@ -472,6 +487,7 @@ public class VolumeEntry implements IAnswer {
 			try {
 				IndexFactory.deleteIndexForEntryId(this.getVolume().getIndexDbname(), this.getHandle());
 				res = ParseVolume.parseEntry(this);
+				this.setIdIfNull();
 				this.myDO.setXmlCode(Utility.NodeToString(this.dom));
 				this.myDO.setDom(Utility.serializeDocument(this.dom));
 				this.myDO.setHtmldom(Utility.serializeDocument(this.htmldom));

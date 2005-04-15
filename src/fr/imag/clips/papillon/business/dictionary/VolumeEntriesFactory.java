@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.7  2005/04/15 13:20:08  mangeot
+ * Added setIdIfNull
+ *
  * Revision 1.6  2005/04/13 14:34:38  mangeot
  * Simplified the expert lookup. Now lookup directly the cdm element name
  *
@@ -549,7 +552,7 @@ public class VolumeEntriesFactory {
 			//Headword[2] = value
 		String[] Headword = new String[3];
 		Headword[0] = Volume.CDM_headword;
-		Headword[1] = "";
+		Headword[1] = "fra";
 		Headword[2] = "";
 
 		Volume myVolume = myAnswer.getVolume();
