@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.8  2005/04/15 11:38:05  mangeot
+ * Fixed a bug, not using entryHandle from contributions table any more
+ *
  * Revision 1.7  2005/04/14 08:25:12  mangeot
  * *** empty log message ***
  *
@@ -515,7 +518,9 @@ public class ReviewContributions extends BasePO {
 				content.setTextContributionsCount("" + EntryCollection.size());
 				for(Iterator entriesIterator = EntryCollection.iterator(); entriesIterator.hasNext();) {
                     Contribution myContrib = (Contribution) entriesIterator.next();
-                        XslSheet xmlSheet = XslSheetFactory.findXslSheetByName("XML");
+					if (myContrib !=null && !myContrib.IsEmpty()) {
+					VolumeEntry myEntry = VolumeEntriesFactory.findEntryByEntryId(myContrib.getVolumeName(),myContrib.getEntryId());
+					XslSheet xmlSheet = XslSheetFactory.findXslSheetByName("XML");
                         String xslid = "";
                         if (null != xmlSheet && !xmlSheet.IsEmpty()) {
                             xslid = xmlSheet.getHandle();
@@ -523,7 +528,6 @@ public class ReviewContributions extends BasePO {
 					// FIXME: hack for the GDEF estonian volume
 						String headword = myContrib.getHeadword();
 						if (myContrib.getVolumeName().equals("GDEF_est")) {
-							VolumeEntry myEntry = VolumeEntriesFactory.findEntryByHandle(myContrib.getVolumeName(),myContrib.getEntryHandle());
 							if (myEntry!=null && !myEntry.IsEmpty()) {
 								String particule = myEntry.getParticule();
 								if(particule!=null && !particule.equals("")) {
@@ -554,13 +558,14 @@ public class ReviewContributions extends BasePO {
 						// edit contrib
 						// FIXME hack because we cannot reedit yet axies ...
 						if (!myContrib.getVolumeName().equals(PapillonPivotFactory.VOLUMENAME)
+							&& myEntry!=null && !myEntry.IsEmpty()
 							&& (this.getUser().IsInNormalGroups(myContrib.getGroupsArray())
 							|| this.getUser().IsValidator())) {
 							editContribAnchor.setHref(EditURL + "?"
                                                   + EditVolumeParameter + "="
                                                   + myContrib.getVolumeName() + "&"
                                                   + EditHandleParameter + "="
-                                                  + myContrib.getEntryHandle());
+                                                  + myEntry.getHandle());
 						}
 						else {
 							content.setTextEditMessage("");
@@ -624,6 +629,7 @@ public class ReviewContributions extends BasePO {
                         clone.removeAttribute("id");
                         entryTable.appendChild(clone);
                     }
+					}
                 }
             }
 

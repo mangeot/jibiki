@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.7  2005/04/15 11:38:05  mangeot
+ * Fixed a bug, not using entryHandle from contributions table any more
+ *
  * Revision 1.6  2005/04/14 09:21:02  mangeot
  * Changed redirections after marked finish and save a contribution
  *
@@ -229,7 +232,7 @@ public class AdminContributions extends BasePO {
 			if (null != myContrib && !myContrib.IsEmpty()) {
 				volumeString = myContrib.getVolumeName();
 				// we delete the entry related to the contrib
-				IAnswer myAnswer = DictionariesFactory.findAnswerByHandle(myContrib.getVolumeName(),myContrib.getEntryHandle());
+				IAnswer myAnswer = VolumeEntriesFactory.findEntryByEntryId(myContrib.getVolumeName(),myContrib.getEntryId());
 				if (myAnswer != null && 
 					!myAnswer.IsEmpty() && 
 					myAnswer.getType()==IAnswer.LocalEntry && 
@@ -248,7 +251,7 @@ public class AdminContributions extends BasePO {
 					Contribution myContrib = ContributionsFactory.findContributionByHandle(entryid);
 					if (null != myContrib && !myContrib.IsEmpty()
 					&& null != myContrib.getStatus() && myContrib.getStatus().equals(Contribution.NOT_FINISHED_STATUS)) {
-						VolumeEntry myEntry = VolumeEntriesFactory.findEntryByHandle(myContrib.getVolumeName(),myContrib.getEntryHandle());
+						VolumeEntry myEntry = VolumeEntriesFactory.findEntryByEntryId(myContrib.getVolumeName(),myContrib.getEntryId());
 						//Adding modifications in the XML code
 						myEntry.setModification(this.getUser().getLogin(),Contribution.FINISHED_STATUS);
 						myEntry.save();
@@ -357,7 +360,7 @@ public class AdminContributions extends BasePO {
                 if (ContribVector.size() < MaxDisplayedEntries) {
                     for(int i = 0; i < ContribVector.size(); i++) {
                         Contribution myContrib = (Contribution)ContribVector.get(i);
-						IAnswer myAnswer = DictionariesFactory.findAnswerByHandle(myContrib.getVolumeName(),myContrib.getEntryHandle());
+						IAnswer myAnswer = VolumeEntriesFactory.findEntryByEntryId(myContrib.getVolumeName(),myContrib.getEntryId());
 						if (myAnswer!=null && !myAnswer.IsEmpty()) {
 							addElement(XslTransformation.applyXslSheets(myAnswer, xslid));
 						}
@@ -428,11 +431,11 @@ public class AdminContributions extends BasePO {
 					
 					// view contrib
 					if (myContrib!=null && !myContrib.IsEmpty()) {
+						VolumeEntry myEntry = VolumeEntriesFactory.findEntryByEntryId(myContrib.getVolumeName(),myContrib.getEntryId());
 
 					// FIXME: hack for the GDEF estonian volume
 						String headword = myContrib.getHeadword();
 						if (myContrib.getVolumeName().equals("GDEF_est")) {
-							VolumeEntry myEntry = VolumeEntriesFactory.findEntryByHandle(myContrib.getVolumeName(),myContrib.getEntryHandle());
 							if (myEntry!=null && !myEntry.IsEmpty()) {
 								String particule = myEntry.getParticule();
 								if(particule!=null && !particule.equals("")) {
@@ -492,7 +495,7 @@ public class AdminContributions extends BasePO {
 													  + EditVolumeParameter + "="
 													  + myContrib.getVolumeName() + "&"
 													  + EditHandleParameter + "="
-													  + myContrib.getEntryHandle());
+													  + myEntry.getHandle());
 						}
 						
 						// remove contrib

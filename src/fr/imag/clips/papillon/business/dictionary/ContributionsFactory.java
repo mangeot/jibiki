@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.7  2005/04/15 11:38:05  mangeot
+ * Fixed a bug, not using entryHandle from contributions table any more
+ *
  * Revision 1.6  2005/04/14 13:08:25  mangeot
  * Deleted all references to findContributionByEntryHandle
  *
@@ -86,8 +89,6 @@ public class ContributionsFactory {
             newContrib.setHeadword(headword);
             // external id
             newContrib.setEntryId(entryId);
-            //xml code
-            newContrib.setEntryHandle(entryHandle);
             //xml code
             newContrib.setStatus(status);
             //xml code

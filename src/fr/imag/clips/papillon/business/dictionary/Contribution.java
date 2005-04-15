@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2005/04/15 11:38:05  mangeot
+ * Fixed a bug, not using entryHandle from contributions table any more
+ *
  * Revision 1.3  2005/04/11 12:29:59  mangeot
  * Merge between the XPathAndMultipleKeys branch and the main trunk
  *
@@ -296,34 +299,6 @@ public class Contribution {
                 throw new PapillonBusinessException("Error setting volume's headword", ex);
             }
         }
-    
-    /**
-     * Gets the handle of the entry created with this contribution
-     *
-     * @return the subject.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-     *   error).
-     */
-    public String getEntryHandle()
-        throws PapillonBusinessException {
-        try {
-            return this.myDO.getEntryHandle();   
-        } catch(DataObjectException ex) {
-            throw new PapillonBusinessException("Error getting contribution entry handle", ex);
-        }
-    }
-
-		public void setEntryHandle(String entryHandle)
-        throws PapillonBusinessException {
-        try {
-		  		myDO.setEntryHandle(entryHandle);   
-        } catch(DataObjectException ex) {
-            throw new PapillonBusinessException("Error setting contribution entry handle", ex);
-        }
-    }
-
-
 
     /**
      * Gets the id of the entry created with this contribution
