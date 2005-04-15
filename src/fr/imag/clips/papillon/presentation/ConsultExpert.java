@@ -10,6 +10,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.10  2005/04/15 11:50:20  mangeot
+ *  Fixed the same bug for search2text
+ *
  *  Revision 1.9  2005/04/15 11:47:10  mangeot
  *  Fixed a bug when search2 can be null
  *
@@ -467,13 +470,15 @@ public class ConsultExpert extends BasePO {
                 // If there is a query, executing it
 				// constructions of the Keys vector
 				Vector myKeys = new Vector();
-				if (search1 !=null && !search1.equals("")  && !search1text.equals("")) {
+				if (search1 !=null && !search1.equals("")  &&
+					search1text != null && !search1text.equals("")) {
 					String[] key1 = new String[3];
 					key1[0] = search1;
 					key1[2] = search1text;
 					myKeys.add(key1);
 				}
-				if (search2 !=null && !search2.equals("") && !search2text.equals("")) {
+				if (search2 !=null && !search2.equals("") &&
+					search2text != null && !search2text.equals("")) {
 					String[] key2 = new String[3];
 					key2[0] = search2;
 					key2[2] = search2text;
