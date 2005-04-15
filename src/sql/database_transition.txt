@@ -81,6 +81,16 @@ update contributions set newentry = 'Y' where newe;
 alter table contributions alter column newentry set not null;
 alter table contributions alter column newentry set default 'N';
 alter table contributions drop COLUMN newe;
+
+alter table volumes RENAME reverse TO reve;
+alter table volumes add column reverse char(1);
+update volumes set reverse = 'N';
+update volumes set reverse = 'Y' where reve;
+alter table volumes alter column reverse set not null;
+alter table volumes alter column reverse set default 'N';
+alter table volumes drop COLUMN reve;
+
+NOUVEAUX CHANGEMENTS DANS LA TABLE CONTRIBUTIONS
 ; MM: nouveau changement de nom de colonne !
 alter table contributions add column originalid varchar(255);
 ; MM: There may be an automatic way to rebuild the originalid from the 
@@ -90,10 +100,6 @@ alter table contributions add column originalid varchar(255);
 update contributions set originalid=idxgdefest.value where contributions.originalhandle=idxgdefest.entryid and idxgdefest.key='cdm-entry-id';
 alter table contributions drop column originalhandle;
 
-alter table volumes RENAME reverse TO reve;
-alter table volumes add column reverse char(1);
-update volumes set reverse = 'N';
-update volumes set reverse = 'Y' where reve;
-alter table volumes alter column reverse set not null;
-alter table volumes alter column reverse set default 'N';
-alter table volumes drop COLUMN reve;
+; encore un changement : on vire la colonne entryHandle 
+alter table contributions drop column entryhandle
+
