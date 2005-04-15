@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.5  2005/04/15 11:42:52  mangeot
+ * Fixed a bug in IsInNormalGroups when groups can be empty
+ *
  * Revision 1.4  2005/04/11 12:29:59  mangeot
  * Merge between the XPathAndMultipleKeys branch and the main trunk
  *
@@ -406,13 +409,15 @@ public class User implements com.lutris.appserver.server.user.User {
 		throws PapillonBusinessException {
 			boolean answer = false;
 			java.util.Vector groupsVector = new java.util.Vector();
-			for (int i=0;i<groups.length;i++) {
-				String tmpGroup = groups[i];
-				if (!tmpGroup.equals("") &&
+			if (groups != null) {
+				for (int i=0;i<groups.length;i++) {
+					String tmpGroup = groups[i];
+					if (!tmpGroup.equals("") &&
 						!tmpGroup.equals(ADMIN_GROUP) &&
 						!tmpGroup.equals(SPECIALIST_GROUP) &&
 						!tmpGroup.equals(VALIDATOR_GROUP)) {
 							groupsVector.add(tmpGroup);
+					}
 				}
 			}
 			if (groupsVector.size()==0) {
