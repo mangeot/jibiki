@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.8  2005/04/15 12:08:30  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.7  2005/04/15 11:38:05  mangeot
  * Fixed a bug, not using entryHandle from contributions table any more
  *
@@ -491,11 +494,13 @@ public class AdminContributions extends BasePO {
 							
 						}
 						else {
-							editContribAnchor.setHref(EditURL + "?"
+							if (myEntry!=null && !myEntry.IsEmpty()) {
+								editContribAnchor.setHref(EditURL + "?"
 													  + EditVolumeParameter + "="
 													  + myContrib.getVolumeName() + "&"
 													  + EditHandleParameter + "="
 													  + myEntry.getHandle());
+							}
 						}
 						
 						// remove contrib
