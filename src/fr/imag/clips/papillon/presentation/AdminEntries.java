@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.5  2005/04/15 15:03:47  mangeot
+ * Fixed a bug in setIdIfNull and deleted the empty button on AdminEntries
+ *
  * Revision 1.4  2005/04/11 12:29:59  mangeot
  * Merge between the XPathAndMultipleKeys branch and the main trunk
  *
@@ -66,7 +69,6 @@ import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
 public class AdminEntries extends BasePO {
     protected final static String ADD_PARAMETER="Add";
-    protected final static String EMPTY_PARAMETER="Empty";
     
     protected final static String URL_PARAMETER="url";
     protected final static String VOLUME_PARAMETER="VOLUME";
@@ -106,12 +108,6 @@ public class AdminEntries extends BasePO {
                 String myURLString = req.getParameter(URL_PARAMETER);
                 ParseVolume.parseVolume(volumeString, myURLString);
                 userMessage = "Volume: " + volumeString + " / URL: " + myURLString + " downloaded...";
-            }
-            else if (null != req.getParameter(EMPTY_PARAMETER)) {
-                Volume myVolume = VolumesFactory.findVolumeByName(volumeString);
-                VolumeEntriesFactory.emptyVolumeEntries(myVolume.getDbname());
-                IndexFactory.emptyIndex(myVolume.getIndexDbname());
-                userMessage = "Entries of volume " + volumeString + " removed...";
             }
 			if (userMessage != null) {
 				this.getSessionData().writeUserMessage(userMessage);

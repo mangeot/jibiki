@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.7  2005/04/15 15:03:47  mangeot
+ * Fixed a bug in setIdIfNull and deleted the empty button on AdminEntries
+ *
  * Revision 1.6  2005/04/15 14:36:01  mangeot
  * Added setIdIfNull
  *
@@ -380,7 +383,7 @@ public class VolumeEntry implements IAnswer {
 	}
 	
 	protected String createNewId () throws PapillonBusinessException {
-		return createNewId(this.getHeadword());
+		return createNewId(ParseVolume.getCdmString(this, Volume.CDM_headword, this.getSourceLanguage()));
 	}
 	
 	public void setModification(String author, String comment) throws PapillonBusinessException {
@@ -489,6 +492,7 @@ public class VolumeEntry implements IAnswer {
 			boolean res = false;
 			try {
 				IndexFactory.deleteIndexForEntryId(this.getVolume().getIndexDbname(), this.getHandle());
+				this.setIdIfNull();
 				res = ParseVolume.parseEntry(this);
 				this.myDO.setXmlCode(Utility.NodeToString(this.dom));
 				this.myDO.setDom(Utility.serializeDocument(this.dom));

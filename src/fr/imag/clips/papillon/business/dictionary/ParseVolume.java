@@ -288,7 +288,6 @@ public class ParseVolume {
 								//	PapillonLogger.writeDebugMsg("Parse entry, node value: " + value);
 								if (CdmElement.equals(Volume.CDM_headword)) {
 									myEntry.setHeadword(value);
-									myEntry.setIdIfNull();
 								}
 								Index myIndex = IndexFactory.newIndex(myEntry.getVolume().getIndexDbname(),CdmElement,lang,value, myEntry.getHandle());
 								myIndex.save();
