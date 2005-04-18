@@ -3,6 +3,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.8  2005/04/18 10:50:26  mangeot
+ * Bug fix when displaying with IExplorer,
+ * Bug fixes when seqencial request
+ *
  * Revision 1.7  2005/04/15 13:20:08  mangeot
  * Added setIdIfNull
  *
@@ -210,10 +214,9 @@ public class VolumeEntriesFactory {
 					}
 						
 					//query.addOrderByHeadword(true);
-					query.getQueryBuilder().addEndClause("ORDER BY " + volume.getSourceLanguage()+"_sort(headword)");
 					query.getQueryBuilder().setMaxRows(DictionariesFactory.MaxRetrievedEntries);
 					query.getQueryBuilder().addEndClause("OFFSET " + offset);
-					query.getQueryBuilder().addOrderByColumn("multilingual_sort(lang,value)","");
+					query.getQueryBuilder().addOrderByColumn(volume.getSourceLanguage()+"_sort(headword)","");
 					VolumeEntryDO[] DOarray = query.getDOArray();
 					if (null != DOarray) {
 						for (int j=0; j < DOarray.length; j++) {

@@ -9,6 +9,10 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.5  2005/04/18 10:50:26  mangeot
+ *  Bug fix when displaying with IExplorer,
+ *  Bug fixes when seqencial request
+ *
  *  Revision 1.4  2005/01/15 12:51:24  mangeot
  *  Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
  *
@@ -128,9 +132,18 @@ public class StdLayout {
         }
         scriptElement.removeAttribute("id");
 
+		// gestion spécifique à IExplorer
+		if (!sessionData.getClientWithLabelDisplayProblems()) {
+			XHTMLElement removeIfNotIE = layout.getElementRemoveIfNotIE();
+			removeIfNotIE.getParentNode().removeChild(removeIfNotIE);
+		}
+
         // Insertion du header et du footer
         layout.getElementHeaderPlace().appendChild(layout.importNode(menuBar, true));
         // layout.getElementFooterPlace().appendChild(layout.importNode( menuBar, true));
+		
+		
+		
 
         // Gestion du menu :
         // Si les utilisateurs sont logues, on met leur login
