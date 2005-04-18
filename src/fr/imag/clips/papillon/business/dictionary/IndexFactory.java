@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.7  2005/04/18 13:22:47  mangeot
+ * Fixed a bug with the strategy
+ *
  * Revision 1.6  2005/04/13 14:34:38  mangeot
  * Simplified the expert lookup. Now lookup directly the cdm element name
  *
@@ -103,20 +106,14 @@ public class IndexFactory {
 	protected final static String VALUE_FIELD = "value";
 	protected final static String ENTRYID_FIELD = "entryid";
 	protected final static String CONTRIB_SEP = "$";
-		
+	
 	protected static Vector getEntriesVector(Dictionary dict, Volume volume, Vector theKeys, int strategy, int offset) throws PapillonBusinessException {
 		Vector theEntries = new Vector();
 		VolumeEntry myEntry = null;
 		
 		
-		String CSE = QueryBuilder.EQUAL;
-		String CSS = QueryBuilder.CASE_SENSITIVE_STARTS_WITH;
-		String cmp_op = CSE;
-		
-		if (strategy == IQuery.STRATEGY_PREFIX) {
-			cmp_op = CSS;
-		}
-		
+		String cmp_op = IQuery.QueryBuilderStrategy[strategy+1];
+				
 		for (java.util.Enumeration enumKeys = theKeys.elements(); enumKeys.hasMoreElements();) {
 			//myKey[0] = key
 			//myKey[1] = lang

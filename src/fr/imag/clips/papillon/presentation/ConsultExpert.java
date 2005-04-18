@@ -10,6 +10,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.12  2005/04/18 13:22:47  mangeot
+ *  Fixed a bug with the strategy
+ *
  *  Revision 1.11  2005/04/18 11:06:55  mangeot
  *  Bug fix
  *
@@ -551,8 +554,8 @@ public class ConsultExpert extends BasePO {
         sourceSelect.removeChild(sourceOptionTemplate);
 
         // Strategy select
-        XHTMLSelectElement strategySelect = content.getElementStrategy();
-        strategySelect.setSelectedIndex(strategy);
+        XHTMLSelectElement strategySelect = (XHTMLSelectElement) content.getElementStrategy();
+		this.setSelected(strategySelect, "" + strategy);
 
         // Adding the appropriate target languages to the target list
         if (originalTargets == null || originalTargets.length == 0) {

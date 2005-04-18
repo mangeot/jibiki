@@ -1,6 +1,6 @@
 package fr.imag.clips.papillon.business.dictionary;
 
-
+import com.lutris.dods.builder.generator.query.QueryBuilder;
 /**
  * Insert the type's description here.
  * Creation date: (10.08.01 20:55:06)
@@ -42,4 +42,18 @@ public interface IQuery {
 	
     // foks "Using Slaven BILAC's FOKS module, only for Japanese"
     public static final int STRATEGY_FOKS = 9;
+	
+	public final static String [] QueryBuilderStrategy = { 
+		QueryBuilder.EQUAL, 
+		QueryBuilder.EQUAL, 
+		QueryBuilder.CASE_SENSITIVE_STARTS_WITH, 
+		QueryBuilder.CASE_SENSITIVE_ENDS_WITH, 
+		QueryBuilder.CASE_SENSITIVE_CONTAINS, 
+		QueryBuilder.CASE_INSENSITIVE_EQUAL, 
+		QueryBuilder.CASE_INSENSITIVE_STARTS_WITH, 
+		QueryBuilder.CASE_INSENSITIVE_ENDS_WITH, 
+		QueryBuilder.CASE_INSENSITIVE_CONTAINS, 
+		QueryBuilder.EQUAL, 
+		QueryBuilder.EQUAL, 
+		};
 }
