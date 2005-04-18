@@ -10,6 +10,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.11  2005/04/18 11:06:55  mangeot
+ *  Bug fix
+ *
  *  Revision 1.10  2005/04/15 11:50:20  mangeot
  *  Fixed the same bug for search2text
  *
@@ -406,11 +409,11 @@ public class ConsultExpert extends BasePO {
 
         // Consultation of several headwords at one time
         String[] Headwords = new String[1];
-		if (search1.equals(Volume.CDM_headword)) {
+		if (search1 !=null && search1.equals(Volume.CDM_headword)) {
 			Headwords[0] = search1text;
 			search1text = "";
 		}
-		else if (search2.equals(Volume.CDM_headword)) {
+		else if (search2 !=null && search2.equals(Volume.CDM_headword)) {
 			Headwords[0] = search2text;
 			search2text = "";
 		}
