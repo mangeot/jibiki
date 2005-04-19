@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.8  2005/04/19 15:47:06  mangeot
+ * Fixed a pb with the id
+ *
  * Revision 1.7  2005/04/15 15:03:47  mangeot
  * Fixed a bug in setIdIfNull and deleted the empty button on AdminEntries
  *
@@ -334,6 +337,11 @@ public class VolumeEntry implements IAnswer {
 		}
 	}
 	
+	public void setIdFromHeadword(String headword) throws PapillonBusinessException {
+		if (this.getId()==null || this.getId().equals("")) {
+			this.setId(this.createNewId(headword));
+		}
+	}	
 
 	public String getPos()  throws PapillonBusinessException {
 		return ParseVolume.getCdmString(this, Volume.CDM_pos,this.getSourceLanguage());

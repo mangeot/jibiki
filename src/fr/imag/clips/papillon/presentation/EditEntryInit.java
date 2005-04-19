@@ -10,6 +10,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.8  2005/04/19 15:47:06  mangeot
+ * Fixed a pb with the id
+ *
  * Revision 1.7  2005/04/14 13:08:25  mangeot
  * Deleted all references to findContributionByEntryHandle
  *
@@ -187,7 +190,7 @@ public class EditEntryInit extends BasePO {
 		case STEP_CREATE:
 			myEntry = VolumeEntriesFactory.createEmptyEntry(volume);
 			myEntry.setHeadword(headword);
-			myEntry.setId();
+			myEntry.setIdFromHeadword(headword);
 			myEntry.save();
 			myContrib = ContributionsFactory.createContributionFromVolumeEntry(myEntry, myUser, null);
 			myContrib.save();
