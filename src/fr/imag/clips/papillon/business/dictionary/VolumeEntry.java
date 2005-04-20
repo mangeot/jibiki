@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.9  2005/04/20 10:51:14  mangeot
+ * Correction de AddDirectTranslations
+ *
  * Revision 1.8  2005/04/19 15:47:06  mangeot
  * Fixed a pb with the id
  *
@@ -504,6 +507,18 @@ public class VolumeEntry implements IAnswer {
 				res = ParseVolume.parseEntry(this);
 				this.myDO.setXmlCode(Utility.NodeToString(this.dom));
 				this.myDO.setDom(Utility.serializeDocument(this.dom));
+				this.myDO.setHtmldom(Utility.serializeDocument(this.htmldom));
+				this.myDO.commit();
+			} catch(Exception ex) {
+				throw new PapillonBusinessException("Error saving volumeEntry", ex);
+			}
+			return res;
+		}
+	
+	public boolean saveHTML() 
+		throws PapillonBusinessException {
+			boolean res = false;
+			try {
 				this.myDO.setHtmldom(Utility.serializeDocument(this.htmldom));
 				this.myDO.commit();
 			} catch(Exception ex) {

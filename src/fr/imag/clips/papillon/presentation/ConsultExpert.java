@@ -10,6 +10,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.13  2005/04/20 10:51:14  mangeot
+ *  Correction de AddDirectTranslations
+ *
  *  Revision 1.12  2005/04/18 13:22:47  mangeot
  *  Fixed a bug with the strategy
  *
@@ -1133,7 +1136,7 @@ public class ConsultExpert extends BasePO {
 				myHtmlDoc = myHtmlElt.getOwnerDocument();
 				if (xslid == null) {
 					myEntry.setHtmlDom(myHtmlDoc);
-					myEntry.save();
+					((VolumeEntry)myEntry).saveHTML();
 				}
 			}
 			else {

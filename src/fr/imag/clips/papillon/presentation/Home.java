@@ -10,6 +10,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.7  2005/04/20 10:51:14  mangeot
+ *  Correction de AddDirectTranslations
+ *
  *  Revision 1.6  2005/04/13 14:34:38  mangeot
  *  Simplified the expert lookup. Now lookup directly the cdm element name
  *
@@ -758,7 +761,7 @@ public class Home extends BasePO {
 				myHtmlDoc = myHtmlElt.getOwnerDocument();
 				if (xslid == null) {
 					myEntry.setHtmlDom(myHtmlDoc);
-					myEntry.save();
+					((VolumeEntry)myEntry).saveHTML();
 				}
 			}
 			else {

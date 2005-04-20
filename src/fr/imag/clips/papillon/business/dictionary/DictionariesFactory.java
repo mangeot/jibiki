@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.7  2005/04/20 10:51:14  mangeot
+ * Correction de AddDirectTranslations
+ *
  * Revision 1.6  2005/04/13 14:34:38  mangeot
  * Simplified the expert lookup. Now lookup directly the cdm element name
  *
@@ -712,7 +715,6 @@ public class DictionariesFactory {
 			// FIXME: do not modify the current DOM! We have to make a copy! 
 			if (null != entries && entries.size() > 0) {
 				VolumeEntry myAnswer = null;
-				String xmlCode="";
 				if	(null != targets && targets.length > 0) {
 					for (Iterator myIterator = entries.iterator();myIterator.hasNext();) {
 						myAnswer = (VolumeEntry) myIterator.next();	
@@ -734,23 +736,16 @@ public class DictionariesFactory {
 												if (myEntry!=null && !myEntry.IsEmpty()) {
 													myTable.add(myEntry);
 												}
-												/*Vector myTable = VolumeEntriesFactory.getVolumeEntriesVector(myDictionary, volumes[0],
-																											 word,
-																											 null,
-																											 IQuery.STRATEGY_EXACT,
-																										 0); */
 												if (myTable.size()>0) {
 													if (myNode.getNodeType()==Node.TEXT_NODE) {
 														Node textNode = myNode;
 														myNode = myNode.getParentNode();
-														// FIXME: do not modify the current DOM! We have to make a copy! 
-														//	myNode.removeChild(textNode);
+															myNode.removeChild(textNode);
 													}
 													for (Enumeration myElements = myTable.elements();myElements.hasMoreElements();) {
 														VolumeEntry newEntry = (VolumeEntry) myElements.nextElement();
 														Node tempNode = myAnswer.getDom().importNode((Node)newEntry.getDom().getDocumentElement(),true);
-												// FIXME: do not modify the current DOM! We have to make a copy! 
-												//		myNode.appendChild(tempNode);
+														myNode.appendChild(tempNode);
 													}
 												}
 											}

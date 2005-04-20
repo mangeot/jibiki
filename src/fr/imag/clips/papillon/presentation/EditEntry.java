@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.7  2005/04/20 10:51:14  mangeot
+ * Correction de AddDirectTranslations
+ *
  * Revision 1.6  2005/04/14 13:08:25  mangeot
  * Deleted all references to findContributionByEntryHandle
  *
@@ -149,6 +152,7 @@ public class EditEntry extends BasePO {
 		if (volumeName!=null && !volumeName.equals("")
 			&& entryHandle!=null &&!entryHandle.equals("")) {
 			myVolumeEntry = VolumeEntriesFactory.findEntryByHandle(volumeName,entryHandle);
+			PapillonLogger.writeDebugMsg("EditEntry: New entry DOM: " + myVolumeEntry.getDom().toString());
 			myEntry = myVolumeEntry.getDom().getDocumentElement();
 		}
 		// TODO answer if no arguments

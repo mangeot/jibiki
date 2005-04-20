@@ -10,6 +10,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.9  2005/04/20 10:51:14  mangeot
+ * Correction de AddDirectTranslations
+ *
  * Revision 1.8  2005/04/19 15:47:06  mangeot
  * Fixed a pb with the id
  *
@@ -189,6 +192,7 @@ public class EditEntryInit extends BasePO {
 		    break;
 		case STEP_CREATE:
 			myEntry = VolumeEntriesFactory.createEmptyEntry(volume);
+			PapillonLogger.writeDebugMsg("EditEntryInit: New entry DOM: " + myEntry.getDom().toString());
 			myEntry.setHeadword(headword);
 			myEntry.setIdFromHeadword(headword);
 			myEntry.save();
