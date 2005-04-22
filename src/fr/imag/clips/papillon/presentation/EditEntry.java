@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.8  2005/04/22 14:13:40  mangeot
+ * URL encoding bug fix
+ *
  * Revision 1.7  2005/04/20 10:51:14  mangeot
  * Correction de AddDirectTranslations
  *
@@ -152,7 +155,6 @@ public class EditEntry extends BasePO {
 		if (volumeName!=null && !volumeName.equals("")
 			&& entryHandle!=null &&!entryHandle.equals("")) {
 			myVolumeEntry = VolumeEntriesFactory.findEntryByHandle(volumeName,entryHandle);
-			PapillonLogger.writeDebugMsg("EditEntry: New entry DOM: " + myVolumeEntry.getDom().toString());
 			myEntry = myVolumeEntry.getDom().getDocumentElement();
 		}
 		// TODO answer if no arguments
@@ -300,12 +302,12 @@ public class EditEntry extends BasePO {
 		}
 		if (referrer.indexOf(ReviewContributionsURL)>0) {
 			throw new ClientPageRedirectException(ReviewContributionsURL+ "?" + ContributionsVolumeParameter + "=" + myVolumeEntry.getVolumeName()
-			+ "&" + ContributionsHeadwordParameter + "=" + myVolumeEntry.getHeadword()
+			+ "&" + ContributionsHeadwordParameter + "=" + myUrlEncode(myVolumeEntry.getHeadword())
 			+ "&" + ContributionsLookupParameter + "=on");
 		}
 		else {
 			throw new ClientPageRedirectException(AdminContributionsURL + "?" + ContributionsVolumeParameter + "=" + myVolumeEntry.getVolumeName()
-			+ "&" + ContributionsHeadwordParameter + "=" + myVolumeEntry.getHeadword()
+			+ "&" + ContributionsHeadwordParameter + "=" + myUrlEncode(myVolumeEntry.getHeadword())
 			+ "&" + ContributionsLookupParameter + "=on");
 		}
 	}
