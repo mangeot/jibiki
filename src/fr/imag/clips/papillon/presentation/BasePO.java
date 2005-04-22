@@ -9,6 +9,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.7  2005/04/22 14:13:21  mangeot
+ *  *** empty log message ***
+ *
  *  Revision 1.6  2005/04/11 12:29:59  mangeot
  *  Merge between the XPathAndMultipleKeys branch and the main trunk
  *
@@ -550,8 +553,16 @@ public abstract class BasePO implements HttpPresentation {
 	 * @exception  java.io.UnsupportedEncodingException 
 	 */
 
-	public static String myUrlEncode(String str) throws java.io.UnsupportedEncodingException {
-		return java.net.URLEncoder.encode(str, "UTF-8");
+	public static String myUrlEncode(String str) {
+		String result = null;
+
+		try {
+			result = java.net.URLEncoder.encode(str, "UTF-8");
+		}
+		catch (java.io.UnsupportedEncodingException ex) {
+			result = str;
+		}
+		return result;
 	}
 
    /**
@@ -562,7 +573,7 @@ public abstract class BasePO implements HttpPresentation {
      *   retrieving data (usually due to an underlying data layer
      *   error).
      */
-	public static String serializeParameterForUrl(String parameter, String[] table)  throws java.io.UnsupportedEncodingException {
+	public static String serializeParameterForUrl(String parameter, String[] table) {
 		String result = "";
 		if (table != null) {
 			for (int i=0;i<table.length;i++) {
