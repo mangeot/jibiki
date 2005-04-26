@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.10  2005/04/26 10:11:32  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.9  2005/04/20 10:51:14  mangeot
  * Correction de AddDirectTranslations
  *
@@ -401,7 +404,6 @@ public class VolumeEntry implements IAnswer {
 		Volume myVolume = this.getVolume();	
 		Document myDocument = this.getDom();	
 		org.w3c.dom.Node myEntry = ParseVolume.getCdmElement(this, Volume.CDM_entry);
-		fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("setModification: " + Volume.CDM_entry);
 		org.w3c.dom.Node myHistory = ParseVolume.getCdmElement(this, Volume.CDM_history);
 		if (myHistory == null) {
 			fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("setModification: myHistory null");
