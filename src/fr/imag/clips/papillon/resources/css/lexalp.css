@@ -1,0 +1,315 @@
+/* 
+ * Stylesheet for Papillon Web site
+ * Style sheet for the xhtml Papillon pages
+ * $Id$
+ *------
+ * $Log$
+ * Revision 1.1  2005/05/24 12:39:54  serasset
+ * Added css file for LexALP application.
+ *
+ */
+
+/*<group=page layout>*/
+
+body {
+	background : white;
+	font: 10pt   'Lucida Grande', LucidaGrande, Lucida, Helvetica, Arial, sans-serif;
+}
+
+.titlePane {
+	color: #1cabed;
+	font-variant: small-caps;
+	text-align: left;
+	font-weight: bold;
+	font-style: italic;
+	display: block;
+	font-size: 1.7em;
+}
+
+.titlePane h1 {
+	text-align: left;
+}
+
+#logo {
+	vertical-align: middle;
+}
+
+/*<group=Quick Links>*/
+
+.quickLinks {
+	display: block;
+	position: absolute;
+	right: 5px;
+	top: 5px;
+	font-size: small;
+	font-style: normal;
+	font-weight: normal;
+	border-bottom: 1px dotted #3b63b5;
+	font-variant: normal;
+}
+
+.quickLinks a:link {
+    text-decoration: none; 
+    color: blue;
+}
+
+.quickLinks a:visited {
+    text-decoration: none; 
+    color: blue;
+}
+
+.quickLinks a:active {
+    text-decoration: none; 
+    color: blue;
+}
+
+.quickLinks a:hover {
+    text-decoration: none; 
+    color: #000070;
+}
+	
+/*</group>*/
+
+/*<group=Menus>*/
+
+.menuColumn {
+	float: left;
+	width: 150px;
+	margin-top: 0.3em;
+	font-size: 8pt;
+	background: transparent;
+}
+
+.menuBlock {
+    padding-bottom: 0.2em;
+    border: 1px solid #3b63b5;
+    margin-bottom: .5em;
+	background: #fffcd3;
+}
+
+.menuBlock h2.menuTitle {
+   background: #3a66a7;
+   color: #fff;
+   border: none;
+   border-bottom : 1px solid grey;
+   width: 100%;
+   font-weight: bold;
+   font-size: 9pt;
+   text-indent: 0.5em;
+   margin-top: 0;
+   padding: 0.1em 0;
+   font-variant: normal;
+}
+
+.menuBlock a:link {
+    text-decoration: none; 
+    color: blue;
+}
+
+.menuBlock a:visited {
+    text-decoration: none; 
+    color: blue;
+}
+
+.menuBlock a:active {
+    text-decoration: none; 
+    color: blue;
+}
+
+.menuBlock a:hover {
+    text-decoration: none; 
+    color: #000070;
+}
+
+.menuBlock h2, .menuBlock div, .menuBlock p, .menuBlock ul {
+   color: #000;
+}
+
+.menuBlock div, .menuBlock p, .menuBlock ul {
+   margin-top: 0.2em;
+}
+
+.menuBlock li {
+   margin-left: 0;
+   color: #3b63b5;
+}
+
+.menuBlock p, .menuBlock div {
+   text-indent: 0.3em;
+}
+
+.menuBlock form {
+   margin-top: 0;
+   padding-left: 0.2em;
+   padding-right: 0.2em;
+}
+
+.menuBlock h2.menuTitle a {
+   color: #fff;
+}
+
+.europaLogos {
+    padding-bottom: 0.2em;
+    border: transparent;
+    margin-bottom: .5em;
+	background: transparent;
+}
+
+.europaLogos a img {
+    border: 0;
+}
+
+.menuBlock h2.menuTitle a:hover {
+   text-decoration: none;
+}
+
+.menuBlock input, textarea, select { font-size: 8pt; color: #000000; background-color: white; }
+	
+/*</group>*/
+
+.mainColumn {
+	margin-left: 170px;
+	margin-top: 0.3em;
+	background: #f2f2f2;
+	color: #000394;
+}
+	
+/*</group>*/
+
+/*<group=Special Classes>*/
+
+pre.adminMessage {
+    font-size: 1.5em;
+    color: #ff0000;
+    background: #DFDFDF;
+}
+
+pre.userMessage {
+    color: #ff0000;
+    background: #DFDFDF;
+}
+
+.hidden {
+	display: none;
+}
+	
+/*</group>*/
+
+/*<group=Details>*/
+
+h1 {
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 1.5em;
+    font-weight: bold;
+    text-align: center;
+}
+
+p.standard {
+    text-align: justify;
+}
+
+A:link {
+	text-decoration: none; 
+	color: blue;
+	}
+
+A:visited {
+	text-decoration: none; 
+	color: blue;
+	}
+
+A:active {
+	text-decoration: none; 
+	color: blue;
+	}
+
+A:hover {
+	text-decoration: underline; 
+	color: blue;
+	}
+
+.accesskey {text-decoration: underline; }
+
+.copyright {
+	font-size: xx-small;
+	margin-left: 170px;
+}
+	
+/*</group>*/
+
+/*<group=Langues>*/
+
+.deu	{
+	font-family: Times New Roman, Times, serif;
+	color: #993399;
+	}
+
+.eng	{
+	font-family: "Arial", sans-serif;
+	color: #006600;
+	}
+
+.fra	{
+	font-family: Arial, Helvetica, sans-serif;
+	color: #3366FF;
+	}
+
+.ita	{
+	font-family: sans-serif;
+	color: #CC6600;
+	}
+	
+/*</group>*/
+
+/*<group=LexALP entries>*/
+
+.axie {
+	border: 1pt solid #3b63b5;
+	display: block;
+}
+
+.lexie[lang="fra"] {
+	
+}
+
+.term {
+	font-weight: bold;
+	font-variant: small-caps;
+}
+
+.synonym {
+	margin-left:10px;
+	font-style: italic;
+	font-variant: small-caps;
+}
+
+.status {
+	font-size: xx-small;
+	margin-left:10px;
+	margin-right: 10px;
+}	
+
+.legal {
+float: right;
+background-color: #bbbbbb;
+margin-right:10px;
+padding-right:10px;
+margin-left:10px;
+padding-left:10px;
+}
+
+
+.source {
+font-size:smaller;
+margin-left:10px;
+font-style: italic;
+}
+
+.definition {
+	margin-left: 10px;
+	display: block;
+	font-size: x-small;
+}
+
+/*</group>*/
+
