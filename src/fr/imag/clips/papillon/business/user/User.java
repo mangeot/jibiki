@@ -9,8 +9,17 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.6  2005/05/24 12:51:22  serasset
+ * Updated many aspect of the Papillon project to handle lexalp project.
+ * 1. Layout is now parametrable in the application configuration file.
+ * 2. Notion of QueryResult has been defined to handle mono/bi and multi lingual dictionary requests
+ * 3. Result presentation may be done by way of standard xsl or with any class implementing the appropriate interface.
+ * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
+ * 5. It is now possible to give a name to the cookie key in the app conf file
+ * 6. Several bug fixes.
+ *
  * Revision 1.5  2005/04/15 11:42:52  mangeot
- * Fixed a bug in IsInNormalGroups when groups can be empty
+ * Fixed a bug in isInNormalGroups when groups can be empty
  *
  * Revision 1.4  2005/04/11 12:29:59  mangeot
  * Merge between the XPathAndMultipleKeys branch and the main trunk
@@ -122,7 +131,7 @@ public class User implements com.lutris.appserver.server.user.User {
 			this.myDO = theUser;
 		}
 	
-	public boolean IsEmpty() {
+	public boolean isEmpty() {
 		return (this.myDO==null) ;
 	}
 	
@@ -366,14 +375,14 @@ public class User implements com.lutris.appserver.server.user.User {
 	
 	public void addGroup(String group)
 		throws PapillonBusinessException {
-			if (!IsInGroup(group)) {
+			if (!isInGroup(group)) {
 				addNewGroup(group);
 			}
 		}
 	
 	public void removeGroup(String group)
 		throws PapillonBusinessException {
-			if (IsInGroup(group)) {
+			if (isInGroup(group)) {
 				String[] groups = getGroupsArray();
 				String newGroups = "";
 				for (int i=0;i< groups.length;i++) {
@@ -388,7 +397,7 @@ public class User implements com.lutris.appserver.server.user.User {
 	
 	
 	
-	public boolean IsInGroups(String[] groups) 
+	public boolean isInGroups(String[] groups) 
 		throws PapillonBusinessException {
 			boolean answer = false;
 			String[] myGroups = this.getGroupsArray();
@@ -396,7 +405,7 @@ public class User implements com.lutris.appserver.server.user.User {
 				if (groups !=null && groups.length>0) {
 					int i=0;
 					while (!answer && i<groups.length) {
-						answer = this.IsInGroup(groups[i]);
+						answer = this.isInGroup(groups[i]);
 						i++;
 					}
 				}
@@ -405,7 +414,7 @@ public class User implements com.lutris.appserver.server.user.User {
 		}
 	
 	
-	public boolean IsInNormalGroups(String[] groups) 
+	public boolean isInNormalGroups(String[] groups) 
 		throws PapillonBusinessException {
 			boolean answer = false;
 			java.util.Vector groupsVector = new java.util.Vector();
@@ -436,7 +445,7 @@ public class User implements com.lutris.appserver.server.user.User {
 			return answer;
 		}
 	
-	public boolean IsInGroup(String group)
+	public boolean isInGroup(String group)
 		throws PapillonBusinessException {
             String[] Groups = getGroupsArray();
             boolean is = false;
@@ -450,19 +459,19 @@ public class User implements com.lutris.appserver.server.user.User {
             return is;
         }
 	
-	public boolean IsAdmin()
+	public boolean isAdmin()
 		throws PapillonBusinessException {
-			return IsInGroup(ADMIN_GROUP);
+			return isInGroup(ADMIN_GROUP);
 		}
 	
-	public boolean IsSpecialist()
+	public boolean isSpecialist()
 		throws PapillonBusinessException {
-			return IsInGroup(SPECIALIST_GROUP);
+			return isInGroup(SPECIALIST_GROUP);
 		}
 	
-	public boolean IsValidator()
+	public boolean isValidator()
 		throws PapillonBusinessException {
-			return IsInGroup(VALIDATOR_GROUP);
+			return isInGroup(VALIDATOR_GROUP);
 		}
 	
 	public String getGroupPassword(String group)

@@ -125,7 +125,7 @@ public class DictEngine implements IDictEngine {
         String info = null;
         try {
             Dictionary dict = DictionariesFactory.findDictionaryByName(dictName);
-			if (dict != null && !dict.IsEmpty()) {
+			if (dict != null && !dict.isEmpty()) {
 				info = dict.getName() + " \"" + dict.getFullName() + "\"\n";
 				String[] Sources = AvailableLanguages.getSourceLanguagesArrayForDict(dict.getName());
 				String languages = "";
@@ -164,7 +164,7 @@ public class DictEngine implements IDictEngine {
             if (dictName.equals("*")) return lookupAll(lang, word, strategy);
             if (dictName.equals("!")) return lookupAny(lang, word, strategy);
             Dictionary dict = DictionariesFactory.findDictionaryByName(dictName);
-            if (dict != null && !dict.IsEmpty()) {
+            if (dict != null && !dict.isEmpty()) {
                 Answers = lookupDict(dict, lang, word, strategy);
             }
         }
@@ -266,7 +266,7 @@ public class DictEngine implements IDictEngine {
             if (null != login && !login.equals("") &&
                 null != password && !password.equals("")) {
                 User myUser = UsersFactory.findUserByLogin(login);
-                if (null != myUser && !myUser.IsEmpty()) {
+                if (null != myUser && !myUser.isEmpty()) {
                     if (myUser.HasCorrectPassword(password)) {
                         setUser(myUser);
                         userMessage = "User authenticated";

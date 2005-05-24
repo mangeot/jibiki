@@ -65,7 +65,7 @@ import fr.imag.clips.papillon.presentation.XMLTitleParser;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
       
 
-public class ConsultInformations extends BasePO {
+public class ConsultInformations extends PapillonBasePO {
 
     protected MediaPreferences prefs;
 
@@ -86,8 +86,8 @@ public class ConsultInformations extends BasePO {
         return false;
     }
 
-    protected boolean adminUserRequired() {
-        return false;
+    protected boolean userMayUseThisPO() {
+        return true;
     }
 
     protected  int getCurrentSection() {

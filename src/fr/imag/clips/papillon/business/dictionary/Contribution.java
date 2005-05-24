@@ -9,6 +9,15 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.5  2005/05/24 12:51:21  serasset
+ * Updated many aspect of the Papillon project to handle lexalp project.
+ * 1. Layout is now parametrable in the application configuration file.
+ * 2. Notion of QueryResult has been defined to handle mono/bi and multi lingual dictionary requests
+ * 3. Result presentation may be done by way of standard xsl or with any class implementing the appropriate interface.
+ * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
+ * 5. It is now possible to give a name to the cookie key in the app conf file
+ * 6. Several bug fixes.
+ *
  * Revision 1.4  2005/04/15 11:38:05  mangeot
  * Fixed a bug, not using entryHandle from contributions table any more
  *
@@ -118,7 +127,7 @@ public class Contribution {
 			this.myDO = theContribution;
 		}
 
-    public boolean IsEmpty() {
+    public boolean isEmpty() {
         return (this.myDO==null) ;
     }
 

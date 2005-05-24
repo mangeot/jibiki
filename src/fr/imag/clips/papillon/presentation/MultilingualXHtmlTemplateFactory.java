@@ -9,6 +9,15 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.2  2005/05/24 12:51:22  serasset
+ * Updated many aspect of the Papillon project to handle lexalp project.
+ * 1. Layout is now parametrable in the application configuration file.
+ * 2. Notion of QueryResult has been defined to handle mono/bi and multi lingual dictionary requests
+ * 3. Result presentation may be done by way of standard xsl or with any class implementing the appropriate interface.
+ * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
+ * 5. It is now possible to give a name to the cookie key in the app conf file
+ * 6. Several bug fixes.
+ *
  * Revision 1.1  2004/12/24 08:57:44  serasset
  * Premiere version de l'interface avec fond papillon et transparence.
  *
@@ -31,47 +40,64 @@ import com.lutris.appserver.server.httpPresentation.HttpPresentationException;
 import com.lutris.appserver.server.httpPresentation.HttpPresentationRequest;
 
 public class MultilingualXHtmlTemplateFactory {
-    private final static String PACKAGE = "fr.imag.clips.papillon.presentation.xhtml.";
+    private final static String PACKAGE = "fr.imag.clips.papillon.presentation.xhtml";
     private final static String ORIG_PACKAGE = PACKAGE + "orig.";
 
     private final static String DEFAULT_LANGUAGE = "eng";
     
     /**
-     * Return an HTML Template object that is an localized instance of the
+     * Return an HTML Template object that is a localized instance of the
      * requested class. The language of the returned object depends on
      * the HTTPRequest (which contains the user's preferred languages).
      *
      * @return The localized HTML Template Object
+     * @deprecated Use createTemplate with package specifier.
      */
     public static java.lang.Object createTemplate(String xhtmlClass,
                                                   HttpPresentationComms comms,
                                                   PapillonSessionData sessiondata)
         throws HttpPresentationException
     {
-
+        return createTemplate(PACKAGE,xhtmlClass,comms,sessiondata);
+    }
+    
+    /**
+        * Return an HTML Template object that is an localized instance of the
+     * requested class. The language of the returned object depends on
+     * the HTTPRequest (which contains the user's preferred languages).
+     *
+     * @return The localized HTML Template Object
+     */
+    public static java.lang.Object createTemplate(String xhtmlPackage,
+                                                  String xhtmlClass,
+                                                  HttpPresentationComms comms,
+                                                  PapillonSessionData sessiondata)
+        throws HttpPresentationException
+    {
+        
         ArrayList languages = sessiondata.getUserAcceptLanguages();
-
+        
         int i = 0;
         java.lang.Object template = null;
-
+        
         while (i != languages.size() &&
-               (template = getTemplateForLanguage(xhtmlClass, (String)languages.get(i), comms)) == null) {
+               (template = getTemplateForLanguage(xhtmlPackage, xhtmlClass, (String)languages.get(i), comms)) == null) {
             i++;
         }
         if (i == languages.size()) {
             try {
-                template = comms.xmlcFactory.create(Class.forName(ORIG_PACKAGE + xhtmlClass));
+                template = comms.xmlcFactory.create(Class.forName(xhtmlPackage + ".orig." + xhtmlClass));
             } catch (java.lang.ClassNotFoundException e) {
                 throw new HttpPresentationException("ERREUR:", e);
             }
         }
-
+        
         return template;
-
+        
     }
-
-    public static java.lang.Object getTemplateForLanguage(String htmlClass, String lang, HttpPresentationComms comms) {
-        String className = PACKAGE + lang + "." + htmlClass;
+    
+    public static java.lang.Object getTemplateForLanguage(String xhtmlPackage, String htmlClass, String lang, HttpPresentationComms comms) {
+        String className = xhtmlPackage + "." + lang + "." + htmlClass;
         java.lang.Object template = null;
 
         try {

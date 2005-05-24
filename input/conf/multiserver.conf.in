@@ -13,8 +13,8 @@ Server.Log4j = "@DEPLOY_PATH@/conf/log4j.xml"
 # Specifications of papillon application listening directly on
 # port 8999.
 #
-Application.Papillon.ConfFile = Papillon.conf
-Application.Papillon.Description = "The Papillon Application"
+Application.Papillon.ConfFile = @APPLICATION@.conf
+Application.Papillon.Description = "The @APPLICATION@ Application"
 Application.Papillon.Running = yes
 Application.Papillon.defaultSessionTimeOut = 30
 
@@ -23,7 +23,7 @@ Application.Papillon.defaultSessionTimeOut = 30
 # on port 8998
 
 Channel.CM_0.channel_0.Enabled = yes
-Channel.CM_0.channel_0.Servlet = Papillon
+Channel.CM_0.channel_0.Servlet = @APPLICATION@
 Channel.CM_0.channel_0.Url = "/"
 
 Connection.CM_0.Type = EnhydraDirector

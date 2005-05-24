@@ -18,15 +18,15 @@ import java.text.DateFormat;
 
 import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
-public class ImportHelp extends BasePO {
+public class ImportHelp extends PapillonBasePO {
 
 
     protected boolean loggedInUserRequired() {
         return false;
     }
 
-    protected boolean adminUserRequired() {
-        return false;
+    protected boolean userMayUseThisPO() {
+        return true;
     }
     
     protected  int getCurrentSection() {

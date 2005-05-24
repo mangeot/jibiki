@@ -9,6 +9,15 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.5  2005/05/24 12:51:22  serasset
+ * Updated many aspect of the Papillon project to handle lexalp project.
+ * 1. Layout is now parametrable in the application configuration file.
+ * 2. Notion of QueryResult has been defined to handle mono/bi and multi lingual dictionary requests
+ * 3. Result presentation may be done by way of standard xsl or with any class implementing the appropriate interface.
+ * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
+ * 5. It is now possible to give a name to the cookie key in the app conf file
+ * 6. Several bug fixes.
+ *
  * Revision 1.4  2005/04/11 12:29:59  mangeot
  * Merge between the XPathAndMultipleKeys branch and the main trunk
  *
@@ -64,9 +73,10 @@ import fr.imag.clips.papillon.data.*;
 import fr.imag.clips.papillon.business.utility.Utility;
 import fr.imag.clips.papillon.business.transformation.*;
 import fr.imag.clips.papillon.business.PapillonLogger;
+import fr.imag.clips.papillon.business.PapillonBusinessException;
 
 
-public class AdminGroups extends BasePO {
+public class AdminGroups extends PapillonBasePO {
 
     protected final static String REMOVE_PARAMETER="Remove";
     
@@ -76,8 +86,13 @@ public class AdminGroups extends BasePO {
         return true;
     }
 
-    protected boolean adminUserRequired() {
-        return true;
+    protected boolean userMayUseThisPO() {
+        try {
+            return this.getUser().isAdmin();
+        } catch (PapillonBusinessException ex) {
+            this.getSessionData().writeUserMessage("Error getting the authorisation to use this PO.");
+        }
+        return false;
     }
 
     protected  int getCurrentSection() {
@@ -114,7 +129,7 @@ public class AdminGroups extends BasePO {
             }
             else if (null != myGetParameter(REMOVE_PARAMETER)) {
                 Group myGroup = GroupsFactory.findGroupByHandle(myGetParameter(REMOVE_PARAMETER));
-								if (myGroup !=null && !myGroup.IsEmpty()) {
+								if (myGroup !=null && !myGroup.isEmpty()) {
 									String groupName = myGroup.getName();
 									myGroup.delete();
 									userMessage = "Group "+  groupName + " has been deleted";
@@ -168,7 +183,7 @@ public class AdminGroups extends BasePO {
 				}
                 content.setTextGrpAdmins(groupsString);
 
-			if (tempGroup.IsAdmin(this.getUser().getLogin())) {
+			if (tempGroup.isAdmin(this.getUser().getLogin())) {
                  theRemoveAnchor.setHref(this.getUrl() + "?" + REMOVE_PARAMETER +
                                         "=" + tempGroup.getHandle());
 

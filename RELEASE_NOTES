@@ -4,4 +4,6 @@ Modifications since Papillon5.0 :
   - Interface is now generated and should be modified by hand...
   - Metadata now make use of XPath to indicate elements that should be indexed.
   - Reverse lookup may be authorized for a dictionary by way of the d:reverse attribute.
-  - upload de dictionnaire/volume/etc. dans une transaction + rollback en cas de pb.
+  - upload de dictionnaire/volume/etc. in a transaction + rollback if a pb occurs.
+  - The Layout is now configurable in the conf file.
+  - Volume whose source language is "axi" is now considered as the pivot volume in a pivot dictionary.

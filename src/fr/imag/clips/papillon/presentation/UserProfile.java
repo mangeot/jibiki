@@ -10,6 +10,15 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.5  2005/05/24 12:51:22  serasset
+ * Updated many aspect of the Papillon project to handle lexalp project.
+ * 1. Layout is now parametrable in the application configuration file.
+ * 2. Notion of QueryResult has been defined to handle mono/bi and multi lingual dictionary requests
+ * 3. Result presentation may be done by way of standard xsl or with any class implementing the appropriate interface.
+ * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
+ * 5. It is now possible to give a name to the cookie key in the app conf file
+ * 6. Several bug fixes.
+ *
  * Revision 1.4  2005/04/11 08:01:02  fbrunet
  * Passage en xhtml des ressources Papillon.
  *
@@ -89,7 +98,7 @@ import fr.imag.clips.papillon.business.PapillonLogger;
 
 import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
-public class UserProfile extends BasePO {
+public class UserProfile extends PapillonBasePO {
    
    protected static UserProfileXHTML content;
 
@@ -98,8 +107,8 @@ public class UserProfile extends BasePO {
         return true;
     }
 
-    protected boolean adminUserRequired() {
-        return false;
+    protected boolean userMayUseThisPO() {
+        return true;
     }
     
     protected  int getCurrentSection() {
@@ -138,7 +147,7 @@ public class UserProfile extends BasePO {
                 newpassword2 = myGetParameter(content.NAME_NewPassword2);
                 
                 UserAnswer myUserAnswer = UsersFactory.changeUserPassword(login, password, newpassword, newpassword2);
-                if (!myUserAnswer.IsEmpty()) {
+                if (!myUserAnswer.isEmpty()) {
                     this.setUser(myUserAnswer.getUser());
                 }
                 userMessage = myUserAnswer.getMessage();
@@ -150,7 +159,7 @@ public class UserProfile extends BasePO {
 							name = myGetParameter(content.NAME_Name);
 
 							UserAnswer myUserAnswer = UsersFactory.ChangeNameAndEmail(this.getUser(), name, email);
-                if (!myUserAnswer.IsEmpty()) {
+                if (!myUserAnswer.isEmpty()) {
                     this.setUser(myUserAnswer.getUser());
                 }
                 userMessage = myUserAnswer.getMessage();
@@ -162,7 +171,7 @@ public class UserProfile extends BasePO {
 							groupPassword = myGetParameter(content.NAME_GroupPassword);
 
 						UserAnswer myUserAnswer = UsersFactory.addUserInGroup(this.getUser(), group, groupPassword);
-							if (!myUserAnswer.IsEmpty()) {
+							if (!myUserAnswer.isEmpty()) {
 								this.setUser(myUserAnswer.getUser());
 							}
 							userMessage = myUserAnswer.getMessage();

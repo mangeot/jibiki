@@ -9,6 +9,15 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.10  2005/05/24 12:51:22  serasset
+ * Updated many aspect of the Papillon project to handle lexalp project.
+ * 1. Layout is now parametrable in the application configuration file.
+ * 2. Notion of QueryResult has been defined to handle mono/bi and multi lingual dictionary requests
+ * 3. Result presentation may be done by way of standard xsl or with any class implementing the appropriate interface.
+ * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
+ * 5. It is now possible to give a name to the cookie key in the app conf file
+ * 6. Several bug fixes.
+ *
  * Revision 1.9  2005/04/15 13:20:08  mangeot
  * Added setIdIfNull
  *
@@ -111,7 +120,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.dom.DOMResult;
 
 
-public class ReviewContributions extends BasePO {
+public class ReviewContributions extends PapillonBasePO {
 
 	
     protected final static int MaxDisplayedEntries= 5;
@@ -142,8 +151,8 @@ public class ReviewContributions extends BasePO {
         return true;
     }
 
-    protected boolean adminUserRequired() {
-        return false;
+    protected boolean userMayUseThisPO() {
+        return true;
     }
     
     protected  int getCurrentSection() {
@@ -284,7 +293,7 @@ public class ReviewContributions extends BasePO {
 				contribid = myGetParameter(CONTRIBID_PARAMETER);
 				if (contribid !=null && !contribid.equals("")) {
 					Contribution myContrib = ContributionsFactory.findContributionByHandle(contribid);
-					if (null != myContrib && !myContrib.IsEmpty()) {
+					if (null != myContrib && !myContrib.isEmpty()) {
 						userMessage = "Contribution " +  myContrib.getHandle() + " / " +
 						myContrib.getHeadword() + " removed...";
 						volume = myContrib.getVolumeName();
@@ -295,9 +304,9 @@ public class ReviewContributions extends BasePO {
 				break;
 			case STEP_REVISE:
 				contribid = myGetParameter(CONTRIBID_PARAMETER);
-				if (contribid !=null && !contribid.equals("") && this.getUser().IsSpecialist()) {
+				if (contribid !=null && !contribid.equals("") && this.getUser().isSpecialist()) {
 					Contribution myContrib = ContributionsFactory.findContributionByHandle(contribid);
-					if (null != myContrib && !myContrib.IsEmpty()
+					if (null != myContrib && !myContrib.isEmpty()
 					&& null != myContrib.getStatus() && myContrib.getStatus().equals(Contribution.FINISHED_STATUS)) {
 						VolumeEntry myEntry = VolumeEntriesFactory.findEntryByEntryId(myContrib.getVolumeName(),myContrib.getEntryId());
 						//Adding modifications in the XML code
@@ -315,9 +324,9 @@ public class ReviewContributions extends BasePO {
 				addContributions(volume, author, headword, strategy, status, revisor, sortBy, queryString);
 				break;
 			case STEP_VALIDATE:
-				if (contribid !=null && !contribid.equals("") && this.getUser().IsValidator()) {
+				if (contribid !=null && !contribid.equals("") && this.getUser().isValidator()) {
 					Contribution myContrib = ContributionsFactory.findContributionByHandle(contribid);
-					if (null != myContrib && !myContrib.IsEmpty() &&
+					if (null != myContrib && !myContrib.isEmpty() &&
 						null != myContrib.getStatus() && myContrib.getStatus().equals(Contribution.REVISED_STATUS)) {
 						VolumeEntry myEntry = VolumeEntriesFactory.findEntryByEntryId(myContrib.getVolumeName(),myContrib.getEntryId());
 						//Adding modifications in the XML code
@@ -365,7 +374,7 @@ public class ReviewContributions extends BasePO {
         // Adding the user name
 		User user = getUser();
 
-		if (null != user && !user.IsEmpty()) {
+		if (null != user && !user.isEmpty()) {
 			content.setTextUserName(user.getName());
 		}
                     
@@ -521,17 +530,17 @@ public class ReviewContributions extends BasePO {
 				content.setTextContributionsCount("" + EntryCollection.size());
 				for(Iterator entriesIterator = EntryCollection.iterator(); entriesIterator.hasNext();) {
                     Contribution myContrib = (Contribution) entriesIterator.next();
-					if (myContrib !=null && !myContrib.IsEmpty()) {
+					if (myContrib !=null && !myContrib.isEmpty()) {
 					VolumeEntry myEntry = VolumeEntriesFactory.findEntryByEntryId(myContrib.getVolumeName(),myContrib.getEntryId());
 					XslSheet xmlSheet = XslSheetFactory.findXslSheetByName("XML");
                         String xslid = "";
-                        if (null != xmlSheet && !xmlSheet.IsEmpty()) {
+                        if (null != xmlSheet && !xmlSheet.isEmpty()) {
                             xslid = xmlSheet.getHandle();
                         } 					
 					// FIXME: hack for the GDEF estonian volume
 						String headword = myContrib.getHeadword();
 						if (myContrib.getVolumeName().equals("GDEF_est")) {
-							if (myEntry!=null && !myEntry.IsEmpty()) {
+							if (myEntry!=null && !myEntry.isEmpty()) {
 								String particule = myEntry.getParticule();
 								if(particule!=null && !particule.equals("")) {
 									headword = particule + " " + headword;
@@ -561,9 +570,9 @@ public class ReviewContributions extends BasePO {
 						// edit contrib
 						// FIXME hack because we cannot reedit yet axies ...
 						if (!myContrib.getVolumeName().equals(PapillonPivotFactory.VOLUMENAME)
-							&& myEntry!=null && !myEntry.IsEmpty()
-							&& (this.getUser().IsInNormalGroups(myContrib.getGroupsArray())
-							|| this.getUser().IsValidator())) {
+							&& myEntry!=null && !myEntry.isEmpty()
+							&& (this.getUser().isInNormalGroups(myContrib.getGroupsArray())
+							|| this.getUser().isValidator())) {
 							editContribAnchor.setHref(EditURL + "?"
                                                   + EditVolumeParameter + "="
                                                   + myContrib.getVolumeName() + "&"
@@ -576,8 +585,8 @@ public class ReviewContributions extends BasePO {
 						
 						// remove contrib
 						if (this.getUser().getLogin().equals(myContrib.getAuthor())
-							|| this.getUser().IsInNormalGroups(myContrib.getGroupsArray())
-							|| this.getUser().IsValidator()) {
+							|| this.getUser().isInNormalGroups(myContrib.getGroupsArray())
+							|| this.getUser().isValidator()) {
 							removeContribAnchor.setHref(this.getUrl() + "?"
 								   + REMOVE_CONTRIB_PARAMETER + "=on&"
 								   + CONTRIBID_PARAMETER + "="
@@ -601,8 +610,8 @@ public class ReviewContributions extends BasePO {
 						// action on contrib
 						if (myContrib.getStatus()!=null) {
 							if (myContrib.getStatus().equals(Contribution.FINISHED_STATUS)
-								&& this.getUser().IsSpecialist() 
-								&& this.getUser().IsInNormalGroups(myContrib.getGroupsArray())) {
+								&& this.getUser().isSpecialist() 
+								&& this.getUser().isInNormalGroups(myContrib.getGroupsArray())) {
 								reviseContribAnchor.setHref(this.getUrl() + "?"
 									 + REVISE_CONTRIB_PARAMETER + "=on&"
 									 + CONTRIBID_PARAMETER + "="
@@ -614,7 +623,7 @@ public class ReviewContributions extends BasePO {
 								reviseContribAnchor.setAttribute("class","hidden");	 
 							}
 							if (myContrib.getStatus().equals(Contribution.REVISED_STATUS)
-								&& this.getUser().IsValidator()) {
+								&& this.getUser().isValidator()) {
 								validateContribAnchor.setHref(this.getUrl() + "?"
 									 + VALIDATE_CONTRIB_PARAMETER + "=on&"
 									 + CONTRIBID_PARAMETER + "="

@@ -9,6 +9,15 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2005/05/24 12:51:22  serasset
+ * Updated many aspect of the Papillon project to handle lexalp project.
+ * 1. Layout is now parametrable in the application configuration file.
+ * 2. Notion of QueryResult has been defined to handle mono/bi and multi lingual dictionary requests
+ * 3. Result presentation may be done by way of standard xsl or with any class implementing the appropriate interface.
+ * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
+ * 5. It is now possible to give a name to the cookie key in the app conf file
+ * 6. Several bug fixes.
+ *
  * Revision 1.3  2005/01/15 12:51:24  mangeot
  * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
  *
@@ -44,7 +53,7 @@ import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
 import fr.imag.clips.papillon.presentation.MultilingualHtmlTemplateFactory;
 
-public class Information extends BasePO {
+public class Information extends PapillonBasePO {
 
     public Node getContent()
         throws HttpPresentationException, IOException {
@@ -62,8 +71,8 @@ public class Information extends BasePO {
         return false;
     }
 
-    protected boolean adminUserRequired() {
-        return false;
+    protected boolean userMayUseThisPO() {
+        return true;
     }
     
     protected  int getCurrentSection() {

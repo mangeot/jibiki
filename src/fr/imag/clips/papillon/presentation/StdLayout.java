@@ -9,6 +9,15 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.6  2005/05/24 12:51:22  serasset
+ *  Updated many aspect of the Papillon project to handle lexalp project.
+ *  1. Layout is now parametrable in the application configuration file.
+ *  2. Notion of QueryResult has been defined to handle mono/bi and multi lingual dictionary requests
+ *  3. Result presentation may be done by way of standard xsl or with any class implementing the appropriate interface.
+ *  4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
+ *  5. It is now possible to give a name to the cookie key in the app conf file
+ *  6. Several bug fixes.
+ *
  *  Revision 1.5  2005/04/18 10:50:26  mangeot
  *  Bug fix when displaying with IExplorer,
  *  Bug fixes when seqencial request
@@ -47,6 +56,7 @@ import com.lutris.appserver.server.httpPresentation.HttpPresentationResponse;
 import org.w3c.dom.*;
 //import org.w3c.dom.html.*;
 import org.enhydra.xml.xhtml.dom.*;
+import org.enhydra.xml.xmlc.XMLObject;
 
 import java.io.*;
 
@@ -75,32 +85,8 @@ import java.text.DateFormat;
  * @author     serasset
  * @created    December 8, 2004
  */
-public class StdLayout {
-    LayoutXHTML layout;
+public interface StdLayout {
 
-    // Constructeurs
-
-    // Constructeur de base
-    /**
-     *  Constructor for the StdLayout object
-     *
-     * @param  comms
-     *      Description of the Parameter
-     * @param  sessionData
-     *      Description of the Parameter
-     * @param  url
-     *      Description of the Parameter
-     * @exception  com.lutris.appserver.server.httpPresentation.HttpPresentationException
-     *      Description of the Exception
-     * @exception  UnsupportedEncodingException
-     *      Description of the Exception
-     */
-    public StdLayout(HttpPresentationComms comms, PapillonSessionData sessionData, String url)
-             throws com.lutris.appserver.server.httpPresentation.HttpPresentationException, UnsupportedEncodingException {
-        this(comms, sessionData, url, "");
-    }
-
-    // Constructeur avec script
     /**
      *  Constructor for the StdLayout object
      *
@@ -117,46 +103,8 @@ public class StdLayout {
      * @exception  UnsupportedEncodingException
      *      Description of the Exception
      */
-    public StdLayout(HttpPresentationComms comms, PapillonSessionData sessionData, String url, String script)
-             throws com.lutris.appserver.server.httpPresentation.HttpPresentationException, UnsupportedEncodingException {
-
-        // Création du document
-        layout = (LayoutXHTML) MultilingualXHtmlTemplateFactory.createTemplate("LayoutXHTML", comms, sessionData);
-        HeaderXHTML header = (HeaderXHTML) MultilingualXHtmlTemplateFactory.createTemplate("HeaderXHTML", comms, sessionData);
-        Node menuBar = header.getElementMenuBar();
-
-        // adding a script if needed
-        XHTMLScriptElement scriptElement = (XHTMLScriptElement) layout.getElementScript();
-        if (null != script && !script.equals("")) {
-            scriptElement.setText(scriptElement.getText() + script);
-        }
-        scriptElement.removeAttribute("id");
-
-		// gestion spécifique à IExplorer
-		if (!sessionData.getClientWithLabelDisplayProblems()) {
-			XHTMLElement removeIfNotIE = layout.getElementRemoveIfNotIE();
-			removeIfNotIE.getParentNode().removeChild(removeIfNotIE);
-		}
-
-        // Insertion du header et du footer
-        layout.getElementHeaderPlace().appendChild(layout.importNode(menuBar, true));
-        // layout.getElementFooterPlace().appendChild(layout.importNode( menuBar, true));
-		
-		
-		
-
-        // Gestion du menu :
-        // Si les utilisateurs sont logues, on met leur login
-
-        // menu
-        handleLangForm(comms, sessionData, url);
-        handleConsultForm(comms, sessionData);
-        handleLexieMenu(comms, sessionData);
-        handleAxieMenu(comms, sessionData);
-        handleReviewerMenu(comms, sessionData);
-        handleAdministratorMenu(comms, sessionData);
-
-    }
+    public void initLayout(HttpPresentationComms comms, PapillonSessionData sessionData, String url, String script)
+        throws com.lutris.appserver.server.httpPresentation.HttpPresentationException, UnsupportedEncodingException;
 
 
     /**
@@ -164,258 +112,8 @@ public class StdLayout {
      *
      * @return    The layout value
      */
-    public LayoutXHTML getLayout() {
-        return layout;
-    }
-
-
-    /**
-     *  Description of the Method
-     *
-     * @param  comms
-     *      Description of the Parameter
-     * @param  sessionData
-     *      Description of the Parameter
-     * @param  url
-     *      Description of the Parameter
-     * @exception  com.lutris.appserver.server.httpPresentation.HttpPresentationException
-     *      Description of the Exception
-     * @exception  PapillonBusinessException
-     *      Description of the Exception
-     */
-    protected void handleLangForm(HttpPresentationComms comms, PapillonSessionData sessionData, String url)
-             throws com.lutris.appserver.server.httpPresentation.HttpPresentationException, PapillonBusinessException {
-
-        UserLanguageSelectXHTML langSelect = (UserLanguageSelectXHTML) MultilingualXHtmlTemplateFactory.createTemplate("UserLanguageSelectXHTML", comms, sessionData);
-        XHTMLSelectElement langSelectElement = (XHTMLSelectElement) langSelect.getElementLang();
-
-        // I select by default the user preferred language for the languages menu
-        if (!sessionData.getClientWithLabelDisplayProblems()) {
-            BasePO.setUnicodeLabels(langSelectElement);
-        }
-		BasePO.setSelected(langSelectElement, sessionData.getUserPreferredLanguage());
-
-        LangAndUserXHTML userMenu = (LangAndUserXHTML) MultilingualXHtmlTemplateFactory.createTemplate("LangAndUserXHTML", comms, sessionData);
-        // I add the LangSelectElement in the menu
-        Node selectHolder = userMenu.getElementLangSelectPlace();
-        selectHolder.getParentNode().replaceChild(userMenu.importNode(langSelectElement, true), selectHolder);
-
-        // I add the URL of the page for the action of the language form
-        XHTMLFormElement umLangForm = (XHTMLFormElement) userMenu.getElementLangForm();
-        umLangForm.setAction(url);
-
-        // Handle the user part of the block
-        handleUserLogin(userMenu, sessionData.getUser());
-
-        layout.getElementMenuColumn().appendChild(layout.importNode(userMenu.getElementLanguageAndUser(), true));
-    }
-
-
-    /**
-     *  Description of the Method
-     *
-     * @param  userMenu                       Description of the Parameter
-     * @param  myUser                         Description of the Parameter
-     * @exception  PapillonBusinessException  Description of the Exception
-     */
-    protected void handleUserLogin(LangAndUserXHTML userMenu, User myUser)
-             throws PapillonBusinessException {
-        // If the user is logged
-        if (null != myUser && !myUser.IsEmpty()) {
-            userMenu.setTextUserLogin(myUser.getLogin());
-            Utility.removeElement(userMenu.getElementLoginAnchor());
-        }                                         // If the user is not logged
-        else {
-            userMenu.setTextUserLogin("");
-            Utility.removeElement(userMenu.getElementUserProfileAnchor());
-            Utility.removeElement(userMenu.getElementLogoutAnchor());
-        }
-    }
-
-
-    /**
-     *  Description of the Method
-     *
-     * @param  comms
-     *      Description of the Parameter
-     * @param  sessionData
-     *      Description of the Parameter
-     * @exception  com.lutris.appserver.server.httpPresentation.HttpPresentationException
-     *      Description of the Exception
-     * @exception  PapillonBusinessException
-     *      Description of the Exception
-     * @exception  HttpPresentationException
-     *      Description of the Exception
-     * @exception  UnsupportedEncodingException
-     *      Description of the Exception
-     */
-    protected void handleConsultForm(HttpPresentationComms comms, PapillonSessionData sessionData)
-             throws com.lutris.appserver.server.httpPresentation.HttpPresentationException,
-            PapillonBusinessException,
-            HttpPresentationException,
-            UnsupportedEncodingException {
-        AvailableLanguages MyAvailableLanguages = new AvailableLanguages();
-
-        String[] allSourceLanguages = MyAvailableLanguages.getSourceLanguagesArray();
-        String[] allTargetLanguages = MyAvailableLanguages.getTargetLanguagesArray();
-
-        QueryMenuXHTML queryMenu = (QueryMenuXHTML) MultilingualXHtmlTemplateFactory.createTemplate("QueryMenuXHTML", comms, sessionData);
-        XHTMLInputElement headwordInput = queryMenu.getElementHeadwordInput();
-        String headtmp = sessionData.getPreference("Home.po", headwordInput.getName());
-        if (headtmp != null) {
-            headwordInput.setValue(headtmp);
-        }
-
-        // Adding the appropriate source languages to the source list
-        XHTMLOptionElement sourceOptionTemplate = queryMenu.getElementSourceOptionTemplate();
-        XHTMLSelectElement sourceSelect = (XHTMLSelectElement) sourceOptionTemplate.getParentNode();
-        sourceOptionTemplate.removeAttribute("id");
-        // We assume that the option element has only one text child
-        // (it should be this way if the HTML is valid...)
-
-        Text sourceTextTemplate = (Text) sourceOptionTemplate.getFirstChild();
-        String langLoc = sessionData.getUserPreferredLanguage();
-        String prefSrcLang = sessionData.getPreference("Home.po", sourceSelect.getName());
-        if (prefSrcLang == null || prefSrcLang.equals("")) {
-            prefSrcLang = langLoc;
-            sessionData.setPreference("Home.po", sourceSelect.getName(), prefSrcLang);
-        }
-
-        for (int i = 0; i < allSourceLanguages.length; i++) {
-            String langi = allSourceLanguages[i];
-
-            sourceOptionTemplate.setValue(langi);
-            // Certains navigateurs ne sont pas conformes aux specs
-            // pour eux,je dois mettre un label en ascii
-            if (sessionData.getClientWithLabelDisplayProblems()) {
-                sourceOptionTemplate.setLabel(Languages.localizeLabel(langLoc, langi));
-            } else {
-                sourceOptionTemplate.setLabel(Languages.localizeName(langLoc, langi));
-            }
-            sourceOptionTemplate.setSelected(langi.equals(prefSrcLang));
-
-            sourceTextTemplate.setData(Languages.localizeName(langLoc, langi));
-            sourceSelect.appendChild(sourceOptionTemplate.cloneNode(true));
-        }
-        sourceSelect.removeChild(sourceOptionTemplate);
-
-        // Adding the appropriate target languages to the target list
-        XHTMLOptionElement targetOptionTemplate = queryMenu.getElementTargetOptionTemplate();
-        XHTMLSelectElement targetSelect = (XHTMLSelectElement) targetOptionTemplate.getParentNode();
-        if (!sessionData.getClientWithLabelDisplayProblems()) {
-            BasePO.setUnicodeLabels(targetSelect);
-        }
-        targetOptionTemplate.removeAttribute("id");
-        // We assume that the option element has only one text child
-        // (it should be this way if the HTML is valid...)
-        Text targetTextTemplate = (Text) targetOptionTemplate.getFirstChild();
-        String prefTrgLang = sessionData.getPreference("Home.po", targetSelect.getName());
-        if (prefTrgLang == null || prefTrgLang.equals("")) {
-            prefTrgLang = Home.ALL_TARGETS;
-            sessionData.setPreference("Home.po", targetSelect.getName(), prefTrgLang);
-        }
-
-        for (int i = 0; i < allTargetLanguages.length; i++) {
-            String langi = allTargetLanguages[i];
-            targetOptionTemplate.setValue(langi);
-            if (sessionData.getClientWithLabelDisplayProblems()) {
-                targetOptionTemplate.setLabel(Languages.localizeLabel(langLoc, langi));
-            } else {
-                targetOptionTemplate.setLabel(Languages.localizeName(langLoc, langi));
-            }
-            // We should select the previously selected target languages...
-            targetTextTemplate.setData(Languages.localizeName(langLoc, langi));
-            targetSelect.appendChild(targetOptionTemplate.cloneNode(true));
-        }
-        targetSelect.removeChild(targetOptionTemplate);
-        BasePO.setSelected(queryMenu.getElementTarget(), prefTrgLang);
-
-        // Add the menu to the Page
-        layout.getElementMenuColumn().appendChild(layout.importNode(queryMenu.getElementQueryMenu(), true));
-    }
-
-
-    /**
-     *  Description of the Method
-     *
-     * @param  comms
-     *      Description of the Parameter
-     * @param  sessionData
-     *      Description of the Parameter
-     * @exception  com.lutris.appserver.server.httpPresentation.HttpPresentationException
-     *      Description of the Exception
-     */
-    protected void handleLexieMenu(HttpPresentationComms comms, PapillonSessionData sessionData)
-             throws com.lutris.appserver.server.httpPresentation.HttpPresentationException {
-        // If the user is logged in add the lexie menu
-        User myUser = sessionData.getUser();
-        if (null != myUser && !myUser.IsEmpty()) {
-            LexiesManagementXHTML lexiesMenu = (LexiesManagementXHTML) MultilingualXHtmlTemplateFactory.createTemplate("LexiesManagementXHTML", comms, sessionData);
-            layout.getElementMenuColumn().appendChild(layout.importNode(lexiesMenu.getElementLexiesManagement(), true));
-        }
-    }
-
-
-    /**
-     *  Description of the Method
-     *
-     * @param  comms
-     *      Description of the Parameter
-     * @param  sessionData
-     *      Description of the Parameter
-     * @exception  com.lutris.appserver.server.httpPresentation.HttpPresentationException
-     *      Description of the Exception
-     */
-    protected void handleAxieMenu(HttpPresentationComms comms, PapillonSessionData sessionData)
-             throws com.lutris.appserver.server.httpPresentation.HttpPresentationException {
-        // If the user is logged in add the lexie menu
-        User myUser = sessionData.getUser();
-        if (null != myUser && !myUser.IsEmpty()) {
-            AxiesManagementXHTML axiesMenu = (AxiesManagementXHTML) MultilingualXHtmlTemplateFactory.createTemplate("AxiesManagementXHTML", comms, sessionData);
-            layout.getElementMenuColumn().appendChild(layout.importNode(axiesMenu.getElementAxiesManagement(), true));
-        }
-    }
-
-
-    /**
-     *  Description of the Method
-     *
-     * @param  comms
-     *      Description of the Parameter
-     * @param  sessionData
-     *      Description of the Parameter
-     * @exception  com.lutris.appserver.server.httpPresentation.HttpPresentationException
-     *      Description of the Exception
-     */
-    protected void handleReviewerMenu(HttpPresentationComms comms, PapillonSessionData sessionData)
-             throws com.lutris.appserver.server.httpPresentation.HttpPresentationException {
-        // If the user is not a specialist reviewer
-        User myUser = sessionData.getUser();
-        if (null != myUser && !myUser.IsEmpty() && myUser.IsSpecialist()) {
-            ReviewerMenuXHTML reviewerMenu = (ReviewerMenuXHTML) MultilingualXHtmlTemplateFactory.createTemplate("ReviewerMenuXHTML", comms, sessionData);
-            layout.getElementMenuColumn().appendChild(layout.importNode(reviewerMenu.getElementReviewerMenu(), true));
-        }
-    }
-
-
-    /**
-     *  Description of the Method
-     *
-     * @param  comms
-     *      Description of the Parameter
-     * @param  sessionData
-     *      Description of the Parameter
-     * @exception  com.lutris.appserver.server.httpPresentation.HttpPresentationException
-     *      Description of the Exception
-     */
-    protected void handleAdministratorMenu(HttpPresentationComms comms, PapillonSessionData sessionData)
-             throws com.lutris.appserver.server.httpPresentation.HttpPresentationException {
-        // If the user is not a specialist reviewer
-        User myUser = sessionData.getUser();
-        if (null != myUser && !myUser.IsEmpty() && myUser.IsAdmin()) {
-            AdministrationMenuXHTML adminMenu = (AdministrationMenuXHTML) MultilingualXHtmlTemplateFactory.createTemplate("AdministrationMenuXHTML", comms, sessionData);
-            layout.getElementMenuColumn().appendChild(layout.importNode(adminMenu.getElementAdministrationMenu(), true));
-        }
-    }
+    public Document getLayout();
+    
+    public Node getContentPlaceHolder();
 
 }

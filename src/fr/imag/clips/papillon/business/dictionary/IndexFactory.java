@@ -3,6 +3,15 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.8  2005/05/24 12:51:21  serasset
+ * Updated many aspect of the Papillon project to handle lexalp project.
+ * 1. Layout is now parametrable in the application configuration file.
+ * 2. Notion of QueryResult has been defined to handle mono/bi and multi lingual dictionary requests
+ * 3. Result presentation may be done by way of standard xsl or with any class implementing the appropriate interface.
+ * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
+ * 5. It is now possible to give a name to the cookie key in the app conf file
+ * 6. Several bug fixes.
+ *
  * Revision 1.7  2005/04/18 13:22:47  mangeot
  * Fixed a bug with the strategy
  *
@@ -148,33 +157,63 @@ public class IndexFactory {
 		return theEntries;
 	}
 	
-	protected static Vector getAxiesVector(Dictionary dict, Volume volume, String id) throws PapillonBusinessException {
+    // FIXME: dict is not used ! (maybe due to the fact that findAnswerByHandle does not ask for it.)
+	protected static Vector getAxiesPointingTo(Dictionary dict, Volume volume, String lexieId, String sourceLanguage) throws PapillonBusinessException {
 		Vector theEntries = new Vector();
 		
 		String cmp_op = QueryBuilder.EQUAL;
 		
-		if (id != null && !id.equals("")) {
+		if (lexieId != null && !lexieId.equals("")) {
 			try {
 				IndexQuery query = new IndexQuery(volume.getIndexDbname(), CurrentDBTransaction.get());
-				query.getQueryBuilder().addWhereClause(KEY_FIELD, Volume.CDM_entryId, QueryBuilder.EQUAL);
-				query.getQueryBuilder().addWhereClause(LANG_FIELD, Axie.LANG, QueryBuilder.EQUAL);
-				query.getQueryBuilder().addWhereClause(VALUE_FIELD, id, cmp_op);
+				query.getQueryBuilder().addWhereClause(KEY_FIELD, Volume.CDM_axiReflexie, QueryBuilder.EQUAL);
+				query.getQueryBuilder().addWhereClause(LANG_FIELD, sourceLanguage, QueryBuilder.EQUAL);
+				query.getQueryBuilder().addWhereClause(VALUE_FIELD, lexieId, cmp_op);
 				IndexDO[] DOarray = query.getDOArray();
 				if (null != DOarray) {
 					for (int j=0; j < DOarray.length; j++) {
 						Index myIndex = new Index(DOarray[j]);
-						Axie myAxie = PapillonPivotFactory.findAxieByHandle(dict, volume, myIndex.getEntryId());
+                        // FIXME: this findAnswer stuff is just here to let a chance searchin g for the element in the axies tables.
+                        // FIXME: soon, this will only be a findEntryByHandle...
+						IAnswer myAxie = DictionariesFactory.findAnswerByHandle(volume.getName(), myIndex.getEntryId());
 						theEntries.add(myAxie);
 					}
 				}
 			}
 			catch(Exception ex) {
-				throw new PapillonBusinessException("Exception in getAxiesVector()", ex);
+				throw new PapillonBusinessException("Exception in getAxiesPointingTo()", ex);
 			}
 		}
 		return theEntries;
 	}
-	
+    
+//    // FIXME: dict is not used ! 
+//    protected static Vector getLexieIdsPointedBy(Dictionary dict, Volume volume, String axieId, String targetLanguage) throws PapillonBusinessException {
+//		Vector theEntries = new Vector();
+//		
+//		String cmp_op = QueryBuilder.EQUAL;
+//		
+//		if (axieId != null && !axieId.equals("")) {
+//			try {
+//				IndexQuery query = new IndexQuery(volume.getIndexDbname(), CurrentDBTransaction.get());
+//				query.getQueryBuilder().addWhereClause(KEY_FIELD, Volume.CDM_axiReflexie, QueryBuilder.EQUAL);
+//				query.getQueryBuilder().addWhereClause(LANG_FIELD, targetLanguage, QueryBuilder.EQUAL);
+//				query.getQueryBuilder().addWhereClause(ENTRYID_FIELD, axieId, cmp_op);
+//				IndexDO[] DOarray = query.getDOArray();
+//				if (null != DOarray) {
+//					for (int j=0; j < DOarray.length; j++) {
+//						Index myIndex = new Index(DOarray[j]);
+//						theEntries.add(myIndex.getEntryId());
+//					}
+//				}
+//			}
+//			catch(Exception ex) {
+//				throw new PapillonBusinessException("Exception in getAxiesPointingTo()", ex);
+//			}
+//		}
+//		return theEntries;
+//	}
+    
 	protected static Vector getIndexVectorByEntryId(Volume volume, String entryId) throws PapillonBusinessException {
 		Vector theIndex = new Vector();
 		

@@ -9,6 +9,15 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2005/05/24 12:51:21  serasset
+ * Updated many aspect of the Papillon project to handle lexalp project.
+ * 1. Layout is now parametrable in the application configuration file.
+ * 2. Notion of QueryResult has been defined to handle mono/bi and multi lingual dictionary requests
+ * 3. Result presentation may be done by way of standard xsl or with any class implementing the appropriate interface.
+ * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
+ * 5. It is now possible to give a name to the cookie key in the app conf file
+ * 6. Several bug fixes.
+ *
  * Revision 1.3  2005/04/11 12:29:59  mangeot
  * Merge between the XPathAndMultipleKeys branch and the main trunk
  *
@@ -100,7 +109,7 @@ public class Group {
 			this.myDO = theGroup;
 		}
 	
-	public boolean IsEmpty() {
+	public boolean isEmpty() {
 		return (this.myDO==null) ;
 	}
 	
@@ -232,14 +241,14 @@ public class Group {
 	
 	public void addUser(String user)
 		throws PapillonBusinessException {
-			if (!IsInGroup(user)) {
+			if (!isInGroup(user)) {
 				addNewUser(user);
 			}
 		}
 				
 				public void removeUser(String user)
 		throws PapillonBusinessException {
-			if (IsInGroup(user)) {
+			if (isInGroup(user)) {
 				String[] users = getAdminsArray();
 				String newUsers = "";
 				for (int i=0;i< users.length;i++) {
@@ -254,7 +263,7 @@ public class Group {
 	
 	
 	
-	public boolean IsInGroup(String user)
+	public boolean isInGroup(String user)
 		throws PapillonBusinessException {
             String[] Users = getUsersArray();
             boolean is = false;
@@ -330,14 +339,14 @@ public class Group {
 	
 	public void addAdmin(String user)
 		throws PapillonBusinessException {
-			if (!IsAdmin(user)) {
+			if (!isAdmin(user)) {
 				addNewAdmin(user);
 			}
 		}
 	
 				public void removeAdmin(String user)
 		throws PapillonBusinessException {
-			if (IsAdmin(user)) {
+			if (isAdmin(user)) {
 				String[] users = getAdminsArray();
 				String newUsers = "";
 				for (int i=0;i< users.length;i++) {
@@ -350,7 +359,7 @@ public class Group {
 			}
 		}
 	
-	public boolean IsAdmin(String user)
+	public boolean isAdmin(String user)
 		throws PapillonBusinessException {
             String[] Users = getAdminsArray();
             boolean is = false;

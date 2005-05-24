@@ -9,6 +9,15 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.9  2005/05/24 12:51:22  serasset
+ * Updated many aspect of the Papillon project to handle lexalp project.
+ * 1. Layout is now parametrable in the application configuration file.
+ * 2. Notion of QueryResult has been defined to handle mono/bi and multi lingual dictionary requests
+ * 3. Result presentation may be done by way of standard xsl or with any class implementing the appropriate interface.
+ * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
+ * 5. It is now possible to give a name to the cookie key in the app conf file
+ * 6. Several bug fixes.
+ *
  * Revision 1.8  2005/04/15 12:08:30  mangeot
  * *** empty log message ***
  *
@@ -100,7 +109,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.dom.DOMResult;
 
 
-public class AdminContributions extends BasePO {
+public class AdminContributions extends PapillonBasePO {
 	
     protected final static int MaxDisplayedEntries= 5;
 	
@@ -122,8 +131,8 @@ public class AdminContributions extends BasePO {
         return true;
     }
 	
-    protected boolean adminUserRequired() {
-        return false;
+    protected boolean userMayUseThisPO() {
+        return true;
     }
     
     protected  int getCurrentSection() {
@@ -217,7 +226,7 @@ public class AdminContributions extends BasePO {
 			if (null != Contribs && Contribs.length>0) {
 				for (int i=0;i<Contribs.length;i++) {
 					Contribution myContrib = Contribs[i];
-					if (null != myContrib && !myContrib.IsEmpty()) {
+					if (null != myContrib && !myContrib.isEmpty()) {
 						myContrib.save();
 						userMessage = "Contribution from " + myContrib.getAuthor() +
 							" on volume " + volumeString +
@@ -232,12 +241,12 @@ public class AdminContributions extends BasePO {
 		}
 		else if (null != req.getParameter(REMOVE_CONTRIB_PARAMETER)) {
 			Contribution myContrib = ContributionsFactory.findContributionByHandle(entryid);
-			if (null != myContrib && !myContrib.IsEmpty()) {
+			if (null != myContrib && !myContrib.isEmpty()) {
 				volumeString = myContrib.getVolumeName();
 				// we delete the entry related to the contrib
 				IAnswer myAnswer = VolumeEntriesFactory.findEntryByEntryId(myContrib.getVolumeName(),myContrib.getEntryId());
 				if (myAnswer != null && 
-					!myAnswer.IsEmpty() && 
+					!myAnswer.isEmpty() && 
 					myAnswer.getType()==IAnswer.LocalEntry && 
 					myAnswer.getVolumeName().equals(PapillonPivotFactory.VOLUMENAME)) {
 					PapillonPivotFactory.deleteLinksInAxies(myAnswer,this.getUser());
@@ -252,7 +261,7 @@ public class AdminContributions extends BasePO {
 		else if (null != req.getParameter(MARK_FINISHED_PARAMETER)) {
 				if (entryid !=null && !entryid.equals("")) {
 					Contribution myContrib = ContributionsFactory.findContributionByHandle(entryid);
-					if (null != myContrib && !myContrib.IsEmpty()
+					if (null != myContrib && !myContrib.isEmpty()
 					&& null != myContrib.getStatus() && myContrib.getStatus().equals(Contribution.NOT_FINISHED_STATUS)) {
 						VolumeEntry myEntry = VolumeEntriesFactory.findEntryByEntryId(myContrib.getVolumeName(),myContrib.getEntryId());
 						//Adding modifications in the XML code
@@ -289,7 +298,7 @@ public class AdminContributions extends BasePO {
 			// Adding the user name
 			User user = getUser();
 			
-			if (null != user && !user.IsEmpty()) {
+			if (null != user && !user.isEmpty()) {
 				content.setTextUserName(user.getName());
 			}
 			
@@ -320,8 +329,8 @@ public class AdminContributions extends BasePO {
 			volumeSelect.removeChild(volumeOptionTemplate);
 			
 			
-		HTMLInputElement headwordInput = content.getElementHEADWORD();
-		headwordInput.setValue(headword);
+		//HTMLInputElement headwordInput = content.getElementHEADWORD();
+		//headwordInput.setValue(headword);
 		
 		if (strategy !=null && !strategy.equals("")) {
 			HTMLInputElement strategyInput = content.getElementPartialMatch();
@@ -364,7 +373,7 @@ public class AdminContributions extends BasePO {
                     for(int i = 0; i < ContribVector.size(); i++) {
                         Contribution myContrib = (Contribution)ContribVector.get(i);
 						IAnswer myAnswer = VolumeEntriesFactory.findEntryByEntryId(myContrib.getVolumeName(),myContrib.getEntryId());
-						if (myAnswer!=null && !myAnswer.IsEmpty()) {
+						if (myAnswer!=null && !myAnswer.isEmpty()) {
 							addElement(XslTransformation.applyXslSheets(myAnswer, xslid));
 						}
 					}
@@ -433,13 +442,13 @@ public class AdminContributions extends BasePO {
 					Contribution myContrib = (Contribution) ContribVector.elementAt(i);
 					
 					// view contrib
-					if (myContrib!=null && !myContrib.IsEmpty()) {
+					if (myContrib!=null && !myContrib.isEmpty()) {
 						VolumeEntry myEntry = VolumeEntriesFactory.findEntryByEntryId(myContrib.getVolumeName(),myContrib.getEntryId());
 
 					// FIXME: hack for the GDEF estonian volume
 						String headword = myContrib.getHeadword();
 						if (myContrib.getVolumeName().equals("GDEF_est")) {
-							if (myEntry!=null && !myEntry.IsEmpty()) {
+							if (myEntry!=null && !myEntry.isEmpty()) {
 								String particule = myEntry.getParticule();
 								if(particule!=null && !particule.equals("")) {
 									headword = particule + " " + headword;
@@ -475,7 +484,7 @@ public class AdminContributions extends BasePO {
 						// view XML
 						XslSheet xmlSheet = XslSheetFactory.findXslSheetByName("XML");
 						String xslid = "";
-						if (null != xmlSheet && !xmlSheet.IsEmpty()) {
+						if (null != xmlSheet && !xmlSheet.isEmpty()) {
 							xslid = xmlSheet.getHandle();
 						} 
 						
@@ -494,7 +503,7 @@ public class AdminContributions extends BasePO {
 							
 						}
 						else {
-							if (myEntry!=null && !myEntry.IsEmpty()) {
+							if (myEntry!=null && !myEntry.isEmpty()) {
 								editContribAnchor.setHref(EditURL + "?"
 													  + EditVolumeParameter + "="
 													  + myContrib.getVolumeName() + "&"

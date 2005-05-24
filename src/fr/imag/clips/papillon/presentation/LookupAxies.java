@@ -9,6 +9,15 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2005/05/24 12:51:22  serasset
+ * Updated many aspect of the Papillon project to handle lexalp project.
+ * 1. Layout is now parametrable in the application configuration file.
+ * 2. Notion of QueryResult has been defined to handle mono/bi and multi lingual dictionary requests
+ * 3. Result presentation may be done by way of standard xsl or with any class implementing the appropriate interface.
+ * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
+ * 5. It is now possible to give a name to the cookie key in the app conf file
+ * 6. Several bug fixes.
+ *
  * Revision 1.3  2005/04/11 08:01:02  fbrunet
  * Passage en xhtml des ressources Papillon.
  *
@@ -77,7 +86,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.dom.DOMResult;
 
 
-public class LookupAxies extends BasePO {
+public class LookupAxies extends PapillonBasePO {
 
     protected final static int MaxDisplayedEntries= 5;
 
@@ -91,8 +100,8 @@ public class LookupAxies extends BasePO {
         return true;
     }
 
-    protected boolean adminUserRequired() {
-        return false;
+    protected boolean userMayUseThisPO() {
+        return true;
     }
 
     protected  int getCurrentSection() {
@@ -168,7 +177,7 @@ public class LookupAxies extends BasePO {
             // Add Axie in XML
             if (null != req.getParameter(VIEW_AXIE_PARAMETER) &&
                 myAxie !=null &&
-                !myAxie.IsEmpty()) {
+                !myAxie.isEmpty()) {
                 addXml(myAxie.getXmlCode());
             }
 
@@ -241,7 +250,7 @@ public class LookupAxies extends BasePO {
 					
                     XslSheet xmlSheet = XslSheetFactory.findXslSheetByName("XML");
                     String xslid = "";
-                    if (null != xmlSheet && !xmlSheet.IsEmpty()) {
+                    if (null != xmlSheet && !xmlSheet.isEmpty()) {
                         xslid = xmlSheet.getHandle();
                     }
 

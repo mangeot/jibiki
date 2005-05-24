@@ -44,7 +44,7 @@ import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
 
-public class Register extends BasePO{
+public class Register extends PapillonBasePO {
 
 
     protected static RegisterXHTML content;
@@ -56,8 +56,8 @@ public class Register extends BasePO{
         return false;
     }
 
-    protected boolean adminUserRequired() {
-        return false;
+    protected boolean userMayUseThisPO() {
+        return true;
     }
     
     protected  int getCurrentSection() {
@@ -101,7 +101,7 @@ public class Register extends BasePO{
                 
                 userMessage = myUserAnswer.getMessage();
 
-                if (!myUserAnswer.IsEmpty()) {
+                if (!myUserAnswer.isEmpty()) {
                     this.setUser(myUserAnswer.getUser());
                     throw new ClientPageRedirectException(Dest);
                 }

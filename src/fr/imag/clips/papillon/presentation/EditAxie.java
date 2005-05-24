@@ -10,6 +10,15 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.7  2005/05/24 12:51:22  serasset
+ * Updated many aspect of the Papillon project to handle lexalp project.
+ * 1. Layout is now parametrable in the application configuration file.
+ * 2. Notion of QueryResult has been defined to handle mono/bi and multi lingual dictionary requests
+ * 3. Result presentation may be done by way of standard xsl or with any class implementing the appropriate interface.
+ * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
+ * 5. It is now possible to give a name to the cookie key in the app conf file
+ * 6. Several bug fixes.
+ *
  * Revision 1.6  2005/04/13 15:47:41  mangeot
  * *** empty log message ***
  *
@@ -74,7 +83,7 @@ import fr.imag.clips.papillon.business.user.User;
 import fr.imag.clips.papillon.business.utility.Utility;
 
 
-public class EditAxie extends BasePO {
+public class EditAxie extends PapillonBasePO {
 
     protected final static String ContributionsURL = "AdminContributions.po";
     protected final static String ContributionsVolumeParameter = "VOLUME";
@@ -97,8 +106,8 @@ public class EditAxie extends BasePO {
         return true;
     }
 
-    protected boolean adminUserRequired() {
-        return false;
+    protected boolean userMayUseThisPO() {
+        return true;
     }
 
     protected  int getCurrentSection() {
@@ -234,12 +243,12 @@ public class EditAxie extends BasePO {
 				if (axieFound) {
 					boolean myPreviousContrib = false;
 					Axie myAxie = (Axie) ContributionsFactory.myFirstContribution(axies,myUser);
-					if (myAxie!=null && !myAxie.IsEmpty()) {
+					if (myAxie!=null && !myAxie.isEmpty()) {
 						myPreviousContrib = true;
 					}
 					else {
 						myAxie = (Axie) ContributionsFactory.myFirstGroupContribution(axies,myUser);
-						if (myAxie==null || myAxie.IsEmpty()) {
+						if (myAxie==null || myAxie.isEmpty()) {
 							myAxie= (Axie) axies.iterator().next();
 						}
 					}
@@ -349,11 +358,11 @@ public class EditAxie extends BasePO {
 			Collection EntryVector2 = new Vector();
 			
 			IAnswer myAnswer1 = (IAnswer)DictionariesFactory.findAnswerByHandle(volumeName1, handle1);
-			if (myAnswer1 != null && !myAnswer1.IsEmpty()) {
+			if (myAnswer1 != null && !myAnswer1.isEmpty()) {
 				EntryVector1.add(myAnswer1);
 			}
 			IAnswer myAnswer2 = (IAnswer)DictionariesFactory.findAnswerByHandle(volumeName2, handle2);
-			if (myAnswer2 != null && !myAnswer2.IsEmpty()) {
+			if (myAnswer2 != null && !myAnswer2.isEmpty()) {
 				EntryVector2.add(myAnswer2);
 			}
 			addEntriesTable(EntryVector1, EntryVector2, true);

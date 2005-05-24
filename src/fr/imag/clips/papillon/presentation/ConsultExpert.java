@@ -10,6 +10,15 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.14  2005/05/24 12:51:22  serasset
+ *  Updated many aspect of the Papillon project to handle lexalp project.
+ *  1. Layout is now parametrable in the application configuration file.
+ *  2. Notion of QueryResult has been defined to handle mono/bi and multi lingual dictionary requests
+ *  3. Result presentation may be done by way of standard xsl or with any class implementing the appropriate interface.
+ *  4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
+ *  5. It is now possible to give a name to the cookie key in the app conf file
+ *  6. Several bug fixes.
+ *
  *  Revision 1.13  2005/04/20 10:51:14  mangeot
  *  Correction de AddDirectTranslations
  *
@@ -133,7 +142,7 @@ import fr.imag.clips.papillon.presentation.xhtml.orig.*;
  * @author     serasset
  * @created    December 17, 2004
  */
-public class ConsultExpert extends BasePO {
+public class ConsultExpert extends PapillonBasePO {
 
     /**
      *  Description of the Field
@@ -287,8 +296,8 @@ public class ConsultExpert extends BasePO {
      *
      * @return    Description of the Return Value
      */
-    protected boolean adminUserRequired() {
-        return false;
+    protected boolean userMayUseThisPO() {
+        return true;
     }
 
 
@@ -754,11 +763,11 @@ public class ConsultExpert extends BasePO {
      * @exception  java.io.UnsupportedEncodingException  Description of the
      *      Exception
      */
-    protected void addEntryTable(Collection EntryCollection, String[] targets, int offset)
+    protected void addEntryTable(Collection qrset, String[] targets, int offset)
              throws PapillonBusinessException,
             java.io.UnsupportedEncodingException {
 
-        PapillonLogger.writeDebugMsg("addEntryTable, size: " + EntryCollection.size());
+        PapillonLogger.writeDebugMsg("addEntryTable, size: " + qrset.size());
         // On récupère les éléments du layout
         XHTMLTableRowElement entryListRow = content.getElementEntryListRow();
         XHTMLElement vocable = content.getElementVocable();
@@ -789,7 +798,7 @@ public class ConsultExpert extends BasePO {
         previousEntriesAnchor.removeAttribute("id");
         nextEntriesAnchor.removeAttribute("id");
 		
-		content.setTextEntryNumber(""+EntryCollection.size());
+		content.setTextEntryNumber(""+qrset.size());
 		
 		
         String href = this.getUrl() + "?"
@@ -816,9 +825,10 @@ public class ConsultExpert extends BasePO {
 
         // On récupère le noeud contenant la table...
         Node lexieTable = entryListRow.getParentNode();
-        if (null != EntryCollection) {
-            for (Iterator myIterator = EntryCollection.iterator(); myIterator.hasNext(); ) {
-                IAnswer myEntry = (IAnswer) myIterator.next();
+        if (null != qrset) {
+            for (Iterator myIterator = qrset.iterator(); myIterator.hasNext(); ) {
+                QueryResult myQueryResult = (QueryResult) myIterator.next();
+                VolumeEntry myEntry = myQueryResult.getSourceEntry();
 
                 // Le vocable
                 content.setTextVocable(myEntry.getHeadword());
@@ -836,24 +846,34 @@ public class ConsultExpert extends BasePO {
                          + content.NAME_lookup + "="
                          + content.NAME_lookup;
                 entryAnchor.setHref(href);
+                
+                // FIXME: is this usefull, shouldn't id be always defined for a db entry...
+                String id = myEntry.getId();
+                if (id == null) {
+                    id = "";
+                }
+                
                 content.setTextEntryIdList(myEntry.getId());
 
                 // The contribution
-                if (myEntry.getType() == IAnswer.Contribution) {
-                    Contribution myContrib = (Contribution) myEntry;
-
-                    String contribHref = ContributionsURL + "?"
-                             + ContributionsVolumeParameter + "="
-                             + myEntry.getVolumeName();
-                    contribAnchor.setHref(contribHref);
-
-                    content.setTextContribution(myContrib.getCreationDate() + " " + myContrib.getHandle());
-                } else {
-                    content.setTextContribution("");
-                }
+                // FIXME: seems to be incompatible with current contrib stuff...
+//                if (myEntry.getType() == IAnswer.Contribution) {
+//                    Contribution myContrib = (Contribution) myEntry;
+//
+//                    String contribHref = ContributionsURL + "?"
+//                             + ContributionsVolumeParameter + "="
+//                             + myEntry.getVolumeName();
+//                    contribAnchor.setHref(contribHref);
+//
+//                    content.setTextContribution(myContrib.getCreationDate() + " " + myContrib.getHandle());
+//                } else {
+//                    content.setTextContribution("");
+//                }
 
                 // Le pos
                 String posstr = null;
+                
+                // FIXME: Apparently, volumeEntries ALWAYS return LocalEntry.... can we have remote entries here ?
                 if (myEntry.getType() == IAnswer.LocalEntry) {
 					posstr = ((VolumeEntry) myEntry).getPos();
                 }
@@ -866,6 +886,7 @@ public class ConsultExpert extends BasePO {
                 content.setTextDictionaryName(myEntry.getDictionaryName());
 
                 // The formula
+                // FIXME: Apparently, volumeEntries ALWAYS return LocalEntry.... can we have remote entries here ?
                  if (myEntry.getType() == IAnswer.LocalEntry) {
 					 content.setTextFormula(((VolumeEntry) myEntry).getDefinition());
                 }
@@ -873,6 +894,7 @@ public class ConsultExpert extends BasePO {
                 XHTMLElement cloneEntry = (XHTMLElement) entryListRow.cloneNode(true);
                 XHTMLElement cloneFormula = (XHTMLElement) formulaRow.cloneNode(true);
                 //      we have to take off the id attribute because we did not take it off the original
+                // FIXME: why did we not tae it off in the original ?
                 cloneEntry.removeAttribute("id");
                 cloneFormula.removeAttribute("id");
                 lexieTable.appendChild(cloneEntry);
@@ -924,7 +946,7 @@ public class ConsultExpert extends BasePO {
                 content.setTextFoksEntry(headword);
                 String myWriting = "";
                 VolumeEntry myWritingEntry = VolumeEntriesFactory.getJMDictVolumeEntry(headword);
-                if (myWritingEntry != null && !myWritingEntry.IsEmpty()) {
+                if (myWritingEntry != null && !myWritingEntry.isEmpty()) {
                     //NOTE: I store the writing of the Japanese entries in the Key1 field.
                     // The reading field is used for transcriptions like romaji
 					myWriting = ParseVolume.getCdmString(myWritingEntry,Volume.CDM_writing,"jpn");
@@ -977,13 +999,13 @@ public class ConsultExpert extends BasePO {
             Vector xslList = new Vector();
 
             XslSheet myXmlSheet = XslSheetFactory.findXslSheetByName("XML");
-            if (myXmlSheet != null && !myXmlSheet.IsEmpty()) {
+            if (myXmlSheet != null && !myXmlSheet.isEmpty()) {
                 xslList.add(myXmlSheet);
             }
             // FIXME: We have too much XslSheets so I put only XML and DEC
             // but it should not be hardcoded!
             XslSheet myDECSheet = XslSheetFactory.findXslSheetByName("DEC");
-            if (myDECSheet != null && !myDECSheet.IsEmpty()) {
+            if (myDECSheet != null && !myDECSheet.isEmpty()) {
                 xslList.add(myDECSheet);
             }
             // size + 1 for the default xsl sheet
@@ -1004,8 +1026,8 @@ public class ConsultExpert extends BasePO {
             Document theDoc = stylesheetRow.getOwnerDocument();
 
             // default XSL = null !
-            Element cell = theDoc.createElement("TD");
-            Element anchor = theDoc.createElement("A");
+            Element cell = theDoc.createElement("td");
+            Element anchor = theDoc.createElement("a");
             Text xslName = theDoc.createTextNode("Default");
             anchor.setAttribute("href", this.getUrl() + "?" +
                     VOLUME_PARAMETER + "=" + volume + "&" +
@@ -1020,8 +1042,8 @@ public class ConsultExpert extends BasePO {
                 // Le nom de la stylesheet
                 String name = ((XslSheet) xslList.elementAt(i)).getName();
                 //creation de la data cell
-                cell = theDoc.createElement("TD");
-                anchor = theDoc.createElement("A");
+                cell = theDoc.createElement("td");
+                anchor = theDoc.createElement("a");
                 xslName = theDoc.createTextNode(name);
                 anchor.setAttribute("href", this.getUrl() + "?" +
                         VOLUME_PARAMETER + "=" + volume + "&" +
@@ -1061,7 +1083,7 @@ public class ConsultExpert extends BasePO {
             XHTMLTableRowElement originalEntryRow = content.getElementEntryRow();
             Node entryTable = originalEntryRow.getParentNode();
             //for the entry content
-
+            content.getElementResourceName().removeAttribute("id");
             content.setTextResourceName(resource);
 
             //for the lexie content
@@ -1107,7 +1129,7 @@ public class ConsultExpert extends BasePO {
              throws fr.imag.clips.papillon.business.PapillonBusinessException {
         if (EntryCollection != null && EntryCollection.size() > 0) {
             for (Iterator myIterator = EntryCollection.iterator(); myIterator.hasNext(); ) {
-				addEntry((IAnswer) myIterator.next(), xslid);
+				addEntry((QueryResult) myIterator.next(), xslid);
             }
         } else {
             Utility.removeElement(content.getElementEntryListTable());
@@ -1127,21 +1149,29 @@ public class ConsultExpert extends BasePO {
      * @exception  fr.imag.clips.papillon.business.PapillonBusinessException
      *      Description of the Exception
      */
-    protected void addEntry(IAnswer myEntry, String xslid)
+    protected void addEntry(QueryResult qr, String xslid)
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
-			org.w3c.dom.Element myHtmlElt = null;
-			org.w3c.dom.Document myHtmlDoc = myEntry.getHtmlDom();
-			if (xslid != null || myHtmlDoc == null) {
-				myHtmlElt = XslTransformation.applyXslSheets(myEntry, xslid);
-				myHtmlDoc = myHtmlElt.getOwnerDocument();
-				if (xslid == null) {
-					myEntry.setHtmlDom(myHtmlDoc);
-					((VolumeEntry)myEntry).saveHTML();
-				}
-			}
-			else {
-				myHtmlElt = myHtmlDoc.getDocumentElement();
-			}
+            VolumeEntry myEntry = qr.getSourceEntry();
+            // get the apropriate transformer.
+            ResultFormatter rf = ResultFormatterFactory.getFormatter(qr,ResultFormatterFactory.XHTML_DIALECT,null);
+            rf.initializeFormatter(qr.getSourceEntry().getDictionary(), qr.getSourceEntry().getVolume() ,ResultFormatterFactory.XHTML_DIALECT,null);
+            
+            Element myHtmlElt = (Element)rf.getFormattedResult(qr);
+            
+            
+//			org.w3c.dom.Element myHtmlElt = null;
+//			org.w3c.dom.Document myHtmlDoc = myEntry.getHtmlDom();
+//			if (xslid != null || myHtmlDoc == null) {
+//				myHtmlElt = XslTransformation.applyXslSheets(myEntry, xslid);
+//				myHtmlDoc = myHtmlElt.getOwnerDocument();
+//				if (xslid == null) {
+//					myEntry.setHtmlDom(myHtmlDoc);
+//					((VolumeEntry)myEntry).saveHTML();
+//				}
+//			}
+//			else {
+//				myHtmlElt = myHtmlDoc.getDocumentElement();
+//			}
 			addElement(myHtmlElt, myEntry.getVolumeName(), myEntry.getHandle(),  myEntry.getDictionaryName(), myEntry.getType());
 		}
 	

@@ -10,6 +10,15 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.11  2005/05/24 12:51:22  serasset
+ * Updated many aspect of the Papillon project to handle lexalp project.
+ * 1. Layout is now parametrable in the application configuration file.
+ * 2. Notion of QueryResult has been defined to handle mono/bi and multi lingual dictionary requests
+ * 3. Result presentation may be done by way of standard xsl or with any class implementing the appropriate interface.
+ * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
+ * 5. It is now possible to give a name to the cookie key in the app conf file
+ * 6. Several bug fixes.
+ *
  * Revision 1.10  2005/04/26 10:11:32  mangeot
  * *** empty log message ***
  *
@@ -105,7 +114,7 @@ import fr.imag.clips.papillon.business.xsl.XslSheetFactory;
 
 
 
-public class EditEntryInit extends BasePO {
+public class EditEntryInit extends PapillonBasePO {
 
     protected final static String HANDLE_PARAMETER = "handle";
 
@@ -129,8 +138,8 @@ public class EditEntryInit extends BasePO {
         return true;
     }
 
-    protected boolean adminUserRequired() {
-        return false;
+    protected boolean userMayUseThisPO() {
+        return true;
     }
 
     protected  int getCurrentSection() {
@@ -208,7 +217,7 @@ public class EditEntryInit extends BasePO {
 			myEntry = VolumeEntriesFactory.findEntryByHandle(volume, entryHandle);
 			// if myAnswer is contribution
 			myContrib = ContributionsFactory.findContributionByEntryId(myEntry.getId());
-			boolean isMyContrib =  (myContrib !=null && !myContrib.IsEmpty() && myContrib.getAuthor().equals(this.getUser().getLogin()));
+			boolean isMyContrib =  (myContrib !=null && !myContrib.isEmpty() && myContrib.getAuthor().equals(this.getUser().getLogin()));
 			
 			// if there is an existing contribution and it is myUser's one
 			if (isMyContrib) {
@@ -346,7 +355,7 @@ public class EditEntryInit extends BasePO {
 			
 			// The Contribution text and anchor
 			Contribution myContrib = ContributionsFactory.findContributionByEntryId(myEntry.getId());
-			boolean IsContrib = (myContrib != null && !myContrib.IsEmpty());
+			boolean IsContrib = (myContrib != null && !myContrib.isEmpty());
 			if (IsContrib) {
 					content.setTextContribution(new Boolean(IsContrib).toString() + " " + myContrib.getAuthor() + " " + myContrib.getCreationDate().toString());			
 			} 
@@ -373,7 +382,7 @@ public class EditEntryInit extends BasePO {
 		    // The view XML anchor
 			XslSheet xmlSheet = XslSheetFactory.findXslSheetByName("XML");
 			String xslid = "";
-			if (null != xmlSheet && !xmlSheet.IsEmpty()) {
+			if (null != xmlSheet && !xmlSheet.isEmpty()) {
 				xslid = xmlSheet.getHandle();
 			} 
 		    href = ConsultExpertURL + "?"

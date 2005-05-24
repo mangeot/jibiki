@@ -11,6 +11,15 @@ Id:
   
 Log:
    $Log$
+   Revision 1.10  2005/05/24 12:51:21  serasset
+   Updated many aspect of the Papillon project to handle lexalp project.
+   1. Layout is now parametrable in the application configuration file.
+   2. Notion of QueryResult has been defined to handle mono/bi and multi lingual dictionary requests
+   3. Result presentation may be done by way of standard xsl or with any class implementing the appropriate interface.
+   4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
+   5. It is now possible to give a name to the cookie key in the app conf file
+   6. Several bug fixes.
+
    Revision 1.9  2005/04/11 12:32:29  mangeot
    Merge between the XPathAndMultipleKeys branch and the trunk
 
@@ -64,6 +73,7 @@ Most useful targets:
 
   <!-- Set up application values -->
   <property name="project.name"    value="Papillon"/>
+  <property name="application.name"    value="Papillon"/>
   <property name="project.package" value="fr.imag.clips.papillon"/>
   <property name="project.version" value="1.6a"/>
   <property name="project.year"    value="2004"/>
@@ -192,6 +202,7 @@ Most useful targets:
  - gdef     -> create ./output for GDEF server
  - gquick   -> create ./output for GDEF server without using DODS.
 
+For Lexalp, call ant using -Dapplication.name=Lexalp 
     </echo>
   </target>
 
@@ -278,7 +289,7 @@ Most useful targets:
 
   <target name="xmlc" depends="prepare">
     <!-- Generate java classes with XMLC -->
-    <xmlc srcdir="${xmlcresources.dir}"
+    <!-- xmlc srcdir="${xmlcresources.dir}"
        sourceout="${dir.xmlc}"
        packagename="${project.package}.presentation"
        options="options.xmlc"
@@ -286,7 +297,7 @@ Most useful targets:
        includes="**/*.html">
      <arg value="-d" />
      <arg value="${dir.classes}" />
-   </xmlc>
+   </xmlc -->
    <!-- Generate xhtml java classes with XMLC -->
    <xmlc srcdir="${xmlcresources.dir}"
        sourceout="${dir.xmlc}"
@@ -356,6 +367,7 @@ Most useful targets:
   <!-- Prepare output files                                                -->
   <!-- =================================================================== -->
   <target name="output" depends="prepare">
+     <filter token="APPLICATION" value="${application.name}" />
      <filter token="ENHYDRA_PATH" value="${enhydra.dir}" />
      <filter token="JAVA_PATH"    value="${dir.java}" />
      <filter token="DEPLOY_PATH"  value="${dir.output}" />
@@ -471,7 +483,7 @@ Most useful targets:
   <target name="gdef" depends="gdefbefore,make,gdefafter"/>
   
   <target name="gquick" depends="gdefbefore,quick,gdefafter"/>
-
+  
   <!-- =================================================================== -->
   <!-- Clean everything                                                    -->
   <!-- =================================================================== -->

@@ -15,6 +15,8 @@ import fr.imag.clips.papillon.business.dictionary.Volume;
 import fr.imag.clips.papillon.business.utility.Utility;
 import fr.imag.clips.papillon.business.PapillonLogger;
 
+import fr.imag.clips.papillon.business.PapillonBusinessException;
+
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -32,7 +34,7 @@ public class UITemplates {
 	
 	// public methods
 	public static Element getInterface(String volumeName, String type, ArrayList languages) 
-		throws fr.imag.clips.papillon.business.PapillonBusinessException {
+		throws PapillonBusinessException {
 		PapillonLogger.writeDebugMsg("UITemplates.getInterface: volume: " +  volumeName + " type: " + type);
 		Element initElt = null;
 		Element resultElt = null;
@@ -82,7 +84,7 @@ public class UITemplates {
 			}
 		}
 		else {
-			PapillonLogger.writeDebugMsg("UITemplates.getInterface: volumeName is null");
+			throw new PapillonBusinessException("UITemplates.getInterface: volumeName is null");
 		}
 		if (resultElt == null) {
 			resultElt = initElt;
@@ -123,6 +125,9 @@ public class UITemplates {
 						langTable = new Hashtable();
 					}
 					String lang = myForm.getAttributeNS(DML_URI,"lang");
+                    if (null == lang || lang.equals("")) {
+                        lang = "default";
+                    }
 					langTable.put(lang, myForm);
 					typeTable.put(type,langTable);
 					String defaultForm = myForm.getAttribute("id");

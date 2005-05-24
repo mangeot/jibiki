@@ -1,0 +1,12 @@
+INSTALLING POSTGRESQL
+---------------------
+
+- Install postgresql 8.x
+- createdb with owner lexalp (pass specified in conf). ENCODING=UNICODE
+- Create database by evaluating SQLcreate.sql of dods_static generated files.
+- createlang -L /usr/local/pgsql/lib -d lexalp plpgsql
+- add multilingual sort functions by evaluating file ???
+
+- launch lexalp server
+
+- add XML stylesheet into the database

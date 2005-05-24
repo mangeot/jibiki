@@ -9,6 +9,15 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2005/05/24 12:51:22  serasset
+ * Updated many aspect of the Papillon project to handle lexalp project.
+ * 1. Layout is now parametrable in the application configuration file.
+ * 2. Notion of QueryResult has been defined to handle mono/bi and multi lingual dictionary requests
+ * 3. Result presentation may be done by way of standard xsl or with any class implementing the appropriate interface.
+ * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
+ * 5. It is now possible to give a name to the cookie key in the app conf file
+ * 6. Several bug fixes.
+ *
  * Revision 1.3  2005/04/11 08:01:02  fbrunet
  * Passage en xhtml des ressources Papillon.
  *
@@ -38,6 +47,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.Text;
 
 import fr.imag.clips.papillon.business.message.MessageDBLoader;
+import fr.imag.clips.papillon.business.PapillonBusinessException;
 
 import fr.imag.clips.papillon.presentation.PapillonSessionData;
 
@@ -60,7 +70,7 @@ import fr.imag.clips.papillon.business.transformation.*;
 import fr.imag.clips.papillon.business.PapillonLogger;
 
 
-public class AdminUsers extends BasePO {
+public class AdminUsers extends PapillonBasePO {
 
     protected final static String SEE_PARAMETER="See";
     protected final static String REMOVE_PARAMETER="Remove";
@@ -76,8 +86,13 @@ public class AdminUsers extends BasePO {
         return true;
     }
 
-    protected boolean adminUserRequired() {
-        return true;
+    protected boolean userMayUseThisPO() {
+        try {
+            return this.getUser().isAdmin();
+        } catch (PapillonBusinessException ex) {
+            this.getSessionData().writeUserMessage("Error getting the authorisation to use this PO.");
+        }
+        return false;
     }
 
     protected  int getCurrentSection() {
@@ -104,7 +119,7 @@ public class AdminUsers extends BasePO {
             String userMessage = null;
             if (null != myGetParameter(REMOVE_PARAMETER)) {
                 User myUser = UsersFactory.findUserById(myGetParameter(REMOVE_PARAMETER));
-								if (myUser !=null && !myUser.IsEmpty()) {
+								if (myUser !=null && !myUser.isEmpty()) {
 									String userName = myUser.getName();
 									myUser.delete();
 									userMessage = "User "+  userName + " has been deleted";
@@ -115,7 +130,7 @@ public class AdminUsers extends BasePO {
             }
             else if (null != myGetParameter(MAKEADMIN_PARAMETER)) {
                 User myUser = UsersFactory.findUserById(myGetParameter(MAKEADMIN_PARAMETER));
-                if (null != myUser && !myUser.IsEmpty()) {
+                if (null != myUser && !myUser.isEmpty()) {
                     myUser.addGroup(User.ADMIN_GROUP);
                     myUser.save();
                     userMessage = "User "+ myUser.getName() + " is admin";
@@ -125,7 +140,7 @@ public class AdminUsers extends BasePO {
             }
             else if (null != myGetParameter(RESETPASSWORD_PARAMETER)) {
                 User myUser = UsersFactory.findUserById(myGetParameter(RESETPASSWORD_PARAMETER));
-                if (null != myUser && !myUser.IsEmpty()) {
+                if (null != myUser && !myUser.isEmpty()) {
                     myUser.setPassword(myUser.getLogin());
                     myUser.save();
                     userMessage = "User "+ myUser.getName() + " has a new password with the login " + myUser.getLogin() + " for value";
@@ -135,7 +150,7 @@ public class AdminUsers extends BasePO {
             }
             else if (null != myGetParameter(MAKESPECIALIST_PARAMETER)) {
                 User myUser = UsersFactory.findUserById(myGetParameter(MAKESPECIALIST_PARAMETER));
-                if (null != myUser && !myUser.IsEmpty()) {
+                if (null != myUser && !myUser.isEmpty()) {
                     myUser.addGroup(User.SPECIALIST_GROUP);
                     myUser.save();
                     userMessage = "User "+ myUser.getName() + " is a specialist";

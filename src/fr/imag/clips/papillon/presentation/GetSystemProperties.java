@@ -9,6 +9,15 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2005/05/24 12:51:22  serasset
+ * Updated many aspect of the Papillon project to handle lexalp project.
+ * 1. Layout is now parametrable in the application configuration file.
+ * 2. Notion of QueryResult has been defined to handle mono/bi and multi lingual dictionary requests
+ * 3. Result presentation may be done by way of standard xsl or with any class implementing the appropriate interface.
+ * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
+ * 5. It is now possible to give a name to the cookie key in the app conf file
+ * 6. Several bug fixes.
+ *
  * Revision 1.3  2005/04/11 08:01:02  fbrunet
  * Passage en xhtml des ressources Papillon.
  *
@@ -40,6 +49,7 @@ import fr.imag.clips.papillon.business.message.MessageDBLoader;
 
 // Standard imports
 import java.io.IOException;
+import fr.imag.clips.papillon.business.PapillonBusinessException;
 
 import java.lang.System;
 import java.util.Properties;
@@ -47,14 +57,19 @@ import java.util.Enumeration;
 
 import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
-public class GetSystemProperties extends BasePO {
+public class GetSystemProperties extends PapillonBasePO {
 
     protected boolean loggedInUserRequired() {
         return true;
     }
 
-    protected boolean adminUserRequired() {
-        return true;
+    protected boolean userMayUseThisPO() {
+        try {
+            return this.getUser().isAdmin();
+        } catch (PapillonBusinessException ex) {
+            this.getSessionData().writeUserMessage("Error getting the authorisation to use this PO.");
+        }
+        return false;
     }
     
     protected  int getCurrentSection() {

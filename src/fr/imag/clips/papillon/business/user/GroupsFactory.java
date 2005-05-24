@@ -3,6 +3,15 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2005/05/24 12:51:22  serasset
+ * Updated many aspect of the Papillon project to handle lexalp project.
+ * 1. Layout is now parametrable in the application configuration file.
+ * 2. Notion of QueryResult has been defined to handle mono/bi and multi lingual dictionary requests
+ * 3. Result presentation may be done by way of standard xsl or with any class implementing the appropriate interface.
+ * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
+ * 5. It is now possible to give a name to the cookie key in the app conf file
+ * 6. Several bug fixes.
+ *
  * Revision 1.3  2005/04/11 12:29:59  mangeot
  * Merge between the XPathAndMultipleKeys branch and the main trunk
  *
@@ -69,7 +78,7 @@ public class GroupsFactory{
         else {
             //search for an existing user
             Group Existe=GroupsFactory.findGroupByName(name);
-            if (!Existe.IsEmpty()) {
+            if (!Existe.isEmpty()) {
                 answerMessage = "Group " + name + " already in the database";
             }
 			else {//doesn't exist, create:
@@ -142,7 +151,7 @@ public class GroupsFactory{
         else {
             //search for an existing group
             Group Existe=GroupsFactory.findGroupByName(name);
-            if (!Existe.IsEmpty()) {
+            if (!Existe.isEmpty()) {
                 answerMessage = "Group " + name + " already in the database";
             }
             else {//doesn't exist, create:
@@ -179,7 +188,7 @@ public class GroupsFactory{
         else {
             //search for an existing group
             myGroup = GroupsFactory.findGroupByName(name);
-            if (myGroup.IsEmpty()) {
+            if (myGroup.isEmpty()) {
                 answerMessage = "Group " + name + " not in the database";
             }
             else {
@@ -207,7 +216,7 @@ public class GroupsFactory{
 		String answerMessage = "";
 
 		//search for an existing group
-		if (myGroup.IsEmpty()) {
+		if (myGroup.isEmpty()) {
 			answerMessage = "Group not in the database";
 		}
 		else {
@@ -232,7 +241,7 @@ public class GroupsFactory{
         } else {
             //search for an existing group
             myGroup = GroupsFactory.findGroupByName(name);
-            if (null != myGroup && !myGroup.IsEmpty()) {
+            if (null != myGroup && !myGroup.isEmpty()) {
                 myGroup.delete();
                 answerMessage = "Group: "+ myGroup.getName() + " deleted";
             }

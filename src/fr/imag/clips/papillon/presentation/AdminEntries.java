@@ -9,6 +9,15 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.6  2005/05/24 12:51:22  serasset
+ * Updated many aspect of the Papillon project to handle lexalp project.
+ * 1. Layout is now parametrable in the application configuration file.
+ * 2. Notion of QueryResult has been defined to handle mono/bi and multi lingual dictionary requests
+ * 3. Result presentation may be done by way of standard xsl or with any class implementing the appropriate interface.
+ * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
+ * 5. It is now possible to give a name to the cookie key in the app conf file
+ * 6. Several bug fixes.
+ *
  * Revision 1.5  2005/04/15 15:03:47  mangeot
  * Fixed a bug in setIdIfNull and deleted the empty button on AdminEntries
  *
@@ -64,10 +73,12 @@ import fr.imag.clips.papillon.data.*;
 import fr.imag.clips.papillon.business.utility.Utility;
 import fr.imag.clips.papillon.business.PapillonLogger;
 
+import fr.imag.clips.papillon.business.PapillonBusinessException;
+
 import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
 
-public class AdminEntries extends BasePO {
+public class AdminEntries extends PapillonBasePO {
     protected final static String ADD_PARAMETER="Add";
     
     protected final static String URL_PARAMETER="url";
@@ -79,8 +90,13 @@ public class AdminEntries extends BasePO {
         return true;
     }
 
-    protected boolean adminUserRequired() {
-        return true;
+    protected boolean userMayUseThisPO() {
+        try {
+            return this.getUser().isAdmin();
+        } catch (PapillonBusinessException ex) {
+            this.getSessionData().writeUserMessage("Error getting the authorisation to use this PO.");
+        }
+        return false;
     }
     
     protected  int getCurrentSection() {

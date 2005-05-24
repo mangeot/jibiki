@@ -4,6 +4,15 @@
  *$Id$
  *------------------------
  *$Log$
+ *Revision 1.3  2005/05/24 12:51:21  serasset
+ *Updated many aspect of the Papillon project to handle lexalp project.
+ *1. Layout is now parametrable in the application configuration file.
+ *2. Notion of QueryResult has been defined to handle mono/bi and multi lingual dictionary requests
+ *3. Result presentation may be done by way of standard xsl or with any class implementing the appropriate interface.
+ *4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
+ *5. It is now possible to give a name to the cookie key in the app conf file
+ *6. Several bug fixes.
+ *
  *Revision 1.2  2005/04/11 12:29:59  mangeot
  *Merge between the XPathAndMultipleKeys branch and the main trunk
  *
@@ -43,6 +52,7 @@
 package fr.imag.clips.papillon.business.transformation;
 
 import java.util.Hashtable;
+import java.util.Vector;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -62,14 +72,19 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import fr.imag.clips.papillon.business.dictionary.IAnswer;
+import fr.imag.clips.papillon.business.dictionary.QueryResult;
+import fr.imag.clips.papillon.business.dictionary.Dictionary;
+import fr.imag.clips.papillon.business.dictionary.Volume;
 import fr.imag.clips.papillon.business.xsl.XslSheet;
 import fr.imag.clips.papillon.business.xsl.XslSheetFactory;
 import fr.imag.clips.papillon.business.utility.Utility;
+import fr.imag.clips.papillon.business.transformation.ResultFormatter;
 
 import fr.imag.clips.papillon.business.PapillonLogger;
+import fr.imag.clips.papillon.business.PapillonBusinessException;
 
 
-public class XslTransformation {
+public class XslTransformation implements ResultFormatter {
 
 
 	// Constants
@@ -77,6 +92,47 @@ public class XslTransformation {
 	// bit slow
 	protected static Hashtable XslSheetCache = new Hashtable();
 	
+    protected Vector currentXslSheetSequence = null;
+    
+    public void initializeFormatter(Dictionary dict, Volume vol, int dialect, String lang) throws PapillonBusinessException {
+        // Find the correct XslSheet or xslsheet sequence for the given parameters.
+        // FIXME: I currently use the same strategy, but this has to be redefined.
+        currentXslSheetSequence = new Vector();
+
+        // Get the dictionary sheet...
+        currentXslSheetSequence.add(XslSheetFactory.findXslSheetByName(dict.getName()));
+        // Then the volume one...
+        currentXslSheetSequence.add(XslSheetFactory.findXslSheetByName(vol.getName()));
+        // Last, the defaut one
+        currentXslSheetSequence.add(XslSheetFactory.findDefaultXslSheet());
+
+        // FIXME: How can the user specify a xsl if there is the choice between several...
+        
+    }
+    
+    public Node getFormattedResult(QueryResult qr) throws PapillonBusinessException {
+        Node doc = null;
+        try {
+            if ((qr.getResultKind() == QueryResult.UNIQUE_RESULT) || 
+                (qr.getResultKind() == QueryResult.REVERSE_UNIQUE_RESULT)) {
+                doc = (Node)qr.getSourceEntry().getDom();
+                for (int i=0; i < currentXslSheetSequence.size(); i++) {
+                    XslSheet xsl = (XslSheet) currentXslSheetSequence.elementAt(i);
+                    if (null != xsl && ! xsl.isEmpty()) {
+                        doc = Transform(doc, xsl);
+                    }
+                }
+            } else if (qr.getResultKind() == QueryResult.AXIE_COLLECTION_RESULT) {
+                // FIXME: What should I do in this case ?
+                doc = (Node)qr.getSourceEntry().getDom();
+            }
+        } catch(Exception ex) {
+            throw new fr.imag.clips.papillon.business.PapillonBusinessException("Exception in getFormattedResult()", ex);
+        }	
+        return doc;
+    }
+
+    
 	//outils pour les transformation
 	protected static final TransformerFactory myTransformerFactory = TransformerFactory.newInstance();
 	// preparation du resultat//usine a document duilder
@@ -152,16 +208,16 @@ public class XslTransformation {
 				// We apply cascades of XSL
 				// First, the one for the dictionary if there is
 				XslSheet theXslSheet = XslSheetFactory.findXslSheetByName(answer.getDictionaryName());
-				if (!theXslSheet.IsEmpty()) {
+				if (!theXslSheet.isEmpty()) {
 					result = Transform((Node)result, theXslSheet);					
 					// Second, the one for the volume if there is
 					theXslSheet = XslSheetFactory.findXslSheetByName(answer.getVolumeName());
-					if (null != theXslSheet && !theXslSheet.IsEmpty()) {
+					if (null != theXslSheet && !theXslSheet.isEmpty()) {
 						result = Transform((Node)result, theXslSheet);
 					}
 					// Last, the default one
 					theXslSheet = XslSheetFactory.findDefaultXslSheet();
-					if (!theXslSheet.IsEmpty()) {
+					if (!theXslSheet.isEmpty()) {
 						result = XslTransformation.Transform((Node)result, theXslSheet);
 					}
 				}
@@ -204,7 +260,7 @@ public class XslTransformation {
 		try {
 			// If there is one XSL sheet for XML
 			theXslSheet = XslSheetFactory.findXslSheetByName(XslSheet.XML_view);
-			if (!theXslSheet.IsEmpty()) {
+			if (!theXslSheet.isEmpty()) {
 				result = XslTransformation.Transform(resultDoc, theXslSheet).getDocumentElement();
 			}
 			else {
@@ -231,15 +287,15 @@ public class XslTransformation {
 				// We apply one XSL
 				// First, the one for the volume if there is
 				theXslSheet = XslSheetFactory.findXslSheetByName(answer.getVolumeName() + XslSheet.TEXT_suffix);
-				if (theXslSheet.IsEmpty()) {
+				if (theXslSheet.isEmpty()) {
 					theXslSheet = XslSheetFactory.findXslSheetByName(answer.getDictionaryName() + XslSheet.TEXT_suffix);
 				}
 				// Second, the one for the dictionary if there is
-				if (theXslSheet.IsEmpty()) {
+				if (theXslSheet.isEmpty()) {
 					theXslSheet = XslSheetFactory.findXslSheetByName(XslSheet.TEXT_view);
 				}
 				// Last, the default one
-				if (!theXslSheet.IsEmpty()) {	
+				if (!theXslSheet.isEmpty()) {	
 					Document resultDoc = answer.getDom();				
 					result = TransformToText((Node)resultDoc, theXslSheet);
 				}

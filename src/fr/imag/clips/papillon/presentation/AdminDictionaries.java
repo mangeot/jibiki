@@ -9,6 +9,15 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.5  2005/05/24 12:51:22  serasset
+ *  Updated many aspect of the Papillon project to handle lexalp project.
+ *  1. Layout is now parametrable in the application configuration file.
+ *  2. Notion of QueryResult has been defined to handle mono/bi and multi lingual dictionary requests
+ *  3. Result presentation may be done by way of standard xsl or with any class implementing the appropriate interface.
+ *  4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
+ *  5. It is now possible to give a name to the cookie key in the app conf file
+ *  6. Several bug fixes.
+ *
  *  Revision 1.4  2005/04/11 12:29:59  mangeot
  *  Merge between the XPathAndMultipleKeys branch and the main trunk
  *
@@ -74,6 +83,7 @@ import fr.imag.clips.papillon.data.*;
 import fr.imag.clips.papillon.business.utility.Utility;
 import fr.imag.clips.papillon.business.transformation.*;
 import fr.imag.clips.papillon.business.PapillonLogger;
+import fr.imag.clips.papillon.business.PapillonBusinessException;
 
 import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
@@ -83,7 +93,7 @@ import fr.imag.clips.papillon.presentation.xhtml.orig.*;
  * @author     serasset
  * @created    December 2, 2004
  */
-public class AdminDictionaries extends BasePO {
+public class AdminDictionaries extends PapillonBasePO {
 
     /**
      *  Description of the Field
@@ -119,8 +129,13 @@ public class AdminDictionaries extends BasePO {
      *
      * @return    Description of the Return Value
      */
-    protected boolean adminUserRequired() {
-        return true;
+    protected boolean userMayUseThisPO() {
+        try {
+            return this.getUser().isAdmin();
+        } catch (PapillonBusinessException ex) {
+            this.getSessionData().writeUserMessage("Error getting the authorisation to use this PO.");
+        }
+        return false;
     }
 
 
@@ -210,7 +225,7 @@ public class AdminDictionaries extends BasePO {
             Dictionary myDict = DictionariesFactory.parseDictionaryMetadata(myURL,
                                                                             req.getParameter(content.NAME_AddVolumes),
                                                                             req.getParameter(content.NAME_AddVolumesAndEntries));
-            if (null != myDict && !myDict.IsEmpty()) {
+            if (null != myDict && !myDict.isEmpty()) {
                 userMessage = "adding " + myDict.getName() + " dictionary" + " // " + myDict.getCategory() + " // " + myDict.getType() + " // " + myDict.getDomain() + " // " + myDict.getLegal() + " // " + myDict.getSourceLanguages() + " // " + myDict.getTargetLanguages();
                 myDict.save();
             } else {

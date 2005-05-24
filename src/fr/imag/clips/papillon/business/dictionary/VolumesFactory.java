@@ -3,6 +3,15 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.5  2005/05/24 12:51:21  serasset
+ * Updated many aspect of the Papillon project to handle lexalp project.
+ * 1. Layout is now parametrable in the application configuration file.
+ * 2. Notion of QueryResult has been defined to handle mono/bi and multi lingual dictionary requests
+ * 3. Result presentation may be done by way of standard xsl or with any class implementing the appropriate interface.
+ * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
+ * 5. It is now possible to give a name to the cookie key in the app conf file
+ * 6. Several bug fixes.
+ *
  * Revision 1.4  2005/04/11 12:29:59  mangeot
  * Merge between the XPathAndMultipleKeys branch and the main trunk
  *
@@ -127,6 +136,8 @@ public class VolumesFactory {
                 Element cdmElt = (Element)cdmElts.item(0);
 				NodeList cdmChilds = cdmElt.getChildNodes();
 				for (int i=0;i<cdmChilds.getLength();i++) {
+                    // FIXME: Can we have several XPaths for 1 cdm element ?
+                    // (ex: cdm-headword is to be found in headword/abbrev/variant ?)
 					Node myNode = cdmChilds.item(i);
 					if (myNode.getNodeType() == Node.ELEMENT_NODE) {
 						Element myElt = (Element) myNode;
@@ -220,7 +231,7 @@ public class VolumesFactory {
 			{
 				//search for an existing dictionary
 				Volume Existe=VolumesFactory.findVolumeByName(name);
-				if (Existe.IsEmpty())
+				if (Existe.isEmpty())
 				{//does'nt exist, create :
 					myVolume=new Volume();
 					myVolume.setName(name);
@@ -255,7 +266,7 @@ public class VolumesFactory {
                 
 				//on recupere le dictionnaire
 				Element volume;	
-				boolean virtual = false;	
+				boolean virtual = false;
 				volume=(Element)docXml.getElementsByTagName(VOLUME_TAG).item(0);
 				if (volume != null) {
 					String virtualString = volume.getAttribute(VIRTUAL_ATTRIBUTE);
@@ -323,7 +334,7 @@ public class VolumesFactory {
 			return getVolumesArray(dictName, null, null);
 		}
 	
-	
+	// FIXME: should provide the same method with a dictionary instead of a dictionary name. And use it when possible.
     public static Volume[] getVolumesArray(String dictname, String source, String target) 
         throws PapillonBusinessException {
 			Volume[] theDictArray = null;

@@ -9,6 +9,15 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.5  2005/05/24 12:51:22  serasset
+ * Updated many aspect of the Papillon project to handle lexalp project.
+ * 1. Layout is now parametrable in the application configuration file.
+ * 2. Notion of QueryResult has been defined to handle mono/bi and multi lingual dictionary requests
+ * 3. Result presentation may be done by way of standard xsl or with any class implementing the appropriate interface.
+ * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
+ * 5. It is now possible to give a name to the cookie key in the app conf file
+ * 6. Several bug fixes.
+ *
  * Revision 1.4  2005/04/11 12:29:59  mangeot
  * Merge between the XPathAndMultipleKeys branch and the main trunk
  *
@@ -54,21 +63,26 @@ public class PapillonSessionData {
      */
     public static final String SESSION_KEY = "PapillonSessionData";
     
-    protected User myUser = null;
+    protected User sessionUser = null;
     protected StringBuffer userMessage = null;
     protected ArrayList acceptLanguages = new ArrayList();
     protected boolean ClientWithLabelDisplayProblems = false;
 	protected Hashtable PreferencesTable = null;
     
+    public PapillonSessionData() 
+        throws PapillonBusinessException {
+			this.userMessage = new StringBuffer(INITIAL_MESSAGE_SIZE);            
+        }
+
     public PapillonSessionData(User myUser, ArrayList userAcceptLanguage, String requestHeader)
-		throws PapillonBusinessException{
+		throws PapillonBusinessException {
+            this();
 			setUser(myUser);
 			setUserAcceptLanguages(userAcceptLanguage);
-			if (myUser != null && !myUser.IsEmpty()) {
+			if (myUser != null && !myUser.isEmpty()) {
 				setUserPreferredLanguage(myUser.getLang());
 			}
 			setClientWithLabelDisplayProblems(requestHeader);
-			this.userMessage = new StringBuffer(INITIAL_MESSAGE_SIZE);
     }
 
     /**
@@ -100,13 +114,14 @@ public class PapillonSessionData {
         this.ClientWithLabelDisplayProblems = (requestHeader.indexOf("MSIE") > 0
                                                 || requestHeader.indexOf("iCab") > 0);
     }	
+   
     /**
         * Sets the person object
      *
      * @param thePerson the person object
      */
     protected void setUser(User theUser) {
-        this.myUser = theUser;
+        this.sessionUser = theUser;
     }
 
     /**
@@ -115,14 +130,14 @@ public class PapillonSessionData {
      * @return person
      */
     public User getUser() {
-        return this.myUser;
+        return this.sessionUser;
     }    
     
     /**
      * Method to remove the current user from the session
      */
     public void removeUser() {
-        this.myUser = null;
+        this.sessionUser = null;
     }
     
     public String getUserMessage() {
@@ -146,13 +161,23 @@ public class PapillonSessionData {
         this.userMessage.setLength(0);
     } 
 
+    /**
+        *  Description of the Method
+     *
+     * @return    Description of the Return Value
+     */
+    public boolean userHasBeenIdentified() {
+        return (this.sessionUser != null);
+    }
+    
+    
 // management of the preferences
     public String getPreference(String url, String name) 
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
         String pref = "";
 		if (this.PreferencesTable ==null) {
-			if (this.myUser!=null) {
-				this.PreferencesTable = this.myUser.getPreferences();
+			if (this.sessionUser!=null) {
+				this.PreferencesTable = this.sessionUser.getPreferences();
 			}
 			else {
 				this.PreferencesTable = new Hashtable();
@@ -177,8 +202,8 @@ public class PapillonSessionData {
 				value = "";
 			}
 			if (this.PreferencesTable ==null) {
-				if (this.myUser!=null && persistent) {
-					this.PreferencesTable = this.myUser.getPreferences();
+				if (this.sessionUser!=null && persistent) {
+					this.PreferencesTable = this.sessionUser.getPreferences();
 				}
 				else {
 					this.PreferencesTable = new Hashtable();
@@ -188,8 +213,8 @@ public class PapillonSessionData {
 				String pref = (String) this.PreferencesTable.get(url + User.KEY_SEP + name);
 				if (value !=null && !value.equals(pref)) {
 					this.PreferencesTable.put(url + User.KEY_SEP + name, value);
-					if (myUser!=null && persistent) {
-						this.myUser.setPreference(url, name, value);
+					if (this.sessionUser!=null && persistent) {
+						this.sessionUser.setPreference(url, name, value);
 					}
 				}
 			}

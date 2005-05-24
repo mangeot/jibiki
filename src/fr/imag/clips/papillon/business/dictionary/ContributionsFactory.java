@@ -3,6 +3,15 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.8  2005/05/24 12:51:21  serasset
+ * Updated many aspect of the Papillon project to handle lexalp project.
+ * 1. Layout is now parametrable in the application configuration file.
+ * 2. Notion of QueryResult has been defined to handle mono/bi and multi lingual dictionary requests
+ * 3. Result presentation may be done by way of standard xsl or with any class implementing the appropriate interface.
+ * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
+ * 5. It is now possible to give a name to the cookie key in the app conf file
+ * 6. Several bug fixes.
+ *
  * Revision 1.7  2005/04/15 11:38:05  mangeot
  * Fixed a bug, not using entryHandle from contributions table any more
  *
@@ -159,15 +168,15 @@ public class ContributionsFactory {
 					IAnswer myAnswer = (IAnswer) entriesTable.elementAt(i);
 					Contribution myContrib = findContributionByEntryId(myAnswer.getId());
 					// There is an existing contribution
-					if (myContrib != null && !myContrib.IsEmpty()) {
+					if (myContrib != null && !myContrib.isEmpty()) {
 					// the author is not the current user
-						if (user==null || user.IsEmpty()) {
+						if (user==null || user.isEmpty()) {
 								entriesTable.remove(myAnswer);
 								i--;
 						}
 						else if (!myContrib.getAuthor().equals(user.getLogin())) {
 						// the current user is not in the same groups as the author
-							if (!user.IsInNormalGroups(myContrib.getGroupsArray())) {
+							if (!user.isInNormalGroups(myContrib.getGroupsArray())) {
 								entriesTable.remove(myAnswer);
 								i--;
 							}
@@ -184,7 +193,7 @@ public class ContributionsFactory {
 					IAnswer tempAnswer = (IAnswer) entriesIterator.next();
 					Contribution myContrib = findContributionByEntryId(tempAnswer.getId());
 					// There is an existing contribution
-					if (myContrib != null && !myContrib.IsEmpty()) {
+					if (myContrib != null && !myContrib.isEmpty()) {
 					// the author is the current user
 						if (myContrib.getAuthor().equals(user.getLogin())) {
 						myAnswer = tempAnswer;
@@ -201,9 +210,9 @@ public class ContributionsFactory {
 					IAnswer tempAnswer = (IAnswer) entriesIterator.next();
 					Contribution myContrib = findContributionByEntryId(tempAnswer.getId());
 					// There is an existing contribution
-					if (myContrib != null && !myContrib.IsEmpty()) {
+					if (myContrib != null && !myContrib.isEmpty()) {
 					// the author is the user groups
-						if (user.IsInGroups(myContrib.getGroupsArray())) {
+						if (user.isInGroups(myContrib.getGroupsArray())) {
 							myAnswer = tempAnswer;
 						}
 					}
@@ -444,7 +453,7 @@ throws fr.imag.clips.papillon.business.PapillonBusinessException {
 	PapillonLogger.writeDebugMsg("New contrib author: " + myUser.getLogin() + " volume: " + myAxie.getVolumeName() +
 							  " headword: " + myAxie.getHeadword() + " entryid: " + myAxie.getId());
 	myContrib = newContribution(myAxie.getVolumeName(), myAxie.getSourceLanguage(), myUser.getLogin(), myUser.getGroups(), myAxie.getHeadword(), myAxie.getId(), myAxie.getHandle(), Contribution.NOT_FINISHED_STATUS, true, null);
-	if (null != myContrib && !myContrib.IsEmpty()) {
+	if (null != myContrib && !myContrib.isEmpty()) {
 		myContrib.save();
 	}
 	return myContrib;
@@ -457,7 +466,7 @@ throws fr.imag.clips.papillon.business.PapillonBusinessException {
 	PapillonLogger.writeDebugMsg("New contrib author: " + myUser.getLogin() + " volume: " + myEntry.getVolumeName() +
 							  " headword: " + myEntry.getHeadword() + " entryid: " + myEntry.getId() + " originalId: " + originalId);
 	myContrib = newContribution(myEntry.getVolumeName(), myEntry.getSourceLanguage(), myUser.getLogin(), myUser.getGroups(),  myEntry.getHeadword(), myEntry.getId(), myEntry.getHandle(), Contribution.NOT_FINISHED_STATUS, newEntry, originalId);
-	if (null != myContrib && !myContrib.IsEmpty()) {
+	if (null != myContrib && !myContrib.isEmpty()) {
 		myContrib.save();
 	}
 	return myContrib;

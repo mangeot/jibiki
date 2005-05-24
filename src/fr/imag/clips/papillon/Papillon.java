@@ -9,6 +9,15 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2005/05/24 12:51:21  serasset
+ * Updated many aspect of the Papillon project to handle lexalp project.
+ * 1. Layout is now parametrable in the application configuration file.
+ * 2. Notion of QueryResult has been defined to handle mono/bi and multi lingual dictionary requests
+ * 3. Result presentation may be done by way of standard xsl or with any class implementing the appropriate interface.
+ * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
+ * 5. It is now possible to give a name to the cookie key in the app conf file
+ * 6. Several bug fixes.
+ *
  * Revision 1.3  2005/04/11 12:29:59  mangeot
  * Merge between the XPathAndMultipleKeys branch and the main trunk
  *
@@ -49,7 +58,12 @@ import fr.imag.clips.papillon.business.locales.*;
  * Application-wide data would go here.
  */
 public class Papillon extends StandardApplication {
-    
+    protected static final String LAYOUT_CONFIG = "Papillon.LayoutClassName";
+    protected static final String COOKIE_CONFIG = "Papillon.LoginCookieName";
+
+    protected String layoutClassName = "fr.imag.clips.papillon.presentation.PapillonLayout";
+    protected String loginCookieName = "PapillonLoginCookie";
+
     /*
      *  A few methods you might want to add to.
      *  See StandardApplication for more details.
@@ -86,6 +100,32 @@ public class Papillon extends StandardApplication {
             // Here is where I startup JDictd server
             JDictd.listen(port,Enhydra.getApplication(),timeout);
         }
+        
+        // Get current Layout Setting.
+        String configLayoutClassName = null; 
+        try {
+            configLayoutClassName =  Enhydra.getApplication().getConfig().getString(LAYOUT_CONFIG);
+            layoutClassName = configLayoutClassName;
+        } catch (ConfigException e) {
+            // nothing... failing to default...
+        }
+        // Get Login Cookie Name.
+        String configLoginCookieName = null; 
+        try {
+            configLoginCookieName =  Enhydra.getApplication().getConfig().getString(COOKIE_CONFIG);
+            loginCookieName = configLoginCookieName;
+        } catch (ConfigException e) {
+            // nothing... failing to default...
+        }
+        
+    }
+    
+    public String getLayoutClassName() {
+        return layoutClassName;
+    }
+    
+    public String getLoginCookieName() {
+        return loginCookieName;
     }
     
     public boolean requestPreprocessor(HttpPresentationComms comms)

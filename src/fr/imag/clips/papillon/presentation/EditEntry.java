@@ -9,6 +9,15 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.9  2005/05/24 12:51:22  serasset
+ * Updated many aspect of the Papillon project to handle lexalp project.
+ * 1. Layout is now parametrable in the application configuration file.
+ * 2. Notion of QueryResult has been defined to handle mono/bi and multi lingual dictionary requests
+ * 3. Result presentation may be done by way of standard xsl or with any class implementing the appropriate interface.
+ * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
+ * 5. It is now possible to give a name to the cookie key in the app conf file
+ * 6. Several bug fixes.
+ *
  * Revision 1.8  2005/04/22 14:13:40  mangeot
  * URL encoding bug fix
  *
@@ -88,7 +97,7 @@ import fr.imag.clips.papillon.business.utility.Utility;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-public class EditEntry extends BasePO {
+public class EditEntry extends PapillonBasePO {
     
     public static String EntryHandle_PARAMETER = "EntryHandle";
     public static String Headword_PARAMETER = "Headword";
@@ -118,8 +127,8 @@ public class EditEntry extends BasePO {
         return true;
     }
 
-    protected boolean adminUserRequired() {
-        return false;
+    protected boolean userMayUseThisPO() {
+        return true;
     }
     
     protected  int getCurrentSection() {
@@ -169,25 +178,31 @@ public class EditEntry extends BasePO {
 		}
 		
 		// updateElement
+        PapillonLogger.writeDebugMsg("BEFORE:\n");
+        PapillonLogger.writeDebugMsg(Utility.NodeToString(myEntry));
 		if (myVolumeEntry!=null) {
 			updateEntry(myVolumeEntry, myEntry, this.getComms().request.getParameterNames());
 		}
-		
+        PapillonLogger.writeDebugMsg("AFTER:\n");
+        PapillonLogger.writeDebugMsg(Utility.NodeToString(myEntry));
+
 		// addElement
 		if (submitAdd!=null && !submitAdd.equals("")) {
-			String redirected = myGetParameter(Redirection_PARAMETER);
-			if (redirected == null || redirected.equals("")) {
-				VolumeEntriesFactory.setGDEFFrenchTranslations(myVolumeEntry);
-				myVolumeEntry.save();
-				String newUrl = this.getUrl() + "?" + VolumeName_PARAMETER + "=" + volumeName 
-					+ "&" + EntryHandle_PARAMETER + "=" + entryHandle
-					+ "&" + AddCall_PARAMETER + "=" + myUrlEncode(submitAdd)
-					+ "&" + Referrer_PARAMETER + "=" + referrer
-					+ "&" + serializeParameterForUrl(Select_PARAMETER,myGetParameterValues(Select_PARAMETER))
-					+ "&" + Redirection_PARAMETER + "=" + "on"	
-					+ "#" + UIGenerator.NEW_BLOCK_ANCHOR;				
-				throw new ClientPageRedirectException(newUrl);
-			}
+//			String redirected = myGetParameter(Redirection_PARAMETER);
+//			if (redirected == null || redirected.equals("")) {
+//                // FIXME: Bordel ! POURQUOI UNE REDIRECTION ICI ???????
+//                // En plus, ca redirige en utilisant les élément de la soumission précédente !!!
+//				VolumeEntriesFactory.setGDEFFrenchTranslations(myVolumeEntry);
+//				myVolumeEntry.save();
+//				String newUrl = this.getUrl() + "?" + VolumeName_PARAMETER + "=" + volumeName 
+//					+ "&" + EntryHandle_PARAMETER + "=" + entryHandle
+//					+ "&" + AddCall_PARAMETER + "=" + myUrlEncode(submitAdd)
+//					+ "&" + Referrer_PARAMETER + "=" + referrer
+//					+ "&" + serializeParameterForUrl(Select_PARAMETER,myGetParameterValues(Select_PARAMETER))
+//					+ "&" + Redirection_PARAMETER + "=" + "on"	
+//					+ "#" + UIGenerator.NEW_BLOCK_ANCHOR;				
+//				throw new ClientPageRedirectException(newUrl);
+//			}
 			int plus =  submitAdd.indexOf(UIGenerator.PARAMETERS_SEPARATOR);
 			if (plus > 0) {
 				String elementName = submitAdd.substring(0,plus);
@@ -200,18 +215,18 @@ public class EditEntry extends BasePO {
 		else if (submitDelete!=null && !submitDelete.equals("")
 					&& select != null && !select.equals("")) {
 			String redirected = myGetParameter(Redirection_PARAMETER);
-			if (redirected == null || redirected.equals("")) {
-				VolumeEntriesFactory.setGDEFFrenchTranslations(myVolumeEntry);
-				myVolumeEntry.save();
-				String newUrl = this.getUrl() + "?" + VolumeName_PARAMETER + "=" + volumeName 
-					+ "&" + EntryHandle_PARAMETER + "=" + entryHandle
-					+ "&" + DelCall_PARAMETER + "=" + myUrlEncode(submitDelete)
-					+ "&" + Referrer_PARAMETER + "=" + referrer
-					+ "&" + serializeParameterForUrl(Select_PARAMETER,myGetParameterValues(Select_PARAMETER))
-					+ Redirection_PARAMETER + "=" + "on"	
-					+ "#" + UIGenerator.NEW_BLOCK_ANCHOR;				
-				throw new ClientPageRedirectException(newUrl);
-			}
+//			if (redirected == null || redirected.equals("")) {
+//				VolumeEntriesFactory.setGDEFFrenchTranslations(myVolumeEntry);
+//				myVolumeEntry.save();
+//				String newUrl = this.getUrl() + "?" + VolumeName_PARAMETER + "=" + volumeName 
+//					+ "&" + EntryHandle_PARAMETER + "=" + entryHandle
+//					+ "&" + DelCall_PARAMETER + "=" + myUrlEncode(submitDelete)
+//					+ "&" + Referrer_PARAMETER + "=" + referrer
+//					+ "&" + serializeParameterForUrl(Select_PARAMETER,myGetParameterValues(Select_PARAMETER))
+//					+ Redirection_PARAMETER + "=" + "on"	
+//					+ "#" + UIGenerator.NEW_BLOCK_ANCHOR;				
+//				throw new ClientPageRedirectException(newUrl);
+//			}
 			int plus =  submitDelete.indexOf(UIGenerator.PARAMETERS_SEPARATOR);
 			if (plus > 0) {
 				String elementName = submitDelete.substring(0,plus);

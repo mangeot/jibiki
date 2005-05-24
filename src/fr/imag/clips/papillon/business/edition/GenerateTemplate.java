@@ -209,7 +209,7 @@ public class GenerateTemplate {
 								String attrName = attributePSVI.getName();
 								// avoid special attributes
 								if (!attrName.equals("id")) {
-								    attrName = elementName + UIGenerator.ID_SEPARATOR + attrName;
+								    attrName = elementName + UIGenerator.ATTR_SEPARATOR + attrName;
 									parseSimpleTypeDeclaration (interfaceBuffer,attributePSVI.getTypeDefinition(),attrName);
 								}
 							}
@@ -353,7 +353,7 @@ public class GenerateTemplate {
 				interfaceBuffer.write("    <select name=\"" + elementName + "\" >" + "\n");			
 				StringList stringList = simpleTypeDefinition.getLexicalEnumerations ();
 				for (int i=0; i < stringList.getLength (); i++) {
-					interfaceBuffer.write("      <option value=\"" + stringList.item(i) + "\">" + stringList.item(i) + "</option>\n");			
+					interfaceBuffer.write("      <option value=\"" + stringList.item(i) + "\">" + stringList.item(i) + "</option>\n");		
 				}
 				interfaceBuffer.write("    </select>" + "\n");	
 				interfaceBuffer.write("<br />\n");					

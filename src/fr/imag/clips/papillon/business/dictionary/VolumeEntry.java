@@ -9,6 +9,15 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.11  2005/05/24 12:51:21  serasset
+ * Updated many aspect of the Papillon project to handle lexalp project.
+ * 1. Layout is now parametrable in the application configuration file.
+ * 2. Notion of QueryResult has been defined to handle mono/bi and multi lingual dictionary requests
+ * 3. Result presentation may be done by way of standard xsl or with any class implementing the appropriate interface.
+ * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
+ * 5. It is now possible to give a name to the cookie key in the app conf file
+ * 6. Several bug fixes.
+ *
  * Revision 1.10  2005/04/26 10:11:32  mangeot
  * *** empty log message ***
  *
@@ -175,7 +184,7 @@ public class VolumeEntry implements IAnswer {
 			
 		}
 	
-	public boolean IsEmpty() {
+	public boolean isEmpty() {
 		return (this.myDO==null) ;
 	}
 	
@@ -218,6 +227,8 @@ public class VolumeEntry implements IAnswer {
 	 *   retrieving data (usually due to an underlying data layer
 						  *   error).
 	 */
+    // FIXME: Should not be stored in a column, but should be extracted from the xml using CDM...
+    // FIXME: Moreover, an entry may have more than one headword.
 	public String getHeadword() throws PapillonBusinessException {
 		try {
 			return this.myDO.getHeadword();
@@ -337,6 +348,20 @@ public class VolumeEntry implements IAnswer {
 		return ParseVolume.getCdmString(this, Volume.CDM_entryId);
 	}
 	
+    /**
+        * returns ids of the lexies that are pointed by this by an axi-reflink, for lang
+     */
+    public String[] getReferencedLexieIds(String lang) throws PapillonBusinessException {
+        return ParseVolume.getCdmStrings(this, Volume.CDM_axiReflexie, lang);
+    }
+    
+    /**
+        * returns ids of the lexies that are pointed by this by an axi-reflink, for lang
+     */
+    public String[] getTranslationsLexieIds(String lang) throws PapillonBusinessException {
+        return ParseVolume.getCdmStrings(this, Volume.CDM_translationReflexie, lang);
+    }
+    
 	public void setIdIfNull() throws PapillonBusinessException {
 		if (this.getId()==null || this.getId().equals("")) {
 			this.setId(this.createNewId());
@@ -402,26 +427,30 @@ public class VolumeEntry implements IAnswer {
 	
 	public void setModification(String author, String comment) throws PapillonBusinessException {
 		Volume myVolume = this.getVolume();	
-		Document myDocument = this.getDom();	
+		Document myDocument = this.getDom();
 		org.w3c.dom.Node myEntry = ParseVolume.getCdmElement(this, Volume.CDM_entry);
-		org.w3c.dom.Node myHistory = ParseVolume.getCdmElement(this, Volume.CDM_history);
-		if (myHistory == null) {
-			fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("setModification: myHistory null");
-			myHistory = myDocument.createElement(myVolume.getCdmHistory());
-			myEntry.appendChild(myHistory);			
-		}
-		org.w3c.dom.Node myModification = myDocument.createElement(myVolume.getCdmModification());
-		org.w3c.dom.Element myAuthor = myDocument.createElement(myVolume.getCdmAuthor());
-		org.w3c.dom.Element myComment = myDocument.createElement(myVolume.getCdmComment());
-		org.w3c.dom.Element myDate = myDocument.createElement(myVolume.getCdmDate());
-		Utility.setText(myAuthor,author);
-		Utility.setText(myDate,new java.util.Date().toString());
-		Utility.setText(myComment,comment);
-		myModification.appendChild(myAuthor);
-		myModification.appendChild(myComment);
-		myModification.appendChild(myDate);
-		myHistory.appendChild(myModification);
-	}
+        
+        if (null != ParseVolume.getXPath(this,Volume.CDM_history)) {
+            org.w3c.dom.Node myHistory = ParseVolume.getCdmElement(this, Volume.CDM_history);
+            // FIXME: history should not be mandatory in the volumes !!!!
+            if (myHistory == null) {
+                fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("setModification: myHistory null");
+                myHistory = myDocument.createElement(myVolume.getCdmHistory());
+                myEntry.appendChild(myHistory);			
+            }
+            org.w3c.dom.Node myModification = myDocument.createElement(myVolume.getCdmModification());
+            org.w3c.dom.Element myAuthor = myDocument.createElement(myVolume.getCdmAuthor());
+            org.w3c.dom.Element myComment = myDocument.createElement(myVolume.getCdmComment());
+            org.w3c.dom.Element myDate = myDocument.createElement(myVolume.getCdmDate());
+            Utility.setText(myAuthor,author);
+            Utility.setText(myDate,new java.util.Date().toString());
+            Utility.setText(myComment,comment);
+            myModification.appendChild(myAuthor);
+            myModification.appendChild(myComment);
+            myModification.appendChild(myDate);
+            myHistory.appendChild(myModification);
+        }
+    }
 	
     /**
      * getDefinition
@@ -539,10 +568,10 @@ public class VolumeEntry implements IAnswer {
 	public void delete() 
 		throws PapillonBusinessException {
 			Volume myVolume = this.getVolume();
-			if (myVolume == null || myVolume.IsEmpty()) {
+			if (myVolume == null || myVolume.isEmpty()) {
 				myVolume = VolumesFactory.findVolumeByDbname(this.getTableName());
 			}
-			if (myVolume!=null && ! myVolume.IsEmpty()) {
+			if (myVolume!=null && ! myVolume.isEmpty()) {
 				this.delete(myVolume.getIndexDbname());
 			}
 			else {

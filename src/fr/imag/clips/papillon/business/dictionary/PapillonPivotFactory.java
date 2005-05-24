@@ -3,6 +3,15 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.5  2005/05/24 12:51:21  serasset
+ * Updated many aspect of the Papillon project to handle lexalp project.
+ * 1. Layout is now parametrable in the application configuration file.
+ * 2. Notion of QueryResult has been defined to handle mono/bi and multi lingual dictionary requests
+ * 3. Result presentation may be done by way of standard xsl or with any class implementing the appropriate interface.
+ * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
+ * 5. It is now possible to give a name to the cookie key in the app conf file
+ * 6. Several bug fixes.
+ *
  * Revision 1.4  2005/04/11 12:29:59  mangeot
  * Merge between the XPathAndMultipleKeys branch and the main trunk
  *
@@ -86,7 +95,7 @@ public class PapillonPivotFactory {
 	    	theAxieVector.add(new Axie(dict, vol, DOarray[i]));
 
         }catch(Exception ex) {
-            throw new PapillonBusinessException("Exception in findAxiesByLexie()", ex);
+            throw new PapillonBusinessException("Exception in getAxiesCollection()", ex);
         }
         return theAxieVector;
     }
@@ -104,9 +113,9 @@ public class PapillonPivotFactory {
     public static Axie findAxieByHandle(String volumeName, String handle) throws PapillonBusinessException {
 		Axie myAxie = null;
 			Volume myVolume = VolumesFactory.findVolumeByName(volumeName);
-			if (myVolume!=null && !myVolume.IsEmpty()) {
+			if (myVolume!=null && !myVolume.isEmpty()) {
 				Dictionary myDict = DictionariesFactory.findDictionaryByName(myVolume.getDictname());
-				if (myDict!=null && !myDict.IsEmpty()) {
+				if (myDict!=null && !myDict.isEmpty()) {
 					myAxie = findAxieByHandle(myDict, myVolume, handle);
 				}
 			}
@@ -117,29 +126,32 @@ public class PapillonPivotFactory {
     throws PapillonBusinessException {
 			Axie theAxie = null;
 			PapillonAxiDO theAxieDO = null;
-
-			int intId = 0;
-			try {
-				intId = Integer.parseInt(handle);
-			}
-			catch(NumberFormatException ex) {
-				return theAxie;
-			}
-
-			try {
-				PapillonAxiQuery query = new PapillonAxiQuery(CurrentDBTransaction.get());
-				//set query
-				query.setQueryOId(new ObjectId(intId));
-				// Throw an exception if more than one message is found
-				query.requireUniqueInstance();
-				theAxieDO = query.getNextDO();
-				theAxie = new Axie(dict, volume, theAxieDO);
-				return theAxie;
-			}
-			catch(Exception ex) {
-				return null;
-			//	throw new PapillonBusinessException("Exception in findAxieByHandle()", ex);
-			}
+            
+            // FIXME: The Papillon Axie should be treated as any pivot volume
+            // FIXME: In this case, is there a difference between a pivot entry and a normal volume entry
+            // FIXME: (which means maybe the whole Axie stuff is to be removed...)
+                int intId = 0;
+                try {
+                    intId = Integer.parseInt(handle);
+                }
+                catch(NumberFormatException ex) {
+                    return theAxie;
+                }
+                
+                try {
+                    PapillonAxiQuery query = new PapillonAxiQuery(CurrentDBTransaction.get());
+                    //set query
+                    query.setQueryOId(new ObjectId(intId));
+                    // Throw an exception if more than one message is found
+                    query.requireUniqueInstance();
+                    theAxieDO = query.getNextDO();
+                    theAxie = new Axie(dict, volume, theAxieDO);
+                    return theAxie;
+                }
+                catch(Exception ex) {
+                    return null;
+                    //	throw new PapillonBusinessException("Exception in findAxieByHandle()", ex);
+                }
     }
     
 		    /**
@@ -176,24 +188,77 @@ public class PapillonPivotFactory {
 		
     public static Collection findAxiesByLexie(IAnswer lexie, User myUser)
     throws PapillonBusinessException {
-        return findAxiesByLexieID(lexie.getDictionary(), lexie.getId(), myUser);
+        return findAxiesByLexieID(lexie.getDictionary(), lexie.getId(), lexie.getSourceLanguage(), myUser);
     }
 
-    public static Collection findAxiesByLexieID(Dictionary dict, String lexieId, User myUser)
-    throws PapillonBusinessException {
-		Vector axiesTable = null;
-		Collection axiesCollection = null;
-		//FIXME:  Here there should be some generic code
-		// in order to find the name of the pivot volume in a pivot dictionary
-		if (dict.getName().equals(DICTNAME)) {
-		//	Papillon_axi
-			Volume myVolume = VolumesFactory.findVolumeByName(VOLUMENAME);
-			axiesTable = IndexFactory.getAxiesVector(dict, myVolume,lexieId);
-			axiesCollection = ContributionsFactory.checkContributions(myUser, axiesTable);
-			}
-		return axiesCollection;
-	}
+    public static Collection findAxiesByLexieID(Dictionary dict, String lexieId, String sourceLanguage, User myUser)
+        throws PapillonBusinessException 
+    {
+        // find pivot volume(s) for the dictionary 
+        // FIXME: Currently, a volume with lang="axi" is considered as a pivot.
+        // FIXME: this should be a special type in order to cope with eurowordnet, where eng is the pivot language.
+        Volume[] myVolumes = VolumesFactory.getVolumesArray(dict.getName(), "axi", null);
+        // iterate over each volume and look for axies linking to the given lexie...
+        Collection axies = new HashSet();
+        for (int i=0; i < myVolumes.length; i++) {
+            Volume vol = myVolumes[i];
+            Vector axiesTable = IndexFactory.getAxiesPointingTo(dict, vol, lexieId, sourceLanguage);
+            axies.addAll(ContributionsFactory.checkContributions(myUser, axiesTable));
+        }
+        return axies;
+    }
+    
+//    public static Collection findAxiesByLexieID(Dictionary dict, String lexieId, User myUser)
+//    throws PapillonBusinessException {
+//		Collection axiesCollection = null;
+//		//FIXME:  Here there should be some generic code
+//		// in order to find the name of the pivot volume in a pivot dictionary
+//		if (dict.getName().equals(DICTNAME)) {
+//            //	Papillon_axi
+//			Volume myVolume = VolumesFactory.findVolumeByName(VOLUMENAME);
+//			Vector axiesTable = IndexFactory.getAxiesVector(dict, myVolume,lexieId);
+//			axiesCollection = ContributionsFactory.checkContributions(myUser, axiesTable);
+//        } else {
+//            // find pivot volume(s) for the dictionary
+//            Volume[] myVolumes = VolumesFactory.getVolumesArray(dict.getName(), "axi", null);
+//            // iterate over each volume and look for axies linking to the given lexie...
+//            axiesCollection = new HashSet();
+//            for (int i=0; i < myVolumes.length; i++) {
+//                Volume vol = myVolumes[i];
+//                Vector axiesTable = IndexFactory.getAxiesVector(dict, vol, lexieId);
+//                axiesCollection.addAll(ContributionsFactory.checkContributions(myUser, axiesTable));
+//            }
+//        }
+//		return axiesCollection;
+//	}
 	
+    
+    public static Collection findLexiesByAxie(VolumeEntry pivotEntry, String lang) 
+        throws fr.imag.clips.papillon.business.PapillonBusinessException {
+            Collection myCollection = new HashSet();
+                        
+            String[] lexids = pivotEntry.getReferencedLexieIds(lang);
+
+            Volume[] Volumes = VolumesFactory.getVolumesArray(pivotEntry.getDictionaryName(),lang, null);
+            if (null != lexids && Volumes != null && Volumes.length>0) {
+				if (Volumes != null && Volumes.length>0) {
+					Volume firstVolume = Volumes[0];
+                    for (int i = 0; i < lexids.length; i++) {
+                        IAnswer myEntry = DictionariesFactory.findEntryByEntryId(firstVolume.getName(), lexids[i]);
+                        if (myEntry != null && ! myEntry.isEmpty()) {
+                            myCollection.add(myEntry);
+                        } 
+                    }
+                }
+            }
+			// Is it necessary to check if the user is authorized to see the lexie ?
+			//myCollection = ContributionsFactory.checkContributions(myUser, myEntryTable);
+            return myCollection;
+        }
+    
+    
+
+    // FIXME: SOON: Should not be called anymore. As Papillon Axies should not be treated specialy.
     public static Collection findLexiesByAxie(Axie axie, String lang) 
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
         Hashtable myEntryTable = new Hashtable();
@@ -206,7 +271,7 @@ public class PapillonPivotFactory {
 					Volume firstVolume = Volumes[0];
             for (int i = 0; i < lexids.size(); i++) {
 							IAnswer myEntry = DictionariesFactory.findEntryByEntryId(firstVolume.getName(), (String) lexids.elementAt(i));
-							if (myEntry != null && ! myEntry.IsEmpty()) {
+							if (myEntry != null && ! myEntry.isEmpty()) {
 									myEntryTable.put(myEntry.getHandle(),myEntry);
 							} 
             }
@@ -245,7 +310,7 @@ public class PapillonPivotFactory {
 	public static Axie createAndSaveAxie (Dictionary dict, Volume volume, String id, org.w3c.dom.Document docdom, String semanticCat, Vector synonyms, Hashtable lexies)
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
 			Axie myAxie = newAxie(dict, volume, id, docdom, semanticCat, synonyms, lexies);
-			if (myAxie.IsEmpty()) {
+			if (myAxie.isEmpty()) {
 				myAxie = null;
 			}
 			else {
@@ -265,7 +330,7 @@ public class PapillonPivotFactory {
 
 		Volume axieVolume = VolumesFactory.findVolumeByName(VOLUMENAME);
 		Dictionary axieDict = null;
-		if (axieVolume != null && !axieVolume.IsEmpty()) {
+		if (axieVolume != null && !axieVolume.isEmpty()) {
 			axieDict = DictionariesFactory.findDictionaryByName(axieVolume.getDictname());
 		}
 		
@@ -306,7 +371,7 @@ public class PapillonPivotFactory {
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 		int res = 0;
 			Collection TheAxies = null;
-			if (myAnswer != null && !myAnswer.IsEmpty() && myAnswer.getVolumeName().equals(VOLUMENAME)) {
+			if (myAnswer != null && !myAnswer.isEmpty() && myAnswer.getVolumeName().equals(VOLUMENAME)) {
 			PapillonLogger.writeDebugMsg("Delete axie links to lexie: " + myAnswer.getHeadword());
 			TheAxies = findAxiesByLexie(myAnswer, myUser);
 			if (TheAxies!=null && TheAxies.size()>0) { 
@@ -346,7 +411,7 @@ public class PapillonPivotFactory {
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 			Volume axieVolume = VolumesFactory.findVolumeByName(VOLUMENAME);
 			Dictionary axieDict = null;
-			if (axieVolume != null && !axieVolume.IsEmpty()) {
+			if (axieVolume != null && !axieVolume.isEmpty()) {
 				axieDict = DictionariesFactory.findDictionaryByName(axieVolume.getDictname());
 			}
 			Collection	TheAxies = getAxiesCollection(axieDict, axieVolume, null, null);

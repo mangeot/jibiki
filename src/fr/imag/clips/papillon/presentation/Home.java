@@ -10,6 +10,15 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.8  2005/05/24 12:51:22  serasset
+ *  Updated many aspect of the Papillon project to handle lexalp project.
+ *  1. Layout is now parametrable in the application configuration file.
+ *  2. Notion of QueryResult has been defined to handle mono/bi and multi lingual dictionary requests
+ *  3. Result presentation may be done by way of standard xsl or with any class implementing the appropriate interface.
+ *  4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
+ *  5. It is now possible to give a name to the cookie key in the app conf file
+ *  6. Several bug fixes.
+ *
  *  Revision 1.7  2005/04/20 10:51:14  mangeot
  *  Correction de AddDirectTranslations
  *
@@ -127,7 +136,7 @@ import fr.imag.clips.papillon.presentation.xhtml.orig.*;
  * @author     serasset
  * @created    December 8, 2004
  */
-public class Home extends BasePO {
+public class Home extends PapillonBasePO {
 
     /**
      *  Description of the Field
@@ -263,8 +272,8 @@ public class Home extends BasePO {
      *
      * @return    Description of the Return Value
      */
-    protected boolean adminUserRequired() {
-        return false;
+    protected boolean userMayUseThisPO() {
+        return true;
     }
 
 
@@ -480,14 +489,20 @@ public class Home extends BasePO {
                 Iterator myIterator = EntryCollection.iterator();
                 int i = 0;
                 while ((myIterator.hasNext()) && (i < QueryLog.MAX_LOGGED_RESULTS)) {
-                    IAnswer myEntry = (IAnswer) myIterator.next();
-                    results[i][0] = myEntry.getDictionaryName();
-                    results[i][1] = myEntry.getHeadword();
+                    Object myAnswer = myIterator.next();
+                    if (myAnswer instanceof Collection) {
+                        results[i][0] = "PivotDict";
+                        results[i][1] = "Some Collection...";
+                    } else if (myAnswer instanceof IAnswer) {
+                        IAnswer myEntry = (IAnswer) myAnswer;
+                        results[i][0] = myEntry.getDictionaryName();
+                        results[i][1] = myEntry.getHeadword();
+                    }
                     i++;
                 }
             }
             String login = "";
-            if (user != null && !user.IsEmpty()) {
+            if (user != null && !user.isEmpty()) {
                 login = user.getLogin();
             }
             QueryLog myQueryLog = QueryLogsFactory.newQueryLog(login,
@@ -543,11 +558,11 @@ public class Home extends BasePO {
      * @exception  java.io.UnsupportedEncodingException  Description of the
      *      Exception
      */
-    protected void addEntryTable(ConsultXHTML content, Collection EntryCollection, String source, String target, int strategy, int offset)
+    protected void addEntryTable(ConsultXHTML content, Collection qrset, String source, String target, int strategy, int offset)
              throws PapillonBusinessException,
             java.io.UnsupportedEncodingException {
 
-        PapillonLogger.writeDebugMsg("addEntryTable, size: " + EntryCollection.size());
+        PapillonLogger.writeDebugMsg("addEntryTable, size: " + qrset.size());
         // init of PartialMatch
         String partialMatch = "";
         if (strategy == IQuery.STRATEGY_SUBSTRING) {
@@ -583,7 +598,7 @@ public class Home extends BasePO {
         previousEntriesAnchor.removeAttribute("id");
         nextEntriesAnchor.removeAttribute("id");
 		
-		content.setTextEntryNumber(""+EntryCollection.size());
+		content.setTextEntryNumber(""+qrset.size());
 		
 		
         String href = this.getUrl() + "?"
@@ -607,72 +622,77 @@ public class Home extends BasePO {
 
         // On récupère le noeud contenant la table...
         Node lexieTable = entryListRow.getParentNode();
-        if (null != EntryCollection) {
-            for (Iterator myIterator = EntryCollection.iterator(); myIterator.hasNext(); ) {
-                IAnswer myEntry = (IAnswer) myIterator.next();
-
+        if (null != qrset) {
+            for (Iterator myIterator = qrset.iterator(); myIterator.hasNext(); ) {
+                QueryResult myQueryResult = (QueryResult) myIterator.next();
+                VolumeEntry myEntry = myQueryResult.getSourceEntry();
+                
                 // Le vocable
                 //            String vocable = theDicArray[i].getKey1();
                 content.setTextVocable(myEntry.getHeadword());
-
+                
                 // l'entry id
                 href = this.getUrl() + "?"
-                         + VOLUME_PARAMETER + "=" + myEntry.getVolumeName() + "&"
-                         + HANDLE + "=" + myEntry.getHandle() + "&"
-                         + SOURCE_PARAMETER + "=" + myEntry.getSourceLanguage() + "&"
-                         + TARGETS_PARAMETER + "=" + target + "&"
-                         + PartialMatch_PARAMETER + "=" + partialMatch + "&"
-                         + LOOKUP_PARAMETER + "=" + LOOKUP_PARAMETER;
+                    + VOLUME_PARAMETER + "=" + myEntry.getVolumeName() + "&"
+                    + HANDLE + "=" + myEntry.getHandle() + "&"
+                    + SOURCE_PARAMETER + "=" + myEntry.getSourceLanguage() + "&"
+                    + TARGETS_PARAMETER + "=" + target + "&"
+                    + PartialMatch_PARAMETER + "=" + partialMatch + "&"
+                    + LOOKUP_PARAMETER + "=" + LOOKUP_PARAMETER;
                 entryAnchor.setHref(href);
-				
-				String id = myEntry.getId();
+                
+                String id = myEntry.getId();
                 if (id == null) {
-					id = "";
-				}
-				content.setTextEntryIdList(id);
-
-                // The contribution
-                if (myEntry.getType() == IAnswer.Contribution) {
-                    Contribution myContrib = (Contribution) myEntry;
-
-                    String contribHref = ContributionsURL + "?"
-                             + ContributionsVolumeParameter + "="
-                             + myEntry.getVolumeName();
-                    contribAnchor.setHref(contribHref);
-
-                    content.setTextContribution(myContrib.getCreationDate() + " " + myContrib.getHandle());
-                } else {
-                    content.setTextContribution("");
+                    id = "";
                 }
-
+                content.setTextEntryIdList(id);
+                
+                // The contribution
+                // FIXME: seems to be incompatible with current contrib stuff...
+//                if (myEntry.getType() == IAnswer.Contribution) {
+//                    Contribution myContrib = (Contribution) myEntry;
+//                    
+//                    String contribHref = ContributionsURL + "?"
+//                        + ContributionsVolumeParameter + "="
+//                        + myEntry.getVolumeName();
+//                    contribAnchor.setHref(contribHref);
+//                    
+//                    content.setTextContribution(myContrib.getCreationDate() + " " + myContrib.getHandle());
+//                } else {
+//                    content.setTextContribution("");
+//                }
+                
                 // Le pos
                 String posstr = null;
+                // FIXME: Apparently, volumeEntries ALWAYS return LocalEntry.... can we have remote entries here ?
                 if (myEntry.getType() == IAnswer.LocalEntry) {
-					posstr = ((VolumeEntry) myEntry).getPos();
+                    posstr = ((VolumeEntry) myEntry).getPos();
                 }
                 if (null == posstr || posstr.equals("")) {
                     posstr = "+";
                 }
                 content.setTextPosEntry(posstr);
-
+                
                 // The volume
                 content.setTextDictionaryName(myEntry.getDictionaryName());
-
+                
                 // The formula
-                  if (myEntry.getType() == IAnswer.LocalEntry) {
-					 content.setTextFormula(((VolumeEntry) myEntry).getDefinition());
+                // FIXME: Apparently, volumeEntries ALWAYS return LocalEntry.... can we have remote entries here ?
+                if (myEntry.getType() == IAnswer.LocalEntry) {
+                    content.setTextFormula(((VolumeEntry) myEntry).getDefinition());
                 }
-             
-
+                
+                
                 XHTMLElement cloneEntry = (XHTMLElement) entryListRow.cloneNode(true);
                 XHTMLElement cloneFormula = (XHTMLElement) formulaRow.cloneNode(true);
                 //      we have to take off the id attribute because we did not take it off the original
+                // FIXME: why did we not tae it off in the original ?
                 cloneEntry.removeAttribute("id");
                 cloneFormula.removeAttribute("id");
                 lexieTable.appendChild(cloneEntry);
                 lexieTable.appendChild(cloneFormula);
-
             }
+            
         }
         Utility.removeElement(content.getElementEntryListRow());
         Utility.removeElement(content.getElementFormulaRow());
@@ -697,7 +717,7 @@ public class Home extends BasePO {
             Node entryTable = originalEntryRow.getParentNode();
             //for the entry content
 
-
+            content.getElementResourceName().removeAttribute("id");
             content.setTextResourceName(resourceName);
 
             //for the lexie content
@@ -730,11 +750,11 @@ public class Home extends BasePO {
      * @exception  fr.imag.clips.papillon.business.PapillonBusinessException
      *      Description of the Exception
      */
-    protected void addFewEntries(ConsultXHTML content, Collection EntryCollection, String xslid)
+    protected void addFewEntries(ConsultXHTML content, Collection qrset, String xslid)
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
-        if (EntryCollection != null && EntryCollection.size() > 0) {
-            for (Iterator myIterator = EntryCollection.iterator(); myIterator.hasNext(); ) {
-				addEntry(content, (IAnswer) myIterator.next(), xslid);
+        if (qrset != null && qrset.size() > 0) {
+            for (Iterator myIterator = qrset.iterator(); myIterator.hasNext(); ) {
+				addEntry(content, (QueryResult) myIterator.next(), xslid);
              }
         } else {
             Utility.removeElement(content.getElementEntryListTable());
@@ -752,23 +772,32 @@ public class Home extends BasePO {
      * @exception  fr.imag.clips.papillon.business.PapillonBusinessException
      *      Description of the Exception
      */
-    protected void addEntry(ConsultXHTML content, IAnswer myEntry, String xslid)
-		throws fr.imag.clips.papillon.business.PapillonBusinessException {
-			org.w3c.dom.Element myHtmlElt = null;
-			org.w3c.dom.Document myHtmlDoc = myEntry.getHtmlDom();
-			if (xslid != null || myHtmlDoc == null) {
-				myHtmlElt = XslTransformation.applyXslSheets(myEntry, xslid);
-				myHtmlDoc = myHtmlElt.getOwnerDocument();
-				if (xslid == null) {
-					myEntry.setHtmlDom(myHtmlDoc);
-					((VolumeEntry)myEntry).saveHTML();
-				}
-			}
-			else {
-				myHtmlElt = myHtmlDoc.getDocumentElement();
-			}
-			addElement(content, myHtmlElt, myEntry.getDictionaryName());
-		}
+    protected void addEntry(ConsultXHTML content, QueryResult qr, String xslid)
+		throws fr.imag.clips.papillon.business.PapillonBusinessException
+    {
+        // get the apropriate transformer.
+        ResultFormatter rf = ResultFormatterFactory.getFormatter(qr,ResultFormatterFactory.XHTML_DIALECT,null);
+        rf.initializeFormatter(qr.getSourceEntry().getDictionary(), qr.getSourceEntry().getVolume() ,ResultFormatterFactory.XHTML_DIALECT,null);
+        
+        addElement(content, (Element)rf.getFormattedResult(qr), qr.getSourceEntry().getDictionaryName());
+                   
+        //VolumeEntry myEntry = qr.getSourceEntry();
+//        org.w3c.dom.Element myHtmlElt = null;
+//        org.w3c.dom.Document myHtmlDoc = myEntry.getHtmlDom();
+//        if (xslid != null || myHtmlDoc == null) {
+//            myHtmlElt = XslTransformation.applyXslSheets(myEntry, xslid);
+//            myHtmlDoc = myHtmlElt.getOwnerDocument();
+//            if (xslid == null) {
+//                myEntry.setHtmlDom(myHtmlDoc);
+//                ((VolumeEntry)myEntry).saveHTML();
+//            }
+//        }
+//        else {
+//            myHtmlElt = myHtmlDoc.getDocumentElement();
+//        }
+//        addElement(content, myHtmlElt, myEntry.getDictionaryName());
+        
+    }
 	
 	
     /**

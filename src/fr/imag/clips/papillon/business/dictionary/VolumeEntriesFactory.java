@@ -3,6 +3,15 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.9  2005/05/24 12:51:21  serasset
+ * Updated many aspect of the Papillon project to handle lexalp project.
+ * 1. Layout is now parametrable in the application configuration file.
+ * 2. Notion of QueryResult has been defined to handle mono/bi and multi lingual dictionary requests
+ * 3. Result presentation may be done by way of standard xsl or with any class implementing the appropriate interface.
+ * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
+ * 5. It is now possible to give a name to the cookie key in the app conf file
+ * 6. Several bug fixes.
+ *
  * Revision 1.8  2005/04/18 10:50:26  mangeot
  * Bug fix when displaying with IExplorer,
  * Bug fixes when seqencial request
@@ -273,7 +282,7 @@ public class VolumeEntriesFactory {
 		myVector.add(Headword);
         try {
 			Volume volume = VolumesFactory.findVolumeByName("JMDict_jpn_eng");
-			if (volume != null && !volume.IsEmpty()) {
+			if (volume != null && !volume.isEmpty()) {
 				Dictionary myDict = DictionariesFactory.findDictionaryByName(volume.getDictname());
 				theEntries = IndexFactory.getEntriesVector(myDict, volume, myVector, IQuery.STRATEGY_EXACT,0);
 			}
@@ -404,7 +413,7 @@ public class VolumeEntriesFactory {
         throws PapillonBusinessException {
 			Volume volume = VolumesFactory.findVolumeByName(volumeName);
 			Dictionary dict = DictionariesFactory.findDictionaryByName(volume.getDictname());
-            if (!volume.IsEmpty()) {
+            if (!volume.isEmpty()) {
                 parseVolume(dict, volume,URL);
             }
         }
@@ -468,9 +477,9 @@ public class VolumeEntriesFactory {
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 		VolumeEntry myEntry = null;
 		Volume myVolume = VolumesFactory.findVolumeByName(volume);
-		if (myVolume != null && !myVolume.IsEmpty()) {
+		if (myVolume != null && !myVolume.isEmpty()) {
 			Dictionary myDict = DictionariesFactory.findDictionaryByName(myVolume.getDictname());
-			if (myDict != null && !myDict.IsEmpty()) {
+			if (myDict != null && !myDict.isEmpty()) {
 				myEntry = new VolumeEntry(myDict, myVolume);
 				String templateEntry = myVolume.getTemplateEntry();
 				myEntry.setDom(Utility.buildDOMTree(templateEntry));

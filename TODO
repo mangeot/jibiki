@@ -1,4 +1,49 @@
 - Supprimer la table "contributions" du fichier doml.
 - traiter papillonaxi comme n'importe quelle autre volume pivot.
-- Supprimer la dépendance avec ant dans la section informationfiles.
 - Revoir la partie XSLSheet pour des formes plus sympas...
+- Reporter localisation sur le xhtml et supprimer les fichiers html.
+- Supprimer le traitement spécifique des Axies Papillon
+
+- Revoir le DML, le rendre valide, répercuter les nouveautés (liens bilingues inter volumes, nouveau xsl-sheet...)
+- Distinguer l'espace de nom des meta données et les structures de dico Papillon.
+- Revoir les classes Home et consultExpert qui ont beaucoup de code commun...
+  
+- Construire le menu Axie lorsqu'une base a un dictionnaire pivot.
+- Supprimer le volume axies de la page d'édition
+- Corriger le javascript de la page d'édition/contribution
+- Construire une axie via une page ad-hoc...
+- créer des raccourcis pour la création d'axies/lexies
+- Faire page de sélection de termref/axieref dans une fenêtre spécifique avec mise à jour des champs automatiquement.
+- Faire des validations automatiques paramêtrables par les metadata pour remplissage de champs admin à la sauvegarde d'une entrée.
+
+- Que fait le update/save dans l'édition ? En cas de reconnection d'un utilisateur lui présenter les entrées en cours de construction ?
+
+NOTES: 
+- Que fait le HtmlDom dans la base ?
+- De nombreuses infos DML devraient être réunies dans une classe (ex: DML_URI, ...)
+- Attention, si l'utilisateur supprime le dernier élément d'une liste lors de l'édition, on ne pourra plus en recréer un.
+- De même les entrées construites contiennent de nombreux champs vides...
+
+FAIT:
+- FAIT ? Supprimer la dépendance avec ant dans la section informationfiles.
+- Consultation d'entrées:
+  - FAIT (QueryResult) Definir les concepts d'AXIE/LEXIE SETs résultats d'une recherche qui contiendraient 1 Axies + toutes les lexies directement reliées...
+    - Voir comment on peut afficher ces éléments...
+  - La mise en forme d'un dictionnaire peut se faire soit par des xsl (standard) soit par une classe ad-hoc implémentant l'interface ResultFormatter
+    - La classe en question doit être déclérée dans le metadata
+  - Modification de la transformation des résultats et adaptation des classes de présentation qui l'utilisent
+- Edition d'entrées:
+  - Modifié les noms d'attributs dans les pages xhtml d'interfaces. Les attributs sont préfixés par @ (ex: element.@attr)
+  - Modifié la gestion du passage entrée->interface et interface->entrée afin de le rendre + solide
+- Layout standard et aspect général du site-
+  - Le fichier de configuration d'application contient 2 nouveaux attributs:
+    - Papillon.LayoutClassName = "fr.imag.clips.papillon.presentation.LexALPLayout"
+      Si présent, cet attribut désigne la classe qui sera en charge du layout du site.
+    - Papillon.LoginCookieName = "LexalpLoginCookie" : donne un nom au cookie de l'application afin de permettre à 2 instances 
+      d'applications de cohabiter...
+  - Le layout d'un site est pris en charge par une classe spéciale désignées dans le fichier de configuration. Le layout standard 
+    étant le layout papillon. Ainsi, chaque presentation object rendra un layout qui dépendra de l'instance.
+- Bug fixes:
+  - Solved a bug when the language (d:lang) is not specified in the interface template
+  - Solved a bug where half of the childs of an xml element where removed... (when editing it, in certain situations)
+  - Solved a bug where an incorrect node was said to correspond with an interface element id.

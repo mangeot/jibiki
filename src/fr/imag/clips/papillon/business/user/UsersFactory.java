@@ -3,6 +3,15 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2005/05/24 12:51:22  serasset
+ * Updated many aspect of the Papillon project to handle lexalp project.
+ * 1. Layout is now parametrable in the application configuration file.
+ * 2. Notion of QueryResult has been defined to handle mono/bi and multi lingual dictionary requests
+ * 3. Result presentation may be done by way of standard xsl or with any class implementing the appropriate interface.
+ * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
+ * 5. It is now possible to give a name to the cookie key in the app conf file
+ * 6. Several bug fixes.
+ *
  * Revision 1.3  2005/04/11 12:29:59  mangeot
  * Merge between the XPathAndMultipleKeys branch and the main trunk
  *
@@ -111,12 +120,12 @@ public class UsersFactory {
         else {
             //search for an existing user
             User Existe=UsersFactory.findUserByName(name);
-            if (!Existe.IsEmpty()) {
+            if (!Existe.isEmpty()) {
                 answerMessage = "User " + name + " already in the database";
             }
             else {
                 Existe=UsersFactory.findUserByLogin(login);
-                if (!Existe.IsEmpty()) {
+                if (!Existe.isEmpty()) {
                     answerMessage = "Login " + login + " already in the database";
                 }
                 else {//doesn't exist, create:
@@ -158,7 +167,7 @@ public class UsersFactory {
         else {
             //search for an existing user
             myUser = UsersFactory.findUserByLogin(login);
-            if (myUser.IsEmpty()) {
+            if (myUser.isEmpty()) {
                 answerMessage = "Login " + login + " not in the database";
             }
             else {
@@ -187,7 +196,7 @@ public class UsersFactory {
     throws fr.imag.clips.papillon.business.PapillonBusinessException {
         String answerMessage = "";
 
-        if (myUser==null || myUser.IsEmpty()) {
+        if (myUser==null || myUser.isEmpty()) {
             answerMessage = "Non existing user";
         }
         else if (group==null || group.equals("")) {
@@ -212,7 +221,7 @@ public class UsersFactory {
 			//search for an existing created group
 			else {
 				Group myGroup = GroupsFactory.findGroupByName(group);
-				if (!myGroup.IsEmpty()) {
+				if (!myGroup.isEmpty()) {
 					if (myGroup.HasCorrectPassword(groupPassword)) {
 						myGroup.addUser(myUser.getLogin());
 						myUser.addGroup(group);
@@ -238,7 +247,7 @@ public class UsersFactory {
     throws fr.imag.clips.papillon.business.PapillonBusinessException {
         String answerMessage = "";
 
-        if (myUser==null || myUser.IsEmpty()) {
+        if (myUser==null || myUser.isEmpty()) {
             answerMessage = "Non existing user";
         }
         else if (group==null || group.equals("")) {
@@ -263,7 +272,7 @@ public class UsersFactory {
 			//search for an existing created group
 			else {
 				Group myGroup = GroupsFactory.findGroupByName(group);
-				if (!myGroup.IsEmpty()) {
+				if (!myGroup.isEmpty()) {
 					if (myGroup.HasCorrectPassword(groupPassword)) {
 						myGroup.removeUser(myUser.getLogin());
 						myUser.removeGroup(group);
@@ -288,7 +297,7 @@ public class UsersFactory {
 		String answerMessage = "";
 
 		//search for an existing user
-		if (myUser == null || myUser.IsEmpty()) {
+		if (myUser == null || myUser.isEmpty()) {
 			answerMessage = "User not in the database";
 		}
 		else {
@@ -318,7 +327,7 @@ public class UsersFactory {
         }
         else {
             //search for an existing user
-            if (myUser.IsEmpty()) {
+            if (myUser.isEmpty()) {
                 answerMessage = "User not in the database";
             }
             else {

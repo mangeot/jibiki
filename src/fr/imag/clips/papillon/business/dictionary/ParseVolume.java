@@ -13,6 +13,9 @@ import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.utility.Utility;
 
+import java.util.Vector;
+import java.util.Hashtable;
+
 public class ParseVolume {
 	
 	// constants
@@ -51,7 +54,7 @@ public class ParseVolume {
 														  myTokenizer.nextToken(),
 														  myTokenizer.nextToken(),
 														  myTokenizer.nextToken());
-						if (myEntry != null && !myEntry.IsEmpty()) {
+						if (myEntry != null && !myEntry.isEmpty()) {
 							myEntry.save();
 							entry++;
 						}
@@ -75,7 +78,7 @@ public class ParseVolume {
         throws PapillonBusinessException {
 			Volume volume = VolumesFactory.findVolumeByName(volumeName);
 			Dictionary dict = DictionariesFactory.findDictionaryByName(volume.getDictname());
-            if (!volume.IsEmpty()) {
+            if (!volume.isEmpty()) {
                 parseVolume(dict, volume,URL);
             }
         }
@@ -408,6 +411,18 @@ public class ParseVolume {
 		}
 		return myXPath;
 	}
+    
+    public static org.apache.xpath.XPath compileXPath(String xpathString, org.apache.xml.utils.PrefixResolver aPrefixResolver)  throws PapillonBusinessException {
+		javax.xml.transform.SourceLocator mySourceLocator = new org.apache.xml.utils.SAXSourceLocator();
+		org.apache.xpath.XPath myXPath = null;
+		try	{
+			myXPath = new org.apache.xpath.XPath(xpathString,mySourceLocator,aPrefixResolver,org.apache.xpath.XPath.SELECT);
+		}
+		catch (javax.xml.transform.TransformerException e) {
+			throw new PapillonBusinessException("javax.xml.transform.TransformerException: ", e);
+		}
+		return myXPath;
+	}
 	
 	public static boolean compileXPathTable(java.util.Hashtable cdmElements, org.w3c.dom.Element myRootElt) throws PapillonBusinessException {
 		boolean result = false;
@@ -456,38 +471,32 @@ public class ParseVolume {
 		throws PapillonBusinessException {
 			org.w3c.dom.NodeList resNodeList = null;
 			fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getCdmElements: " + CdmElement + " " + lang);
-			java.util.Hashtable CdmElementsTable = myEntry.getVolume().getCdmElements();
-			if (CdmElementsTable != null) {
-				java.util.Hashtable tmpTable = (java.util.Hashtable) CdmElementsTable.get(lang);
-				if (tmpTable != null) {
-					java.util.Vector myVector = (java.util.Vector) tmpTable.get(CdmElement);
-					org.apache.xpath.XPath myXPath = null;
-					if (myVector!= null && myVector.size()==3) {
-						myXPath =  (org.apache.xpath.XPath) myVector.elementAt(2);
-					}
-					org.w3c.dom.Document myDoc = myEntry.getDom();
-					if (myXPath != null && myDoc != null) {
-						try {
-							//							fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getCdmElements: XPath execute");
-							org.apache.xpath.objects.XObject myXObject = myXPath.execute(new org.apache.xpath.XPathContext(),myDoc.getDocumentElement(),aPrefixResolver);
-							resNodeList = myXObject.nodelist();
-						}
-						catch (javax.xml.transform.TransformerException e) {
-							throw new PapillonBusinessException("javax.xml.transform.TransformerException: ", e);
-						}
-					}
-					else {
+            java.util.Vector myVector = getXPath(myEntry,CdmElement,lang);
+            org.apache.xpath.XPath myXPath = null;
+            if (myVector!= null && myVector.size()==3) {
+                myXPath =  (org.apache.xpath.XPath) myVector.elementAt(2);
+            } else if (myVector!= null && myVector.size()==2) {
+                // The XPath has not yet been compiled...
+                myXPath = compileXPath((String) myVector.elementAt(0), aPrefixResolver);
+                // Store the compiled XPath in the cdm...
+                myVector.add(myXPath);
+                // FIXME: Should we save the change into the database ????
+            }
+            org.w3c.dom.Document myDoc = myEntry.getDom();
+            if (myXPath != null && myDoc != null) {
+                try {
+                    //							fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getCdmElements: XPath execute");
+                    org.apache.xpath.objects.XObject myXObject = myXPath.execute(new org.apache.xpath.XPathContext(),myDoc.getDocumentElement(),aPrefixResolver);
+                    resNodeList = myXObject.nodelist();
+                }
+                catch (javax.xml.transform.TransformerException e) {
+                    throw new PapillonBusinessException("javax.xml.transform.TransformerException: ", e);
+                }
+            } else {
 						//						fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getCdmElements: myXPath: null");
-					}
-				}
-				else {
-					//					fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getCdmElements: tmpTable == null");
-				}
-			}
-			else {
-				fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getCdmElements: CdmElementsTable == null");
-			}
-			return resNodeList;
+            }
+				
+            return resNodeList;
 		}
 	
 	public static org.w3c.dom.Node getCdmElement(IAnswer myEntry, String CdmElement)
@@ -519,5 +528,40 @@ public class ParseVolume {
 			}
 			return resString;
 		}
+    
+	public static String[] getCdmStrings (IAnswer myEntry, String CdmElement)
+		throws PapillonBusinessException {
+			return getCdmStrings(myEntry, CdmElement, Volume.DEFAULT_LANG);
+		}
+    
+    public static String[] getCdmStrings(IAnswer myEntry, String CdmElement, String lang) throws PapillonBusinessException {
+        org.w3c.dom.NodeList myList = ParseVolume.getCdmElements(myEntry,CdmElement,lang);
+        String [] result = null;
+        if (myList != null ) {
+            result = new String[myList.getLength()];
+            for (int i=0; i < myList.getLength(); i++) {
+                result[i] = myList.item(i).getNodeValue();
+            }
+        }
+        return result;
+    }
+    
+    public static Vector getXPath(IAnswer myEntry, String CdmElement) throws PapillonBusinessException {
+        return getXPath(myEntry, CdmElement, Volume.DEFAULT_LANG);
+    }
+    
+    public static Vector getXPath(IAnswer myEntry, String cdmElement, String lang) throws PapillonBusinessException {
+        Vector xpathVector = null;
+        
+        java.util.Hashtable cdmElementsTable = myEntry.getVolume().getCdmElements();
+        if (cdmElementsTable != null) {
+            java.util.Hashtable tmpTable = (java.util.Hashtable) cdmElementsTable.get(lang);
+            if (tmpTable != null) {
+                xpathVector = (java.util.Vector) tmpTable.get(cdmElement);
+            }
+        }
+        return xpathVector;
+    }
+    
 	
 }

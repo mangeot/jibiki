@@ -22,7 +22,8 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 public class UIGenerator {
 	
@@ -34,6 +35,7 @@ public class UIGenerator {
 	public static final String TYPE_PARENT_ANCHOR = "parent";
 
 	public static final String ID_SEPARATOR = ".";
+	public static final String ATTR_SEPARATOR = ".@";
 	public static final String PARAMETERS_SEPARATOR = "+";
 	public static final String ITF_ELT_NAME = "span";
 	public static final String ITF_DUPLICATE_ELT_NAME = "tr";
@@ -45,7 +47,16 @@ public class UIGenerator {
 	public static final String TYPE_ATTR_NAME = "type";
 	
 	public static final String CHOICE_NODE_NAME = "xsd:choice";
+    
+    // WARN: patterns depend on id and attr separators !
+    protected static final String attributePatternString = "^([^\\.]+)\\.(\\d+)\\.@(.+)$";
+    protected static Pattern attributePattern = Pattern.compile(attributePatternString);
+    protected static Matcher attributeMatcher = attributePattern.matcher("");
 	
+    protected static final String nodePatternString = "^([^\\.]+)\\.(\\d+)$";
+    protected static Pattern nodePattern = Pattern.compile(nodePatternString);
+    protected static Matcher nodeMatcher = nodePattern.matcher("");
+    
 	
 	/******************************************************/
 	/* Public methods                                     */
@@ -57,58 +68,51 @@ public class UIGenerator {
 	}
 	
 	public static boolean addElement(String elementName, String parentId, Element entryElt, Element entryTemplate, String[] siblingIds) {
-		// PapillonLogger.writeDebugMsg("addElement: " + elementName + " parent: " + parentId);	
-		boolean found = false;
+		//PapillonLogger.writeDebugMsg("addElement: " + elementName + " parent: " + parentId);
+        
 		Element siblingElement = null;
-		int indexOfPt;
 		if (siblingIds.length>0) {
 			String siblingId = siblingIds[siblingIds.length-1]; 
-			indexOfPt = siblingId.lastIndexOf(ID_SEPARATOR);
-			if (indexOfPt>0) {
-				String siblingName = siblingId.substring(0,indexOfPt);
-				if (siblingName.equals(elementName)) {
-					String siblingNb = siblingId.substring(indexOfPt+1);
-					siblingElement =  findElementInEntry(siblingName, siblingNb, entryElt);
+            nodeMatcher.reset(siblingId);
+            if (nodeMatcher.find()) {
+                String tagName = nodeMatcher.group(1);
+                String tagNum = nodeMatcher.group(2);
+				if (tagName.equals(elementName)) {
+					siblingElement = findElementInEntry(tagName, tagNum, entryElt);
 				}
 			}
 		}
-		indexOfPt = parentId.lastIndexOf(ID_SEPARATOR);
-		String parentName = "";
-		String parentNb = "";
-		
-		if (indexOfPt>0) {
-			parentName = parentId.substring(0,indexOfPt);
-			parentNb = parentId.substring(indexOfPt+1);
+        
+		nodeMatcher.reset(parentId);
+        if (nodeMatcher.find()) {
+            String parentName = nodeMatcher.group(1);
+            String parentNb = nodeMatcher.group(2);
 			
 			Element parentElt = findElementInEntry(parentName, parentNb, entryElt);
 			if (parentElt!=null) {
-				found = true;
 				Element myElement = getTemplateEntryElement(elementName,parentName,entryTemplate);
 				insertEntryElement(parentElt,myElement,siblingElement);
+                return true;
 			}
 		}
-		return found;
+		return false;
 	}
 	
 	public static boolean chooseElement(String elementId, String parentId, Element entryElt, Element entryTemplate) {
-		PapillonLogger.writeDebugMsg("chooseElement: " + elementId + " parent: " + parentId);	
+		// PapillonLogger.writeDebugMsg("chooseElement: " + elementId + " parent: " + parentId);	
 		boolean found = false;
-		
-		int indexOfPt = parentId.lastIndexOf(ID_SEPARATOR);
-		String parentName = "";
-		String parentNb = "";
-		
-		if (indexOfPt>0) {
-			parentName = parentId.substring(0,indexOfPt);
-			parentNb = parentId.substring(indexOfPt+1);
+        
+		nodeMatcher.reset(parentId);
+        if (nodeMatcher.find()) {
+            String parentName = nodeMatcher.group(1);
+            String parentNb = nodeMatcher.group(2);
+            		
 			Element resultParent = findElementInEntry(parentName, parentNb, entryElt);
 			if (resultParent!=null) {
-				int indexOfElt = elementId.lastIndexOf(ID_SEPARATOR);
-				String elementName = "";
-				String elementNb = "";
-				if (indexOfElt>0) {
-					elementName = elementId.substring(0,indexOfElt);
-					elementNb = elementId.substring(indexOfElt+1);
+                nodeMatcher.reset(elementId);
+                if (nodeMatcher.find()) {
+                    String elementName = nodeMatcher.group(1);
+                    String elementNb = nodeMatcher.group(2);
 					Element templateElt = getTemplateEntryElement(elementName,parentName,entryTemplate);
 					if (templateElt!=null) {
 						found = true;
@@ -125,41 +129,35 @@ public class UIGenerator {
 	
 	// Update an element in the XML entry entryElt with the new value value
 	public static boolean updateElement(String elementId, String value, Element entryElt) {
-		boolean found = false;
-		PapillonLogger.writeDebugMsg("updateElement: " + elementId + " value: " + value);	
-		boolean isAttribute =  (elementId.indexOf(ID_SEPARATOR)!= elementId.lastIndexOf(ID_SEPARATOR));
-		String attrName = "";
-		
-		if (isAttribute) {
-			attrName = elementId.substring(elementId.lastIndexOf(ID_SEPARATOR)+1);
-			elementId = elementId.substring(0,elementId.lastIndexOf(ID_SEPARATOR));
-		}
-		
-		int indexOfPt = elementId.lastIndexOf(ID_SEPARATOR);
-		String elementName = "";
-		String eltNb = "";
-		
-		if (indexOfPt>0) {
-			elementName = elementId.substring(0,indexOfPt);
-			eltNb = elementId.substring(indexOfPt+1);
-			
-			Element resultElt = findElementInEntry(elementName, eltNb,entryElt);
-			if (resultElt!=null) {
-				found=true;
-				if (isAttribute) {
-					resultElt.setAttribute(attrName,value);
-				}
-				else {
-					NodeList childNodes = resultElt.getChildNodes();
-					for (int j=0;j<childNodes.getLength();j++) {
-						resultElt.removeChild(childNodes.item(j));
-					}
-					Node textNode = resultElt.getOwnerDocument().createTextNode(value);
-					resultElt.appendChild(textNode);
-				}
-			}
-		}		
-		return found;
+		//PapillonLogger.writeDebugMsg("updateElement: " + elementId + " value: " + value);	
+        
+        attributeMatcher.reset(elementId);
+        nodeMatcher.reset(elementId);
+        Element res = null;
+        if (attributeMatcher.find()) {
+            String tagName = attributeMatcher.group(1);
+            String tagNum = attributeMatcher.group(2);
+            String attributeName = attributeMatcher.group(3);
+            Element resultElt = findElementInEntry(tagName, tagNum, entryElt);
+            if (resultElt!=null) { 
+                resultElt.setAttribute(attributeName,value);
+                return true;
+            }
+        } else if (nodeMatcher.find()) {
+            String tagName = nodeMatcher.group(1);
+            String tagNum = nodeMatcher.group(2);
+            Element resultElt = findElementInEntry(tagName, tagNum, entryElt);
+            if (resultElt!=null) { 
+                // remove all children.
+                while(resultElt.hasChildNodes()) {
+                    resultElt.removeChild(resultElt.getFirstChild());
+                }
+                Node textNode = resultElt.getOwnerDocument().createTextNode(value);
+                resultElt.appendChild(textNode);
+                return true;
+            }
+        }
+        return false;
 	}
 	
 	public static void deleteElements(String elementName, String[] elementIds, Element entryElt) {
@@ -168,20 +166,19 @@ public class UIGenerator {
 		for (int i=0; i<elementIds.length;i++) {
 			String elementId = elementIds[i];
 //			PapillonLogger.writeDebugMsg("deleteElement: " + elementName + " eltId: " + elementId);
-			int indexOfPt = elementId.lastIndexOf(ID_SEPARATOR);
-			String currentName = "";
-			String currentNb = "";
-			if (indexOfPt>0) {
-				currentName = elementId.substring(0,indexOfPt);
-				currentNb = elementId.substring(indexOfPt+1);
-			}
-			if (currentNb!=null && !currentNb.equals("") && 
-				elementName!=null && elementName.equals(currentName)) {
-				int itemNb = Integer.parseInt(currentNb);
-				Element resultElt = (Element) myNodeList.item(itemNb);
-				removeNodes.add(resultElt);
-			}
-		}
+            
+			nodeMatcher.reset(elementId);
+            if (nodeMatcher.find()) {
+                String currentName = nodeMatcher.group(1);
+                String currentNb = nodeMatcher.group(2);
+                
+                if (elementName!=null && elementName.equals(currentName)) {
+                    int itemNb = Integer.parseInt(currentNb);
+                    Element resultElt = (Element) myNodeList.item(itemNb);
+                    removeNodes.add(resultElt);
+                }
+            }
+        }
 		Node parentNode = null;
 		for (int i=0; i<removeNodes.size();i++) {
 			Element removeElt = (Element) removeNodes.elementAt(i);
@@ -194,20 +191,22 @@ public class UIGenerator {
 	}
 	
 	public static boolean setValueInput(Element itfElt, String correspName, String value) {
-		PapillonLogger.writeDebugMsg("setValueInput: " + correspName);
+		//PapillonLogger.writeDebugMsg("setValueInput: " + correspName);
 		boolean found = false;
-		NodeList myNodeList = itfElt.getElementsByTagName ("input");
-		int i=0;
-		while (i<myNodeList.getLength () && !found) {
-			Element currentElt = (Element) myNodeList.item(i);
-			String name = currentElt.getAttribute("name");
-			if (name !=null && name.equals(correspName)) {
-				String type = currentElt.getAttribute("type");
-				currentElt.setAttribute("value", value);
-				found = true;
-			}	
-			i++;
-		}
+        if (null != itfElt) {
+            NodeList myNodeList = itfElt.getElementsByTagName ("input");
+            int i=0;
+            while (i<myNodeList.getLength () && !found) {
+                Element currentElt = (Element) myNodeList.item(i);
+                String name = currentElt.getAttribute("name");
+                if (name !=null && name.equals(correspName)) {
+                    String type = currentElt.getAttribute("type");
+                    currentElt.setAttribute("value", value);
+                    found = true;
+                }	
+                i++;
+            }
+        }
 		return found;
 	}
 	
@@ -226,9 +225,9 @@ public class UIGenerator {
 			String newId = createId(entryNode, oldId);
 			String entryNodeName = entryNode.getNodeName();
 			if (entryNode.getNodeType()==Node.ATTRIBUTE_NODE) {
-				entryNodeName = ((Attr) entryNode).getOwnerElement().getNodeName() + ID_SEPARATOR + entryNodeName;
+				entryNodeName = ((Attr) entryNode).getOwnerElement().getNodeName() + ATTR_SEPARATOR + entryNodeName;
 			}
-			// PapillonLogger.writeDebugMsg("fillTemplate Node: " + entryNodeName + " ID: " + newId);
+			PapillonLogger.writeDebugMsg("fillTemplate Node: " + entryNodeName + " ID: " + newId);
 			setNameCorrespondingAnchor(entryNode, itfElt, newId);
 			setIdCorrespondingSubmitInputs(entryNodeName, itfElt, newId);
 			setIdCorrespondingLabel(entryNodeName, itfElt, newId);
@@ -325,7 +324,7 @@ public class UIGenerator {
 		switch (entryNode.getNodeType()) {
 			// this case case should not be present. It is solved in the next section
 			case  Node.ATTRIBUTE_NODE:
-				idString = eltId + ID_SEPARATOR + entryNode.getNodeName();
+				idString = eltId + ATTR_SEPARATOR + entryNode.getNodeName();
 				break;
 			case  Node.DOCUMENT_NODE:
 				idString = entryNode.getNodeName() + ID_SEPARATOR + getElementNumber(((Document) entryNode).getDocumentElement());
@@ -649,7 +648,7 @@ public class UIGenerator {
 	
 	
 	protected static Element insertEntryElement(Element parentElement, Element newElement, Element siblingElement) {
-		PapillonLogger.writeDebugMsg("insertEntryElement: " + newElement.toString() + " parent: " + parentElement.toString());	
+		//PapillonLogger.writeDebugMsg("insertEntryElement: " + newElement.toString() + " parent: " + parentElement.toString());	
 		Vector nodeVector = new Vector();
 		
 		Element resElt = (Element) parentElement.getOwnerDocument().importNode(newElement,true);
@@ -711,23 +710,22 @@ public class UIGenerator {
 		return resElt;
 	}
 	
+    
+    // FIXED: this should not return an element if the eltNb is not a number...
+    // FIXED: The eltNb is now parsed as an int.
 	protected static Element findElementInEntry(String eltName, String eltNb, Element entryElt) {
-		Element resultElt = null;
-		boolean found = false;
 		if (entryElt.getTagName().equals(eltName)) {
-			resultElt = entryElt;
-			found = true;
+            // Assumes that eltNb == 0...
+			return entryElt;
+		} else {
+            try {
+                NodeList myNodeList = entryElt.getElementsByTagName (eltName);
+                int nb = Integer.parseInt(eltNb);;
+                return (Element) myNodeList.item(nb);
+            } catch (Exception e) {
+                return null;
+            }
 		}
-		else {
-			NodeList myNodeList = entryElt.getElementsByTagName (eltName);
-			int i=0;
-			while (i<myNodeList.getLength() && !found) {
-				resultElt = (Element) myNodeList.item(i);
-				found = eltNb.equals(i + "");
-				i++;
-			}
-		}
-		return resultElt;
 	}
 	
 	protected static Node getChildNode(Node parentNode, String childName) {

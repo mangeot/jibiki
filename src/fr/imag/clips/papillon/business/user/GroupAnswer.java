@@ -9,8 +9,18 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.1  2004/12/06 16:38:31  serasset
- * Initial revision
+ * Revision 1.2  2005/05/24 12:51:22  serasset
+ * Updated many aspect of the Papillon project to handle lexalp project.
+ * 1. Layout is now parametrable in the application configuration file.
+ * 2. Notion of QueryResult has been defined to handle mono/bi and multi lingual dictionary requests
+ * 3. Result presentation may be done by way of standard xsl or with any class implementing the appropriate interface.
+ * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
+ * 5. It is now possible to give a name to the cookie key in the app conf file
+ * 6. Several bug fixes.
+ *
+ * Revision 1.1.1.1  2004/12/06 16:38:31  serasset
+ * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
+ * There are still bugs in the code.
  *
  * Revision 1.2  2004/02/10 05:27:13  mangeot
  * The version UIGEN_V2 has been merged with the trunk by MM
@@ -61,7 +71,7 @@ public class GroupAnswer {
     public Group getGroup() {
         return myGroup;
     }
-    public boolean IsEmpty() {
-        return (myGroup == null || myGroup.IsEmpty());
+    public boolean isEmpty() {
+        return (myGroup == null || myGroup.isEmpty());
     }
 }

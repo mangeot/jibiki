@@ -9,6 +9,15 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.6  2005/05/24 12:51:22  serasset
+ * Updated many aspect of the Papillon project to handle lexalp project.
+ * 1. Layout is now parametrable in the application configuration file.
+ * 2. Notion of QueryResult has been defined to handle mono/bi and multi lingual dictionary requests
+ * 3. Result presentation may be done by way of standard xsl or with any class implementing the appropriate interface.
+ * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
+ * 5. It is now possible to give a name to the cookie key in the app conf file
+ * 6. Several bug fixes.
+ *
  * Revision 1.5  2005/04/11 12:29:59  mangeot
  * Merge between the XPathAndMultipleKeys branch and the main trunk
  *
@@ -79,7 +88,7 @@ import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
 
-public class AdminVolumes extends BasePO {
+public class AdminVolumes extends PapillonBasePO {
 
     protected final static String SEE_METADATA_PARAMETER="SeeMetadata";
     protected final static String SEE_SCHEMA_PARAMETER="SeeSchema";
@@ -110,8 +119,13 @@ public class AdminVolumes extends BasePO {
         return true;
     }
 
-    protected boolean adminUserRequired() {
-        return true;
+    protected boolean userMayUseThisPO() {
+        try {
+            return this.getUser().isAdmin();
+        } catch (PapillonBusinessException ex) {
+            this.getSessionData().writeUserMessage("Error getting the authorisation to use this PO.");
+        }
+        return false;
     }
     
     protected  int getCurrentSection() {
@@ -136,38 +150,35 @@ public class AdminVolumes extends BasePO {
             //TEMPORAIRE :avec l URL
             //AJOUT DE DICO
             String userMessage = null;
-						String urlString = myGetParameter(content.NAME_URL);
+            String urlString = myGetParameter(content.NAME_URL);
             if (null != urlString &&
-								null != myGetParameter(content.NAME_Dictionary)) {
-								URL myURL = new URL(urlString);
+                null != myGetParameter(content.NAME_Dictionary)) {
+                URL myURL = new URL(urlString);
                 PapillonLogger.writeDebugMsg(req.getParameter(myURL.toString()));
-								Dictionary dict = DictionariesFactory.findDictionaryByName(dictName);
+                Dictionary dict = DictionariesFactory.findDictionaryByName(dictName);
                 Volume myVolume = VolumesFactory.parseVolumeMetadata(dict, myURL,req.getParameter(content.NAME_AddEntries));
-                if (null != myVolume && !myVolume.IsEmpty()) {
-                        userMessage = "adding "+ myVolume.getName() + " volume" + " // " + myVolume.getDictname() + " // "  + myVolume.getDbname() + " // " + myVolume.getSourceLanguage() + " // " + myVolume.getTargetLanguages() + " // " + myVolume.getVolumeRef();
-						fr.imag.clips.papillon.business.edition.UITemplates.resetCache();
-                    }
+                if (null != myVolume && !myVolume.isEmpty()) {
+                    userMessage = "adding "+ myVolume.getName() + " volume" + " // " + myVolume.getDictname() + " // "  + myVolume.getDbname() + " // " + myVolume.getSourceLanguage() + " // " + myVolume.getTargetLanguages() + " // " + myVolume.getVolumeRef();
+                    fr.imag.clips.papillon.business.edition.UITemplates.resetCache();
+                }
                 else {
                     userMessage = "Ignoring volume";
-                    }
                 }
-             else if (null != myGetParameter(content.NAME_Volume) &&
-									null != myGetParameter(content.NAME_URLObject) &&
-									null != myGetParameter(content.NAME_Object)) {
-									String object = myGetParameter(content.NAME_Object);
-									String url = myGetParameter(content.NAME_URLObject);
-									userMessage = this.uploadObject(volName, object, url);
-            } 
-             else if (null != myGetParameter(REMOVE_METADATA_PARAMETER)) {
+            } else if (null != myGetParameter(content.NAME_Volume) &&
+                       null != myGetParameter(content.NAME_URLObject) &&
+                       null != myGetParameter(content.NAME_Object)) {
+                String object = myGetParameter(content.NAME_Object);
+                String url = myGetParameter(content.NAME_URLObject);
+                userMessage = this.uploadObject(volName, object, url);
+            } else if (null != myGetParameter(REMOVE_METADATA_PARAMETER)) {
                 String handle = myGetParameter(REMOVE_METADATA_PARAMETER);
                 Volume volume = VolumesFactory.findVolumeByID(handle);
                 volume.delete();
                 userMessage = "Volume " + volume.getName() + " metadata  erased...";	
-            } 
-             else if (null != myGetParameter(REMOVE_ALL_PARAMETER)) {
+            } else if (null != myGetParameter(REMOVE_ALL_PARAMETER)) {
                 String handle = myGetParameter(REMOVE_ALL_PARAMETER);
                 Volume volume = VolumesFactory.findVolumeByID(handle);
-                if (null != volume && !volume.IsEmpty()) {
+                if (null != volume && !volume.isEmpty()) {
                     volume.deleteAll();
                     userMessage = "Volume " + volume.getName() + " entries and metadata  erased...";                    
                 }
@@ -183,20 +194,17 @@ public class AdminVolumes extends BasePO {
                 Volume volume = VolumesFactory.findVolumeByID(handle);
                 //adding an XML file
                 addXml(volume.getXmlSchema());
-            }
-            else if (null != myGetParameter(SEE_TEMPLATE_PARAMETER)) {
+            } else if (null != myGetParameter(SEE_TEMPLATE_PARAMETER)) {
                 String handle = myGetParameter(SEE_TEMPLATE_PARAMETER);
                 Volume volume = VolumesFactory.findVolumeByID(handle);
                 //adding an XML file
                 addXml(volume.getTemplateEntry());
-            }
-            else if (null != myGetParameter(SEE_INTERFACE_PARAMETER)) {
+            } else if (null != myGetParameter(SEE_INTERFACE_PARAMETER)) {
                 String handle = myGetParameter(SEE_INTERFACE_PARAMETER);
                 Volume volume = VolumesFactory.findVolumeByID(handle);
                 //adding an XML file
                 addXml(volume.getTemplateInterface());
-            }
-            else if (null != myGetParameter(GENERATE_INTERFACE_PARAMETER)) {
+            } else if (null != myGetParameter(GENERATE_INTERFACE_PARAMETER)) {
                 String handle = myGetParameter(GENERATE_INTERFACE_PARAMETER);
                 Volume volume = VolumesFactory.findVolumeByID(handle);
                 // generating an XNF interface description
@@ -376,7 +384,7 @@ public class AdminVolumes extends BasePO {
 		PapillonLogger.writeDebugMsg("uploadObject volName: " + volName);
 		Volume myVolume = VolumesFactory.findVolumeByName(volName);
 		String result = "Nothing uploaded";
-		if (myVolume!=null && !myVolume.IsEmpty()) {
+		if (myVolume!=null && !myVolume.isEmpty()) {
 			if (object !=null && !object.equals("")) {
 				String objectResult = Utility.NodeToString(Utility.buildDOMTreeFromUrl(url));
 				result= object + " reloaded";

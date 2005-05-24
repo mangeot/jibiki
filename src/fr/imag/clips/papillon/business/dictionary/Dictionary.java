@@ -9,6 +9,15 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2005/05/24 12:51:21  serasset
+ * Updated many aspect of the Papillon project to handle lexalp project.
+ * 1. Layout is now parametrable in the application configuration file.
+ * 2. Notion of QueryResult has been defined to handle mono/bi and multi lingual dictionary requests
+ * 3. Result presentation may be done by way of standard xsl or with any class implementing the appropriate interface.
+ * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
+ * 5. It is now possible to give a name to the cookie key in the app conf file
+ * 6. Several bug fixes.
+ *
  * Revision 1.3  2005/04/11 12:29:59  mangeot
  * Merge between the XPathAndMultipleKeys branch and the main trunk
  *
@@ -39,11 +48,15 @@ import fr.imag.clips.papillon.data.*;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.CurrentDBTransaction;
 
+import fr.imag.clips.papillon.business.utility.Utility;
+
 import com.lutris.appserver.server.sql.DatabaseManagerException;
 import com.lutris.appserver.server.sql.ObjectIdException;
 import com.lutris.dods.builder.generator.query.DataObjectException;
 
 import java.util.Vector;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Element;
 
 
 /**
@@ -77,7 +90,7 @@ public class Dictionary {
         this.myDO = theDictionary;
     }
 
-    public boolean IsEmpty() {
+    public boolean isEmpty() {
         return (this.myDO==null) ;
     }
 
@@ -273,6 +286,14 @@ public class Dictionary {
         }
     }
 
+    public String getFormatterClassName() throws PapillonBusinessException {
+        NodeList formatters = Utility.buildDOMTree(this.getXmlCode()).getElementsByTagName("result-formatter"); 
+        String classname = null;
+        if ((null != formatters) && (formatters.getLength() > 0)) {
+            classname = ((Element) formatters.item(0)).getAttribute("class-name");
+        }
+        return classname;
+    }
   
    
     public void save() 

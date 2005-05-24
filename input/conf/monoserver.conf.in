@@ -17,10 +17,10 @@ MimeType.ico = image/x-icon
 #
 # Specify only one application (no graphical administration).
 #
-Application.Papillon.ConfFile = Papillon.conf
-Application.Papillon.Description = "Papillon"
-Application.Papillon.Running = yes
-Application.Papillon.defaultSessionTimeOut = 30
+Application.@APPLICATION@.ConfFile = @APPLICATION@.conf
+Application.@APPLICATION@.Description = "@APPLICATION@"
+Application.@APPLICATION@.Running = yes
+Application.@APPLICATION@.defaultSessionTimeOut = 30
 
 #
 # Open up a port.
@@ -31,7 +31,7 @@ Connection.http.Port = 8999
 #
 # Connect the port to the application.
 #
-Channel.http.channel.Servlet = Papillon
+Channel.http.channel.Servlet = @APPLICATION@
 Channel.http.channel.Url = /
 Channel.http.channel.Enabled = yes
 

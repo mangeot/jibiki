@@ -9,6 +9,15 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2005/05/24 12:51:22  serasset
+ * Updated many aspect of the Papillon project to handle lexalp project.
+ * 1. Layout is now parametrable in the application configuration file.
+ * 2. Notion of QueryResult has been defined to handle mono/bi and multi lingual dictionary requests
+ * 3. Result presentation may be done by way of standard xsl or with any class implementing the appropriate interface.
+ * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
+ * 5. It is now possible to give a name to the cookie key in the app conf file
+ * 6. Several bug fixes.
+ *
  * Revision 1.3  2005/01/15 12:51:24  mangeot
  * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
  *
@@ -64,7 +73,9 @@ import fr.imag.clips.papillon.business.PapillonBusinessException;
 
 import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
-public class MailingList extends BasePO {
+import org.w3c.dom.CDATASection;
+
+public class MailingList extends PapillonBasePO {
     protected final static String ID="Id";
     protected final static String BODYPLACE="@@MESSAGE_BODY@@";
     protected final static String SORT_PARAMETER="sort";
@@ -88,14 +99,10 @@ public class MailingList extends BasePO {
         return false;
     }
 
-    protected boolean adminUserRequired() {
-        return false;
+    protected boolean userMayUseThisPO() {
+        return true;
     }
     
-    public Node getContent() throws Exception {
-        throw new Exception("Unexpected call to getContent in the Mailing list.");
-    }
-
     public Node getMessageList() throws HttpPresentationException, 
                                         IOException, 
                                         DataObjectException {
@@ -296,106 +303,51 @@ public class MailingList extends BasePO {
 
         String authorName = theMessage.getAuthor();
         String authorAddress = theMessage.getAuthorAddress();
-	messageLayout.setTextAuthor(this.maskAddress(authorName));
-	// Split the address in 2 parts
-	int arobasPos=authorAddress.indexOf("@", 0);
-	if (arobasPos != -1) {
-	    autInput.setName(authorAddress.substring(0, arobasPos));
-	    autInput.setValue(authorAddress.substring(arobasPos+1));
-	}
-	//messageLayout.setTextAuthor(authorName);
-	//autAnchor.setHref("mailto:"+authorAddress);
+        messageLayout.setTextAuthor(this.maskAddress(authorName));
+        // Split the address in 2 parts
+        int arobasPos=authorAddress.indexOf("@", 0);
+        if (arobasPos != -1) {
+            autInput.setName(authorAddress.substring(0, arobasPos));
+            autInput.setValue(authorAddress.substring(arobasPos+1));
+        }
+        //messageLayout.setTextAuthor(authorName);
+        //autAnchor.setHref("mailto:"+authorAddress);
         
         String subject = theMessage.getSubject();
         messageLayout.setTextSubject(subject);
+        
+        String msgText = theMessage.getMsg();
+        CDATASection cds = messageLayout.createCDATASection(msgText);
+        messageLayout.getElementMessageBody().appendChild(cds);
+        
         return messageLayout.getElementMessage();
     }
  
     /**
      * This implements the run method in MailingList.
-     * I overrided the BasePO.run method because I don't want to parse the
+     * I overrided the PapillonBasePO.run method because I don't want to parse the
      * message body (as many of then are ill-formed).
      *
      * @param HttpPresentationComms
      * @exception Exception
      */
-    public void run(HttpPresentationComms comms)
-        throws HttpPresentationException, IOException, Exception {
-                 
-        // Initialize new or get the existing session data
-        initSessionData(comms);
-        // Check if the user needs to be logged in for this request.
-        if(this.loggedInUserRequired()) {
-            checkForUserLogin();   // This will redirect the user to the login page if necessary
-        }
-
-        HttpPresentationOutputStream out;
-        StdLayout stdLayout;
+    public Node getContent()
+        throws HttpPresentationException, IOException, Exception 
+    {
+        
         Node content;
-        byte[] buffer;
-	String resStr;
-	// Creation du contenu
-	String lang = myGetParameter(BasePO.LANG_PARAMETER);
-
-	if (null != lang) {
-		this.setUserPreferredLanguage(lang);
-	}
-	
         
-	// Creating the empty page
-        stdLayout = new StdLayout(comms, this.getSessionData(),this.getUrl());
-        
-	// Creating the content of the page --> returning the byte array
         HttpPresentationRequest req = this.getComms().request;
         // If the page is called with the Id parameter, present the requested message,
         // else present the message list.
         if (null != req.getParameter(ID)) { 
             //Insertion du contenu sans corps de message dans le document vide.
-            stdLayout.getLayout().getElementMainColumn().appendChild(
-                stdLayout.getLayout().importNode(this.getMessage(),true));
+            return this.getMessage();
             
-            // Handling user Messages
-            handleUserMessage(stdLayout);
-            
-            // Création du document HTML résultant
-            OutputOptions options = new OutputOptions();
-            options.setDropHtmlSpanIds(true);
-            options.setXmlEncoding("UTF-8");
-            DOMFormatter fFormatter = new DOMFormatter(options);
-            
-            String docStr = fFormatter.toString(stdLayout.getLayout());
-            int bodyStartPos = docStr.lastIndexOf(BODYPLACE);
- 
-            // Récupération du body du message demandé.
-            Message theMessage = MessageFactory.findMessageByID(this.getComms().request.getParameter(ID));
-        
-            resStr = docStr.substring(0, bodyStartPos) + theMessage.getMsg() + 
-                     docStr.substring(bodyStartPos + BODYPLACE.length());
-            buffer = resStr.getBytes("UTF-8");
         } else {
             //Insertion du contenu dans le document vide.
-            stdLayout.getLayout().getElementMainColumn().appendChild(
-                stdLayout.getLayout().importNode(this.getMessageList(),true));
-            
-            // Handling user Messages
-            handleUserMessage(stdLayout);
-            
-            // Création du document HTML résultant
-            OutputOptions options = new OutputOptions();
-            options.setDropHtmlSpanIds(true);
-            options.setXmlEncoding("UTF-8");
-            DOMFormatter fFormatter = new DOMFormatter(options);
-            
-            buffer = fFormatter.toBytes(stdLayout.getLayout());
+            return this.getMessageList();
         }
-        
-	// envoi de la réponse
-        
-        comms.response.setContentType( "text/html; charset=UTF-8" );        
-        comms.response.setContentLength( buffer.length );
-        out = comms.response.getOutputStream();
-        out.write(buffer);
-        out.flush();
     }
     
     public static String maskAddress(String address) {

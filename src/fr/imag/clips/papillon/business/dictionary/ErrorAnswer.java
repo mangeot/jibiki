@@ -14,7 +14,7 @@ public class ErrorAnswer implements IAnswer {
 		return IAnswer.Error;
 	}
 
-   public  boolean IsEmpty() {
+   public  boolean isEmpty() {
 	return true;
    }
     
