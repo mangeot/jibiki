@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Menu</title>
+  </head>
+  <body>
+    <div id="LanguageAndUser"  xml:lang="et" lang="et" class="menuBlock">
+      <h2 class="menuTitle">
+        <a title="Kasutaja toimingud" href="javascript:void(0)">Kasutaja:</a>
+      </h2>
+      <span id="UserLogin">UserLogin</span>
+      <form id="LangForm" action="PapillonBasePO.po">
+        <div>
+        <label for="lang" accesskey="k">
+          <span class="accesskey">K</span>eel:</label>
+        <span id="LangSelectPlace">
+          <span id="lang" />
+        </span>
+        <noscript><div><input type="submit" value="Go" /></div></noscript>
+      </div>
+      </form>
+      <span id="LoginAnchor">
+        <a title="Tutvusta ennast"
+            href="LoginUser.po">Sisene</a><br/>
+      </span>
+      <span id="UserProfileAnchor">
+        <a title="Vaata/muuda oma kasutaja nime/parooli/aadressi..."
+            href="UserProfile.po">Kasutaja seadistus</a><br/>
+      </span>
+      <span id="LogoutAnchor">
+        <a title="Välju Papilloni www-lehelt"
+            href="LoginUser.po?Logout=yes" onclick="return confirm('Oled kindel, et soovid väljuda?')">Välju</a>
+      </span>
+    </div>
+  </body>
+</html>
