@@ -1,50 +1,21 @@
 /*
  *
  *-----------------------
- *$Id$
+ * $Id$
  *------------------------
- *$Log$
- *Revision 1.1  2005/05/24 12:51:21  serasset
- *Updated many aspect of the Papillon project to handle lexalp project.
- *1. Layout is now parametrable in the application configuration file.
- *2. Notion of QueryResult has been defined to handle mono/bi and multi lingual dictionary requests
- *3. Result presentation may be done by way of standard xsl or with any class implementing the appropriate interface.
- *4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
- *5. It is now possible to give a name to the cookie key in the app conf file
- *6. Several bug fixes.
+ * $Log$
+ * Revision 1.2  2005/05/25 13:31:08  serasset
+ * Return a monolingual entry even if the lexie is not linked to an axie.
+ * LexALP transformer now formats simple monolingual query results.
  *
- *Revision 1.2  2005/04/11 12:29:59  mangeot
- *Merge between the XPathAndMultipleKeys branch and the main trunk
- *
- *Revision 1.1.1.1.2.1  2005/01/28 19:45:55  mangeot
- *First version that runs basically.
- *Should compile after an ant clean.
- *XPath loading and virtual volumes for terminological lexicons are OK.
- *Bugs remain, needs more testings like the editor for example.
- *
- *Revision 1.1.1.1  2004/12/06 16:38:31  serasset
- *Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
- *There are still bugs in the code.
- *
- *Revision 1.15  2004/10/28 10:36:13  mangeot
- *MM: I added a transformation method in order to produce a text version from an XML entry. It is used in dictd to display a text entry
- *
- *Revision 1.14  2004/05/12 15:35:22  serasset
- *The xml processing instruction also has to be suppressed in the source language
- *entry, when building the artificial Papillon entry.
- *
- *Revision 1.13  2004/05/11 16:15:47  serasset
- *The database now bear a <?xml instruction in the beginning of newly created
- *files.Hence, when building a fake Papillon entry 1 source -> n targets, each
- *translation is preceded by an invalid instruction. Hence the entry could not
- *be parsed for Xsl transformation. As a result, Papillon returned a null pointer
- *exception. Fixed with a hack that suppress the instruction directly in the xml
- *code when the fake entry is built.
- *
- *Revision 1.12  2004/02/10 05:27:13  mangeot
- *The version UIGEN_V2 has been merged with the trunk by MM
- *Be careful because the Volumes and contributions database tables have been modified.
- *You have to drop and rebuild them unless you modify them by hands.
+ * Revision 1.1  2005/05/24 12:51:21  serasset
+ * Updated many aspect of the Papillon project to handle lexalp project.
+ * 1. Layout is now parametrable in the application configuration file.
+ * 2. Notion of QueryResult has been defined to handle mono/bi and multi lingual dictionary requests
+ * 3. Result presentation may be done by way of standard xsl or with any class implementing the appropriate interface.
+ * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
+ * 5. It is now possible to give a name to the cookie key in the app conf file
+ * 6. Several bug fixes.
  *
  *------------------------
  */
@@ -122,18 +93,16 @@ public class LexALPFormatter implements ResultFormatter {
             Document res = myDocumentBuilder.newDocument();
             Element div = res.createElement("div");
             res.appendChild(div);
+            // First format the source entry
+            XslSheet dictXsl = XslSheetFactory.findXslSheetByName(currentDictionary.getName());
+            Document doc = qr.getSourceEntry().getDom();
+            
+            if (null != dictXsl && ! dictXsl.isEmpty()) {
+                doc = Transform(doc, dictXsl);
+            }
+            div.appendChild(res.importNode(doc.getDocumentElement(),true));
             
             if (qr.getResultKind() == QueryResult.AXIE_COLLECTION_RESULT) {
-                // First format the source entry
-                XslSheet dictXsl = XslSheetFactory.findXslSheetByName(currentDictionary.getName());
-                Document doc = qr.getSourceEntry().getDom();
-
-                if (null != dictXsl && ! dictXsl.isEmpty()) {
-                    doc = Transform(doc, dictXsl);
-                }
-
-                // div.appendChild(res.importNode((Node) (doc.getElementsByTagNameNS(DML_URI,"entry").item(0)),true));
-                div.appendChild(res.importNode(doc.getDocumentElement(),true));
                 // Then append each translation
                 Iterator iter = qr.getLexiesCollection().iterator();
                 while (iter.hasNext()) {
@@ -146,7 +115,7 @@ public class LexALPFormatter implements ResultFormatter {
                         div.appendChild(res.importNode(doc.getDocumentElement(),true));
                     }
                 }
-            }
+            } 
             return (Node) res.getDocumentElement();
 
         } catch(Exception ex) {

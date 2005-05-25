@@ -3,6 +3,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.9  2005/05/25 13:31:08  serasset
+ * Return a monolingual entry even if the lexie is not linked to an axie.
+ * LexALP transformer now formats simple monolingual query results.
+ *
  * Revision 1.8  2005/05/24 12:51:21  serasset
  * Updated many aspect of the Papillon project to handle lexalp project.
  * 1. Layout is now parametrable in the application configuration file.
@@ -688,6 +692,12 @@ public class DictionariesFactory {
             VolumeEntry mySourceEntry = proto.getSourceEntry();
             //String xmlCode = mySourceEntry.getXmlCode();
             Collection axies = PapillonPivotFactory.findAxiesByLexie(mySourceEntry, myUser);
+            
+            // If the entry is not connected to an axie, return the proto
+            if (axies.size() == 0) {
+                proto.setResultKind(QueryResult.UNIQUE_RESULT);
+                qrset.add(proto);
+            }
             
             // For each axie, get the requested set of target lexies.
             for (Iterator iter = axies.iterator(); iter.hasNext();) {
