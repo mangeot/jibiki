@@ -4,6 +4,9 @@
  * $Id$
  *------
  * $Log$
+ * Revision 1.2  2005/05/25 14:26:59  serasset
+ * Added kwic link style in lexalp css.
+ *
  * Revision 1.1  2005/05/24 12:39:54  serasset
  * Added css file for LexALP application.
  *
@@ -288,6 +291,11 @@ A:hover {
 	margin-left:10px;
 	margin-right: 10px;
 }	
+
+.kwic {
+float: right;
+font-size: xx-small;
+}
 
 .legal {
 float: right;
