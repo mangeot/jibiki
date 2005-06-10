@@ -1,4 +1,4 @@
-- Supprimer la table "contributions" du fichier doml.
+- Supprimer la table "contributions" du fichier doml. (cf Mathieu...)
 - traiter papillonaxi comme n'importe quelle autre volume pivot.
 - Revoir la partie XSLSheet pour des formes plus sympas...
 - Reporter localisation sur le xhtml et supprimer les fichiers html.
@@ -15,8 +15,20 @@
 - créer des raccourcis pour la création d'axies/lexies
 - Faire page de sélection de termref/axieref dans une fenêtre spécifique avec mise à jour des champs automatiquement.
 - Faire des validations automatiques paramêtrables par les metadata pour remplissage de champs admin à la sauvegarde d'une entrée.
+  - Peut-être simplement définir une classe spécifique pour cela... (que l'on peut désigner dans les metadata)
 
 - Que fait le update/save dans l'édition ? En cas de reconnection d'un utilisateur lui présenter les entrées en cours de construction ?
+
+- Gestion des liste... s'inspirer des listes de addressbook au niveau interface ?
+
+- Pb de OutOfMemoryError lorsque l'upload est fait avec une transaction...
+
+
+
+APRES DISCUSSION AVEC UTILISATEURS:
+- Définir un modèle de spécification de droits sur des parties de dictionnaires/d'entrées
+- Définir un modèle de définition de "triggers", avec déclenchement d'actions, parmis lesquels envoie d'un message, etc...
+
 
 NOTES: 
 - Que fait le HtmlDom dans la base ?

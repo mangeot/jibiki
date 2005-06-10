@@ -9,4 +9,4 @@ INSTALLING POSTGRESQL
 
 - launch lexalp server
 
-- add XML stylesheet into the database
+- add XML stylesheet into the database (using xsl sheets page)
