@@ -7,6 +7,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.2  2005/06/15 20:40:41  serasset
+ *  Now serve content as text/html instead of application/xhtml+xml
+ *
  *  Revision 1.1  2005/05/24 12:51:22  serasset
  *  Updated many aspect of the Papillon project to handle lexalp project.
  *  1. Layout is now parametrable in the application configuration file.
@@ -172,7 +175,7 @@ public abstract class AbstractPO implements HttpPresentation {
                 this.getComms().response.sendError(HttpPresentationResponse.SC_NOT_FOUND, "Page returned a null Document");
             }
             
-            comms.response.setContentType("application/xhtml+xml");
+            comms.response.setContentType("text/html");
             
             // Preparation de la sortie...
             OutputOptions options = new OutputOptions();
