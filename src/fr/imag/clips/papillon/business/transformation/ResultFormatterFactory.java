@@ -9,6 +9,9 @@
  *$Id$
  *------------------------
  *$Log$
+ *Revision 1.2  2005/06/15 20:40:04  serasset
+ *bugfix: transformer -> transformation in default transformer class name.
+ *
  *Revision 1.1  2005/05/24 12:51:21  serasset
  *Updated many aspect of the Papillon project to handle lexalp project.
  *1. Layout is now parametrable in the application configuration file.
@@ -59,7 +62,7 @@ public class ResultFormatterFactory {
         
         // If not, use the generic XslTransformer
         if (formatterClassName == null) {
-            formatterClassName = "fr.imag.clips.papillon.business.transformer.XslTransformation";
+            formatterClassName = "fr.imag.clips.papillon.business.transformation.XslTransformation";
         }
         
         // Instanciate the formatter
