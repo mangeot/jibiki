@@ -2,28 +2,39 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <title>Consultation of Papillon Lexical Database</title>
+    <title>Consultation of GDEF Lexical Database</title>
   </head>
   <body>
     <div id="ConsultContent"  xml:lang="en" lang="en">
       <form id="ConsultForm" action="ConsultExpert.po">
         <table width="100%" style="border:1; bordercolor:white; bgcolor:#eeeecc;" summary="Search form">
-          <tr>
-     <!-- Warning, make sure the option element contains a Text and only a Text (no other child) -->
+         <tr>
             <td>
-              <b>
-                <label for="SOURCE">Source:</label>
-              </b>
-            <!-- select name="SOURCE" onChange="UpdateList(document.ConsultForm);" -->
+              <b><label for="SOURCE">Source:</label></b>
               <select id="SOURCE" name="SOURCE">
                 <option id="SourceOptionTemplate" value="NONE" label="NONE">NONE</option>
               </select>
-              <br />
-
-              <b>
-                <label for="Strategy">Strategy:</label>
-              </b>
-              <select id="Strategy" name="Strategy">
+            </td>
+            <td valign="middle">
+              <b><label for="Targets">Targets:</label></b>
+              <select id="Targets" name="TARGETS" size="3" multiple="multiple">
+                <option value="*ANY*" label="ANY">ANY</option>
+                <option id="TargetOptionTemplate" value="NONE" label="NONE">NONE</option>
+              </select>
+            </td>
+            <td valign="middle">
+              <b><label for="Resources">Dictionaries:</label></b>
+              <select id="Resources" name="RESOURCES" size="3" multiple="multiple">
+                <option value="*ANY*" label="ANY">ANY</option>
+                <option id="ResourceOptionTemplate" value="NONE" label="NONE">NONE</option>
+              </select>
+            </td>
+          </tr>
+         <tr>
+            <td style="bgcolor:#4682b4;">
+               <input id="search1text" name="search1text" type="text" size="15" value="" />
+			   is 
+              <select id="Strategy1" name="Strategy1">
                 <option value="0" label="exact match">exact match</option>
                 <option value="1" label="prefix">prefix</option>
                 <option value="2" label="suffix">suffix</option>
@@ -32,69 +43,52 @@
                 <option value="5" label="insensitive prefix">insensitive prefix</option>
                 <option value="6" label="insensitive suffix">insensitive suffix</option>
                 <option value="7" label="insensitive substring">insensitive substring</option>
-                <!--option value="8" label="lemmatize">lemmatize</option>
-                <option value="9" label="foks">FOKS Japanese</option-->
               </select>
-              <!--br />
-              <a href="http://www.foks.info">foks info</a-->
-            </td>
-
-
-<!-- Warning, do not modify the content of the td element -->
-            <td valign="middle">
-              <b>
-                <label for="Targets">Targets:</label>
-              </b>
-              <select id="Targets" name="TARGETS" size="3" multiple="multiple">
-<!-- selected="yes" -->
-                <option value="*ANY*" label="ANY">ANY</option>
-                <option id="TargetOptionTemplate" value="NONE" label="NONE">NONE</option>
+			  of the
+             <select id="search1" name="search1">
+                <option value="cdm-headword" label="headword">headword</option>
+                <option value="cdm-headword-variant" label="variant">variant</option>
+                <option value="cdm-pos" label="part-of-speech">part-of-speech</option>
+                <option value="gdef-est-domaine" label="domain">domain</option>
+                <option value="cdm-translation" label="translation">translation</option>
+                <option value="cdm-example" label="examples">examples</option>
+                <option value="gdef-est-traduction-exemple" label="expl translations">expl. translations</option>
+                <option value="gdef-est-locution" label="locutions">locutions</option>
+                <option value="gdef-est-traduction-locution" label="Loc translations">loc. translations</option>
+                <option value="AnyContains" label="any part">any part</option>
               </select>
             </td>
-            <td valign="middle">
-              <b>
-                <label for="Resources">Dictionaries:</label>
-              </b>
-              <select id="Resources" name="RESOURCES" size="3" multiple="multiple">
-    <!-- selected="yes" -->
-                <option value="*ANY*" label="ANY">ANY</option>
-                <option id="ResourceOptionTemplate" value="NONE" label="NONE">NONE</option>
-              </select>
-            </td>
-          </tr>
-          <tr>
+			<td>
+              and
+			</td>
             <td style="bgcolor:#4682b4;">
-              <select id="search1" name="search1">
-                <option value="cdm-headword" label="Headword">Headword</option>
-                <option value="cdm-pos" label="Part-of-speech">Part-of-speech</option>
-                <option value="gdef-est-domaine" label="Domain">Domain</option>
-                <option value="cdm-translation" label="Translation">Translation</option>
-                <option value="cdm-example" label="Examples">Examples</option>
-                <option value="gdef-est-traduction-exemple" label="Expl translations">Expl. translations</option>
-                <option value="gdef-est-locution" label="Locutions">Locutions</option>
-                <option value="gdef-est-traduction-locution" label="Loc translations">Loc. translations</option>
-                <option value="AnyContains" label="Any part">Any part</option>
-              </select>
-              <label for="search1text">contains</label>
-              <input id="search1text" name="search1text" type="text" size="15" value="" />
-            </td>
-            <td style="bgcolor:#4682b4;">
-              <select id="search2" name="search2">
-                <option value="cdm-headword" label="Headword">Headword</option>
-                <option value="cdm-pos" label="Part-of-speech">Part-of-speech</option>
-                <option value="gdef-est-domaine" label="Domain">Domain</option>
-                <option value="cdm-translation" label="Translation">Translation</option>
-                <option value="cdm-example" label="Examples">Examples</option>
-                <option value="gdef-est-traduction-exemple" label="Expl translations">Expl. translations</option>
-                <option value="gdef-est-locution" label="Locutions">Locutions</option>
-                <option value="gdef-est-traduction-locution" label="Loc translations">Loc. translations</option>
-                <option value="AnyContains" label="Any part">Any part</option>
-              </select>
-              <label for="search2text">contains</label>
               <input id="search2text" name="search2text" type="text" size="15" value="" />
+			  is
+              <select id="Strategy2" name="Strategy2">
+                <option value="0" label="exact match">exact match</option>
+                <option value="1" label="prefix">prefix</option>
+                <option value="2" label="suffix">suffix</option>
+                <option value="3" label="substring">substring</option>
+                <option value="4" label="case insensitive">case insensitive</option>
+                <option value="5" label="insensitive prefix">insensitive prefix</option>
+                <option value="6" label="insensitive suffix">insensitive suffix</option>
+                <option value="7" label="insensitive substring">insensitive substring</option>
+              </select>
+			  of
+              <select id="search2" name="search2">
+                <option value="cdm-headword" label="headword">headword</option>
+                <option value="cdm-pos" label="part-of-speech">part-of-speech</option>
+                <option value="gdef-est-domaine" label="domain">domain</option>
+                <option value="cdm-translation" label="translation">translation</option>
+                <option value="cdm-example" label="examples">examples</option>
+                <option value="gdef-est-traduction-exemple" label="expl translations">expl. translations</option>
+                <option value="gdef-est-locution" label="locutions">locutions</option>
+                <option value="gdef-est-traduction-locution" label="Loc translations">loc. translations</option>
+                <option value="AnyContains" label="any part">any part</option>
+              </select>
             </td>
             <td style="bgcolor:#4682b4;">
-              <input name="lookup" value="Lookup" type="submit" />
+				<input id="LOOKUP" name="LOOKUP" type="submit" value="Lookup"/>
             </td>
           </tr>
         </table>

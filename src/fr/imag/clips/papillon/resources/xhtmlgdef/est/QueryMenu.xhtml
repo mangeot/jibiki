@@ -16,21 +16,16 @@
         <label for="HeadwordInput" accesskey="s">
           <span class="accesskey">S</span>õna:</label>
         <input type="text" id="HeadwordInput" name="HEADWORD" size="14" maxlength="40" />
-        <br/>
-        <label for="Source" accesskey="e">
-          K<span class="accesskey">e</span>elest:</label>
-
-        <select id="Source" name="SOURCE">
+         <input type="hidden" name="SOURCE" value="est" />
+         <input type="hidden" name="TARGETS" value="fra" />
+        <select class="hidden" id="Source">
           <option id="SourceOptionTemplate" value="NONE" label="NONE">NONE</option>
         </select>
-        <br/>
-        <label for="Target" accesskey="l">
-          Kee<span class="accesskey">l</span>de:</label>
-        <select id="Target" name="TARGETS">
-          <option id="AllTargets" value="*ALL*" label="All">Kõik</option>
+        <select class="hidden" id="Target">
+          <option id="AllTargets" value="*ALL*" label="All">All</option>
           <option id="TargetOptionTemplate" value="NONE" label="NONENONENONE">NONE</option>
         </select>
-        <br/>
+       <br/>
         <input type="submit" name="lookup" value="Otsi" />
         </div>
       </form>

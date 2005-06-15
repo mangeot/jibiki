@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.5  2005/06/15 16:48:27  mangeot
+ * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
+ *
  * Revision 1.4  2005/05/24 12:51:21  serasset
  * Updated many aspect of the Papillon project to handle lexalp project.
  * 1. Layout is now parametrable in the application configuration file.
@@ -18,6 +21,30 @@
  * 5. It is now possible to give a name to the cookie key in the app conf file
  * 6. Several bug fixes.
  *
+ * Revision 1.3.4.7  2005/06/14 11:56:16  mangeot
+ * Added a new page ChangeAuthor for changing the author of a set of previously selected contributions
+ *
+ * Revision 1.3.4.6  2005/06/09 11:28:24  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.3.4.5  2005/06/09 11:07:45  mangeot
+ * Deleted the countEntriesCache. entries counts are not cached any more.
+ * Fixed a few bugs.
+ *
+ * Revision 1.3.4.4  2005/06/01 08:38:43  mangeot
+ * Multi bug correction + added the possibility of disabling data edition
+ * via the Admin.po page
+ *
+ * Revision 1.3.4.3  2005/05/19 17:02:22  mangeot
+ * Importing entries without the contribution element
+ *
+ * Revision 1.3.4.2  2005/04/29 19:22:53  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.3.4.1  2005/04/29 14:50:25  mangeot
+ * New version with contribution infos embedded in the XML of the entries
+ *
+>>>>>>> 1.3.4.7
  * Revision 1.3  2005/04/11 12:29:59  mangeot
  * Merge between the XPathAndMultipleKeys branch and the main trunk
  *
@@ -153,6 +180,29 @@ public class Volume {
 	public static final  String CDM_modificationAuthor = "cdm-modification-author";
 	public static final  String CDM_modificationDate = "cdm-modification-date";
 	public static final  String CDM_modificationComment = "cdm-modification-comment";
+
+	// contribution tags
+    public static final  String CDM_contribution = "cdm-contribution";
+    public static final  String CDM_contributionAuthor = "cdm-contribution-author";
+    public static final  String CDM_contributionAuthorElement = "cdm-contribution-author-element";
+    public static final  String CDM_contributionCreationDate = "cdm-contribution-creation-date";
+    public static final  String CDM_contributionCreationDateElement = "cdm-contribution-creation-date-element";
+    public static final  String CDM_contributionGroup = "cdm-contribution-group";
+    public static final  String CDM_contributionGroups = "cdm-contribution-groups";
+    public static final  String CDM_contributionId = "cdm-contribution-id";
+    public static final  String CDM_contributionReviewDate = "cdm-contribution-review-date";
+    public static final  String CDM_contributionReviewDateElement = "cdm-contribution-review-date-element";
+    public static final  String CDM_contributionReviewer = "cdm-contribution-reviewer";
+    public static final  String CDM_contributionReviewerElement = "cdm-contribution-reviewer-element";
+    public static final  String CDM_contributionValidationDate = "cdm-contribution-validation-date";
+    public static final  String CDM_contributionValidationDateElement = "cdm-contribution-validation-date-element";
+    public static final  String CDM_contributionValidator = "cdm-contribution-validator";
+    public static final  String CDM_contributionValidatorElement = "cdm-contribution-validator-element";
+    public static final  String CDM_contributionStatus = "cdm-contribution-status";
+    public static final  String CDM_contributionStatusElement = "cdm-contribution-status-element";
+    public static final  String CDM_headwordElement = "cdm-headword-element";
+    public static final  String CDM_originalContributionId = "cdm-original-contribution-id";
+
 	
 	// constants added to manage axies, it should be generic...
     public static final  String CDM_axiSemanticCat = "axi-semantic-cat";
@@ -477,7 +527,11 @@ public class Volume {
 		return res;
 	}
 	
-	protected String getTagNameFromXPath (String xPathString) {
+	public static String getTagNameFromXPath (String xPathString) {
+		return getTagNameFromXPath(xPathString, true);
+	}
+	
+	protected static String getTagNameFromXPath (String xPathString, boolean letNamespacePrefix) {
 		String res = xPathString;
 		if (res != null) {
 			int text = res.indexOf("/text()");
@@ -488,9 +542,11 @@ public class Volume {
 			if (index>=0) {
 				res = res.substring(index+1);
 			}
-			int colon = res.lastIndexOf(":");
-			if (colon>=0) {
-				res = res.substring(colon+1);
+			if (!letNamespacePrefix) {
+				int colon = res.lastIndexOf(":");
+				if (colon>=0) {
+					res = res.substring(colon+1);
+				}
 			}
 		}
 		return res;
@@ -518,6 +574,22 @@ public class Volume {
      */
     public String getCdmEntry() {
 		return getTagNameFromXPath(getCdmXPathString(this.CDM_entry));
+	}
+
+    /**
+		* Gets the local tag name of the CDM entry of the Volume
+     *
+     * @return the  CDM entry tag name as a String.
+     * @exception PapillonBusinessException if an error occurs
+     *   retrieving data (usually due to an underlying data layer
+						  *   error).
+     */
+    public String getCdmLocalEntry() {
+		return Utility.getLocalTagName(getTagNameFromXPath(getCdmXPathString(this.CDM_entry)));
+	}
+
+    public String getCdmContribution() {
+		return getTagNameFromXPath(getCdmXPathString(this.CDM_contribution));
 	}
 
     /**
@@ -564,7 +636,7 @@ public class Volume {
      *   retrieving data (usually due to an underlying data layer
 						  *   error).
      */
-    public String getCdmAuthor() {
+    public String getCdmModificationAuthor() {
 		return getTagNameFromXPath(getCdmXPathString(this.CDM_modificationAuthor));
 	}
 
@@ -576,7 +648,7 @@ public class Volume {
      *   retrieving data (usually due to an underlying data layer
 						  *   error).
      */
-    public String getCdmDate() {
+    public String getCdmModificationDate() {
 		return getTagNameFromXPath(getCdmXPathString(this.CDM_modificationDate));
 	}
 
@@ -588,10 +660,34 @@ public class Volume {
      *   retrieving data (usually due to an underlying data layer
 						  *   error).
      */
-    public String getCdmComment() {
+    public String getCdmModificationComment() {
 		return getTagNameFromXPath(getCdmXPathString(this.CDM_modificationComment));
 	}
 
+    /**
+		* Gets the CDM group of the Volume
+     *
+     * @return the CDM comment tag name as a String.
+     * @exception PapillonBusinessException if an error occurs
+     *   retrieving data (usually due to an underlying data layer
+						  *   error).
+     */
+    public String getCdmContributionGroup() {
+		return getTagNameFromXPath(getCdmXPathString(this.CDM_contributionGroup));
+	}
+
+	/**
+		* Sets the CDM elements Hashtable of the Volume
+     *
+     * @exception PapillonBusinessException if an error occurs
+     *   retrieving data (usually due to an underlying data layer
+						  *   error).
+     */
+	public void setCdmElements() 
+        throws PapillonBusinessException {
+			this.CDM_elements = VolumesFactory.buildCdmElementsTable(this.getXmlCode(), this.getTemplateEntry(), this.getSourceLanguage());
+	}
+	
 	/**
 		* Sets the CDM elements Hashtable of the Volume
      *
@@ -752,16 +848,58 @@ public class Volume {
 		}
 	
     /**
-		* count entries of the volume
+		* Gets the xml code footer of the volume
+     *
+     * @return the xml code as a string.
+     * @exception PapillonBusinessException if an error occurs
+     *   retrieving data (usually due to an underlying data layer
+						  *   error).
+     */
+    public String getXmlFooter()
+		throws PapillonBusinessException {
+			String xmlFooter = null;
+			try {
+				Document docXml = Utility.buildDOMTree(this.getXmlCode());
+				Element footerElement=(Element)docXml.getElementsByTagName(VolumesFactory.XML_FOOTER_TAG).item(0);
+				if (footerElement!=null) {
+					xmlFooter = Utility.getStringValue(footerElement);
+				}
+			} catch(Exception ex) {
+				throw new PapillonBusinessException("Error getting volume xml footer code", ex);
+			}
+			if (xmlFooter == null || xmlFooter.equals("")) {
+				xmlFooter = "</" + this.getCdmVolume() + ">";
+			}
+			return xmlFooter;
+ 		}
+
+    /**
+		* getCount get entries number of the volume
      *
      * @return the number of entries as an integer.
      * @exception PapillonBusinessException if an error occurs
      *   retrieving data (usually due to an underlying data layer
 						  *   error).
      */
-    public int countEntries() throws PapillonBusinessException {
-        return VolumeEntriesFactory.getCount(this);
-    }
+	public int getCount()  
+        throws fr.imag.clips.papillon.business.PapillonBusinessException {
+			return VolumeEntriesFactory.getDbTableEntriesCount(this, null, null, null);
+	}
+
+	public int getCount(String status) 
+        throws fr.imag.clips.papillon.business.PapillonBusinessException {
+			java.util.Vector Keys = new java.util.Vector();
+			String[] statusKey = new String[4];
+			statusKey[0] = Volume.CDM_contributionStatus;
+			statusKey[1] = Volume.DEFAULT_LANG;
+			statusKey[2] = status;
+			statusKey[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_EXACT+1];
+			
+			Keys.add(statusKey);
+			
+			return VolumeEntriesFactory.getDbTableEntriesCount(this, Keys, null, null);
+		}
+	
 	
     /**
 		* Saves the Volume into the database.
@@ -793,7 +931,6 @@ public class Volume {
 				if (this.getLocation().equals(LOCAL_LOCATION)) {
 					VolumeEntriesFactory.dropVolumeTables(this);
 				}
-				ContributionsFactory.removeContributions(this);
 				this.myDO.delete();
 			} catch(Exception ex) {
 				throw new PapillonBusinessException("Error deleting Volume", ex);

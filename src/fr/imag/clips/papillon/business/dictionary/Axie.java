@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.5  2005/06/15 16:48:27  mangeot
+ * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
+ *
  * Revision 1.4  2005/05/24 12:51:21  serasset
  * Updated many aspect of the Papillon project to handle lexalp project.
  * 1. Layout is now parametrable in the application configuration file.
@@ -17,6 +20,9 @@
  * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
  * 5. It is now possible to give a name to the cookie key in the app conf file
  * 6. Several bug fixes.
+ *
+ * Revision 1.3.4.1  2005/04/29 14:50:25  mangeot
+ * New version with contribution infos embedded in the XML of the entries
  *
  * Revision 1.3  2005/04/11 12:29:59  mangeot
  * Merge between the XPathAndMultipleKeys branch and the main trunk
@@ -130,7 +136,6 @@ public class Axie implements IAnswer {
             throw new PapillonBusinessException("Error creating empty axie volume", ex);
         }
         catch(ObjectIdException ex) {
-            throw new PapillonBusinessException("Error creating empty axie volume", ex);
         }
 		
     }

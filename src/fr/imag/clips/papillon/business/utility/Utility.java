@@ -4,6 +4,22 @@
 *$Id$
 *------------------------------------------
 *$Log$
+*Revision 1.4  2005/06/15 16:48:28  mangeot
+*Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
+*
+*Revision 1.3.4.4  2005/06/01 08:38:43  mangeot
+*Multi bug correction + added the possibility of disabling data edition
+*via the Admin.po page
+*
+*Revision 1.3.4.3  2005/05/19 17:02:22  mangeot
+*Importing entries without the contribution element
+*
+*Revision 1.3.4.2  2005/04/29 17:30:30  mangeot
+**** empty log message ***
+*
+*Revision 1.3.4.1  2005/04/29 14:50:25  mangeot
+*New version with contribution infos embedded in the XML of the entries
+*
 *Revision 1.3  2005/04/11 12:29:59  mangeot
 *Merge between the XPathAndMultipleKeys branch and the main trunk
 *
@@ -64,6 +80,13 @@ import org.xml.sax.InputSource;
 import fr.imag.clips.papillon.business.PapillonLogger;
 
 public class Utility {
+
+
+	public static final java.util.Locale PapillonLocale = new java.util.Locale("C");
+	public static final java.text.DateFormat PapillonPrintDateFormat = new java.text.SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", PapillonLocale);
+	public static final java.text.DateFormat PapillonCDMDateFormat = new java.text.SimpleDateFormat("yyyy/MM/dd HH:mm:ss", PapillonLocale);
+	public static final java.text.DateFormat PapillonShortDateFormat = new java.text.SimpleDateFormat("yyyy/MM/dd", PapillonLocale);
+
 	// constants
 	protected static final  String MESSAGE_ENCODING="UTF-8";
 	protected static final DocumentBuilderFactory myDocumentBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -263,9 +286,6 @@ public class Utility {
 						break;
 					case  Node.ELEMENT_NODE:
 						String childString = getStringValue(nodeItem);
-						if (!resString.equals("") && !childString.equals("")) {
-							resString += " ";
-						}
 						resString += childString;
 						break;
 					case Node.TEXT_NODE:
@@ -930,14 +950,52 @@ public class Utility {
 		}
 	}
 	
+	
 	/**
-     * Serialize a Hashtable into a byte array
+     * getLocalTagName
      *
-     * @return a byte array
+     * @return a String
      * @exception PapillonBusinessException if an error occurs
      *   retrieving data (usually due to an underlying data layer
      *   error).
      */
+	public static String getLocalTagName(String tagname) {
+		if (tagname != null) {
+			if (tagname.indexOf(":") >0) {
+				tagname = tagname.substring(tagname.indexOf(":")+1);
+			}
+		}
+		return tagname;
+	}
+
+	/**
+     * getPrefix
+     *
+     * @return a String
+     * @exception PapillonBusinessException if an error occurs
+     *   retrieving data (usually due to an underlying data layer
+     *   error).
+     */
+	public static String getPrefix(String tagname) {
+		String prefix = "";
+		if (tagname != null) {
+			if (tagname.indexOf(":") >0) {
+				prefix = tagname.substring(0,tagname.indexOf(":"));
+			}
+		}
+		return prefix;
+	}
+
+		/**
+     * Tests if a String array is in another String array
+     *
+     * @return a String
+     * @exception PapillonBusinessException if an error occurs
+     *   retrieving data (usually due to an underlying data layer
+     *   error).
+     */
+	
+	 
 	public static byte[] serializeHashtable(java.util.Hashtable myTable) throws fr.imag.clips.papillon.business.PapillonBusinessException {
 		byte[] resultArray = null;
 		try {

@@ -9,6 +9,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.5  2005/06/15 16:48:28  mangeot
+ *  Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
+ *
  *  Revision 1.4  2005/05/24 12:51:22  serasset
  *  Updated many aspect of the Papillon project to handle lexalp project.
  *  1. Layout is now parametrable in the application configuration file.
@@ -17,6 +20,13 @@
  *  4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
  *  5. It is now possible to give a name to the cookie key in the app conf file
  *  6. Several bug fixes.
+ *
+ *  Revision 1.3.4.2  2005/06/09 11:28:24  mangeot
+ *  *** empty log message ***
+ *
+ *  Revision 1.3.4.1  2005/06/09 11:07:45  mangeot
+ *  Deleted the countEntriesCache. entries counts are not cached any more.
+ *  Fixed a few bugs.
  *
  *  Revision 1.3  2005/04/11 08:01:02  fbrunet
  *  Passage en xhtml des ressources Papillon.
@@ -255,8 +265,7 @@ public class ViewDictionaries extends PapillonBasePO {
                 content.setTextTargets(VolsTable[j].getTargetLanguages());
                 content.setTextDomain("");
                 content.setTextLegal("");
-                String entries = VolumesFactory.countEntries(VolsTable[j]);
-                content.setTextEntries(entries);
+                content.setTextEntries("" + VolsTable[j].getCount(VolumeEntry.VALIDATED_STATUS));
 
                 theSeeAnchor.setHref(this.getUrl() + "?"
                          + SEE_VOLUME_PARAMETER + "="

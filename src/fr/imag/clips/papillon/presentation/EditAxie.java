@@ -10,6 +10,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.8  2005/06/15 16:48:28  mangeot
+ * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
+ *
  * Revision 1.7  2005/05/24 12:51:22  serasset
  * Updated many aspect of the Papillon project to handle lexalp project.
  * 1. Layout is now parametrable in the application configuration file.
@@ -18,6 +21,9 @@
  * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
  * 5. It is now possible to give a name to the cookie key in the app conf file
  * 6. Several bug fixes.
+ *
+ * Revision 1.6.4.1  2005/04/29 15:34:53  mangeot
+ * *** empty log message ***
  *
  * Revision 1.6  2005/04/13 15:47:41  mangeot
  * *** empty log message ***
@@ -239,7 +245,7 @@ public class EditAxie extends PapillonBasePO {
 					entryLang = myAnswer2.getSourceLanguage();
 					entryId = myAnswer2.getId();
 			}
-			Contribution myContrib = null;
+/*			Contribution myContrib = null;
 				if (axieFound) {
 					boolean myPreviousContrib = false;
 					Axie myAxie = (Axie) ContributionsFactory.myFirstContribution(axies,myUser);
@@ -272,6 +278,7 @@ public class EditAxie extends PapillonBasePO {
 			
 
 			throw new ClientPageRedirectException(ContributionsURL + "?" + ContributionsVolumeParameter + "=" + PapillonPivotFactory.VOLUMENAME);
+			*/
 		default:
 		    removeEntryListInterface();
 		    break;
@@ -330,21 +337,23 @@ public class EditAxie extends PapillonBasePO {
 			//Headword[0] = key
 			//Headword[1] = lang
 			//Headword[2] = value
-			String[] Headword1 = new String[3];
+			String[] Headword1 = new String[4];
 			Headword1[0] = Volume.CDM_headword;
 			Headword1[2] = headword1;
+			Headword1[3] = IQuery.QueryBuilderStrategy[strategy1+1];
 			Vector myVector1 = new Vector();
 			myVector1.add(Headword1);
 
-			String[] Headword2 = new String[3];
+			String[] Headword2 = new String[4];
 			Headword2[0] = Volume.CDM_headword;
 			Headword2[2] = headword2;
+			Headword2[3] = IQuery.QueryBuilderStrategy[strategy2+1];
 			Vector myVector2 = new Vector();
 			myVector2.add(Headword2);
 
 
-			Collection EntryVector1 = DictionariesFactory.getVolumeEntriesCollection(volumeName1, myUser, myVector1, strategy1);
-			Collection EntryVector2 = DictionariesFactory.getVolumeEntriesCollection(volumeName2, myUser, myVector2, strategy2);
+			Collection EntryVector1 = DictionariesFactory.getVolumeEntriesCollection(volumeName1, myUser, myVector1);
+			Collection EntryVector2 = DictionariesFactory.getVolumeEntriesCollection(volumeName2, myUser, myVector2);
 
 			addEntriesTable(EntryVector1, EntryVector2, false);
 		}

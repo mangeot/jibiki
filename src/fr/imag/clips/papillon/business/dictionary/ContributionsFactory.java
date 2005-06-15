@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.9  2005/06/15 16:48:27  mangeot
+ * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
+ *
  * Revision 1.8  2005/05/24 12:51:21  serasset
  * Updated many aspect of the Papillon project to handle lexalp project.
  * 1. Layout is now parametrable in the application configuration file.
@@ -11,6 +14,18 @@
  * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
  * 5. It is now possible to give a name to the cookie key in the app conf file
  * 6. Several bug fixes.
+ *
+ * Revision 1.7.4.4  2005/05/31 14:22:34  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.7.4.3  2005/05/25 21:00:36  mangeot
+ * Bug fixes
+ *
+ * Revision 1.7.4.2  2005/05/20 10:27:34  mangeot
+ * Added a contributors board in order to count the contribs
+ *
+ * Revision 1.7.4.1  2005/04/29 14:50:25  mangeot
+ * New version with contribution infos embedded in the XML of the entries
  *
  * Revision 1.7  2005/04/15 11:38:05  mangeot
  * Fixed a bug, not using entryHandle from contributions table any more
@@ -79,425 +94,206 @@ import fr.imag.clips.papillon.business.utility.*;
 * Used to find the instances of xslsheet.
  */
 public class ContributionsFactory {
-
-    protected final static String DML_URI = "http://www-clips.imag.fr/geta/services/dml";
-
-    public static Contribution newContribution(String volumeName, String srclang, String author, String groups, String headword, String entryId, String entryHandle, String status, boolean newEntry, String originalId)
-        throws fr.imag.clips.papillon.business.PapillonBusinessException {
-            //
-            Contribution newContrib=new Contribution();
-            // external id
-            newContrib.setAuthor(author);
-            // source language of the contrib
-            newContrib.setSourceLanguage(srclang);
-            // external id
-            newContrib.setGroups(groups);
-            // external id
-            newContrib.setVolumeName(volumeName);
-            // external id
-            newContrib.setHeadword(headword);
-            // external id
-            newContrib.setEntryId(entryId);
-            //xml code
-            newContrib.setStatus(status);
-            //xml code
-            newContrib.setCreationDate(new Date());
-            //xml code
-            newContrib.setNewEntry(newEntry);
-			if (!newEntry) {
-						newContrib.setOriginalId(originalId);
-			}
-            return newContrib;
-        }
-
-    public static Contribution findContributionByHandle(String handle)
-        throws PapillonBusinessException {
-            Contribution theContribution = null;
-            ContributionDO theContributionDO = null;
-
-						int intId = 0;
-						try {
-							intId = Integer.parseInt(handle);
-						}
-						catch(NumberFormatException ex) {
-							return theContribution;
-            }
-						
-            try {
-                ContributionQuery query = new ContributionQuery(CurrentDBTransaction.get());
-                //set query
-                query.setQueryOId(new ObjectId(intId));
-                // Throw an exception if more than one message is found
-                query.requireUniqueInstance();
-                theContributionDO = query.getNextDO();
-				if (theContributionDO != null) {
-					theContribution = new Contribution(theContributionDO);
-				}
-            }
-            catch(Exception ex) {
-                throw new PapillonBusinessException("Exception in findContributionByHandle()", ex);
-            }
-            return theContribution;
-        }
-
-    protected static Vector getContributionsForDeletion(String author, String volume)
-        throws PapillonBusinessException {
-            Vector theContribVector = new Vector();
-            try {
-                ContributionQuery query = new ContributionQuery(CurrentDBTransaction.get());
-				if (author !=null && !author.equals("")) {
-					query.getQueryBuilder().addWhereClause("author", author,
-                                                       QueryBuilder.EQUAL);
-				}
-				if (volume !=null && !volume.equals("")) {
-					query.getQueryBuilder().addWhereClause("volume", volume,
-                                                       QueryBuilder.EQUAL);
-				}
-                ContributionDO[] DOarray = query.getDOArray();
-                for ( int i = 0; i < DOarray.length; i++ ) {
-                    theContribVector.add(new Contribution(DOarray[i]));
-                }
-            }catch(Exception ex) {
-                throw new PapillonBusinessException("Exception in getContributionsForDeletion()", ex);
-            }
-            return theContribVector;
-        }
 				
-		public static Collection checkContributions(User user, Vector entriesTable) throws PapillonBusinessException {
-				for (int i=0; i< entriesTable.size();i++) {					
-					IAnswer myAnswer = (IAnswer) entriesTable.elementAt(i);
-					Contribution myContrib = findContributionByEntryId(myAnswer.getId());
-					// There is an existing contribution
-					if (myContrib != null && !myContrib.isEmpty()) {
-					// the author is not the current user
-						if (user==null || user.isEmpty()) {
-								entriesTable.remove(myAnswer);
-								i--;
-						}
-						else if (!myContrib.getAuthor().equals(user.getLogin())) {
-						// the current user is not in the same groups as the author
-							if (!user.isInNormalGroups(myContrib.getGroupsArray())) {
-								entriesTable.remove(myAnswer);
-								i--;
-							}
-						}
-					}
-				}
-				return (Collection) entriesTable;
-			}
-
-			public static IAnswer myFirstContribution(Collection entriesCollection, User user) throws PapillonBusinessException {
-					IAnswer myAnswer = null;
-					Iterator entriesIterator = entriesCollection.iterator();
-					while (myAnswer == null && entriesIterator.hasNext()) {					
-					IAnswer tempAnswer = (IAnswer) entriesIterator.next();
-					Contribution myContrib = findContributionByEntryId(tempAnswer.getId());
-					// There is an existing contribution
-					if (myContrib != null && !myContrib.isEmpty()) {
-					// the author is the current user
-						if (myContrib.getAuthor().equals(user.getLogin())) {
-						myAnswer = tempAnswer;
-						}
-					}
-				}
-				return myAnswer;
-			}
-
-			public static IAnswer myFirstGroupContribution(Collection entriesCollection, User user) throws PapillonBusinessException {
-					IAnswer myAnswer = null;
-					Iterator entriesIterator = entriesCollection.iterator();
-					while (myAnswer == null && entriesIterator.hasNext()) {					
-					IAnswer tempAnswer = (IAnswer) entriesIterator.next();
-					Contribution myContrib = findContributionByEntryId(tempAnswer.getId());
-					// There is an existing contribution
-					if (myContrib != null && !myContrib.isEmpty()) {
-					// the author is the user groups
-						if (user.isInGroups(myContrib.getGroupsArray())) {
-							myAnswer = tempAnswer;
-						}
-					}
-				}
-				return myAnswer;
-			}
+	/* ContributionLog methods */
+	
+	public static ContributionLog newContributionLog(User myUser, VolumeEntry myEntry) 
+        throws fr.imag.clips.papillon.business.PapillonBusinessException {
 			
+			ContributionLog myContribLog = new ContributionLog();
 			
-			public static Vector getContributions(String volumeName, User myUser, String sortBy)
-		throws PapillonBusinessException {
-            Vector theContribs = new Vector();
-						String author = myUser.getLogin();
-            try {
-				// consultation of a local volume
-				ContributionQuery query = new ContributionQuery(CurrentDBTransaction.get());
-
-				query.getQueryBuilder().addWhereClause("volume", volumeName,
-										   QueryBuilder.EQUAL);
-				if (author != null && !author.equals("")) {
-					query.getQueryBuilder().addWhereClause("author", author,
-											QueryBuilder.EQUAL);
-				}
-					if (sortBy!=null && !sortBy.equals("")) {
-						if (sortBy.equals("volume")) {
-							query.addOrderByVolume(true);
-						}
-						else if (sortBy.equals("author")) {
-							query.addOrderByAuthor(true);
-						}
-						else if (sortBy.equals("creationdate")) {
-							query.addOrderByCreationDate(true);
-						}
-						else if (sortBy.equals("status")) {
-							query.addOrderByStatus(true);
-						}
-						else if (sortBy.equals("newentry")) {
-							query.addOrderByNewEntry(true);
-						}
-						else if (sortBy.equals("reviewer")) {
-							query.addOrderByReviewer(true);
-						}
-						else if (sortBy.equals("reviewdate")) {
-							query.addOrderByReviewDate(true);
-						}
-					}
-				// query.addOrderByHeadword(true);
-				query.getQueryBuilder().addOrderByColumn("multilingual_sort(sourcelanguage,headword)","");
-				ContributionDO[] DOarray = query.getDOArray();
-				if (null != DOarray) {
-					for (int j=0; j < DOarray.length; j++) {
-						theContribs.add(new Contribution(DOarray[j]));
-					}
-				}
-			}
-			catch(Exception ex) {
-				throw new PapillonBusinessException("Exception in getContributions()", ex);
-			}
-			return theContribs;
+			myContribLog.setAuthor(myUser.getLogin());
+			myContribLog.setGroups(myUser.getGroups());
+			myContribLog.setVolumeName(myEntry.getVolumeName());
+			myContribLog.setSourceLanguage(myEntry.getSourceLanguage());
+			myContribLog.setHeadword(myEntry.getHeadword());
+			myContribLog.setEntryId(myEntry.getEntryId());
+			myContribLog.setContributionId(myEntry.getContributionId());
+			myContribLog.setStatus(myEntry.getStatus());
+			myContribLog.setDate(new java.util.Date());
+			
+			return myContribLog;
 		}
-
-	public static Vector getContributions(String volumeName, String author, int strategy, String[] Headwords, String status, String revisor, String sortBy)
-		throws PapillonBusinessException {
-            Vector theContribs = new Vector();
-            try {
-				// consultation of a local volume
-				ContributionQuery query = new ContributionQuery(CurrentDBTransaction.get());
-
-				query.getQueryBuilder().addWhereClause("volume", volumeName,
-										   QueryBuilder.EQUAL);
-				if (author != null && !author.equals("")) {
-					query.getQueryBuilder().addWhereClause("author", author,QueryBuilder.EQUAL);
-				}
-				if (revisor != null && !revisor.equals("")) {
-					query.getQueryBuilder().addWhereClause("reviewer", revisor,QueryBuilder.EQUAL);
-				}
-				if (status != null && !status.equals("")) {
-					query.getQueryBuilder().addWhereClause("status", status,QueryBuilder.EQUAL);
-				}
-				if (Headwords != null && Headwords.length>0) {
-				for (int i=0;i<Headwords.length;i++) {
-					String headword = Headwords[i];
-				if (headword != null && !headword.equals("")) {
-					// Different strategies
-					String CIE = QueryBuilder.CASE_INSENSITIVE_EQUAL;
-					String CIC = QueryBuilder.CASE_INSENSITIVE_CONTAINS;
-					String cmp_op = CIE;
-
-					if (strategy == IQuery.STRATEGY_EXACT) {
-						cmp_op = CIE;
-					}
-					else if (strategy == IQuery.STRATEGY_PREFIX) {
-						cmp_op = CIC;
-					}
-					else if (strategy == IQuery.STRATEGY_SUFFIX) {
-						cmp_op = CIC;
-					}
-					else if (strategy == IQuery.STRATEGY_SUBSTRING) {
-						cmp_op = CIC;
+	
+	public static void createContributionLogsFromExistingEntry(VolumeEntry myEntry) 
+		throws fr.imag.clips.papillon.business.PapillonBusinessException {
+			if (myEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS) ||
+				myEntry.getStatus().equals(VolumeEntry.REVIEWED_STATUS) ||
+				myEntry.getStatus().equals(VolumeEntry.VALIDATED_STATUS) ||
+				myEntry.getStatus().equals(VolumeEntry.REPLACED_STATUS)) {
+				
+				if (myEntry.getAuthor() !=null && !myEntry.getAuthor().equals("")) {
+					ContributionLog myContribLog = new ContributionLog();
+					
+					myContribLog.setAuthor(myEntry.getAuthor());
+					myContribLog.setGroups("");
+					myContribLog.setVolumeName(myEntry.getVolumeName());
+					myContribLog.setSourceLanguage(myEntry.getSourceLanguage());
+					myContribLog.setHeadword(myEntry.getHeadword());
+					myContribLog.setEntryId(myEntry.getEntryId());
+					myContribLog.setContributionId(myEntry.getContributionId());
+					if (myEntry.getCreationDate() !=null) {
+						myContribLog.setDate(myEntry.getCreationDate());
 					}
 					else {
-						cmp_op = CIC;
+						myContribLog.setDate(new java.util.Date());
 					}
-					query.getQueryBuilder().addWhereClause("headword", headword,cmp_op);
-					if (sortBy!=null && !sortBy.equals("")) {
-						if (sortBy.equals("volume")) {
-							query.addOrderByVolume(true);
-						}
-						else if (sortBy.equals("author")) {
-							query.addOrderByAuthor(true);
-						}
-						else if (sortBy.equals("creationdate")) {
-							query.addOrderByCreationDate(true);
-						}
-						else if (sortBy.equals("status")) {
-							query.addOrderByStatus(true);
-						}
-						else if (sortBy.equals("newentry")) {
-							query.addOrderByNewEntry(true);
-						}
-						else if (sortBy.equals("reviewer")) {
-							query.addOrderByReviewer(true);
-						}
-						else if (sortBy.equals("reviewdate")) {
-							query.addOrderByReviewDate(true);
-						}
+					myContribLog.setStatus(VolumeEntry.FINISHED_STATUS);
+					myContribLog.save();
+				}
+				
+				if (myEntry.getReviewer() !=null && !myEntry.getReviewer().equals("")) {
+					ContributionLog myContribLog = new ContributionLog();
+					
+					myContribLog.setAuthor(myEntry.getReviewer());
+					myContribLog.setGroups("");
+					myContribLog.setVolumeName(myEntry.getVolumeName());
+					myContribLog.setSourceLanguage(myEntry.getSourceLanguage());
+					myContribLog.setHeadword(myEntry.getHeadword());
+					myContribLog.setEntryId(myEntry.getEntryId());
+					myContribLog.setContributionId(myEntry.getContributionId());
+					if (myEntry.getReviewDate() !=null) {
+						myContribLog.setDate(myEntry.getReviewDate());
 					}
-//				query.addOrderByHeadword(true);
-				query.getQueryBuilder().addOrderByColumn("multilingual_sort(sourcelanguage,headword)","");
-				ContributionDO[] DOarray = query.getDOArray();
-				if (null != DOarray) {
-					for (int j=0; j < DOarray.length; j++) {
-						theContribs.add(new Contribution(DOarray[j]));
+					else {
+						myContribLog.setDate(new java.util.Date());
 					}
+					myContribLog.setStatus(VolumeEntry.REVIEWED_STATUS);
+					myContribLog.save();
+				}
+
+				if (myEntry.getValidator() !=null && !myEntry.getValidator().equals("")) {
+					ContributionLog myContribLog = new ContributionLog();
+					
+					myContribLog.setAuthor(myEntry.getValidator());
+					myContribLog.setGroups("");
+					myContribLog.setVolumeName(myEntry.getVolumeName());
+					myContribLog.setSourceLanguage(myEntry.getSourceLanguage());
+					myContribLog.setHeadword(myEntry.getHeadword());
+					myContribLog.setEntryId(myEntry.getEntryId());
+					myContribLog.setContributionId(myEntry.getContributionId());
+					if (myEntry.getValidationDate() !=null) {
+						myContribLog.setDate(myEntry.getValidationDate());
+					}
+					else {
+						myContribLog.setDate(new java.util.Date());
+					}
+					myContribLog.setStatus(VolumeEntry.VALIDATED_STATUS);
+					myContribLog.save();
 				}
 			}
+		}
+	
+	public static ContributionLog newContributionLog(VolumeEntry myEntry, String author, String status, String date) 
+        throws fr.imag.clips.papillon.business.PapillonBusinessException {
+			
+			ContributionLog myContribLog = new ContributionLog();
+			User myUser = fr.imag.clips.papillon.business.user.UsersFactory.findUserByLogin(author);
+			java.util.Date resDate = null;
+			try {
+				java.text.DateFormat myDateFormat = new java.text.SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy");
+				resDate = myDateFormat.parse(date);
 			}
+			catch (java.text.ParseException ex) {
+				throw new PapillonBusinessException("Error parsing a date String", ex);
+			}
+			
+			myContribLog.setAuthor(author);
+			if (myUser !=null && !myUser.isEmpty()) {
+				myContribLog.setGroups(myUser.getGroups());
 			}
 			else {
-					if (sortBy!=null && !sortBy.equals("")) {
-						if (sortBy.equals("volume")) {
-							query.addOrderByVolume(true);
-						}
-						else if (sortBy.equals("author")) {
-							query.addOrderByAuthor(true);
-						}
-						else if (sortBy.equals("creationdate")) {
-							query.addOrderByCreationDate(true);
-						}
-						else if (sortBy.equals("status")) {
-							query.addOrderByStatus(true);
-						}
-						else if (sortBy.equals("newentry")) {
-							query.addOrderByNewEntry(true);
-						}
-						else if (sortBy.equals("reviewer")) {
-							query.addOrderByReviewer(true);
-						}
-						else if (sortBy.equals("reviewdate")) {
-							query.addOrderByReviewDate(true);
-						}
-					}
-//				query.addOrderByHeadword(true);
-				query.getQueryBuilder().addOrderByColumn("multilingual_sort(sourcelanguage,headword)","");
-				ContributionDO[] DOarray = query.getDOArray();
-				if (null != DOarray) {
-					for (int j=0; j < DOarray.length; j++) {
-						theContribs.add(new Contribution(DOarray[j]));
-					}
-				}			
+				myContribLog.setGroups("");
 			}
-			}
-			catch(Exception ex) {
-				throw new PapillonBusinessException("Exception in getContributions()", ex);
-			}
-			return theContribs;
-        }
+			myContribLog.setVolumeName(myEntry.getVolumeName());
+			myContribLog.setSourceLanguage(myEntry.getSourceLanguage());
+			myContribLog.setHeadword(myEntry.getHeadword());
+			myContribLog.setEntryId(myEntry.getEntryId());
+			myContribLog.setContributionId(myEntry.getContributionId());
+			myContribLog.setStatus(status);
+			myContribLog.setDate(resDate);
+			
+			return myContribLog;
+		}
+	
+	public static ContributionLog[] getContributionLogArray(String author, String status, String volume, java.util.Date fromDate, java.util.Date toDate)
+		throws fr.imag.clips.papillon.business.PapillonBusinessException {
+            ContributionLog[] theContribsArray = null;
+            try {
+				// consultation of a local volume
+				ContributionLogQuery query = new ContributionLogQuery(CurrentDBTransaction.get());
 				
-	// convenience method, must be changed for the new verison of the contribs
-    public static Contribution findContributionByEntryId(String id)
-        throws PapillonBusinessException {
-			Vector myVector = getContributionsByEntryId(null, id);
-			Contribution myContrib = null;
-			if (myVector != null && myVector.size()>0) {
-				myContrib = (Contribution) myVector.elementAt(0);
-			}
-            return myContrib;
-        }
-
-
-	public static Vector getContributionsByEntryId(String author, String entryid) throws PapillonBusinessException {
-		Vector theContribs = new Vector();
-		try {
-			// consultation of a local volume
-			ContributionQuery query = new ContributionQuery(CurrentDBTransaction.get());
-
-			query.getQueryBuilder().addWhereClause("entryid", entryid,
-										  QueryBuilder.EQUAL);
-			if (author != null && !author.equals("")) {
-				query.getQueryBuilder().addWhereClause("author", author,
-										   QueryBuilder.EQUAL);
-			}
-			ContributionDO[] DOarray = query.getDOArray();
-			if (null != DOarray) {
-				for (int j=0; j < DOarray.length; j++) {
-					theContribs.add(new Contribution(DOarray[j]));
+				if (author != null && !author.equals("")) {
+					query.getQueryBuilder().addWhereClause("author", author,
+														   QueryBuilder.EQUAL);
+				}
+				if (status != null && !status.equals("")) {
+					query.getQueryBuilder().addWhereClause("status", status,
+														   QueryBuilder.EQUAL);
+				}
+				if (volume != null && !volume.equals("")) {
+					query.getQueryBuilder().addWhereClause("volume", volume,
+														   QueryBuilder.EQUAL);
+				}
+				if (fromDate != null) {
+					query.getQueryBuilder().addWhereClause("date", new java.sql.Timestamp(fromDate.getTime()),
+														   QueryBuilder.GREATER_THAN_OR_EQUAL);
+				}
+				if (toDate != null) {
+					query.getQueryBuilder().addWhereClause("date", new java.sql.Timestamp(toDate.getTime()),
+														   QueryBuilder.LESS_THAN_OR_EQUAL);
+				}
+				query.addOrderByHeadword(true);
+				ContributionLogDO[] DOarray = query.getDOArray();
+				theContribsArray = new ContributionLog[ DOarray.length ];
+				if (null != DOarray) {
+					for (int i=0; i < DOarray.length; i++) {
+						theContribsArray[i] = new ContributionLog(DOarray[i]);
+					}
 				}
 			}
-		}
-		catch(Exception ex) {
-			throw new PapillonBusinessException("Exception in getContributions()", ex);
-		}
-		return theContribs;
-	}
-	
-public static void removeContributions(String author, String volume)
-throws fr.imag.clips.papillon.business.PapillonBusinessException {
-	Vector ContribVector = getContributionsForDeletion(author,volume);
-	if (null != ContribVector && ContribVector.size()>0) {
-		for (int i=0;i<ContribVector.size();i++) {
-			((Contribution)ContribVector.get(i)).delete();
-		}
-	}
-}
-
-public static void removeContributions(Volume volume)
-throws fr.imag.clips.papillon.business.PapillonBusinessException {
-	Vector ContribVector = getContributionsForDeletion("",volume.getName());
-	if (null != ContribVector && ContribVector.size()>0) {
-		for (int i=0;i<ContribVector.size();i++) {
-			((Contribution)ContribVector.get(i)).delete();
-		}
-	}
-}
-
-public static Contribution createContributionFromAxie (Axie myAxie, User myUser)
-throws fr.imag.clips.papillon.business.PapillonBusinessException {
-	Contribution myContrib = null;
-	PapillonLogger.writeDebugMsg("New contrib author: " + myUser.getLogin() + " volume: " + myAxie.getVolumeName() +
-							  " headword: " + myAxie.getHeadword() + " entryid: " + myAxie.getId());
-	myContrib = newContribution(myAxie.getVolumeName(), myAxie.getSourceLanguage(), myUser.getLogin(), myUser.getGroups(), myAxie.getHeadword(), myAxie.getId(), myAxie.getHandle(), Contribution.NOT_FINISHED_STATUS, true, null);
-	if (null != myContrib && !myContrib.isEmpty()) {
-		myContrib.save();
-	}
-	return myContrib;
-}
-
-public static Contribution createContributionFromVolumeEntry (VolumeEntry myEntry, User myUser, String originalId)
-throws fr.imag.clips.papillon.business.PapillonBusinessException {
-	Contribution myContrib = null;
-	boolean newEntry = (originalId == null || originalId.equals(""));
-	PapillonLogger.writeDebugMsg("New contrib author: " + myUser.getLogin() + " volume: " + myEntry.getVolumeName() +
-							  " headword: " + myEntry.getHeadword() + " entryid: " + myEntry.getId() + " originalId: " + originalId);
-	myContrib = newContribution(myEntry.getVolumeName(), myEntry.getSourceLanguage(), myUser.getLogin(), myUser.getGroups(),  myEntry.getHeadword(), myEntry.getId(), myEntry.getHandle(), Contribution.NOT_FINISHED_STATUS, newEntry, originalId);
-	if (null != myContrib && !myContrib.isEmpty()) {
-		myContrib.save();
-	}
-	return myContrib;
-}
-
-	public static int getCount(Volume myVolume) 
-        throws fr.imag.clips.papillon.business.PapillonBusinessException {
-			int count = -1;
-			try {
-                VolumeEntryQuery volumeQuery = new VolumeEntryQuery(myVolume.getDbname(), CurrentDBTransaction.get());
-				count = volumeQuery.getCount();
-				ContributionQuery contribsQuery = new ContributionQuery(CurrentDBTransaction.get());
-				contribsQuery.getQueryBuilder().addWhereClause("volume", myVolume.getName(),
-										   QueryBuilder.EQUAL);
-				count -= contribsQuery.getCount();
+			catch(Exception ex) {
+				throw new PapillonBusinessException("Exception in getContributionLogArray()", ex);
 			}
-			catch (com.lutris.appserver.server.sql.DatabaseManagerException e) {
-				throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in getCount with volume: " + myVolume.getName(), e);
-			}			
-			catch (java.sql.SQLException e) {
-				throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in getCount with volume: " + myVolume.getName(), e);
-			}			
-			catch (com.lutris.dods.builder.generator.query.DataObjectException e) {
-				throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in getCount with volume: " + myVolume.getName(), e);
-			}			
-			catch (com.lutris.dods.builder.generator.query.NonUniqueQueryException e) {
-				throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in getCount with volume: " + myVolume.getName(), e);
-			}			
-			return count;
+			return theContribsArray;
 		}
 	
-
+	public static Vector getContributorsBoard(String volume, java.util.Date fromDate, java.util.Date toDate)
+		throws fr.imag.clips.papillon.business.PapillonBusinessException {
+			Vector usersVector = new Vector();
+			
+			User[] UsersArray=fr.imag.clips.papillon.business.user.UsersFactory.getUsersArray("name");
+			for (int i=0;i<UsersArray.length;i++) {
+				String login = UsersArray[i].getLogin();
+				ContributionLog[] myContribsArray = getContributionLogArray(login, null, volume, fromDate, toDate);
+				if (myContribsArray != null && myContribsArray.length>0) {
+					int finished = 0;
+					int reviewed = 0;
+					int validated = 0;
+					for (int j=0; j< myContribsArray.length; j++) {
+						String contribStatus = myContribsArray[j].getStatus();
+						if (contribStatus.equals(VolumeEntry.FINISHED_STATUS)) {
+							finished++;
+						}
+						else if (contribStatus.equals(VolumeEntry.REVIEWED_STATUS)) {
+							reviewed++;
+						}
+						else if (contribStatus.equals(VolumeEntry.VALIDATED_STATUS)) {
+							validated++;
+						}
+					}
+					if (finished>0 || reviewed >0 || validated>0) {
+						Vector myVector = new Vector();
+						myVector.add(UsersArray[i]);
+						myVector.add("" + finished);
+						myVector.add("" + reviewed);
+						myVector.add("" + validated);
+						usersVector.add(myVector);
+					}
+				}
+			}
+			return usersVector;
+		}
+	
 }
 

@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.12  2005/06/15 16:48:27  mangeot
+ * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
+ *
  * Revision 1.11  2005/05/24 12:51:21  serasset
  * Updated many aspect of the Papillon project to handle lexalp project.
  * 1. Layout is now parametrable in the application configuration file.
@@ -17,6 +20,22 @@
  * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
  * 5. It is now possible to give a name to the cookie key in the app conf file
  * 6. Several bug fixes.
+ *
+ * Revision 1.10.4.5  2005/06/01 08:38:43  mangeot
+ * Multi bug correction + added the possibility of disabling data edition
+ * via the Admin.po page
+ *
+ * Revision 1.10.4.4  2005/05/19 17:02:22  mangeot
+ * Importing entries without the contribution element
+ *
+ * Revision 1.10.4.3  2005/04/30 09:11:20  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.10.4.2  2005/04/29 16:04:32  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.10.4.1  2005/04/29 14:50:25  mangeot
+ * New version with contribution infos embedded in the XML of the entries
  *
  * Revision 1.10  2005/04/26 10:11:32  mangeot
  * *** empty log message ***
@@ -133,6 +152,65 @@ import fr.imag.clips.papillon.business.utility.Utility;
  */
 public class VolumeEntry implements IAnswer {    
 
+	public final static String ORIGINAL_STATUS = "original";
+	public final static String NOT_FINISHED_STATUS = "not finished";
+	public final static String FINISHED_STATUS = "finished";
+	public final static String REVIEWED_STATUS = "revised";
+	public final static String VALIDATED_STATUS = "validated";
+	public final static String REPLACED_STATUS = "replaced";
+	public final static String DELETED_STATUS = "deleted";
+	
+	public final static String authorTag = "d:author";
+	public final static String commentTag = "d:comment";
+	public final static String contributionTag = "d:contribution";
+	public final static String contributionIdAttr = "d:contribid";
+	public final static String creationDateTag = "d:creation-date";
+	public final static String dataTag = "d:data";
+	public final static String dateTag = "d:date";
+	public final static String originalContributionIdAttr = "d:originalcontribid";
+	public final static String groupsTag = "d:groups";
+	public final static String groupTag = "d:group";
+	public final static String historyTag = "d:history";
+	public final static String metadataTag = "d:metadata";
+	public final static String modificationTag = "d:modification";
+	public final static String reviewDateTag = "d:review-date";
+	public final static String reviewerTag = "d:reviewer";
+	public final static String statusTag = "d:status";
+	public final static String validationDateTag = "d:validation-date";
+	public final static String validatorTag = "d:validator";
+	
+	public final static String ContributionHeader = "<" + contributionTag + "\n" 
+		+ "xmlns:d=\"http://www-clips.imag.fr/geta/services/dml\"\n"
+		+ "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
+		+ "xsi:schemaLocation=\"http://www-clips.imag.fr/geta/services/dml "
+		+ "http://www-clips.imag.fr/geta/services/dml/dml.xsd\"\n"
+		+ contributionIdAttr + "=\"\" " + originalContributionIdAttr + "=\"\">\n"
+		+ "  <" + metadataTag + ">\n"
+        + "    <" + authorTag + "/>\n"
+        + "    <" + groupsTag + "/>\n"
+        + "    <" + creationDateTag + "/>\n"
+        + "    <" + reviewDateTag + "/>\n"
+        + "    <" + reviewerTag + "/>\n"
+        + "    <" + validationDateTag + "/>\n"
+        + "    <" + validatorTag + "/>\n"
+        + "    <" + statusTag + "/>\n"
+        + "    <" + historyTag + ">\n"
+        + "      <" + modificationTag + ">\n"
+        + "        <" + authorTag + "/>\n"
+        + "        <" + dateTag + "/>\n"
+        + "        <" + commentTag + "/>\n"
+        + "      </" + modificationTag + ">\n"
+        + "    </" + historyTag + ">\n"
+		+ "  </" + metadataTag + ">\n"
+		+ "  <" + dataTag + ">\n";
+	
+	
+	public final static String ContributionFooter = "  </" + dataTag + ">\n"
+		+ "</" + contributionTag + ">\n";
+
+	protected static final String ENTRY_ID_SUFFIX = ".e";
+	protected static final String CONTRIBUTION_ID_SUFFIX = ".c";
+
 	// by default, the HTML DOM is not cached
 	public static boolean CACHE_HTMLDOM = false; 
 
@@ -145,7 +223,7 @@ public class VolumeEntry implements IAnswer {
     protected Volume theVolume;
     
     protected VolumeEntryDO myDO = null;
-	
+		
     /**
 		* The public constructor.
      * Should find a better method instead of these if elsif elsif
@@ -230,15 +308,30 @@ public class VolumeEntry implements IAnswer {
     // FIXME: Should not be stored in a column, but should be extracted from the xml using CDM...
     // FIXME: Moreover, an entry may have more than one headword.
 	public String getHeadword() throws PapillonBusinessException {
+		String headword = null;
 		try {
-			return this.myDO.getHeadword();
+			headword = this.myDO.getHeadword();
 		} catch(DataObjectException ex) {
 			throw new PapillonBusinessException("Error getting volumeEntry's headword", ex);
 		} 
+		if (headword == null || headword.equals("")) {
+			headword = ParseVolume.getCdmString(this, Volume.CDM_headword, this.getSourceLanguage());
+		}
+		return headword;
+	}
+	
+	public void setHeadword() throws PapillonBusinessException {
+		String word = ParseVolume.getCdmString(this, Volume.CDM_headword, this.getSourceLanguage());
+		try {
+			myDO.setHeadword(word);
+		} catch(DataObjectException ex) {
+			throw new PapillonBusinessException("Error setting volumeEntry's headword", ex);
+		}
 	}
 	
 	public void setHeadword(String word)
 		throws PapillonBusinessException {
+			ParseVolume.setCdmElement(this, Volume.CDM_headwordElement, word, this.getSourceLanguage());
 			try {
 				myDO.setHeadword(word);
 			} catch(DataObjectException ex) {
@@ -332,21 +425,126 @@ public class VolumeEntry implements IAnswer {
 			}
 		}
 	
-	/* Methods added for compatibility with IAnswer interface */
+	/* Methods for Entry ID */		
+
+    /**
+     * setEntryId sets the entry id into the XML code of the entry.
+     * 
+     * @exception PapillonBusinessException if an error occurs
+     *   replacing data (usually due to an underlying data layer
+	 *   error).
+     */
 	public void setId() throws PapillonBusinessException {
-		this.setId(this.createNewId());
+		this.setEntryIdIfNull();
+	}
+
+	public void setEntryId() throws PapillonBusinessException {
+		this.setEntryId(this.createNewId() + ENTRY_ID_SUFFIX);
+	}
+
+	protected void setEntryId(String newId) throws PapillonBusinessException {
+		ParseVolume.setCdmElement(this, Volume.CDM_entryId, newId);
 	}
 	
-	protected void setId(String newId) throws PapillonBusinessException {
-		org.w3c.dom.Node idNode = ParseVolume.getCdmElement(this, Volume.CDM_entryId);
-		if (idNode != null) {
-			idNode.setNodeValue(newId);
+	
+    /**
+     * setEntryIdIfNull sets the entry id into the XML code of the entry
+	 * if there is no previous existing entry id
+	 *
+     * @exception PapillonBusinessException if an error occurs
+     *   replacing data (usually due to an underlying data layer
+	 *   error).
+     */
+	protected void setEntryIdIfNull() throws PapillonBusinessException {
+		if (this.getEntryId()==null || this.getEntryId().equals("")) {
+			this.setEntryId(this.createNewId() + ENTRY_ID_SUFFIX);
 		}
 	}
 	
+    /**
+     * getEntryId gets the entry id into the XML code of the entry.
+     * 
+	 * @return the entry id as a String
+     * @exception PapillonBusinessException if an error occurs
+     *   getting data (usually due to an underlying data layer
+	 *   error).
+     */
 	public String getId()  throws PapillonBusinessException {
+		return getEntryId();
+	}
+	public String getEntryId()  throws PapillonBusinessException {
 		return ParseVolume.getCdmString(this, Volume.CDM_entryId);
 	}
+
+    
+	/* methods for the contribution id */
+
+    /**
+     * setEntryId sets the entry id into the XML code of the entry.
+     * 
+     * @exception PapillonBusinessException if an error occurs
+     *   replacing data (usually due to an underlying data layer
+	 *   error).
+     */
+	public void setContributionId() throws PapillonBusinessException {
+		this.setContributionId(this.createNewId() + CONTRIBUTION_ID_SUFFIX);
+	}
+	
+    /**
+     * setContributionIdIfNull sets the entry id into the XML code of the entry
+	 * if there is no previous existing entry id
+	 *
+     * @exception PapillonBusinessException if an error occurs
+     *   replacing data (usually due to an underlying data layer
+	 *   error).
+     */
+	protected void setContributionIdIfNull() throws PapillonBusinessException {
+		if (this.getContributionId()==null || this.getContributionId().equals("")) {
+			this.setContributionId(this.createNewId() + CONTRIBUTION_ID_SUFFIX);
+		}
+	}
+
+	protected void setContributionId(String newId) throws PapillonBusinessException {
+		ParseVolume.setCdmElement(this, Volume.CDM_contributionId, newId);
+	}
+	
+    /**
+     * getContributionId gets the entry id into the XML code of the entry.
+     * 
+	 * @return the contribution id as a String
+     * @exception PapillonBusinessException if an error occurs
+     *   getting data (usually due to an underlying data layer
+	 *   error).
+     */
+	public String getContributionId()  throws PapillonBusinessException {
+		return ParseVolume.getCdmString(this, Volume.CDM_contributionId);
+	}
+
+    /**
+     * setOriginalContributionId sets the entry id into the XML code of the entry.
+     * 
+	 * @param contribid as a String
+     * @exception PapillonBusinessException if an error occurs
+     *   replacing data (usually due to an underlying data layer
+	 *   error).
+     */
+	public void setOriginalContributionId(String newId) throws PapillonBusinessException {
+		ParseVolume.setCdmElement(this, Volume.CDM_originalContributionId, newId);
+	}
+	
+    /**
+     * getOriginalContributionId gets the original contribution id into the XML code of the entry.
+     * 
+	 * @return the contribution id as a String
+     * @exception PapillonBusinessException if an error occurs
+     *   getting data (usually due to an underlying data layer
+	 *   error).
+     */
+	public String getOriginalContributionId()  throws PapillonBusinessException {
+		return ParseVolume.getCdmString(this, Volume.CDM_originalContributionId);
+	}
+
+/* methods for axi-reflinks */
 	
     /**
         * returns ids of the lexies that are pointed by this by an axi-reflink, for lang
@@ -361,19 +559,373 @@ public class VolumeEntry implements IAnswer {
     public String[] getTranslationsLexieIds(String lang) throws PapillonBusinessException {
         return ParseVolume.getCdmStrings(this, Volume.CDM_translationReflexie, lang);
     }
-    
-	public void setIdIfNull() throws PapillonBusinessException {
-		if (this.getId()==null || this.getId().equals("")) {
-			this.setId(this.createNewId());
+
+	/* other methods */
+
+     /**
+     * getAuthor gets the entry author into the XML code of the entry.
+     * 
+	 * @return the author as a String
+     * @exception PapillonBusinessException if an error occurs
+     *   getting data (usually due to an underlying data layer
+	 *   error).
+     */
+	public String getAuthor() throws PapillonBusinessException {
+		return ParseVolume.getCdmString(this, Volume.CDM_contributionAuthor);
+	}
+
+    /**
+     * setAuthor sets the entry author into the XML code of the entry.
+     * 
+	 * @param the author as a String
+     * @exception PapillonBusinessException if an error occurs
+     *   replacing data (usually due to an underlying data layer
+	 *   error).
+     */
+	public void setAuthor(String author) throws PapillonBusinessException {
+		ParseVolume.setCdmElement(this, Volume.CDM_contributionAuthorElement, author);
+	}
+
+	public void setAuthor() throws PapillonBusinessException {
+		String author = ParseVolume.getCdmString(this, Volume.CDM_contributionAuthor);
+		if (author == null || author.equals("")) {
+			setAuthor("automatic");
+		}
+	}
+     /**
+     * getCreationDate gets the entry date into the XML code of the entry.
+     * 
+	 * @return the creation date as a java.util.Date
+     * @exception PapillonBusinessException if an error occurs
+     *   getting data (usually due to an underlying data layer
+	 *   error).
+     */
+	public java.util.Date getCreationDate() throws PapillonBusinessException {
+		java.util.Date resDate = null;
+		String dateString = ParseVolume.getCdmString(this, Volume.CDM_contributionCreationDate);
+		if (dateString !=null && !dateString.equals("")) {
+			try {
+				resDate = Utility.PapillonCDMDateFormat.parse(dateString);
+			}
+			catch (java.text.ParseException ex) {
+				throw new PapillonBusinessException("Error parsing a date String", ex);
+			}
+		}
+		return resDate;
+	}
+
+    /**
+     * setCreationDate sets the entry review date into the XML code of the entry.
+     * 
+     * @exception PapillonBusinessException if an error occurs
+     *   replacing data (usually due to an underlying data layer
+	 *   error).
+     */
+	public void setCreationDate() throws PapillonBusinessException {
+		setCreationDate(Utility.PapillonCDMDateFormat.format(new java.util.Date()));
+	}
+
+	public void setCreationDate(java.util.Date myDate) throws PapillonBusinessException {
+		if (myDate !=null) {
+			setCreationDate(Utility.PapillonCDMDateFormat.format(myDate));
+		}
+	}
+
+	protected void setCreationDate(String date) throws PapillonBusinessException {
+		ParseVolume.setCdmElement(this, Volume.CDM_contributionCreationDateElement, date);
+	}
+
+     /**
+     * getReviewDate gets the entry review date from the XML code of the entry.
+     * 
+	 * @return the review date as a String
+     * @exception PapillonBusinessException if an error occurs
+     *   getting data (usually due to an underlying data layer
+	 *   error).
+     */
+	public java.util.Date getReviewDate() throws PapillonBusinessException {
+		java.util.Date resDate = null;
+		String dateString = ParseVolume.getCdmString(this, Volume.CDM_contributionReviewDate);
+		if (dateString !=null && !dateString.equals("")) {
+			try {
+				resDate = Utility.PapillonCDMDateFormat.parse(dateString);
+			}
+			catch (java.text.ParseException ex) {
+				throw new PapillonBusinessException("Error parsing a date String", ex);
+			}
+		}
+		return resDate;
+	}
+
+    /**
+     * setReviewDate sets the entry review date into the XML code of the entry.
+     * 
+     * @exception PapillonBusinessException if an error occurs
+     *   replacing data (usually due to an underlying data layer
+	 *   error).
+     */
+	public void setReviewDate() throws PapillonBusinessException {
+		setReviewDate(Utility.PapillonCDMDateFormat.format(new java.util.Date()));
+	}
+
+	public void setReviewDate(java.util.Date myDate) throws PapillonBusinessException {
+		if (myDate !=null) {
+			setReviewDate(Utility.PapillonCDMDateFormat.format(myDate));
+		}
+	}
+
+	protected void setReviewDate(String date) throws PapillonBusinessException {
+		ParseVolume.setCdmElement(this, Volume.CDM_contributionReviewDateElement, date);
+	}
+
+     /**
+     * getReviewer gets the entry author into the XML code of the entry.
+     * 
+	 * @return the reviewer as a String
+     * @exception PapillonBusinessException if an error occurs
+     *   getting data (usually due to an underlying data layer
+	 *   error).
+     */
+	public String getReviewer() throws PapillonBusinessException {
+		return ParseVolume.getCdmString(this, Volume.CDM_contributionReviewer);
+	}
+
+    /**
+     * setReviewer sets the entry reviewer into the XML code of the entry.
+     * 
+	 * @param the reviewer as a String
+     * @exception PapillonBusinessException if an error occurs
+     *   replacing data (usually due to an underlying data layer
+	 *   error).
+     */
+	public void setReviewer(String reviewer) throws PapillonBusinessException {
+		ParseVolume.setCdmElement(this, Volume.CDM_contributionReviewerElement, reviewer);
+	}
+
+     /**
+     * getValidationDate gets the entry review date from the XML code of the entry.
+     * 
+	 * @return the validation date as a String
+     * @exception PapillonBusinessException if an error occurs
+     *   getting data (usually due to an underlying data layer
+	 *   error).
+     */
+	public java.util.Date getValidationDate() throws PapillonBusinessException {
+		java.util.Date resDate = null;
+		String dateString = ParseVolume.getCdmString(this, Volume.CDM_contributionValidationDate);
+		if (dateString !=null && !dateString.equals("")) {
+			try {
+				resDate = Utility.PapillonCDMDateFormat.parse(dateString);
+			}
+			catch (java.text.ParseException ex) {
+				throw new PapillonBusinessException("Error parsing a date String", ex);
+			}
+		}
+		return resDate;
+	}
+
+    /**
+     * setValidationDate sets the entry review date into the XML code of the entry.
+     * 
+     * @exception PapillonBusinessException if an error occurs
+     *   replacing data (usually due to an underlying data layer
+	 *   error).
+     */
+	public void setValidationDate() throws PapillonBusinessException {
+		setValidationDate(Utility.PapillonCDMDateFormat.format(new java.util.Date()));
+	}
+
+	public void setValidationDate(java.util.Date myDate) throws PapillonBusinessException {
+		if (myDate !=null) {
+			setValidationDate(Utility.PapillonCDMDateFormat.format(myDate));
+		}
+	}
+
+	protected void setValidationDate(String date) throws PapillonBusinessException {
+		ParseVolume.setCdmElement(this, Volume.CDM_contributionValidationDateElement, date);
+	}
+
+     /**
+     * getReviewer gets the entry author into the XML code of the entry.
+     * 
+	 * @return the reviewer as a String
+     * @exception PapillonBusinessException if an error occurs
+     *   getting data (usually due to an underlying data layer
+	 *   error).
+     */
+	public String getValidator() throws PapillonBusinessException {
+		return ParseVolume.getCdmString(this, Volume.CDM_contributionValidator);
+	}
+
+    /**
+     * setValidator sets the entry reviewer into the XML code of the entry.
+     * 
+	 * @param the reviewer as a String
+     * @exception PapillonBusinessException if an error occurs
+     *   replacing data (usually due to an underlying data layer
+	 *   error).
+     */
+	public void setValidator(String validator) throws PapillonBusinessException {
+		ParseVolume.setCdmElement(this, Volume.CDM_contributionValidatorElement, validator);
+	}
+
+   /**
+     * getStatus gets the entry status into the XML code of the entry.
+     * 
+	 * @return the status as a String
+     * @exception PapillonBusinessException if an error occurs
+     *   getting data (usually due to an underlying data layer
+	 *   error).
+     */
+	public String getStatus() throws PapillonBusinessException {
+		return ParseVolume.getCdmString(this, Volume.CDM_contributionStatus);
+	}
+
+    /**
+     * setStatus sets the entry id into the XML code of the entry.
+     * 
+	 * @param the status as a String
+     * @exception PapillonBusinessException if an error occurs
+     *   replacing data (usually due to an underlying data layer
+	 *   error).
+     */
+	public void setStatus(String status) throws PapillonBusinessException {
+		ParseVolume.setCdmElement(this, Volume.CDM_contributionStatusElement, status);
+	}
+	
+	public void setStatus() throws PapillonBusinessException {
+		String status = ParseVolume.getCdmString(this, Volume.CDM_contributionStatus);
+		if (status == null || status.equals("")) {
+			setStatus(VolumeEntry.VALIDATED_STATUS);
 		}
 	}
 	
-	public void setIdFromHeadword(String headword) throws PapillonBusinessException {
-		if (this.getId()==null || this.getId().equals("")) {
-			this.setId(this.createNewId(headword));
+    /**
+     * setFinished sets the entry status to finished
+     * 
+	 * @param the author as a User
+     * @exception PapillonBusinessException if an error occurs
+     *   replacing data (usually due to an underlying data layer
+	 *   error).
+     */
+	public void setFinished(fr.imag.clips.papillon.business.user.User myUser) 
+		throws PapillonBusinessException {
+		if (null != this.getStatus() && this.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS)) {
+				this.setModification(myUser.getLogin(),VolumeEntry.FINISHED_STATUS);
+				this.setStatus(VolumeEntry.FINISHED_STATUS);
+				this.save();
+				ContributionLog myContribLog = ContributionsFactory.newContributionLog(myUser, this);
+				myContribLog.save();
 		}
-	}	
+	}
 
+    /**
+     * setReviewed sets the entry status to reviewed
+     * 
+	 * @param the reviewer as a User
+     * @exception PapillonBusinessException if an error occurs
+     *   replacing data (usually due to an underlying data layer
+	 *   error).
+     */
+	public void setReviewed(fr.imag.clips.papillon.business.user.User myUser) 
+		throws PapillonBusinessException {
+		if (null != this.getStatus() && this.getStatus().equals(VolumeEntry.FINISHED_STATUS)) {
+				this.setModification(myUser.getLogin(),VolumeEntry.REVIEWED_STATUS);
+				this.setStatus(VolumeEntry.REVIEWED_STATUS);
+				this.save();
+				ContributionLog myContribLog = ContributionsFactory.newContributionLog(myUser, this);
+				myContribLog.save();
+		}
+	}
+
+    /**
+     * setValidated sets the entry status to validated
+     * 
+	 * @param the reviewer as a User
+     * @exception PapillonBusinessException if an error occurs
+     *   replacing data (usually due to an underlying data layer
+	 *   error).
+     */
+	public void setValidated(fr.imag.clips.papillon.business.user.User myUser) 
+		throws PapillonBusinessException {
+		if (null != this.getStatus() && this.getStatus().equals(VolumeEntry.REVIEWED_STATUS)) {
+				this.setModification(myUser.getLogin(),VolumeEntry.VALIDATED_STATUS);
+				this.setStatus(VolumeEntry.VALIDATED_STATUS);
+				this.save();
+				String origId = this.getOriginalContributionId();
+				if (origId !=null && !origId.equals("")) {
+					VolumeEntry myEntry = VolumeEntriesFactory.findEntryByEntryId(this.getVolumeName(), origId);
+					if (myEntry != null && !myEntry.isEmpty()) {
+						myEntry.setReplaced(myUser);
+					}
+				}
+				ContributionLog myContribLog = ContributionsFactory.newContributionLog(myUser, this);
+				myContribLog.save();
+		}
+	}
+
+    /**
+     * setReplaced sets the entry status to replaced
+     * 
+	 * @param the validator as a User
+     * @exception PapillonBusinessException if an error occurs
+     *   replacing data (usually due to an underlying data layer
+	 *   error).
+     */
+	public void setReplaced(fr.imag.clips.papillon.business.user.User myUser) 
+		throws PapillonBusinessException {
+		if (null != this.getStatus() && this.getStatus().equals(VolumeEntry.VALIDATED_STATUS)) {
+				this.setModification(myUser.getLogin(),VolumeEntry.REPLACED_STATUS);
+				this.setStatus(VolumeEntry.REPLACED_STATUS);
+				this.save();
+//				ContributionLog myContribLog = ContributionsFactory.newContributionLog(myUser, this);
+//				myContribLog.save();
+		}
+	}
+
+   /**
+     * getStatus gets the entry status into the XML code of the entry.
+     * 
+	 * @return the status as a String
+     * @exception PapillonBusinessException if an error occurs
+     *   getting data (usually due to an underlying data layer
+	 *   error).
+     */
+	public String[] getGroups() throws PapillonBusinessException {
+		return ParseVolume.getCdmStrings(this, Volume.CDM_contributionGroup);
+	}
+
+    /**
+     * setStatus sets the entry id into the XML code of the entry.
+     * 
+	 * @param the status as a String
+     * @exception PapillonBusinessException if an error occurs
+     *   replacing data (usually due to an underlying data layer
+	 *   error).
+     */
+	public void setGroups(String[] groups) throws PapillonBusinessException {
+		if (groups !=null && groups.length>0) {
+			org.w3c.dom.Document myDocument = this.getDom();	
+			org.w3c.dom.Node groupsNode = ParseVolume.getCdmElement(this, Volume.CDM_contributionGroups);
+			for (int i=0; i<groups.length; i++) {
+				String group = groups[i];
+				if (group !=null && !group.equals("")) {
+					org.w3c.dom.Element myGroup = myDocument.createElement(this.getVolume().getCdmContributionGroup());
+					Utility.setText(myGroup,group);
+					groupsNode.appendChild(myGroup);
+				}
+			}
+		}
+	}
+
+    /**
+     * getPos gets the part-of-speech of the entry.
+     * 
+	 * @return the part-of-speech as a String
+     * @exception PapillonBusinessException if an error occurs
+     *   getting data (usually due to an underlying data layer
+	 *   error).
+     */
 	public String getPos()  throws PapillonBusinessException {
 		return ParseVolume.getCdmString(this, Volume.CDM_pos,this.getSourceLanguage());
 	}
@@ -426,58 +978,50 @@ public class VolumeEntry implements IAnswer {
 	}
 	
 	public void setModification(String author, String comment) throws PapillonBusinessException {
+		setModification(author,new java.util.Date(), comment);
+	}
+	public void setModification(String author, java.util.Date date, String comment) throws PapillonBusinessException {
+
 		Volume myVolume = this.getVolume();	
-		Document myDocument = this.getDom();
+		Document myDocument = this.getDom();	
 		org.w3c.dom.Node myEntry = ParseVolume.getCdmElement(this, Volume.CDM_entry);
-        
-        if (null != ParseVolume.getXPath(this,Volume.CDM_history)) {
-            org.w3c.dom.Node myHistory = ParseVolume.getCdmElement(this, Volume.CDM_history);
-            // FIXME: history should not be mandatory in the volumes !!!!
-            if (myHistory == null) {
-                fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("setModification: myHistory null");
-                myHistory = myDocument.createElement(myVolume.getCdmHistory());
-                myEntry.appendChild(myHistory);			
-            }
-            org.w3c.dom.Node myModification = myDocument.createElement(myVolume.getCdmModification());
-            org.w3c.dom.Element myAuthor = myDocument.createElement(myVolume.getCdmAuthor());
-            org.w3c.dom.Element myComment = myDocument.createElement(myVolume.getCdmComment());
-            org.w3c.dom.Element myDate = myDocument.createElement(myVolume.getCdmDate());
-            Utility.setText(myAuthor,author);
-            Utility.setText(myDate,new java.util.Date().toString());
-            Utility.setText(myComment,comment);
-            myModification.appendChild(myAuthor);
-            myModification.appendChild(myComment);
-            myModification.appendChild(myDate);
-            myHistory.appendChild(myModification);
-        }
-    }
-	
+		org.w3c.dom.Node myHistory = ParseVolume.getCdmElement(this, Volume.CDM_history);
+		if (myHistory == null) {
+			fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("setModification: myHistory null");
+			myHistory = myDocument.createElement(myVolume.getCdmHistory());
+			myEntry.appendChild(myHistory);			
+		}
+		org.w3c.dom.Node myModification = myDocument.createElement(myVolume.getCdmModification());
+		org.w3c.dom.Element myAuthor = myDocument.createElement(myVolume.getCdmModificationAuthor());
+		org.w3c.dom.Element myComment = myDocument.createElement(myVolume.getCdmModificationComment());
+		org.w3c.dom.Element myDate = myDocument.createElement(myVolume.getCdmModificationDate());
+		Utility.setText(myAuthor,author);
+		Utility.setText(myDate,Utility.PapillonCDMDateFormat.format(date));
+		Utility.setText(myComment,comment);
+		myModification.appendChild(myAuthor);
+		myModification.appendChild(myComment);
+		myModification.appendChild(myDate);
+		myHistory.appendChild(myModification);
+	}
+
     /**
-     * getDefinition
-     *
-	 * function 
-	 * retrives the definition.
+     * getDefinition retrieves the definition of the entry
 	 * 
      * @exception PapillonBusinessException if an error occurs
      *   replacing data (usually due to an underlying data layer
 	 *   error).
      */
 	public String getDefinition() throws PapillonBusinessException {
-		String definition = "   ";
-		org.w3c.dom.Node myNode = ParseVolume.getCdmElement(this,Volume.CDM_definition);
-		if (myNode != null) {
-			definition = myNode.getNodeValue();
-		}
-		return definition;
+		return "   " + ParseVolume.getCdmString(this,Volume.CDM_definition);
 	}
 	
 	
     /**
-        * replaceData replaces all the data except the handle
+	 * replaceData replaces all the data except the handle
      *
      * @exception PapillonBusinessException if an error occurs
      *   replacing data (usually due to an underlying data layer
-                        *   error).
+	 *   error).
      */
 	 public boolean replaceData(VolumeEntry otherEntry) throws PapillonBusinessException {
 		boolean res = false;
@@ -486,9 +1030,9 @@ public class VolumeEntry implements IAnswer {
 			setHeadword(otherEntry.getHeadword());
 			// Do we have to copy the id? Quid of the existing links?
 			// setId(otherEntry.getId());
-			String oldId = this.getId();
+			String oldId = this.getEntryId();
 			setDom((org.w3c.dom.Document) otherEntry.getDom().cloneNode(true));
-			setId(oldId);
+			setEntryId(oldId);
 			setHtmlDom(otherEntry.getHtmlDom());
 			res= true;
 		}
@@ -506,17 +1050,9 @@ public class VolumeEntry implements IAnswer {
 	 *   error).
      */
 	 public String getParticule() throws fr.imag.clips.papillon.business.PapillonBusinessException {
-		String res = "";
-		
-		if (this.getVolumeName().equals("GDEF_est")) {
-			org.w3c.dom.Node myNode = ParseVolume.getCdmElement(this,Volume.CDM_gdefEstParticule,this.getSourceLanguage());
-			if (myNode != null) {
-				res = myNode.getNodeValue();
-			}
-		}
-		return res;
-	 }
-	
+		return ParseVolume.getCdmString(this,Volume.CDM_gdefEstParticule,this.getSourceLanguage());
+	}
+	 	
 	public static void setCacheHtmlDom(boolean cache) {
 		CACHE_HTMLDOM = cache;
 	}
@@ -534,7 +1070,8 @@ public class VolumeEntry implements IAnswer {
 			boolean res = false;
 			try {
 				IndexFactory.deleteIndexForEntryId(this.getVolume().getIndexDbname(), this.getHandle());
-				this.setIdIfNull();
+				this.setEntryIdIfNull();
+				this.setContributionIdIfNull();
 				res = ParseVolume.parseEntry(this);
 				this.myDO.setXmlCode(Utility.NodeToString(this.dom));
 				this.myDO.setDom(Utility.serializeDocument(this.dom));

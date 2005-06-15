@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.10  2005/06/15 16:48:28  mangeot
+ * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
+ *
  * Revision 1.9  2005/05/24 12:51:22  serasset
  * Updated many aspect of the Papillon project to handle lexalp project.
  * 1. Layout is now parametrable in the application configuration file.
@@ -17,6 +20,51 @@
  * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
  * 5. It is now possible to give a name to the cookie key in the app conf file
  * 6. Several bug fixes.
+ *
+ * Revision 1.8.4.15  2005/06/15 10:08:06  mangeot
+ * Removed the AND/OR connector, now only AND criteria can be added for dict lookup
+ *
+ * Revision 1.8.4.14  2005/05/24 11:15:48  mangeot
+ * Bug fixes in sort
+ *
+ * Revision 1.8.4.13  2005/05/19 09:43:26  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.8.4.12  2005/05/14 11:56:28  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.8.4.11  2005/05/13 11:52:13  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.8.4.10  2005/05/13 11:20:42  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.8.4.9  2005/05/13 11:17:07  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.8.4.8  2005/04/30 09:11:20  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.8.4.7  2005/04/29 18:43:13  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.8.4.6  2005/04/29 18:38:06  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.8.4.5  2005/04/29 18:29:59  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.8.4.4  2005/04/29 17:30:30  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.8.4.3  2005/04/29 16:49:06  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.8.4.2  2005/04/29 16:42:36  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.8.4.1  2005/04/29 14:50:25  mangeot
+ * New version with contribution infos embedded in the XML of the entries
  *
  * Revision 1.8  2005/04/15 12:08:30  mangeot
  * *** empty log message ***
@@ -65,7 +113,7 @@ import com.lutris.appserver.server.httpPresentation.HttpPresentation;
 import com.lutris.appserver.server.httpPresentation.HttpPresentationRequest;
 import com.lutris.appserver.server.httpPresentation.HttpPresentationException;
 //import org.enhydra.xml.xmlc.XMLObject;
-import org.w3c.dom.html.*;
+import org.enhydra.xml.xhtml.dom.*;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
@@ -119,6 +167,8 @@ public class AdminContributions extends PapillonBasePO {
 	protected final static String EditHandleParameter=EditEntry.EntryHandle_PARAMETER;
 	
 	protected final static String ALL="*ALL*";
+	protected final static String AnyContains_PARAMETER="AnyContains";
+	protected final static String OFFSET_PARAMETER="OFFSET";
 	protected final static String REMOVE_CONTRIB_PARAMETER="RemoveContrib";
 	protected final static String MARK_FINISHED_PARAMETER="MarkFinished";
 	protected final static String ENTRYID="entryid";
@@ -149,148 +199,288 @@ public class AdminContributions extends PapillonBasePO {
         javax.xml.transform.TransformerException,
         ClassNotFoundException,
         PapillonBusinessException {
-        
-        // Création du contenu
-        content = (AdminContributionsTmplXHTML)MultilingualXHtmlTemplateFactory.createTemplate("AdminContributionsTmplXHTML", this.getComms(), this.getSessionData());
-		
-        HttpPresentationRequest req = this.getComms().request;
-        
-		//TEMPORAIRE :avec l URL
-		//AJOUT D ENTREE DE DICO
-		
-		//String URL = req.getParameter(content.NAME_URL);
-		String URL = null;
-		String lookup = req.getParameter(content.NAME_LOOKUP);
-		String volumeString = req.getParameter(content.NAME_VOLUME);
-		String entryid = req.getParameter(ENTRYID);
-		String xslid = req.getParameter(XSLID);
-		String sortBy = req.getParameter(SORTBY_PARAMETER);
-		
-		if (volumeString!=null &&!volumeString.equals("")) {
-			this.setPreference(content.NAME_VOLUME,volumeString);
-		}
-		else {
-			volumeString = this.getPreference(content.NAME_VOLUME);
-		}
+			
+			// Création du contenu
+			content = (AdminContributionsTmplXHTML)MultilingualXHtmlTemplateFactory.createTemplate("AdminContributionsTmplXHTML", this.getComms(), this.getSessionData());
+			
+			HttpPresentationRequest req = this.getComms().request;
+			
+			//TEMPORAIRE :avec l URL
+			//AJOUT D ENTREE DE DICO
+			
+			//String URL = req.getParameter(content.NAME_URL);
+			String URL = null;
+			String lookup = req.getParameter(content.NAME_LOOKUP);
+			String volumeString = req.getParameter(content.NAME_VOLUME);
+			String entryid = req.getParameter(ENTRYID);
+			String xslid = req.getParameter(XSLID);
+			String sortBy = req.getParameter(SORTBY_PARAMETER);
+			
+			if (sortBy==null || sortBy.equals("")) {
+				sortBy=VolumeEntriesFactory.HEADWORD_SORT;
+			}
+			
+			if (volumeString!=null &&!volumeString.equals("")) {
+				this.setPreference(content.NAME_VOLUME,volumeString);
+			}
+			else {
+				volumeString = this.getPreference(content.NAME_VOLUME);
+			}
+			
+			String queryString = "";
+			if (volumeString!=null && !volumeString.equals("")) {
+				queryString += "&" + content.NAME_VOLUME + "=" + volumeString;
+			}
 
-		String queryString = "";
-		if (volumeString!=null && !volumeString.equals("")) {
-			queryString += "&" + content.NAME_VOLUME + "=" + volumeString;
-		}
-		
-		// headword
-		String headword = myGetParameter(content.NAME_HEADWORD);
-		if (lookup!=null &&!lookup.equals("")) {
-			this.setPreference(content.NAME_HEADWORD,headword);
-		}
-		else {
-			headword = this.getPreference(content.NAME_HEADWORD);
-		}
-		if (headword !=null && !headword.equals("")) {
-			queryString += "&" + content.NAME_HEADWORD + "=" + headword;
-		}
-		String partialMatch = myGetParameter(content.NAME_PartialMatch);
-		if (lookup!=null && !lookup.equals("")) {
-			this.setPreference(content.NAME_PartialMatch,partialMatch);
-		}
-		else {
-			partialMatch = this.getPreference(content.NAME_PartialMatch);
-		}
-		int strategy = IQuery.STRATEGY_EXACT;
-		if (null != partialMatch && !partialMatch.equals("")) {
-			strategy = IQuery.STRATEGY_SUBSTRING;
-			queryString += "&" + content.NAME_PartialMatch + "=" + partialMatch;
-		}
-
-		// status
-		String status = myGetParameter(content.NAME_STATUS);
-		if (lookup!=null &&!lookup.equals("")) {
-			this.setPreference(content.NAME_STATUS,status);
-		}
-		else {
-			status =  this.getPreference(content.NAME_STATUS);
-		}
-		if (status !=null && !status.equals("")) {
-			queryString += "&" + content.NAME_STATUS + "=" + status;
-		}
-		if (status != null && status.equals(ALL)) {
-			status = null;
-		}
-
-		String userMessage = null;
-		if (null != req.getParameter("ADD") &&
-			null != URL) {
-			Contribution[] Contribs = null;
-			//         Contribution[] Contribs = ContributionsFactory.parseCreateContributionsURL(getUser().getLogin(),
-			//                                                                                     volumeString, URL);
-			if (null != Contribs && Contribs.length>0) {
-				for (int i=0;i<Contribs.length;i++) {
-					Contribution myContrib = Contribs[i];
-					if (null != myContrib && !myContrib.isEmpty()) {
-						myContrib.save();
-						userMessage = "Contribution from " + myContrib.getAuthor() +
-							" on volume " + volumeString +
-							" with headword " + myContrib.getHeadword() + " downloaded...";
-					}
+			// CreationDate
+			String creationDate = myGetParameter(content.NAME_CreationDate);
+			if (lookup !=null && !lookup.equals("")) {
+				this.setPreference(content.NAME_CreationDate, creationDate);
+			} else {
+				creationDate = this.getPreference(content.NAME_CreationDate);
+			}
+			if (creationDate !=null && !creationDate.equals("")) {
+				queryString += "&" + content.NAME_CreationDate + "=" + creationDate;
+			}
+			String creationDateStrategyString = myGetParameter(content.NAME_StrategyCreationDate);
+			if (creationDateStrategyString != null && !creationDateStrategyString.equals("")) {
+				this.setPreference(content.NAME_StrategyCreationDate, creationDateStrategyString);
+			} else {
+				creationDateStrategyString = this.getPreference(content.NAME_StrategyCreationDate);
+			}
+			int creationDateStrategy = IQuery.STRATEGY_NONE;
+			if (null != creationDateStrategyString && !creationDateStrategyString.equals("")) {
+				creationDateStrategy = Integer.parseInt(creationDateStrategyString);
+			}
+			if (creationDateStrategyString !=null && !creationDateStrategyString.equals("")) {
+				queryString += "&" + content.NAME_StrategyCreationDate + "=" + creationDateStrategyString;
+			}
+			
+			// ReviewDate
+			String reviewDate = myGetParameter(content.NAME_ReviewDate);
+			if (lookup !=null && !lookup.equals("")) {
+				this.setPreference(content.NAME_ReviewDate, reviewDate);
+			} else {
+				reviewDate = this.getPreference(content.NAME_ReviewDate);
+			}
+			if (reviewDate !=null && !reviewDate.equals("")) {
+				queryString += "&" + content.NAME_ReviewDate + "=" + reviewDate;
+			}
+			String reviewDateStrategyString = myGetParameter(content.NAME_StrategyReviewDate);
+			if (reviewDateStrategyString != null && !reviewDateStrategyString.equals("")) {
+				this.setPreference(content.NAME_StrategyReviewDate, reviewDateStrategyString);
+			} else {
+				reviewDateStrategyString = this.getPreference(content.NAME_StrategyReviewDate);
+			}
+			int reviewDateStrategy = IQuery.STRATEGY_NONE;
+			if (null != reviewDateStrategyString && !reviewDateStrategyString.equals("")) {
+				reviewDateStrategy = Integer.parseInt(reviewDateStrategyString);
+			}
+			if (reviewDateStrategyString !=null && !reviewDateStrategyString.equals("")) {
+				queryString += "&" + content.NAME_StrategyReviewDate + "=" + reviewDateStrategyString;
+			}
+			
+			// search1
+			String search1 = myGetParameter(content.NAME_search1);
+			if (search1 != null && !search1.equals("")) {
+				this.setPreference(content.NAME_search1, search1);
+			} else {
+				search1 = this.getPreference(content.NAME_search1);
+			}
+			if (search1 !=null && !search1.equals("")) {
+				queryString += "&" + content.NAME_search1 + "=" + search1;
+			}
+			String search1text = myGetParameter(content.NAME_search1text);
+			if (search1text !=null && !search1text.equals("")) {
+				queryString += "&" + content.NAME_search1text + "=" + search1text;
+			}
+			
+			// search2
+			String search2 = myGetParameter(content.NAME_search2);
+			if (search2 != null && !search2.equals("")) {
+				this.setPreference(content.NAME_search2, search2);
+			} else {
+				search2 = this.getPreference(content.NAME_search2);
+			}
+			if (search2 !=null && !search2.equals("")) {
+				queryString += "&" + content.NAME_search2 + "=" + search2;
+			}
+			String search2text = myGetParameter(content.NAME_search2text);
+			if (search2text !=null && !search2text.equals("")) {
+				queryString += "&" + content.NAME_search2text + "=" + search2text;
+			}
+			
+			String anyContains = null;
+			
+			
+			if (null != search1 && null != search1text && !search1text.equals("")) {
+				if (search1.equals(AnyContains_PARAMETER)) {
+					anyContains = search1text;
 				}
 			}
-		}
-		else if (null != req.getParameter("EMPTY")) {
-			ContributionsFactory.removeContributions(this.getUser().getLogin(), volumeString);
-			userMessage = "Volume " + volumeString + " contributions removed...";
-		}
-		else if (null != req.getParameter(REMOVE_CONTRIB_PARAMETER)) {
-			Contribution myContrib = ContributionsFactory.findContributionByHandle(entryid);
-			if (null != myContrib && !myContrib.isEmpty()) {
-				volumeString = myContrib.getVolumeName();
-				// we delete the entry related to the contrib
-				IAnswer myAnswer = VolumeEntriesFactory.findEntryByEntryId(myContrib.getVolumeName(),myContrib.getEntryId());
-				if (myAnswer != null && 
-					!myAnswer.isEmpty() && 
-					myAnswer.getType()==IAnswer.LocalEntry && 
-					myAnswer.getVolumeName().equals(PapillonPivotFactory.VOLUMENAME)) {
-					PapillonPivotFactory.deleteLinksInAxies(myAnswer,this.getUser());
+			
+			if (null != search2 && null != search2text && !search2text.equals("")) {
+				if (search2.equals(AnyContains_PARAMETER)) {
+					anyContains = search2text;
 				}
-				myAnswer.delete();
-				myContrib.delete();
-				entryid=null;
-				userMessage = "Contribution " +  myContrib.getHandle() + " / " +
-					myContrib.getHeadword() + " removed...";
 			}
-		}
-		else if (null != req.getParameter(MARK_FINISHED_PARAMETER)) {
+			
+			// strategy1
+			String strategyString1 = myGetParameter(content.NAME_Strategy1);
+			if (strategyString1 != null && !strategyString1.equals("")) {
+				this.setPreference(content.NAME_Strategy1, strategyString1);
+			} else {
+				strategyString1 = this.getPreference(content.NAME_Strategy1);
+			}
+			int strategy1 = IQuery.STRATEGY_NONE;
+			if (null != strategyString1 && !strategyString1.equals("")) {
+				strategy1 = Integer.parseInt(strategyString1);
+			}
+			if (strategyString1 !=null && !strategyString1.equals("")) {
+				queryString += "&" + content.NAME_Strategy1 + "=" + strategyString1;
+			}
+			
+			String strategyString2 = myGetParameter(content.NAME_Strategy2);
+			if (strategyString2 != null && !strategyString2.equals("")) {
+				this.setPreference(content.NAME_Strategy2, strategyString2);
+			} else {
+				strategyString2 = this.getPreference(content.NAME_Strategy2);
+			}
+			int strategy2 = IQuery.STRATEGY_NONE;
+			if (null != strategyString2 && !strategyString2.equals("")) {
+				strategy2 = Integer.parseInt(strategyString2);
+			}
+			if (strategyString2 !=null && !strategyString2.equals("")) {
+				queryString += "&" + content.NAME_Strategy2 + "=" + strategyString2;
+			}
+						
+			//offset
+			int offset = 0;
+			String offsetString = myGetParameter(OFFSET_PARAMETER);
+			if (offsetString != null && !offsetString.equals("")) {
+				offset = Integer.parseInt(offsetString);
+			}
+			queryString += "&" + OFFSET_PARAMETER + "=" + offset;
+			
+			// status
+			String status = myGetParameter(content.NAME_STATUS);
+			if (lookup!=null &&!lookup.equals("")) {
+				this.setPreference(content.NAME_STATUS,status);
+			}
+			else {
+				status =  this.getPreference(content.NAME_STATUS);
+			}
+			if (status !=null && !status.equals("")) {
+				queryString += "&" + content.NAME_STATUS + "=" + status;
+			}
+			if (status != null && status.equals(ALL)) {
+				status = null;
+			}
+			Vector myKeys = new Vector();
+			Vector myClauses = new Vector();
+			if (search1 !=null && !search1.equals("")  &&
+				search1text != null && !search1text.equals("")) {
+				String[] key1 = new String[4];
+				key1[0] = search1;
+				key1[2] = search1text;
+				key1[3] = IQuery.QueryBuilderStrategy[strategy1+1];
+				myKeys.add(key1);
+			}
+			if (search2 !=null && !search2.equals("") &&
+				search2text != null && !search2text.equals("")) {
+				String[] key2 = new String[4];
+				key2[0] = search2;
+				key2[2] = search2text;
+				key2[3] = IQuery.QueryBuilderStrategy[strategy2+1];
+				myKeys.add(key2);
+			}
+			if (status !=null && !status.equals("")) {
+				String[] key2 = new String[4];
+				key2[0] = Volume.CDM_contributionStatus;
+				key2[1] = Volume.DEFAULT_LANG;
+				key2[2] = status;
+				key2[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_EXACT+1];			
+				myKeys.add(key2);
+			}
+			else {
+				String[] key2 = new String[4];
+				key2[0] = Volume.CDM_contributionStatus;
+				key2[1] = Volume.DEFAULT_LANG;
+				key2[2] = VolumeEntry.VALIDATED_STATUS;
+				key2[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_NOT_EQUAL+1];			
+				myKeys.add(key2);			
+				String[] key3 = new String[4];
+				key3[0] = Volume.CDM_contributionStatus;
+				key3[1] = Volume.DEFAULT_LANG;
+				key3[2] = VolumeEntry.DELETED_STATUS;
+				key3[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_NOT_EQUAL+1];			
+				myKeys.add(key3);			
+			}
+			if (creationDate !=null && !creationDate.equals("")) {
+				String[] creationDateKey = new String[4];
+				creationDateKey[0] = Volume.CDM_contributionCreationDate;
+				creationDateKey[1] = Volume.DEFAULT_LANG;
+				creationDateKey[2] = creationDate;
+				creationDateKey[3] = IQuery.QueryBuilderStrategy[creationDateStrategy+1];			
+				myKeys.add(creationDateKey);
+			}
+			if (reviewDate !=null && !reviewDate.equals("")) {
+				String[] reviewDateKey = new String[4];
+				reviewDateKey[0] = Volume.CDM_contributionReviewDate;
+				reviewDateKey[1] = Volume.DEFAULT_LANG;
+				reviewDateKey[2] = reviewDate;
+				reviewDateKey[3] = IQuery.QueryBuilderStrategy[reviewDateStrategy+1];			
+				myKeys.add(reviewDateKey);
+			}
+			String[] authorKey = new String[4];
+			authorKey[0] = Volume.CDM_contributionAuthor;
+			authorKey[1] = Volume.DEFAULT_LANG;
+			authorKey[2] = this.getUser().getLogin();
+			authorKey[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_EXACT+1];			
+			myKeys.add(authorKey);
+			
+			String userMessage = null;
+			if (null != req.getParameter(REMOVE_CONTRIB_PARAMETER)) {
+				VolumeEntry myContrib = VolumeEntriesFactory.findEntryByHandle(volumeString, entryid);
+				if (null != myContrib && !myContrib.isEmpty()) {
+					myContrib.delete();
+					entryid=null;
+					userMessage = "Contribution " +  myContrib.getHandle() + " / " +
+						myContrib.getHeadword() + " removed...";
+				}
+			}
+			else if (null != req.getParameter(MARK_FINISHED_PARAMETER)) {
 				if (entryid !=null && !entryid.equals("")) {
-					Contribution myContrib = ContributionsFactory.findContributionByHandle(entryid);
-					if (null != myContrib && !myContrib.isEmpty()
-					&& null != myContrib.getStatus() && myContrib.getStatus().equals(Contribution.NOT_FINISHED_STATUS)) {
-						VolumeEntry myEntry = VolumeEntriesFactory.findEntryByEntryId(myContrib.getVolumeName(),myContrib.getEntryId());
-						//Adding modifications in the XML code
-						myEntry.setModification(this.getUser().getLogin(),Contribution.FINISHED_STATUS);
-						myEntry.save();
-						myContrib.setStatus(Contribution.FINISHED_STATUS);
-						myContrib.save();
+					VolumeEntry myContrib = VolumeEntriesFactory.findEntryByHandle(volumeString, entryid);
+					if (null != myContrib && !myContrib.isEmpty()) {
+						myContrib.setFinished(this.getUser());
 						userMessage = "Contribution " +  myContrib.getHandle() + " / " +
-						myContrib.getHeadword() + " finished";
-						headword="";
-						volumeString = myContrib.getVolumeName();
+							myContrib.getHeadword() + " finished";
 					}
 				}
+			}
+			if (null != userMessage && !userMessage.equals("")){
+				this.getSessionData().writeUserMessage(userMessage);
+				PapillonLogger.writeDebugMsg(userMessage);
+			}
+			
+			addConsultForm(volumeString, creationDate, creationDateStrategyString, reviewDate, reviewDateStrategyString, search1, search1text, strategyString1, search2, search2text, strategyString2, status);
+			
+			addContributions(entryid, volumeString, this.getUser(), myKeys, myClauses, anyContains, offset, xslid, sortBy, queryString);
+			
+			removeTemplateRows();
+			
+			//On rend le contenu correct
+			return content.getElementFormulaire();
 		}
-		if (null != userMessage && !userMessage.equals("")){
-			this.getSessionData().writeUserMessage(userMessage);
-			PapillonLogger.writeDebugMsg(userMessage);
-		}
-		
-        addConsultForm(volumeString, headword, partialMatch, status);
-		
-        addContributions(entryid, volumeString, this.getUser(), headword, strategy, status, xslid, sortBy, queryString);
-
-        removeTemplateRows();
-        
-        //On rend le contenu correct
-        return content.getElementFormulaire();
-    }
-	protected void addConsultForm(String volume, String headword, String strategy, String status) 
+	
+	protected void addConsultForm(String volume, 
+								  String creationDate, String creationDateStrategyString,
+								  String reviewDate, String reviewDateStrategyString,
+								  String search1, String search1text, 
+								  String strategy1, 
+								  String search2, String search2text,
+								  String strategy2, String status)
         throws fr.imag.clips.papillon.business.PapillonBusinessException, 
 		HttpPresentationException,
         java.io.UnsupportedEncodingException {
@@ -303,7 +493,7 @@ public class AdminContributions extends PapillonBasePO {
 			}
 			
 			// Adding the appropriate source languages to the source list
-			HTMLOptionElement volumeOptionTemplate = content.getElementVolumeOptionTemplate();
+			XHTMLOptionElement volumeOptionTemplate = content.getElementVolumeOptionTemplate();
 			Node volumeSelect = volumeOptionTemplate.getParentNode();
 			volumeOptionTemplate.removeAttribute("id");
 			// We assume that the option element has only one text child 
@@ -329,21 +519,57 @@ public class AdminContributions extends PapillonBasePO {
 			volumeSelect.removeChild(volumeOptionTemplate);
 			
 			
-		//HTMLInputElement headwordInput = content.getElementHEADWORD();
-		//headwordInput.setValue(headword);
-		
-		if (strategy !=null && !strategy.equals("")) {
-			HTMLInputElement strategyInput = content.getElementPartialMatch();
-			strategyInput.setChecked(true);		
-		}
-		
-		HTMLSelectElement statusSelect = (HTMLSelectElement) content.getElementSTATUS();
-		setSelected(statusSelect,status);
-		
+		// creationDate
+		XHTMLInputElement creationDateInput = content.getElementInputCreationDate();
+		creationDateInput.setValue(creationDate);
+		this.setSelected(content.getElementStrategyCreationDate(), creationDateStrategyString);
 
+		// reviewDate
+		XHTMLInputElement reviewDateInput = content.getElementInputReviewDate();
+		reviewDateInput.setValue(reviewDate);
+		this.setSelected(content.getElementStrategyReviewDate(), reviewDateStrategyString);
+
+			// strategy
+			if (!this.IsClientWithLabelDisplayProblems()) {
+				this.setUnicodeLabels(content.getElementStrategy1());
+			}
+			this.setSelected(content.getElementStrategy1(), "" + strategy1);
+			
+			if (!this.IsClientWithLabelDisplayProblems()) {
+				this.setUnicodeLabels(content.getElementStrategy2());
+			}
+			this.setSelected(content.getElementStrategy2(), "" + strategy2);
+			
+			// Search1 field
+			if (search1 == null || search1.equals("")) {
+				search1 = Volume.CDM_headword;
+			}
+			if (!this.IsClientWithLabelDisplayProblems()) {
+				this.setUnicodeLabels(content.getElementSearch1());
+			}
+			this.setSelected(content.getElementSearch1(), search1);
+			
+			XHTMLInputElement search1Input = content.getElementSearch1text();
+			search1Input.setValue(search1text);
+			
+			// Search2 field
+			if (search2 == null || search2.equals("")) {
+				search2 = Volume.CDM_pos;
+			}
+			if (!this.IsClientWithLabelDisplayProblems()) {
+				this.setUnicodeLabels(content.getElementSearch2());
+			}
+			this.setSelected(content.getElementSearch2(), search2);
+			
+			XHTMLInputElement search2Input = content.getElementSearch2text();
+			search2Input.setValue(search2text);
+			
+			XHTMLSelectElement statusSelect = (XHTMLSelectElement) content.getElementSTATUS();
+			this.setSelected(statusSelect,status);
+			
 		}
 	
-    protected void addContributions(String entryid, String volumeString, User myUser, String headword, int strategy, String status, String xslid, String sortBy, String queryString)
+    protected void addContributions(String entryid, String volumeString, User myUser, Vector Keys1, Vector Keys2, String anyContains, int offset, String xslid, String sortBy, String queryString)
         throws PapillonBusinessException,
         ClassNotFoundException,
         HttpPresentationException,
@@ -352,27 +578,24 @@ public class AdminContributions extends PapillonBasePO {
         org.xml.sax.SAXException,
         javax.xml.parsers.ParserConfigurationException,
         javax.xml.transform.TransformerException {
-			
-   			String[] Headwords = null;
-				if (headword!=null && !headword.equals("")) {
-					Headwords = new String[]{headword};
-				}
-	
+						
 			Vector ContribVector = new Vector();
             if (null != entryid && !entryid.equals("")) {
-                ContribVector.add(ContributionsFactory.findContributionByHandle(entryid));
+                ContribVector.add(VolumeEntriesFactory.findEntryByHandle(volumeString, entryid));
             }
             else {
-         			ContribVector = ContributionsFactory.getContributions(volumeString, myUser.getLogin(), strategy, Headwords, status, null, sortBy);
+				ContribVector = VolumeEntriesFactory.getVolumeNameEntriesVector(volumeString, Keys1, Keys2, anyContains, offset);
             }
             // If there are too much entries ie > MaxDisplayedEntries,
             // we display a table of entries instead of the entries
             if (null != ContribVector) {
+				if (sortBy !=null && !sortBy.equals("") && !sortBy.equals(VolumeEntriesFactory.HEADWORD_SORT)) {
+					VolumeEntriesFactory.sort(ContribVector, sortBy);
+				}
                 addEntryTable(ContribVector, queryString);
                 if (ContribVector.size() < MaxDisplayedEntries) {
                     for(int i = 0; i < ContribVector.size(); i++) {
-                        Contribution myContrib = (Contribution)ContribVector.get(i);
-						IAnswer myAnswer = VolumeEntriesFactory.findEntryByEntryId(myContrib.getVolumeName(),myContrib.getEntryId());
+						IAnswer myAnswer = (IAnswer)ContribVector.get(i);
 						if (myAnswer!=null && !myAnswer.isEmpty()) {
 							addElement(XslTransformation.applyXslSheets(myAnswer, xslid));
 						}
@@ -388,20 +611,20 @@ public class AdminContributions extends PapillonBasePO {
 			
             // On récupère les éléments du layout
 			// the headers
-			HTMLAnchorElement headwordHeader = content.getElementHeadwordHeaderAnchor();
+			XHTMLAnchorElement headwordHeader = content.getElementHeadwordHeaderAnchor();
 			headwordHeader.setHref(headwordHeader.getHref()+queryString);
-			HTMLAnchorElement creationdateHeader = content.getElementCreationdateHeaderAnchor();
+			XHTMLAnchorElement creationdateHeader = content.getElementCreationdateHeaderAnchor();
 			creationdateHeader.setHref(creationdateHeader.getHref()+queryString);
-			HTMLAnchorElement statusHeader = content.getElementStatusHeaderAnchor();
+			XHTMLAnchorElement statusHeader = content.getElementStatusHeaderAnchor();
 			statusHeader.setHref(statusHeader.getHref()+queryString);
-			HTMLAnchorElement newentryHeader = content.getElementNewentryHeaderAnchor();
+			XHTMLAnchorElement newentryHeader = content.getElementNewentryHeaderAnchor();
 			newentryHeader.setHref(newentryHeader.getHref()+queryString);
-
-
-            HTMLTableRowElement entryListRow = content.getElementEntryListRow();
+			
+			
+            XHTMLTableRowElement entryListRow = content.getElementEntryListRow();
 			
 			// View Contrib
-            HTMLAnchorElement viewContribAnchor = content.getElementViewContribAnchor();
+            XHTMLAnchorElement viewContribAnchor = content.getElementViewContribAnchor();
             viewContribAnchor.removeAttribute("id");
             content.getElementViewContribText().removeAttribute("id");
 			
@@ -413,24 +636,24 @@ public class AdminContributions extends PapillonBasePO {
 												
 			// IsNewEntry
 			content.getElementIsNewEntry().removeAttribute("id");
-
+			
 			// Status
 			content.getElementStatus().removeAttribute("id");
 			
 			//Mark finished
-            HTMLAnchorElement markFinishedAnchor = content.getElementMarkFinishedAnchor();
+            XHTMLAnchorElement markFinishedAnchor = content.getElementMarkFinishedAnchor();
             markFinishedAnchor.removeAttribute("id");
 			
 			//View XML
-            HTMLAnchorElement viewXmlAnchor = content.getElementViewXmlAnchor();
+            XHTMLAnchorElement viewXmlAnchor = content.getElementViewXmlAnchor();
             viewXmlAnchor.removeAttribute("id");
 			
 			// Edit contrib
-            HTMLAnchorElement editContribAnchor = content.getElementEditContribAnchor();
+            XHTMLAnchorElement editContribAnchor = content.getElementEditContribAnchor();
             editContribAnchor.removeAttribute("id");
 			
 			// remove contrib
-            HTMLAnchorElement removeContribAnchor = content.getElementRemoveContribAnchor();
+            XHTMLAnchorElement removeContribAnchor = content.getElementRemoveContribAnchor();
             removeContribAnchor.removeAttribute("id");
 			
 			
@@ -439,48 +662,50 @@ public class AdminContributions extends PapillonBasePO {
             if (null != ContribVector && ContribVector.size()>0) {
 				content.setTextContributionsCount("" + ContribVector.size());
                 for(int i = 0; i < ContribVector.size(); i++) {
-					Contribution myContrib = (Contribution) ContribVector.elementAt(i);
+					VolumeEntry myContrib = (VolumeEntry) ContribVector.elementAt(i);
 					
-					// view contrib
-					if (myContrib!=null && !myContrib.isEmpty()) {
-						VolumeEntry myEntry = VolumeEntriesFactory.findEntryByEntryId(myContrib.getVolumeName(),myContrib.getEntryId());
-
-					// FIXME: hack for the GDEF estonian volume
+					if (myContrib!=null && !myContrib.isEmpty()) {						
+						// FIXME: hack for the GDEF estonian volume
 						String headword = myContrib.getHeadword();
 						if (myContrib.getVolumeName().equals("GDEF_est")) {
-							if (myEntry!=null && !myEntry.isEmpty()) {
-								String particule = myEntry.getParticule();
-								if(particule!=null && !particule.equals("")) {
-									headword = particule + " " + headword;
-								}
+							String particule = myContrib.getParticule();
+							if(particule!=null && !particule.equals("")) {
+								headword = particule + " " + headword;
 							}
 						}
-
-
+						
+						
 						content.setTextViewContribText(headword);
 						viewContribAnchor.setHref(this.getUrl() + "?"
-												  + ENTRYID + "="
-												  + myContrib.getHandle()
+												  + ENTRYID + "=" + myContrib.getHandle()
+												  + "&" + content.NAME_VOLUME + "=" + myContrib.getVolumeName()
 												  + queryString);
 						// entry id
 						content.setTextEntryId(myContrib.getEntryId());
 						
 						// creation date
-						content.setTextCreationDate(myContrib.getCreationDate().toString());
+						content.setTextCreationDate(Utility.PapillonShortDateFormat.format(myContrib.getCreationDate()));
 						
 						// IsNewEntry
-						content.setTextIsNewEntry(new Boolean(myContrib.IsNewEntry()).toString());
+						content.setTextIsNewEntry(new Boolean(myContrib.getOriginalContributionId()==null || myContrib.getOriginalContributionId().equals("")).toString());
 						
 						// Status
 						content.setTextStatus(myContrib.getStatus());
 						
 						// mark finished
-						markFinishedAnchor.setHref(this.getUrl() + "?"
-											  + MARK_FINISHED_PARAMETER + "=on&"
-											  + ENTRYID + "="
-											  + myContrib.getHandle()
-											  + queryString);
-
+						if (myContrib.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS)) {
+							markFinishedAnchor.setHref(this.getUrl() + "?"
+												   + MARK_FINISHED_PARAMETER + "=on"
+												   + "&" + ENTRYID + "=" + myContrib.getHandle()
+												   + "&" + content.NAME_VOLUME + "=" + myContrib.getVolumeName()
+												   + queryString);
+							markFinishedAnchor.setAttribute("class", "");
+						}
+						else {
+							markFinishedAnchor.setHref(this.getUrl());
+							markFinishedAnchor.setAttribute("class", "hidden");
+						}
+						
 						// view XML
 						XslSheet xmlSheet = XslSheetFactory.findXslSheetByName("XML");
 						String xslid = "";
@@ -489,10 +714,8 @@ public class AdminContributions extends PapillonBasePO {
 						} 
 						
 						viewXmlAnchor.setHref(this.getUrl() + "?"
-											  + ENTRYID + "="
-											  + myContrib.getHandle() + "&"
-											  + XSLID + "="
-											  + xslid
+											  + ENTRYID + "=" + myContrib.getHandle() 
+											  + "&" + XSLID + "=" + xslid
 											  + queryString);
 						
 						// edit contrib
@@ -503,23 +726,19 @@ public class AdminContributions extends PapillonBasePO {
 							
 						}
 						else {
-							if (myEntry!=null && !myEntry.isEmpty()) {
-								editContribAnchor.setHref(EditURL + "?"
-													  + EditVolumeParameter + "="
-													  + myContrib.getVolumeName() + "&"
-													  + EditHandleParameter + "="
-													  + myEntry.getHandle());
-							}
+							editContribAnchor.setHref(EditURL + "?"
+														+ EditVolumeParameter + "=" + myContrib.getVolumeName()
+														+ "&"+ EditHandleParameter + "=" + myContrib.getHandle());
 						}
 						
 						// remove contrib
                         removeContribAnchor.setHref(this.getUrl() + "?"
-													+ REMOVE_CONTRIB_PARAMETER + "=on&"
-													+ ENTRYID + "="
-													+ myContrib.getHandle()
+													+ REMOVE_CONTRIB_PARAMETER + "=on"
+													+ "&" + ENTRYID + "=" + myContrib.getHandle()
+													+ "&" + EditVolumeParameter + "=" + myContrib.getVolumeName() 
 													+ queryString);                        
                         
-                        HTMLElement clone = (HTMLElement)entryListRow.cloneNode(true);
+                        XHTMLElement clone = (XHTMLElement)entryListRow.cloneNode(true);
                         //      we have to take off the id attribute because we did not take it off the original
                         clone.removeAttribute("id");
                         entryTable.appendChild(clone);
@@ -537,13 +756,13 @@ public class AdminContributions extends PapillonBasePO {
         java.io.IOException {
 			
             //for the entry content
-            HTMLTableRowElement originalEntryRow = content.getElementEntryRow();
+            XHTMLTableRowElement originalEntryRow = content.getElementEntryRow();
             Node entryTable=originalEntryRow.getParentNode();
             //for the entry content
-            HTMLTableRowElement entryRow = (HTMLTableRowElement)originalEntryRow.cloneNode(true);
+            XHTMLTableRowElement entryRow = (XHTMLTableRowElement)originalEntryRow.cloneNode(true);
 			
             //for the lexie content
-            HTMLTableCellElement entryCell= (HTMLTableCellElement)entryRow.getFirstChild();
+            XHTMLTableCellElement entryCell= (XHTMLTableCellElement)entryRow.getFirstChild();
 			
             entryRow.removeAttribute("id");
             entryCell.removeAttribute("id");

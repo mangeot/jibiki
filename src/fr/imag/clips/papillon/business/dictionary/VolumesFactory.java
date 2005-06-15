@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.6  2005/06/15 16:48:27  mangeot
+ * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
+ *
  * Revision 1.5  2005/05/24 12:51:21  serasset
  * Updated many aspect of the Papillon project to handle lexalp project.
  * 1. Layout is now parametrable in the application configuration file.
@@ -11,6 +14,29 @@
  * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
  * 5. It is now possible to give a name to the cookie key in the app conf file
  * 6. Several bug fixes.
+ *
+ * Revision 1.4.4.7  2005/06/09 11:07:45  mangeot
+ * Deleted the countEntriesCache. entries counts are not cached any more.
+ * Fixed a few bugs.
+ *
+ * Revision 1.4.4.6  2005/06/01 15:20:33  mangeot
+ * Added a boolean for contributionslog
+ *
+ * Revision 1.4.4.5  2005/06/01 08:38:43  mangeot
+ * Multi bug correction + added the possibility of disabling data edition
+ * via the Admin.po page
+ *
+ * Revision 1.4.4.4  2005/05/31 14:22:34  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.4.4.3  2005/05/27 11:53:21  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.4.4.2  2005/05/19 17:02:22  mangeot
+ * Importing entries without the contribution element
+ *
+ * Revision 1.4.4.1  2005/04/29 14:50:25  mangeot
+ * New version with contribution infos embedded in the XML of the entries
  *
  * Revision 1.4  2005/04/11 12:29:59  mangeot
  * Merge between the XPathAndMultipleKeys branch and the main trunk
@@ -92,6 +118,7 @@ public class VolumesFactory {
 	protected final static String XMLSCHEMA_TAG = "xmlschema-ref";
 	protected final static String TEMPLATE_INTERFACE_TAG = "template-interface-ref";
 	protected final static String TEMPLATE_ENTRY_TAG = "template-entry-ref";
+	protected final static String XML_FOOTER_TAG = "volume-xml-footer";
 
 	protected final static String HREF_ATTRIBUTE="href";
 	protected final static String LANG_ATTRIBUTE="lang";
@@ -100,13 +127,10 @@ public class VolumesFactory {
 	protected final static String XPATH_ATTRIBUTE="xpath";
 	protected final static String INDEX_ATTRIBUTE="index";
 		
-	protected final static Hashtable countEntriesCache = new Hashtable(); 
-	
 	public static Volume newVolume(String dictname, Element volume, URL fileURL)
 		throws fr.imag.clips.papillon.business.PapillonBusinessException, java.io.IOException {
 		
-			Hashtable cdmElements = new Hashtable();
-			java.util.Hashtable xpathsTable = null;
+			Hashtable cdmElements = null;
             
 			// Cette méthode dépend du schéma des volumes.
             String name = volume.getAttribute("name");
@@ -134,33 +158,18 @@ public class VolumesFactory {
 			NodeList cdmElts = volume.getElementsByTagName(CDM_ELEMENTS_TAG);
             if (null != cdmElts && cdmElts.getLength()>0) {
                 Element cdmElt = (Element)cdmElts.item(0);
-				NodeList cdmChilds = cdmElt.getChildNodes();
-				for (int i=0;i<cdmChilds.getLength();i++) {
-                    // FIXME: Can we have several XPaths for 1 cdm element ?
-                    // (ex: cdm-headword is to be found in headword/abbrev/variant ?)
-					Node myNode = cdmChilds.item(i);
-					if (myNode.getNodeType() == Node.ELEMENT_NODE) {
-						Element myElt = (Element) myNode;
-						String eltName = myElt.getTagName();
-						String lang = Volume.DEFAULT_LANG;
-						Attr langAttr = myElt.getAttributeNodeNS(DML_URI, LANG_ATTRIBUTE);
-						if (langAttr != null) {
-							lang = langAttr.getValue();
-						}
-						String xpath = myElt.getAttribute(XPATH_ATTRIBUTE);
-						String index = myElt.getAttribute(INDEX_ATTRIBUTE);
-						boolean isindex = (index != null && index.equals("true"));
-						addCdmElementInTable(cdmElements,eltName,lang,xpath, isindex);
-					}
-				}
+				cdmElements = buildCdmElementsTable(cdmElt, source);
 			}
 			else {
-				PapillonLogger.writeDebugMsg("No volume-ref");   
+				PapillonLogger.writeDebugMsg("No cdm-elements tag");   
 			} 
 			
             String schema = getXmlCode(volume,XMLSCHEMA_TAG, fileURL);
             String tmplInterface = getXmlCode(volume,TEMPLATE_INTERFACE_TAG, fileURL);
             String tmplEntry = getXmlCode(volume,TEMPLATE_ENTRY_TAG, fileURL);
+			
+			// Embedding the entry into a contribution element
+			tmplEntry = updateTemplateEntry(tmplEntry, cdmElements);
 			
 			org.w3c.dom.Document myDoc = Utility.buildDOMTree(tmplEntry);
 			if (myDoc != null) {
@@ -231,8 +240,8 @@ public class VolumesFactory {
 			{
 				//search for an existing dictionary
 				Volume Existe=VolumesFactory.findVolumeByName(name);
-				if (Existe.isEmpty())
-				{//does'nt exist, create :
+				if (Existe == null || Existe.isEmpty()) {
+				//does'nt exist, create :
 					myVolume=new Volume();
 					myVolume.setName(name);
 					myVolume.setDictname(dictname);
@@ -254,15 +263,15 @@ public class VolumesFactory {
 			return myVolume;	
 		}
 	
-	public static Volume parseVolumeMetadata (Dictionary dict, URL fileURL, String parseEntries) 
+	public static Volume parseVolumeMetadata (Dictionary dict, URL fileURL, boolean parseEntries, boolean logContribs) 
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 			
             Volume resVolume = null;
 			
             try {
                 Document docXml = Utility.buildDOMTree(fileURL);
-                PapillonLogger.writeDebugMsg("The xml code:");
-                PapillonLogger.writeDebugMsg(Utility.NodeToString(docXml));
+             //   PapillonLogger.writeDebugMsg("The xml code:");
+              //  PapillonLogger.writeDebugMsg(Utility.NodeToString(docXml));
                 
 				//on recupere le dictionnaire
 				Element volume;	
@@ -286,16 +295,18 @@ public class VolumesFactory {
                         String xslString = fr.imag.clips.papillon.business.xsl.XslSheetFactory.parseXslSheet(resultURL);
                         fr.imag.clips.papillon.business.xsl.XslSheetFactory.AddXslSheet(resVolume.getName(),null,xslString,false);
 					}
-                    
+
                     if (resVolume.getLocation().equals(Volume.LOCAL_LOCATION) && !virtual) {
 						VolumeEntriesFactory.createVolumeTables(resVolume);
-						if (parseEntries != null) {
+						if (parseEntries) {
 							URL resultURL = new URL(fileURL,resVolume.getVolumeRef());
-						//	VolumeEntriesFactory.parseVolume(dict, resVolume, resultURL.toString());
-							ParseVolume.parseVolume(dict, resVolume, resultURL.toString());
+							ParseVolume.parseVolume(dict, resVolume, resultURL.toString(), logContribs);
 						}
                     }
                 }
+				else {
+					PapillonLogger.writeDebugMsg("parseVolumeMetadata: volume null!");
+				}
 			}
 			catch(Exception ex) {
 				throw new PapillonBusinessException("Exception in parseVolumeMetadata()", ex);
@@ -366,53 +377,36 @@ public class VolumesFactory {
 			return theDictArray;
 		}
 	
-	public static String countEntries(Volume myVolume)
+	public static String getSymetricVolumeName(String myVolumeName) 
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
-			String result = "-1";
-			if (countEntriesCache.containsKey(myVolume.getName())) {
-				result = (String) countEntriesCache.get(myVolume.getName());
-			}
-			else {
-				result = String.valueOf(myVolume.countEntries());
-				countEntriesCache.put(myVolume.getName(),result);
-			}
-			return result;
-		}
-	
-	
-	public static int intCountEntries(Volume myVolume)
-		throws fr.imag.clips.papillon.business.PapillonBusinessException {
-			return Integer.parseInt(countEntries(myVolume));
-		}
-	
-	public static void setCountEntries(Volume myVolume)
-		throws fr.imag.clips.papillon.business.PapillonBusinessException  {
-			setCountEntries(myVolume.getName(),String.valueOf(myVolume.countEntries()));
-		}
-	
-	public static void resetCountEntries(String myVolumeName)
-		throws fr.imag.clips.papillon.business.PapillonBusinessException  {
-			setCountEntries(myVolumeName,"0");
-		}
-	
-	protected static void setCountEntries(String myVolumeName, String entries)
-		throws fr.imag.clips.papillon.business.PapillonBusinessException  {
-			countEntriesCache.put(myVolumeName,entries);
-		}
-	
-	public static void deleteCountEntries(String myVolumeName)
-		throws fr.imag.clips.papillon.business.PapillonBusinessException  {
-			countEntriesCache.remove(myVolumeName);
-		}
-	
-	public static void resetCountEntriesCache()
-		throws fr.imag.clips.papillon.business.PapillonBusinessException {
-			Volume[] Volumes = getVolumesArray();
-			for (int i=0;i<Volumes.length;i++) {
-				setCountEntries(Volumes[i]);
+		String resName = "";
+		Volume myVolume = findVolumeByName(myVolumeName);
+		if (myVolume != null && !myVolume.isEmpty()) {
+			Volume resVolume = getSymetricVolume(myVolume);
+			if (resVolume != null && !resVolume.isEmpty()) {
+				resName = resVolume.getName();
 			}
 		}
+		return resName;
+	}
 	
+	
+	protected static Volume getSymetricVolume(Volume myVolume) 
+		throws fr.imag.clips.papillon.business.PapillonBusinessException {
+		Volume resVolume = null;
+		
+		Volume[] volumesArray = getVolumesArray(myVolume.getDictname());
+		int i=0;
+		while (resVolume==null && i<volumesArray.length) {
+			Volume tmpVolume = volumesArray[i];
+			if (!tmpVolume.getName().equals(myVolume.getName())) {
+				resVolume = tmpVolume;
+			}
+			i++;
+		}
+		return resVolume;
+	}
+		
 	protected static String getXmlCode(Element myDOMElement, String tag, URL fileURL) throws PapillonBusinessException {
 		String res = "";
 		String href ="";
@@ -437,7 +431,217 @@ public class VolumesFactory {
 		return res;
 	}
 	
+	/* cdmElements Hashtable = {lang => Hashtable} = {CDM_element => Vector} = (xpathString, isIndex, XPath)*/
+    // FIXME: Can we have several XPaths for 1 cdm element ?
+	// (ex: cdm-headword is to be found in headword/abbrev/variant ?)
+	public static Hashtable buildCdmElementsTable(String xmlCode, String tmplEntry, String sourceLanguage) 
+		throws fr.imag.clips.papillon.business.PapillonBusinessException {
+		Hashtable cdmElements = new Hashtable();
+		Document docXml = Utility.buildDOMTree(xmlCode);
+		NodeList cdmElts = docXml.getElementsByTagName(CDM_ELEMENTS_TAG);
+		if (null != cdmElts && cdmElts.getLength()>0) {
+			Element cdmElt = (Element)cdmElts.item(0);
+			cdmElements = buildCdmElementsTable(cdmElt, sourceLanguage);
+		}
+		else {
+			PapillonLogger.writeDebugMsg("No cdm-elements tag");   
+		}
+		org.w3c.dom.Document myDoc = Utility.buildDOMTree(tmplEntry);
+		if (myDoc != null) {
+			ParseVolume.compileXPathTable(cdmElements, myDoc.getDocumentElement());
+		}
+		return cdmElements;
+	}
+	
+	/* cdmElements Hashtable = {lang => Hashtable} = {CDM_element => Vector} = (xpathString, isIndex, XPath)*/
+	protected static Hashtable buildCdmElementsTable(Node cdmElt, String sourceLanguage) {
+		Hashtable cdmElements = new Hashtable();
+		NodeList cdmChilds = cdmElt.getChildNodes();
+		for (int i=0;i<cdmChilds.getLength();i++) {
+			Node myNode = cdmChilds.item(i);
+			if (myNode.getNodeType() == Node.ELEMENT_NODE) {
+				Element myElt = (Element) myNode;
+				String eltName = myElt.getTagName();
+				String lang = Volume.DEFAULT_LANG;
+				Attr langAttr = myElt.getAttributeNodeNS(DML_URI, LANG_ATTRIBUTE);
+				if (langAttr != null) {
+					lang = langAttr.getValue();
+				}
+				String xpath = myElt.getAttribute(XPATH_ATTRIBUTE);
+				String index = myElt.getAttribute(INDEX_ATTRIBUTE);
+				boolean isindex = (index != null && index.equals("true"));
+				addCdmElementInTable(cdmElements,eltName,lang,xpath, isindex);
+			}
+		}
+		completeCdmElementsTable(cdmElements, sourceLanguage);
+		updateCdmElementsTable(cdmElements);
+		return cdmElements;
+	}
+	
+	/* cdmElements Hashtable = {lang => Hashtable} = {CDM_element => Vector} = (xpathString, isIndex, XPath)*/
+	protected static void updateCdmElementsTable(Hashtable cdmElements) {
+	
+		String contribPath = getCdmXPathString(cdmElements, Volume.CDM_contribution, Volume.DEFAULT_LANG);
+		String contribString = Volume.getTagNameFromXPath(contribPath);
+		String entryString = getCdmXPathString(cdmElements, Volume.CDM_entry, Volume.DEFAULT_LANG);
+		entryString = Volume.getTagNameFromXPath(entryString);
+		String newXpath = contribPath + "/" + VolumeEntry.dataTag + "/" + entryString;
+		for (java.util.Enumeration langKeys = cdmElements.keys(); langKeys.hasMoreElements();) {
+			String lang = (String) langKeys.nextElement();
+			java.util.Hashtable tmpTable =  (java.util.Hashtable) cdmElements.get(lang);
+			for (java.util.Enumeration keys = tmpTable.keys(); keys.hasMoreElements();) {
+				String CDM_element = (String) keys.nextElement();
+				java.util.Vector eltVector = (java.util.Vector) tmpTable.get(CDM_element);
+				if (eltVector != null && eltVector.size()>=2) {
+					String xpathString =  (String) eltVector.elementAt(0);
+					if (xpathString.indexOf(entryString)>0 && xpathString.indexOf(contribString)<0) {
+						xpathString = newXpath + xpathString.substring(xpathString.indexOf(entryString)+entryString.length());
+						eltVector.remove(0);
+						eltVector.add(0,xpathString);
+					}
+				}
+			}
+		}
+	}
+	
+	/* cdmElements Hashtable = {lang => Hashtable} = {CDM_element => Vector} = (xpathString, isIndex, XPath)*/
+	protected static void completeCdmElementsTable(Hashtable elementsTable, String sourceLanguage) {
+		String currentXpath = getCdmXPathString(elementsTable, Volume.CDM_volume, Volume.DEFAULT_LANG);
+
+	// contribution tags
+		currentXpath += "/" + VolumeEntry.contributionTag;
+		if (getCdmXPathString(elementsTable, Volume.CDM_contribution, Volume.DEFAULT_LANG) == null) {
+			addCdmElementInTable(elementsTable,Volume.CDM_contribution,Volume.DEFAULT_LANG,currentXpath, false);
+		}
+		if (getCdmXPathString(elementsTable, Volume.CDM_contributionId, Volume.DEFAULT_LANG) == null) {
+			addCdmElementInTable(elementsTable,Volume.CDM_contributionId,Volume.DEFAULT_LANG,currentXpath + "/@" + VolumeEntry.contributionIdAttr, true);
+		}
+		if (getCdmXPathString(elementsTable, Volume.CDM_originalContributionId, Volume.DEFAULT_LANG) == null) {
+			addCdmElementInTable(elementsTable,Volume.CDM_originalContributionId,Volume.DEFAULT_LANG,currentXpath + "/@" + VolumeEntry.originalContributionIdAttr, true);
+		}
+		currentXpath += "/" + VolumeEntry.metadataTag;
+		if (getCdmXPathString(elementsTable, Volume.CDM_contributionAuthorElement, Volume.DEFAULT_LANG) == null) {
+			addCdmElementInTable(elementsTable,Volume.CDM_contributionAuthorElement,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.authorTag, false);
+		}
+		if (getCdmXPathString(elementsTable, Volume.CDM_contributionAuthor, Volume.DEFAULT_LANG) == null) {
+			addCdmElementInTable(elementsTable,Volume.CDM_contributionAuthor,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.authorTag + "/text()", true);
+		}
+		if (getCdmXPathString(elementsTable, Volume.CDM_contributionGroups, Volume.DEFAULT_LANG) == null) {
+			addCdmElementInTable(elementsTable,Volume.CDM_contributionGroups,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.groupsTag, false);
+		}
+		if (getCdmXPathString(elementsTable, Volume.CDM_contributionGroup, Volume.DEFAULT_LANG) == null) {
+			addCdmElementInTable(elementsTable,Volume.CDM_contributionGroup,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.groupsTag + "/" + VolumeEntry.groupTag + "/text()", true);
+		}
+		if (getCdmXPathString(elementsTable, Volume.CDM_contributionCreationDateElement, Volume.DEFAULT_LANG) == null) {
+			addCdmElementInTable(elementsTable,Volume.CDM_contributionCreationDateElement,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.creationDateTag, false);
+		}
+		if (getCdmXPathString(elementsTable, Volume.CDM_contributionCreationDate, Volume.DEFAULT_LANG) == null) {
+			addCdmElementInTable(elementsTable,Volume.CDM_contributionCreationDate,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.creationDateTag + "/text()", true);
+		}
+		if (getCdmXPathString(elementsTable, Volume.CDM_contributionReviewDateElement, Volume.DEFAULT_LANG) == null) {
+			addCdmElementInTable(elementsTable,Volume.CDM_contributionReviewDateElement,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.reviewDateTag, false);
+		}
+		if (getCdmXPathString(elementsTable, Volume.CDM_contributionReviewDate, Volume.DEFAULT_LANG) == null) {
+			addCdmElementInTable(elementsTable,Volume.CDM_contributionReviewDate,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.reviewDateTag + "/text()", true);
+		}
+		if (getCdmXPathString(elementsTable, Volume.CDM_contributionReviewerElement, Volume.DEFAULT_LANG) == null) {
+			addCdmElementInTable(elementsTable,Volume.CDM_contributionReviewerElement,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.reviewerTag, false);
+		}
+		if (getCdmXPathString(elementsTable, Volume.CDM_contributionReviewer, Volume.DEFAULT_LANG) == null) {
+			addCdmElementInTable(elementsTable,Volume.CDM_contributionReviewer,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.reviewerTag + "/text()", true);
+		}
+		if (getCdmXPathString(elementsTable, Volume.CDM_contributionValidationDateElement, Volume.DEFAULT_LANG) == null) {
+			addCdmElementInTable(elementsTable,Volume.CDM_contributionValidationDateElement,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.validationDateTag, false);
+		}
+		if (getCdmXPathString(elementsTable, Volume.CDM_contributionValidationDate, Volume.DEFAULT_LANG) == null) {
+			addCdmElementInTable(elementsTable,Volume.CDM_contributionValidationDate,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.validationDateTag + "/text()", true);
+		}
+		if (getCdmXPathString(elementsTable, Volume.CDM_contributionValidatorElement, Volume.DEFAULT_LANG) == null) {
+			addCdmElementInTable(elementsTable,Volume.CDM_contributionValidatorElement,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.validatorTag, false);
+		}
+		if (getCdmXPathString(elementsTable, Volume.CDM_contributionValidator, Volume.DEFAULT_LANG) == null) {
+			addCdmElementInTable(elementsTable,Volume.CDM_contributionValidator,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.validatorTag + "/text()", true);
+		}
+		if (getCdmXPathString(elementsTable, Volume.CDM_contributionStatusElement, Volume.DEFAULT_LANG) == null) {
+			addCdmElementInTable(elementsTable,Volume.CDM_contributionStatusElement,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.statusTag, false);
+		}
+		if (getCdmXPathString(elementsTable, Volume.CDM_contributionStatus, Volume.DEFAULT_LANG) == null) {
+			addCdmElementInTable(elementsTable,Volume.CDM_contributionStatus,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.statusTag + "/text()", true);
+		}
+		
+		currentXpath += "/" + VolumeEntry.historyTag;
+		if (getCdmXPathString(elementsTable, Volume.CDM_history, Volume.DEFAULT_LANG) == null) {
+			addCdmElementInTable(elementsTable,Volume.CDM_history,Volume.DEFAULT_LANG,currentXpath, false);
+		}
+
+		currentXpath += "/" + VolumeEntry.modificationTag;
+		if (getCdmXPathString(elementsTable, Volume.CDM_modification, Volume.DEFAULT_LANG) == null) {
+			addCdmElementInTable(elementsTable,Volume.CDM_modification,Volume.DEFAULT_LANG,currentXpath, false);
+		}
+		if (getCdmXPathString(elementsTable, Volume.CDM_modificationAuthor, Volume.DEFAULT_LANG) == null) {
+			addCdmElementInTable(elementsTable,Volume.CDM_modificationAuthor,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.authorTag + "/text()", false);
+		}
+		if (getCdmXPathString(elementsTable, Volume.CDM_modificationDate, Volume.DEFAULT_LANG) == null) {
+			addCdmElementInTable(elementsTable,Volume.CDM_modificationDate,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.dateTag + "/text()", false);
+		}
+		if (getCdmXPathString(elementsTable, Volume.CDM_modificationComment, Volume.DEFAULT_LANG) == null) {
+			addCdmElementInTable(elementsTable,Volume.CDM_modificationComment,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.commentTag + "/text()", false);
+		}
+		
+		if (getCdmXPathString(elementsTable, Volume.CDM_headwordElement, sourceLanguage) == null) {
+			String headwordXpath = getCdmXPathString(elementsTable, Volume.CDM_headword, sourceLanguage);
+			if (headwordXpath != null && headwordXpath.indexOf("/text()")>0) {
+				headwordXpath = headwordXpath.substring(0,headwordXpath.indexOf("/text()"));
+				addCdmElementInTable(elementsTable,Volume.CDM_headwordElement,sourceLanguage,headwordXpath, false);
+			}
+		}
+	}
+	
+	// embeds the template entry into a contribution element 
+	
+	public static String updateTemplateEntry(String tmplEntry, Hashtable cdmElements) {
+		if (tmplEntry !=null && !tmplEntry.equals("")) {
+			String contribPath = getCdmXPathString(cdmElements, Volume.CDM_contribution, Volume.DEFAULT_LANG);
+			String contribString = Volume.getTagNameFromXPath(contribPath);
+			String entryString = getCdmXPathString(cdmElements, Volume.CDM_entry, Volume.DEFAULT_LANG);
+			entryString = Volume.getTagNameFromXPath(entryString);
+			
+			if (tmplEntry.indexOf("<" + entryString)>=0 && tmplEntry.indexOf("<" + contribString)<0) {
+				String entryHead = tmplEntry.substring(0,tmplEntry.indexOf("<" + entryString)-1); 
+				String entryContent = tmplEntry.substring(tmplEntry.indexOf("<" + entryString)); 
+				String endTag = "</" + entryString + ">";
+				entryContent = entryContent.substring(0,entryContent.indexOf(endTag) + endTag.length());
+				String entryFoot =  tmplEntry.substring(tmplEntry.indexOf(endTag) + endTag.length()+1);
+				
+				tmplEntry = entryHead 
+					+ VolumeEntry.ContributionHeader
+					+ entryContent + "\n"
+					+ VolumeEntry.ContributionFooter
+					+ entryFoot;
+			}
+		}
+		return tmplEntry;
+	}
+	
+	
+	protected static String getCdmXPathString(Hashtable table, String name, String lang) {
+		String res = null;
+		if (table!=null) {
+			java.util.Hashtable tmpTable = (java.util.Hashtable) table.get(lang);
+			if (tmpTable != null) {
+				java.util.Vector myVector = (java.util.Vector) tmpTable.get(name);
+				if (myVector != null && myVector.size()>0) {
+					res = (String) myVector.elementAt(0);
+				}
+			}
+		}
+		return res;
+	}
+
+	
 	protected static void addCdmElementInTable(Hashtable table, String elt, String lang, String xpathString, boolean isIndex) {
+	/* cdmElements Hashtable = {lang => Hashtable} = {CDM_element => Vector} = (xpathString, isIndex, XPath)*/
+//		PapillonLogger.writeDebugMsg("addCdmElementInTable: elt: " + elt + " lang: " + lang + " xpath: " + xpathString + " isIndex: " + isIndex);
 		Vector xpathAndIndexVector = new Vector();
 		xpathAndIndexVector.add(xpathString); 
 		xpathAndIndexVector.add(new Boolean(isIndex)); 

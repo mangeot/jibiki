@@ -3,15 +3,21 @@
  *  © Mathieu Mangeot & Gilles Sérasset - GETA CLIPS IMAG
  *  Projet Papillon
  *
- *  -----------------------------------------------
+ *  
  *  $Id$
- *  -----------------------------------------------
+ *  
  *  $Log$
+ *  Revision 1.4  2005/06/15 16:48:28  mangeot
+ *  Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
+ *
+ *  Revision 1.3.6.1  2005/06/10 09:38:50  mangeot
+ *  *** empty log message ***
+ *
  *  Revision 1.3  2005/01/15 17:43:19  mangeot
  *  Added cvs Id and Log on the files
  *
  *
- *  -----------------------------------------------
+ *  
 -->
 <!DOCTYPE xsl:stylesheet [
 	<!ENTITY nbsp " ">
@@ -21,7 +27,7 @@
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:xlink="http://www.w3.org/1999/xlink"
 	xmlns="http://www.w3.org/1999/xhtml"
-	exclude-result-prefixes="d xlink xsi xsl">
+	exclude-result-prefixes="d xlink xsl">
 
 <xsl:output method="html" encoding="utf-8" indent="yes"/> 
 

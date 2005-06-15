@@ -2,58 +2,29 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <title>Consultation of Papillon Lexical Database</title>
+    <title>Consultation of GDEF Lexical Database</title>
   </head>
   <body>
     <div id="ConsultContent"  xml:lang="fr" lang="fr">
       <form id="ConsultForm" action="ConsultExpert.po">
         <table width="100%" style="border:1; bordercolor:white; bgcolor:#eeeecc;" summary="Search form">
           <tr>
-     <!-- Warning, make sure the option element contains a Text and only a Text (no other child) -->
             <td>
-              <b>
-                <label for="SOURCE">Source&nbsp;:</label>
-              </b>
-            <!-- select name="SOURCE" onChange="UpdateList(document.ConsultForm);" -->
+              <b><label for="SOURCE">Source&nbsp;:</label></b>
               <select id="SOURCE" name="SOURCE">
                 <option id="SourceOptionTemplate" value="NONE" label="NONE">NONE</option>
               </select>
-              <br />
-
-              <b>
-                <label for="Strategy">Stratégie&nbsp;:</label>
-              </b>
-              <select id="Strategy" name="Strategy">
-                <option value="0" label="exact">exact</option>
-                <option value="1" label="prefixe">préfixe</option>
-                <option value="2" label="suffixe">suffixe</option>
-                <option value="3" label="sous-chaine">sous-chaîne</option>
-                <option value="4" label="exact hors casse">exact hors casse</option>
-                <option value="5" label="prefix hors casse">préfixe hors casse</option>
-                <option value="6" label="suffixe hors casse">suffixe hors casse</option>
-                <option value="7" label="sous-chaine hors casse">sous-chaîne hors casse</option>
-                <!--option value="8" label="lemmatiser">lemmatiser</option-->
-              </select>
             </td>
-
-
-<!-- Warning, do not modify the content of the td element -->
             <td valign="middle">
-              <b>
-                <label for="Targets">Cibles&nbsp;:</label>
-              </b>
+              <b><label for="Targets">Cibles&nbsp;:</label></b>
               <select id="Targets" name="TARGETS" size="3" multiple="multiple">
-<!-- selected="yes" -->
                 <option value="*ANY*" label="ANY">Toutes</option>
                 <option id="TargetOptionTemplate" value="NONE" label="NONE">NONE</option>
               </select>
             </td>
             <td valign="middle">
-              <b>
-                <label for="Resources">Dictionnaires&nbsp;:</label>
-              </b>
+              <b><label for="Resources">Dictionnaires&nbsp;:</label></b>
               <select id="Resources" name="RESOURCES" size="3" multiple="multiple">
-    <!-- selected="yes" -->
                 <option value="*ANY*" label="ANY">Tous</option>
                 <option id="ResourceOptionTemplate" value="NONE" label="NONE">NONE</option>
               </select>
@@ -61,43 +32,68 @@
           </tr>
           <tr>
             <td style="bgcolor:#4682b4;">
-              <select id="search1" name="search1">
-                <option value="cdm-headword" label="Le mot-vedette">Le mot-vedette</option>
-                <option value="cdm-pos" label="La categorie">La catégorie</option>
-                <option value="gdef-est-domaine" label="Le domaine">Le domaine</option>
-                <option value="cdm-translation" label="La traduction">La traduction</option>
-                <option value="cdm-example" label="Les exemples">Les exemples</option>
-                <option value="gdef-est-traduction-exemple" label="Traductions d'expl.">Traductions d'expl.</option>
-                <option value="gdef-est-locution" label="Locutions">Locutions</option>
-                <option value="gdef-est-traduction-locution" label="Traductions de loc.">Traductions de loc.</option>
-                <option value="AnyContains" label="Tout l'article">Tout l'article</option>
-              </select>
-              <label for="search1text">contient</label>
               <input id="search1text" name="search1text" type="text" size="15" value="" />
-            </td>
-            <td style="bgcolor:#4682b4;">
-              <select id="search2" name="search2">
-                <option value="cdm-headword" label="Le mot-vedette">Le mot-vedette</option>
-                <option value="cdm-pos" label="La categorie">La catégorie</option>
-                <option value="gdef-est-domaine" label="Le domaine">Le domaine</option>
-                <option value="cdm-translation" label="La traduction">La traduction</option>
-                <option value="cdm-example" label="Le domaine">Les exemples</option>
-                <option value="gdef-est-traduction-exemple" label="Traductions d'expl.">Traductions d'expl.</option>
-                <option value="gdef-est-locution" label="Locutions">Locutions</option>
-                <option value="gdef-est-traduction-locution" label="Traductions de loc.">Traductions de loc.</option>
-                <option value="AnyContains" label="Tout l'article">Tout l'article</option>
+			  est
+				<select id="Strategy1" name="Strategy1">
+                <option value="0" label="exactement">exactement</option>
+                <option value="1" label="prefixe de">préfixe de</option>
+                <option value="2" label="suffixe de">suffixe de</option>
+                <option value="3" label="sous-chaine de">sous-chaîne de</option>
+                <option value="4" label="exact hors casse de">exact hors casse de</option>
+                <option value="5" label="prefix hors casse de">préfixe hors casse de</option>
+                <option value="6" label="suffixe hors casse de">suffixe hors casse de</option>
+                <option value="7" label="sous-chaine hors casse de">sous-chaîne hors casse de</option>
               </select>
-              <label for="search2text">contient</label>
+              <select id="search1" name="search1">
+                <option value="cdm-headword" label="le mot-vedette">le mot-vedette</option>
+                <option value="cdm-headword-variant" label="la variante">la variante</option>
+                <option value="cdm-pos" label="la categorie">la catégorie</option>
+                <option value="gdef-est-domaine" label="le domaine">le domaine</option>
+                <option value="cdm-translation" label="la traduction">la traduction</option>
+                <option value="cdm-example" label="les exemples">les exemples</option>
+                <option value="gdef-est-traduction-exemple" label="traductions d'expl.">les traductions d'expl.</option>
+                <option value="gdef-est-locution" label="les locutions">locutions</option>
+                <option value="gdef-est-traduction-locution" label="traductions de loc.">les traductions de loc.</option>
+                <option value="AnyContains" label="tout l'article">tout l'article</option>
+              </select>
+            </td>
+			<td>
+              et
+			</td>
+             <td style="bgcolor:#4682b4;">
               <input id="search2text" name="search2text" type="text" size="15" value="" />
+			  est
+			  <select id="Strategy2" name="Strategy2">
+                <option value="0" label="exactement">exactement</option>
+                <option value="1" label="prefixe de">préfixe de</option>
+                <option value="2" label="suffixe de">suffixe de</option>
+                <option value="3" label="sous-chaine de">sous-chaîne de</option>
+                <option value="4" label="exact hors casse de">exact hors casse de</option>
+                <option value="5" label="prefix hors casse de">préfixe hors casse de</option>
+                <option value="6" label="suffixe hors casse de">suffixe hors casse de</option>
+                <option value="7" label="sous-chaine hors casse de">sous-chaîne hors casse de</option>
+              </select>
+              <select id="search2" name="search2">
+                <option value="cdm-headword" label="le mot-vedette">le mot-vedette</option>
+                <option value="cdm-headword-variant" label="la variante">la variante</option>
+                <option value="cdm-pos" label="la categorie">la catégorie</option>
+                <option value="gdef-est-domaine" label="le domaine">le domaine</option>
+                <option value="cdm-translation" label="la traduction">la traduction</option>
+                <option value="cdm-example" label="les exemples">les exemples</option>
+                <option value="gdef-est-traduction-exemple" label="traductions d'expl.">les traductions d'expl.</option>
+                <option value="gdef-est-locution" label="les locutions">locutions</option>
+                <option value="gdef-est-traduction-locution" label="traductions de loc.">les traductions de loc.</option>
+                <option value="AnyContains" label="tout l'article">tout l'article</option>
+              </select>
             </td>
             <td style="bgcolor:#4682b4;">
-              <input name="lookup" value="Lookup" type="submit" />
+				<input id="LOOKUP" name="LOOKUP" type="submit" value="Chercher"/>
             </td>
           </tr>
         </table>
       </form>
       <br />
-      <div id="SorryMessage" style="align:center;">D&eacute;sol&eacute;, cet article n'existe pas encore, Vous pouvez contribuer en <a href="ConsultEdit.po?STEP=1&amp;InitType=create">l'ajoutant</a> au dictionnaire !</div>
+      <div id="SorryMessage" style="align:center;">Désolé, cet article n'existe pas encore, Vous pouvez contribuer en <a href="ConsultEdit.po?STEP=1&amp;InitType=create">l'ajoutant</a> au dictionnaire !</div>
       <div id="ReverseLookupMessage" class="hidden" style="align: center"><p style="align: center">Aucun article trouvé en consultation directe. Ces articles ont été trouvés en consultation renversée. Les traductions peuvent ne pas correspondre.</p></div>      
       <table id="EntryListTable" width="100%" frame="hsides" style="border:0; bgcolor:#faecc9" summary="entries">
         <thead>

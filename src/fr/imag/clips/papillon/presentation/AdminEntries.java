@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.7  2005/06/15 16:48:28  mangeot
+ * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
+ *
  * Revision 1.6  2005/05/24 12:51:22  serasset
  * Updated many aspect of the Papillon project to handle lexalp project.
  * 1. Layout is now parametrable in the application configuration file.
@@ -17,6 +20,26 @@
  * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
  * 5. It is now possible to give a name to the cookie key in the app conf file
  * 6. Several bug fixes.
+ *
+ * Revision 1.5.4.6  2005/06/09 11:07:45  mangeot
+ * Deleted the countEntriesCache. entries counts are not cached any more.
+ * Fixed a few bugs.
+ *
+ * Revision 1.5.4.5  2005/06/02 09:13:50  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.5.4.4  2005/06/01 15:25:43  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.5.4.3  2005/06/01 15:20:33  mangeot
+ * Added a boolean for contributionslog
+ *
+ * Revision 1.5.4.2  2005/06/01 14:17:54  mangeot
+ * Bug fix in itf generator & added variant in CDM lookup1
+ *
+ * Revision 1.5.4.1  2005/06/01 08:38:43  mangeot
+ * Multi bug correction + added the possibility of disabling data edition
+ * via the Admin.po page
  *
  * Revision 1.5  2005/04/15 15:03:47  mangeot
  * Fixed a bug in setIdIfNull and deleted the empty button on AdminEntries
@@ -56,15 +79,15 @@ import org.w3c.dom.Text;
 
 import fr.imag.clips.papillon.business.message.MessageDBLoader;
 
-//import com.lutris.appserver.server.httpPresentation.HttpPresentationOutputStream;
-//import com.lutris.appserver.server.httpPresentation.HttpPresentationResponse;
-
 // Standard imports
 import java.io.IOException;
 import java.util.Date;
 import java.text.DateFormat;
 import java.io.*;
 
+
+import fr.imag.clips.papillon.CurrentDBTransaction;
+import com.lutris.appserver.server.sql.DBTransaction;
 
 //pour le dictionary
 import fr.imag.clips.papillon.business.dictionary.*;
@@ -104,27 +127,23 @@ public class AdminEntries extends PapillonBasePO {
     }
 
     public Node getContent() 
-        throws HttpPresentationException
-    {
+        throws HttpPresentationException,
+			java.io.UnsupportedEncodingException {
         
         // Création du contenu
         content = (AdminEntriesTmplXHTML)MultilingualXHtmlTemplateFactory.createTemplate("AdminEntriesTmplXHTML", this.getComms(), this.getSessionData());
-
-        HttpPresentationRequest req = this.getComms().request;
         
-        String volumeString = req.getParameter(VOLUME_PARAMETER);
+        String volumeString = myGetParameter(content.NAME_VOLUME);
+        String urlString = myGetParameter(content.NAME_URL);
+        String submitAdd = myGetParameter(content.NAME_ADD);
+        String logContributions = myGetParameter(content.NAME_LogContributions);
+		
+		boolean logContribs = (logContributions!=null && !logContributions.equals(""));
         
-        // If the page is called with parameters, take the requested action
-        if (req.getParameterNames().hasMoreElements()) {
-            //TEMPORAIRE :avec l URL
-            //AJOUT D ENTREE DE DICO
-            String userMessage = null;
-            if (null != req.getParameter(ADD_PARAMETER) &&
-                null != req.getParameter(URL_PARAMETER)) {
-                String myURLString = req.getParameter(URL_PARAMETER);
-                ParseVolume.parseVolume(volumeString, myURLString);
-                userMessage = "Volume: " + volumeString + " / URL: " + myURLString + " downloaded...";
-            }
+        if (volumeString!=null && !volumeString.equals("") &&
+			urlString!=null && !urlString.equals("") &&
+			submitAdd!=null && !submitAdd.equals("")) {
+            String userMessage = handleVolumeAddition(volumeString, urlString, logContribs);
 			if (userMessage != null) {
 				this.getSessionData().writeUserMessage(userMessage);
 				PapillonLogger.writeDebugMsg(userMessage);
@@ -134,7 +153,42 @@ public class AdminEntries extends PapillonBasePO {
         //On rend le contenu correct
         return content.getElementFormulaire();
     }
-        protected void addConsultForm(String selectedVolume) 
+	
+	protected String handleVolumeAddition(String volumeString, String urlString, boolean logContribs) 
+		throws fr.imag.clips.papillon.business.PapillonBusinessException, 
+			HttpPresentationException {
+        String userMessage;
+        
+        // Create and Register the transaction
+  //      CurrentDBTransaction.registerNewDBTransaction();
+        try {
+			java.net.URL myURL = new java.net.URL(urlString);
+			PapillonLogger.writeDebugMsg(myURL.toString());
+			ParseVolume.parseVolume(volumeString, myURL.toString(), logContribs);
+			userMessage = "Volume: " + volumeString + " / URL: " + myURL + " downloaded...";
+           // everything was correct, commit the transaction...
+//            ((DBTransaction) CurrentDBTransaction.get()).commit();
+        } catch (Exception e) {
+            userMessage = "Problems while adding the specified volume.\n";
+            userMessage = userMessage + e.getMessage();
+            userMessage = userMessage + "\nAll changes to the database have been rolled back.";
+			e.printStackTrace();
+/*            try {
+                ((DBTransaction) CurrentDBTransaction.get()).rollback();
+            } catch (java.sql.SQLException sqle) {
+                PapillonLogger.writeDebugMsg("AdminVolumes: SQLException while rolling back failed transaction.");
+				sqle.printStackTrace();
+            }
+        } finally {
+            CurrentDBTransaction.releaseCurrentDBTransaction(); */
+        } 
+        return userMessage;
+    }
+
+
+	
+	
+	protected void addConsultForm(String selectedVolume) 
         throws fr.imag.clips.papillon.business.PapillonBusinessException, 
                 HttpPresentationException {
            // Adding the appropriate source languages to the source list

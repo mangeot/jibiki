@@ -10,6 +10,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.9  2005/06/15 16:48:28  mangeot
+ *  Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
+ *
  *  Revision 1.8  2005/05/24 12:51:22  serasset
  *  Updated many aspect of the Papillon project to handle lexalp project.
  *  1. Layout is now parametrable in the application configuration file.
@@ -18,6 +21,22 @@
  *  4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
  *  5. It is now possible to give a name to the cookie key in the app conf file
  *  6. Several bug fixes.
+ *
+ *  Revision 1.7.4.5  2005/06/15 10:08:06  mangeot
+ *  Removed the AND/OR connector, now only AND criteria can be added for dict lookup
+ *
+ *  Revision 1.7.4.4  2005/06/09 11:07:45  mangeot
+ *  Deleted the countEntriesCache. entries counts are not cached any more.
+ *  Fixed a few bugs.
+ *
+ *  Revision 1.7.4.3  2005/05/27 11:53:34  mangeot
+ *  *** empty log message ***
+ *
+ *  Revision 1.7.4.2  2005/05/11 14:45:30  mangeot
+ *  *** empty log message ***
+ *
+ *  Revision 1.7.4.1  2005/04/29 14:50:25  mangeot
+ *  New version with contribution infos embedded in the XML of the entries
  *
  *  Revision 1.7  2005/04/20 10:51:14  mangeot
  *  Correction de AddDirectTranslations
@@ -454,26 +473,37 @@ public class Home extends PapillonBasePO {
 		boolean reverseLookup = false;
         boolean QueryLogging = false;
 		
+		Vector myKey = new Vector();
+
 		//Headword[0] = key
 		//Headword[1] = lang
 		//Headword[2] = value
-		String[] Headword = new String[3];
+		//Headword[3] = strategy
+
+		String[] Headword = new String[4];
 		Headword[0] = Volume.CDM_headword;
 		Headword[1] = source;
 		Headword[2] = headword;
-		Vector myKey = new Vector();
+		Headword[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_EXACT+1];
 		myKey.add(Headword);
+		
+		String[] status = new String[4];
+		status[0] = Volume.CDM_contributionStatus;
+		status[1] = Volume.DEFAULT_LANG;
+		status[2] = VolumeEntry.VALIDATED_STATUS;
+		status[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_EXACT+1];
+		myKey.add(status);
 
 
         if (null != handle && null != volume) {
             EntryCollection = DictionariesFactory.findAnswerAndTranslations(volume, handle, targets, user);
         } else if (null != volume) {
-            EntryCollection =  (Collection) VolumeEntriesFactory.getVolumeNameEntriesVector(volume, myKey, null, strategy);
+            EntryCollection =  (Collection) VolumeEntriesFactory.getVolumeNameEntriesVector(volume, myKey, null, null);
         } else {
-            EntryCollection = DictionariesFactory.getDictionariesEntriesCollection(resources, source, targets, myKey, null, strategy, user,offset);
+            EntryCollection = DictionariesFactory.getDictionariesEntriesCollection(resources, source, targets, myKey, null, null, user,offset);
 			if (EntryCollection==null || EntryCollection.size()==0) {
 				PapillonLogger.writeDebugMsg("EntryCollection null, getDictionariesReverseEntriesCollection");
-				EntryCollection = DictionariesFactory.getDictionariesReverseEntriesCollection(resources, source, targets, myKey, null, strategy, user,offset);
+				EntryCollection = DictionariesFactory.getDictionariesReverseEntriesCollection(resources, source, targets, myKey, null, null, user,offset);
 				reverseLookup = (EntryCollection!=null && EntryCollection.size()>0);
 			}
             QueryLogging = true;
@@ -603,7 +633,7 @@ public class Home extends PapillonBasePO {
 		
         String href = this.getUrl() + "?"
 			+ HEADWORD_PARAMETER + "=" + headword + "&"
-			+ serializeParameterForUrl(RESOURCES_PARAMETER, resources)
+			+ serializeParameterForUrl(RESOURCES_PARAMETER, resources) + "&"
 			+ SOURCE_PARAMETER + "=" + source + "&"
             + TARGETS_PARAMETER + "=" + target + "&"
             + PartialMatch_PARAMETER + "=" + partialMatch + "&"
@@ -847,13 +877,20 @@ public class Home extends PapillonBasePO {
             }
         }
 		// code spécifique pour le GDEF
-		Element GDEFEntryCountFra = home.getOwnerDocument().getElementById("GDEFEntryCountFra");
-		Element GDEFEntryCountEst = home.getOwnerDocument().getElementById("GDEFEntryCountEst");
-		if (GDEFEntryCountFra != null && GDEFEntryCountEst != null ) {
+		Element GDEFValidatedEntryCountFra = home.getOwnerDocument().getElementById("GDEFValidatedEntryCountFra");
+		Element GDEFValidatedEntryCountEst = home.getOwnerDocument().getElementById("GDEFValidatedEntryCountEst");
+		Element GDEFReviewedEntryCountFra = home.getOwnerDocument().getElementById("GDEFReviewedEntryCountFra");
+		Element GDEFReviewedEntryCountEst = home.getOwnerDocument().getElementById("GDEFReviewedEntryCountEst");
+		if (GDEFValidatedEntryCountFra != null && GDEFValidatedEntryCountEst != null 
+			&& GDEFReviewedEntryCountFra != null && GDEFReviewedEntryCountEst != null) {
 			Volume GDEFVolume = VolumesFactory.findVolumeByName("GDEF_est");
 			if (GDEFVolume!=null) {
-				Utility.setText(GDEFEntryCountFra,"" + ContributionsFactory.getCount(GDEFVolume));
-				Utility.setText(GDEFEntryCountEst,"" + ContributionsFactory.getCount(GDEFVolume));
+				int validatedEntriesCount =  GDEFVolume.getCount(VolumeEntry.VALIDATED_STATUS);
+				int reviewedEntriesCount =  GDEFVolume.getCount(VolumeEntry.REVIEWED_STATUS);
+				Utility.setText(GDEFValidatedEntryCountFra,"" + validatedEntriesCount);
+				Utility.setText(GDEFValidatedEntryCountEst,"" + validatedEntriesCount);
+				Utility.setText(GDEFReviewedEntryCountFra,"" + reviewedEntriesCount);
+				Utility.setText(GDEFReviewedEntryCountEst,"" + reviewedEntriesCount);
 			}
 		}
 		

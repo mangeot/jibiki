@@ -7,6 +7,12 @@
  * $Id$
  *************************************************
  * $Log$
+ * Revision 1.6  2005/06/15 16:48:27  mangeot
+ * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
+ *
+ * Revision 1.5.4.1  2005/04/29 14:50:25  mangeot
+ * New version with contribution infos embedded in the XML of the entries
+ *
  * Revision 1.5  2005/04/15 11:59:18  mangeot
  * Deleted column entryHandle from table contributions
  *
@@ -180,7 +186,7 @@
             <type dbType="VARCHAR" javaType="String" size="5"/>
           </column>
         </table>
-        <table dbTableName="contributions" id="fr.imag.clips.papillon.data.Contribution">
+         <table dbTableName="contributionlog" id="fr.imag.clips.papillon.data.ContributionLog">
           <column id="author" usedForQuery="true">
             <javadoc>/**
  * the login of the author of the contribution
@@ -213,49 +219,30 @@
  */</javadoc>
             <type dbType="VARCHAR" javaType="String" size="255"/>
           </column>
+          <column id="contributionId" usedForQuery="true">
+            <javadoc>/**
+ * the contribution id corresponding to the contribution
+ */</javadoc>
+            <type dbType="VARCHAR" javaType="String" size="255"/>
+          </column>
           <column id="entryId" usedForQuery="true">
             <javadoc>/**
  * the entry id corresponding to the contribution
  */</javadoc>
             <type dbType="VARCHAR" javaType="String" size="255"/>
           </column>
-		<column id="creationDate" usedForQuery="true">
+		<column id="date" usedForQuery="true">
             <javadoc>/**
- * the creation date of the contribution
+ * the date of the action on the contribution
  */</javadoc>
-            <type dbType="DATE" javaType="java.sql.Date"/>
+            <type dbType="TIMESTAMP" javaType="java.sql.Timestamp"/>
           </column>
-					<column id="reviewer" usedForQuery="true">
-            <javadoc>/**
- * the login of the reviewer of the contribution
- */</javadoc>
-            <type canBeNull="true" dbType="VARCHAR" javaType="String" size="255"/>
-          </column>
-					<column id="reviewDate" usedForQuery="true">
-            <javadoc>/**
- * the review date of the contribution
- */</javadoc>
-            <type canBeNull="true" dbType="DATE" javaType="java.sql.Date"/>
-          </column>
-					<column id="status" usedForQuery="true">
+		  <column id="status" usedForQuery="true">
             <javadoc>/**
  * the status of the contribution
  */</javadoc>
             <type dbType="VARCHAR" javaType="String" size="255"/>
           </column>
-		  <column id="newEntry" usedForQuery="true">
-            <javadoc>/**
- * true = contribution is built from scratch (new entry)
- * false = contribution is a modification of an existing entry with id in (originalId)
- */</javadoc>
-            <type dbType="CHAR" javaType="String" size="1"/>
-          </column>
-		  <column id="originalId" usedForQuery="true">
-            <javadoc>/**
- * the original entry id corresponding to the contribution
- */</javadoc>
-            <type  canBeNull="true" dbType="VARCHAR" javaType="String" size="255"/>
-          </column> 
 		  <index id="author_idx">
           <indexColumn id="author"/>
         </index>
@@ -265,8 +252,14 @@
 		  <index id="headword_idx">
           <indexColumn id="headword"/>
         </index>
+		<index id="contributionid_idx">
+          <indexColumn id="contributionId"/>
+        </index>
 		  <index id="entryid_idx">
           <indexColumn id="entryId"/>
+        </index>
+		  <index id="status_idx">
+          <indexColumn id="status"/>
         </index>
         </table>
         <table dbTableName="history" id="fr.imag.clips.papillon.data.History"/>

@@ -9,6 +9,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.7  2005/06/15 16:48:28  mangeot
+ *  Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
+ *
  *  Revision 1.6  2005/05/24 12:51:22  serasset
  *  Updated many aspect of the Papillon project to handle lexalp project.
  *  1. Layout is now parametrable in the application configuration file.
@@ -17,6 +20,13 @@
  *  4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
  *  5. It is now possible to give a name to the cookie key in the app conf file
  *  6. Several bug fixes.
+ *
+ *  Revision 1.5.4.2  2005/06/01 08:38:43  mangeot
+ *  Multi bug correction + added the possibility of disabling data edition
+ *  via the Admin.po page
+ *
+ *  Revision 1.5.4.1  2005/05/27 11:53:34  mangeot
+ *  *** empty log message ***
  *
  *  Revision 1.5  2005/04/18 10:50:26  mangeot
  *  Bug fix when displaying with IExplorer,
@@ -105,7 +115,6 @@ public interface StdLayout {
      */
     public void initLayout(HttpPresentationComms comms, PapillonSessionData sessionData, String url, String script)
         throws com.lutris.appserver.server.httpPresentation.HttpPresentationException, UnsupportedEncodingException;
-
 
     /**
      *  Gets the layout attribute of the StdLayout object

@@ -1,10 +1,19 @@
-//
-//  UITemplates.java
-//  PapillonStable
-//
-//  Created by Mathieu Mangeot on Thu Sep 16 2004.
-//  Copyright (c) 2004 __MyCompanyName__. All rights reserved.
-//
+/*
+ *  papillon
+ *
+ *  Created by Mathieu Mangeot on Thu Sep 16 2004.
+ *  Copyright (c) 2002 GETA_CLIPS_IMAG. All rights reserved.
+ *
+ *---------------------------------------------------------
+ * $Id$
+ *---------------------------------------------------------
+ * $Log$
+ * Revision 1.4  2005/06/15 16:48:27  mangeot
+ * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
+ *
+ *
+ *---------------------------------------------------------
+ */
 
 package fr.imag.clips.papillon.business.edition;
 

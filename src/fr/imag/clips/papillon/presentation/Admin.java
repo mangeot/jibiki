@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.7  2005/06/15 16:48:28  mangeot
+ * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
+ *
  * Revision 1.6  2005/05/24 12:51:22  serasset
  * Updated many aspect of the Papillon project to handle lexalp project.
  * 1. Layout is now parametrable in the application configuration file.
@@ -17,6 +20,20 @@
  * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
  * 5. It is now possible to give a name to the cookie key in the app conf file
  * 6. Several bug fixes.
+ *
+ * Revision 1.5.4.4  2005/06/09 11:07:45  mangeot
+ * Deleted the countEntriesCache. entries counts are not cached any more.
+ * Fixed a few bugs.
+ *
+ * Revision 1.5.4.3  2005/06/01 08:38:43  mangeot
+ * Multi bug correction + added the possibility of disabling data edition
+ * via the Admin.po page
+ *
+ * Revision 1.5.4.2  2005/05/25 22:06:11  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.5.4.1  2005/04/29 14:50:25  mangeot
+ * New version with contribution infos embedded in the XML of the entries
  *
  * Revision 1.5  2005/04/11 12:29:59  mangeot
  * Merge between the XPathAndMultipleKeys branch and the main trunk
@@ -53,8 +70,8 @@ package fr.imag.clips.papillon.presentation;
 import com.lutris.appserver.server.httpPresentation.HttpPresentation;
 import com.lutris.appserver.server.httpPresentation.HttpPresentationRequest;
 import com.lutris.appserver.server.httpPresentation.HttpPresentationException;
-//import org.enhydra.xml.xmlc.XMLObject;
-import org.w3c.dom.html.HTMLElement;
+
+import org.enhydra.xml.xhtml.dom.*;
 import org.w3c.dom.Node;
 
 import fr.imag.clips.papillon.business.message.MessageDBLoader;
@@ -73,6 +90,9 @@ import fr.imag.clips.papillon.business.locales.Languages;
 import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
 public class Admin extends PapillonBasePO {
+
+	/* by default, data is editable */
+	public static boolean EDIT_DATA = true;
 
     protected boolean loggedInUserRequired() {
         return false;
@@ -94,6 +114,10 @@ public class Admin extends PapillonBasePO {
         content = (AdminTmplXHTML) MultilingualXHtmlTemplateFactory.createTemplate("AdminTmplXHTML", this.getComms(), this.getSessionData());
 
         HttpPresentationRequest req = this.getComms().request;
+		
+		boolean cacheSet = fr.imag.clips.papillon.business.dictionary.VolumeEntry.CACHE_HTMLDOM;
+
+		
         // If the page is called with parameters, take the requested action
         if (req.getParameterNames().hasMoreElements()) {
             // Get the main parameters
@@ -114,8 +138,6 @@ public class Admin extends PapillonBasePO {
                 loader.updateDatabase();
                 this.getSessionData().writeUserMessage(loader.getUserLog());
                 this.getSessionData().writeUserMessage("Updating... done.");
-            } else if (null != req.getParameter(content.NAME_ResetEntriesCountCache)) {
-		VolumesFactory.resetCountEntriesCache();
             } else if (null != req.getParameter(content.NAME_ResetInterfaceDescriptionCache)) {
 				fr.imag.clips.papillon.business.edition.UITemplates.resetCache();
             }
@@ -126,16 +148,33 @@ public class Admin extends PapillonBasePO {
 				Languages.resetCache();
             }
 			else if (null != req.getParameter(content.NAME_SetHTMLDomCaches)) {
-				fr.imag.clips.papillon.business.dictionary.VolumeEntry.setCacheHtmlDom(true);
-                this.getSessionData().writeUserMessage("HTML DOM will be cached");
+				String setCacheString = myGetParameter(content.NAME_HTMLDomCaches);
+				cacheSet = (setCacheString!=null && !setCacheString.equals(""));
+				fr.imag.clips.papillon.business.dictionary.VolumeEntry.setCacheHtmlDom(cacheSet);
+                this.getSessionData().writeUserMessage("HTML DOM cache is set? " + cacheSet);
             }
-			else if (null != req.getParameter(content.NAME_UnsetHTMLDomCaches)) {
-				fr.imag.clips.papillon.business.dictionary.VolumeEntry.setCacheHtmlDom(false);
-                this.getSessionData().writeUserMessage("HTML DOM will not be cached");
+			else if (null != req.getParameter(content.NAME_SetEditData)) {
+				String editDataString = myGetParameter(content.NAME_EditData);
+				EDIT_DATA = (editDataString!=null && !editDataString.equals(""));
+                this.getSessionData().writeUserMessage("Data is editable? " + EDIT_DATA);
             }
         }
+		
+		addAdminForm(content, cacheSet, EDIT_DATA);
 
         //On rends le contenu correct
         return content.getElementHomeContent();
     }
+	
+	protected static void addAdminForm (AdminTmplXHTML content, boolean cacheSet, boolean editData) {
+	
+		XHTMLInputElement cacheElement = content.getElementHTMLDomCaches();
+		cacheElement.setChecked(cacheSet);
+		
+		XHTMLInputElement editDataElement = content.getElementEditData();
+		editDataElement.setChecked(editData);
+		
+	}
+	
+	
 }

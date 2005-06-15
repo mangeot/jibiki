@@ -10,6 +10,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.15  2005/06/15 16:48:28  mangeot
+ *  Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
+ *
  *  Revision 1.14  2005/05/24 12:51:22  serasset
  *  Updated many aspect of the Papillon project to handle lexalp project.
  *  1. Layout is now parametrable in the application configuration file.
@@ -18,6 +21,24 @@
  *  4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
  *  5. It is now possible to give a name to the cookie key in the app conf file
  *  6. Several bug fixes.
+ *
+ *  Revision 1.13.4.6  2005/06/15 10:08:06  mangeot
+ *  Removed the AND/OR connector, now only AND criteria can be added for dict lookup
+ *
+ *  Revision 1.13.4.5  2005/05/27 11:53:33  mangeot
+ *  *** empty log message ***
+ *
+ *  Revision 1.13.4.4  2005/05/16 16:45:08  mangeot
+ *  *** empty log message ***
+ *
+ *  Revision 1.13.4.3  2005/05/11 14:45:29  mangeot
+ *  *** empty log message ***
+ *
+ *  Revision 1.13.4.2  2005/04/29 15:34:53  mangeot
+ *  *** empty log message ***
+ *
+ *  Revision 1.13.4.1  2005/04/29 14:50:25  mangeot
+ *  New version with contribution infos embedded in the XML of the entries
  *
  *  Revision 1.13  2005/04/20 10:51:14  mangeot
  *  Correction de AddDirectTranslations
@@ -194,6 +215,7 @@ public class ConsultExpert extends PapillonBasePO {
 	*/
    protected final static String OFFSET_PARAMETER = "OFFSET";
 
+
     /**
      *  Description of the Field
      */
@@ -269,11 +291,19 @@ public class ConsultExpert extends PapillonBasePO {
     /**
      *  Description of the Field
      */
-    protected String strategyString;
+    protected String strategyString1;
     /**
      *  Description of the Field
      */
-    protected int strategy = IQuery.STRATEGY_NONE;
+    protected String strategyString2;
+    /**
+     *  Description of the Field
+     */
+    protected int strategy1 = IQuery.STRATEGY_NONE;
+    /**
+     *  Description of the Field
+     */
+    protected int strategy2 = IQuery.STRATEGY_NONE;
 
     /**
      *  Description of the Field
@@ -353,7 +383,7 @@ public class ConsultExpert extends PapillonBasePO {
         content = (ConsultExpertXHTML) MultilingualXHtmlTemplateFactory.createTemplate("ConsultExpertXHTML", this.getComms(), this.getSessionData());
 
         // On regarde d'abord les parametres qui nous sont demandes.
-        String submit = myGetParameter(content.NAME_lookup);
+        String submit = myGetParameter(content.NAME_LOOKUP);
         sourceLanguage = myGetParameter(content.NAME_SOURCE);
         if (sourceLanguage != null && !sourceLanguage.equals("")) {
             this.setPreference(content.NAME_SOURCE, sourceLanguage);
@@ -372,15 +402,14 @@ public class ConsultExpert extends PapillonBasePO {
         } else {
             search1 = this.getPreference(content.NAME_search1);
         }
-
         search1text = myGetParameter(content.NAME_search1text);
+		
         search2 = myGetParameter(content.NAME_search2);
         if (search2 != null && !search2.equals("")) {
             this.setPreference(content.NAME_search2, search2);
         } else {
             search2 = this.getPreference(content.NAME_search2);
         }
-
         search2text = myGetParameter(content.NAME_search2text);
 
         String anyContains = null;
@@ -397,16 +426,27 @@ public class ConsultExpert extends PapillonBasePO {
                 anyContains = search2text;
             }
         }
-        strategyString = myGetParameter(content.NAME_Strategy);
-        if (strategyString != null && !strategyString.equals("")) {
-            this.setPreference(content.NAME_Strategy, strategyString);
+
+        strategyString1 = myGetParameter(content.NAME_Strategy1);
+        if (strategyString1 != null && !strategyString1.equals("")) {
+            this.setPreference(content.NAME_Strategy1, strategyString1);
         } else {
-            strategyString = this.getPreference(content.NAME_Strategy);
+            strategyString1 = this.getPreference(content.NAME_Strategy1);
+        }
+        strategy1 = IQuery.STRATEGY_NONE;
+        if (null != strategyString1 && !strategyString1.equals("")) {
+            strategy1 = Integer.parseInt(strategyString1);
         }
 
-        strategy = IQuery.STRATEGY_NONE;
-        if (null != strategyString && !strategyString.equals("")) {
-            strategy = Integer.parseInt(strategyString);
+        strategyString2 = myGetParameter(content.NAME_Strategy2);
+        if (strategyString2 != null && !strategyString2.equals("")) {
+            this.setPreference(content.NAME_Strategy2, strategyString2);
+        } else {
+            strategyString2 = this.getPreference(content.NAME_Strategy2);
+        }
+        strategy2 = IQuery.STRATEGY_NONE;
+        if (null != strategyString2 && !strategyString2.equals("")) {
+            strategy2 = Integer.parseInt(strategyString2);
         }
 
         int offset = 0;
@@ -423,17 +463,11 @@ public class ConsultExpert extends PapillonBasePO {
         }
 
         // Consultation of several headwords at one time
-        String[] Headwords = new String[1];
-		if (search1 !=null && search1.equals(Volume.CDM_headword)) {
-			Headwords[0] = search1text;
-			search1text = "";
-		}
-		else if (search2 !=null && search2.equals(Volume.CDM_headword)) {
-			Headwords[0] = search2text;
-			search2text = "";
-		}
-		else {
-			Headwords = new String[0];
+        String[] Headwords = null;
+		if (search1 !=null && search1.equals(Volume.CDM_headword)
+			&& (strategy1 == IQuery.STRATEGY_LEMMATIZE || strategy1 == IQuery.STRATEGY_FOKS)) {
+			 Headwords = new String[1];
+			 Headwords[0] = search1text;
 		}
 
         // FIXME: Just get the first language for the moment. Architecture of this part should be revised.
@@ -463,21 +497,31 @@ public class ConsultExpert extends PapillonBasePO {
 
         if (null != submit && !submit.equals("")) {
             // Lemmatize the entry Testing phase ...
-            if (strategy == IQuery.STRATEGY_LEMMATIZE) {
+            if (Headwords !=null &&
+				strategy1 == IQuery.STRATEGY_LEMMATIZE) {
                 Wrapper myWrapper = WrappersFactory.createXRCEAnalyzerWrapper(sourceLanguage);
                 String result = myWrapper.getResultString(Headwords);
                 String[] Results = WrappersFactory.getXRCEAnalyzerAnswers(result);
-                if (Results != null && Results.length > 0) {
+                if (Results != null && Results.length > 1) {
                     Headwords = Results;
                 }
-                strategy = IQuery.STRATEGY_EXACT;
+				else if (Results != null && Results.length == 0) {
+					Headwords = null;
+					search1text = Results[0];
+				}
+				else {
+					Headwords = null;
+					
+				}
+                strategy1 = IQuery.STRATEGY_EXACT;
             }
             // Using FOKS module Testing phase ...
-            if (strategy == IQuery.STRATEGY_FOKS && sourceLanguage.equals("jpn")) {
+            if (Headwords !=null &&
+				strategy1 == IQuery.STRATEGY_FOKS && sourceLanguage.equals("jpn")) {
                 Vector foksVector = VolumeEntriesFactory.getFoksEntriesVector(Headwords[0]);
                 if (foksVector != null && foksVector.size() > 0) {
                     addFoksEntryTable(foksVector);
-                    strategy = IQuery.STRATEGY_EXACT;
+                    strategy1 = IQuery.STRATEGY_EXACT;
                     Utility.removeElement(content.getElementSorryMessage());
                 } else {
                     Utility.removeElement(content.getElementFoksEntries());
@@ -487,30 +531,34 @@ public class ConsultExpert extends PapillonBasePO {
             } else {
                 // If there is a query, executing it
 				// constructions of the Keys vector
+				
 				Vector myKeys = new Vector();
-				if (search1 !=null && !search1.equals("")  &&
+				Vector Clauses = new Vector();
+				if (Headwords == null &&
+					search1 !=null && !search1.equals("")  &&
 					search1text != null && !search1text.equals("")) {
-					String[] key1 = new String[3];
+					String[] key1 = new String[4];
 					key1[0] = search1;
 					key1[2] = search1text;
+					key1[3] = IQuery.QueryBuilderStrategy[strategy1+1];
 					myKeys.add(key1);
 				}
 				if (search2 !=null && !search2.equals("") &&
 					search2text != null && !search2text.equals("")) {
-					String[] key2 = new String[3];
+					String[] key2 = new String[4];
 					key2[0] = search2;
 					key2[2] = search2text;
+					key2[3] = IQuery.QueryBuilderStrategy[strategy2+1];
 					myKeys.add(key2);
 				}
-				for (int i=0; i< Headwords.length;i++) {
-					String[] Headword = new String[3];
-					Headword[0] = Volume.CDM_headword;
-					Headword[1] = sourceLanguage;
-					Headword[2] = Headwords[i];
-					myKeys.add(Headword);
-				}
+				String[] status = new String[4];
+				status[0] = Volume.CDM_contributionStatus;
+				status[1] = Volume.DEFAULT_LANG;
+				status[2] = VolumeEntry.VALIDATED_STATUS;
+				status[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_EXACT+1];
+				myKeys.add(status);
 
-                addEntries(resources, volume, sourceLanguage, targetLanguages, myKeys, anyContains, strategy, handle, xslid, this.getUser(), offset);
+                addEntries(resources, volume, sourceLanguage, targetLanguages, Headwords, strategy1, myKeys, Clauses, anyContains, handle, xslid, this.getUser(), offset);
                 Utility.removeElement(content.getElementFoksEntries());
             }
         } else {
@@ -564,10 +612,6 @@ public class ConsultExpert extends PapillonBasePO {
             sourceSelect.appendChild(sourceOptionTemplate.cloneNode(true));
         }
         sourceSelect.removeChild(sourceOptionTemplate);
-
-        // Strategy select
-        XHTMLSelectElement strategySelect = (XHTMLSelectElement) content.getElementStrategy();
-		this.setSelected(strategySelect, "" + strategy);
 
         // Adding the appropriate target languages to the target list
         if (originalTargets == null || originalTargets.length == 0) {
@@ -626,8 +670,14 @@ public class ConsultExpert extends PapillonBasePO {
 
         // strategy
         if (!this.IsClientWithLabelDisplayProblems()) {
-            this.setUnicodeLabels(content.getElementStrategy());
+            this.setUnicodeLabels(content.getElementStrategy1());
         }
+        this.setSelected(content.getElementStrategy1(), "" + strategy1);
+
+        if (!this.IsClientWithLabelDisplayProblems()) {
+            this.setUnicodeLabels(content.getElementStrategy2());
+        }
+        this.setSelected(content.getElementStrategy2(), "" + strategy2);
 
         // Search1 field
         if (search1 == null || search1.equals("")) {
@@ -703,7 +753,7 @@ public class ConsultExpert extends PapillonBasePO {
      * @exception  javax.xml.transform.TransformerException        Description
      *      of the Exception
      */
-    protected void addEntries(String[] resources, String volume, String source, String[] targets, Vector myKeys,  String anyContains, int strategy, String handle, String xslid, User myUser, int offset)
+    protected void addEntries(String[] resources, String volume, String source, String[] targets, String[] Headwords, int strategy1, Vector myKeys,  Vector myClauses, String anyContains, String handle, String xslid, User myUser, int offset)
              throws PapillonBusinessException,
             ClassNotFoundException,
             HttpPresentationException,
@@ -719,12 +769,27 @@ public class ConsultExpert extends PapillonBasePO {
         if (null != handle && null != volume) {
             EntryCollection = DictionariesFactory.findAnswerAndTranslations(volume, handle, targets, myUser);
         } else if (null != volume) {
-            EntryCollection = VolumeEntriesFactory.getVolumeNameEntriesVector(volume, myKeys, null, strategy);
+			EntryCollection = VolumeEntriesFactory.getVolumeNameEntriesVector(volume, myKeys, myClauses, null);
         } else {
-            EntryCollection = DictionariesFactory.getDictionariesEntriesCollection(resources, source, targets, myKeys, anyContains, strategy, myUser, offset);
+			if (Headwords!=null && Headwords.length>0) {
+				EntryCollection = (Collection) new Vector();
+				for (int i=0; i< Headwords.length; i++) {
+					String[] Headword = new String[4];
+					Headword[0] = Volume.CDM_headword;
+					Headword[1] = sourceLanguage;
+					Headword[2] = Headwords[i];
+					Headword[3] = IQuery.QueryBuilderStrategy[strategy1+1];
+					myKeys.add(Headword);
+					EntryCollection.addAll(DictionariesFactory.getDictionariesEntriesCollection(resources, source, targets, myKeys, myClauses, anyContains, myUser, offset));
+					myKeys.remove(Headword);
+				}
+			}
+			else {
+				EntryCollection = DictionariesFactory.getDictionariesEntriesCollection(resources, source, targets, myKeys, myClauses, anyContains, myUser, offset);
+			}
  			if (EntryCollection==null || EntryCollection.size()==0) {
 				PapillonLogger.writeDebugMsg("EntryCollection null, getDictionariesReverseEntriesCollection");
-				EntryCollection = DictionariesFactory.getDictionariesReverseEntriesCollection(resources, source, targets, myKeys, anyContains, strategy, myUser,offset);
+				EntryCollection = DictionariesFactory.getDictionariesReverseEntriesCollection(resources, source, targets, myKeys, myClauses, anyContains, myUser,offset);
 				reverseLookup = (EntryCollection!=null && EntryCollection.size()>0);
 			}
        }
@@ -802,15 +867,16 @@ public class ConsultExpert extends PapillonBasePO {
 		
 		
         String href = this.getUrl() + "?"
-			+ serializeParameterForUrl(content.NAME_RESOURCES, originalResources)
+			+ serializeParameterForUrl(content.NAME_RESOURCES, originalResources) + "&"
 			+ content.NAME_search1 + "=" + search1 + "&"
 			+ content.NAME_search1text + "=" + search1text + "&"
 			+ content.NAME_search2 + "=" + search2 + "&"
 			+ content.NAME_search2text + "=" + search2text + "&"
 			+ content.NAME_SOURCE + "=" + sourceLanguage + "&"
-			+ serializeParameterForUrl(content.NAME_TARGETS, originalTargets)
-			+ content.NAME_Strategy + "=" + strategyString + "&"
-			+ content.NAME_lookup + "=" + content.NAME_lookup + "&"
+			+ serializeParameterForUrl(content.NAME_TARGETS, originalTargets) + "&"
+			+ content.NAME_Strategy1 + "=" + strategyString1 + "&"
+			+ content.NAME_Strategy2 + "=" + strategyString2 + "&"
+			+ content.NAME_LOOKUP + "=" + content.NAME_LOOKUP + "&"
 			+ OFFSET_PARAMETER + "=";
 		if (offset >= DictionariesFactory.MaxRetrievedEntries) {
 			int prevOffset = offset-DictionariesFactory.MaxRetrievedEntries;
@@ -835,16 +901,12 @@ public class ConsultExpert extends PapillonBasePO {
 
                 // l'entry
                 href = this.getUrl() + "?"
-                         + VOLUME_PARAMETER + "="
-                         + myEntry.getVolumeName() + "&"
-                         + HANDLE + "="
-                         + myEntry.getHandle() + "&"
+                         + VOLUME_PARAMETER + "=" + myEntry.getVolumeName() + "&"
+                         + HANDLE + "=" + myEntry.getHandle() + "&"
                          + content.NAME_SOURCE + "=" + myEntry.getSourceLanguage() + "&"
-                         + serializeParameterForUrl(content.NAME_TARGETS, targets)
-                         + content.NAME_Strategy + "="
-                         + strategyString + "&"
-                         + content.NAME_lookup + "="
-                         + content.NAME_lookup;
+                         + serializeParameterForUrl(content.NAME_TARGETS, targets) + "&"
+                         + content.NAME_Strategy1 + "=" + strategyString1 + "&"
+                         + content.NAME_LOOKUP + "=" + content.NAME_LOOKUP;
                 entryAnchor.setHref(href);
                 
                 // FIXME: is this usefull, shouldn't id be always defined for a db entry...
@@ -854,21 +916,6 @@ public class ConsultExpert extends PapillonBasePO {
                 }
                 
                 content.setTextEntryIdList(myEntry.getId());
-
-                // The contribution
-                // FIXME: seems to be incompatible with current contrib stuff...
-//                if (myEntry.getType() == IAnswer.Contribution) {
-//                    Contribution myContrib = (Contribution) myEntry;
-//
-//                    String contribHref = ContributionsURL + "?"
-//                             + ContributionsVolumeParameter + "="
-//                             + myEntry.getVolumeName();
-//                    contribAnchor.setHref(contribHref);
-//
-//                    content.setTextContribution(myContrib.getCreationDate() + " " + myContrib.getHandle());
-//                } else {
-//                    content.setTextContribution("");
-//                }
 
                 // Le pos
                 String posstr = null;
@@ -956,17 +1003,13 @@ public class ConsultExpert extends PapillonBasePO {
                 content.setTextFoksGrade(myEntry.getScoreString());
 
                 href = this.getUrl() + "?"
-                         + content.NAME_SOURCE + "="
-                         + sourceLanguage + "&"
-                         + serializeParameterForUrl(content.NAME_TARGETS, originalTargets)
-                         + serializeParameterForUrl(content.NAME_RESOURCES, originalResources)
+                         + content.NAME_SOURCE + "=" + sourceLanguage + "&"
+                         + serializeParameterForUrl(content.NAME_TARGETS, originalTargets)  + "&"
+                         + serializeParameterForUrl(content.NAME_RESOURCES, originalResources) + "&"
                          + content.NAME_search1 + "=" + Volume.CDM_headword + "&"
-                         + content.NAME_search1text + "="
-                         + Utility.convertToUrlForEncoding(headword, "UTF-8") + "&"
-                         + content.NAME_Strategy + "="
-                         + IQuery.STRATEGY_EXACT + "&"
-                         + content.NAME_lookup + "="
-                         + "lookup";
+                         + content.NAME_search1text + "="  + Utility.convertToUrlForEncoding(headword, "UTF-8") + "&"
+                         + content.NAME_Strategy1 + "=" + IQuery.STRATEGY_EXACT + "&"
+                         + content.NAME_LOOKUP + "=" + "lookup";
                 foksHref.setHref(href);
                 XHTMLElement clone = (XHTMLElement) entryListRow.cloneNode(true);
                 //      we have to take off the id attribute because we did not take it off the original
@@ -1032,7 +1075,7 @@ public class ConsultExpert extends PapillonBasePO {
             anchor.setAttribute("href", this.getUrl() + "?" +
                     VOLUME_PARAMETER + "=" + volume + "&" +
                     HANDLE + "=" + handle + "&" +
-                    content.NAME_lookup + "=" + "lookup");
+                    content.NAME_LOOKUP + "=" + "lookup");
             anchor.appendChild(xslName);
             cell.appendChild(anchor);
             stylesheetRow.appendChild(cell);
@@ -1049,7 +1092,7 @@ public class ConsultExpert extends PapillonBasePO {
                         VOLUME_PARAMETER + "=" + volume + "&" +
                         HANDLE + "=" + handle + "&" +
                         XSLID + "=" + ((XslSheet) xslList.elementAt(i)).getHandle() + "&" +
-                        content.NAME_lookup + "=" + "lookup");
+                        content.NAME_LOOKUP + "=" + "lookup");
                 anchor.appendChild(xslName);
                 cell.appendChild(anchor);
                 stylesheetRow.appendChild(cell);
@@ -1158,20 +1201,6 @@ public class ConsultExpert extends PapillonBasePO {
             
             Element myHtmlElt = (Element)rf.getFormattedResult(qr);
             
-            
-//			org.w3c.dom.Element myHtmlElt = null;
-//			org.w3c.dom.Document myHtmlDoc = myEntry.getHtmlDom();
-//			if (xslid != null || myHtmlDoc == null) {
-//				myHtmlElt = XslTransformation.applyXslSheets(myEntry, xslid);
-//				myHtmlDoc = myHtmlElt.getOwnerDocument();
-//				if (xslid == null) {
-//					myEntry.setHtmlDom(myHtmlDoc);
-//					((VolumeEntry)myEntry).saveHTML();
-//				}
-//			}
-//			else {
-//				myHtmlElt = myHtmlDoc.getDocumentElement();
-//			}
 			addElement(myHtmlElt, myEntry.getVolumeName(), myEntry.getHandle(),  myEntry.getDictionaryName(), myEntry.getType());
 		}
 	

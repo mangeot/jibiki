@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2005/06/15 16:48:28  mangeot
+ * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
+ *
  * Revision 1.2  2005/05/24 12:51:22  serasset
  * Updated many aspect of the Papillon project to handle lexalp project.
  * 1. Layout is now parametrable in the application configuration file.
@@ -17,6 +20,9 @@
  * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
  * 5. It is now possible to give a name to the cookie key in the app conf file
  * 6. Several bug fixes.
+ *
+ * Revision 1.1.6.1  2005/05/27 11:53:34  mangeot
+ * *** empty log message ***
  *
  * Revision 1.1  2004/12/24 08:57:44  serasset
  * Premiere version de l'interface avec fond papillon et transparence.
@@ -99,7 +105,7 @@ public class MultilingualXHtmlTemplateFactory {
     public static java.lang.Object getTemplateForLanguage(String xhtmlPackage, String htmlClass, String lang, HttpPresentationComms comms) {
         String className = xhtmlPackage + "." + lang + "." + htmlClass;
         java.lang.Object template = null;
-
+		
         try {
             template = comms.xmlcFactory.create(Class.forName(className));
         } catch (java.lang.ClassNotFoundException e) {

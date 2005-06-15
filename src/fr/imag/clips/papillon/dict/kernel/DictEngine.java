@@ -8,6 +8,7 @@ import fr.imag.clips.papillon.business.dictionary.DictionariesFactory;
 import fr.imag.clips.papillon.business.dictionary.Dictionary;
 import fr.imag.clips.papillon.business.dictionary.ErrorAnswer;
 import fr.imag.clips.papillon.business.dictionary.IAnswer;
+import fr.imag.clips.papillon.business.dictionary.IQuery;
 import fr.imag.clips.papillon.business.dictionary.Volume;
 import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
 import fr.imag.clips.papillon.business.transformation.XslTransformation;
@@ -108,7 +109,7 @@ public class DictEngine implements IDictEngine {
                 Volume[] Volumes = VolumesFactory.getVolumesArray(dict.getName());
                 if (Volumes != null && Volumes.length > 0) {
                     for (int j=0 ; j< Volumes.length; j++) {
-                        count = count + VolumesFactory.intCountEntries(Volumes[j]);
+                        count += Volumes[j].getCount();
                     }
                 }
                 
@@ -139,7 +140,7 @@ public class DictEngine implements IDictEngine {
 				Volume[] Volumes = VolumesFactory.getVolumesArray(dict.getName());
 				if (Volumes != null && Volumes.length > 0) {
 					for (int j=0 ; j< Volumes.length; j++) {
-						count = count + VolumesFactory.intCountEntries(Volumes[j]);
+						count = count + Volumes[j].getCount();
 					}
 				}            
 				info = info + dict.getName() + " has " + count + " entries";
@@ -188,17 +189,19 @@ public class DictEngine implements IDictEngine {
 			//Headword[0] = key
 			//Headword[1] = lang
 			//Headword[2] = value
-		String[] Headword = new String[3];
+			//Headword[3] = strategy
+		String[] Headword = new String[4];
 		Headword[0] = Volume.CDM_headword;
 		Headword[1] = lang;
 		Headword[2] = word;
+		Headword[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_EXACT+1];
 		Vector myVector = new Vector();
 		myVector.add(Headword);
 		
         try {
             Answers = DictionariesFactory.getAllDictionariesEntriesCollection(myVector,
 																	null,
-                                                                     strategy,
+                                                                     null,
                                                                      this.getUser());
         }
         catch (Exception e) {
@@ -243,10 +246,12 @@ public class DictEngine implements IDictEngine {
 			//Headword[0] = key
 			//Headword[1] = lang
 			//Headword[2] = value
-		String[] Headword = new String[3];
+			//Headword[3] = strategy
+		String[] Headword = new String[4];
 		Headword[0] = Volume.CDM_headword;
 		Headword[1] = lang;
 		Headword[2] = word;
+		Headword[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_EXACT+1];
 		Vector myVector = new Vector();
 		myVector.add(Headword);
 		
@@ -255,7 +260,7 @@ public class DictEngine implements IDictEngine {
 																	 null,
                                                                      myVector,
                                                                      null,
-                                                                     strategy,
+																	 null,
                                                                      this.getUser(),
 																	 0);
     }

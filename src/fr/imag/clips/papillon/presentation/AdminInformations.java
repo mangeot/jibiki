@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.5  2005/06/15 16:48:28  mangeot
+ * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
+ *
  * Revision 1.4  2005/05/24 12:51:22  serasset
  * Updated many aspect of the Papillon project to handle lexalp project.
  * 1. Layout is now parametrable in the application configuration file.
@@ -17,6 +20,9 @@
  * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
  * 5. It is now possible to give a name to the cookie key in the app conf file
  * 6. Several bug fixes.
+ *
+ * Revision 1.3.4.1  2005/04/29 14:50:25  mangeot
+ * New version with contribution infos embedded in the XML of the entries
  *
  * Revision 1.3  2005/04/11 08:01:02  fbrunet
  * Passage en xhtml des ressources Papillon.
@@ -266,7 +272,7 @@ public class AdminInformations extends PapillonBasePO {
             theReplaceButtonParent.removeChild(theReplaceButtonParent.getFirstChild());
             theRemoveAnchorParent.removeChild(theRemoveAnchorParent.getFirstChild());
             content.setTextDocumentAuthor(docTable[i].getAuthor());
-            content.setTextDocumentDate(docTable[i].getCreationDate().toString());
+            content.setTextDocumentDate(Utility.PapillonPrintDateFormat.format(docTable[i].getCreationDate()));
             content.setTextDocumentReference(docTable[i].getReference());
 
             //parse the XML title stored in the DB

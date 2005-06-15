@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.7  2005/06/15 16:48:28  mangeot
+ * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
+ *
  * Revision 1.6  2005/05/24 12:51:22  serasset
  * Updated many aspect of the Papillon project to handle lexalp project.
  * 1. Layout is now parametrable in the application configuration file.
@@ -17,6 +20,29 @@
  * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
  * 5. It is now possible to give a name to the cookie key in the app conf file
  * 6. Several bug fixes.
+ *
+ * Revision 1.5.4.7  2005/06/09 11:28:24  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.5.4.6  2005/06/09 11:07:45  mangeot
+ * Deleted the countEntriesCache. entries counts are not cached any more.
+ * Fixed a few bugs.
+ *
+ * Revision 1.5.4.5  2005/06/02 09:13:50  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.5.4.4  2005/06/01 15:20:33  mangeot
+ * Added a boolean for contributionslog
+ *
+ * Revision 1.5.4.3  2005/06/01 08:38:43  mangeot
+ * Multi bug correction + added the possibility of disabling data edition
+ * via the Admin.po page
+ *
+ * Revision 1.5.4.2  2005/05/19 17:02:22  mangeot
+ * Importing entries without the contribution element
+ *
+ * Revision 1.5.4.1  2005/04/29 14:50:25  mangeot
+ * New version with contribution infos embedded in the XML of the entries
  *
  * Revision 1.5  2005/04/11 12:29:59  mangeot
  * Merge between the XPathAndMultipleKeys branch and the main trunk
@@ -74,6 +100,9 @@ import java.io.*;
 // For URLs
 import java.net.URL;
 
+
+import fr.imag.clips.papillon.CurrentDBTransaction;
+import com.lutris.appserver.server.sql.DBTransaction;
 
 //pour les dictionary
 import fr.imag.clips.papillon.business.dictionary.*;
@@ -134,9 +163,10 @@ public class AdminVolumes extends PapillonBasePO {
 
     public Node getContent()
         throws javax.xml.parsers.ParserConfigurationException,
-                    HttpPresentationException,
-		   IOException, org.xml.sax.SAXException,
-                   javax.xml.transform.TransformerException
+			HttpPresentationException,
+		    IOException, org.xml.sax.SAXException,
+			javax.xml.transform.TransformerException,
+			java.sql.SQLException
     {
         
         // Création du contenu
@@ -152,25 +182,17 @@ public class AdminVolumes extends PapillonBasePO {
             String userMessage = null;
             String urlString = myGetParameter(content.NAME_URL);
             if (null != urlString &&
-                null != myGetParameter(content.NAME_Dictionary)) {
-                URL myURL = new URL(urlString);
-                PapillonLogger.writeDebugMsg(req.getParameter(myURL.toString()));
-                Dictionary dict = DictionariesFactory.findDictionaryByName(dictName);
-                Volume myVolume = VolumesFactory.parseVolumeMetadata(dict, myURL,req.getParameter(content.NAME_AddEntries));
-                if (null != myVolume && !myVolume.isEmpty()) {
-                    userMessage = "adding "+ myVolume.getName() + " volume" + " // " + myVolume.getDictname() + " // "  + myVolume.getDbname() + " // " + myVolume.getSourceLanguage() + " // " + myVolume.getTargetLanguages() + " // " + myVolume.getVolumeRef();
-                    fr.imag.clips.papillon.business.edition.UITemplates.resetCache();
+				null != myGetParameter(content.NAME_Dictionary)) {
+                    userMessage = handleVolumeAddition(req);
                 }
-                else {
-                    userMessage = "Ignoring volume";
-                }
-            } else if (null != myGetParameter(content.NAME_Volume) &&
-                       null != myGetParameter(content.NAME_URLObject) &&
-                       null != myGetParameter(content.NAME_Object)) {
-                String object = myGetParameter(content.NAME_Object);
-                String url = myGetParameter(content.NAME_URLObject);
-                userMessage = this.uploadObject(volName, object, url);
-            } else if (null != myGetParameter(REMOVE_METADATA_PARAMETER)) {
+             else if (null != myGetParameter(content.NAME_Volume) &&
+					null != myGetParameter(content.NAME_URLObject) &&
+					null != myGetParameter(content.NAME_Object)) {
+					String object = myGetParameter(content.NAME_Object);
+					String url = myGetParameter(content.NAME_URLObject);
+					userMessage = this.uploadObject(volName, object, url);
+            } 
+             else if (null != myGetParameter(REMOVE_METADATA_PARAMETER)) {
                 String handle = myGetParameter(REMOVE_METADATA_PARAMETER);
                 Volume volume = VolumesFactory.findVolumeByID(handle);
                 volume.delete();
@@ -227,6 +249,49 @@ public class AdminVolumes extends PapillonBasePO {
         return content.getElementFormulaire();
     }
     
+	protected String handleVolumeAddition(HttpPresentationRequest req) throws PapillonBusinessException, HttpPresentationException, java.net.MalformedURLException {
+        String userMessage;
+        String urlString = req.getParameter(content.NAME_URL);
+        URL myURL = new URL(urlString);
+        PapillonLogger.writeDebugMsg(myURL.toString());
+		String logContribsString = req.getParameter(content.NAME_LogContributions);
+		boolean logContribs = (logContribsString!=null && !logContribsString.equals(""));
+		String parseEntriesString = req.getParameter(content.NAME_AddVolumesAndEntries);
+		boolean parseEntries = (parseEntriesString!=null && !parseEntriesString.equals(""));
+        
+        // Create and Register the transaction
+        CurrentDBTransaction.registerNewDBTransaction();
+        try {
+			Dictionary dict = DictionariesFactory.findDictionaryByName(req.getParameter(content.NAME_Dictionary));
+			Volume myVolume = VolumesFactory.parseVolumeMetadata(dict, myURL, parseEntries, logContribs);
+
+            if (null != myVolume && !myVolume.isEmpty()) {
+				userMessage = "adding "+ myVolume.getName() + " volume" + " // " + myVolume.getDictname() + " // "  + myVolume.getDbname() + " // " + myVolume.getSourceLanguage() + " // " + myVolume.getTargetLanguages() + " // " + myVolume.getVolumeRef();
+                myVolume.save();
+				fr.imag.clips.papillon.business.edition.UITemplates.resetCache();
+            } else {
+                userMessage = "Ignoring volume";
+            }
+            // everything was correct, commit the transaction...
+            ((DBTransaction) CurrentDBTransaction.get()).commit();
+        } catch (Exception e) {
+            userMessage = "Problems while adding the specified volume.\n";
+            userMessage = userMessage + e.getMessage();
+            userMessage = userMessage + "\nAll changes to the database have been rolled back.";
+			e.printStackTrace();
+            try {
+                ((DBTransaction) CurrentDBTransaction.get()).rollback();
+            } catch (java.sql.SQLException sqle) {
+                PapillonLogger.writeDebugMsg("AdminVolumes: SQLException while rolling back failed transaction.");
+				sqle.printStackTrace();
+            }
+        } finally {
+            CurrentDBTransaction.releaseCurrentDBTransaction();
+        }
+        return userMessage;
+    }
+
+	
     protected void addVolumesArray() 
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
             
@@ -274,8 +339,7 @@ public class AdminVolumes extends PapillonBasePO {
         content.setTextName(VolumesTable[i].getName());
         content.setTextDbname(VolumesTable[i].getDbname());
         content.setTextSource(VolumesTable[i].getSourceLanguage());
-				String entries = VolumesFactory.countEntries(VolumesTable[i]);
-        content.setTextEntries(entries);
+        content.setTextEntries("" + VolumesTable[i].getCount());
             
 				String handle =  VolumesTable[i].getHandle();
         theSeeMetadataAnchor.setHref(this.getUrl() + "?" + SEE_METADATA_PARAMETER + "=" + handle);
@@ -393,9 +457,13 @@ public class AdminVolumes extends PapillonBasePO {
 				}
 				else if (object.equals(Object_Metadata)) {
 					myVolume.setXmlCode(objectResult);
+					myVolume.setCdmElements();
 				}
 				else if (object.equals(Object_Template)) {
+					objectResult = VolumesFactory.updateTemplateEntry(objectResult, myVolume.getCdmElements());
+					PapillonLogger.writeDebugMsg("uploadObject objectResult: " + objectResult);
 					myVolume.setTemplateEntry(objectResult);
+					myVolume.setCdmElements();
 				}
 				else if (object.equals(Object_Interface)) {
 					myVolume.setTemplateInterface(objectResult);

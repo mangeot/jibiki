@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.11  2005/06/15 16:48:28  mangeot
+ * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
+ *
  * Revision 1.10  2005/05/24 12:51:22  serasset
  * Updated many aspect of the Papillon project to handle lexalp project.
  * 1. Layout is now parametrable in the application configuration file.
@@ -17,6 +20,54 @@
  * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
  * 5. It is now possible to give a name to the cookie key in the app conf file
  * 6. Several bug fixes.
+ *
+ * Revision 1.9.4.16  2005/06/15 10:08:06  mangeot
+ * Removed the AND/OR connector, now only AND criteria can be added for dict lookup
+ *
+ * Revision 1.9.4.15  2005/05/24 11:15:48  mangeot
+ * Bug fixes in sort
+ *
+ * Revision 1.9.4.14  2005/05/19 09:43:26  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.9.4.13  2005/05/13 11:08:26  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.9.4.12  2005/05/11 15:42:31  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.9.4.11  2005/05/11 15:34:00  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.9.4.10  2005/05/11 15:16:19  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.9.4.9  2005/05/11 15:10:06  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.9.4.8  2005/05/11 14:22:16  mangeot
+ * Ajout de entrées précédentes et suivantes
+ *
+ * Revision 1.9.4.7  2005/04/30 09:11:20  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.9.4.6  2005/04/29 18:43:13  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.9.4.5  2005/04/29 18:38:06  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.9.4.4  2005/04/29 18:29:59  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.9.4.3  2005/04/29 17:30:30  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.9.4.2  2005/04/29 17:08:06  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.9.4.1  2005/04/29 14:50:25  mangeot
+ * New version with contribution infos embedded in the XML of the entries
  *
  * Revision 1.9  2005/04/15 13:20:08  mangeot
  * Added setIdIfNull
@@ -76,7 +127,7 @@ import com.lutris.appserver.server.httpPresentation.HttpPresentation;
 import com.lutris.appserver.server.httpPresentation.HttpPresentationRequest;
 import com.lutris.appserver.server.httpPresentation.HttpPresentationException;
 //import org.enhydra.xml.xmlc.XMLObject;
-import org.w3c.dom.html.*;
+import org.enhydra.xml.xhtml.dom.*;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
@@ -138,12 +189,15 @@ public class ReviewContributions extends PapillonBasePO {
 	protected final static String EditHandleParameter=EditEntry.EntryHandle_PARAMETER;
 
 	protected final static String VIEW_CONTRIB_PARAMETER="ViewContrib";
+	protected final static String AnyContains_PARAMETER="AnyContains";
+	protected final static String OFFSET_PARAMETER="OFFSET";
 	protected final static String REMOVE_CONTRIB_PARAMETER="RemoveContrib";
 	protected final static String REVISE_CONTRIB_PARAMETER="ReviseContrib";
 	protected final static String VALIDATE_CONTRIB_PARAMETER="ValidateContrib";
 	protected final static String CONTRIBID_PARAMETER="ContribId";
     protected final static String XSLID_PARAMETER="xslid";
     protected final static String SORTBY_PARAMETER="SortBy";
+	
     
     protected static ReviewContributionsTmplXHTML content;
 
@@ -178,90 +232,271 @@ public class ReviewContributions extends PapillonBasePO {
 		// decoding the CGI arguments
 		String queryString = "";
 		
-		// lookup
-		String lookup = myGetParameter(content.NAME_LOOKUP);
-		// volume
-		String volume = myGetParameter(content.NAME_VOLUME);
-		if (volume!=null &&!volume.equals("")) {
-			this.setPreference(content.NAME_VOLUME,volume);
-		}
-		else {
-			volume = this.getPreference(content.NAME_VOLUME);
-		}
-		if (volume !=null && !volume.equals("")) {
-			queryString += "&" + content.NAME_VOLUME + "=" + volume;
-		}
-		
-		//author
-		String author = myGetParameter(content.NAME_AUTHOR);
-		if (lookup!=null &&!lookup.equals("")) {
-			this.setPreference(content.NAME_AUTHOR,author);
-		}
-		else {
-			author = this.getPreference(content.NAME_AUTHOR);
-		}
-		if (author !=null && !author.equals("")) {
-			queryString += "&" + content.NAME_AUTHOR + "=" + author;
-		}
-
-		// headword
-		String headword = myGetParameter(content.NAME_HEADWORD);
-		if (lookup!=null &&!lookup.equals("")) {
-			this.setPreference(content.NAME_HEADWORD,headword);
-		}
-		else {
-			headword = this.getPreference(content.NAME_HEADWORD);
-		}
-		if (headword !=null && !headword.equals("")) {
-			queryString += "&" + content.NAME_HEADWORD + "=" + headword;
-		}
-		String partialMatch = myGetParameter(content.NAME_PartialMatch);
-		if (lookup!=null && !lookup.equals("")) {
-			this.setPreference(content.NAME_PartialMatch,partialMatch);
-		}
-		else {
-			partialMatch = this.getPreference(content.NAME_PartialMatch);
-		}
-		int strategy = IQuery.STRATEGY_EXACT;
-		if (null != partialMatch && !partialMatch.equals("")) {
-			strategy = IQuery.STRATEGY_SUBSTRING;
-			queryString += "&" + content.NAME_PartialMatch + "=" + partialMatch;
-		}
-
-		// status
-		String status = myGetParameter(content.NAME_STATUS);
-		if (lookup!=null &&!lookup.equals("")) {
-			this.setPreference(content.NAME_STATUS,status);
-		}
-		else {
-			status =  this.getPreference(content.NAME_STATUS);
-		}
-		if (status != null && status.equals(ALL)) {
-			status = null;
-		}
-		if (status !=null && !status.equals("")) {
-			queryString += "&" + content.NAME_STATUS + "=" + status;
-		}
-
-		// revisor
-		String revisor = myGetParameter(content.NAME_REVISOR);
-		if (lookup!=null &&!lookup.equals("")) {
-			this.setPreference(content.NAME_REVISOR,revisor);
-		}
-		else {
-			revisor =  this.getPreference(content.NAME_REVISOR);
-		}
-		if (revisor !=null && !revisor.equals("")) {
-			queryString += "&" + content.NAME_REVISOR + "=" + revisor;
-		}
-
+			String lookup = req.getParameter(content.NAME_LOOKUP);
+			String volume = req.getParameter(content.NAME_VOLUME);
 		// hidden arguments
-		String contribid = myGetParameter(CONTRIBID_PARAMETER);
-		String xslid = myGetParameter(XSLID_PARAMETER);
-		String sortBy = myGetParameter(SORTBY_PARAMETER);
+			String contribid = req.getParameter(CONTRIBID_PARAMETER);
+			String xslid = req.getParameter(XSLID_PARAMETER);
+			String sortBy = req.getParameter(SORTBY_PARAMETER);
+			
+			if (sortBy==null || sortBy.equals("")) {
+				sortBy=VolumeEntriesFactory.HEADWORD_SORT;
+			}
+			
+			if (volume!=null &&!volume.equals("")) {
+				this.setPreference(content.NAME_VOLUME,volume);
+			}
+			else {
+				volume = this.getPreference(content.NAME_VOLUME);
+			}
+			
+			if (volume!=null && !volume.equals("")) {
+				queryString += "&" + content.NAME_VOLUME + "=" + volume;
+			}
+			
+			//author
+			String author = myGetParameter(content.NAME_AUTHOR);
+			if (lookup !=null && !lookup.equals("")) {
+				this.setPreference(content.NAME_AUTHOR,author);
+			}
+			else {
+				author = this.getPreference(content.NAME_AUTHOR);
+			}
+			if (author !=null && !author.equals("")) {
+				queryString += "&" + content.NAME_AUTHOR + "=" + author;
+			}
+
+			// reviewer
+			String reviewer = myGetParameter(content.NAME_REVIEWER);
+			if (lookup !=null && !lookup.equals("")) {
+				this.setPreference(content.NAME_REVIEWER,reviewer);
+			}
+			else {
+				reviewer =  this.getPreference(content.NAME_REVIEWER);
+			}
+			if (reviewer !=null && !reviewer.equals("")) {
+				queryString += "&" + content.NAME_REVIEWER + "=" + reviewer;
+			}
+
+			// CreationDate
+			String creationDate = myGetParameter(content.NAME_CreationDate);
+			if (lookup !=null && !lookup.equals("")) {
+				this.setPreference(content.NAME_CreationDate, creationDate);
+			} else {
+				creationDate = this.getPreference(content.NAME_CreationDate);
+			}
+			if (creationDate !=null && !creationDate.equals("")) {
+				queryString += "&" + content.NAME_CreationDate + "=" + creationDate;
+			}
+			String creationDateStrategyString = myGetParameter(content.NAME_StrategyCreationDate);
+			if (creationDateStrategyString != null && !creationDateStrategyString.equals("")) {
+				this.setPreference(content.NAME_StrategyCreationDate, creationDateStrategyString);
+			} else {
+				creationDateStrategyString = this.getPreference(content.NAME_StrategyCreationDate);
+			}
+			int creationDateStrategy = IQuery.STRATEGY_NONE;
+			if (null != creationDateStrategyString && !creationDateStrategyString.equals("")) {
+				creationDateStrategy = Integer.parseInt(creationDateStrategyString);
+			}
+			if (creationDateStrategyString !=null && !creationDateStrategyString.equals("")) {
+				queryString += "&" + content.NAME_StrategyCreationDate + "=" + creationDateStrategyString;
+			}
+			
+			// ReviewDate
+			String reviewDate = myGetParameter(content.NAME_ReviewDate);
+			if (lookup !=null && !lookup.equals("")) {
+				this.setPreference(content.NAME_ReviewDate, reviewDate);
+			} else {
+				reviewDate = this.getPreference(content.NAME_ReviewDate);
+			}
+			if (reviewDate !=null && !reviewDate.equals("")) {
+				queryString += "&" + content.NAME_ReviewDate + "=" + reviewDate;
+			}
+			String reviewDateStrategyString = myGetParameter(content.NAME_StrategyReviewDate);
+			if (reviewDateStrategyString != null && !reviewDateStrategyString.equals("")) {
+				this.setPreference(content.NAME_StrategyReviewDate, reviewDateStrategyString);
+			} else {
+				reviewDateStrategyString = this.getPreference(content.NAME_StrategyReviewDate);
+			}
+			int reviewDateStrategy = IQuery.STRATEGY_NONE;
+			if (null != reviewDateStrategyString && !reviewDateStrategyString.equals("")) {
+				reviewDateStrategy = Integer.parseInt(reviewDateStrategyString);
+			}
+			if (reviewDateStrategyString !=null && !reviewDateStrategyString.equals("")) {
+				queryString += "&" + content.NAME_StrategyReviewDate + "=" + reviewDateStrategyString;
+			}
+			
+			// search1
+			String search1 = myGetParameter(content.NAME_search1);
+			if (search1 != null && !search1.equals("")) {
+				this.setPreference(content.NAME_search1, search1);
+			} else {
+				search1 = this.getPreference(content.NAME_search1);
+			}
+			if (search1 !=null && !search1.equals("")) {
+				queryString += "&" + content.NAME_search1 + "=" + search1;
+			}
+			String search1text = myGetParameter(content.NAME_search1text);
+			if (search1text !=null && !search1text.equals("")) {
+				queryString += "&" + content.NAME_search1text + "=" + search1text;
+			}
+			
+			// search2
+			String search2 = myGetParameter(content.NAME_search2);
+			if (search2 != null && !search2.equals("")) {
+				this.setPreference(content.NAME_search2, search2);
+			} else {
+				search2 = this.getPreference(content.NAME_search2);
+			}
+			if (search2 !=null && !search2.equals("")) {
+				queryString += "&" + content.NAME_search2 + "=" + search2;
+			}
+			String search2text = myGetParameter(content.NAME_search2text);
+			if (search2text !=null && !search2text.equals("")) {
+				queryString += "&" + content.NAME_search2text + "=" + search2text;
+			}
+			
+			String anyContains = null;
+			
+			
+			if (null != search1 && null != search1text && !search1text.equals("")) {
+				if (search1.equals(AnyContains_PARAMETER)) {
+					anyContains = search1text;
+				}
+			}
+			
+			if (null != search2 && null != search2text && !search2text.equals("")) {
+				if (search2.equals(AnyContains_PARAMETER)) {
+					anyContains = search2text;
+				}
+			}
+			
+			// strategy1
+			String strategyString1 = myGetParameter(content.NAME_Strategy1);
+			if (strategyString1 != null && !strategyString1.equals("")) {
+				this.setPreference(content.NAME_Strategy1, strategyString1);
+			} else {
+				strategyString1 = this.getPreference(content.NAME_Strategy1);
+			}
+			int strategy1 = IQuery.STRATEGY_NONE;
+			if (null != strategyString1 && !strategyString1.equals("")) {
+				strategy1 = Integer.parseInt(strategyString1);
+			}
+			if (strategyString1 !=null && !strategyString1.equals("")) {
+				queryString += "&" + content.NAME_Strategy1 + "=" + strategyString1;
+			}
+			
+			String strategyString2 = myGetParameter(content.NAME_Strategy2);
+			if (strategyString2 != null && !strategyString2.equals("")) {
+				this.setPreference(content.NAME_Strategy2, strategyString2);
+			} else {
+				strategyString2 = this.getPreference(content.NAME_Strategy2);
+			}
+			int strategy2 = IQuery.STRATEGY_NONE;
+			if (null != strategyString2 && !strategyString2.equals("")) {
+				strategy2 = Integer.parseInt(strategyString2);
+			}
+			if (strategyString2 !=null && !strategyString2.equals("")) {
+				queryString += "&" + content.NAME_Strategy2 + "=" + strategyString2;
+			}
+						
+			int offset = 0;
+			String offsetString = myGetParameter(OFFSET_PARAMETER);
+			if (offsetString != null && !offsetString.equals("")) {
+				offset = Integer.parseInt(offsetString);
+			}
+			queryString += "&" + OFFSET_PARAMETER + "=" + offset;
+			
+			// status
+			String status = myGetParameter(content.NAME_STATUS);
+			if (lookup!=null &&!lookup.equals("")) {
+				this.setPreference(content.NAME_STATUS,status);
+			}
+			else {
+				status =  this.getPreference(content.NAME_STATUS);
+			}
+			if (status !=null && !status.equals("")) {
+				queryString += "&" + content.NAME_STATUS + "=" + status;
+			}
+			if (status != null && status.equals(ALL)) {
+				status = null;
+			}
+			Vector myKeys = new Vector();
+			Vector myClauses = new Vector();
+			if (search1 !=null && !search1.equals("")  &&
+				search1text != null && !search1text.equals("")) {
+				String[] key1 = new String[4];
+				key1[0] = search1;
+				key1[2] = search1text;
+				key1[3] = IQuery.QueryBuilderStrategy[strategy1+1];
+				myKeys.add(key1);
+			}
+			if (search2 !=null && !search2.equals("") &&
+				search2text != null && !search2text.equals("")) {
+				String[] key2 = new String[4];
+				key2[0] = search2;
+				key2[2] = search2text;
+				key2[3] = IQuery.QueryBuilderStrategy[strategy2+1];
+				myKeys.add(key2);
+			}
+			if (status !=null && !status.equals("")) {
+				String[] key2 = new String[4];
+				key2[0] = Volume.CDM_contributionStatus;
+				key2[1] = Volume.DEFAULT_LANG;
+				key2[2] = status;
+				key2[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_EXACT+1];			
+				myKeys.add(key2);
+			}
+			else {
+				String[] key2 = new String[4];
+				key2[0] = Volume.CDM_contributionStatus;
+				key2[1] = Volume.DEFAULT_LANG;
+				key2[2] = VolumeEntry.VALIDATED_STATUS;
+				key2[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_NOT_EQUAL+1];			
+				myKeys.add(key2);			
+				String[] key3 = new String[4];
+				key3[0] = Volume.CDM_contributionStatus;
+				key3[1] = Volume.DEFAULT_LANG;
+				key3[2] = VolumeEntry.DELETED_STATUS;
+				key3[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_NOT_EQUAL+1];			
+				myKeys.add(key3);			
+			}
+			if (author !=null && !author.equals("")) {
+				String[] authorKey = new String[4];
+				authorKey[0] = Volume.CDM_contributionAuthor;
+				authorKey[1] = Volume.DEFAULT_LANG;
+				authorKey[2] = author;
+				authorKey[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_EXACT+1];			
+				myKeys.add(authorKey);
+			}
+			if (reviewer !=null && !reviewer.equals("")) {
+				String[] reviewerKey = new String[4];
+				reviewerKey[0] = Volume.CDM_contributionReviewer;
+				reviewerKey[1] = Volume.DEFAULT_LANG;
+				reviewerKey[2] = reviewer;
+				reviewerKey[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_EXACT+1];			
+				myKeys.add(reviewerKey);
+			}
+			if (reviewDate !=null && !reviewDate.equals("")) {
+				String[] reviewDateKey = new String[4];
+				reviewDateKey[0] = Volume.CDM_contributionReviewDate;
+				reviewDateKey[1] = Volume.DEFAULT_LANG;
+				reviewDateKey[2] = reviewDate;
+				reviewDateKey[3] = IQuery.QueryBuilderStrategy[reviewDateStrategy+1];			
+				myKeys.add(reviewDateKey);
+			}
+			if (creationDate !=null && !creationDate.equals("")) {
+				String[] creationDateKey = new String[4];
+				creationDateKey[0] = Volume.CDM_contributionCreationDate;
+				creationDateKey[1] = Volume.DEFAULT_LANG;
+				creationDateKey[2] = creationDate;
+				creationDateKey[3] = IQuery.QueryBuilderStrategy[creationDateStrategy+1];			
+				myKeys.add(creationDateKey);
+			}
+		
 
 		int step = STEP_DEFAULT;
-		if (null != lookup || this.getReferrer().indexOf(EditURL)>0) {
+		if (null != lookup || this.getReferrer() !=null && this.getReferrer().indexOf(EditURL)>0) {
 			step = STEP_LOOKUP;
 		}
 		else if (null != contribid && null != myGetParameter(VIEW_CONTRIB_PARAMETER)) {
@@ -281,74 +516,48 @@ public class ReviewContributions extends PapillonBasePO {
 
 		switch (step) {
 			case STEP_DEFAULT:
-				//addContributions(volume, author, headword, strategy, sortBy, queryString);
+				//addContributions(volume, author, headword, strategy, sortBy, queryString, offset);
 				break;
 			case STEP_LOOKUP:
-				addContributions(volume, author, headword, strategy, status, revisor, sortBy, queryString);
+				addContributions(volume, myKeys, myClauses, sortBy, queryString, offset);
 				break;
 			case STEP_VIEW:
-				addContribution(contribid, xslid, queryString);
+				addContribution(volume, contribid, xslid, queryString);
 				break;
 			case STEP_REMOVE:
 				contribid = myGetParameter(CONTRIBID_PARAMETER);
 				if (contribid !=null && !contribid.equals("")) {
-					Contribution myContrib = ContributionsFactory.findContributionByHandle(contribid);
+					VolumeEntry myContrib = VolumeEntriesFactory.findEntryByHandle(volume, contribid);
 					if (null != myContrib && !myContrib.isEmpty()) {
 						userMessage = "Contribution " +  myContrib.getHandle() + " / " +
 						myContrib.getHeadword() + " removed...";
-						volume = myContrib.getVolumeName();
 						myContrib.delete();
 					}
 				}
-				addContributions(volume, author, headword, strategy, status, revisor, sortBy, queryString);
+				addContributions(volume, myKeys, myClauses, sortBy, queryString, offset);
 				break;
 			case STEP_REVISE:
 				contribid = myGetParameter(CONTRIBID_PARAMETER);
 				if (contribid !=null && !contribid.equals("") && this.getUser().isSpecialist()) {
-					Contribution myContrib = ContributionsFactory.findContributionByHandle(contribid);
-					if (null != myContrib && !myContrib.isEmpty()
-					&& null != myContrib.getStatus() && myContrib.getStatus().equals(Contribution.FINISHED_STATUS)) {
-						VolumeEntry myEntry = VolumeEntriesFactory.findEntryByEntryId(myContrib.getVolumeName(),myContrib.getEntryId());
-						//Adding modifications in the XML code
-						myEntry.setModification(this.getUser().getLogin(),Contribution.REVISED_STATUS);
-						myEntry.save();
-						myContrib.setReviewer(this.getUser().getLogin());
-						myContrib.setReviewDate(new Date());
-						myContrib.setStatus(Contribution.REVISED_STATUS);
-						myContrib.save();
+					VolumeEntry myContrib = VolumeEntriesFactory.findEntryByHandle(volume, contribid);
+					if (null != myContrib && !myContrib.isEmpty()) {
+						myContrib.setReviewed(this.getUser());
 						userMessage = "Contribution " +  myContrib.getHandle() + " / " +
-						myContrib.getHeadword() + " revised";
-						volume = myContrib.getVolumeName();
+						myContrib.getHeadword() + " reviewed";
 					}
 				}
-				addContributions(volume, author, headword, strategy, status, revisor, sortBy, queryString);
+				addContributions(volume, myKeys, myClauses, sortBy, queryString, offset);
 				break;
 			case STEP_VALIDATE:
 				if (contribid !=null && !contribid.equals("") && this.getUser().isValidator()) {
-					Contribution myContrib = ContributionsFactory.findContributionByHandle(contribid);
-					if (null != myContrib && !myContrib.isEmpty() &&
-						null != myContrib.getStatus() && myContrib.getStatus().equals(Contribution.REVISED_STATUS)) {
-						VolumeEntry myEntry = VolumeEntriesFactory.findEntryByEntryId(myContrib.getVolumeName(),myContrib.getEntryId());
-						//Adding modifications in the XML code
-						myEntry.setModification(this.getUser().getLogin(),Contribution.VALIDATED_STATUS);
-						if (!myContrib.IsNewEntry()) {
-							VolumeEntry origEntry = VolumeEntriesFactory.findEntryByEntryId(myContrib.getVolumeName(),myContrib.getOriginalId());
-							origEntry.replaceData(myEntry);
-							origEntry.save();
-							myEntry.delete();
-							userMessage = "Data of entry " + origEntry.getHeadword() + " / " + origEntry.getId() + " replaced by data of contribution " +  myEntry.getId() +
-							" in the dictionary...";
-						}
-						else {
-							myEntry.save();
-							userMessage = "Contribution " +  myEntry.getId() + " / " +
+					VolumeEntry myContrib = VolumeEntriesFactory.findEntryByHandle(volume, contribid);
+					if (null != myContrib && !myContrib.isEmpty()) {
+						myContrib.setValidated(this.getUser());
+						userMessage = "Contribution " +  myContrib.getContributionId() + " / " +
 							myContrib.getHeadword() + " integrated in the dictionary...";
-						}
-						volume = myContrib.getVolumeName();
-						myContrib.delete();
 					}
 				}
-				addContributions(volume, author, headword, strategy, status, revisor, sortBy, queryString);
+				addContributions(volume, myKeys, myClauses, sortBy, queryString, offset);
 				break;
 			default:
 				break;
@@ -359,15 +568,23 @@ public class ReviewContributions extends PapillonBasePO {
                 PapillonLogger.writeDebugMsg(userMessage);
             }
            
-        addConsultForm(volume, author, headword, partialMatch, status, revisor);
+        addConsultForm(volume, status, author, reviewer, 
+			creationDate, creationDateStrategyString, 
+			reviewDate, reviewDateStrategyString, 
+			search1, search1text, strategyString1, 
+			search2, search2text, strategyString2);
 
         removeTemplateRows();
         
         //On rend le contenu correct
         return content.getElementFormulaire();
     }
-        protected void addConsultForm(String volume, String author, String headword, String strategy, String status, String revisor) 
-        throws fr.imag.clips.papillon.business.PapillonBusinessException, 
+        protected void addConsultForm(String volume, String status, String author, String reviewer, 
+			String creationDate, String creationDateStrategyString, 
+			String reviewDate, String reviewDateStrategyString, 
+			String search1, String search1text, String strategyString1, 
+			String search2, String search2text, String strategyString2)
+			throws fr.imag.clips.papillon.business.PapillonBusinessException, 
                 HttpPresentationException,
         java.io.UnsupportedEncodingException {
                     
@@ -379,7 +596,7 @@ public class ReviewContributions extends PapillonBasePO {
 		}
                     
            // Adding the appropriate source languages to the source list
-        HTMLOptionElement volumeOptionTemplate = content.getElementVolumeOptionTemplate();
+        XHTMLOptionElement volumeOptionTemplate = content.getElementVolumeOptionTemplate();
         Node volumeSelect = volumeOptionTemplate.getParentNode();
         volumeOptionTemplate.removeAttribute("id");
         // We assume that the option element has only one text child 
@@ -405,26 +622,66 @@ public class ReviewContributions extends PapillonBasePO {
 		}
         volumeSelect.removeChild(volumeOptionTemplate);
 
-		HTMLInputElement authorInput = content.getElementAUTHOR();
+		// author
+		XHTMLInputElement authorInput = content.getElementAUTHOR();
 		authorInput.setValue(author);
+		
+		// reviewer
+		XHTMLInputElement reviewerInput = content.getElementREVIEWER();
+		reviewerInput.setValue(reviewer);
 
-		HTMLInputElement headwordInput = content.getElementHEADWORD();
-		headwordInput.setValue(headword);
+		// creationDate
+		XHTMLInputElement creationDateInput = content.getElementInputCreationDate();
+		creationDateInput.setValue(creationDate);
+		this.setSelected(content.getElementStrategyCreationDate(), creationDateStrategyString);
+
+		// reviewDate
+		XHTMLInputElement reviewDateInput = content.getElementInputReviewDate();
+		reviewDateInput.setValue(reviewDate);
+		this.setSelected(content.getElementStrategyReviewDate(), reviewDateStrategyString);
 		
-		if (strategy !=null && !strategy.equals("")) {
-			HTMLInputElement strategyInput = content.getElementPartialMatch();
-			strategyInput.setChecked(true);		
-		}
 		
-		HTMLSelectElement statusSelect = (HTMLSelectElement) content.getElementSTATUS();
-		setSelected(statusSelect,status);
-		
-		HTMLInputElement revisorInput = content.getElementREVISOR();
-		revisorInput.setValue(revisor);
-		
+			// strategy
+			if (!this.IsClientWithLabelDisplayProblems()) {
+				this.setUnicodeLabels(content.getElementStrategy1());
+			}
+			this.setSelected(content.getElementStrategy1(), strategyString1);
+			
+			if (!this.IsClientWithLabelDisplayProblems()) {
+				this.setUnicodeLabels(content.getElementStrategy2());
+			}
+			this.setSelected(content.getElementStrategy2(), strategyString2);
+						
+			// Search1 field
+			if (search1 == null || search1.equals("")) {
+				search1 = Volume.CDM_headword;
+			}
+			if (!this.IsClientWithLabelDisplayProblems()) {
+				this.setUnicodeLabels(content.getElementSearch1());
+			}
+			this.setSelected(content.getElementSearch1(), search1);
+			
+			XHTMLInputElement search1Input = content.getElementSearch1text();
+			search1Input.setValue(search1text);
+			
+			// Search2 field
+			if (search2 == null || search2.equals("")) {
+				search2 = Volume.CDM_pos;
+			}
+			if (!this.IsClientWithLabelDisplayProblems()) {
+				this.setUnicodeLabels(content.getElementSearch2());
+			}
+			this.setSelected(content.getElementSearch2(), search2);
+			
+			XHTMLInputElement search2Input = content.getElementSearch2text();
+			search2Input.setValue(search2text);
+			
+			// status
+			XHTMLSelectElement statusSelect = (XHTMLSelectElement) content.getElementSTATUS();
+			this.setSelected(statusSelect,status);
     }
 
-    protected void addContribution(String contribid, String xslid, String queryString)
+    protected void addContribution(String volumeString, String contribid, String xslid, String queryString)
         throws PapillonBusinessException,
         ClassNotFoundException,
         HttpPresentationException,
@@ -434,11 +691,11 @@ public class ReviewContributions extends PapillonBasePO {
         javax.xml.parsers.ParserConfigurationException,
         javax.xml.transform.TransformerException {
 			Vector EntryVector = new Vector();
-			EntryVector.add(ContributionsFactory.findContributionByHandle(contribid));
-			addContributions(EntryVector, xslid, queryString);
+			EntryVector.add(VolumeEntriesFactory.findEntryByHandle(volumeString, contribid));
+			addContributions(EntryVector, xslid, queryString, 0);
 		}
 
-    protected void addContributions(String volume, String author, String headword, int strategy, String status, String revisor, String sortBy, String queryString)
+    protected void addContributions(String volume, Vector Keys1, Vector Keys2, String sortBy, String queryString, int offset)
         throws PapillonBusinessException,
         ClassNotFoundException,
         HttpPresentationException,
@@ -447,15 +704,16 @@ public class ReviewContributions extends PapillonBasePO {
         org.xml.sax.SAXException,
         javax.xml.parsers.ParserConfigurationException,
         javax.xml.transform.TransformerException {
-				String[] Headwords = null;
-				if (headword!=null && !headword.equals("")) {
-					Headwords = new String[]{headword};
+			Vector ContribVector = VolumeEntriesFactory.getVolumeNameEntriesVector(volume, Keys1, Keys2, null, offset);
+            if (null != ContribVector) {
+				if (sortBy !=null && !sortBy.equals("") && !sortBy.equals(VolumeEntriesFactory.HEADWORD_SORT)) {
+					VolumeEntriesFactory.sort(ContribVector, sortBy);
 				}
-			Collection EntryCollection = ContributionsFactory.getContributions(volume, author, strategy, Headwords, status, revisor, sortBy);
-			addContributions(EntryCollection, null, queryString);
+			}
+			addContributions(ContribVector, null, queryString, offset);
 		}
 
-	protected void addContributions(Collection EntryCollection, String xslid, String queryString)
+	protected void addContributions(Collection EntryCollection, String xslid, String queryString, int offset)
 		throws PapillonBusinessException,
 		ClassNotFoundException,
 		HttpPresentationException,
@@ -468,11 +726,10 @@ public class ReviewContributions extends PapillonBasePO {
 		// If there are too much entries ie > MaxDisplayedEntries,
         // we display a table of entries instead of the entries
 			if (null != EntryCollection && EntryCollection.size()>0) {
-				addEntryTable(EntryCollection, queryString);
+				addEntryTable(EntryCollection, queryString, offset);
 				if (EntryCollection.size() < MaxDisplayedEntries) {
 					for(Iterator entriesIterator = EntryCollection.iterator(); entriesIterator.hasNext();) {
-						Contribution myContrib = (Contribution)entriesIterator.next();
-						IAnswer myAnswer = DictionariesFactory.findEntryByEntryId(myContrib.getVolumeName(),myContrib.getEntryId());
+						IAnswer myAnswer = (VolumeEntry)entriesIterator.next();
 						addElement(XslTransformation.applyXslSheets(myAnswer, xslid),myAnswer.getVolumeName(),myAnswer.getHandle());
 					}
 				}
@@ -480,36 +737,39 @@ public class ReviewContributions extends PapillonBasePO {
 		}
     
 
-    protected void addEntryTable (Collection EntryCollection, String queryString)
+    protected void addEntryTable (Collection EntryCollection, String queryString, int offset)
         throws PapillonBusinessException,
         java.io.UnsupportedEncodingException {
 
             // On rÈcupËre les ÈlÈments du layout
+			String lookupParam = content.NAME_LOOKUP + "=" + "lookup";
+			String sortHref = "&" + lookupParam + queryString;
 			
-			HTMLAnchorElement volumeHeader = content.getElementVolumeHeaderAnchor();
-			volumeHeader.setHref(volumeHeader.getHref()+queryString);
-			HTMLAnchorElement authorHeader = content.getElementAuthorHeaderAnchor();
-			authorHeader.setHref(authorHeader.getHref()+queryString);
-			HTMLAnchorElement headwordHeader = content.getElementHeadwordHeaderAnchor();
-			headwordHeader.setHref(headwordHeader.getHref()+queryString);
-			HTMLAnchorElement creationdateHeader = content.getElementCreationdateHeaderAnchor();
-			creationdateHeader.setHref(creationdateHeader.getHref()+queryString);
-			HTMLAnchorElement statusHeader = content.getElementStatusHeaderAnchor();
-			statusHeader.setHref(statusHeader.getHref()+queryString);
-			HTMLAnchorElement reviewerHeader = content.getElementReviewerHeaderAnchor();
-			reviewerHeader.setHref(reviewerHeader.getHref()+queryString);
-			HTMLAnchorElement reviewdateHeader = content.getElementReviewdateHeaderAnchor();
-			reviewdateHeader.setHref(reviewdateHeader.getHref()+queryString);
+			XHTMLAnchorElement authorHeader = content.getElementAuthorHeaderAnchor();
+			authorHeader.setHref(authorHeader.getHref() + sortHref);
+			XHTMLAnchorElement headwordHeader = content.getElementHeadwordHeaderAnchor();
+			headwordHeader.setHref(headwordHeader.getHref()+sortHref);
+			XHTMLAnchorElement creationdateHeader = content.getElementCreationdateHeaderAnchor();
+			creationdateHeader.setHref(creationdateHeader.getHref()+sortHref);
+			XHTMLAnchorElement statusHeader = content.getElementStatusHeaderAnchor();
+			statusHeader.setHref(statusHeader.getHref()+sortHref);
+			XHTMLAnchorElement reviewerHeader = content.getElementReviewerHeaderAnchor();
+			reviewerHeader.setHref(reviewerHeader.getHref()+sortHref);
+			XHTMLAnchorElement reviewdateHeader = content.getElementReviewdateHeaderAnchor();
+			reviewdateHeader.setHref(reviewdateHeader.getHref()+sortHref);
 			
-            HTMLTableRowElement entryListRow = content.getElementEntryListRow();
-            HTMLElement theDate = content.getElementCreationDate();
-            HTMLAnchorElement viewContribAnchor = content.getElementViewContribAnchor();
-            HTMLAnchorElement viewXmlAnchor = content.getElementViewXmlAnchor();
-            HTMLAnchorElement editContribAnchor = content.getElementEditContribAnchor();
-            HTMLAnchorElement removeContribAnchor = content.getElementRemoveContribAnchor();
-            HTMLAnchorElement reviseContribAnchor = content.getElementReviseContribAnchor();
-            HTMLAnchorElement validateContribAnchor = content.getElementValidateContribAnchor();
-            HTMLElement removeMessageElement = content.getElementRemoveMessage();
+            XHTMLTableRowElement entryListRow = content.getElementEntryListRow();
+            XHTMLElement theDate = content.getElementCreationDate();
+            XHTMLAnchorElement viewContribAnchor = content.getElementViewContribAnchor();
+            XHTMLAnchorElement viewXmlAnchor = content.getElementViewXmlAnchor();
+            XHTMLAnchorElement editContribAnchor = content.getElementEditContribAnchor();
+            XHTMLAnchorElement removeContribAnchor = content.getElementRemoveContribAnchor();
+            XHTMLAnchorElement reviseContribAnchor = content.getElementReviseContribAnchor();
+            XHTMLAnchorElement validateContribAnchor = content.getElementValidateContribAnchor();
+            XHTMLElement removeMessageElement = content.getElementRemoveMessage();
+
+			XHTMLAnchorElement previousEntriesAnchor = content.getElementPreviousEntriesAnchor();
+			XHTMLAnchorElement nextEntriesAnchor = content.getElementNextEntriesAnchor();
 
             theDate.removeAttribute("id");
             viewContribAnchor.removeAttribute("id");
@@ -520,7 +780,24 @@ public class ReviewContributions extends PapillonBasePO {
             validateContribAnchor.removeAttribute("id");
             removeMessageElement.removeAttribute("id");
 			
-						
+			
+			String href =  this.getUrl() + "?" + lookupParam + queryString; // + "&" + OFFSET_PARAMETER + "=";
+
+		if (offset >= DictionariesFactory.MaxRetrievedEntries) {
+			int prevOffset = offset-DictionariesFactory.MaxRetrievedEntries;
+			String oldOffsetString = OFFSET_PARAMETER + "=" + offset;
+			String newOffsetString = OFFSET_PARAMETER + "=" + prevOffset;
+			previousEntriesAnchor.setHref(href.replaceFirst(oldOffsetString, newOffsetString));
+		}
+		else {
+			previousEntriesAnchor.setHref("");
+			content.setTextPreviousEntriesAnchor("");			
+		}
+		int nextOffset = offset+DictionariesFactory.MaxRetrievedEntries;
+		String oldOffsetString = OFFSET_PARAMETER + "=" +  offset;
+		String newOffsetString = OFFSET_PARAMETER + "=" + nextOffset;
+		nextEntriesAnchor.setHref(href.replaceFirst(oldOffsetString, newOffsetString));
+
 			String removeMessage = Utility.getText(removeMessageElement);
 
             // On rÈcupËre le noeud contenant la table...
@@ -529,9 +806,8 @@ public class ReviewContributions extends PapillonBasePO {
 				PapillonLogger.writeDebugMsg("addEntryTable " + EntryCollection.size());
 				content.setTextContributionsCount("" + EntryCollection.size());
 				for(Iterator entriesIterator = EntryCollection.iterator(); entriesIterator.hasNext();) {
-                    Contribution myContrib = (Contribution) entriesIterator.next();
+                    VolumeEntry myContrib = (VolumeEntry) entriesIterator.next();
 					if (myContrib !=null && !myContrib.isEmpty()) {
-					VolumeEntry myEntry = VolumeEntriesFactory.findEntryByEntryId(myContrib.getVolumeName(),myContrib.getEntryId());
 					XslSheet xmlSheet = XslSheetFactory.findXslSheetByName("XML");
                         String xslid = "";
                         if (null != xmlSheet && !xmlSheet.isEmpty()) {
@@ -540,44 +816,38 @@ public class ReviewContributions extends PapillonBasePO {
 					// FIXME: hack for the GDEF estonian volume
 						String headword = myContrib.getHeadword();
 						if (myContrib.getVolumeName().equals("GDEF_est")) {
-							if (myEntry!=null && !myEntry.isEmpty()) {
-								String particule = myEntry.getParticule();
-								if(particule!=null && !particule.equals("")) {
-									headword = particule + " " + headword;
-								}
+							String particule = myContrib.getParticule();
+							if(particule!=null && !particule.equals("")) {
+								headword = particule + " " + headword;
 							}
 						}
                         content.setTextViewContribText(headword);
                         viewContribAnchor.setHref(this.getUrl() + "?"
-												  + VIEW_CONTRIB_PARAMETER + "=on&"
-                                                  + CONTRIBID_PARAMETER + "="
-                                                  + myContrib.getHandle()
+												  + VIEW_CONTRIB_PARAMETER + "=on"
+                                                  + "&" + CONTRIBID_PARAMETER + "=" + myContrib.getHandle()
+                                                  + "&" + content.NAME_VOLUME + "=" + myContrib.getVolumeName()
 												  + queryString);
 
                         viewXmlAnchor.setHref(this.getUrl() + "?"
-											  + VIEW_CONTRIB_PARAMETER + "=on&"
-                                              + CONTRIBID_PARAMETER + "="
-                                              + myContrib.getHandle() + "&"
-                                              + XSLID_PARAMETER + "="
-                                              + xslid
+											  + VIEW_CONTRIB_PARAMETER + "=on"
+                                              + "&" + CONTRIBID_PARAMETER + "=" + myContrib.getHandle()
+											  + "&" + content.NAME_VOLUME + "=" + myContrib.getVolumeName()
+						                      + "&" + XSLID_PARAMETER + "="  + xslid
 											  + queryString);
 
                         content.setTextVolumeName(myContrib.getVolumeName());
                         content.setTextAuthor(myContrib.getAuthor());
-                        content.setTextCreationDate(myContrib.getCreationDate().toString());
+                        content.setTextCreationDate(Utility.PapillonShortDateFormat.format(myContrib.getCreationDate()));
                         content.setTextStatus(myContrib.getStatus());
 												
 						// edit contrib
 						// FIXME hack because we cannot reedit yet axies ...
 						if (!myContrib.getVolumeName().equals(PapillonPivotFactory.VOLUMENAME)
-							&& myEntry!=null && !myEntry.isEmpty()
-							&& (this.getUser().isInNormalGroups(myContrib.getGroupsArray())
+							&& (this.getUser().isInNormalGroups(myContrib.getGroups())
 							|| this.getUser().isValidator())) {
 							editContribAnchor.setHref(EditURL + "?"
-                                                  + EditVolumeParameter + "="
-                                                  + myContrib.getVolumeName() + "&"
-                                                  + EditHandleParameter + "="
-                                                  + myEntry.getHandle());
+                                                  + EditVolumeParameter + "=" + myContrib.getVolumeName()
+												  + "&" + EditHandleParameter + "=" + myContrib.getHandle());
 						}
 						else {
 							content.setTextEditMessage("");
@@ -585,12 +855,12 @@ public class ReviewContributions extends PapillonBasePO {
 						
 						// remove contrib
 						if (this.getUser().getLogin().equals(myContrib.getAuthor())
-							|| this.getUser().isInNormalGroups(myContrib.getGroupsArray())
+							|| this.getUser().isInNormalGroups(myContrib.getGroups())
 							|| this.getUser().isValidator()) {
 							removeContribAnchor.setHref(this.getUrl() + "?"
-								   + REMOVE_CONTRIB_PARAMETER + "=on&"
-								   + CONTRIBID_PARAMETER + "="
-								   + myContrib.getHandle()
+								   + REMOVE_CONTRIB_PARAMETER + "=on"
+								   + "&" + CONTRIBID_PARAMETER + "=" + myContrib.getHandle()
+								   + "&" + content.NAME_VOLUME + "=" + myContrib.getVolumeName()
 								   + queryString);
 							content.setTextRemoveMessage(removeMessage);
 						}
@@ -601,7 +871,7 @@ public class ReviewContributions extends PapillonBasePO {
 						// revisions on the contrib
 						if (myContrib.getReviewer()!=null && myContrib.getReviewDate()!=null) {
 							content.setTextReviewer(myContrib.getReviewer());
-							content.setTextReviewDate(myContrib.getReviewDate().toString());
+							content.setTextReviewDate(Utility.PapillonShortDateFormat.format(myContrib.getReviewDate()));
 						}
 						else {
 							content.setTextReviewer("");
@@ -609,25 +879,25 @@ public class ReviewContributions extends PapillonBasePO {
 						}
 						// action on contrib
 						if (myContrib.getStatus()!=null) {
-							if (myContrib.getStatus().equals(Contribution.FINISHED_STATUS)
+							if (myContrib.getStatus().equals(VolumeEntry.FINISHED_STATUS)
 								&& this.getUser().isSpecialist() 
-								&& this.getUser().isInNormalGroups(myContrib.getGroupsArray())) {
+								&& this.getUser().isInNormalGroups(myContrib.getGroups())) {
 								reviseContribAnchor.setHref(this.getUrl() + "?"
-									 + REVISE_CONTRIB_PARAMETER + "=on&"
-									 + CONTRIBID_PARAMETER + "="
-									 + myContrib.getHandle()
+									 + REVISE_CONTRIB_PARAMETER + "=on"
+									 + "&" + CONTRIBID_PARAMETER + "=" + myContrib.getHandle()
+								     + "&" + content.NAME_VOLUME + "=" + myContrib.getVolumeName()
 								     + queryString);
 								reviseContribAnchor.setAttribute("class","");	 
 							}
 							else {
 								reviseContribAnchor.setAttribute("class","hidden");	 
 							}
-							if (myContrib.getStatus().equals(Contribution.REVISED_STATUS)
+							if (myContrib.getStatus().equals(VolumeEntry.REVIEWED_STATUS)
 								&& this.getUser().isValidator()) {
 								validateContribAnchor.setHref(this.getUrl() + "?"
-									 + VALIDATE_CONTRIB_PARAMETER + "=on&"
-									 + CONTRIBID_PARAMETER + "="
-									 + myContrib.getHandle()
+									 + VALIDATE_CONTRIB_PARAMETER + "=on"
+									 + "&" + CONTRIBID_PARAMETER + "=" + myContrib.getHandle()
+								     + "&" + content.NAME_VOLUME + "=" + myContrib.getVolumeName()
 								     + queryString);
 								validateContribAnchor.removeAttribute("class");	 
 							}
@@ -636,7 +906,7 @@ public class ReviewContributions extends PapillonBasePO {
 							}
 						}
                         
-                        HTMLElement clone = (HTMLElement)entryListRow.cloneNode(true);
+                        XHTMLElement clone = (XHTMLElement)entryListRow.cloneNode(true);
                         //      we have to take off the id attribute because we did not take it off the original
                         clone.removeAttribute("id");
                         entryTable.appendChild(clone);
@@ -651,13 +921,13 @@ public class ReviewContributions extends PapillonBasePO {
         java.io.IOException {
 
             //for the entry content
-            HTMLTableRowElement originalEntryRow = content.getElementEntryRow();
+            XHTMLTableRowElement originalEntryRow = content.getElementEntryRow();
             Node entryTable=originalEntryRow.getParentNode();
             //for the entry content
-            HTMLTableRowElement entryRow = (HTMLTableRowElement)originalEntryRow.cloneNode(true);
+            XHTMLTableRowElement entryRow = (XHTMLTableRowElement)originalEntryRow.cloneNode(true);
 
             //for the lexie content
-            HTMLTableCellElement entryCell= (HTMLTableCellElement)entryRow.getFirstChild();
+            XHTMLTableCellElement entryCell= (XHTMLTableCellElement)entryRow.getFirstChild();
 
             entryRow.removeAttribute("id");
             entryCell.removeAttribute("id");
@@ -668,8 +938,6 @@ public class ReviewContributions extends PapillonBasePO {
             //entryTable.removeChild(entryRow);
         }
 
-    
-    
     
     protected void removeTemplateRows() {
         // EntryListRow

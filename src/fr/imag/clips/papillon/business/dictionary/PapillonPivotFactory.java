@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.6  2005/06/15 16:48:27  mangeot
+ * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
+ *
  * Revision 1.5  2005/05/24 12:51:21  serasset
  * Updated many aspect of the Papillon project to handle lexalp project.
  * 1. Layout is now parametrable in the application configuration file.
@@ -199,13 +202,12 @@ public class PapillonPivotFactory {
         // FIXME: this should be a special type in order to cope with eurowordnet, where eng is the pivot language.
         Volume[] myVolumes = VolumesFactory.getVolumesArray(dict.getName(), "axi", null);
         // iterate over each volume and look for axies linking to the given lexie...
-        Collection axies = new HashSet();
+		Collection axiesTable = null;
         for (int i=0; i < myVolumes.length; i++) {
             Volume vol = myVolumes[i];
-            Vector axiesTable = IndexFactory.getAxiesPointingTo(dict, vol, lexieId, sourceLanguage);
-            axies.addAll(ContributionsFactory.checkContributions(myUser, axiesTable));
+             axiesTable = (Collection) IndexFactory.getAxiesPointingTo(dict, vol, lexieId, sourceLanguage);
         }
-        return axies;
+        return axiesTable;
     }
     
 //    public static Collection findAxiesByLexieID(Dictionary dict, String lexieId, User myUser)
@@ -383,7 +385,6 @@ public class PapillonPivotFactory {
 				// if the axie is linking only 2 lexies, we delete it anyway!
 					if (lexies.values().size()<3) {
 						PapillonLogger.writeDebugMsg("Delete axie: " + myAxie.getHandle());
-						deleteVector(ContributionsFactory.getContributionsByEntryId(null, myAxie.getHandle()));
 						myAxie.delete();
 					}
 					// if the axie is linking more than 2 lexies, we delete the link only!

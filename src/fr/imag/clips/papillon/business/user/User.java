@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.7  2005/06/15 16:48:27  mangeot
+ * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
+ *
  * Revision 1.6  2005/05/24 12:51:22  serasset
  * Updated many aspect of the Papillon project to handle lexalp project.
  * 1. Layout is now parametrable in the application configuration file.
@@ -17,6 +20,10 @@
  * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
  * 5. It is now possible to give a name to the cookie key in the app conf file
  * 6. Several bug fixes.
+ *
+ * Revision 1.5.4.1  2005/06/09 11:07:45  mangeot
+ * Deleted the countEntriesCache. entries counts are not cached any more.
+ * Fixed a few bugs.
  *
  * Revision 1.5  2005/04/15 11:42:52  mangeot
  * Fixed a bug in isInNormalGroups when groups can be empty
@@ -421,7 +428,8 @@ public class User implements com.lutris.appserver.server.user.User {
 			if (groups != null) {
 				for (int i=0;i<groups.length;i++) {
 					String tmpGroup = groups[i];
-					if (!tmpGroup.equals("") &&
+					if (tmpGroup!=null &&
+						!tmpGroup.equals("") &&
 						!tmpGroup.equals(ADMIN_GROUP) &&
 						!tmpGroup.equals(SPECIALIST_GROUP) &&
 						!tmpGroup.equals(VALIDATOR_GROUP)) {

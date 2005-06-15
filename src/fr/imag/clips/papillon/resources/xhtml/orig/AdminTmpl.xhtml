@@ -40,15 +40,6 @@
   </tr>
 </table>
 
-<h3>Volumes Entries Count Cache</h3>
-<table width="600" border="0" cellspacing="0" cellpadding="0" summary="Formulaire">
-  <tr>
-    <td><b>&nbsp;Action:</b></td> 
-    <td><input name="ResetEntriesCountCache" type="submit" value="Reset"/></td> 
-  </tr>
-</table>
-	
-
 <h3>Edition Interface Description Cache</h3>
 <table width="600" border="0" cellspacing="0" cellpadding="0" summary="Formulaire">
   <tr>
@@ -80,12 +71,27 @@
 <table width="600" border="0" cellspacing="0" cellpadding="0" summary="Formulaire">
   <tr>
     <td><b>&nbsp;Action:</b></td> 
-    <td><input name="SetHTMLDomCaches" type="submit" value="Set"/>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		<input name="UnsetHTMLDomCaches" type="submit" value="Unset"/>
+    <td><label for="HTMLDomCaches">Cache activated:</label>
+	<input id="HTMLDomCaches" name="HTMLDomCaches" type="checkbox" value="HTMLDomCaches"/>
+		&nbsp;&nbsp;
+		<input name="SetHTMLDomCaches" type="submit" value="Validate"/>
 	</td> 
   </tr>
 </table>
+<hr/>
+
+<h3 style="text-align:center">Data edition</h3>
+<table width="600" border="0" cellspacing="0" cellpadding="0" summary="Formulaire">
+  <tr>
+    <td><b>&nbsp;Action:</b></td> 
+    <td><label for="EditData">Edition activated:</label>
+	<input id="EditData" name="EditData" type="checkbox" value="EditData"/>
+		&nbsp;&nbsp;
+		<input name="SetEditData" type="submit" value="Validate"/>
+	</td> 
+  </tr>
+</table>
+
 
 </form>
 </div>

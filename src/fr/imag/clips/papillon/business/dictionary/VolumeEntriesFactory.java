@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.10  2005/06/15 16:48:27  mangeot
+ * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
+ *
  * Revision 1.9  2005/05/24 12:51:21  serasset
  * Updated many aspect of the Papillon project to handle lexalp project.
  * 1. Layout is now parametrable in the application configuration file.
@@ -11,6 +14,53 @@
  * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
  * 5. It is now possible to give a name to the cookie key in the app conf file
  * 6. Several bug fixes.
+ *
+ * Revision 1.8.4.15  2005/06/15 10:08:06  mangeot
+ * Removed the AND/OR connector, now only AND criteria can be added for dict lookup
+ *
+ * Revision 1.8.4.14  2005/06/14 11:56:16  mangeot
+ * Added a new page ChangeAuthor for changing the author of a set of previously selected contributions
+ *
+ * Revision 1.8.4.13  2005/06/10 14:00:40  mangeot
+ * Changed Edit to Copy and Edit when a copy of the original entry is done before editing
+ *
+ * Revision 1.8.4.12  2005/06/09 11:28:24  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.8.4.11  2005/06/09 11:07:45  mangeot
+ * Deleted the countEntriesCache. entries counts are not cached any more.
+ * Fixed a few bugs.
+ *
+ * Revision 1.8.4.10  2005/06/01 08:38:43  mangeot
+ * Multi bug correction + added the possibility of disabling data edition
+ * via the Admin.po page
+ *
+ * Revision 1.8.4.9  2005/05/27 11:53:21  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.8.4.8  2005/05/20 17:02:22  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.8.4.7  2005/05/20 16:54:53  mangeot
+ * Added ExportVolume functionnality
+ *
+ * Revision 1.8.4.6  2005/05/20 14:43:48  mangeot
+ * Repair mismatch in branch tag
+ *
+ * Revision 1.8.4.5  2005/05/19 09:35:27  mangeot
+ * Doing on ly one sql request when querying the volumes
+ *
+ * Revision 1.8.4.4  2005/05/14 11:56:28  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.8.4.3  2005/05/11 15:34:00  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.8.4.2  2005/04/29 17:35:12  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.8.4.1  2005/04/29 14:50:25  mangeot
+ * New version with contribution infos embedded in the XML of the entries
  *
  * Revision 1.8  2005/04/18 10:50:26  mangeot
  * Bug fix when displaying with IExplorer,
@@ -126,11 +176,23 @@ import org.w3c.dom.NodeList;
  */
 public class VolumeEntriesFactory {
 	
+	
+	public final static String AUTHOR_SORT = "AUTHOR_SORT";
+	public final static String CREATION_DATE_SORT = "CREATION_DATE_SORT";
+	public final static String HEADWORD_SORT = "HEADWORD_SORT";
+	public final static String ORIGINAL_CONTRIBUTION_ID_SORT = "ORIGINAL_CONTRIBUTION_ID_SORT";
+	public final static String REVIEW_DATE_SORT = "REVIEW_DATE_SORT";
+	public final static String REVIEWER_SORT = "REVIEWER_SORT";
+	public final static String STATUS_SORT = "STATUS_SORT";
+	
 	// variables used in setGDEFFrenchTranslations
 	protected final static String VOLUME_GDEF_est = "GDEF_est";
 	protected final static String VOLUME_GDEF_fra = "GDEF_fra";
+	protected final static String VOLUME_GDEF_tes = "GDEF_tes";
 	protected final static String VOLUME_GDEF_est_sep = "#";
 	protected final static String VOLUME_GDEF_est_prefix = "fra.";
+	
+	protected static com.lutris.dods.builder.generator.query.RDBColumn[] Columns = new com.lutris.dods.builder.generator.query.RDBColumn[1];
 	
     /**
         * The getVolumeEntriesArray method performs a database query to
@@ -142,15 +204,15 @@ public class VolumeEntriesFactory {
      */
 	
 	
-	public static Vector getVolumeEntriesVector(Dictionary dict, Volume volume, Vector Keys,String any, int strategy, int offset) throws PapillonBusinessException {
+	public static Vector getVolumeEntriesVector(Dictionary dict, Volume volume, Vector Keys1, Vector Keys2, String any, int offset) throws PapillonBusinessException {
         Vector MyTable = null;
 		PapillonLogger.writeDebugMsg("getVolumeEntriesVector: " + volume.getName());
         if (null != volume) {
             if (volume.getLocation().equals(Volume.LOCAL_LOCATION)) {
-                MyTable = getDbTableEntriesVector(dict, volume,Keys,any,strategy, offset);
+                MyTable = getDbTableEntriesVector(dict, volume,Keys1, Keys2, any, offset);
             }
             else if (volume.getLocation().equals(Volume.REMOTE_LOCATION)) {
-                MyTable = getRemoteVolumeEntriesVector(dict, volume, Keys, any);
+                MyTable = getRemoteVolumeEntriesVector(dict, volume, Keys1, Keys2, any);
             }
         }
         return MyTable;
@@ -159,7 +221,8 @@ public class VolumeEntriesFactory {
 	
     public static Vector getRemoteVolumeEntriesVector(Dictionary dict,
                                                       Volume volume,
-                                                      Vector Keys,
+                                                      Vector Keys1,
+                                                      Vector Keys2,
                                                       String any) 
 		throws PapillonBusinessException {
 			Vector theEntries = new Vector();
@@ -184,67 +247,326 @@ public class VolumeEntriesFactory {
 		}
 	
     public static Vector getVolumeNameEntriesVector(String volumeName,
-                                                    Vector Keys,
-													String any,
-                                                    int strategy
-                                                    )
+                                                    Vector Keys1,
+                                                    Vector Keys2,
+													String any)
         throws PapillonBusinessException {
-            Volume volume;
-            Dictionary dict;
-            try {
-                volume = VolumesFactory.findVolumeByName(volumeName);
-                dict = DictionariesFactory.findDictionaryByName(volume.getDictname());
-            }
-            catch(Exception ex) {
-                throw new PapillonBusinessException("Exception in getVolumeNameEntriesVector()", ex);
-            }
-            return getDbTableEntriesVector(dict, volume, Keys, any, strategy, 0);
+			return getVolumeNameEntriesVector(volumeName, Keys1, Keys2, any, 0);
+		}
+	
+    public static Vector getVolumeNameEntriesVector(String volumeName,
+                                                    Vector Keys,
+                                                    Vector Clauses,
+													String any,
+													int offset)
+        throws PapillonBusinessException {
+			Vector resultVector = null;
+			if (volumeName != null && !volumeName.equals("")) {
+				Volume volume;
+				Dictionary dict;
+				try {
+					volume = VolumesFactory.findVolumeByName(volumeName);
+					if (volume != null && !volume.isEmpty()) {
+						dict = DictionariesFactory.findDictionaryByName(volume.getDictname());
+						if (dict != null && !dict.isEmpty()) {
+							resultVector = getDbTableEntriesVector(dict, volume, Keys, Clauses, any, offset);
+						}
+					}
+				}
+				catch(Exception ex) {
+					throw new PapillonBusinessException("Exception in getVolumeNameEntriesVector()", ex);
+				}
+			}
+			return resultVector;
         }
 	
-    protected static Vector getDbTableEntriesVector(Dictionary dict, Volume volume, Vector Keys, String any, int strategy, int offset) throws PapillonBusinessException {
-        Vector theEntries = new Vector();
+    protected static Vector getDbTableEntriesVector(Dictionary dict, Volume volume, Vector Keys, Vector Clauses, String any, int offset) throws PapillonBusinessException {
+        Vector theEntries = theEntries = new Vector();
 		
-		if	 (any == null || any.equals("")) {
-			theEntries = IndexFactory.getEntriesVector(dict, volume, Keys, strategy, offset);
-		}
-		// MM-FIXME: a revoir
-		else
+		String volumeTableName = volume.getDbname();
+		if (null != volumeTableName) {
 			try {
-				String volumeTable = volume.getDbname();
-				if (null != volumeTable) {
-					String CSC = QueryBuilder.CASE_SENSITIVE_CONTAINS;
-					fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Sequencial request table: " + volumeTable + " any: " + any);
-						
-					// consultation of a local volume
-					VolumeEntryQuery query = new VolumeEntryQuery(volumeTable, CurrentDBTransaction.get());
-						
-					if (!any.equals("")) {
-						query.getQueryBuilder().addWhereClause("xmlcode", any, CSC);
+				com.lutris.dods.builder.generator.query.QueryBuilder myQueryBuilder = null; 
+				com.lutris.dods.builder.generator.query.RDBColumn entryidColumn = IndexDO.getEntryIdColumn(volume.getIndexDbname());
+				com.lutris.dods.builder.generator.query.RDBColumn keyColumn = IndexDO.getKeyColumn(volume.getIndexDbname());
+				com.lutris.dods.builder.generator.query.RDBColumn langColumn = IndexDO.getLangColumn(volume.getIndexDbname());
+				com.lutris.dods.builder.generator.query.RDBColumn valueColumn = IndexDO.getValueColumn(volume.getIndexDbname());
+				com.lutris.dods.builder.generator.query.RDBTable volumeEntryTable = new com.lutris.dods.builder.generator.query.RDBTable(volumeTableName);
+				VolumeEntryDO myDO = VolumeEntryDO.createVirgin(volumeTableName);
+				com.lutris.dods.builder.generator.query.RDBColumn objectidColumn = new com.lutris.dods.builder.generator.query.RDBColumn(volumeEntryTable, myDO.getOIdColumnName());
+				// consultation of a local volume
+				VolumeEntryQuery query = new VolumeEntryQuery(volumeTableName, CurrentDBTransaction.get());
+				
+				// debug
+				//query.getQueryBuilder().debug();
+				
+				// looking for any string on the XML code, thus Sequencial request
+				if (any !=null && !any.equals("")) {
+					fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Sequencial request table: " + volumeTableName + " any: " + any);
+					query.getQueryBuilder().addWhereClause("xmlcode", any, QueryBuilder.CASE_SENSITIVE_CONTAINS);
+				}
+				else {
+					fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Index request table: " + volumeTableName);
+				}
+				
+				if (Keys != null) {
+					for (java.util.Enumeration enumKeys = Keys.elements(); enumKeys.hasMoreElements();) {
+						String[] key = (String[]) enumKeys.nextElement();
+						if (key!=null && key[2] !=null && !key[2].equals("")) {
+							myQueryBuilder = new com.lutris.dods.builder.generator.query.QueryBuilder(Columns);
+							if (IndexFactory.databaseVendor != null) {
+								myQueryBuilder.setDatabaseVendor(IndexFactory.databaseVendor);
+							} else {
+								myQueryBuilder.setDatabaseVendor();
+							}
+							myQueryBuilder.addWhere(keyColumn, key[0], QueryBuilder.EQUAL);
+							if (key[1] !=null && !key[1].equals("")) {
+								myQueryBuilder.addWhere(langColumn, key[1], QueryBuilder.EQUAL);
+							}
+							myQueryBuilder.addWhere(valueColumn, key[2],  key[3]);
+							myQueryBuilder.resetSelectedFields();
+							myQueryBuilder.select(entryidColumn);
+							query.getQueryBuilder().addWhereIn(objectidColumn, myQueryBuilder);
+						}
 					}
-						
-					//query.addOrderByHeadword(true);
-					query.getQueryBuilder().setMaxRows(DictionariesFactory.MaxRetrievedEntries);
+				}
+				
+				if (Clauses != null) {
+					for (java.util.Enumeration enumClauses = Clauses.elements(); enumClauses.hasMoreElements();) {
+						String clause = (String) enumClauses.nextElement();
+						if (clause!=null && !clause.equals("")) {
+							myQueryBuilder = new com.lutris.dods.builder.generator.query.QueryBuilder(Columns);
+							if (IndexFactory.databaseVendor != null) {
+								myQueryBuilder.setDatabaseVendor(IndexFactory.databaseVendor);
+							} else {
+								myQueryBuilder.setDatabaseVendor();
+							}
+							myQueryBuilder.addWhere(clause);
+							myQueryBuilder.resetSelectedFields();
+							myQueryBuilder.select(entryidColumn);
+							query.getQueryBuilder().addWhereIn(objectidColumn, myQueryBuilder);
+						}
+					}
+				}
+				
+				query.getQueryBuilder().setMaxRows(DictionariesFactory.MaxRetrievedEntries);
+				query.getQueryBuilder().addEndClause("OFFSET " + offset);
+				query.getQueryBuilder().addOrderByColumn(volume.getSourceLanguage()+"_sort(headword)","");
+				VolumeEntryDO[] DOarray = query.getDOArray();
+				if (null != DOarray) {
+					for (int j=0; j < DOarray.length; j++) {
+						VolumeEntry tempEntry = new VolumeEntry(dict, volume,DOarray[j]);
+						theEntries.add(tempEntry);
+					}
+				}
+			}
+			catch(Exception ex) {
+				throw new PapillonBusinessException("Exception in getDbtableEntriesVector()", ex);
+			}
+		}
+		return theEntries;
+	}
+	
+    public static int getDbTableEntriesCount(Volume volume, Vector Keys, Vector clausesVector, String any) throws PapillonBusinessException {
+        int countEntries = 0;
+		
+		String volumeTableName = volume.getDbname();
+		if (null != volumeTableName) {
+			try {
+				com.lutris.dods.builder.generator.query.QueryBuilder myQueryBuilder = null; 
+				com.lutris.dods.builder.generator.query.RDBColumn entryidColumn = IndexDO.getEntryIdColumn(volume.getIndexDbname());
+				com.lutris.dods.builder.generator.query.RDBColumn keyColumn = IndexDO.getKeyColumn(volume.getIndexDbname());
+				com.lutris.dods.builder.generator.query.RDBColumn langColumn = IndexDO.getLangColumn(volume.getIndexDbname());
+				com.lutris.dods.builder.generator.query.RDBColumn valueColumn = IndexDO.getValueColumn(volume.getIndexDbname());
+				com.lutris.dods.builder.generator.query.RDBTable volumeEntryTable = new com.lutris.dods.builder.generator.query.RDBTable(volumeTableName);
+				VolumeEntryDO myDO = VolumeEntryDO.createVirgin(volumeTableName);
+				com.lutris.dods.builder.generator.query.RDBColumn objectidColumn = new com.lutris.dods.builder.generator.query.RDBColumn(volumeEntryTable, myDO.getOIdColumnName());
+				VolumeEntryQuery query = new VolumeEntryQuery(volumeTableName, CurrentDBTransaction.get());
+				if (any !=null && !any.equals("")) {
+					fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Sequencial request table: " + volumeTableName + " any: " + any);
+					query.getQueryBuilder().addWhereClause("xmlcode", any, QueryBuilder.CASE_SENSITIVE_CONTAINS);
+				}
+				else {
+					fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Index request table: " + volumeTableName);
+				}
+				if (Keys !=null) {
+					for (java.util.Enumeration enumKeys = Keys.elements(); enumKeys.hasMoreElements();) {
+						String[] key = (String[]) enumKeys.nextElement();
+						if (key!=null && key[2] !=null && !key[2].equals("")) {
+							myQueryBuilder = new com.lutris.dods.builder.generator.query.QueryBuilder(Columns);
+							if (IndexFactory.databaseVendor != null) {
+								myQueryBuilder.setDatabaseVendor(IndexFactory.databaseVendor);
+							} else {
+								myQueryBuilder.setDatabaseVendor();
+							}
+							myQueryBuilder.addWhere(keyColumn, key[0], QueryBuilder.EQUAL);
+							if (key[1] !=null && !key[1].equals("")) {
+								myQueryBuilder.addWhere(langColumn, key[1], QueryBuilder.EQUAL);
+							}
+							myQueryBuilder.addWhere(valueColumn, key[2],  key[3]);
+							myQueryBuilder.resetSelectedFields();
+							myQueryBuilder.select(entryidColumn);
+							query.getQueryBuilder().addWhereIn(objectidColumn, myQueryBuilder);
+						}
+					}
+				}
+				
+				if (clausesVector != null) {
+					for (java.util.Enumeration enumClauses = clausesVector.elements(); enumClauses.hasMoreElements();) {
+						String clause = (String) enumClauses.nextElement();
+						if (clause!=null && !clause.equals("")) {
+							myQueryBuilder = new com.lutris.dods.builder.generator.query.QueryBuilder(Columns);
+							if (IndexFactory.databaseVendor != null) {
+								myQueryBuilder.setDatabaseVendor(IndexFactory.databaseVendor);
+							} else {
+								myQueryBuilder.setDatabaseVendor();
+							}
+							myQueryBuilder.addWhere(clause);
+							myQueryBuilder.resetSelectedFields();
+							myQueryBuilder.select(entryidColumn);
+							query.getQueryBuilder().addWhereIn(objectidColumn, myQueryBuilder);
+						}
+					}
+				}
+				countEntries += query.getCount();
+			}
+			catch(Exception ex) {
+				throw new PapillonBusinessException("Exception in getDbtableEntriesCount()", ex);
+			}
+		}
+		return countEntries;
+	}
+	
+    protected static void processVolume(Dictionary dict, Volume volume, Vector myKeys, Vector myClauses, IVolumeEntryProcessor myProcessor) throws PapillonBusinessException {
+		final int MaxRetrievedEntries = 500;
+		int offset = 0;
+		boolean stop = false;
+		try {
+			String volumeTableName = volume.getDbname();
+			if (null != volumeTableName) {
+				fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Sequencial request table: " + volumeTableName);
+				
+				com.lutris.dods.builder.generator.query.QueryBuilder myQueryBuilder = null; 
+				com.lutris.dods.builder.generator.query.RDBColumn entryidColumn = IndexDO.getEntryIdColumn(volume.getIndexDbname());
+				com.lutris.dods.builder.generator.query.RDBColumn keyColumn = IndexDO.getKeyColumn(volume.getIndexDbname());
+				com.lutris.dods.builder.generator.query.RDBColumn langColumn = IndexDO.getLangColumn(volume.getIndexDbname());
+				com.lutris.dods.builder.generator.query.RDBColumn valueColumn = IndexDO.getValueColumn(volume.getIndexDbname());
+				com.lutris.dods.builder.generator.query.RDBTable volumeEntryTable = new com.lutris.dods.builder.generator.query.RDBTable(volumeTableName);
+				VolumeEntryDO myDO = VolumeEntryDO.createVirgin(volumeTableName);
+				com.lutris.dods.builder.generator.query.RDBColumn objectidColumn = new com.lutris.dods.builder.generator.query.RDBColumn(volumeEntryTable, myDO.getOIdColumnName());
+				
+				// consultation of a local volume
+				while (!stop) {
+					VolumeEntryQuery query = new VolumeEntryQuery(volumeTableName, CurrentDBTransaction.get());
+					
+					if (myKeys !=null) { 
+						for (java.util.Enumeration enumKeys = myKeys.elements(); enumKeys.hasMoreElements();) {
+							String[] key = (String[]) enumKeys.nextElement();
+							if (key!=null && key[2] !=null && !key[2].equals("")) {
+								myQueryBuilder = new com.lutris.dods.builder.generator.query.QueryBuilder(Columns);
+								if (IndexFactory.databaseVendor != null) {
+									myQueryBuilder.setDatabaseVendor(IndexFactory.databaseVendor);
+								} else {
+									myQueryBuilder.setDatabaseVendor();
+								}
+								myQueryBuilder.addWhere(keyColumn, key[0], QueryBuilder.EQUAL);
+								if (key[1] !=null && !key[1].equals("")) {
+									myQueryBuilder.addWhere(langColumn, key[1], QueryBuilder.EQUAL);
+								}
+								myQueryBuilder.addWhere(valueColumn, key[2],  key[3]);
+								myQueryBuilder.resetSelectedFields();
+								myQueryBuilder.select(entryidColumn);
+								query.getQueryBuilder().addWhereIn(objectidColumn, myQueryBuilder);
+							}
+						}
+					}
+					
+					if (myClauses != null) {
+						for (java.util.Enumeration enumClauses = myClauses.elements(); enumClauses.hasMoreElements();) {
+							String clause = (String) enumClauses.nextElement();
+							if (clause!=null && !clause.equals("")) {
+								myQueryBuilder = new com.lutris.dods.builder.generator.query.QueryBuilder(Columns);
+								if (IndexFactory.databaseVendor != null) {
+									myQueryBuilder.setDatabaseVendor(IndexFactory.databaseVendor);
+								} else {
+									myQueryBuilder.setDatabaseVendor();
+								}
+								myQueryBuilder.addWhere(clause);
+								myQueryBuilder.resetSelectedFields();
+								myQueryBuilder.select(entryidColumn);
+								query.getQueryBuilder().addWhereIn(objectidColumn, myQueryBuilder);
+							}
+						}
+					}
+					
+					query.getQueryBuilder().setMaxRows(MaxRetrievedEntries);
 					query.getQueryBuilder().addEndClause("OFFSET " + offset);
 					query.getQueryBuilder().addOrderByColumn(volume.getSourceLanguage()+"_sort(headword)","");
 					VolumeEntryDO[] DOarray = query.getDOArray();
 					if (null != DOarray) {
 						for (int j=0; j < DOarray.length; j++) {
-							VolumeEntry tempEntry = new VolumeEntry(dict, volume,DOarray[j]);
-							theEntries.add(tempEntry);
+							myProcessor.process(new VolumeEntry(dict, volume,DOarray[j]));
 						}
+						offset += DOarray.length;
+					}
+					stop = DOarray == null || DOarray.length<MaxRetrievedEntries;
+				}
+			}
+		}
+		catch(Exception ex) {
+			throw new PapillonBusinessException("Exception in processVolume()", ex);
+		}
+	}
+	
+	public static void changeAuthor(Volume myVolume, String newAuthor, Vector myKeys, Vector clausesVector) 
+		throws fr.imag.clips.papillon.business.PapillonBusinessException {
+			
+			if (myVolume !=null && !myVolume.isEmpty()) {
+				Dictionary myDict = DictionariesFactory.findDictionaryByName(myVolume.getDictname());
+				if (myDict !=null && !myDict.isEmpty()) {
+					IVolumeEntryProcessor changeAuthorProcessor = new ChangeAuthorProcessor(newAuthor);
+					processVolume(myDict, myVolume, myKeys, clausesVector, changeAuthorProcessor);
+				}
+			}
+		}
+
+
+	public static void exportVolume(String volumeName, Vector myKeys, Vector clauseVector, java.io.OutputStream myOutStream) 
+		throws fr.imag.clips.papillon.business.PapillonBusinessException {
+			
+			Volume myVolume = VolumesFactory.findVolumeByName(volumeName);
+			if (myVolume !=null && !myVolume.isEmpty()) {
+				Dictionary myDict = DictionariesFactory.findDictionaryByName(myVolume.getDictname());
+				if (myDict !=null && !myDict.isEmpty()) {
+					
+					String tmplEntry = myVolume.getTemplateEntry();
+					String contribString = myVolume.getCdmContribution();
+					String xmlHeader = "";
+					String xmlFooter = "";
+					if (tmplEntry.indexOf("<" + contribString)>=0) {
+						xmlHeader = tmplEntry.substring(0,tmplEntry.indexOf("<" + contribString));
+						String endTag = "</" + contribString + ">";
+						xmlFooter = tmplEntry.substring(tmplEntry.indexOf(endTag)+endTag.length()+1);
+					}
+					
+					fr.imag.clips.papillon.business.dictionary.IVolumeEntryProcessor myProcessor = new fr.imag.clips.papillon.business.dictionary.ExportVolumeEntryProcessor(myOutStream);
+					
+					PapillonLogger.writeDebugMsg("Start writing volume " + volumeName);
+					try {
+						myOutStream.write(xmlHeader.getBytes("UTF-8"));
+						fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory.processVolume(myDict, myVolume, myKeys, clauseVector, myProcessor);
+						myOutStream.write(xmlFooter.getBytes("UTF-8"));
+					}
+					catch (Exception ex) {
+						throw new PapillonBusinessException("Error in writing an UTF-8 String: ", ex);
 					}
 				}
 			}
-        catch(Exception ex) {
-            throw new PapillonBusinessException("Exception in getDbtableEntriesVector()", ex);
-        }
-        return theEntries;
-    }
+		}
 	
 	public static Vector getFoksEntriesVector(String headword) throws PapillonBusinessException {
         Vector theEntries = new Vector();
         try {
-			
 			// consultation of a local volume
 			FoksEntryQuery query = new FoksEntryQuery(CurrentDBTransaction.get());
 			//set query
@@ -271,20 +593,21 @@ public class VolumeEntriesFactory {
 		// FIXME: special code depending on FoksEdict and JmDict dictionaries
         VolumeEntry myAnswer = null;
 		Vector theEntries = null;
-			//Headword[0] = key
-			//Headword[1] = lang
-			//Headword[2] = value
-		String[] Headword = new String[3];
+		//Headword[0] = key
+		//Headword[1] = lang
+		//Headword[2] = value
+		String[] Headword = new String[4];
 		Headword[0] = Volume.CDM_headword;
 		Headword[1] = "jpn";
 		Headword[2] = headword;
+		Headword[3] = "" + IQuery.STRATEGY_EXACT;
 		Vector myVector = new Vector();
 		myVector.add(Headword);
         try {
 			Volume volume = VolumesFactory.findVolumeByName("JMDict_jpn_eng");
 			if (volume != null && !volume.isEmpty()) {
 				Dictionary myDict = DictionariesFactory.findDictionaryByName(volume.getDictname());
-				theEntries = IndexFactory.getEntriesVector(myDict, volume, myVector, IQuery.STRATEGY_EXACT,0);
+				theEntries = IndexFactory.getEntriesVector(myDict, volume, myVector, null,0);
 			}
 		}
 		catch(Exception ex) {
@@ -349,7 +672,7 @@ public class VolumeEntriesFactory {
         }
 	
     /**
-     * The findEntryByKey method performs a database query to
+		* The findEntryByKey method performs a database query to
      * return a VolumeEntry
      *
      * @param Dictionary, Volume, key, lang, value
@@ -382,7 +705,7 @@ public class VolumeEntriesFactory {
 	}
 	
     /**
-     * The findEntryByEntryId method performs a database query to
+		* The findEntryByEntryId method performs a database query to
      * return a VolumeEntry
      *
      * @param id, the object id of the entries table.
@@ -408,61 +731,17 @@ public class VolumeEntriesFactory {
         throws PapillonBusinessException {
 			return findEntryByKey(myDict, myVolume, Volume.CDM_entryId, Volume.DEFAULT_LANG, entryId);
         }
-	
-	/*    public static void parseVolume (String volumeName, String URL)
-        throws PapillonBusinessException {
-			Volume volume = VolumesFactory.findVolumeByName(volumeName);
-			Dictionary dict = DictionariesFactory.findDictionaryByName(volume.getDictname());
-            if (!volume.isEmpty()) {
-                parseVolume(dict, volume,URL);
-            }
-        }
-	
-	
-    public static void parseVolume (Dictionary dict, Volume volume, String URL)
-        throws PapillonBusinessException {
-			if (volume.getName().equals(ParseVolume.FOKSEDICT_VOLUME)) {
-				ParseVolume.parseFoksVolume(URL);
-			}
-			else
-				try {
-					// Tools for parsing with a SAX parser
-					SAXParserFactory mySAXParserFactory = SAXParserFactory.newInstance();
-					//indicate here if you want the parser to be namespace aware or not
-					mySAXParserFactory.setNamespaceAware(true);
-					// test if this dictionary will be edited.
-					// if yes, the content should be validated!
-					// FIXME: should be a lot more explicit
-					String schema = volume.getXmlSchema();
-					String templateEntry = volume.getTemplateEntry();
-					if ((schema != null && !schema.equals("")) &&
-						(templateEntry != null && !templateEntry.equals(""))) {
-						PapillonLogger.writeDebugMsg("The XML parser will validate!");
-						mySAXParserFactory.setValidating(true);
-					}
-					//building the constructor of the document
-					SAXParser mySAXParser = mySAXParserFactory.newSAXParser();
-					VolumeHandler myHandler = new VolumeHandler(dict, volume);
-					
-					mySAXParser.parse(URL, myHandler);
-					VolumesFactory.setCountEntries(volume);
-				}
-            catch(Exception ex) {
-                throw new PapillonBusinessException("Exception in parseVolume(): " + URL, ex);
-            }
-        }
-	*/
-	
+		
     public static VolumeEntry newEntry(Dictionary dict, Volume volume, String headword, org.w3c.dom.Document docdom)
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
 			
             VolumeEntry newEntry=new VolumeEntry(dict, volume);
+            //dom avant toute chose !
+            newEntry.setDom((org.w3c.dom.Document) docdom.cloneNode(true));
             //headword
             newEntry.setHeadword(headword);
-            //dom
-            newEntry.setDom((org.w3c.dom.Document) docdom.cloneNode(true));
 			
-			newEntry.setId();
+			newEntry.setEntryId();
             
             return newEntry;
         }
@@ -471,7 +750,7 @@ public class VolumeEntriesFactory {
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 			VolumeEntry resEntry = newEntry(existingEntry.getDictionary(), existingEntry.getVolume(), existingEntry.getHeadword(), existingEntry.getDom());
 			return resEntry;
-	}
+		}
 	
 	public static VolumeEntry createEmptyEntry(String volume) 
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
@@ -484,7 +763,6 @@ public class VolumeEntriesFactory {
 				String templateEntry = myVolume.getTemplateEntry();
 				myEntry.setDom(Utility.buildDOMTree(templateEntry));
 			}
-
 		}
 		return myEntry;
 	}
@@ -493,34 +771,11 @@ public class VolumeEntriesFactory {
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
             try {
                 ManageDatabase.truncateTable(volume);
-				VolumesFactory.resetCountEntries(volume);
             }
             catch (Exception e) {
                 throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in emptyVolumeEntries with volume: " + volume, e);
             }
         }
-	
-	public static int getCount(Volume myVolume) 
-        throws fr.imag.clips.papillon.business.PapillonBusinessException {
-			int count = -1;
-			try {
-                VolumeEntryQuery query = new VolumeEntryQuery(myVolume.getDbname(), CurrentDBTransaction.get());
-				count = query.getCount();
-			}
-			catch (com.lutris.appserver.server.sql.DatabaseManagerException e) {
-				throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in getCount with volume: " + myVolume.getName(), e);
-			}			
-			catch (java.sql.SQLException e) {
-				throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in getCount with volume: " + myVolume.getName(), e);
-			}			
-			catch (com.lutris.dods.builder.generator.query.DataObjectException e) {
-				throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in getCount with volume: " + myVolume.getName(), e);
-			}			
-			catch (com.lutris.dods.builder.generator.query.NonUniqueQueryException e) {
-				throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in getCount with volume: " + myVolume.getName(), e);
-			}			
-			return count;
-		}
 	
 	public static void createVolumeTables(Volume volume)
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
@@ -532,8 +787,8 @@ public class VolumeEntriesFactory {
 				IndexFactory.createIndexTable(volume);
 			}
             catch (Exception e) {
-             //   throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in createVolumeTables with volume: " + volume.getName(), e);
-			PapillonLogger.writeDebugMsg("Exception in createVolumeTables with volume: " + volume.getName() + ", probably the tables already exist.");
+				//   throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in createVolumeTables with volume: " + volume.getName(), e);
+				PapillonLogger.writeDebugMsg("Exception in createVolumeTables with volume: " + volume.getName() + ", probably the tables already exist.");
             }			
 		}
 	
@@ -545,11 +800,9 @@ public class VolumeEntriesFactory {
                 //FIXME: this if is bad code, temporary solution !
                 if (volume.getName().equals(PapillonPivotFactory.VOLUMENAME)) {
                     ManageDatabase.truncateTable(volume.getDbname());
-					VolumesFactory.resetCountEntries(volume.getDbname());
                 }
                 else {
                     ManageDatabase.dropTable(volume.getDbname());
-					VolumesFactory.deleteCountEntries(volume.getDbname());
                 }
 				IndexFactory.dropIndexTable(volume.getIndexDbname());
             }
@@ -558,17 +811,22 @@ public class VolumeEntriesFactory {
             }
         }
 	
-	public static void setGDEFFrenchTranslations(IAnswer myAnswer) throws PapillonBusinessException {
-					//Headword[0] = key
-			//Headword[1] = lang
-			//Headword[2] = value
-		String[] Headword = new String[3];
+	public static String setGDEFFrenchTranslations(IAnswer myAnswer, String homographId) throws PapillonBusinessException {
+		String homographWord = "";
+		//Headword[0] = key
+		//Headword[1] = lang
+		//Headword[2] = value
+		//Headword[3] = strategy
+		String[] Headword = new String[4];
 		Headword[0] = Volume.CDM_headword;
 		Headword[1] = "fra";
 		Headword[2] = "";
-
+		Headword[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_EXACT+1];
+		
+		
 		Volume myVolume = myAnswer.getVolume();
-		if (myVolume.getName().equals(VOLUME_GDEF_est)) {
+		if (myVolume.getName().equals(VOLUME_GDEF_est) ||
+			myVolume.getName().equals(VOLUME_GDEF_tes)) {
 			NodeList myNodeList = ParseVolume.getCdmElements((VolumeEntry)myAnswer,Volume.CDM_translation,"fra");
 			if ((myNodeList != null) && (myNodeList.getLength()>0)) {
 				for (int i=0; i<myNodeList.getLength();i++) {
@@ -589,20 +847,71 @@ public class VolumeEntriesFactory {
 						Vector myTable = getVolumeNameEntriesVector(VOLUME_GDEF_fra,
 																	myVector,
 																	null,
-																	IQuery.STRATEGY_EXACT);
-						if (myTable.size()==1) {
-							IAnswer newAnswer = (IAnswer) myTable.elements().nextElement();
+																	null);
+						if (myTable.size()==0) {
+							myNode.setNodeValue(VOLUME_GDEF_est_sep + myTable.size() + VOLUME_GDEF_est_sep + word);
+						}
+						else if (myTable.size()==1) {
+							VolumeEntry newAnswer = (VolumeEntry) myTable.elements().nextElement();
 							myNode.setNodeValue(newAnswer.getId());
 						}
+						else if (myTable.size()>1 && homographId !=null && !homographId.equals("")) {
+							String nodeValue = null;
+							int k=0;
+							while (homographId!="" && k<myTable.size()) {
+								VolumeEntry newAnswer = (VolumeEntry) myTable.elementAt(k);
+								if (newAnswer.getEntryId().equals(homographId)) {
+									nodeValue = homographId;
+									homographId = "";
+								}
+								k++;
+							}
+							if (nodeValue == null || nodeValue.equals("")) {
+								nodeValue = VOLUME_GDEF_est_sep + myTable.size() + VOLUME_GDEF_est_sep + word;
+							}
+							myNode.setNodeValue(nodeValue);
+						}
 						else {
+							homographWord = word;
 							myNode.setNodeValue(VOLUME_GDEF_est_sep + myTable.size() + VOLUME_GDEF_est_sep + word);
 						}
 					}
 				}
 			}
 		}
+		return homographWord;
 	}
 	
+	public static void sort (Vector EntryVector) {
+		sort (EntryVector, HEADWORD_SORT);
+	}
+	
+	public static void sort (Vector EntryVector, String sortBy) {
+		if (sortBy.equals(AUTHOR_SORT)) {
+			Collections.sort(EntryVector, new fr.imag.clips.papillon.business.utility.AuthorComparator());
+		}
+		else if (sortBy.equals(CREATION_DATE_SORT)) {
+			Collections.sort(EntryVector, new fr.imag.clips.papillon.business.utility.CreationDateComparator());
+		}
+		else if (sortBy.equals(HEADWORD_SORT)) {
+			Collections.sort(EntryVector, new fr.imag.clips.papillon.business.utility.HeadwordComparator());
+		}
+		else if (sortBy.equals(ORIGINAL_CONTRIBUTION_ID_SORT)) {
+			Collections.sort(EntryVector, new fr.imag.clips.papillon.business.utility.OriginalContributionIdComparator());
+		}
+		else if (sortBy.equals(REVIEW_DATE_SORT)) {
+			Collections.sort(EntryVector, new fr.imag.clips.papillon.business.utility.ReviewDateComparator());
+		}
+		else if (sortBy.equals(REVIEWER_SORT)) {
+			Collections.sort(EntryVector, new fr.imag.clips.papillon.business.utility.ReviewerComparator());
+		}
+		else if (sortBy.equals(STATUS_SORT)) {
+			Collections.sort(EntryVector, new fr.imag.clips.papillon.business.utility.StatusComparator());
+		}
+		else {
+			Collections.sort(EntryVector, new fr.imag.clips.papillon.business.utility.HeadwordComparator());
+		}
+	}
 	
 }
 

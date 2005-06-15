@@ -9,6 +9,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.6  2005/06/15 16:48:28  mangeot
+ *  Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
+ *
  *  Revision 1.5  2005/05/24 12:51:22  serasset
  *  Updated many aspect of the Papillon project to handle lexalp project.
  *  1. Layout is now parametrable in the application configuration file.
@@ -17,6 +20,12 @@
  *  4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
  *  5. It is now possible to give a name to the cookie key in the app conf file
  *  6. Several bug fixes.
+ *
+ *  Revision 1.4.4.2  2005/06/01 15:20:33  mangeot
+ *  Added a boolean for contributionslog
+ *
+ *  Revision 1.4.4.1  2005/05/19 17:02:22  mangeot
+ *  Importing entries without the contribution element
  *
  *  Revision 1.4  2005/04/11 12:29:59  mangeot
  *  Merge between the XPathAndMultipleKeys branch and the main trunk
@@ -218,13 +227,17 @@ public class AdminDictionaries extends PapillonBasePO {
         String urlString = req.getParameter(content.NAME_url);
         URL myURL = new URL(urlString);
         PapillonLogger.writeDebugMsg(myURL.toString());
+		String parseVolumesString = req.getParameter(content.NAME_AddVolumes);
+		boolean parseVolumes = (parseVolumesString!=null && !parseVolumesString.equals(""));
+		String parseEntriesString = req.getParameter(content.NAME_AddVolumesAndEntries);
+		boolean parseEntries = (parseEntriesString!=null && !parseEntriesString.equals(""));
+		String logContribsString = req.getParameter(content.NAME_LogContributions);
+		boolean logContribs = (logContribsString!=null && !logContribsString.equals(""));
         
         // Create and Register the transaction
         CurrentDBTransaction.registerNewDBTransaction();
         try {
-            Dictionary myDict = DictionariesFactory.parseDictionaryMetadata(myURL,
-                                                                            req.getParameter(content.NAME_AddVolumes),
-                                                                            req.getParameter(content.NAME_AddVolumesAndEntries));
+            Dictionary myDict = DictionariesFactory.parseDictionaryMetadata(myURL, parseVolumes, parseEntries, logContribs);
             if (null != myDict && !myDict.isEmpty()) {
                 userMessage = "adding " + myDict.getName() + " dictionary" + " // " + myDict.getCategory() + " // " + myDict.getType() + " // " + myDict.getDomain() + " // " + myDict.getLegal() + " // " + myDict.getSourceLanguages() + " // " + myDict.getTargetLanguages();
                 myDict.save();
@@ -237,10 +250,12 @@ public class AdminDictionaries extends PapillonBasePO {
             userMessage = "Problems while adding the specified dictionary.\n";
             userMessage = userMessage + e.getMessage();
             userMessage = userMessage + "\nAll changes to the database have been rolled back.";
+			e.printStackTrace();
             try {
                 ((DBTransaction) CurrentDBTransaction.get()).rollback();
             } catch (java.sql.SQLException sqle) {
                 PapillonLogger.writeDebugMsg("AdminDictionaries: SQLException while rolling back failed transaction.");
+				sqle.printStackTrace();
             }
         } finally {
             CurrentDBTransaction.releaseCurrentDBTransaction();

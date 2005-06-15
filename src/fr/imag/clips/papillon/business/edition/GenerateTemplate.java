@@ -1,15 +1,26 @@
-//
-//  GenerateInterface.java
-//  PapillonStable
-//
-//  Created by Mathieu Mangeot on Thu Sep 16 2004.
-//  Copyright (c) 2004 __MyCompanyName__. All rights reserved.
-//
+/*
+ *  papillon
+ *
+ *  Created by Mathieu Mangeot on Thu Sep 16 2004.
+ *  Copyright (c) 2002 GETA_CLIPS_IMAG. All rights reserved.
+ *
+ *---------------------------------------------------------
+ * $Id$
+ *---------------------------------------------------------
+ * $Log$
+ * Revision 1.8  2005/06/15 16:48:27  mangeot
+ * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
+ *
+ *
+ *---------------------------------------------------------
+ */
+
 package fr.imag.clips.papillon.business.edition;
 
 import fr.imag.clips.papillon.business.dictionary.Volume;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.PapillonLogger;
+import fr.imag.clips.papillon.presentation.EditEntry;
 
 // to parse the XML schema
 import org.apache.xerces.xni.parser.XMLInputSource;
@@ -37,11 +48,12 @@ public class GenerateTemplate {
 		"<body>\n" +
 		"<form  action=\"EditEntry.po\" id=\"default\" name=\"default\" xml:lang=\"en\" lang=\"en\" d:lang=\"eng\">\n" +
 		"<h1 align=\"center\">Edition interface</h1>\n" +
-		"<input name=\"VolumeName\" type=\"hidden\" value=\"\" />\n" +
-		"<input name=\"EntryHandle\" type=\"hidden\" value=\"\" />\n" +
-		"<input name=\"AddCall\" type=\"hidden\" value=\"\" />\n" +
-		"<input name=\"DelCall\" type=\"hidden\" value=\"\" />\n" +
-		"<input name=\"ChooseCall\" type=\"hidden\" value=\"\" />\n";
+		"<input name=\"" + EditEntry.VolumeName_PARAMETER + "\" type=\"hidden\" value=\"\" />\n" +
+		"<input name=\"" + EditEntry.EntryHandle_PARAMETER + "\" type=\"hidden\" value=\"\" />\n" +
+		"<input name=\"" + EditEntry.Referrer_PARAMETER + "\" type=\"hidden\" value=\"\" />\n" +
+		"<input name=\"" + EditEntry.AddCall_PARAMETER + "\" type=\"hidden\" value=\"\" />\n" +
+		"<input name=\"" + EditEntry.DelCall_PARAMETER + "\" type=\"hidden\" value=\"\" />\n" +
+		"<input name=\"" + EditEntry.ChooseCall_PARAMETER + "\" type=\"hidden\" value=\"\" />\n";
 	
 	protected final static String xmlFooter = "<br /><br />\n" +
 		"<input name=\"Update\" type=\"Submit\" value=\"Update\" />\n" +
@@ -55,8 +67,6 @@ public class GenerateTemplate {
 	protected final static int LIST_ELEMENT = 1;
 	protected final static int CHOICE_ELEMENT = 2;
 	
-	protected static String HistoryTag = "";
-	
 	// public methods
 	public static void generateInterfaceTemplate(Volume myVolume)  
 		throws PapillonBusinessException {
@@ -64,7 +74,6 @@ public class GenerateTemplate {
 			BufferedWriter bufferInterface;
 			
 			try {
-				HistoryTag = myVolume.getCdmHistory();
 				ByteArrayOutputStream interfaceOS = new ByteArrayOutputStream();
 				OutputStreamWriter interfaceWriter =
 					new OutputStreamWriter(interfaceOS, DefaultEncoding);
@@ -113,27 +122,23 @@ public class GenerateTemplate {
 			XSNamedMap listComponent;
 			XSObject object;
 			
+			// FIXME: Attention, pour la génération, j'utilise les noms de balises locaux, non préfixés par un espace de noms
+			// Il faudrait corriger ça en ajoutant le préfixe à toutes les balises.
+			// Si on modifie la génération, alors il faut aussi modifier UIGenerator.fillInterfaceTemplate
+			String prefix = fr.imag.clips.papillon.business.utility.Utility.getPrefix(rootElement);
+			if (prefix != null && !prefix.equals("")) {
+				prefix += ":";
+			}
+			
+			String localRootName = fr.imag.clips.papillon.business.utility.Utility.getLocalTagName(rootElement);
+			PapillonLogger.writeDebugMsg("produceInterfaceTemplate: prefix: " + prefix + " local root name: " + localRootName);
+			
 			try {
 				interfaceBuffer.write(xmlHeader);
-				myDeclaration = schemaGrammar.getGlobalElementDecl(rootElement);
+				myDeclaration = schemaGrammar.getGlobalElementDecl(localRootName);
 				if (myDeclaration !=null) {
-					parseElementDeclaration(interfaceBuffer, volumeName, myDeclaration);
+					parseElementDeclaration(interfaceBuffer, volumeName, myDeclaration, prefix);
 				}
-				/*				listComponent =
-					schemaGrammar.getComponents(XSConstants.ELEMENT_DECLARATION);
-				boolean found = false;
-				int i=0;
-				while (i < listComponent.getMapLength() && !found) {
-					object = (XSObject) listComponent.getItem(i);
-					if ((object != null) && (object instanceof XSElementDeclaration)) {
-						myDeclaration = (XSElementDeclaration) object;
-						if (myDeclaration.getName().equals(rootElement)) {
-							parseElementDeclaration(interfaceBuffer, volumeName, myDeclaration);
-							found = true;
-						}
-					}
-					i++;
-				} */
 				interfaceBuffer.write(xmlFooter);
 			} catch (Exception ex) {
 				throw new PapillonBusinessException("Exception in GenerateTemplate.produceInterfaceTemplate with " +  volumeName, ex);
@@ -141,13 +146,13 @@ public class GenerateTemplate {
 		}
 	
 	protected static void parseElementDeclaration(BufferedWriter interfaceBuffer,
-												  String volumeName, XSElementDeclaration declaration) {
-		parseElementDeclaration(interfaceBuffer, volumeName, declaration, DEFAULT_ELEMENT);
+												  String volumeName, XSElementDeclaration declaration, String prefix) {
+		parseElementDeclaration(interfaceBuffer, volumeName, declaration, prefix, DEFAULT_ELEMENT);
 	}
 	
 	
 	protected static void parseElementDeclaration(BufferedWriter interfaceBuffer,
-												  String volumeName, XSElementDeclaration declaration, int elementType) {
+												  String volumeName, XSElementDeclaration declaration, String prefix, int elementType) {
 		
 		XSObject object;
 		XSTypeDefinition baseType;
@@ -159,182 +164,181 @@ public class GenerateTemplate {
 		XSModelGroup modelGroup = null;
 		
 		try {
-			String elementName = declaration.getName();
-			// discard history and modifications tags
-			if (!elementName.equals(HistoryTag)) {		
-				if (elementType==GenerateTemplate.LIST_ELEMENT) {
-					interfaceBuffer.write("  <tr " +  UIGenerator.ITF_ATTR_NAME  + "=\"" + elementName + "\" bgcolor='#ffebdc'>\n");
-					interfaceBuffer.write("    <td align='center' valign='top' width='25'>\n");
-					interfaceBuffer.write("		 <a name=\"" + elementName + "\"> </a>");
-					interfaceBuffer.write("<input name=\"" + UIGenerator.SELECT_ATTR_NAME + "\" type=\"checkbox\" value=\"" + elementName + "\" />");
-					interfaceBuffer.write("\n");
-					interfaceBuffer.write("    </td>\n");
-					interfaceBuffer.write("    <td  align='center' valign='top'  class='block'>\n");
-                    interfaceBuffer.write("      <h4 class='blockTitle'>" + elementName + "</h4>\n");
-				}
-				else if (elementType==GenerateTemplate.CHOICE_ELEMENT) {
-					interfaceBuffer.write("<" + UIGenerator.ITF_ELT_NAME + " " + UIGenerator.ITF_ATTR_NAME  + "=\"" + elementName + "\">" + "\n");
-					interfaceBuffer.write("<label for=\"" + elementName + "\">"+ elementName + ":</label>\n");
-					interfaceBuffer.write("<input name=\"" + UIGenerator.CHOOSE_ATTR_NAME + "\" type=\"checkbox\" value=\"" + elementName + "\" />\n");
-					interfaceBuffer.write("<br />\n");
-					interfaceBuffer.write("<span title=\"" + elementName + "\" class=\"" + UIGenerator.ITF_HIDDEN_STYLE + "\">\n");
-				}
-				else {
-					interfaceBuffer.write("<" + UIGenerator.ITF_ELT_NAME + " " + UIGenerator.ITF_ATTR_NAME  + "=\"" + elementName + "\">" + "\n");
-				}
-				baseType = declaration.getTypeDefinition ();
-				String typeName = declaration.getName() + "Type";
-				if (baseType.getName()!=null) {
-					typeName =  baseType.getName();
-				}
+			// FIXME: il faudrait utiliser declaration.getNamespace au lieu de construire le préfixe...
+			String elementName = prefix + declaration.getName();
+			String elementNameDisplay = declaration.getName();
+			if (elementType==GenerateTemplate.LIST_ELEMENT) {
+				interfaceBuffer.write("  <tr " +  UIGenerator.ITF_ATTR_NAME  + "=\"" + elementName + "\" bgcolor='#ffebdc'>\n");
+				interfaceBuffer.write("    <td align='center' valign='top' width='25'>\n");
+				interfaceBuffer.write("		 <a name=\"" + elementName + "\"> </a>");
+				interfaceBuffer.write("<input name=\"" + UIGenerator.SELECT_ATTR_NAME + "\" type=\"checkbox\" value=\"" + elementName + "\" />");
+				interfaceBuffer.write("\n");
+				interfaceBuffer.write("    </td>\n");
+				interfaceBuffer.write("    <td  align='center' valign='top'  class='block'>\n");
+				interfaceBuffer.write("      <h4 class='blockTitle'>" + elementNameDisplay + "</h4>\n");
+			}
+			else if (elementType==GenerateTemplate.CHOICE_ELEMENT) {
+				interfaceBuffer.write("<" + UIGenerator.ITF_ELT_NAME + " " + UIGenerator.ITF_ATTR_NAME  + "=\"" + elementName + "\">" + "\n");
+				interfaceBuffer.write("<label for=\"" + elementName + "\">"+ elementNameDisplay + ":</label>\n");
+				interfaceBuffer.write("<input name=\"" + UIGenerator.CHOOSE_ATTR_NAME + "\" type=\"checkbox\" value=\"" + elementName + "\" />\n");
+				interfaceBuffer.write("<br />\n");
+				interfaceBuffer.write("<span title=\"" + elementName + "\" class=\"" + UIGenerator.ITF_HIDDEN_STYLE + "\">\n");
+			}
+			else {
+				interfaceBuffer.write("<" + UIGenerator.ITF_ELT_NAME + " " + UIGenerator.ITF_ATTR_NAME  + "=\"" + elementName + "\">" + "\n");
+			}
+			baseType = declaration.getTypeDefinition ();
+			String typeName = declaration.getName() + "Type";
+			if (baseType.getName()!=null) {
+				typeName =  baseType.getName();
+			}
+			
+			PapillonLogger.writeDebugMsg("Element: " + elementName);
+			PapillonLogger.writeDebugMsg("Type Name: " + typeName);
+			
+			if (baseType instanceof XSSimpleTypeDefinition) {
+				parseSimpleTypeDeclaration (interfaceBuffer,(XSSimpleTypeDefinition) baseType,elementName);
+			}
+			else if (baseType instanceof XSComplexTypeDefinition) {
+				//	interfaceBuffer.write("  <blockquote>\n");	
+				PapillonLogger.writeDebugMsg("Complex type definition");
+				complexType = (XSComplexTypeDefinition) baseType; 
 				
-				PapillonLogger.writeDebugMsg("Element: " + elementName);
-				PapillonLogger.writeDebugMsg("Type Name: " + typeName);
-				
-				if (baseType instanceof XSSimpleTypeDefinition) {
-					parseSimpleTypeDeclaration (interfaceBuffer,(XSSimpleTypeDefinition) baseType,elementName);
-				}
-				else if (baseType instanceof XSComplexTypeDefinition) {
-					//	interfaceBuffer.write("  <blockquote>\n");	
-					PapillonLogger.writeDebugMsg("Complex type definition");
-					complexType = (XSComplexTypeDefinition) baseType; 
-					
-					/* Attributes */
-					XSObjectList listObject = complexType.getAttributeUses ();
-					if (listObject != null) {
-						for (int i = 0; i < listObject.getLength (); i++) {
-							object = listObject.getItem (i);
-							if ((object != null) && (object instanceof XSAttributeUse)) {
-								attributePSVI = ((XSAttributeUse) object).getAttrDeclaration ();
-								String attrName = attributePSVI.getName();
-								// avoid special attributes
-								if (!attrName.equals("id")) {
-								    attrName = elementName + UIGenerator.ATTR_SEPARATOR + attrName;
-									parseSimpleTypeDeclaration (interfaceBuffer,attributePSVI.getTypeDefinition(),attrName);
-								}
+				/* Attributes */
+				XSObjectList listObject = complexType.getAttributeUses ();
+				if (listObject != null) {
+					for (int i = 0; i < listObject.getLength (); i++) {
+						object = listObject.getItem (i);
+						if ((object != null) && (object instanceof XSAttributeUse)) {
+							attributePSVI = ((XSAttributeUse) object).getAttrDeclaration ();
+							String attrName = attributePSVI.getName();
+							// avoid special attributes
+							if (!attrName.equals("id")) {
+								attrName = elementName + UIGenerator.ID_SEPARATOR + attrName;
+								parseSimpleTypeDeclaration (interfaceBuffer,attributePSVI.getTypeDefinition(),attrName);
 							}
 						}
 					}
-					XSSimpleTypeDefinition simpleTypeDefinition;
-					switch (complexType.getContentType ()) {
-						case XSComplexTypeDefinition.CONTENTTYPE_SIMPLE:
-				//			PapillonLogger.writeDebugMsg ("************************CONTENTTYPE_SIMPLE" );
-							/* SimpleContent */
+				}
+				XSSimpleTypeDefinition simpleTypeDefinition;
+				switch (complexType.getContentType ()) {
+					case XSComplexTypeDefinition.CONTENTTYPE_SIMPLE:
+						//			PapillonLogger.writeDebugMsg ("************************CONTENTTYPE_SIMPLE" );
+						/* SimpleContent */
+						simpleTypeDefinition = complexType.getSimpleType ();
+						if (simpleTypeDefinition != null) {
+							parseSimpleTypeDeclaration (interfaceBuffer,simpleTypeDefinition,elementName);
+							//PapillonLogger.writeDebugMsg ("PB in constructComplexType: a simpleTypeDefinition not managed: " + simpleTypeDefinition);
+						}
+							break;
+						
+					case XSComplexTypeDefinition.CONTENTTYPE_MIXED:
+						//		PapillonLogger.writeDebugMsg ("************************CONTENTTYPE_MIXED" );
+						particle = complexType.getParticle ();
+						/* Case where there are no child elements */
+						if (particle == null) {
 							simpleTypeDefinition = complexType.getSimpleType ();
 							if (simpleTypeDefinition != null) {
 								parseSimpleTypeDeclaration (interfaceBuffer,simpleTypeDefinition,elementName);
-								//PapillonLogger.writeDebugMsg ("PB in constructComplexType: a simpleTypeDefinition not managed: " + simpleTypeDefinition);
-							}
-							break;
-							
-						case XSComplexTypeDefinition.CONTENTTYPE_MIXED:
-					//		PapillonLogger.writeDebugMsg ("************************CONTENTTYPE_MIXED" );
-							particle = complexType.getParticle ();
-							/* Case where there are no child elements */
-							if (particle == null) {
-								simpleTypeDefinition = complexType.getSimpleType ();
-								if (simpleTypeDefinition != null) {
-									parseSimpleTypeDeclaration (interfaceBuffer,simpleTypeDefinition,elementName);
-								}
-								else {
-									// I simulate the content as a string
-									addStringTypeDefinition(interfaceBuffer, elementName);
-								}
 							}
 							else {
 								// I simulate the content as a string
 								addStringTypeDefinition(interfaceBuffer, elementName);
 							}
+						}
+							else {
+								// I simulate the content as a string
+								addStringTypeDefinition(interfaceBuffer, elementName);
+							}
 							break;
-							
-						case XSComplexTypeDefinition.CONTENTTYPE_ELEMENT:
-							//	PapillonLogger.writeDebugMsg ("************************CONTENTTYPE_ELEMENT" );
-							/* Complex type definied with a {choice, sequence or all) elements */
-							particle = complexType.getParticle ();
-							if (particle != null) {
-								term = particle.getTerm();
-								if (term instanceof XSModelGroup) {
-									// PapillonLogger.writeDebugMsg ("XSModelGroup ");
-									modelGroup = (XSModelGroup) term;
-									if (modelGroup.getCompositor()==XSModelGroup.COMPOSITOR_SEQUENCE) {
-										PapillonLogger.writeDebugMsg ("Compositor sequence");
-										XSObjectList myList = modelGroup.getParticles();
-										for (int j=0;j<myList.getLength();j++) {
-											XSParticle tempParticle = (XSParticle)myList.getItem(j);
-											term = tempParticle.getTerm();
-											int newTypeElement = DEFAULT_ELEMENT;
-											if (tempParticle.getIsMaxOccursUnbounded() && term.getName()!=null) {
-												// list	
-												interfaceBuffer.write("<table align='center' border='0' cellpadding='5' cellspacing='2' summary='List of " + term.getName() + "s' width='100%'>\n");
-												interfaceBuffer.write("  <tr bgcolor='#fbbe78'>\n");
-												interfaceBuffer.write("    <td align='center' width='25'>\n");
-												interfaceBuffer.write("      <input name='" + elementName + "' onclick=\"this.form.AddCall.value='" + term.getName() + UIGenerator.PARAMETERS_SEPARATOR + "\" type=\"submit\" value=\"+\" />\n");
-												interfaceBuffer.write("      <input name='" + elementName + "' onclick=\"this.form.DelCall.value='" + term.getName() + UIGenerator.PARAMETERS_SEPARATOR + "\" type=\"submit\" value=\"-\" />\n");
-												interfaceBuffer.write("    </td>\n");
-												interfaceBuffer.write("    <th align='center'>List of " +  term.getName() + "s:</th>\n");
-												interfaceBuffer.write("  </tr>\n");
-												PapillonLogger.writeDebugMsg(" list element: " + term.getName());
-												newTypeElement = LIST_ELEMENT;
-											}
-											if (term instanceof XSElementDeclaration) {
-												parseElementDeclaration(interfaceBuffer, volumeName, 
-																		(XSElementDeclaration) term, newTypeElement);
-											}	
-											if (newTypeElement == LIST_ELEMENT) {
-												interfaceBuffer.write("</table>\n");
-											}
-										}																					
-									}
-									else if (modelGroup.getCompositor()==XSModelGroup.COMPOSITOR_CHOICE) {
-										PapillonLogger.writeDebugMsg ("Compositor choice");
-										// choice
-										interfaceBuffer.write("  <span title=\"" +  
-															  UIGenerator.CHOICE_NODE_NAME + UIGenerator.PARAMETERS_SEPARATOR + elementName
-															  + "\">\n");
-										interfaceBuffer.write("  Choice for " +  elementName + ":\n");
-										interfaceBuffer.write("  <input name=\"" + elementName + "\" onclick=\"this.form.ChooseCall.value='" + elementName + UIGenerator.PARAMETERS_SEPARATOR + "\" type=\"submit\" value=\"||\" />\n");
-										interfaceBuffer.write("  <br />\n</span>\n");
-										XSObjectList myList = modelGroup.getParticles();
-										for (int j=0;j<myList.getLength();j++) {
-											XSParticle tempParticle = (XSParticle)myList.getItem(j);
-											term = tempParticle.getTerm();
-											if (term instanceof XSElementDeclaration) {
-												PapillonLogger.writeDebugMsg(" choice element: " + ((XSElementDeclaration) term).getName());
-												parseElementDeclaration(interfaceBuffer, volumeName, 
-																		(XSElementDeclaration) term, CHOICE_ELEMENT);
-											}	
+						
+					case XSComplexTypeDefinition.CONTENTTYPE_ELEMENT:
+						//	PapillonLogger.writeDebugMsg ("************************CONTENTTYPE_ELEMENT" );
+						/* Complex type definied with a {choice, sequence or all) elements */
+						particle = complexType.getParticle ();
+						if (particle != null) {
+							term = particle.getTerm();
+							if (term instanceof XSModelGroup) {
+								// PapillonLogger.writeDebugMsg ("XSModelGroup ");
+								modelGroup = (XSModelGroup) term;
+								if (modelGroup.getCompositor()==XSModelGroup.COMPOSITOR_SEQUENCE) {
+									PapillonLogger.writeDebugMsg ("Compositor sequence");
+									XSObjectList myList = modelGroup.getParticles();
+									for (int j=0;j<myList.getLength();j++) {
+										XSParticle tempParticle = (XSParticle)myList.getItem(j);
+										term = tempParticle.getTerm();
+										int newTypeElement = DEFAULT_ELEMENT;
+										if (tempParticle.getIsMaxOccursUnbounded() && term.getName()!=null) {
+											// list	
+											interfaceBuffer.write("<table align='center' border='0' cellpadding='5' cellspacing='2' summary='List of " + term.getName() + "s' width='100%'>\n");
+											interfaceBuffer.write("  <tr bgcolor='#fbbe78'>\n");
+											interfaceBuffer.write("    <td align='center' width='25'>\n");
+											interfaceBuffer.write("      <input name='" + elementName + "' onclick=\"this.form.AddCall.value='" + term.getName() + UIGenerator.PARAMETERS_SEPARATOR + "\" type=\"submit\" value=\"+\" />\n");
+											interfaceBuffer.write("      <input name='" + elementName + "' onclick=\"this.form.DelCall.value='" + term.getName() + UIGenerator.PARAMETERS_SEPARATOR + "\" type=\"submit\" value=\"-\" />\n");
+											interfaceBuffer.write("    </td>\n");
+											interfaceBuffer.write("    <th align='center'>List of " +  term.getName() + "s:</th>\n");
+											interfaceBuffer.write("  </tr>\n");
+											PapillonLogger.writeDebugMsg(" list element: " + term.getName());
+											newTypeElement = LIST_ELEMENT;
 										}
+										if (term instanceof XSElementDeclaration) {
+											parseElementDeclaration(interfaceBuffer, volumeName, 
+																	(XSElementDeclaration) term, prefix, newTypeElement);
+										}	
+										if (newTypeElement == LIST_ELEMENT) {
+											interfaceBuffer.write("</table>\n");
+										}
+									}																					
+								}
+								else if (modelGroup.getCompositor()==XSModelGroup.COMPOSITOR_CHOICE) {
+									PapillonLogger.writeDebugMsg ("Compositor choice");
+									// choice
+									interfaceBuffer.write("  <span title=\"" +  
+														  UIGenerator.CHOICE_NODE_NAME + UIGenerator.PARAMETERS_SEPARATOR + elementName
+														  + "\">\n");
+									interfaceBuffer.write("  Choice for " +  elementNameDisplay + ":\n");
+									interfaceBuffer.write("  <input name=\"" + elementName + "\" onclick=\"this.form.ChooseCall.value='" + elementName + UIGenerator.PARAMETERS_SEPARATOR + "\" type=\"submit\" value=\"||\" />\n");
+									interfaceBuffer.write("  <br />\n</span>\n");
+									XSObjectList myList = modelGroup.getParticles();
+									for (int j=0;j<myList.getLength();j++) {
+										XSParticle tempParticle = (XSParticle)myList.getItem(j);
+										term = tempParticle.getTerm();
+										if (term instanceof XSElementDeclaration) {
+											PapillonLogger.writeDebugMsg(" choice element: " + ((XSElementDeclaration) term).getName());
+											parseElementDeclaration(interfaceBuffer, volumeName, 
+																	(XSElementDeclaration) term, prefix, CHOICE_ELEMENT);
+										}	
 									}
-								}
-								if (!(particle instanceof XSParticleDecl)) {
-									PapillonLogger.writeDebugMsg ("-------- PB in constructComplexType: particle have a bad type.");
-								}
-								else {
-									//		attribute = constructAttributeFromParticle ((XSParticleDecl) particle);
-									//		if (attribute != null)
-									//			concept.addAttributeRelationID (attribute.getID (), currentContainer.version.getID ());
 								}
 							}
-								break;
-							
-						case XSComplexTypeDefinition.CONTENTTYPE_EMPTY:
-							PapillonLogger.writeDebugMsg ("************************CONTENTTYPE_EMPTY" );
-							/* Complex type definied only with attibutes */
+							if (!(particle instanceof XSParticleDecl)) {
+								PapillonLogger.writeDebugMsg ("-------- PB in constructComplexType: particle have a bad type.");
+							}
+							else {
+								//		attribute = constructAttributeFromParticle ((XSParticleDecl) particle);
+								//		if (attribute != null)
+								//			concept.addAttributeRelationID (attribute.getID (), currentContainer.version.getID ());
+							}
+						}
 							break;
+						
+					case XSComplexTypeDefinition.CONTENTTYPE_EMPTY:
+						PapillonLogger.writeDebugMsg ("************************CONTENTTYPE_EMPTY" );
+						/* Complex type definied only with attibutes */
+						break;
 		}
-					//				interfaceBuffer.write("  </blockquote>\n");	
+				//				interfaceBuffer.write("  </blockquote>\n");	
 	}
-				if (elementType==GenerateTemplate.CHOICE_ELEMENT) {
-					interfaceBuffer.write("</" + UIGenerator.ITF_ELT_NAME + ">\n");	
-					interfaceBuffer.write("</" + UIGenerator.ITF_ELT_NAME + ">\n");	
-				}
-				else if (elementType==GenerateTemplate.LIST_ELEMENT) {
-					interfaceBuffer.write("    </td>\n  </tr>\n");
-				}
-				else  {
-					interfaceBuffer.write("</" + UIGenerator.ITF_ELT_NAME + ">\n");	
-				}
-		}
+			if (elementType==GenerateTemplate.CHOICE_ELEMENT) {
+				interfaceBuffer.write("</" + UIGenerator.ITF_ELT_NAME + ">\n");	
+				interfaceBuffer.write("</" + UIGenerator.ITF_ELT_NAME + ">\n");	
+			}
+			else if (elementType==GenerateTemplate.LIST_ELEMENT) {
+				interfaceBuffer.write("    </td>\n  </tr>\n");
+			}
+			else  {
+				interfaceBuffer.write("</" + UIGenerator.ITF_ELT_NAME + ">\n");	
+			}
 		}
 		catch (java.io.IOException IOEx) {
 			IOEx.printStackTrace();
@@ -345,8 +349,9 @@ public class GenerateTemplate {
 													  XSSimpleTypeDefinition simpleTypeDefinition, String elementName) 
 		throws java.io.IOException {
 			String typeName = simpleTypeDefinition.getName();
+			String elementNameDisplay = fr.imag.clips.papillon.business.utility.Utility.getLocalTagName(elementName);
 			PapillonLogger.writeDebugMsg("Simple type definition: " + elementName + " type: " + typeName);
-			interfaceBuffer.write("  <label for=\"" + elementName + "\" >" + elementName + ":</label>\n");	
+			interfaceBuffer.write("  <label for=\"" + elementName + "\" >" + elementNameDisplay + ":</label>\n");	
 			// we do not manage all the different types, we can only use a checkbox, a text box and a select
 			// for a closed list, we use a select with a list of options
 			if (simpleTypeDefinition.getIsDefinedFacet(XSSimpleTypeDefinition.FACET_ENUMERATION)) {
@@ -360,7 +365,7 @@ public class GenerateTemplate {
 			}
 			// for a boolean, we use a checkbox.
 			else if (typeName!= null && typeName.equals("boolean")) {
-				interfaceBuffer.write("    <input name=\"" + UIGenerator.BOOLEAN_ATTR_NAME + "\" type=\"checkbox\" value=\"" + elementName + "\" />\n");			
+				interfaceBuffer.write("    <input name=\"" + UIGenerator.BOOLEAN_ATTR_NAME + "\" type=\"checkbox\" value='" + elementName + "' />\n");			
 				interfaceBuffer.write("<br />\n");					
 			}
 			else if (typeName!= null && typeName.equals("integer")) {
@@ -375,12 +380,12 @@ public class GenerateTemplate {
 				}
 			}
 	
-		
+	
 	protected static void addStringTypeDefinition(BufferedWriter interfaceBuffer, String elementName) 
 		throws java.io.IOException {
 			interfaceBuffer.write("  <label for=\"" + elementName + "\" >" + elementName + ":</label>\n");	
 			interfaceBuffer.write("    <input name=\"" + elementName + "\" type=\"text\" value=\"\" />" + "\n");			
 			interfaceBuffer.write("<br />\n");			
 		}
-		
-	}
+	
+}

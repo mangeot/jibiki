@@ -9,64 +9,12 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.5  2005/05/24 12:51:21  serasset
- * Updated many aspect of the Papillon project to handle lexalp project.
- * 1. Layout is now parametrable in the application configuration file.
- * 2. Notion of QueryResult has been defined to handle mono/bi and multi lingual dictionary requests
- * 3. Result presentation may be done by way of standard xsl or with any class implementing the appropriate interface.
- * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
- * 5. It is now possible to give a name to the cookie key in the app conf file
- * 6. Several bug fixes.
+ * Revision 1.2  2005/06/15 16:48:27  mangeot
+ * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
  *
- * Revision 1.4  2005/04/15 11:38:05  mangeot
- * Fixed a bug, not using entryHandle from contributions table any more
+ * Revision 1.1.2.1  2005/04/29 15:29:09  mangeot
+ * Added classes for new version
  *
- * Revision 1.3  2005/04/11 12:29:59  mangeot
- * Merge between the XPathAndMultipleKeys branch and the main trunk
- *
- * Revision 1.2.2.3  2005/03/30 11:17:07  mangeot
- * Modified table contributions: replaced originalhandle by originalid
- * Corrected a few bugs when validating an already existing entry
- *
- * Revision 1.2.2.2  2005/03/29 09:41:32  serasset
- * Added transaction support. Use CurrentDBTransaction class to define a transaction
- * context in which all db commands will be executed.
- *
- * Revision 1.2.2.1  2005/03/16 13:24:31  serasset
- * Modified all boolean fields in table to CHAR(1) in order to be more db independant.
- * Suppressed ant.jar from class path, informationfiles (which rely on it) should be corrected.
- * The version of Xerces is now displayed on application init.
- *
- * Revision 1.2  2004/12/24 14:31:28  mangeot
- * I merged the latest developments of Papillon5.0 with this version 5.1.
- * Have to be tested more ...
- *
- * Revision 1.1.1.1  2004/12/06 16:38:31  serasset
- * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
- * There are still bugs in the code.
- *
- * Revision 1.9  2004/11/19 15:14:31  mangeot
- * Modified these sources in order to use a specific sort function in the database.
- * The lexicographic order depends on the language, thus I wrote a special function for sorting words.
- * In order to use this function, I had to add a column in the contributions table. This column is called sourcelanguage and is used to store the source language of the contrib.
- * Old papillon databases have to be updated this way:
- *
- * alter table contributions add sourcelanguage varchar(255);
- * update contributions set sourcelanguage=volumes.sourcelanguage where volumes.name=contributions.volume;
- * alter table contributions alter sourcelanguage set not null;
- *
- * and the sql script src/sql/multilingual_sort.sql has to be loaded into the database!
- *
- * Revision 1.6  2004/10/16 09:47:47  mangeot
- * New mechanism for reviewing the contributions:
- * Step 1 revision, the status of the contrib is modified
- * Step 2 validation, the status of the contrib is modified
- * Step 3 integration into the database, the contrib is deleted and the entry inserted into the corresponding volume
- *
- * Revision 1.5  2004/02/10 05:27:12  mangeot
- * The version UIGEN_V2 has been merged with the trunk by MM
- * Be careful because the Volumes and contributions database tables have been modified.
- * You have to drop and rebuild them unless you modify them by hands.
  *
  *-----------------------------------------------
  * 
@@ -90,25 +38,19 @@ import com.lutris.dods.builder.generator.query.DataObjectException;
 /**
  * Represents a Mailing list Dictionary. 
  */
-public class Contribution {
-
-		public final static String NOT_FINISHED_STATUS = "not finished";
-		public final static String FINISHED_STATUS = "finished";
-		public final static String REVISED_STATUS = "revised";
-		public final static String VALIDATED_STATUS = "validated";
-		public final static String INTEGRATED_STATUS = "integrated";
+public class ContributionLog {
 
     /**
      * The DO of the Dictionary.
      */
-    protected fr.imag.clips.papillon.data.ContributionDO myDO = null;
+    protected fr.imag.clips.papillon.data.ContributionLogDO myDO = null;
 
     /**
      * The public constructor.
      */
-    public Contribution() throws PapillonBusinessException {
+    public ContributionLog() throws PapillonBusinessException {
         try {
-			this.myDO = ContributionDO.createVirgin(CurrentDBTransaction.get());
+			this.myDO = ContributionLogDO.createVirgin(CurrentDBTransaction.get());
 
         }
         catch(DatabaseManagerException ex) {
@@ -120,11 +62,11 @@ public class Contribution {
 
     /** The protected constructor
      *
-     * @param theDisc. The data object of the Contribution.
+     * @param theDisc. The data object of the ContributionLog.
      */				
-    protected Contribution(ContributionDO theContribution) 
+    protected ContributionLog(ContributionLogDO theContributionLog) 
         throws PapillonBusinessException  {
-			this.myDO = theContribution;
+			this.myDO = theContributionLog;
 		}
 
     public boolean isEmpty() {
@@ -146,7 +88,7 @@ public class Contribution {
             return this.myDO.getHandle();
         } 
         catch(DatabaseManagerException ex) {
-            throw new PapillonBusinessException("Error getting Contribution's handle", ex);
+            throw new PapillonBusinessException("Error getting ContributionLog's handle", ex);
         }
     }
 
@@ -336,6 +278,32 @@ public class Contribution {
     }
 
     /**
+     * Gets the id of the contribution
+     *
+     * @return the subject.
+     * @exception PapillonBusinessException if an error occurs
+     *   retrieving data (usually due to an underlying data layer
+     *   error).
+     */
+    public String getContributionId()
+        throws PapillonBusinessException {
+        try {
+            return this.myDO.getContributionId();   
+        } catch(DataObjectException ex) {
+            throw new PapillonBusinessException("Error getting contribution id", ex);
+        }
+    }
+
+		public void setContributionId(String contributionId)
+        throws PapillonBusinessException {
+        try {
+		  		myDO.setContributionId(contributionId);   
+        } catch(DataObjectException ex) {
+            throw new PapillonBusinessException("Error setting contribution id", ex);
+        }
+    }
+
+    /**
 		 * Get CreationDate of the InformationDocument
      *
      * @return CreationDate of the InformationDocument
@@ -343,116 +311,27 @@ public class Contribution {
      * @exception DataObjectException
      *   If the object is not found in the database.
      */
-    public java.sql.Date getCreationDate () throws PapillonBusinessException {
+    public java.util.Date getDate () throws PapillonBusinessException {
+		java.sql.Timestamp myTimestamp = null;
         try {
-            return this.myDO.getCreationDate();
+            myTimestamp = this.myDO.getDate();
         } catch(DataObjectException  ex) {
-            throw new PapillonBusinessException("Error getting InformationDocument's FileType", ex);
+            throw new PapillonBusinessException("Error getting Date", ex);
         }
+		return (java.util.Date) myTimestamp;
     }
 
     /**
-		 * Set CreationDate of the InformationDocument
+        * Set Date of the ContributionLog
      *
-     * @param CreationDate of the InformationDocument
+     * @param Date (as a java.util.Date) of the InformationDocument
      *
      * @exception DataObjectException
      *   If the object is not found in the database.
      */
-    public void setCreationDate ( java.sql.Date date ) throws PapillonBusinessException {
+    public void setDate ( java.util.Date date ) throws PapillonBusinessException {
         try {
-            myDO.setCreationDate(date);
-        } catch(DataObjectException ex) {
-            throw new PapillonBusinessException("Error setting InformationDocument's FileType", ex);
-        }
-    }
-
-    /**
-        * Set CreationDate of the InformationDocument
-     *
-     * @param CreationDate (as a java.util.Date) of the InformationDocument
-     *
-     * @exception DataObjectException
-     *   If the object is not found in the database.
-     */
-    public void setCreationDate ( java.util.Date date ) throws PapillonBusinessException {
-        try {
-            myDO.setCreationDate(new java.sql.Date(date.getTime()));
-        } catch(DataObjectException ex) {
-            throw new PapillonBusinessException("Error setting InformationDocument's FileType", ex);
-        }
-    }
-
-    
-    /**
-        * Gets the reviewer of the contribution
-     *
-     * @return the subject.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-                          *   error).
-     */
-    public String getReviewer()
-        throws PapillonBusinessException {
-            try {
-                return myDO.getReviewer();
-            } catch(DataObjectException ex) {
-                throw new PapillonBusinessException("Error getting contribution's reviewer", ex);
-            }
-        }
-
-    public void setReviewer(String author)
-        throws PapillonBusinessException {
-            try {
-                myDO.setReviewer(author);
-            } catch(DataObjectException ex) {
-                throw new PapillonBusinessException("Error setting contribution's reviewer", ex);
-            }
-        }
-
-    /**
-		 * Get getReviewDate of the InformationDocument
-     *
-     * @return getReviewDate of the InformationDocument
-     *
-     * @exception DataObjectException
-     *   If the object is not found in the database.
-     */
-    public java.sql.Date getReviewDate () throws PapillonBusinessException {
-        try {
-            return this.myDO.getReviewDate();
-        } catch(DataObjectException  ex) {
-            throw new PapillonBusinessException("Error getting getReviewDate", ex);
-        }
-    }
-
-    /**
-		 * Set ReviewDate of the InformationDocument
-     *
-     * @param CreationDate of the InformationDocument
-     *
-     * @exception DataObjectException
-     *   If the object is not found in the database.
-     */
-    public void setReviewDate ( java.sql.Date date ) throws PapillonBusinessException {
-        try {
-            myDO.setReviewDate(date);
-        } catch(DataObjectException ex) {
-            throw new PapillonBusinessException("Error setting setReviewDate", ex);
-        }
-    }
-
-    /**
-        * Set setReviewDate of the InformationDocument
-     *
-     * @param setReviewDate (as a java.util.Date) of the InformationDocument
-     *
-     * @exception DataObjectException
-     *   If the object is not found in the database.
-     */
-    public void setReviewDate ( java.util.Date date ) throws PapillonBusinessException {
-        try {
-            myDO.setReviewDate(new java.sql.Date(date.getTime()));
+            myDO.setDate(new java.sql.Timestamp(date.getTime()));
         } catch(DataObjectException ex) {
             throw new PapillonBusinessException("Error setting InformationDocument's FileType", ex);
         }
@@ -483,61 +362,6 @@ public class Contribution {
                 throw new PapillonBusinessException("Error setting contribution's status", ex);
             }
         }
-
-    /**
-     * boolean newEntry
-		 * true if the contribution is an ew entry built from scratch
-		 * false if it is a modification of an existing entry or contribution
-		 *
-     * @return the subject.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-     *   error).
-     */
- public boolean IsNewEntry () throws PapillonBusinessException {
-        try {
-            String ne = this.myDO.getNewEntry();
-            return ((ne != null) && ne.equals("Y"));
-        } catch(DataObjectException  ex) {
-            throw new PapillonBusinessException("Error getting contribution newEntry", ex);
-        }
-    }
-
- 
-    public void setNewEntry (boolean newEntry) throws PapillonBusinessException {
-        try {
-            myDO.setNewEntry(newEntry ? "Y" : "N");   
-        } catch(DataObjectException ex) {
-            throw new PapillonBusinessException("Error setting contribution newEntry", ex);
-        }
-    }
-   
-    /**
-     * Gets the id of the original entry that has been modified with this contribution
-     *
-     * @return the subject.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-     *   error).
-     */
-    public String getOriginalId()
-        throws PapillonBusinessException {
-        try {
-            return this.myDO.getOriginalId();   
-        } catch(DataObjectException ex) {
-            throw new PapillonBusinessException("Error getting contribution original entry id", ex);
-        }
-    }
-
-		public void setOriginalId(String entryId)
-        throws PapillonBusinessException {
-        try {
-		  		myDO.setOriginalId(entryId);   
-        } catch(DataObjectException ex) {
-            throw new PapillonBusinessException("Error setting contribution original entry id", ex);
-        }
-    }
-
 
 	  /**
 		 * Deletes the volume from the database.

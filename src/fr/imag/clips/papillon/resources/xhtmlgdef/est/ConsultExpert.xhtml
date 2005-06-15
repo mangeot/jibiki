@@ -9,44 +9,17 @@
       <form id="ConsultForm" action="ConsultExpert.po">
         <table width="100%" style="border:1; bordercolor:white; bgcolor:#eeeecc;" summary="Search form">
           <tr>
-     <!-- Warning, make sure the option element contains a Text and only a Text (no other child) -->
             <td>
-              <b>
-                <label for="SOURCE">Keelest:</label>
-              </b>
-            <!-- select name="SOURCE" onChange="UpdateList(document.ConsultForm);" -->
+              <b><label for="SOURCE">Keelest:</label></b>
               <select id="SOURCE" name="SOURCE">
                 <option id="SourceOptionTemplate" value="NONE" label="NONE">NONE</option>
               </select>
-              <br />
-
-              <b>
-                <label for="Strategy">Strateegia:</label>
-              </b>
-              <select id="Strategy" name="Strategy">
-                <option value="0" label="exact match">täpne otsing</option>
-                <option value="1" label="prefix">prefiks</option>
-                <option value="2" label="suffix">sufiks</option>
-                <option value="3" label="substring">alamstring</option>
-                <option value="4" label="case insensitive">tõstutundetu</option>
-                <option value="5" label="insensitive prefix">tõstutundetu prefiks</option>
-                <option value="6" label="insensitive suffix">tõstutndetu sufiks</option>
-                <option value="7" label="insensitive substring">tõstutundetu alamstring</option>
-                <!--option value="8" label="lemmatize">lemmatize</option>
-                <option value="9" label="foks">FOKS Japanese</option-->
-              </select>
-              <!--br />
-              <a href="http://www.foks.info">foksi info</a-->
             </td>
-
-
-<!-- Warning, do not modify the content of the td element -->
             <td valign="middle">
               <b>
                 <label for="Targets">Keelde:</label>
               </b>
               <select id="Targets" name="TARGETS" size="3" multiple="multiple">
-<!-- selected="yes" -->
                 <option value="*ANY*" label="ANY">kõik</option>
                 <option id="TargetOptionTemplate" value="NONE" label="NONE">NONE</option>
               </select>
@@ -56,7 +29,6 @@
                 <label for="Resources">Sõnastikud:</label>
               </b>
               <select id="Resources" name="RESOURCES" size="3" multiple="multiple">
-    <!-- selected="yes" -->
                 <option value="*ANY*" label="ANY">kõik</option>
                 <option id="ResourceOptionTemplate" value="NONE" label="NONE">NONE</option>
               </select>
@@ -64,8 +36,19 @@
           </tr>
           <tr>
             <td style="bgcolor:#4682b4;">
+              <select id="Strategy1" name="Strategy1">
+                <option value="0" label="exact match">täpne otsing</option>
+                <option value="1" label="prefix">prefiks</option>
+                <option value="2" label="suffix">sufiks</option>
+                <option value="3" label="substring">alamstring</option>
+                <option value="4" label="case insensitive">tõstutundetu</option>
+                <option value="5" label="insensitive prefix">tõstutundetu prefiks</option>
+                <option value="6" label="insensitive suffix">tõstutndetu sufiks</option>
+                <option value="7" label="insensitive substring">tõstutundetu alamstring</option>
+              </select>
               <select id="search1" name="search1">
                 <option value="cdm-headword" label="Headword">Võtmesõna</option>
+                <option value="cdm-headword-variant" label="la variante">la variante</option>
                 <option value="cdm-pos" label="Part-of-speech">Part-of-speech</option>
                 <option value="gdef-est-domaine" label="Pronunciation">Domain</option>
                 <option value="cdm-translation" label="Reading">Translation</option>
@@ -78,9 +61,23 @@
               <label for="search1text">sisaldab</label>
               <input id="search1text" name="search1text" type="text" size="15" value="" />
             </td>
+			<td>
+              and
+			</td>
             <td style="bgcolor:#4682b4;">
+              <select id="Strategy2" name="Strategy2">
+                <option value="0" label="exact match">täpne otsing</option>
+                <option value="1" label="prefix">prefiks</option>
+                <option value="2" label="suffix">sufiks</option>
+                <option value="3" label="substring">alamstring</option>
+                <option value="4" label="case insensitive">tõstutundetu</option>
+                <option value="5" label="insensitive prefix">tõstutundetu prefiks</option>
+                <option value="6" label="insensitive suffix">tõstutndetu sufiks</option>
+                <option value="7" label="insensitive substring">tõstutundetu alamstring</option>
+              </select>
               <select id="search2" name="search2">
                 <option value="cdm-headword" label="Headword">Võtmesõna</option>
+                <option value="cdm-headword-variant" label="la variante">la variante</option>
                 <option value="cdm-pos" label="Part-of-speech">Part-of-speech</option>
                 <option value="gdef-est-domaine" label="Domain">Domain</option>
                 <option value="cdm-translation" label="Translation">Translation</option>
@@ -94,7 +91,7 @@
               <input id="search2text" name="search2text" type="text" size="15" value="" />
             </td>
             <td style="bgcolor:#4682b4;">
-              <input name="lookup" value="Otsi" type="submit" />
+				<input id="LOOKUP" name="LOOKUP" type="submit" value="Otsi"/>
             </td>
           </tr>
         </table>

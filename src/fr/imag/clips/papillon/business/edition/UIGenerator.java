@@ -1,10 +1,19 @@
-//
-//  UIGenerator.java
-//  PapillonStable
-//
-//  Created by Mathieu Mangeot on Wed Sep 15 2004.
-//  Copyright (c) 2004 __MyCompanyName__. All rights reserved.
-//
+/*
+ *  papillon
+ *
+ *  Created by Mathieu Mangeot on Thu Sep 16 2004.
+ *  Copyright (c) 2002 GETA_CLIPS_IMAG. All rights reserved.
+ *
+ *---------------------------------------------------------
+ * $Id$
+ *---------------------------------------------------------
+ * $Log$
+ * Revision 1.8  2005/06/15 16:48:27  mangeot
+ * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
+ *
+ *
+ *---------------------------------------------------------
+ */
 
 package fr.imag.clips.papillon.business.edition;
 
@@ -274,7 +283,7 @@ public class UIGenerator {
 						case  Node.ELEMENT_NODE:
 							// If the previous node is of the same type, then duplicate the previous corresponding interface node 
 							if (previousNode!=null && nodeItem.getNodeName().equals(previousNode.getNodeName())) {
-								correspItf = findCorrespondingElement((Element) previousNode,itfElt, ITF_DUPLICATE_ELT_NAME);
+								correspItf = findCorrespondingElement((Element) previousNode,itfElt);
 								correspItf = duplicateInterfaceElement((Element) nodeItem,correspItf,itfTemplate);
 							}
 							else {
@@ -345,20 +354,16 @@ public class UIGenerator {
 	}
 	
 	protected static Element findCorrespondingElement(Element entryElt, Element itfElt) {
-		return findCorrespondingElement(entryElt, itfElt, ITF_ELT_NAME);
+		return findCorrespondingElement(entryElt, itfElt, false);
 	}
 	
-	protected static Element findCorrespondingElement(Element entryElt, Element itfElt, String itfEltName) {
-		return findCorrespondingElement(entryElt, itfElt, itfEltName, false);
-	}
-	
-	protected static Element findCorrespondingElement(Element entryElt, Element itfElt, String itfEltName, boolean template) {
+	protected static Element findCorrespondingElement(Element entryElt, Element itfElt, boolean template) {
 		// if template is true, it means that if nothing is found, the result is null
 		// instead of the parent interface element.
-		// PapillonLogger.writeDebugMsg("findCorrespondingElement " + entryElt.getNodeName() + " itfelt: " + itfElt.getNodeName() + " class: " + itfElt.getAttribute(ITF_ATTR_NAME));
+		//PapillonLogger.writeDebugMsg("findCorrespondingElement " + entryElt.getNodeName() + " itfelt: " + itfElt.getNodeName() + " class: " + itfElt.getAttribute(ITF_ATTR_NAME));
 		Element resultElt = null;
 		String entryEltName = entryElt.getNodeName();
-		NodeList myNodeList = itfElt.getElementsByTagName (itfEltName);
+		NodeList myNodeList = itfElt.getElementsByTagName (ITF_DUPLICATE_ELT_NAME);
 		int i=0;
 		while (i<myNodeList.getLength () && resultElt==null) {
 			Element currentElt = (Element) myNodeList.item(i);
@@ -372,6 +377,22 @@ public class UIGenerator {
 			}	
 			i++;	
 		}
+		if (resultElt==null) {
+			myNodeList = itfElt.getElementsByTagName (ITF_ELT_NAME);
+			i=0;
+			while (i<myNodeList.getLength () && resultElt==null) {
+				Element currentElt = (Element) myNodeList.item(i);
+				String myAttr = currentElt.getAttribute(ITF_ATTR_NAME);
+				if (myAttr !=null) {
+					if (myAttr.equals(entryEltName)) {
+						// In any case, we take the first corresponding child
+						// because after we duplicate from an empty template 
+						resultElt = currentElt;
+					}
+				}	
+				i++;	
+			}			
+		}
 		// if template is true, it means that if nothing is found, the result is null
 		// instead of the parent interface element.
 		if (resultElt==null && !template) {
@@ -379,7 +400,7 @@ public class UIGenerator {
 		} 
 		return resultElt;
 	}
-		
+	
 	protected static boolean setNameCorrespondingAnchor(Node entryNode, Element itfElt, String newId) {
 		//	PapillonLogger.writeDebugMsg("setNameCorrespondingAnchor: " + entryNodeName);
 		boolean found = false;
@@ -593,13 +614,10 @@ public class UIGenerator {
 	
 	
 	protected static Element duplicateInterfaceElement(Element entryElt, Element itfElt, Element itfTemplate) {
-		// PapillonLogger.writeDebugMsg("duplicateInterfaceElement: " + entryElt.getNodeName() + " itf: " + itfElt.getNodeName());	
+		//PapillonLogger.writeDebugMsg("duplicateInterfaceElement: " + entryElt.getNodeName() + " itf: " + itfElt.getNodeName() + " class: " + itfElt.getAttribute(ITF_ATTR_NAME));	
 		Vector nodeVector = new Vector();
 		boolean template = true;
-		Element resElt = (Element) findCorrespondingElement(entryElt,itfTemplate, ITF_DUPLICATE_ELT_NAME, template);
-		if (resElt ==null) {
-			resElt = (Element) findCorrespondingElement(entryElt,itfTemplate, ITF_ELT_NAME, template);
-		}
+		Element resElt = (Element) findCorrespondingElement(entryElt,itfTemplate, template);
 		if (resElt !=null) {
 			
 			Document itfDoc = itfElt.getOwnerDocument();
@@ -690,6 +708,7 @@ public class UIGenerator {
 	}
 	
 	protected static Element getTemplateEntryElement(String elementName, String parentName, Element entryTemplate) {
+//		PapillonLogger.writeDebugMsg("getTemplateEntryElement: " + elementName + " parent: " + parentName);
 		Element resElt = null;
 		Element myParent = null;
 		if (entryTemplate.getTagName().equals(parentName)) {

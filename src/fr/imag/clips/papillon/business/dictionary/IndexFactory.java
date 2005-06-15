@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.9  2005/06/15 16:48:27  mangeot
+ * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
+ *
  * Revision 1.8  2005/05/24 12:51:21  serasset
  * Updated many aspect of the Papillon project to handle lexalp project.
  * 1. Layout is now parametrable in the application configuration file.
@@ -11,6 +14,9 @@
  * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
  * 5. It is now possible to give a name to the cookie key in the app conf file
  * 6. Several bug fixes.
+ *
+ * Revision 1.7.4.1  2005/04/29 14:50:25  mangeot
+ * New version with contribution infos embedded in the XML of the entries
  *
  * Revision 1.7  2005/04/18 13:22:47  mangeot
  * Fixed a bug with the strategy
@@ -110,36 +116,87 @@ public class IndexFactory {
 	
 	public final static String INDEX_TABLE_PREFIX = "idx";
 	
-	protected final static String KEY_FIELD = "key";
-	protected final static String LANG_FIELD = "lang";
-	protected final static String VALUE_FIELD = "value";
-	protected final static String ENTRYID_FIELD = "entryid";
-	protected final static String CONTRIB_SEP = "$";
+	public final static String KEY_FIELD = "key";
+	public final static String LANG_FIELD = "lang";
+	public final static String VALUE_FIELD = "value";
+	public final static String ENTRYID_FIELD = "entryid";
 	
-	protected static Vector getEntriesVector(Dictionary dict, Volume volume, Vector theKeys, int strategy, int offset) throws PapillonBusinessException {
+	protected final static String databaseName = IndexDO.get_logicalDBName();
+	public static String databaseVendor = null;
+	protected static com.lutris.dods.builder.generator.query.RDBColumn[] Columns = new com.lutris.dods.builder.generator.query.RDBColumn[1];
+
+	static {
+		try  {
+			databaseVendor = org.enhydra.dods.DODS.getDatabaseManager().logicalDatabaseType(databaseName);
+		}
+		catch (com.lutris.appserver.server.sql.DatabaseManagerException ex) {
+			databaseVendor = null;
+		}
+		catch (java.sql.SQLException ex) {
+			databaseVendor = null;
+		}
+	}
+		
+		
+	protected static Vector getEntriesVector(Dictionary dict, Volume volume, Vector Keys1, Vector Keys2, int offset) throws PapillonBusinessException {
 		Vector theEntries = new Vector();
 		VolumeEntry myEntry = null;
 		
+		//myKey[0] = key
+		//myKey[1] = lang
+		//myKey[2] = value
+		//myKey[3] = cmp_op
 		
-		String cmp_op = IQuery.QueryBuilderStrategy[strategy+1];
-				
-		for (java.util.Enumeration enumKeys = theKeys.elements(); enumKeys.hasMoreElements();) {
+		if (Keys1.size()==0 && Keys2.size()>0) {
+			Object myObject = Keys2.firstElement();
+			Keys1.add(myObject);
+			Keys2.remove(myObject);
+		}
+		
+		com.lutris.dods.builder.generator.query.QueryBuilder myQueryBuilder = null; 
+		com.lutris.dods.builder.generator.query.RDBColumn entryidColumn = IndexDO.getEntryIdColumn(volume.getIndexDbname());
+		Columns[0] = entryidColumn;
+		if (Keys1 !=null) {
+		for (java.util.Enumeration enumKeys1 = Keys1.elements(); enumKeys1.hasMoreElements();) {
 			//myKey[0] = key
 			//myKey[1] = lang
 			//myKey[2] = value
-			String[] myKey = (String[]) enumKeys.nextElement();
-			if (myKey[2] !=null && !myKey[2].equals("")) {
+			//myKey[3] = cmp_op
+			String[] key1 = (String[]) enumKeys1.nextElement();
+			if (key1[2] !=null && !key1[2].equals("")) {
 				try {
-					fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Indexed request table: " + volume.getIndexDbname() + " :: " +  myKey[0] + "/" + myKey[1] + "/" + myKey[2]);
+					fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Indexed request table: " + volume.getIndexDbname() + " :: " +  key1[0] + "/" + key1[1] + "/" + key1[2]);
 					IndexQuery query = new IndexQuery(volume.getIndexDbname(), CurrentDBTransaction.get());
-					query.getQueryBuilder().addWhereClause(KEY_FIELD, myKey[0], QueryBuilder.EQUAL);
-					if (myKey[1] !=null && !myKey[1].equals("")) {
-						query.getQueryBuilder().addWhereClause(LANG_FIELD, myKey[1], QueryBuilder.EQUAL);
+					query.getQueryBuilder().addWhereClause(KEY_FIELD, key1[0], QueryBuilder.EQUAL);
+					if (key1[1] !=null && !key1[1].equals("")) {
+						query.getQueryBuilder().addWhereClause(LANG_FIELD, key1[1], QueryBuilder.EQUAL);
 					}
-					query.getQueryBuilder().addWhereClause(VALUE_FIELD, myKey[2], cmp_op);
+					query.getQueryBuilder().addWhereClause(VALUE_FIELD, key1[2], key1[3]);
+					if (Keys2 !=null) {
+						for (java.util.Enumeration enumKeys2 = Keys2.elements(); enumKeys2.hasMoreElements();) {
+						String[] key2 = (String[]) enumKeys2.nextElement();
+						if (key2!=null && key2[2] !=null && !key2[2].equals("")) {
+							myQueryBuilder = new com.lutris.dods.builder.generator.query.QueryBuilder(Columns);
+							if (databaseVendor != null) {
+								myQueryBuilder.setDatabaseVendor(databaseVendor);
+							} else {
+								myQueryBuilder.setDatabaseVendor();
+							}
+							myQueryBuilder.addWhereClause(KEY_FIELD, key2[0], QueryBuilder.EQUAL);
+							if (key2[1] !=null && !key2[1].equals("")) {
+								myQueryBuilder.addWhereClause(LANG_FIELD, key2[1], QueryBuilder.EQUAL);
+							}
+							myQueryBuilder.addWhereClause(VALUE_FIELD, key2[2],  key2[3]);
+							myQueryBuilder.resetSelectedFields();
+							myQueryBuilder.select(entryidColumn);
+							query.getQueryBuilder().addWhereIn(entryidColumn, myQueryBuilder);
+							}
+						}
+					}
 					query.getQueryBuilder().setMaxRows(DictionariesFactory.MaxRetrievedEntries);
 					query.getQueryBuilder().addEndClause("OFFSET " + offset);
 					query.getQueryBuilder().addOrderByColumn("multilingual_sort(lang,value)","");
+					PapillonLogger.writeDebugMsg("Query SQL: " + query.getQueryBuilder().getSQL());
 					IndexDO[] DOarray = query.getDOArray();
 					if (null != DOarray) {
 						for (int j=0; j < DOarray.length; j++) {
@@ -154,9 +211,11 @@ public class IndexFactory {
 				}
 			}
 		}
+		}
 		return theEntries;
 	}
 	
+		
     // FIXME: dict is not used ! (maybe due to the fact that findAnswerByHandle does not ask for it.)
 	protected static Vector getAxiesPointingTo(Dictionary dict, Volume volume, String lexieId, String sourceLanguage) throws PapillonBusinessException {
 		Vector theEntries = new Vector();
@@ -186,34 +245,7 @@ public class IndexFactory {
 		}
 		return theEntries;
 	}
-    
-//    // FIXME: dict is not used ! 
-//    protected static Vector getLexieIdsPointedBy(Dictionary dict, Volume volume, String axieId, String targetLanguage) throws PapillonBusinessException {
-//		Vector theEntries = new Vector();
-//		
-//		String cmp_op = QueryBuilder.EQUAL;
-//		
-//		if (axieId != null && !axieId.equals("")) {
-//			try {
-//				IndexQuery query = new IndexQuery(volume.getIndexDbname(), CurrentDBTransaction.get());
-//				query.getQueryBuilder().addWhereClause(KEY_FIELD, Volume.CDM_axiReflexie, QueryBuilder.EQUAL);
-//				query.getQueryBuilder().addWhereClause(LANG_FIELD, targetLanguage, QueryBuilder.EQUAL);
-//				query.getQueryBuilder().addWhereClause(ENTRYID_FIELD, axieId, cmp_op);
-//				IndexDO[] DOarray = query.getDOArray();
-//				if (null != DOarray) {
-//					for (int j=0; j < DOarray.length; j++) {
-//						Index myIndex = new Index(DOarray[j]);
-//						theEntries.add(myIndex.getEntryId());
-//					}
-//				}
-//			}
-//			catch(Exception ex) {
-//				throw new PapillonBusinessException("Exception in getAxiesPointingTo()", ex);
-//			}
-//		}
-//		return theEntries;
-//	}
-    
+        
 	protected static Vector getIndexVectorByEntryId(Volume volume, String entryId) throws PapillonBusinessException {
 		Vector theIndex = new Vector();
 		

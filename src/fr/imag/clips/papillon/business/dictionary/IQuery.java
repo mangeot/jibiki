@@ -1,11 +1,22 @@
+/*
+ -----------------------------
+ * $Id$
+ *-----------------------------------------------
+ * $Log$
+ * Revision 1.3  2005/06/15 16:48:27  mangeot
+ * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
+ *
+ * Revision 1.2.4.1  2005/04/29 14:50:25  mangeot
+ * New version with contribution infos embedded in the XML of the entries
+ *
+ *
+ *-----------------------------------------------
+ */ 
+
 package fr.imag.clips.papillon.business.dictionary;
 
 import com.lutris.dods.builder.generator.query.QueryBuilder;
-/**
- * Insert the type's description here.
- * Creation date: (10.08.01 20:55:06)
- * @author: Administrator
- */
+
 public interface IQuery {
 /**
  * Insert the method's description here.
@@ -26,7 +37,7 @@ public interface IQuery {
     public static final int STRATEGY_SUBSTRING = 3;
 
     // insensitive "Match words case-insensitively"
-     public static final int STRATEGY_INSENSITIVE_EXACT = 4;
+	public static final int STRATEGY_INSENSITIVE_EXACT = 4;
 
     // inprefix "Match case-insensitive prefixes"
     public static final int STRATEGY_INSENSITIVE_PREFIX = 5;
@@ -43,6 +54,21 @@ public interface IQuery {
     // foks "Using Slaven BILAC's FOKS module, only for Japanese"
     public static final int STRATEGY_FOKS = 9;
 	
+    // !=
+    public static final int STRATEGY_NOT_EQUAL = 10;
+
+    // >
+    public static final int STRATEGY_GREATER_THAN = 11;
+	
+    // >=
+    public static final int STRATEGY_GREATER_THAN_OR_EQUAL = 12;
+	
+    // >
+    public static final int STRATEGY_LESS_THAN = 13;
+	
+    // >=
+    public static final int STRATEGY_LESS_THAN_OR_EQUAL = 14;
+	
 	public final static String [] QueryBuilderStrategy = { 
 		QueryBuilder.EQUAL, 
 		QueryBuilder.EQUAL, 
@@ -55,5 +81,10 @@ public interface IQuery {
 		QueryBuilder.CASE_INSENSITIVE_CONTAINS, 
 		QueryBuilder.EQUAL, 
 		QueryBuilder.EQUAL, 
+		QueryBuilder.NOT_EQUAL, 
+		QueryBuilder.GREATER_THAN, 
+		QueryBuilder.GREATER_THAN_OR_EQUAL, 
+		QueryBuilder.LESS_THAN, 
+		QueryBuilder.LESS_THAN_OR_EQUAL, 
 		};
 }

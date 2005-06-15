@@ -14,19 +14,23 @@
 <table width="600" border="0" cellspacing="0" cellpadding="10" summary="Upload Metadata">
 <tr>
      <!-- Warning, make sure the option element contains a Text and only a Text (no other child) -->
-	<td><b>Dictionary:</b></td>
-        <td>
-            <select name="Dictionary">
+	<td colspan="2"><label>Dictionary:
+		<select name="Dictionary">
             <option id="DictionaryOptionTemplate" value="NONE" label="NONE">NONE</option>
-        </select></td>
+        </select></label>
+	</td>
 </tr>
 <tr>	
-	<td valign="top"><b>Url:&nbsp;</b></td>
-	<td><input name="URL" type="text" size="64" value=""/></td>
+	<td colspan="2"><b>Url:&nbsp;</b><input name="URL" type="text" size="64" value=""/></td>
 </tr>
 <tr>
-    <td><b>Load Also Entries: &nbsp;</b></td>     
-    <td><input name="AddEntries" type="checkbox" value="Load Entries"/>&nbsp;&nbsp;<input name="Add" type="submit" value="Upload"/></td>
+    <td><label>Load Also Entries: &nbsp;   
+    <input name="AddVolumesAndEntries" type="checkbox" value="Load Volumes and Entries"/></label></td>
+    <td><label>Log contributions: &nbsp;
+    <input name="LogContributions" type="checkbox" value="LogContributions"/></label></td>
+</tr>
+<tr>
+	<td colspan="2"><input name="Add" type="submit" value="Add"/></td>
 </tr>
 </table>
 <p class="note">NB: The Volume Metadata file must be valid against the &lt;volume-metadata&gt; element of the DML schema. The latest version of the schema can be found at: <a href="http://www-clips.imag.fr/geta/services/dml/dml.xsd">www-clips.imag.fr/geta/services/dml/dml.xsd</a>.</p>

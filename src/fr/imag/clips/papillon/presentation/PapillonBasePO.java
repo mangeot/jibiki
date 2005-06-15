@@ -9,6 +9,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.2  2005/06/15 16:48:28  mangeot
+ *  Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
+ *
  *  Revision 1.1  2005/05/24 12:51:22  serasset
  *  Updated many aspect of the Papillon project to handle lexalp project.
  *  1. Layout is now parametrable in the application configuration file.
@@ -364,11 +367,15 @@ public abstract class PapillonBasePO extends AbstractPO {
                           *   error).
      */
 	public static String serializeParameterForUrl(String parameter, String[] table) {
+		String parameterSeparator = "&";
 		String result = "";
 		if (table != null) {
 			for (int i=0;i<table.length;i++) {
-				result += parameter + "=" + myUrlEncode(table[i]) + "&";
+				result += parameter + "=" + myUrlEncode(table[i]) + parameterSeparator;
 			}
+		}
+		if (result.endsWith(parameterSeparator)) {
+			result = result.substring(0,result.lastIndexOf(parameterSeparator));
 		}
 		return result;
 	}

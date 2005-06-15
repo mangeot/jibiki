@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.5  2005/06/15 16:48:28  mangeot
+ * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
+ *
  * Revision 1.4  2005/05/24 12:51:22  serasset
  * Updated many aspect of the Papillon project to handle lexalp project.
  * 1. Layout is now parametrable in the application configuration file.
@@ -11,6 +14,10 @@
  * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
  * 5. It is now possible to give a name to the cookie key in the app conf file
  * 6. Several bug fixes.
+ *
+ * Revision 1.3.4.1  2005/06/01 08:38:43  mangeot
+ * Multi bug correction + added the possibility of disabling data edition
+ * via the Admin.po page
  *
  * Revision 1.3  2005/04/11 12:29:59  mangeot
  * Merge between the XPathAndMultipleKeys branch and the main trunk
@@ -114,8 +121,8 @@ public class XslSheetFactory {
                 Document docXml = Utility.buildDOMTree(fileURL);                
                if (null != docXml) 
                 result=Utility.NodeToString(docXml);
-                PapillonLogger.writeDebugMsg("The XSL sheet:");
-                PapillonLogger.writeDebugMsg(result);
+              //  PapillonLogger.writeDebugMsg("The XSL sheet:");
+              //  PapillonLogger.writeDebugMsg(result);
                }
                catch(Exception ex) {
                     throw new PapillonBusinessException("Exception in parseXslSheet()", ex);

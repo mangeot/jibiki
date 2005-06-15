@@ -10,6 +10,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.12  2005/06/15 16:48:28  mangeot
+ * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
+ *
  * Revision 1.11  2005/05/24 12:51:22  serasset
  * Updated many aspect of the Papillon project to handle lexalp project.
  * 1. Layout is now parametrable in the application configuration file.
@@ -18,6 +21,18 @@
  * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
  * 5. It is now possible to give a name to the cookie key in the app conf file
  * 6. Several bug fixes.
+ *
+ * Revision 1.10.4.4  2005/06/10 14:11:55  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.10.4.3  2005/06/10 14:00:40  mangeot
+ * Changed Edit to Copy and Edit when a copy of the original entry is done before editing
+ *
+ * Revision 1.10.4.2  2005/04/29 17:30:30  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.10.4.1  2005/04/29 14:50:25  mangeot
+ * New version with contribution infos embedded in the XML of the entries
  *
  * Revision 1.10  2005/04/26 10:11:32  mangeot
  * *** empty log message ***
@@ -67,7 +82,8 @@
  * Revision 1.3  2004/10/28 10:56:21  mangeot
  * Added the list of connected users on AdminUsers.java,
  * Added the possibility to sort in columns for some pages
- * Added persistent preferences for the user. They are saved in the database and retrived when the user reconnects. The user is registered in the enhydra session.
+ * Added persistent preferences for the user. They are saved in the database and retrieved
+ * when the user reconnects. The user is registered in the enhydra session.
  *
  * Revision 1.2  2004/09/18 18:26:30  mangeot
  * Bug corrected
@@ -195,7 +211,6 @@ public class EditEntryInit extends PapillonBasePO {
 			content.setTextUserName(myUser.getName());
 	    }
 		VolumeEntry myEntry = null;
-		Contribution myContrib = null;
 				
 	    switch (step) {
 		case STEP_LOOKUP_EDIT:
@@ -204,33 +219,29 @@ public class EditEntryInit extends PapillonBasePO {
 		    break;
 		case STEP_CREATE:
 			myEntry = VolumeEntriesFactory.createEmptyEntry(volume);
+			myEntry.setCreationDate();
 			myEntry.setHeadword(headword);
-			myEntry.setIdFromHeadword(headword);
+			myEntry.setAuthor(myUser.getLogin());
+			myEntry.setGroups(myUser.getGroupsArray());
+			myEntry.setStatus(VolumeEntry.NOT_FINISHED_STATUS);
 			myEntry.save();
-			myContrib = ContributionsFactory.createContributionFromVolumeEntry(myEntry, myUser, null);
-			myContrib.save();
 			String headwordParam = myUrlEncode(headword);
 		    throw new ClientPageRedirectException(EditEntryURL + "?" + EditEntry.VolumeName_PARAMETER + "=" + volume + 
-			"&" + EditEntry.Headword_PARAMETER + "=" + headwordParam + 
 			"&" + EditEntry.EntryHandle_PARAMETER + "=" + myEntry.getHandle());
 		case STEP_EDIT:
 			myEntry = VolumeEntriesFactory.findEntryByHandle(volume, entryHandle);
-			// if myAnswer is contribution
-			myContrib = ContributionsFactory.findContributionByEntryId(myEntry.getId());
-			boolean isMyContrib =  (myContrib !=null && !myContrib.isEmpty() && myContrib.getAuthor().equals(this.getUser().getLogin()));
-			
-			// if there is an existing contribution and it is myUser's one
-			if (isMyContrib) {
-		    throw new ClientPageRedirectException(EditEntryURL + "?" + EditEntry.VolumeName_PARAMETER + "=" + myEntry.getVolumeName() + 
-			"&" + EditEntry.EntryHandle_PARAMETER + "=" + myEntry.getHandle());
+			if (myEntry.getAuthor().equals(this.getUser().getLogin())) {
+				throw new ClientPageRedirectException(EditEntryURL + "?" + EditEntry.VolumeName_PARAMETER + "=" + myEntry.getVolumeName() + 
+				"&" + EditEntry.EntryHandle_PARAMETER + "=" + myEntry.getHandle());
 			}
-						
-			// if it is a modification of an existing entry and myUser has no previous contributions on it
 			else {
 				VolumeEntry newEntry = VolumeEntriesFactory.newEntryFromExisting(myEntry);
+				newEntry.setAuthor(myUser.getLogin());
+				newEntry.setGroups(myUser.getGroupsArray());
+				newEntry.setContributionId();
+				newEntry.setOriginalContributionId(myEntry.getContributionId());
+				newEntry.setStatus(VolumeEntry.NOT_FINISHED_STATUS);
 				newEntry.save();
-				myContrib = ContributionsFactory.createContributionFromVolumeEntry(newEntry, myUser, myEntry.getId());
-				myContrib.save();
 				throw new ClientPageRedirectException(EditEntryURL + "?" + EditEntry.VolumeName_PARAMETER + "=" + newEntry.getVolumeName() + 
 				"&" + EditEntry.EntryHandle_PARAMETER + "=" + newEntry.getHandle());
 			}
@@ -286,14 +297,16 @@ public class EditEntryInit extends PapillonBasePO {
 			//Headword[0] = key
 			//Headword[1] = lang
 			//Headword[2] = value
-		String[] Headword = new String[3];
+			//Headword[3] = strategy
+		String[] Headword = new String[4];
 		Headword[0] = Volume.CDM_headword;
 		Headword[1] = null;
 		Headword[2] = headword;
+		Headword[3] = IQuery.QueryBuilderStrategy[strategy+1];
 		Vector myVector = new Vector();
 		myVector.add(Headword);
 
-	    Collection EntryCollection = DictionariesFactory.getVolumeEntriesCollection(volumeName, this.getUser(), myVector, strategy);
+	    Collection EntryCollection = DictionariesFactory.getVolumeEntriesCollection(volumeName, this.getUser(), myVector);
 
 
 	    if (EntryCollection != null && EntryCollection.size()>0) {
@@ -311,11 +324,13 @@ public class EditEntryInit extends PapillonBasePO {
 	    // On récupère les éléments du layout
 	    HTMLTableRowElement entryListRow = content.getElementEntryListRow();
 		HTMLAnchorElement entryIdAnchor = content.getElementViewEntryAnchor();
-		HTMLAnchorElement contribAnchor = content.getElementContribAnchor();
 	    HTMLElement headwordElement = content.getElementHeadwordList();
 	    HTMLElement posElement = content.getElementPosList();
+	    HTMLElement authorElement = content.getElementEntryAuthorList();
 	    HTMLAnchorElement editAnchor = content.getElementEditEntryAnchor();
 	    HTMLAnchorElement viewXmlAnchor = content.getElementViewXmlEntryAnchor();
+	    HTMLElement editElement = content.getElementEditMessage();
+	    HTMLElement copyElement = content.getElementCopyMessage();
 
 		// Recuperating the elements for the formula
 		HTMLTableRowElement formulaRow = content.getElementFormulaRow();
@@ -325,12 +340,14 @@ public class EditEntryInit extends PapillonBasePO {
 	    //      we don't take off the id attribute because we will take the element off later...
      //      entryListRow.removeAttribute("id");
 		entryIdAnchor.removeAttribute("id");
-		contribAnchor.removeAttribute("id");
 	    headwordElement.removeAttribute("id");
 	    posElement.removeAttribute("id");
 	    editAnchor.removeAttribute("id");
 	    viewXmlAnchor.removeAttribute("id");
 		formulaElement.removeAttribute("id");
+		editElement.removeAttribute("id");
+		copyElement.removeAttribute("id");
+		authorElement.removeAttribute("id");
 
 
 	    // On récupère le noeud contenant la table...
@@ -351,25 +368,18 @@ public class EditEntryInit extends PapillonBasePO {
 			
 		    entryIdAnchor.setHref(href);
 
+
+			// the entry id
 			content.setTextEntryIdList(myEntry.getId());
 			
-			// The Contribution text and anchor
-			Contribution myContrib = ContributionsFactory.findContributionByEntryId(myEntry.getId());
-			boolean IsContrib = (myContrib != null && !myContrib.isEmpty());
-			if (IsContrib) {
-					content.setTextContribution(new Boolean(IsContrib).toString() + " " + myContrib.getAuthor() + " " + myContrib.getCreationDate().toString());			
-			} 
-			else {
-					content.setTextContribution(new Boolean(IsContrib).toString());
-			}
-				String contribHref = ContributionsURL + "?"
-						+ ContributionsVolumeParameter + "="
-						+ myEntry.getVolumeName();
-					contribAnchor.setHref(contribHref);
-					
-
 		    // The pos
 			content.setTextPosList(myEntry.getPos());
+
+		    // The author
+			content.setTextEntryAuthorList(myEntry.getAuthor());
+			
+		    // The status
+			content.setTextEntryStatusList(myEntry.getStatus());
 
 		    // The edit anchor
 		   href = this.getUrl() + "?"
@@ -377,7 +387,24 @@ public class EditEntryInit extends PapillonBasePO {
 			+ myEntry.getVolumeName() + "&"
 			+ HANDLE_PARAMETER + "="
 			+ myEntry.getHandle();
-		    editAnchor.setHref(href);
+			
+			// the Edit button
+			if (myEntry.getAuthor().equals(this.getUser().getLogin())
+				&& !myEntry.getStatus().equals(VolumeEntry.VALIDATED_STATUS)) {
+				editAnchor.setHref(href);
+				editElement.setAttribute("class","");
+				copyElement.setAttribute("class","hidden");
+			}
+			else if (myEntry.getStatus().equals(VolumeEntry.VALIDATED_STATUS)) {
+				editAnchor.setHref(href);
+				copyElement.setAttribute("class","");
+				editElement.setAttribute("class","hidden");
+			}
+			else {
+				editAnchor.setHref("");
+				copyElement.setAttribute("class","hidden");
+				editElement.setAttribute("class","hidden");
+			}
 
 		    // The view XML anchor
 			XslSheet xmlSheet = XslSheetFactory.findXslSheetByName("XML");
