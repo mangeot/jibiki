@@ -9,6 +9,9 @@
  *$Id$
  *------------------------
  *$Log$
+ *Revision 1.3  2005/06/16 13:41:15  mangeot
+ *Bugfixed in the default formatter
+ *
  *Revision 1.2  2005/06/15 20:40:04  serasset
  *bugfix: transformer -> transformation in default transformer class name.
  *
@@ -42,15 +45,13 @@ public class ResultFormatterFactory {
 
     
     public static ResultFormatter getFormatter(QueryResult qr, int dialect, String lang)
-        throws PapillonBusinessException 
-    {
+        throws PapillonBusinessException {
         // returns the formatter for the appropriate volume or dictionary.
         return getFormatter(qr.getSourceEntry().getDictionary(), qr.getSourceEntry().getVolume(), dialect, lang);
     }
     
     public static ResultFormatter getFormatter(Dictionary dict, Volume vol, int dialect, String lang) 
-        throws PapillonBusinessException 
-    {
+        throws PapillonBusinessException {
         // returns the formatter for the appropriate volume or dictionary.
         // FIXME: Maybe the dialect and/or lang could be use to select a formatter class name.
         // Check if a special transformer is implemented for this Volume/dictionary

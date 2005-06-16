@@ -9,6 +9,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.2  2005/06/16 13:41:15  mangeot
+ *  Bugfixed in the default formatter
+ *
  *  Revision 1.1  2005/05/24 12:51:22  serasset
  *  Updated many aspect of the Papillon project to handle lexalp project.
  *  1. Layout is now parametrable in the application configuration file.
@@ -141,6 +144,7 @@ public class PapillonLayout implements StdLayout {
             handleLexieMenu(comms, sessionData);
             handleAxieMenu(comms, sessionData);
             handleReviewerMenu(comms, sessionData);
+            handleValidatorMenu(comms, sessionData);
             handleAdministratorMenu(comms, sessionData);
             
         }
@@ -388,7 +392,28 @@ public class PapillonLayout implements StdLayout {
         }
     
     
-    /**
+	/**
+        *  Description of the Method
+     *
+     * @param  comms
+     *      Description of the Parameter
+     * @param  sessionData
+     *      Description of the Parameter
+     * @exception  com.lutris.appserver.server.httpPresentation.HttpPresentationException
+     *      Description of the Exception
+     */
+    protected void handleValidatorMenu(HttpPresentationComms comms, PapillonSessionData sessionData)
+        throws com.lutris.appserver.server.httpPresentation.HttpPresentationException {
+            // If the user is not a specialist reviewer
+            User myUser = sessionData.getUser();
+            if (null != myUser && !myUser.isEmpty() && myUser.isValidator()) {
+                ValidatorMenuXHTML validatorMenu = (ValidatorMenuXHTML) MultilingualXHtmlTemplateFactory.createTemplate("ValidatorMenuXHTML", comms, sessionData);
+                layout.getElementMenuColumn().appendChild(layout.importNode(validatorMenu.getElementValidatorMenu(), true));
+            }
+        }
+
+    
+	/**
         *  Description of the Method
      *
      * @param  comms

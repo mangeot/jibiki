@@ -4,6 +4,9 @@
  *$Id$
  *------------------------
  *$Log$
+ *Revision 1.4  2005/06/16 13:41:15  mangeot
+ *Bugfixed in the default formatter
+ *
  *Revision 1.3  2005/05/24 12:51:21  serasset
  *Updated many aspect of the Papillon project to handle lexalp project.
  *1. Layout is now parametrable in the application configuration file.
@@ -115,7 +118,7 @@ public class XslTransformation implements ResultFormatter {
         try {
             if ((qr.getResultKind() == QueryResult.UNIQUE_RESULT) || 
                 (qr.getResultKind() == QueryResult.REVERSE_UNIQUE_RESULT)) {
-                doc = (Node)qr.getSourceEntry().getDom();
+                doc = (Node) qr.getSourceEntry().getDom();
                 for (int i=0; i < currentXslSheetSequence.size(); i++) {
                     XslSheet xsl = (XslSheet) currentXslSheetSequence.elementAt(i);
                     if (null != xsl && ! xsl.isEmpty()) {
@@ -129,7 +132,10 @@ public class XslTransformation implements ResultFormatter {
         } catch(Exception ex) {
             throw new fr.imag.clips.papillon.business.PapillonBusinessException("Exception in getFormattedResult()", ex);
         }	
-        return doc;
+		if (doc != null && doc.getNodeType()==Node.DOCUMENT_NODE) { 
+			doc = (Node)((Document)doc).getDocumentElement();
+		}
+		return doc;
     }
 
     

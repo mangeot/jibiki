@@ -10,6 +10,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.16  2005/06/16 13:41:15  mangeot
+ *  Bugfixed in the default formatter
+ *
  *  Revision 1.15  2005/06/15 16:48:28  mangeot
  *  Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
  *
@@ -108,7 +111,6 @@ import com.lutris.appserver.server.httpPresentation.HttpPresentation;
 import com.lutris.appserver.server.httpPresentation.HttpPresentationRequest;
 import com.lutris.appserver.server.httpPresentation.HttpPresentationException;
 //import org.enhydra.xml.xmlc.XMLObject;
-//import org.w3c.dom.html.HTMLElement;
 import org.enhydra.xml.xhtml.dom.*;
 
 //import com.lutris.appserver.server.httpPresentation.HttpPresentationOutputStream;
@@ -1198,8 +1200,9 @@ public class ConsultExpert extends PapillonBasePO {
             // get the apropriate transformer.
             ResultFormatter rf = ResultFormatterFactory.getFormatter(qr,ResultFormatterFactory.XHTML_DIALECT,null);
             rf.initializeFormatter(qr.getSourceEntry().getDictionary(), qr.getSourceEntry().getVolume() ,ResultFormatterFactory.XHTML_DIALECT,null);
-            
-            Element myHtmlElt = (Element)rf.getFormattedResult(qr);
+            String[] formatters = ResultFormatterFactory.getAvailableFormatters(qr.getSourceEntry().getVolume(), ResultFormatterFactory.XHTML_DIALECT,null);
+			PapillonLogger.writeDebugMsg("addEntry0: ");
+           Element myHtmlElt = (Element)rf.getFormattedResult(qr);
             
 			addElement(myHtmlElt, myEntry.getVolumeName(), myEntry.getHandle(),  myEntry.getDictionaryName(), myEntry.getType());
 		}
