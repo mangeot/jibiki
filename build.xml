@@ -11,6 +11,10 @@ Id:
   
 Log:
    $Log$
+   Revision 1.11  2005/06/16 12:44:43  mangeot
+   Deleted the gdef special targets and tasks. Not useful any more.
+   for the GDEF projet, compile using: -Dapplication.name=GDEF
+
    Revision 1.10  2005/05/24 12:51:21  serasset
    Updated many aspect of the Papillon project to handle lexalp project.
    1. Layout is now parametrable in the application configuration file.
@@ -57,8 +61,6 @@ Most useful targets:
  - qclean   -> remove all files from ./classes and ./output except dods ones
  - compile  -> compile source to ./classes with javac and xmlc
  - javadocs -> creates the javadocs in "./output/javadocs"
- - gdef     -> create ./output for GDEF server
- - gquick   -> create ./output for GDEF server without using DODS.
 
 
 ==================================================================== -->
@@ -143,10 +145,8 @@ Most useful targets:
     <pathelement path="${papillon.xerces.jar}"/>
     <pathelement path="${papillon.xmlapi.jar}"/>
     <pathelement path="${papillon.regexp.jar}"/>
-    <!-- <pathelement path="${papillon.ant.jar}"/> -->
     <pathelement path="${papillon.uigenerator.jar}"/>
     <pathelement path="${papillon.concepts.jar}"/>
-<!--    <pathelement path="${papillon.jsse.jar}"/> -->
     <pathelement path="${papillon.pgsql.jar}"/>
   </path>
 
@@ -199,9 +199,8 @@ Most useful targets:
  - clean    -> remove all files from ./classes and ./output
  - compile  -> compile source to ./classes with javac and xmlc
  - javadocs -> creates the javadocs in "./output/javadocs"
- - gdef     -> create ./output for GDEF server
- - gquick   -> create ./output for GDEF server without using DODS.
 
+For GDEF, call ant using -Dapplication.name=GDEF 
 For Lexalp, call ant using -Dapplication.name=Lexalp 
     </echo>
   </target>
@@ -269,35 +268,11 @@ For Lexalp, call ant using -Dapplication.name=Lexalp
 	   </copy> 
    </target>
   
-  <!-- ========================================================= -->
-	<!-- copy sql files to the sql directory                       -->
-	<!-- ========================================================= -->
-	<!-- Attention, à adapter car on a 2 doml qui génèrent des fichiers de meme nom... -->
-  <!-- <target name="sql" depends="dods">
-	   <copy todir="${dir.sql}">
-	       <fileset dir="${dodsbuild.dir}" includes="**/*.sql"/>
-	   </copy>
-	   <copy todir="${dir.sql}">
-	       <fileset dir="${dir.src}/sql"/>
-	   </copy>
-	</target>	
-	-->
-   
   <!-- =================================================================== -->
-  <!-- Compile html documents with XMLC                                         -->
+  <!-- Compile html documents with XMLC                                    -->
   <!-- =================================================================== -->
 
   <target name="xmlc" depends="prepare">
-    <!-- Generate java classes with XMLC -->
-    <!-- xmlc srcdir="${xmlcresources.dir}"
-       sourceout="${dir.xmlc}"
-       packagename="${project.package}.presentation"
-       options="options.xmlc"
-       compile="false"
-       includes="**/*.html">
-     <arg value="-d" />
-     <arg value="${dir.classes}" />
-   </xmlc -->
    <!-- Generate xhtml java classes with XMLC -->
    <xmlc srcdir="${xmlcresources.dir}"
        sourceout="${dir.xmlc}"
@@ -374,13 +349,11 @@ For Lexalp, call ant using -Dapplication.name=Lexalp
      <filter token="PROJECT_PATH" value="${dir.project}" />
      <filter token="ENHYDRA_DIR" value="${enhydra.dir}" />
      <!-- Papillon-specific filters -->
-     <!-- <filter token="ANT_LIB" value="${papillon.ant.jar}" /> -->
      <filter token="XALAN_LIB"    value="${papillon.xalan.jar}" />
      <filter token="XERCES_LIB"  value="${papillon.xerces.jar}" />
      <filter token="XMLAPI_LIB"  value="${papillon.xmlapi.jar}" />
      <filter token="PGSQL_JDBC_DRIVER" value="${papillon.pgsql.jar}" />
      <filter token="CONCEPTS_LIB" value="${papillon.concepts.jar}" />
-     <!--filter token="JSSE_LIB" value="${papillon.jsse.jar}" /-->
      <!-- /Papillon-specific filters -->
 
      <copy todir="${dir.output}"
@@ -407,13 +380,6 @@ For Lexalp, call ant using -Dapplication.name=Lexalp
 
      <move file="${dir.output}/run.in"
          tofile="${dir.output}/run"/>
-<!--      <move file="${dir.output}/conf/multiserver.conf.in"
-         tofile="${dir.output}/conf/multiserver.conf"/>
-     <move file="${dir.output}/conf/log4j.xml.in"
-         tofile="${dir.output}/conf/log4j.xml"/>
-     <move file="${dir.output}/conf/${project.name}.conf.in"
-         tofile="${dir.output}/conf/${project.name}.conf"/> -->
-
 
      <chmod file="${dir.output}/run" perm="ugo+rx"/>
 
@@ -454,36 +420,6 @@ For Lexalp, call ant using -Dapplication.name=Lexalp
               bottom="Copyright (c); ${project.year}"/>
   </target>
 
- <!-- =================================================================== -->
-  <!-- Special targets for GDEF project									   -->
-  <!-- =================================================================== -->
-  <target name="gdeftest">
-  <!-- test if the htmlbackup directory exists -->
-  	<available file="${xmlcresources.dir}/xhtmlbackup" type="dir" property="xhtmlbackup.exists"/>
-  </target>
-  <target name="gdefbefore" depends="gdeftest" unless="xhtmlbackup.exists">
-	  <copy todir="${xmlcresources.dir}/xhtmlbackup" overwrite="false" preservelastmodified="true">
-  	  	<fileset dir="${xmlcresources.dir}/xhtml"/>
-  	</copy>
-  	<copy todir="${xmlcresources.dir}/xhtml" overwrite="true" preservelastmodified="true">
-   		 <fileset dir="${xmlcresources.dir}/xhtmlgdef"/>
- 	</copy>
-  </target>
-		 
-  <target name="gdefretest">
-  <!-- test if the htmlbackup directory exists -->
-  	<available file="${xmlcresources.dir}/xhtmlbackup" type="dir" property="newxhtmlbackup.exists"/>
-  </target>
-  <target name="gdefafter" depends="gdefretest" if="newxhtmlbackup.exists">
- 	<move todir="${xmlcresources.dir}/xhtml" overwrite="true" preservelastmodified="true">
-  	  <fileset dir="${xmlcresources.dir}/xhtmlbackup"/>
-  	</move>
-  </target>
-		 
-  <target name="gdef" depends="gdefbefore,make,gdefafter"/>
-  
-  <target name="gquick" depends="gdefbefore,quick,gdefafter"/>
-  
   <!-- =================================================================== -->
   <!-- Clean everything                                                    -->
   <!-- =================================================================== -->
