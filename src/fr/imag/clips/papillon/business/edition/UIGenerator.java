@@ -8,6 +8,9 @@
  * $Id$
  *---------------------------------------------------------
  * $Log$
+ * Revision 1.9  2005/06/16 16:09:17  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.8  2005/06/15 16:48:27  mangeot
  * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
  *
@@ -236,7 +239,7 @@ public class UIGenerator {
 			if (entryNode.getNodeType()==Node.ATTRIBUTE_NODE) {
 				entryNodeName = ((Attr) entryNode).getOwnerElement().getNodeName() + ATTR_SEPARATOR + entryNodeName;
 			}
-			PapillonLogger.writeDebugMsg("fillTemplate Node: " + entryNodeName + " ID: " + newId);
+		//	PapillonLogger.writeDebugMsg("fillTemplate Node: " + entryNodeName + " ID: " + newId);
 			setNameCorrespondingAnchor(entryNode, itfElt, newId);
 			setIdCorrespondingSubmitInputs(entryNodeName, itfElt, newId);
 			setIdCorrespondingLabel(entryNodeName, itfElt, newId);

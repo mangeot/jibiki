@@ -10,6 +10,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.17  2005/06/16 16:09:17  mangeot
+ *  *** empty log message ***
+ *
  *  Revision 1.16  2005/06/16 13:41:15  mangeot
  *  Bugfixed in the default formatter
  *
@@ -1201,7 +1204,6 @@ public class ConsultExpert extends PapillonBasePO {
             ResultFormatter rf = ResultFormatterFactory.getFormatter(qr,ResultFormatterFactory.XHTML_DIALECT,null);
             rf.initializeFormatter(qr.getSourceEntry().getDictionary(), qr.getSourceEntry().getVolume() ,ResultFormatterFactory.XHTML_DIALECT,null);
             String[] formatters = ResultFormatterFactory.getAvailableFormatters(qr.getSourceEntry().getVolume(), ResultFormatterFactory.XHTML_DIALECT,null);
-			PapillonLogger.writeDebugMsg("addEntry0: ");
            Element myHtmlElt = (Element)rf.getFormattedResult(qr);
             
 			addElement(myHtmlElt, myEntry.getVolumeName(), myEntry.getHandle(),  myEntry.getDictionaryName(), myEntry.getType());

@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.7  2005/06/16 16:09:17  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.6  2005/06/15 16:48:27  mangeot
  * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
  *
@@ -380,12 +383,21 @@ public class VolumesFactory {
 	public static String getSymetricVolumeName(String myVolumeName) 
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 		String resName = "";
+			/* FIXME à recoder proprement en utilsant les language-link des metadonnées du dictionnaire 
 		Volume myVolume = findVolumeByName(myVolumeName);
 		if (myVolume != null && !myVolume.isEmpty()) {
 			Volume resVolume = getSymetricVolume(myVolume);
 			if (resVolume != null && !resVolume.isEmpty()) {
 				resName = resVolume.getName();
 			}
+		}
+			*/
+		if (myVolumeName.equals(VolumeEntriesFactory.VOLUME_GDEF_est)
+			|| myVolumeName.equals(VolumeEntriesFactory.VOLUME_GDEF_tes)) {
+			resName = VolumeEntriesFactory.VOLUME_GDEF_fra;
+		}
+		else if (myVolumeName.equals(VolumeEntriesFactory.VOLUME_GDEF_fra))  {
+			resName = VolumeEntriesFactory.VOLUME_GDEF_est;
 		}
 		return resName;
 	}
