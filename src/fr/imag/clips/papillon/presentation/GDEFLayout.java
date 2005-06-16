@@ -9,6 +9,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.2  2005/06/16 10:42:15  mangeot
+ *  Added and modified files for the GDEF project
+ *
  *  Revision 1.1  2005/06/16 08:21:23  mangeot
  *  *** empty log message ***
  *
@@ -64,8 +67,6 @@ import java.text.DateFormat;
 public class GDEFLayout implements StdLayout {
     LayoutXHTML layout;
     
-    public static final String PACKAGE = "fr.imag.clips.papillon.presentation.xhtmlgdef";
-
     // Constructeur avec script
     /**
         *  Constructor for the StdLayout object
@@ -87,8 +88,8 @@ public class GDEFLayout implements StdLayout {
         throws com.lutris.appserver.server.httpPresentation.HttpPresentationException, UnsupportedEncodingException {
             
             // Création du document
-            layout = (LayoutXHTML) MultilingualXHtmlTemplateFactory.createTemplate(PACKAGE, "LayoutXHTML", comms, sessionData);
-            HeaderXHTML header = (HeaderXHTML) MultilingualXHtmlTemplateFactory.createTemplate(PACKAGE, "HeaderXHTML", comms, sessionData);
+            layout = (LayoutXHTML) MultilingualXHtmlTemplateFactory.createTemplate("LayoutXHTML", comms, sessionData);
+            HeaderXHTML header = (HeaderXHTML) MultilingualXHtmlTemplateFactory.createTemplate("HeaderXHTML", comms, sessionData);
             Node menuBar = header.getElementMenuBar();
             
             // adding a script if needed
@@ -108,17 +109,15 @@ public class GDEFLayout implements StdLayout {
             layout.getElementHeaderPlace().appendChild(layout.importNode(menuBar, true));
             // layout.getElementFooterPlace().appendChild(layout.importNode( menuBar, true));
             
-            
-            
-            
             // Gestion du menu :
-            // Si les utilisateurs sont logues, on met leur login
+            // Si les utilisateurs sont logués, on met leur login
             
             // menu
             handleLangForm(comms, sessionData, url);
             handleConsultForm(comms, sessionData);
             handleLexieMenu(comms, sessionData);
             handleReviewerMenu(comms, sessionData);
+            handleValidatorMenu(comms, sessionData);
             handleAdministratorMenu(comms, sessionData);
             
         }
@@ -241,32 +240,13 @@ public class GDEFLayout implements StdLayout {
             // We assume that the option element has only one text child
             // (it should be this way if the HTML is valid...)
             
-            Text sourceTextTemplate = (Text) sourceOptionTemplate.getFirstChild();
             String langLoc = sessionData.getUserPreferredLanguage();
             String prefSrcLang = sessionData.getPreference("Home.po", sourceSelect.getName());
             if (prefSrcLang == null || prefSrcLang.equals("")) {
                 prefSrcLang = langLoc;
                 sessionData.setPreference("Home.po", sourceSelect.getName(), prefSrcLang);
             }
-            
-            for (int i = 0; i < allSourceLanguages.length; i++) {
-                String langi = allSourceLanguages[i];
-                
-                sourceOptionTemplate.setValue(langi);
-                // Certains navigateurs ne sont pas conformes aux specs
-                // pour eux,je dois mettre un label en ascii
-                if (sessionData.getClientWithLabelDisplayProblems()) {
-                    sourceOptionTemplate.setLabel(Languages.localizeLabel(langLoc, langi));
-                } else {
-                    sourceOptionTemplate.setLabel(Languages.localizeName(langLoc, langi));
-                }
-                sourceOptionTemplate.setSelected(langi.equals(prefSrcLang));
-                
-                sourceTextTemplate.setData(Languages.localizeName(langLoc, langi));
-                sourceSelect.appendChild(sourceOptionTemplate.cloneNode(true));
-            }
-            sourceSelect.removeChild(sourceOptionTemplate);
-            
+                        
             // Adding the appropriate target languages to the target list
             XHTMLOptionElement targetOptionTemplate = queryMenu.getElementTargetOptionTemplate();
             XHTMLSelectElement targetSelect = (XHTMLSelectElement) targetOptionTemplate.getParentNode();
@@ -345,7 +325,27 @@ public class GDEFLayout implements StdLayout {
         }
     
     
-    /**
+	/**
+        *  Description of the Method
+     *
+     * @param  comms
+     *      Description of the Parameter
+     * @param  sessionData
+     *      Description of the Parameter
+     * @exception  com.lutris.appserver.server.httpPresentation.HttpPresentationException
+     *      Description of the Exception
+     */
+    protected void handleValidatorMenu(HttpPresentationComms comms, PapillonSessionData sessionData)
+        throws com.lutris.appserver.server.httpPresentation.HttpPresentationException {
+            // If the user is not a specialist reviewer
+            User myUser = sessionData.getUser();
+            if (null != myUser && !myUser.isEmpty() && myUser.isValidator()) {
+                ValidatorMenuXHTML validatorMenu = (ValidatorMenuXHTML) MultilingualXHtmlTemplateFactory.createTemplate("ValidatorMenuXHTML", comms, sessionData);
+                layout.getElementMenuColumn().appendChild(layout.importNode(validatorMenu.getElementValidatorMenu(), true));
+            }
+        }
+
+	/**
         *  Description of the Method
      *
      * @param  comms

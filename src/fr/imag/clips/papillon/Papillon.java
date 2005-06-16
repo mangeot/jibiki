@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.5  2005/06/16 10:42:15  mangeot
+ * Added and modified files for the GDEF project
+ *
  * Revision 1.4  2005/05/24 12:51:21  serasset
  * Updated many aspect of the Papillon project to handle lexalp project.
  * 1. Layout is now parametrable in the application configuration file.
@@ -58,9 +61,11 @@ import fr.imag.clips.papillon.business.locales.*;
  * Application-wide data would go here.
  */
 public class Papillon extends StandardApplication {
+    protected static final String PRIORITY_PACKAGE_CONFIG = "Papillon.Presentation.PriorityPackage";
     protected static final String LAYOUT_CONFIG = "Papillon.LayoutClassName";
     protected static final String COOKIE_CONFIG = "Papillon.LoginCookieName";
 
+    protected String presentationPriorityPackage = null;
     protected String layoutClassName = "fr.imag.clips.papillon.presentation.PapillonLayout";
     protected String loginCookieName = "PapillonLoginCookie";
 
@@ -102,6 +107,15 @@ public class Papillon extends StandardApplication {
         }
         
         // Get current Layout Setting.
+        String priorityPackage = null; 
+        try {
+            priorityPackage =  Enhydra.getApplication().getConfig().getString(PRIORITY_PACKAGE_CONFIG);
+            presentationPriorityPackage = priorityPackage;
+        } catch (ConfigException e) {
+            // nothing... failing to default...
+        }
+
+        // Get current Layout Setting.
         String configLayoutClassName = null; 
         try {
             configLayoutClassName =  Enhydra.getApplication().getConfig().getString(LAYOUT_CONFIG);
@@ -118,6 +132,10 @@ public class Papillon extends StandardApplication {
             // nothing... failing to default...
         }
         
+    }
+    
+    public String getPriorityPackage() {
+        return presentationPriorityPackage;
     }
     
     public String getLayoutClassName() {

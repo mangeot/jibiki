@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2005/06/16 10:42:15  mangeot
+ * Added and modified files for the GDEF project
+ *
  * Revision 1.3  2005/06/15 16:48:28  mangeot
  * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
  *
@@ -37,6 +40,9 @@
 package fr.imag.clips.papillon.presentation;
 
 // Enhydra SuperServlet imports
+import com.lutris.appserver.server.Enhydra;
+import fr.imag.clips.papillon.Papillon;
+
 import java.util.ArrayList;
 
 import fr.imag.clips.papillon.business.locales.LanguageFactory;
@@ -50,6 +56,7 @@ public class MultilingualXHtmlTemplateFactory {
     private final static String ORIG_PACKAGE = PACKAGE + "orig.";
 
     private final static String DEFAULT_LANGUAGE = "eng";
+	private static java.lang.ClassNotFoundException myClassNotFoundException = null;
     
     /**
      * Return an HTML Template object that is a localized instance of the
@@ -62,9 +69,20 @@ public class MultilingualXHtmlTemplateFactory {
     public static java.lang.Object createTemplate(String xhtmlClass,
                                                   HttpPresentationComms comms,
                                                   PapillonSessionData sessiondata)
-        throws HttpPresentationException
-    {
-        return createTemplate(PACKAGE,xhtmlClass,comms,sessiondata);
+        throws HttpPresentationException {
+			java.lang.Object resObject = null;
+		String priorityPackage = ((Papillon)Enhydra.getApplication()).getPriorityPackage();
+		if (priorityPackage != null && !priorityPackage.equals("")) {
+			resObject = createTemplate(priorityPackage,xhtmlClass,comms,sessiondata);
+		}
+		if (resObject==null) {
+			resObject = createTemplate(PACKAGE,xhtmlClass,comms,sessiondata);
+		}
+		if (resObject==null) {
+			throw new HttpPresentationException("ERREUR:", myClassNotFoundException);
+		}
+
+		return resObject;
     }
     
     /**
@@ -74,7 +92,7 @@ public class MultilingualXHtmlTemplateFactory {
      *
      * @return The localized HTML Template Object
      */
-    public static java.lang.Object createTemplate(String xhtmlPackage,
+    protected static java.lang.Object createTemplate(String xhtmlPackage,
                                                   String xhtmlClass,
                                                   HttpPresentationComms comms,
                                                   PapillonSessionData sessiondata)
@@ -94,10 +112,9 @@ public class MultilingualXHtmlTemplateFactory {
             try {
                 template = comms.xmlcFactory.create(Class.forName(xhtmlPackage + ".orig." + xhtmlClass));
             } catch (java.lang.ClassNotFoundException e) {
-                throw new HttpPresentationException("ERREUR:", e);
+				myClassNotFoundException = e;
             }
         }
-        
         return template;
         
     }
