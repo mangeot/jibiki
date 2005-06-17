@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.7  2005/06/17 16:49:47  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.6  2005/06/17 12:38:56  mangeot
  * Changed lexiesCollection into lexiesHashtable in order to implement the getDirectTranslations
  *
@@ -667,6 +670,18 @@ public class Volume {
 	}
 
     /**
+		* Gets the CDM groups element of the Volume
+     *
+     * @return the CDM comment tag name as a String.
+     * @exception PapillonBusinessException if an error occurs
+     *   retrieving data (usually due to an underlying data layer
+						  *   error).
+     */
+    public String getCdmContributionGroups() {
+		return getTagNameFromXPath(getCdmXPathString(this.CDM_contributionGroups));
+	}
+	
+    /**
 		* Gets the CDM group of the Volume
      *
      * @return the CDM comment tag name as a String.
@@ -677,7 +692,7 @@ public class Volume {
     public String getCdmContributionGroup() {
 		return getTagNameFromXPath(getCdmXPathString(this.CDM_contributionGroup));
 	}
-
+	
 	/**
 		* Sets the CDM elements Hashtable of the Volume
      *

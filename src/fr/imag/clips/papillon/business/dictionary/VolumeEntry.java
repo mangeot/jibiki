@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.13  2005/06/17 16:49:47  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.12  2005/06/15 16:48:27  mangeot
  * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
  *
@@ -906,7 +909,13 @@ public class VolumeEntry implements IAnswer {
 	public void setGroups(String[] groups) throws PapillonBusinessException {
 		if (groups !=null && groups.length>0) {
 			org.w3c.dom.Document myDocument = this.getDom();	
-			org.w3c.dom.Node groupsNode = ParseVolume.getCdmElement(this, Volume.CDM_contributionGroups);
+			org.w3c.dom.Node groupsNode = ParseVolume.getCdmElement(this, this.getVolume().getCdmContributionGroups());
+			NodeList childNodes = groupsNode.getChildNodes();
+			if (childNodes!=null) {
+				for (int i=0; i<childNodes.getLength() ; i++) {
+					groupsNode.removeChild(childNodes.item(i));
+				}
+			}
 			for (int i=0; i<groups.length; i++) {
 				String group = groups[i];
 				if (group !=null && !group.equals("")) {
