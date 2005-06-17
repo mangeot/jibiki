@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.6  2005/06/17 12:38:56  mangeot
+ * Changed lexiesCollection into lexiesHashtable in order to implement the getDirectTranslations
+ *
  * Revision 1.5  2005/06/15 16:48:27  mangeot
  * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
  *
@@ -44,7 +47,6 @@
  * Revision 1.3.4.1  2005/04/29 14:50:25  mangeot
  * New version with contribution infos embedded in the XML of the entries
  *
->>>>>>> 1.3.4.7
  * Revision 1.3  2005/04/11 12:29:59  mangeot
  * Merge between the XPathAndMultipleKeys branch and the main trunk
  *

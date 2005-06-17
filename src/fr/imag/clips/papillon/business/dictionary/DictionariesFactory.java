@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.11  2005/06/17 12:38:56  mangeot
+ * Changed lexiesCollection into lexiesHashtable in order to implement the getDirectTranslations
+ *
  * Revision 1.10  2005/06/15 16:48:27  mangeot
  * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
  *
@@ -665,8 +668,7 @@ public class DictionariesFactory {
 				myVector = getPivotResults(qr, ve.getSourceLanguage(), targets, user);
 			}
 			if (type.equals("direct")) {
-                // FIXME: TO BE ADAPTED FOR QueryResults !
-                qr.setResultKind(QueryResult.UNIQUE_RESULT);
+                qr.setResultKind(QueryResult.DIRECT_TRANSLATIONS_RESULT);
 				myVector = getDirectResults(qr, ve.getSourceLanguage(), targets, user);
 			}
 		} else {
@@ -713,15 +715,19 @@ public class DictionariesFactory {
             for (Iterator iter = axies.iterator(); iter.hasNext();) {
                 // FIXME: Typecasting will not work for papillon until axies are treated normally...
                 VolumeEntry myAxie = (VolumeEntry) iter.next();
-                Collection resLexies = new HashSet();
+                Hashtable resLexies = new Hashtable();
                 
                 for (int i = 0; i < targets.length; i++) {
-                    resLexies.addAll(PapillonPivotFactory.findLexiesByAxie(myAxie, targets[i]));
+                    Collection tempCollection = PapillonPivotFactory.findLexiesByAxie(myAxie, targets[i]);
+					for (Iterator iterTarget = tempCollection.iterator(); iterTarget.hasNext();) {
+						VolumeEntry myTargetLexie = (VolumeEntry) iterTarget.next();
+						resLexies.put(myTargetLexie.getEntryId(),myTargetLexie);
+					}
                 }
                 
                 QueryResult qr = new QueryResult(proto);
                 qr.setResultAxie(myAxie);
-                qr.setLexiesCollection(resLexies);
+                qr.setLexiesHashtable(resLexies);
                 
                 qrset.add(qr);
                 
@@ -736,20 +742,19 @@ public class DictionariesFactory {
         Collection qrset = new HashSet();
         if (null != proto && null != proto.getSourceEntry()) {
             VolumeEntry mySourceEntry = proto.getSourceEntry();
-            Collection resLexies = new HashSet();
+            Hashtable resLexies = new Hashtable();
 
             for (int i = 0; i < targets.length; i++) {
                 // get all cdm elements pointing to target entries.
                 String[] transIds = mySourceEntry.getTranslationsLexieIds(targets[i]);
-                
                 Volume[] Volumes = VolumesFactory.getVolumesArray(mySourceEntry.getDictionaryName(),targets[i], null);
                 if (null != transIds && Volumes != null && Volumes.length>0) {
                     if (Volumes != null && Volumes.length>0) {
                         Volume firstVolume = Volumes[0];
                         for (int j = 0; j < transIds.length; j++) {
-                            IAnswer myEntry = DictionariesFactory.findEntryByEntryId(firstVolume.getName(), transIds[j]);
+                            VolumeEntry myEntry = (VolumeEntry) DictionariesFactory.findEntryByEntryId(firstVolume.getName(), transIds[j]);
                             if (myEntry != null && ! myEntry.isEmpty()) {
-                                resLexies.add(myEntry);
+                                resLexies.put(myEntry.getEntryId(),myEntry);
                             } 
                         }
                     }
@@ -757,7 +762,7 @@ public class DictionariesFactory {
             }
             
             QueryResult qr = new QueryResult(proto);
-            qr.setLexiesCollection(resLexies);
+            qr.setLexiesHashtable(resLexies);
             
             qrset.add(qr);
             

@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.2  2005/06/17 12:38:56  mangeot
+ * Changed lexiesCollection into lexiesHashtable in order to implement the getDirectTranslations
+ *
  * Revision 1.1  2005/05/24 12:51:21  serasset
  * Updated many aspect of the Papillon project to handle lexalp project.
  * 1. Layout is now parametrable in the application configuration file.
@@ -24,7 +27,7 @@
 package fr.imag.clips.papillon.business.dictionary;
 
 /* standards imports */
-import java.util.Collection;
+import java.util.Hashtable;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
 
 /**
@@ -45,11 +48,12 @@ public class QueryResult {
     public static final int UNIQUE_RESULT = 1;
     public static final int REVERSE_UNIQUE_RESULT = 2;
     public static final int AXIE_COLLECTION_RESULT = 3;
+	public static final int DIRECT_TRANSLATIONS_RESULT = 4;
     
     protected int resultKind;
 	protected VolumeEntry sourceEntry = null;
     protected VolumeEntry resultAxie = null;
-    protected Collection lexiesCollection = null;
+    protected Hashtable lexiesHashtable = null;
 	
     public QueryResult() {
         this.resultKind = UNKNOWN;
@@ -60,7 +64,7 @@ public class QueryResult {
         this.resultKind = qr.getResultKind();
         this.sourceEntry = qr.getSourceEntry();
         this.resultAxie = qr.getResultAxie();
-        this.lexiesCollection = qr.getLexiesCollection();
+        this.lexiesHashtable = qr.getLexiesHashtable();
     }
     
     
@@ -74,9 +78,9 @@ public class QueryResult {
         this.resultAxie = axie;
     }
     
-    public QueryResult(int kind, VolumeEntry source, VolumeEntry axie, Collection lexies) {
+    public QueryResult(int kind, VolumeEntry source, VolumeEntry axie, Hashtable lexies) {
         this(kind, source, axie);
-        this.lexiesCollection = lexies;
+        this.lexiesHashtable = lexies;
     }
     
     public void setSourceEntry(VolumeEntry ve) {
@@ -103,12 +107,16 @@ public class QueryResult {
         return this.resultAxie;
     }
 
-    public void setLexiesCollection(Collection lexies) {
-        this.lexiesCollection = lexies;
+    public void setLexiesHashtable(Hashtable lexies) {
+        this.lexiesHashtable = lexies;
     }
     
-    public Collection getLexiesCollection() {
-        return this.lexiesCollection;
+    public Hashtable getLexiesHashtable() {
+        return this.lexiesHashtable;
+    }
+    
+    public java.util.Collection getLexiesCollection() {
+        return this.lexiesHashtable.values();
     }
     
     

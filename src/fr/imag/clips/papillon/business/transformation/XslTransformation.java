@@ -4,6 +4,9 @@
  *$Id$
  *------------------------
  *$Log$
+ *Revision 1.5  2005/06/17 12:38:56  mangeot
+ *Changed lexiesCollection into lexiesHashtable in order to implement the getDirectTranslations
+ *
  *Revision 1.4  2005/06/16 13:41:15  mangeot
  *Bugfixed in the default formatter
  *
@@ -73,11 +76,14 @@ import javax.xml.transform.stream.StreamSource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import fr.imag.clips.papillon.business.dictionary.IAnswer;
 import fr.imag.clips.papillon.business.dictionary.QueryResult;
 import fr.imag.clips.papillon.business.dictionary.Dictionary;
+import fr.imag.clips.papillon.business.dictionary.ParseVolume;
 import fr.imag.clips.papillon.business.dictionary.Volume;
+import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
 import fr.imag.clips.papillon.business.xsl.XslSheet;
 import fr.imag.clips.papillon.business.xsl.XslSheetFactory;
 import fr.imag.clips.papillon.business.utility.Utility;
@@ -125,18 +131,57 @@ public class XslTransformation implements ResultFormatter {
                         doc = Transform(doc, xsl);
                     }
                 }
-            } else if (qr.getResultKind() == QueryResult.AXIE_COLLECTION_RESULT) {
+            } 
+			else if (qr.getResultKind() == QueryResult.AXIE_COLLECTION_RESULT) {
                 // FIXME: What should I do in this case ?
                 doc = (Node)qr.getSourceEntry().getDom();
             }
-        } catch(Exception ex) {
+			else if (qr.getResultKind() == QueryResult.DIRECT_TRANSLATIONS_RESULT) {
+				VolumeEntry myAnswer = qr.getSourceEntry();
+				if (myAnswer.getHtmlDom() == null) {					
+					Volume myVolume = myAnswer.getVolume();
+					Dictionary myDictionary = myAnswer.getDictionary();
+					String[] targets = myVolume.getTargetLanguagesArray();
+					for (int j=0;j<targets.length;j++) {
+						NodeList myNodeList = ParseVolume.getCdmElements(myAnswer, Volume.CDM_translationReflexie, targets[j]);
+						if ((myNodeList != null) && (myNodeList.getLength()>0)) {
+							for (int i=0; i<myNodeList.getLength();i++) {
+								Node myNode = myNodeList.item(i);
+								String translationId = myNode.getNodeValue();
+								if (myNode.getNodeType()==Node.TEXT_NODE) {
+									Node textNode = myNode;
+									myNode = myNode.getParentNode();
+									myNode.removeChild(textNode);
+								}
+								VolumeEntry newEntry = (VolumeEntry) qr.getLexiesHashtable().get(translationId);
+								if (newEntry != null && !newEntry.isEmpty()) {
+									Node tempNode = myAnswer.getDom().importNode((Node)newEntry.getDom().getDocumentElement(),true);
+									myNode.appendChild(tempNode);
+								}
+							}
+						}
+					}
+					doc = (Node)myAnswer.getDom();
+					for (int i=0; i < currentXslSheetSequence.size(); i++) {
+						XslSheet xsl = (XslSheet) currentXslSheetSequence.elementAt(i);
+						if (null != xsl && ! xsl.isEmpty()) {
+							doc = Transform(doc, xsl);
+						}
+					}
+				}
+				else {
+					doc = (Node)myAnswer.getHtmlDom();
+				}
+			}
+		} 
+		catch(Exception ex) {
             throw new fr.imag.clips.papillon.business.PapillonBusinessException("Exception in getFormattedResult()", ex);
         }	
 		if (doc != null && doc.getNodeType()==Node.DOCUMENT_NODE) { 
 			doc = (Node)((Document)doc).getDocumentElement();
 		}
 		return doc;
-    }
+	}
 
     
 	//outils pour les transformation
