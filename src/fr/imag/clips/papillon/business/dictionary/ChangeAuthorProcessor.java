@@ -5,6 +5,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2005/06/17 15:51:32  mangeot
+ * Modified changeAuthor
+ *
  * Revision 1.2  2005/06/15 16:48:27  mangeot
  * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
  *
@@ -19,19 +22,24 @@ package fr.imag.clips.papillon.business.dictionary;
 
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.PapillonLogger;
+import fr.imag.clips.papillon.business.user.User;
 
 public class ChangeAuthorProcessor implements IVolumeEntryProcessor {
 
-	protected static String newAuthor = null;
+	protected static User newAuthor = null;
+	protected static User validator = null;
 
-	public ChangeAuthorProcessor(String author) {
+	public ChangeAuthorProcessor(User theValidator, User author) {
+		validator = theValidator;
 		newAuthor = author;
 	}
 
 	public void process(VolumeEntry myEntry) throws PapillonBusinessException {
 		try {
 			if (newAuthor != null && ! newAuthor.equals("")) {
-				myEntry.setAuthor(newAuthor);	
+				myEntry.setAuthor(newAuthor.getLogin());	
+				myEntry.setGroups(newAuthor.getGroupsArray());	
+				myEntry.setModification(validator.getLogin(), "set new author: " + newAuthor.getLogin());
 				myEntry.save();
 			}
 		}

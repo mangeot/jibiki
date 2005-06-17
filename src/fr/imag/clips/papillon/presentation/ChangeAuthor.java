@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2005/06/17 15:51:32  mangeot
+ * Modified changeAuthor
+ *
  * Revision 1.2  2005/06/15 16:48:28  mangeot
  * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
  *
@@ -319,21 +322,47 @@ public class ChangeAuthor extends PapillonBasePO {
 				status = null;
 			}
 			Vector myKeys1 = new Vector();
+			Vector clausesVector = new Vector();
+			Volume myVolume = VolumesFactory.findVolumeByName(volume);
+			String source = "eng";
+			if (myVolume !=null && !myVolume.isEmpty()) {
+				source = myVolume.getSourceLanguage();
+			}
 			if (search1 !=null && !search1.equals("")  &&
 				search1text != null && !search1text.equals("")) {
-				String[] key1 = new String[4];
-				key1[0] = search1;
-				key1[2] = search1text;
-				key1[3] = IQuery.QueryBuilderStrategy[strategy1+1];
-				myKeys1.add(key1);
+				if (strategy1 == IQuery.STRATEGY_GREATER_THAN ||
+					strategy1 == IQuery.STRATEGY_GREATER_THAN_OR_EQUAL ||
+					strategy1 == IQuery.STRATEGY_LESS_THAN ||
+					strategy1 == IQuery.STRATEGY_LESS_THAN_OR_EQUAL) {
+					String clause = "key='" + search1 + "'";
+					clause += " and " + source + "_sort('" + search1text +"') " + IQuery.QueryBuilderStrategy[strategy1+1] + " " + source + "_sort(value)"; 
+					clausesVector.add(clause);
+					}
+				else {
+					String[] key1 = new String[4];
+					key1[0] = search1;
+					key1[2] = search1text;
+					key1[3] = IQuery.QueryBuilderStrategy[strategy1+1];
+					myKeys1.add(key1);
+				}
 			}
 			if (search2 !=null && !search2.equals("") &&
 				search2text != null && !search2text.equals("")) {
-				String[] key2 = new String[4];
-				key2[0] = search2;
-				key2[2] = search2text;
-				key2[3] = IQuery.QueryBuilderStrategy[strategy2+1];
-				myKeys1.add(key2);
+				if (strategy2 == IQuery.STRATEGY_GREATER_THAN ||
+					strategy2 == IQuery.STRATEGY_GREATER_THAN_OR_EQUAL ||
+					strategy2 == IQuery.STRATEGY_LESS_THAN ||
+					strategy2 == IQuery.STRATEGY_LESS_THAN_OR_EQUAL) {
+					String clause = "key='" + search2 + "'";
+					clause += " and " + source + "_sort('" + search2text +"') " + IQuery.QueryBuilderStrategy[strategy2+1] + " " + source + "_sort(value)"; 
+					clausesVector.add(clause);
+				}
+				else {
+					String[] key2 = new String[4];
+					key2[0] = search2;
+					key2[2] = search2text;
+					key2[3] = IQuery.QueryBuilderStrategy[strategy2+1];
+					myKeys1.add(key2);
+				}
 			}
 			if (status !=null && !status.equals("")) {
 				String[] key2 = new String[4];
@@ -390,47 +419,6 @@ public class ChangeAuthor extends PapillonBasePO {
 				myKeys1.add(creationDateKey);
 			}
 			
-			//headwordMin
-			String headwordMin = myGetParameter(content.NAME_HeadwordMin);
-			if (lookup !=null && !lookup.equals("")) {
-				this.setPreference(content.NAME_HeadwordMin,headwordMin);
-			}
-			else {
-				headwordMin = this.getPreference(content.NAME_HeadwordMin);
-			}
-			if (headwordMin !=null && !headwordMin.equals("")) {
-				queryString += "&" + content.NAME_HeadwordMin + "=" + headwordMin;
-			}
-			//headwordMax
-			String headwordMax = myGetParameter(content.NAME_HeadwordMax);
-			if (lookup !=null && !lookup.equals("")) {
-				this.setPreference(content.NAME_HeadwordMax,headwordMax);
-			}
-			else {
-				headwordMax = this.getPreference(content.NAME_HeadwordMax);
-			}
-			if (headwordMax !=null && !headwordMax.equals("")) {
-				queryString += "&" + content.NAME_HeadwordMax + "=" + headwordMax;
-			}
-
-			Vector clausesVector = new Vector();
-			Volume myVolume = VolumesFactory.findVolumeByName(volume);
-			if (myVolume !=null && !myVolume.isEmpty() &&
-				((headwordMin !=null && !headwordMin.equals("")) ||
-				 (headwordMax !=null && !headwordMax.equals("")))) {
-				String source = myVolume.getSourceLanguage();
-				String clause = "key='" + Volume.CDM_headword + "'";
-				if (source !=null && source.length()==3) {
-					if (headwordMin !=null && !headwordMin.equals("")) {
-						clause += " and " + source + "_sort(value) > " + source + "_sort('" + headwordMin +"')"; 
-					}
-					if (headwordMax !=null && !headwordMax.equals("")) {
-						clause += " and " + source + "_sort(value) < " + source + "_sort('" + headwordMax +"')"; 
-					}
-					clausesVector.add(clause);
-				}
-			}
-			
 
 		int step = STEP_DEFAULT;
 		if (null != lookup) {
@@ -449,7 +437,7 @@ public class ChangeAuthor extends PapillonBasePO {
 				addContributionsCount(myVolume, myKeys1, clausesVector);
 				break;
 			case STEP_CHANGE_AUTHOR:
-				VolumeEntriesFactory.changeAuthor(myVolume, newAuthor, myKeys1, clausesVector);
+				VolumeEntriesFactory.changeAuthor(myVolume, this.getUser(), newAuthor, myKeys1, clausesVector);
 				userMessage = "New author " + newAuthor + " for selected contributions";
 				break;
 			default:
@@ -465,8 +453,7 @@ public class ChangeAuthor extends PapillonBasePO {
 			creationDate, creationDateStrategyString, 
 			reviewDate, reviewDateStrategyString, 
 			search1, search1text, strategyString1, 
-			search2, search2text, strategyString2,
-			headwordMin, headwordMax);
+			search2, search2text, strategyString2);
         
         //On rend le contenu correct
         return content.getElementFormulaire();
@@ -475,8 +462,7 @@ public class ChangeAuthor extends PapillonBasePO {
 			String creationDate, String creationDateStrategyString, 
 			String reviewDate, String reviewDateStrategyString, 
 			String search1, String search1text, String strategyString1, 
-			String search2, String search2text, String strategyString2,
-			String headwordMin, String headwordMax)
+			String search2, String search2text, String strategyString2)
 			throws fr.imag.clips.papillon.business.PapillonBusinessException, 
                 HttpPresentationException,
         java.io.UnsupportedEncodingException {
@@ -573,13 +559,6 @@ public class ChangeAuthor extends PapillonBasePO {
 			XHTMLSelectElement statusSelect = (XHTMLSelectElement) content.getElementSTATUS();
 			this.setSelected(statusSelect,status);
 
-			// headwordMin
-		XHTMLInputElement headwordMinInput = content.getElementHeadwordMin();
-		headwordMinInput.setValue(headwordMin);
-
-			// headwordMax
-		XHTMLInputElement headwordMaxInput = content.getElementHeadwordMax();
-		headwordMaxInput.setValue(headwordMax);
     }
 	
     protected void addContributionsCount(Volume myVolume, Vector Keys1, Vector clausesVector)

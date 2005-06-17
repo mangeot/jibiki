@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.11  2005/06/17 15:51:32  mangeot
+ * Modified changeAuthor
+ *
  * Revision 1.10  2005/06/15 16:48:27  mangeot
  * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
  *
@@ -163,6 +166,8 @@ import com.lutris.appserver.server.sql.ObjectId;
 
 
 import fr.imag.clips.papillon.business.utility.*;
+import fr.imag.clips.papillon.business.user.User;
+import fr.imag.clips.papillon.business.user.UsersFactory;
 
 /* For the SQL statements */
 import fr.imag.clips.papillon.data.*;
@@ -518,13 +523,18 @@ public class VolumeEntriesFactory {
 		}
 	}
 	
-	public static void changeAuthor(Volume myVolume, String newAuthor, Vector myKeys, Vector clausesVector) 
+	public static void changeAuthor(Volume myVolume, User validator, String newAuthorLogin, Vector myKeys, Vector clausesVector) 
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 			
 			if (myVolume !=null && !myVolume.isEmpty()) {
 				Dictionary myDict = DictionariesFactory.findDictionaryByName(myVolume.getDictname());
 				if (myDict !=null && !myDict.isEmpty()) {
-					IVolumeEntryProcessor changeAuthorProcessor = new ChangeAuthorProcessor(newAuthor);
+					User authorUser = UsersFactory.findUserByLogin(newAuthorLogin);
+					if (authorUser == null || authorUser.isEmpty()) {
+						authorUser = new User();
+						authorUser.setLogin(newAuthorLogin);
+					}
+					IVolumeEntryProcessor changeAuthorProcessor = new ChangeAuthorProcessor(validator, authorUser);
 					processVolume(myDict, myVolume, myKeys, clausesVector, changeAuthorProcessor);
 				}
 			}
