@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.15  2005/06/17 17:53:39  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.14  2005/06/17 16:58:11  mangeot
  * *** empty log message ***
  *
@@ -628,7 +631,10 @@ public class VolumeEntry implements IAnswer {
 	 *   error).
      */
 	public void setCreationDate() throws PapillonBusinessException {
-		setCreationDate(Utility.PapillonCDMDateFormat.format(new java.util.Date()));
+		String dateString = ParseVolume.getCdmString(this, Volume.CDM_contributionCreationDate);
+		if (dateString == null || dateString.equals("")) {
+			setCreationDate(Utility.PapillonCDMDateFormat.format(new java.util.Date()));
+		}
 	}
 
 	public void setCreationDate(java.util.Date myDate) throws PapillonBusinessException {
@@ -913,23 +919,22 @@ public class VolumeEntry implements IAnswer {
 		if (groups !=null && groups.length>0) {
 			org.w3c.dom.Document myDocument = this.getDom();	
 			org.w3c.dom.Node groupsNode = ParseVolume.getCdmElement(this, Volume.CDM_contributionGroups);
-			NodeList childNodes = groupsNode.getChildNodes();
-			if (childNodes!=null) {
-				for (int i=0; i<childNodes.getLength() ; i++) {
-					groupsNode.removeChild(childNodes.item(i));
+			if (groupsNode!=null) {
+				while (groupsNode.hasChildNodes()) {
+					groupsNode.removeChild(groupsNode.getFirstChild());
 				}
-			}
-			for (int i=0; i<groups.length; i++) {
-				String group = groups[i];
-				if (group !=null && !group.equals("")) {
-					org.w3c.dom.Element myGroup = myDocument.createElement(this.getVolume().getCdmContributionGroup());
-					Utility.setText(myGroup,group);
-					groupsNode.appendChild(myGroup);
+				for (int i=0; i<groups.length; i++) {
+					String group = groups[i];
+					if (group !=null && !group.equals("")) {
+						org.w3c.dom.Element myGroup = myDocument.createElement(this.getVolume().getCdmContributionGroup());
+						Utility.setText(myGroup,group);
+						groupsNode.appendChild(myGroup);
+					}
 				}
 			}
 		}
 	}
-
+	
     /**
      * getPos gets the part-of-speech of the entry.
      * 

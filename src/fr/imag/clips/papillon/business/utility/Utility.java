@@ -4,6 +4,9 @@
 *$Id$
 *------------------------------------------
 *$Log$
+*Revision 1.5  2005/06/17 17:53:39  mangeot
+**** empty log message ***
+*
 *Revision 1.4  2005/06/15 16:48:28  mangeot
 *Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
 *
@@ -345,11 +348,8 @@ public class Utility {
 	}
 
 	public static void removeChildNodes(Element myElt) {
-		if (myElt.hasChildNodes()) {
-			NodeList childNodes = myElt.getChildNodes();
-			for (int i=0; i< childNodes.getLength();i++) {
-				myElt.removeChild(childNodes.item(i));
-			}
+		while (myElt.hasChildNodes()) {
+			myElt.removeChild(myElt.getFirstChild());
 		}
 	}
 
