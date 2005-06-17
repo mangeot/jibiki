@@ -66,23 +66,6 @@
           </tr>
          <tr>
             <td style="bgcolor:#4682b4;">
-               <input id="search1text" name="search1text" type="text" size="15" value="" />
-			   is 
-              <select id="Strategy1" name="Strategy1">
-                <option value="0" label="exact match">exact match</option>
-                <option value="1" label="prefix">prefix</option>
-                <option value="2" label="suffix">suffix</option>
-                <option value="3" label="substring">substring</option>
-                <option value="4" label="case insensitive">case insensitive</option>
-                <option value="5" label="insensitive prefix">insensitive prefix</option>
-                <option value="6" label="insensitive suffix">insensitive suffix</option>
-                <option value="7" label="insensitive substring">insensitive substring</option>
-                <option value="13" label="&lt;">&lt;</option>
-                <option value="14" label="≤">≤</option>
-                <option value="11" label="&gt;">&gt;</option>
-                <option value="12" label="≥">≥</option>
-              </select>
-			  of
              <select id="search1" name="search1">
                 <option value="cdm-headword" label="headword">headword</option>
                 <option value="cdm-pos" label="part-of-speech">part-of-speech</option>
@@ -90,28 +73,22 @@
                 <option value="cdm-example" label="examples">examples</option>
                 <option value="AnyContains" label="any part">any part</option>
               </select>
-            </td>
-			<td>
-                and
-			</td>
-            <td style="bgcolor:#4682b4;">
-              <input id="search2text" name="search2text" type="text" size="15" value="" />
-			  is
-              <select id="Strategy2" name="Strategy2">
-                <option value="0" label="exact match">exact match</option>
-                <option value="1" label="prefix">prefix</option>
-                <option value="2" label="suffix">suffix</option>
-                <option value="3" label="substring">substring</option>
-                <option value="4" label="case insensitive">case insensitive</option>
-                <option value="5" label="insensitive prefix">insensitive prefix</option>
-                <option value="6" label="insensitive suffix">insensitive suffix</option>
-                <option value="7" label="insensitive substring">insensitive substring</option>
+              <select id="Strategy1" name="Strategy1">
+                <option value="0" label="exact match">=</option>
+                <option value="1" label="prefix">begins with</option>
+                <option value="2" label="suffix">ends with</option>
+                <option value="3" label="substring">contains</option>
                 <option value="13" label="&lt;">&lt;</option>
                 <option value="14" label="≤">≤</option>
                 <option value="11" label="&gt;">&gt;</option>
                 <option value="12" label="≥">≥</option>
               </select>
-			  of
+                <input id="search1text" name="search1text" type="text" size="15" value="" />
+           </td>
+			<td>
+                and
+			</td>
+            <td style="bgcolor:#4682b4;">
               <select id="search2" name="search2">
                 <option value="cdm-headword" label="headword">headword</option>
                 <option value="cdm-pos" label="part-of-speech">part-of-speech</option>
@@ -119,22 +96,22 @@
                 <option value="cdm-example" label="examples">examples</option>
                 <option value="AnyContains" label="any part">any part</option>
               </select>
+              <select id="Strategy2" name="Strategy2">
+                <option value="0" label="exact match">=</option>
+                <option value="1" label="prefix">begins with</option>
+                <option value="2" label="suffix">ends with</option>
+                <option value="3" label="substring">contains</option>
+                <option value="13" label="&lt;">&lt;</option>
+                <option value="14" label="≤">≤</option>
+                <option value="11" label="&gt;">&gt;</option>
+                <option value="12" label="≥">≥</option>
+              </select>
+              <input id="search2text" name="search2text" type="text" size="15" value="" />
+            </td>
+            <td style="bgcolor:#4682b4;">
+				<input id="LOOKUP" name="LOOKUP" type="submit" value="Lookup"/>
             </td>
 			</tr>
-			<tr>
-			<td>
-			Headword &gt; <input id="HeadwordMin" name="HeadwordMin" type="text" size="15" value="" />
-			</td>
-			<td>
-			and
-			</td>
-			<td>
-			Headword &lt; <input id="HeadwordMax" name="HeadwordMax" type="text" size="15" value="" />
-			</td>
-            <td style="bgcolor:#4682b4;">
-				<input id="LOOKUP" name="LOOKUP" type="submit" value="Count"/>
-            </td>
-          </tr>
 </table>
 
 <h2>Change author of the <span id="ContributionsCount">0</span> contributions</h2>
