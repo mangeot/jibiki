@@ -183,7 +183,7 @@ Papillon.Informations.fileExtensionHandler.xsl     = "fr.imag.clips.papillon.bus
 # Absolute path to the temporary directory (where files are expanded and processed, then discarded)
 Papillon.Informations.tmpDir = "/tmp/"
 # Absolute path to the information section base dir.
-Papillon.Informations.baseDir = "/home/papillon/informations/main/presentation/"
+Papillon.Informations.baseDir = "/home/gdef/informations/main/presentation/"
 # Relative path to the media directory (the directory that contains gifs, jpgs, etc. that are added 
 # while importing a file). This directory is relative to the server's information section base Dir. 
 Papillon.Informations.mediaDir = "info_media/"
