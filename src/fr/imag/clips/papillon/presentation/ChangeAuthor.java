@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2005/06/17 16:36:50  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.3  2005/06/17 15:51:32  mangeot
  * Modified changeAuthor
  *
@@ -335,7 +338,7 @@ public class ChangeAuthor extends PapillonBasePO {
 					strategy1 == IQuery.STRATEGY_LESS_THAN ||
 					strategy1 == IQuery.STRATEGY_LESS_THAN_OR_EQUAL) {
 					String clause = "key='" + search1 + "'";
-					clause += " and " + source + "_sort('" + search1text +"') " + IQuery.QueryBuilderStrategy[strategy1+1] + " " + source + "_sort(value)"; 
+					clause += " and " + source + "_sort(value)" + IQuery.QueryBuilderStrategy[strategy1+1] + " " + source + "_sort('" + search1text +"') "; 
 					clausesVector.add(clause);
 					}
 				else {
@@ -353,7 +356,7 @@ public class ChangeAuthor extends PapillonBasePO {
 					strategy2 == IQuery.STRATEGY_LESS_THAN ||
 					strategy2 == IQuery.STRATEGY_LESS_THAN_OR_EQUAL) {
 					String clause = "key='" + search2 + "'";
-					clause += " and " + source + "_sort('" + search2text +"') " + IQuery.QueryBuilderStrategy[strategy2+1] + " " + source + "_sort(value)"; 
+					clause += " and " + source + "_sort(value)" + IQuery.QueryBuilderStrategy[strategy2+1] + " " + source + "_sort('" + search2text +"') "; 
 					clausesVector.add(clause);
 				}
 				else {
