@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.11  2005/06/18 07:20:09  mangeot
+ * Removed hard coded NewBlock redirection and replaced by a javascript on body onload attribute
+ *
  * Revision 1.10  2005/06/15 16:48:28  mangeot
  * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
  *
@@ -118,7 +121,6 @@ public class EditEntry extends PapillonBasePO {
     public static String EntryHandle_PARAMETER = "EntryHandle";
     public static String Headword_PARAMETER = "Headword";
     public static String VolumeName_PARAMETER = "VolumeName";  
-    public static String Redirection_PARAMETER = "Redirection";  
 	public static String Referrer_PARAMETER = "Referrer";
 	public static String HomographId_PARAMETER = "HomographId";
     public static String AddCall_PARAMETER = "AddCall";
@@ -247,18 +249,6 @@ public class EditEntry extends PapillonBasePO {
 
 		// addElement
 		if (submitAdd!=null && !submitAdd.equals("")) {
-			String redirected = myGetParameter(Redirection_PARAMETER);
-			// The redirection is used in order to open the generated web page 
-			// with the added block at the top of the window
-			// It is essential when lots of blocks are already created
-			
-			if (redirected == null || redirected.equals("")) {
-				myVolumeEntry.save();
-				String newUrl = queryString 
-					+ "&" + Redirection_PARAMETER + "=" + "on"	
-					+ "#" + UIGenerator.NEW_BLOCK_ANCHOR;			
-				throw new ClientPageRedirectException(newUrl);
-			}
 			int plus =  submitAdd.indexOf(UIGenerator.PARAMETERS_SEPARATOR);
 			if (plus > 0) {
 				String elementName = submitAdd.substring(0,plus);
@@ -270,17 +260,6 @@ public class EditEntry extends PapillonBasePO {
 		// deleteElements MUST be after updateElement because it modifies the element ids.
 		else if (submitDelete!=null && !submitDelete.equals("")
 					&& select != null && !select.equals("")) {
-			String redirected = myGetParameter(Redirection_PARAMETER);
-			// The redirection is used in order to open the generated web page 
-			// with the deleted block parent at the top of the window
-			// It is essential when lots of blocks are already created
-			if (redirected == null || redirected.equals("")) {
-				myVolumeEntry.save();
-				String newUrl = queryString 
-					+ "&" + Redirection_PARAMETER + "=" + "on"	
-					+ "#" + UIGenerator.NEW_BLOCK_ANCHOR;				
-				throw new ClientPageRedirectException(newUrl);
-			}
 			int plus =  submitDelete.indexOf(UIGenerator.PARAMETERS_SEPARATOR);
 			if (plus > 0) {
 				String elementName = submitDelete.substring(0,plus);
