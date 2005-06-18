@@ -5,6 +5,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2005/06/18 23:01:43  mangeot
+ * changed the modif comment
+ *
  * Revision 1.3  2005/06/17 15:51:32  mangeot
  * Modified changeAuthor
  *
@@ -37,9 +40,10 @@ public class ChangeAuthorProcessor implements IVolumeEntryProcessor {
 	public void process(VolumeEntry myEntry) throws PapillonBusinessException {
 		try {
 			if (newAuthor != null && ! newAuthor.equals("")) {
+				String oldAuthor = myEntry.getAuthor();
 				myEntry.setAuthor(newAuthor.getLogin());	
 				myEntry.setGroups(newAuthor.getGroupsArray());	
-				myEntry.setModification(validator.getLogin(), "set new author: " + newAuthor.getLogin());
+				myEntry.setModification(validator.getLogin(), "Changed author: from " + oldAuthor + " to " + newAuthor.getLogin());
 				myEntry.save();
 			}
 		}
