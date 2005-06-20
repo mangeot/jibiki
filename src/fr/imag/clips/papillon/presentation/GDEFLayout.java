@@ -9,6 +9,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.3  2005/06/20 16:55:05  mangeot
+ *  multiple bug fixes
+ *
  *  Revision 1.2  2005/06/16 10:42:15  mangeot
  *  Added and modified files for the GDEF project
  *
@@ -95,7 +98,12 @@ public class GDEFLayout implements StdLayout {
             // adding a script if needed
             XHTMLScriptElement scriptElement = (XHTMLScriptElement) layout.getElementScript();
             if (null != script && !script.equals("")) {
-                scriptElement.setText(scriptElement.getText() + script);
+				script = "\n" + script + "\n//";
+				while (scriptElement.hasChildNodes()) {
+					scriptElement.removeChild(scriptElement.getFirstChild());
+				}
+				Comment scriptContent = scriptElement.getOwnerDocument().createComment(script);
+                scriptElement.appendChild(scriptContent);
             }
             scriptElement.removeAttribute("id");
             

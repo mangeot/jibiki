@@ -4,6 +4,9 @@
 *$Id$
 *------------------------------------------
 *$Log$
+*Revision 1.6  2005/06/20 16:55:05  mangeot
+*multiple bug fixes
+*
 *Revision 1.5  2005/06/17 17:53:39  mangeot
 **** empty log message ***
 *
@@ -919,30 +922,51 @@ public class Utility {
 			return found;
 		}
 
-		/**
-     * Tests if a String array is in another String array
-     *
-     * @return a String
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-     *   error).
-     */
-		public static boolean IsInArray(String[] myStrings, String[] myArray) {
-			boolean found = false;
-			if (myStrings != null && myStrings.length>0) {
-				int i=0;
-				while (i<myStrings.length && !found) {
-					found = IsInArray(myStrings[i],myArray);
-					i++;
-				}
-			}
-				else {
-					found = true;
-				}
-			return found;
-		}
-
-	public static void removeElement(Element elem) {
+   /**
+	   * Tests if a String array is in another String array
+	*
+	* @return a String
+	* @exception PapillonBusinessException if an error occurs
+	*   retrieving data (usually due to an underlying data layer
+						 *   error).
+	*/
+   public static boolean IsInArray(String[] myStrings, String[] myArray) {
+	   boolean found = false;
+	   if (myStrings != null && myStrings.length>0) {
+		   int i=0;
+		   while (i<myStrings.length && !found) {
+			   found = IsInArray(myStrings[i],myArray);
+			   i++;
+		   }
+	   }
+	   else {
+		   found = true;
+	   }
+	   return found;
+   }
+   
+   /**
+	   * Intersection of 2 String arrays 
+	*
+	* @return an array of String
+	* @exception PapillonBusinessException if an error occurs
+	*   retrieving data (usually due to an underlying data layer
+						 *   error).
+	*/
+   public static String[] ArrayIntersection(String[] myArray1, String[] myArray2) {
+	   java.util.Vector myRes = new java.util.Vector();
+	   if (myArray1 != null && myArray1.length>0) {
+		   for (int i=0; i<myArray1.length;i++) {
+			   String tempString = myArray1[i];
+			   if (IsInArray(tempString,myArray2)) {
+				   myRes.add(tempString);
+			   }
+		   }
+	   }
+	   return (String[]) myRes.toArray(new String[0]);
+   }
+   
+   public static void removeElement(Element elem) {
 		if (elem != null) {
 			Node myParent = elem.getParentNode();
 			if (myParent != null)

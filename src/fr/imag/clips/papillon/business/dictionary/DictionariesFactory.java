@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.12  2005/06/20 16:55:02  mangeot
+ * multiple bug fixes
+ *
  * Revision 1.11  2005/06/17 12:38:56  mangeot
  * Changed lexiesCollection into lexiesHashtable in order to implement the getDirectTranslations
  *
@@ -464,18 +467,21 @@ public class DictionariesFactory {
 															User user,
 															int offset) 
 		throws PapillonBusinessException {
-			Collection qrset = new HashSet();
+			//	Collection qrset = new HashSet();
+				Collection qrset = new Vector();
 			if (null != dict 
 				&& Utility.IsInArray(source, dict.getSourceLanguagesArray())
 				&& Utility.IsInArray(targets, dict.getTargetLanguagesArray())) {
 				Volume[] volumes = VolumesFactory.getVolumesArray(dict.getName(), source, null);
 				if (null != volumes && volumes.length > 0) {
 					for (int i=0;i<volumes.length;i++) {
-						Vector entriesVector = VolumeEntriesFactory.getVolumeEntriesVector(dict, volumes[i], Keys1, Keys2, anyContains, offset);
+						Volume myVolume = volumes[i];
+						Vector entriesVector = VolumeEntriesFactory.getVolumeEntriesVector(dict, myVolume, Keys1, Keys2, anyContains, offset);
+						String[] tempTargets = Utility.ArrayIntersection(myVolume.getTargetLanguagesArray(), targets);
 						Iterator iter = entriesVector.iterator();
 						while (iter.hasNext()) {
 							VolumeEntry ve = (VolumeEntry) iter.next();
-							qrset.addAll(expandResult(ve,targets,user));
+							qrset.addAll(expandResult(ve,tempTargets,user));
 						}
 					}
 				}
@@ -739,7 +745,8 @@ public class DictionariesFactory {
     }
 	
     protected static Collection getDirectResults(QueryResult proto, String source, String[] targets, User myUser) throws PapillonBusinessException {
-        Collection qrset = new HashSet();
+        //Collection qrset = new HashSet();
+        Collection qrset = new Vector();
         if (null != proto && null != proto.getSourceEntry()) {
             VolumeEntry mySourceEntry = proto.getSourceEntry();
             Hashtable resLexies = new Hashtable();
@@ -785,7 +792,7 @@ public class DictionariesFactory {
 							Volume myVolume = myAnswer.getVolume();
 							Dictionary myDictionary = myAnswer.getDictionary();
 							for (int j=0;j<targets.length;j++) {
-								NodeList myNodeList = ParseVolume.getCdmElements(myAnswer, Volume.CDM_translation, targets[j]);
+								NodeList myNodeList = ParseVolume.getCdmElements(myAnswer, Volume.CDM_translationReflexie, targets[j]);
 								if ((myNodeList != null) && (myNodeList.getLength()>0)) {
 									for (int i=0; i<myNodeList.getLength();i++) {
 										Node myNode = myNodeList.item(i);

@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.12  2005/06/20 16:55:05  mangeot
+ * multiple bug fixes
+ *
  * Revision 1.11  2005/06/18 07:20:09  mangeot
  * Removed hard coded NewBlock redirection and replaced by a javascript on body onload attribute
  *
@@ -141,6 +144,11 @@ public class EditEntry extends PapillonBasePO {
     protected final static String ContributionsLookupParameter = "LOOKUP";
     protected final static String ContributionsHeadwordParameter = "HEADWORD";
     protected final static String ContributionsVolumeParameter = "VOLUME";
+	
+	
+	protected final static String newBockRedirectionJavascript = "function loadFunction () {\n"
+		+ "   window.location.hash='NewBlock';\n"
+		+ "}\n";
 
 	
     protected boolean loggedInUserRequired() {
@@ -255,6 +263,7 @@ public class EditEntry extends PapillonBasePO {
 				String parentElement = submitAdd.substring(plus+1);
 				String[] siblingElements = myGetParameterValues(Select_PARAMETER);
 				UIGenerator.addElement(elementName,parentElement,myEntry, myTemplateEntry, siblingElements);
+				this.setHeaderScript(newBockRedirectionJavascript);
 			}
 		}
 		// deleteElements MUST be after updateElement because it modifies the element ids.
@@ -266,6 +275,7 @@ public class EditEntry extends PapillonBasePO {
 				String parentElement = submitDelete.substring(plus+1);
 				String[] selectedElements = myGetParameterValues(Select_PARAMETER);
 				UIGenerator.deleteElements(elementName,selectedElements,myEntry);
+				this.setHeaderScript(newBockRedirectionJavascript);
 			}
 		}
 		else if (submitChoose!=null && !submitChoose.equals("")

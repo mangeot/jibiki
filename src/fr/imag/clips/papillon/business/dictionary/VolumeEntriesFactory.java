@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.12  2005/06/20 16:55:05  mangeot
+ * multiple bug fixes
+ *
  * Revision 1.11  2005/06/17 15:51:32  mangeot
  * Modified changeAuthor
  *
@@ -302,13 +305,18 @@ public class VolumeEntriesFactory {
 				// consultation of a local volume
 				VolumeEntryQuery query = new VolumeEntryQuery(volumeTableName, CurrentDBTransaction.get());
 				
-				// debug
-				//query.getQueryBuilder().debug();
-				
+				// distinct avoid to retreive the same entry twice
+				// The distinct cannot be combined with an order by...
+				// The ORDER BY clause can include items not appearing in the select list. 
+				// However, if SELECT DISTINCT is specified, or if the SELECT statement contains a UNION operator,
+				// the sort columns must appear in the select list.
+				//query.getQueryBuilder().distinct();
+
 				// looking for any string on the XML code, thus Sequencial request
 				if (any !=null && !any.equals("")) {
 					fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Sequencial request table: " + volumeTableName + " any: " + any);
-					query.getQueryBuilder().addWhereClause("xmlcode", any, QueryBuilder.CASE_SENSITIVE_CONTAINS);
+					com.lutris.dods.builder.generator.query.RDBColumn xmlcodeColumn = VolumeEntryDO.getXmlCodeColumn(volume.getDbname());
+					query.getQueryBuilder().addWhere(xmlcodeColumn, any, QueryBuilder.CASE_SENSITIVE_CONTAINS);
 				}
 				else {
 					fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Index request table: " + volumeTableName);
@@ -357,11 +365,20 @@ public class VolumeEntriesFactory {
 				query.getQueryBuilder().setMaxRows(DictionariesFactory.MaxRetrievedEntries);
 				query.getQueryBuilder().addEndClause("OFFSET " + offset);
 				query.getQueryBuilder().addOrderByColumn(volume.getSourceLanguage()+"_sort(headword)","");
+				// debug
+				//query.getQueryBuilder().debug();
+			
 				VolumeEntryDO[] DOarray = query.getDOArray();
 				if (null != DOarray) {
+					// my implementation of the SELECT DISTINCT
+					// maybe takes too much time in computation...
+					java.util.List myList = java.util.Arrays.asList(DOarray);
 					for (int j=0; j < DOarray.length; j++) {
-						VolumeEntry tempEntry = new VolumeEntry(dict, volume,DOarray[j]);
-						theEntries.add(tempEntry);
+						VolumeEntryDO myTmpDO = DOarray[j];
+						if (j==0 || !myList.subList(0,j-1).contains(myTmpDO)) {
+							VolumeEntry tempEntry = new VolumeEntry(dict, volume,myTmpDO);
+							theEntries.add(tempEntry);
+						}
 					}
 				}
 			}
@@ -388,11 +405,12 @@ public class VolumeEntriesFactory {
 				com.lutris.dods.builder.generator.query.RDBColumn objectidColumn = new com.lutris.dods.builder.generator.query.RDBColumn(volumeEntryTable, myDO.getOIdColumnName());
 				VolumeEntryQuery query = new VolumeEntryQuery(volumeTableName, CurrentDBTransaction.get());
 				if (any !=null && !any.equals("")) {
-					fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Sequencial request table: " + volumeTableName + " any: " + any);
-					query.getQueryBuilder().addWhereClause("xmlcode", any, QueryBuilder.CASE_SENSITIVE_CONTAINS);
+					fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Sequencial count request table: " + volumeTableName + " any: " + any);
+					com.lutris.dods.builder.generator.query.RDBColumn xmlcodeColumn = VolumeEntryDO.getXmlCodeColumn(volume.getDbname());
+					query.getQueryBuilder().addWhere(xmlcodeColumn, any, QueryBuilder.CASE_SENSITIVE_CONTAINS);
 				}
 				else {
-					fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Index request table: " + volumeTableName);
+					fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Index count request table: " + volumeTableName);
 				}
 				if (Keys !=null) {
 					for (java.util.Enumeration enumKeys = Keys.elements(); enumKeys.hasMoreElements();) {
@@ -433,6 +451,7 @@ public class VolumeEntriesFactory {
 						}
 					}
 				}
+				query.getQueryBuilder().distinct();
 				countEntries += query.getCount();
 			}
 			catch(Exception ex) {
@@ -449,7 +468,7 @@ public class VolumeEntriesFactory {
 		try {
 			String volumeTableName = volume.getDbname();
 			if (null != volumeTableName) {
-				fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Sequencial request table: " + volumeTableName);
+				fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Sequencial process request table: " + volumeTableName);
 				
 				com.lutris.dods.builder.generator.query.QueryBuilder myQueryBuilder = null; 
 				com.lutris.dods.builder.generator.query.RDBColumn entryidColumn = IndexDO.getEntryIdColumn(volume.getIndexDbname());
@@ -506,6 +525,7 @@ public class VolumeEntriesFactory {
 					
 					query.getQueryBuilder().setMaxRows(MaxRetrievedEntries);
 					query.getQueryBuilder().addEndClause("OFFSET " + offset);
+					//query.getQueryBuilder().distinct();
 					query.getQueryBuilder().addOrderByColumn(volume.getSourceLanguage()+"_sort(headword)","");
 					VolumeEntryDO[] DOarray = query.getDOArray();
 					if (null != DOarray) {
@@ -837,7 +857,7 @@ public class VolumeEntriesFactory {
 		Volume myVolume = myAnswer.getVolume();
 		if (myVolume.getName().equals(VOLUME_GDEF_est) ||
 			myVolume.getName().equals(VOLUME_GDEF_tes)) {
-			NodeList myNodeList = ParseVolume.getCdmElements((VolumeEntry)myAnswer,Volume.CDM_translation,"fra");
+			NodeList myNodeList = ParseVolume.getCdmElements((VolumeEntry)myAnswer,Volume.CDM_translationReflexie,"fra");
 			if ((myNodeList != null) && (myNodeList.getLength()>0)) {
 				for (int i=0; i<myNodeList.getLength();i++) {
 					org.w3c.dom.Node myNode = myNodeList.item(i);

@@ -10,6 +10,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.18  2005/06/20 16:55:05  mangeot
+ *  multiple bug fixes
+ *
  *  Revision 1.17  2005/06/16 16:09:17  mangeot
  *  *** empty log message ***
  *
@@ -843,7 +846,7 @@ public class ConsultExpert extends PapillonBasePO {
         XHTMLElement vocable = content.getElementVocable();
         XHTMLAnchorElement entryAnchor = content.getElementEntryAnchor();
         XHTMLElement entryId = content.getElementEntryIdList();
-        XHTMLAnchorElement contribAnchor = content.getElementContribAnchor();
+        XHTMLElement author = content.getElementAuthorList();
         XHTMLElement pos = content.getElementPosEntry();
         XHTMLElement dictname = content.getElementDictionaryName();
 
@@ -860,7 +863,7 @@ public class ConsultExpert extends PapillonBasePO {
         vocable.removeAttribute("id");
         entryAnchor.removeAttribute("id");
         entryId.removeAttribute("id");
-        contribAnchor.removeAttribute("id");
+        author.removeAttribute("id");
         pos.removeAttribute("id");
         dictname.removeAttribute("id");
         formulaElement.removeAttribute("id");
@@ -921,6 +924,8 @@ public class ConsultExpert extends PapillonBasePO {
                 }
                 
                 content.setTextEntryIdList(myEntry.getId());
+
+                content.setTextAuthorList(myEntry.getAuthor());
 
                 // Le pos
                 String posstr = null;
