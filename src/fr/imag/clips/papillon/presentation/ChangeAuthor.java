@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.5  2005/06/20 10:27:26  mangeot
+ * Print entry table in Changeauthor
+ *
  * Revision 1.4  2005/06/17 16:36:50  mangeot
  * *** empty log message ***
  *
@@ -124,13 +127,8 @@ public class ChangeAuthor extends PapillonBasePO {
     
     public Node getContent() 
         throws HttpPresentationException,
-        IOException,
-        TransformerConfigurationException,
+        java.io.UnsupportedEncodingException,
         org.xml.sax.SAXException,
-        javax.xml.parsers.ParserConfigurationException,
-        java.io.IOException,
-        javax.xml.transform.TransformerException,
-        ClassNotFoundException,
         PapillonBusinessException {
         
         // Création du contenu
@@ -437,7 +435,10 @@ public class ChangeAuthor extends PapillonBasePO {
 			case STEP_DEFAULT:
 				break;
 			case STEP_LOOKUP:
-				addContributionsCount(myVolume, myKeys1, clausesVector);
+				int count = addContributionsCount(myVolume, myKeys1, clausesVector);
+				if (count <DictionariesFactory.MaxRetrievedEntries) {
+					addEntries(myVolume, myKeys1, clausesVector);
+				} 
 				break;
 			case STEP_CHANGE_AUTHOR:
 				VolumeEntriesFactory.changeAuthor(myVolume, this.getUser(), newAuthor, myKeys1, clausesVector);
@@ -564,10 +565,101 @@ public class ChangeAuthor extends PapillonBasePO {
 
     }
 	
-    protected void addContributionsCount(Volume myVolume, Vector Keys1, Vector clausesVector)
+    protected int addContributionsCount(Volume myVolume, Vector Keys1, Vector clausesVector)
         throws PapillonBusinessException {
 			int count = VolumeEntriesFactory.getDbTableEntriesCount(myVolume, Keys1, clausesVector, null);
-				content.setTextContributionsCount("" + count);
+			content.setTextContributionsCount("" + count);
+			return count;
 		}
+	
+    protected void addEntries(Volume myVolume, Vector Keys1, Vector clausesVector)
+        throws PapillonBusinessException,java.io.UnsupportedEncodingException {
+			Vector entriesVector = VolumeEntriesFactory.getVolumeNameEntriesVector(myVolume.getName(), Keys1, clausesVector, null,0);
+			addEntryTable(entriesVector);
+		}
+	
+	protected void addEntryTable (Vector ContribVector)
+        throws PapillonBusinessException,
+        java.io.UnsupportedEncodingException {
+			
+            // On récupère les éléments du layout			
+            XHTMLTableRowElement entryListRow = content.getElementEntryListRow();
+						
+			// Headword
+			content.getElementHeadwordList().removeAttribute("id");
+			
+			// EntryId
+			content.getElementEntryIdList().removeAttribute("id");
+												
+			// Author
+			content.getElementAuthorList().removeAttribute("id");
+
+			// Creation date
+			content.getElementCreationDateList().removeAttribute("id");
+															
+			// Status
+			content.getElementStatus().removeAttribute("id");
+			
+			// Reviewer
+			content.getElementReviewerList().removeAttribute("id");
+			
+			// Creation date
+			content.getElementReviewDateList().removeAttribute("id");
+
+            // On récupère le noeud contenant la table...
+            Node entryTable = entryListRow.getParentNode();
+            if (null != ContribVector && ContribVector.size()>0) {
+				content.setTextContributionsCount("" + ContribVector.size());
+                for(int i = 0; i < ContribVector.size(); i++) {
+					VolumeEntry myContrib = (VolumeEntry) ContribVector.elementAt(i);
+					
+					if (myContrib!=null && !myContrib.isEmpty()) {						
+						// FIXME: hack for the GDEF estonian volume
+						String headword = myContrib.getHeadword();
+						if (myContrib.getVolumeName().equals("GDEF_est")) {
+							String particule = myContrib.getParticule();
+							if(particule!=null && !particule.equals("")) {
+								headword = particule + " " + headword;
+							}
+						}
+						
+						
+						// headword
+						content.setTextHeadwordList(headword);
+
+						// entry id
+						content.setTextEntryIdList(myContrib.getEntryId());
+						
+						// author
+						content.setTextAuthorList(myContrib.getAuthor());
+
+						// creation date
+						content.setTextCreationDateList(Utility.PapillonShortDateFormat.format(myContrib.getCreationDate()));
+												
+						// reviewer
+						content.setTextReviewerList(myContrib.getReviewer());
+						
+						// creation date
+						if (myContrib.getReviewDate()!=null) {
+							content.setTextReviewDateList(Utility.PapillonShortDateFormat.format(myContrib.getReviewDate()));
+						}
+						else {
+							content.setTextReviewDateList("");
+						}
+						// Status
+						content.setTextStatus(myContrib.getStatus());
+						                        
+                        XHTMLElement clone = (XHTMLElement)entryListRow.cloneNode(true);
+                        //      we have to take off the id attribute because we did not take it off the original
+                        clone.removeAttribute("id");
+                        entryTable.appendChild(clone);
+                    }
+					else {
+						PapillonLogger.writeDebugMsg("contrib empty ");
+					}
+				}
+			}
+        }
+		
         
 	}
