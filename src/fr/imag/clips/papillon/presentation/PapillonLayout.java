@@ -9,6 +9,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.3  2005/06/20 16:55:20  mangeot
+ *  *** empty log message ***
+ *
  *  Revision 1.2  2005/06/16 13:41:15  mangeot
  *  Bugfixed in the default formatter
  *
@@ -118,7 +121,12 @@ public class PapillonLayout implements StdLayout {
             // adding a script if needed
             XHTMLScriptElement scriptElement = (XHTMLScriptElement) layout.getElementScript();
             if (null != script && !script.equals("")) {
-                scriptElement.setText(scriptElement.getText() + script);
+				script = "\n" + script + "\n//";
+				while (scriptElement.hasChildNodes()) {
+					scriptElement.removeChild(scriptElement.getFirstChild());
+				}
+				Comment scriptContent = scriptElement.getOwnerDocument().createComment(script);
+                scriptElement.appendChild(scriptContent);
             }
             scriptElement.removeAttribute("id");
             
