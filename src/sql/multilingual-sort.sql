@@ -6,6 +6,20 @@
 --
 
 
+-- axi interlingual link
+--
+-- for the moment do nothing
+CREATE OR REPLACE FUNCTION axi_sort( varchar ) 
+ RETURNS varchar AS '
+
+ DECLARE
+  tmp		varchar;
+  result	varchar := '''';
+  length	integer;
+ BEGIN
+  return( $1 );
+ END;
+' LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
 
 
 -- deu German
@@ -589,6 +603,22 @@ CREATE OR REPLACE FUNCTION fra_sort( varchar )
  END;
 ' LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
 
+-- ita Italian
+--
+-- for the moment do nothing
+-- todo: maybe italian sort 
+CREATE OR REPLACE FUNCTION ita_sort( varchar ) 
+ RETURNS varchar AS '
+
+ DECLARE
+  tmp		varchar;
+  result	varchar := '''';
+  length	integer;
+ BEGIN
+  return( $1 );
+ END;
+' LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
+
 
 
 -- jpn Japanese
@@ -632,6 +662,24 @@ CREATE OR REPLACE FUNCTION kor_sort( varchar )
 -- a b c d e f g h i j k l m n o p q r s t u v w x y z
 -- for the moment do nothing; probably ok as is
 CREATE OR REPLACE FUNCTION msa_sort( varchar ) 
+ RETURNS varchar AS '
+
+ DECLARE
+  tmp		varchar;
+  result	varchar := '''';
+  length	integer;
+ BEGIN
+  return( $1 );
+ END;
+' LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
+
+
+
+-- slo Slovene
+--
+-- for the moment do nothing
+-- todo: maybe slovene sort 
+CREATE OR REPLACE FUNCTION slo_sort( varchar ) 
  RETURNS varchar AS '
 
  DECLARE
