@@ -3,6 +3,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.13  2005/06/22 15:55:53  mangeot
+ * Solved an unresolved prefix bug when the dml prefix was not in the template entry.
+ * Now we use the DmlPrefixResolver to solve this issue.
+ *
  * Revision 1.12  2005/06/20 16:55:05  mangeot
  * multiple bug fixes
  *
@@ -372,6 +376,8 @@ public class VolumeEntriesFactory {
 				if (null != DOarray) {
 					// my implementation of the SELECT DISTINCT
 					// maybe takes too much time in computation...
+					// maybe it isn't needed with a select from where in. To be tested
+					/*
 					java.util.List myList = java.util.Arrays.asList(DOarray);
 					for (int j=0; j < DOarray.length; j++) {
 						VolumeEntryDO myTmpDO = DOarray[j];
@@ -380,6 +386,12 @@ public class VolumeEntriesFactory {
 							theEntries.add(tempEntry);
 						}
 					}
+					 */
+					for (int j=0; j < DOarray.length; j++) {
+						VolumeEntry tempEntry = new VolumeEntry(dict, volume, DOarray[j]);
+						theEntries.add(tempEntry);
+					}
+					
 				}
 			}
 			catch(Exception ex) {

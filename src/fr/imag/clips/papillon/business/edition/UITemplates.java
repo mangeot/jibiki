@@ -8,6 +8,10 @@
  * $Id$
  *---------------------------------------------------------
  * $Log$
+ * Revision 1.5  2005/06/22 15:55:53  mangeot
+ * Solved an unresolved prefix bug when the dml prefix was not in the template entry.
+ * Now we use the DmlPrefixResolver to solve this issue.
+ *
  * Revision 1.4  2005/06/15 16:48:27  mangeot
  * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
  *
@@ -32,7 +36,7 @@ import org.w3c.dom.NodeList;
 public class UITemplates {
 	
 	// constants
-	protected static final String DML_URI = "http://www-clips.imag.fr/geta/services/dml";
+	protected final static String DML_URI = fr.imag.clips.papillon.business.dictionary.DmlPrefixResolver.DML_URI;
 	public static final String DEFAULT_FORM = "default";
 	
 	protected static Hashtable defaultTypeTable = new Hashtable();

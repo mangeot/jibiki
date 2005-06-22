@@ -9,6 +9,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.16  2005/06/22 15:55:53  mangeot
+ * Solved an unresolved prefix bug when the dml prefix was not in the template entry.
+ * Now we use the DmlPrefixResolver to solve this issue.
+ *
  * Revision 1.15  2005/06/17 17:53:39  mangeot
  * *** empty log message ***
  *
@@ -169,27 +173,35 @@ public class VolumeEntry implements IAnswer {
 	public final static String REPLACED_STATUS = "replaced";
 	public final static String DELETED_STATUS = "deleted";
 	
-	public final static String authorTag = "d:author";
-	public final static String commentTag = "d:comment";
-	public final static String contributionTag = "d:contribution";
-	public final static String contributionIdAttr = "d:contribid";
-	public final static String creationDateTag = "d:creation-date";
-	public final static String dataTag = "d:data";
-	public final static String dateTag = "d:date";
-	public final static String originalContributionIdAttr = "d:originalcontribid";
-	public final static String groupsTag = "d:groups";
-	public final static String groupTag = "d:group";
-	public final static String historyTag = "d:history";
-	public final static String metadataTag = "d:metadata";
-	public final static String modificationTag = "d:modification";
-	public final static String reviewDateTag = "d:review-date";
-	public final static String reviewerTag = "d:reviewer";
-	public final static String statusTag = "d:status";
-	public final static String validationDateTag = "d:validation-date";
-	public final static String validatorTag = "d:validator";
+	protected static String DML_PREFIX_COLON = DmlPrefixResolver.DML_PREFIX;
+	
+	static {
+		if (DML_PREFIX_COLON != null && !DML_PREFIX_COLON.equals("")) {
+			DML_PREFIX_COLON += ":";
+		}
+	}
+	
+	public final static String authorTag = DML_PREFIX_COLON + "author";
+	public final static String commentTag = DML_PREFIX_COLON + "comment";
+	public final static String contributionTag = DML_PREFIX_COLON + "contribution";
+	public final static String contributionIdAttr = DmlPrefixResolver.DML_PREFIX + "contribid";
+	public final static String creationDateTag = DmlPrefixResolver.DML_PREFIX + "creation-date";
+	public final static String dataTag = DML_PREFIX_COLON + "data";
+	public final static String dateTag = DML_PREFIX_COLON + "date";
+	public final static String originalContributionIdAttr = DML_PREFIX_COLON + "originalcontribid";
+	public final static String groupsTag = DML_PREFIX_COLON + "groups";
+	public final static String groupTag = DML_PREFIX_COLON + "group";
+	public final static String historyTag = DML_PREFIX_COLON + "history";
+	public final static String metadataTag = DML_PREFIX_COLON + "metadata";
+	public final static String modificationTag = DML_PREFIX_COLON + "modification";
+	public final static String reviewDateTag = DML_PREFIX_COLON + "review-date";
+	public final static String reviewerTag = DML_PREFIX_COLON + "reviewer";
+	public final static String statusTag = DML_PREFIX_COLON + "status";
+	public final static String validationDateTag = DML_PREFIX_COLON + "validation-date";
+	public final static String validatorTag = DML_PREFIX_COLON + "validator";
 	
 	public final static String ContributionHeader = "<" + contributionTag + "\n" 
-		+ "xmlns:d=\"http://www-clips.imag.fr/geta/services/dml\"\n"
+		+ "xmlns:" + DmlPrefixResolver.DML_PREFIX + "=\"" + DmlPrefixResolver.DML_URI + "\"\n"
 		+ "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
 		+ "xsi:schemaLocation=\"http://www-clips.imag.fr/geta/services/dml "
 		+ "http://www-clips.imag.fr/geta/services/dml/dml.xsd\"\n"

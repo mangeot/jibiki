@@ -9,6 +9,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.6  2005/06/22 15:55:53  mangeot
+ * Solved an unresolved prefix bug when the dml prefix was not in the template entry.
+ * Now we use the DmlPrefixResolver to solve this issue.
+ *
  * Revision 1.5  2005/06/15 16:48:27  mangeot
  * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
  *
@@ -96,8 +100,8 @@ public class Axie implements IAnswer {
     /**
 	* The DO of the Dictionary.
      */
-	protected final static String DML_URI = "http://www-clips.imag.fr/geta/services/dml";
-	protected final static String XLINK_URI = "http://www.w3.org/1999/xlink";
+	protected final static String DML_URI = DmlPrefixResolver.DML_URI;
+	protected final static String XLINK_URI = DmlPrefixResolver.XLINK_URI;
 	
 	protected final static String SYNONYMS_SEPARATOR_STRING = "#";
 	

@@ -3,6 +3,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.8  2005/06/22 15:55:53  mangeot
+ * Solved an unresolved prefix bug when the dml prefix was not in the template entry.
+ * Now we use the DmlPrefixResolver to solve this issue.
+ *
  * Revision 1.7  2005/06/15 16:48:27  mangeot
  * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
  *
@@ -431,7 +435,7 @@ public class ParseVolume {
 	
 	public static org.apache.xpath.XPath compileXPath(String xpathString, org.w3c.dom.Element myRootElt)  throws PapillonBusinessException {
 		javax.xml.transform.SourceLocator mySourceLocator = new org.apache.xml.utils.SAXSourceLocator();
-		org.apache.xml.utils.PrefixResolver myPrefixResolver = new org.apache.xml.utils.PrefixResolverDefault(myRootElt);
+		DmlPrefixResolver myPrefixResolver = new DmlPrefixResolver(myRootElt);
 		org.apache.xpath.XPath myXPath = null;
 		try	{
 			myXPath = new org.apache.xpath.XPath(xpathString,mySourceLocator,myPrefixResolver,org.apache.xpath.XPath.SELECT);

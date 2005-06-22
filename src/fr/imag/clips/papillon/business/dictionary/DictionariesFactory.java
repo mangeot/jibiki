@@ -3,6 +3,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.13  2005/06/22 15:55:53  mangeot
+ * Solved an unresolved prefix bug when the dml prefix was not in the template entry.
+ * Now we use the DmlPrefixResolver to solve this issue.
+ *
  * Revision 1.12  2005/06/20 16:55:02  mangeot
  * multiple bug fixes
  *
@@ -154,8 +158,8 @@ public class DictionariesFactory {
 	
 	public final static int MaxDisplayedEntries = 5;
 	public final static int MaxRetrievedEntries = 500;
-    protected final static String DML_URI = "http://www-clips.imag.fr/geta/services/dml";
-    protected final static String XLINK_URI = "http://www.w3.org/1999/xlink";
+    protected final static String DML_URI = DmlPrefixResolver.DML_URI;
+    protected final static String XLINK_URI = DmlPrefixResolver.XLINK_URI;
     protected final static String DICTIONARY_TAG="dictionary-metadata";
     protected final static String VOLUME_REF_TAG="volume-metadata-ref";
     protected final static String XSLSHEET_TAG="xsl-stylesheet";

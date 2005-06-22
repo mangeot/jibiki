@@ -3,6 +3,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.8  2005/06/22 15:55:53  mangeot
+ * Solved an unresolved prefix bug when the dml prefix was not in the template entry.
+ * Now we use the DmlPrefixResolver to solve this issue.
+ *
  * Revision 1.7  2005/06/16 16:09:17  mangeot
  * *** empty log message ***
  *
@@ -112,8 +116,8 @@ import fr.imag.clips.papillon.business.utility.Utility;
 public class VolumesFactory {
 	
 	
-	protected final static String DML_URI = "http://www-clips.imag.fr/geta/services/dml";
-	protected final static String XLINK_URI = "http://www.w3.org/1999/xlink";
+	protected final static String DML_URI = DmlPrefixResolver.DML_URI;
+	protected final static String XLINK_URI = DmlPrefixResolver.XLINK_URI;
 	
 	protected final static String VOLUME_TAG = "volume-metadata";
 	protected final static String CDM_ELEMENTS_TAG = "cdm-elements";
