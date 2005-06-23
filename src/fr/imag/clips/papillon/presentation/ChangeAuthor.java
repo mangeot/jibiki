@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.6  2005/06/23 13:57:19  mangeot
+ * Added removeTemplateRows
+ *
  * Revision 1.5  2005/06/20 10:27:26  mangeot
  * Print entry table in Changeauthor
  *
@@ -459,6 +462,8 @@ public class ChangeAuthor extends PapillonBasePO {
 			search1, search1text, strategyString1, 
 			search2, search2text, strategyString2);
         
+		removeTemplateRows();
+
         //On rend le contenu correct
         return content.getElementFormulaire();
     }
@@ -660,6 +665,13 @@ public class ChangeAuthor extends PapillonBasePO {
 				}
 			}
         }
-		
-        
+	
+	protected void removeTemplateRows() {
+        // EntryListRow
+        Element entryListRow = content.getElementEntryListRow();
+        Node entryListRowParent = entryListRow.getParentNode();
+        entryListRowParent.removeChild(entryListRow);
+	}    
+	
+	
 	}
