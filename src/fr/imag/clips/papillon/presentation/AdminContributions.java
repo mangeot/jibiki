@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.11  2005/06/23 09:48:17  mangeot
+ * Bug fix in xpath completion and creation-date cdm element
+ *
  * Revision 1.10  2005/06/15 16:48:28  mangeot
  * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
  *
@@ -684,7 +687,12 @@ public class AdminContributions extends PapillonBasePO {
 						content.setTextEntryId(myContrib.getEntryId());
 						
 						// creation date
-						content.setTextCreationDate(Utility.PapillonShortDateFormat.format(myContrib.getCreationDate()));
+						if (myContrib.getCreationDate() != null) {
+							content.setTextCreationDate(Utility.PapillonShortDateFormat.format(myContrib.getCreationDate()));
+						}
+						else {
+							content.setTextCreationDate("no date!");
+						}
 						
 						// IsNewEntry
 						content.setTextIsNewEntry(new Boolean(myContrib.getOriginalContributionId()==null || myContrib.getOriginalContributionId().equals("")).toString());

@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.17  2005/06/23 09:48:17  mangeot
+ * Bug fix in xpath completion and creation-date cdm element
+ *
  * Revision 1.16  2005/06/22 15:55:53  mangeot
  * Solved an unresolved prefix bug when the dml prefix was not in the template entry.
  * Now we use the DmlPrefixResolver to solve this issue.
@@ -184,8 +187,8 @@ public class VolumeEntry implements IAnswer {
 	public final static String authorTag = DML_PREFIX_COLON + "author";
 	public final static String commentTag = DML_PREFIX_COLON + "comment";
 	public final static String contributionTag = DML_PREFIX_COLON + "contribution";
-	public final static String contributionIdAttr = DmlPrefixResolver.DML_PREFIX + "contribid";
-	public final static String creationDateTag = DmlPrefixResolver.DML_PREFIX + "creation-date";
+	public final static String contributionIdAttr = DML_PREFIX_COLON + "contribid";
+	public final static String creationDateTag = DML_PREFIX_COLON + "creation-date";
 	public final static String dataTag = DML_PREFIX_COLON + "data";
 	public final static String dateTag = DML_PREFIX_COLON + "date";
 	public final static String originalContributionIdAttr = DML_PREFIX_COLON + "originalcontribid";

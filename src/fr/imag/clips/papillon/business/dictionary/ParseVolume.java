@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.9  2005/06/23 09:48:17  mangeot
+ * Bug fix in xpath completion and creation-date cdm element
+ *
  * Revision 1.8  2005/06/22 15:55:53  mangeot
  * Solved an unresolved prefix bug when the dml prefix was not in the template entry.
  * Now we use the DmlPrefixResolver to solve this issue.
@@ -471,8 +474,12 @@ public class ParseVolume {
 					String xpathString =  (String) eltVector.elementAt(0);
 					org.apache.xpath.XPath myXPath = compileXPath(xpathString, myRootElt);
 					if (myXPath != null) {
+						PapillonLogger.writeDebugMsg("compileXPathTable: xpath not null: " + xpathString);
 						eltVector.add(myXPath);
 						result = true;
+					}
+					else {
+						PapillonLogger.writeDebugMsg("compileXPathTable: xpath null: " + xpathString);
 					}
 				}
 			}

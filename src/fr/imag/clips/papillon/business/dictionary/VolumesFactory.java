@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.9  2005/06/23 09:48:17  mangeot
+ * Bug fix in xpath completion and creation-date cdm element
+ *
  * Revision 1.8  2005/06/22 15:55:53  mangeot
  * Solved an unresolved prefix bug when the dml prefix was not in the template entry.
  * Now we use the DmlPrefixResolver to solve this issue.
@@ -497,6 +500,8 @@ public class VolumesFactory {
 	/* cdmElements Hashtable = {lang => Hashtable} = {CDM_element => Vector} = (xpathString, isIndex, XPath)*/
 	protected static void updateCdmElementsTable(Hashtable cdmElements) {
 	
+		String volumePath = getCdmXPathString(cdmElements, Volume.CDM_volume, Volume.DEFAULT_LANG);
+		String volumeString = Volume.getTagNameFromXPath(volumePath);
 		String contribPath = getCdmXPathString(cdmElements, Volume.CDM_contribution, Volume.DEFAULT_LANG);
 		String contribString = Volume.getTagNameFromXPath(contribPath);
 		String entryString = getCdmXPathString(cdmElements, Volume.CDM_entry, Volume.DEFAULT_LANG);
@@ -511,7 +516,9 @@ public class VolumesFactory {
 				if (eltVector != null && eltVector.size()>=2) {
 					String xpathString =  (String) eltVector.elementAt(0);
 					if (xpathString.indexOf(entryString)>0 && xpathString.indexOf(contribString)<0) {
-						xpathString = newXpath + xpathString.substring(xpathString.indexOf(entryString)+entryString.length());
+						String startString = "/" + volumeString;
+						xpathString = searchAndReplace(xpathString,startString,entryString,newXpath);
+						PapillonLogger.writeDebugMsg("xpathString: " + xpathString);
 						eltVector.remove(0);
 						eltVector.add(0,xpathString);
 					}
@@ -667,6 +674,19 @@ public class VolumesFactory {
 			table.put(lang,tmpTable);
 		}
 		tmpTable.put(elt,xpathAndIndexVector);
+	}
+	
+	protected static String searchAndReplace(String theString, String startSubstring, String endSubstring, String replaceSubstring) {
+		int startIndex = theString.indexOf(startSubstring);
+		if (startIndex >= 0) {
+			int endIndex = theString.indexOf(endSubstring, startIndex+startSubstring.length()) + endSubstring.length();
+			if (endIndex > startIndex) {
+				String searchedSubstring = theString.substring(startIndex, endIndex);
+				String searchedRegex = "\\Q" + searchedSubstring + "\\E";
+				theString = theString.replaceAll(searchedRegex, replaceSubstring);
+			}
+		}
+		return theString;
 	}
 	
 }
