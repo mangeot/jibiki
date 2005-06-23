@@ -9,6 +9,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.4  2005/06/23 14:05:36  mangeot
+ *  Added EDIT_DATA
+ *
  *  Revision 1.3  2005/06/20 16:55:05  mangeot
  *  multiple bug fixes
  *
@@ -123,9 +126,12 @@ public class GDEFLayout implements StdLayout {
             // menu
             handleLangForm(comms, sessionData, url);
             handleConsultForm(comms, sessionData);
-            handleLexieMenu(comms, sessionData);
-            handleReviewerMenu(comms, sessionData);
-            handleValidatorMenu(comms, sessionData);
+			
+			if (Admin.EDIT_DATA) {
+				handleLexieMenu(comms, sessionData);
+				handleReviewerMenu(comms, sessionData);
+				handleValidatorMenu(comms, sessionData);
+			}
             handleAdministratorMenu(comms, sessionData);
             
         }
