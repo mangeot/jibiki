@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.10  2005/06/24 10:35:57  mangeot
+ * Minor bug fixes
+ *
  * Revision 1.9  2005/06/23 09:48:17  mangeot
  * Bug fix in xpath completion and creation-date cdm element
  *
@@ -512,7 +515,7 @@ public class ParseVolume {
 	protected static org.w3c.dom.NodeList getCdmElements(IAnswer myEntry, String CdmElement, String lang, org.apache.xml.utils.PrefixResolver aPrefixResolver) 
 		throws PapillonBusinessException {
 			org.w3c.dom.NodeList resNodeList = null;
-			// fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getCdmElements: " + CdmElement + " " + lang);
+			//fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getCdmElements: " + CdmElement + " " + lang);
 			java.util.Hashtable CdmElementsTable = myEntry.getVolume().getCdmElements();
 			if (CdmElementsTable != null) {
 				java.util.Hashtable tmpTable = (java.util.Hashtable) CdmElementsTable.get(lang);

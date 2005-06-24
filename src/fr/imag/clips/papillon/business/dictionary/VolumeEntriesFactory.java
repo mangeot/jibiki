@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.14  2005/06/24 10:35:57  mangeot
+ * Minor bug fixes
+ *
  * Revision 1.13  2005/06/22 15:55:53  mangeot
  * Solved an unresolved prefix bug when the dml prefix was not in the template entry.
  * Now we use the DmlPrefixResolver to solve this issue.
@@ -368,7 +371,7 @@ public class VolumeEntriesFactory {
 				
 				query.getQueryBuilder().setMaxRows(DictionariesFactory.MaxRetrievedEntries);
 				query.getQueryBuilder().addEndClause("OFFSET " + offset);
-				query.getQueryBuilder().addOrderByColumn(volume.getSourceLanguage()+"_sort(headword)","");
+				query.getQueryBuilder().addOrderByColumn("multilingual_sort('" + volume.getSourceLanguage() + "',headword)","");
 				// debug
 				//query.getQueryBuilder().debug();
 			
@@ -463,7 +466,7 @@ public class VolumeEntriesFactory {
 						}
 					}
 				}
-				query.getQueryBuilder().distinct();
+				//query.getQueryBuilder().distinct();
 				countEntries += query.getCount();
 			}
 			catch(Exception ex) {
@@ -538,7 +541,7 @@ public class VolumeEntriesFactory {
 					query.getQueryBuilder().setMaxRows(MaxRetrievedEntries);
 					query.getQueryBuilder().addEndClause("OFFSET " + offset);
 					//query.getQueryBuilder().distinct();
-					query.getQueryBuilder().addOrderByColumn(volume.getSourceLanguage()+"_sort(headword)","");
+					query.getQueryBuilder().addOrderByColumn("multilingual_sort('" + volume.getSourceLanguage() + "',headword)","");
 					VolumeEntryDO[] DOarray = query.getDOArray();
 					if (null != DOarray) {
 						for (int j=0; j < DOarray.length; j++) {

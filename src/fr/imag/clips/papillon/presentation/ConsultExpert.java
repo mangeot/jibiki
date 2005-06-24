@@ -10,6 +10,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.19  2005/06/24 10:35:57  mangeot
+ *  Minor bug fixes
+ *
  *  Revision 1.18  2005/06/20 16:55:05  mangeot
  *  multiple bug fixes
  *
@@ -1209,7 +1212,7 @@ public class ConsultExpert extends PapillonBasePO {
             ResultFormatter rf = ResultFormatterFactory.getFormatter(qr,ResultFormatterFactory.XHTML_DIALECT,null);
             rf.initializeFormatter(qr.getSourceEntry().getDictionary(), qr.getSourceEntry().getVolume() ,ResultFormatterFactory.XHTML_DIALECT,null);
             String[] formatters = ResultFormatterFactory.getAvailableFormatters(qr.getSourceEntry().getVolume(), ResultFormatterFactory.XHTML_DIALECT,null);
-           Element myHtmlElt = (Element)rf.getFormattedResult(qr);
+			Element myHtmlElt = (Element)rf.getFormattedResult(qr);
             
 			addElement(myHtmlElt, myEntry.getVolumeName(), myEntry.getHandle(),  myEntry.getDictionaryName(), myEntry.getType());
 		}

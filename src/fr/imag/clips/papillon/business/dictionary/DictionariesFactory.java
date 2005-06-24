@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.14  2005/06/24 10:35:57  mangeot
+ * Minor bug fixes
+ *
  * Revision 1.13  2005/06/22 15:55:53  mangeot
  * Solved an unresolved prefix bug when the dml prefix was not in the template entry.
  * Now we use the DmlPrefixResolver to solve this issue.
@@ -661,7 +664,8 @@ public class DictionariesFactory {
         // FIXME: should be VolumeEntry...
 		VolumeEntry myAnswer = VolumeEntriesFactory.findEntryByHandle(volumeName, handle);
 		PapillonLogger.writeDebugMsg("Found entry in: " + volumeName + ", handle: " + handle);
-        return expandResult(myAnswer, targets, user);
+		String[] newTargets = Utility.ArrayIntersection(myAnswer.getVolume().getTargetLanguagesArray(),targets);
+        return expandResult(myAnswer, newTargets, user);
 	}
 	
     // Create a query result collection that contains all translations of the current entry, for the requested target languages.
