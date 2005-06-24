@@ -6,22 +6,6 @@
 --
 
 
--- axi interlingual link
---
--- for the moment do nothing
-CREATE OR REPLACE FUNCTION axi_sort( varchar ) 
- RETURNS varchar AS '
-
- DECLARE
-  tmp		varchar;
-  result	varchar := '''';
-  length	integer;
- BEGIN
-  return( $1 );
- END;
-' LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
-
-
 -- deu German
 -- (a ä) b c d e f g h i j k l m n (o ö) p q r (s ß) t (u ü) v w x y z
 -- for the moment do nothing
@@ -218,26 +202,6 @@ CREATE OR REPLACE FUNCTION deu_sort( varchar )
   return( result );
  END;
 ' LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
-
-
-
-
--- eng English
--- a b c d e f g h i j k l m n o p q r s t u v w x y z
--- for the moment do nothing; probably ok as is
-CREATE OR REPLACE FUNCTION eng_sort( varchar ) 
- RETURNS varchar AS '
-
- DECLARE
-  tmp		varchar;
-  result	varchar := '''';
-  length	integer;
- BEGIN
-  return( $1 );
- END;
-' LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
-
-
 
 
 -- est Estonian
@@ -926,7 +890,7 @@ CREATE OR REPLACE FUNCTION multilingual_sort( varchar,varchar )
     result:= deu_sort(word);
   ELSIF lang = ''eng'' THEN
     result:= eng_sort(word);
-  ELSIF lang = ''eng'' THEN
+  ELSIF lang = ''est'' THEN
     result:= est_sort(word);
   ELSIF lang = ''fra'' THEN
     result:= fra_sort(word);
