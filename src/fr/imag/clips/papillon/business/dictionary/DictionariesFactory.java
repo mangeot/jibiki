@@ -3,6 +3,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.15  2005/07/05 09:21:59  serasset
+ * Template interface generator now correctly generates attribute names (with an @).
+ * Target languages are now correctly handled when querying a pivot multilingual dictionary.
+ *
  * Revision 1.14  2005/06/24 10:35:57  mangeot
  * Minor bug fixes
  *
@@ -484,11 +488,10 @@ public class DictionariesFactory {
 					for (int i=0;i<volumes.length;i++) {
 						Volume myVolume = volumes[i];
 						Vector entriesVector = VolumeEntriesFactory.getVolumeEntriesVector(dict, myVolume, Keys1, Keys2, anyContains, offset);
-						String[] tempTargets = Utility.ArrayIntersection(myVolume.getTargetLanguagesArray(), targets);
-						Iterator iter = entriesVector.iterator();
+                        						Iterator iter = entriesVector.iterator();
 						while (iter.hasNext()) {
 							VolumeEntry ve = (VolumeEntry) iter.next();
-							qrset.addAll(expandResult(ve,tempTargets,user));
+							qrset.addAll(expandResult(ve,targets,user));
 						}
 					}
 				}
@@ -678,12 +681,14 @@ public class DictionariesFactory {
 		if (!category.equals("monolingual")) {
 			String type = ve.getDictionary().getType();
 			if (type.equals("pivot")) {
+                String[] realTargets = Utility.ArrayIntersection(ve.getDictionary().getTargetLanguagesArray(), targets);
                 qr.setResultKind(QueryResult.AXIE_COLLECTION_RESULT);
-				myVector = getPivotResults(qr, ve.getSourceLanguage(), targets, user);
+				myVector = getPivotResults(qr, ve.getSourceLanguage(), realTargets, user);
 			}
 			if (type.equals("direct")) {
+                String[] realTargets = Utility.ArrayIntersection(ve.getVolume().getTargetLanguagesArray(), targets);
                 qr.setResultKind(QueryResult.DIRECT_TRANSLATIONS_RESULT);
-				myVector = getDirectResults(qr, ve.getSourceLanguage(), targets, user);
+				myVector = getDirectResults(qr, ve.getSourceLanguage(), realTargets, user);
 			}
 		} else {
             // monolingual

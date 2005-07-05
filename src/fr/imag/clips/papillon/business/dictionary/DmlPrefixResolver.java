@@ -9,6 +9,10 @@
  * $Id$
  *---------------------------------------------------------
  * $Log$
+ * Revision 1.2  2005/07/05 09:21:59  serasset
+ * Template interface generator now correctly generates attribute names (with an @).
+ * Target languages are now correctly handled when querying a pivot multilingual dictionary.
+ *
  * Revision 1.1  2005/06/22 16:05:49  mangeot
  * *** empty log message ***
  *
@@ -33,7 +37,7 @@ public class DmlPrefixResolver implements PrefixResolver  {
     public final static String XLINK_URI = "http://www.w3.org/1999/xlink";
 
 	
-	protected static PrefixResolver defaultPrefixResolver = null;	
+	protected static PrefixResolver defaultPrefixResolver = null;
 	
 	public DmlPrefixResolver(Node rootElement) {
 		defaultPrefixResolver = new PrefixResolverDefault(rootElement);

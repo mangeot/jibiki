@@ -8,6 +8,10 @@
  * $Id$
  *---------------------------------------------------------
  * $Log$
+ * Revision 1.9  2005/07/05 09:21:59  serasset
+ * Template interface generator now correctly generates attribute names (with an @).
+ * Target languages are now correctly handled when querying a pivot multilingual dictionary.
+ *
  * Revision 1.8  2005/06/15 16:48:27  mangeot
  * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
  *
@@ -214,7 +218,7 @@ public class GenerateTemplate {
 							String attrName = attributePSVI.getName();
 							// avoid special attributes
 							if (!attrName.equals("id")) {
-								attrName = elementName + UIGenerator.ID_SEPARATOR + attrName;
+								attrName = elementName + UIGenerator.ATTR_SEPARATOR + attrName;
 								parseSimpleTypeDeclaration (interfaceBuffer,attributePSVI.getTypeDefinition(),attrName);
 							}
 						}
