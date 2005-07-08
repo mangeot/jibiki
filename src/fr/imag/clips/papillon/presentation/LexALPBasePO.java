@@ -9,6 +9,10 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.2  2005/07/08 08:22:46  serasset
+ *  Reviewed the Abstract/BasePO hierarchy (moved some methods up in the tree).
+ *  Added base classes to allow independant browsing window to establish links during edition.
+ *
  *  Revision 1.1  2005/05/24 12:51:22  serasset
  *  Updated many aspect of the Papillon project to handle lexalp project.
  *  1. Layout is now parametrable in the application configuration file.
@@ -473,99 +477,5 @@ public abstract class LexALPBasePO extends AbstractPO {
             return this.getSessionData().getClientWithLabelDisplayProblems();
         }
     
-    
-    /**
-        *  Sets the selected attribute of the PapillonBasePO class
-     *
-     * @param  mySelect  The new selected value
-     * @param  myArray   The new selected value
-     */
-    public static void setSelected(XHTMLSelectElement mySelect, String[] myArray) {
-        Vector myVector = new Vector();
-        myVector.addAll(Arrays.asList(myArray));
-        setSelected(mySelect, myVector);
-    }
-    
-    
-    /**
-        *  Sets the selected attribute of the PapillonBasePO class
-     *
-     * @param  mySelect  The new selected value
-     * @param  myValue   The new selected value
-     */
-    public static void setSelected(XHTMLSelectElement mySelect, String myValue) {
-        if (myValue != null && !myValue.equals("")) {
-            HTMLCollection myCollection = mySelect.getOptions();
-            int i = 0;
-            while (i < myCollection.getLength()) {
-                if (((XHTMLOptionElement) myCollection.item(i)).getValue().equals(myValue)) {
-                    // This method does not work any more with enhydra5.1...
-                    // mySelect.setSelectedIndex(i);
-					((XHTMLOptionElement) myCollection.item(i)).setSelected(true);
-                    break;
-                }
-                i++;
-            }
-        }
-    }
-    
-    
-    /**
-        *  Sets the selected attribute of the PapillonBasePO class
-     *
-     * @param  mySelect  The new selected value
-     * @param  myValue   The new selected value
-     */
-    public static void setSelected(HTMLSelectElement mySelect, String myValue) {
-        if (myValue != null && !myValue.equals("")) {
-            HTMLCollection myCollection = mySelect.getOptions();
-            int i = 0;
-            while (i < myCollection.getLength()) {
-                if (((HTMLOptionElement) myCollection.item(i)).getValue().equals(myValue)) {
-                    // This method does not work any more with enhydra5.1...
-                    // mySelect.setSelectedIndex(i);
-					((HTMLOptionElement) myCollection.item(i)).setSelected(true);
-                    break;
-                }
-                i++;
-            }
-        }
-    }
-    
-    
-    /**
-        *  Sets the selected attribute of the PapillonBasePO class
-     *
-     * @param  mySelect  The new selected value
-     * @param  myVector  The new selected value
-     */
-    public static void setSelected(XHTMLSelectElement mySelect, Vector myVector) {
-        if (myVector != null && myVector.size() > 0) {
-            HTMLCollection myCollection = mySelect.getOptions();
-            int i = 0;
-            while (i < myCollection.getLength() && myVector.size() > 0) {
-                XHTMLOptionElement myOptionElement = (XHTMLOptionElement) myCollection.item(i);
-                String myOption = myOptionElement.getValue();
-                if (myVector.contains(myOption)) {
-                    myOptionElement.setSelected(true);
-                    myVector.remove(myOption);
-                }
-                i++;
-            }
-        }
-    }
-    
-    
-    /**
-        *  Sets the unicodeLabels attribute of the PapillonBasePO class
-     *
-     * @param  mySelect  The new unicodeLabels value
-     */
-    public static void setUnicodeLabels(XHTMLSelectElement mySelect) {
-        HTMLCollection myCollection = mySelect.getOptions();
-        for (int i = 0; i < myCollection.getLength(); i++) {
-            XHTMLOptionElement myOption = (XHTMLOptionElement) myCollection.item(i);
-            myOption.setLabel(myOption.getText());
-        }
-    }
+        
 }

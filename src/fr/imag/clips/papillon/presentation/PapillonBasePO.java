@@ -9,6 +9,10 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.3  2005/07/08 08:22:46  serasset
+ *  Reviewed the Abstract/BasePO hierarchy (moved some methods up in the tree).
+ *  Added base classes to allow independant browsing window to establish links during edition.
+ *
  *  Revision 1.2  2005/06/15 16:48:28  mangeot
  *  Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
  *
@@ -332,58 +336,6 @@ public abstract class PapillonBasePO extends AbstractPO {
     }
     
     /**
-        *  Checks the session data for a User admin, if not there then redirects to
-     *  the register page
-     *
-     * @exception  ClientPageRedirectException    Description of the Exception
-     * @exception  PapillonPresentationException  Description of the Exception
-     */
-    
-    //    protected void checkForUserAdmin()
-    //             throws ClientPageRedirectException, PapillonPresentationException {
-    //        try {
-    //            if (!this.getUser().isAdmin()) {
-    //                PapillonLogger.writeDebugMsg("USER NOT ADMIN");
-    //                this.getSessionData().writeUserMessage("User not Admin");
-    //                //send to LoginPage if a logged in user is required.
-    //                String requestedPO = myComms.request.getRequestURI();
-    //                PapillonLogger.writeDebugMsg("PO: " + requestedPO);
-    //                // Call the subclass's implemented method
-    //                PapillonLogger.writeDebugMsg("REDIRECTING TO REGISTER PAGE");
-    //                throw new ClientPageRedirectException(REGISTER_PAGE);
-    //            }
-    //        } catch (Exception ex) {
-    //            throw new PapillonPresentationException("Trouble checking for user admin status", ex);
-    //        }
-    //    }
-    
-    
-    /**
-        * converts a table of Strings for writing an URL
-     *
-     * @return a String
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-                          *   error).
-     */
-	public static String serializeParameterForUrl(String parameter, String[] table) {
-		String parameterSeparator = "&";
-		String result = "";
-		if (table != null) {
-			for (int i=0;i<table.length;i++) {
-				result += parameter + "=" + myUrlEncode(table[i]) + parameterSeparator;
-			}
-		}
-		if (result.endsWith(parameterSeparator)) {
-			result = result.substring(0,result.lastIndexOf(parameterSeparator));
-		}
-		return result;
-	}
-    
-    
-    
-    
-    /**
         *  Gets the userAcceptLanguages attribute of the PapillonBasePO object
      *
      * @return    The userAcceptLanguages value
@@ -557,100 +509,4 @@ public abstract class PapillonBasePO extends AbstractPO {
         throws HttpPresentationException {
             return this.getSessionData().getClientWithLabelDisplayProblems();
         }
-    
-    
-    /**
-        *  Sets the selected attribute of the PapillonBasePO class
-     *
-     * @param  mySelect  The new selected value
-     * @param  myArray   The new selected value
-     */
-    public static void setSelected(XHTMLSelectElement mySelect, String[] myArray) {
-        Vector myVector = new Vector();
-        myVector.addAll(Arrays.asList(myArray));
-        setSelected(mySelect, myVector);
-    }
-    
-    
-    /**
-        *  Sets the selected attribute of the PapillonBasePO class
-     *
-     * @param  mySelect  The new selected value
-     * @param  myValue   The new selected value
-     */
-    public static void setSelected(XHTMLSelectElement mySelect, String myValue) {
-        if (myValue != null && !myValue.equals("")) {
-            HTMLCollection myCollection = mySelect.getOptions();
-            int i = 0;
-            while (i < myCollection.getLength()) {
-                if (((XHTMLOptionElement) myCollection.item(i)).getValue().equals(myValue)) {
-                    // This method does not work any more with enhydra5.1...
-                    // mySelect.setSelectedIndex(i);
-					((XHTMLOptionElement) myCollection.item(i)).setSelected(true);
-                    break;
-                }
-                i++;
-            }
-        }
-    }
-    
-    
-    /**
-        *  Sets the selected attribute of the PapillonBasePO class
-     *
-     * @param  mySelect  The new selected value
-     * @param  myValue   The new selected value
-     */
-    public static void setSelected(HTMLSelectElement mySelect, String myValue) {
-        if (myValue != null && !myValue.equals("")) {
-            HTMLCollection myCollection = mySelect.getOptions();
-            int i = 0;
-            while (i < myCollection.getLength()) {
-                if (((HTMLOptionElement) myCollection.item(i)).getValue().equals(myValue)) {
-                    // This method does not work any more with enhydra5.1...
-                    // mySelect.setSelectedIndex(i);
-					((HTMLOptionElement) myCollection.item(i)).setSelected(true);
-                    break;
-                }
-                i++;
-            }
-        }
-    }
-    
-    
-    /**
-        *  Sets the selected attribute of the PapillonBasePO class
-     *
-     * @param  mySelect  The new selected value
-     * @param  myVector  The new selected value
-     */
-    public static void setSelected(XHTMLSelectElement mySelect, Vector myVector) {
-        if (myVector != null && myVector.size() > 0) {
-            HTMLCollection myCollection = mySelect.getOptions();
-            int i = 0;
-            while (i < myCollection.getLength() && myVector.size() > 0) {
-                XHTMLOptionElement myOptionElement = (XHTMLOptionElement) myCollection.item(i);
-                String myOption = myOptionElement.getValue();
-                if (myVector.contains(myOption)) {
-                    myOptionElement.setSelected(true);
-                    myVector.remove(myOption);
-                }
-                i++;
-            }
-        }
-    }
-    
-    
-    /**
-        *  Sets the unicodeLabels attribute of the PapillonBasePO class
-     *
-     * @param  mySelect  The new unicodeLabels value
-     */
-    public static void setUnicodeLabels(XHTMLSelectElement mySelect) {
-        HTMLCollection myCollection = mySelect.getOptions();
-        for (int i = 0; i < myCollection.getLength(); i++) {
-            XHTMLOptionElement myOption = (XHTMLOptionElement) myCollection.item(i);
-            myOption.setLabel(myOption.getText());
-        }
-    }
 }

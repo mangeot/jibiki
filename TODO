@@ -1,4 +1,3 @@
-- Supprimer la table "contributions" du fichier doml. (cf Mathieu...)
 - traiter papillonaxi comme n'importe quelle autre volume pivot.
 - Revoir la partie XSLSheet pour des formes plus sympas...
 - Reporter localisation sur le xhtml et supprimer les fichiers html.
@@ -7,15 +6,18 @@
 - Revoir le DML, le rendre valide, répercuter les nouveautés (liens bilingues inter volumes, nouveau xsl-sheet...)
 - Distinguer l'espace de nom des meta données et les structures de dico Papillon.
 - Revoir les classes Home et consultExpert qui ont beaucoup de code commun...
-  
+- Supprimer les dépendances à FOKS et créer un module spécifique à foks
 - Construire le menu Axie lorsqu'une base a un dictionnaire pivot.
 - Supprimer le volume axies de la page d'édition
-- Corriger le javascript de la page d'édition/contribution
+- Corriger le javascript de la page d'édition/contribution (il est modifié par la génération de la page effective)
 - Construire une axie via une page ad-hoc...
 - créer des raccourcis pour la création d'axies/lexies
 - Faire page de sélection de termref/axieref dans une fenêtre spécifique avec mise à jour des champs automatiquement.
+  - En cours: développer la recherche et aire les mise à jour via javascripts...
 - Faire des validations automatiques paramêtrables par les metadata pour remplissage de champs admin à la sauvegarde d'une entrée.
   - Peut-être simplement définir une classe spécifique pour cela... (que l'on peut désigner dans les metadata)
+  - Et vérifier tous les éléments qui ne sont pas obligatoires, groupes, status, etc... Ces infos sont soit des infos de la partie contribution,
+    soit des infos présentes dans les metadata, mais non obligatoires.
 
 - Que fait le update/save dans l'édition ? En cas de reconnection d'un utilisateur lui présenter les entrées en cours de construction ?
 
@@ -23,7 +25,11 @@
 
 - Pb de OutOfMemoryError lorsque l'upload est fait avec une transaction...
 
-
+- Le d:contribution devrait être le root élément de chaque entrée ? Mais comment exporter dans le format original alors que 
+le root élément est dupiqué dans chaque entrée...
+- Ne pas accumuler les modifications dans la partie d:history de la contrib, mais ne garder que la dernière modif...
+- QUEL EST LE MODÈLE DES CONTRIBUTIONS ?????
+- Les contributions devraient être accessibles à la consultation dès qu'elles ont été revues ???
 
 APRES DISCUSSION AVEC UTILISATEURS:
 - Définir un modèle de spécification de droits sur des parties de dictionnaires/d'entrées
@@ -34,7 +40,9 @@ NOTES:
 - Que fait le HtmlDom dans la base ?
 - De nombreuses infos DML devraient être réunies dans une classe (ex: DML_URI, ...)
 - Attention, si l'utilisateur supprime le dernier élément d'une liste lors de l'édition, on ne pourra plus en recréer un.
+   --> faux... en fait l'élément sera récupéré dans le template.
 - De même les entrées construites contiennent de nombreux champs vides...
+- Pourrait-on générer des interfaces d'édition avec une simple XSL, pour laquelle on pourrait définir des macros, genre LIST-OF...
 
 FAIT:
 - FAIT ? Supprimer la dépendance avec ant dans la section informationfiles.
@@ -55,6 +63,8 @@ FAIT:
       d'applications de cohabiter...
   - Le layout d'un site est pris en charge par une classe spéciale désignées dans le fichier de configuration. Le layout standard 
     étant le layout papillon. Ainsi, chaque presentation object rendra un layout qui dépendra de l'instance.
+- Suppression d'un redirect à l'édition, qui servait à faire apparaitre le bloc ajouté; utilisation de location.hash = 'NewBlock' (en javascript)
+- Suppression de la table "contributions" du fichier doml. (cf Mathieu...)
 - Bug fixes:
   - Solved a bug when the language (d:lang) is not specified in the interface template
   - Solved a bug where half of the childs of an xml element where removed... (when editing it, in certain situations)

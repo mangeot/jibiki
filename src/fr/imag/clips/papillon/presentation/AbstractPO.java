@@ -7,6 +7,10 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.3  2005/07/08 08:22:46  serasset
+ *  Reviewed the Abstract/BasePO hierarchy (moved some methods up in the tree).
+ *  Added base classes to allow independant browsing window to establish links during edition.
+ *
  *  Revision 1.2  2005/06/15 20:40:41  serasset
  *  Now serve content as text/html instead of application/xhtml+xml
  *
@@ -41,6 +45,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import org.enhydra.xml.xhtml.*;
+import org.enhydra.xml.xhtml.dom.*;
+
 import org.enhydra.xml.xmlc.*;
 import com.lutris.logging.*;
 import com.lutris.util.*;
@@ -48,6 +54,8 @@ import com.lutris.util.*;
 // Standard imports
 import java.io.IOException;
 import java.util.Date;
+import java.util.Vector;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.text.DateFormat;
 
@@ -228,6 +236,23 @@ public abstract class AbstractPO implements HttpPresentation {
         return this.sessionData;
     }
     
+    /**
+        * converts a table of Strings for writing an URL
+     *
+     * @return a String
+     * @exception PapillonBusinessException if an error occurs
+     *   retrieving data (usually due to an underlying data layer
+                          *   error).
+     */
+	public static String serializeParameterForUrl(String parameter, String[] table) {
+		String result = "";
+		if (table != null) {
+			for (int i=0;i<table.length;i++) {
+				result += parameter + "=" + myUrlEncode(table[i]) + "&";
+			}
+		}
+		return result;
+	}    
     
     /**
         *  Description of the Method
@@ -355,6 +380,100 @@ public abstract class AbstractPO implements HttpPresentation {
                 throw new HttpPresentationException("UTF-8 encoding is not supported on this plateform.", e);
             }
         }
+    
+    /**
+        *  Sets the selected attribute of the PapillonBasePO class
+     *
+     * @param  mySelect  The new selected value
+     * @param  myArray   The new selected value
+     */
+    public static void setSelected(XHTMLSelectElement mySelect, String[] myArray) {
+        Vector myVector = new Vector();
+        myVector.addAll(Arrays.asList(myArray));
+        setSelected(mySelect, myVector);
+    }
+    
+    
+    /**
+        *  Sets the selected attribute of the PapillonBasePO class
+     *
+     * @param  mySelect  The new selected value
+     * @param  myValue   The new selected value
+     */
+    public static void setSelected(XHTMLSelectElement mySelect, String myValue) {
+        if (myValue != null && !myValue.equals("")) {
+            HTMLCollection myCollection = mySelect.getOptions();
+            int i = 0;
+            while (i < myCollection.getLength()) {
+                if (((XHTMLOptionElement) myCollection.item(i)).getValue().equals(myValue)) {
+                    // This method does not work any more with enhydra5.1...
+                    // mySelect.setSelectedIndex(i);
+					((XHTMLOptionElement) myCollection.item(i)).setSelected(true);
+                    break;
+                }
+                i++;
+            }
+        }
+    }
+    
+    
+    /**
+        *  Sets the selected attribute of the PapillonBasePO class
+     *
+     * @param  mySelect  The new selected value
+     * @param  myValue   The new selected value
+     */
+    public static void setSelected(HTMLSelectElement mySelect, String myValue) {
+        if (myValue != null && !myValue.equals("")) {
+            HTMLCollection myCollection = mySelect.getOptions();
+            int i = 0;
+            while (i < myCollection.getLength()) {
+                if (((HTMLOptionElement) myCollection.item(i)).getValue().equals(myValue)) {
+                    // This method does not work any more with enhydra5.1...
+                    // mySelect.setSelectedIndex(i);
+					((HTMLOptionElement) myCollection.item(i)).setSelected(true);
+                    break;
+                }
+                i++;
+            }
+        }
+    }
+    
+    
+    /**
+        *  Sets the selected attribute of the PapillonBasePO class
+     *
+     * @param  mySelect  The new selected value
+     * @param  myVector  The new selected value
+     */
+    public static void setSelected(XHTMLSelectElement mySelect, Vector myVector) {
+        if (myVector != null && myVector.size() > 0) {
+            HTMLCollection myCollection = mySelect.getOptions();
+            int i = 0;
+            while (i < myCollection.getLength() && myVector.size() > 0) {
+                XHTMLOptionElement myOptionElement = (XHTMLOptionElement) myCollection.item(i);
+                String myOption = myOptionElement.getValue();
+                if (myVector.contains(myOption)) {
+                    myOptionElement.setSelected(true);
+                    myVector.remove(myOption);
+                }
+                i++;
+            }
+        }
+    }
+    
+    /**
+        *  Sets the unicodeLabels attribute of the PapillonBasePO class
+     *
+     * @param  mySelect  The new unicodeLabels value
+     */
+    public static void setUnicodeLabels(XHTMLSelectElement mySelect) {
+        HTMLCollection myCollection = mySelect.getOptions();
+        for (int i = 0; i < myCollection.getLength(); i++) {
+            XHTMLOptionElement myOption = (XHTMLOptionElement) myCollection.item(i);
+            myOption.setLabel(myOption.getText());
+        }
+    }
     
     
     /**
