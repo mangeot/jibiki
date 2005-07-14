@@ -3,6 +3,14 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.16  2005/07/14 13:48:53  serasset
+ * Added columns dictionaryname and volumename to the xslsheets.
+ * Modified the XslSheet and XslSheetFactory accordingly.
+ * Modified AdminXsl interface accordingly.
+ * Modified DictionariesFactory and VolumesFactory to allow several xsl-sheets and to
+ * correctly provide dictionaryName/volumeName to XslSheetFactory.
+ * Cleanup of several errors in papillon_static doml file.
+ *
  * Revision 1.15  2005/07/05 09:21:59  serasset
  * Template interface generator now correctly generates attribute names (with an @).
  * Target languages are now correctly handled when querying a pivot multilingual dictionary.
@@ -171,8 +179,13 @@ public class DictionariesFactory {
     protected final static String VOLUME_REF_TAG="volume-metadata-ref";
     protected final static String XSLSHEET_TAG="xsl-stylesheet";
     protected final static String HREF_ATTRIBUTE="href";
+    protected final static String NAME_ATTRIBUTE="name";
+	protected final static String DEFAULT_ATTRIBUTE="default";
+    
     public final static String PAPILLONAXI="Papillon_axi";
 	
+	
+    // FIXME: Most attributes should belong to the dml name space. Currently, only the lang attribute do belong to dml...
     public static Dictionary newDictionary(Element dictionary)
         throws fr.imag.clips.papillon.business.PapillonBusinessException, java.io.IOException {
             //on recupere le dictionnaire
@@ -274,15 +287,22 @@ public class DictionariesFactory {
                 myDict = DictionariesFactory.newDictionary(dictionary);
                 if (null != myDict) {
 					
-                    Element stylesheet =(Element)docXml.getElementsByTagName(XSLSHEET_TAG).item(0);
-					
-                    if (null != stylesheet) {
-                        String ref = stylesheet.getAttributeNS(XLINK_URI,HREF_ATTRIBUTE);
-                        URL resultURL = new URL(fileURL,ref);
-                        String xslString = fr.imag.clips.papillon.business.xsl.XslSheetFactory.parseXslSheet(resultURL);
-                        fr.imag.clips.papillon.business.xsl.XslSheetFactory.AddXslSheet(myDict.getName(),null,xslString,false);
-                    }
-					
+                    // DONE: allow several stylesheets in metadata
+                    NodeList stylesheets =(NodeList)docXml.getElementsByTagName(XSLSHEET_TAG);
+                    
+					for (int i=0; i<stylesheets.getLength(); i++) {
+                        Element stylesheet = (Element) stylesheets.item(i);
+                        
+                        if (null != stylesheet) {
+                            String ref = stylesheet.getAttributeNS(XLINK_URI,HREF_ATTRIBUTE);
+                            String name = stylesheet.getAttribute(NAME_ATTRIBUTE);
+                            String isDefault = stylesheet.getAttribute(DEFAULT_ATTRIBUTE);
+                            boolean isDefaultXsl = (null != isDefault && isDefault.equals("true"));
+                            URL resultURL = new URL(fileURL,ref);
+                            String xslString = fr.imag.clips.papillon.business.xsl.XslSheetFactory.parseXslSheet(resultURL);
+                            fr.imag.clips.papillon.business.xsl.XslSheetFactory.AddXslSheet(name, myDict.getName(), null ,null, xslString,isDefaultXsl);
+                        }
+					}
                     if (loadVolumes || loadEntries) {
                         NodeList links = dictionary.getElementsByTagName(VOLUME_REF_TAG);
                         if (null != links && links.getLength() > 0) {
@@ -423,6 +443,7 @@ public class DictionariesFactory {
             return entries;
         }
 	
+    // FIXME: Why Keys1 and Keys2 ? What are they ?
     public static Collection getDictionariesEntriesCollection(String [] resources,
 															  String source,
 															  String[] targets,

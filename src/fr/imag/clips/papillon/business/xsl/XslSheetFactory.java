@@ -3,6 +3,14 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.6  2005/07/14 13:48:53  serasset
+ * Added columns dictionaryname and volumename to the xslsheets.
+ * Modified the XslSheet and XslSheetFactory accordingly.
+ * Modified AdminXsl interface accordingly.
+ * Modified DictionariesFactory and VolumesFactory to allow several xsl-sheets and to
+ * correctly provide dictionaryName/volumeName to XslSheetFactory.
+ * Cleanup of several errors in papillon_static doml file.
+ *
  * Revision 1.5  2005/06/15 16:48:28  mangeot
  * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
  *
@@ -63,6 +71,8 @@ import com.lutris.appserver.server.sql.ObjectId;
 //for URLs
 import java.net.URL;
 
+import java.util.Vector;
+
 //pour les nouvelles entrees
 import org.w3c.dom.*;
 import javax.xml.transform.TransformerFactory;
@@ -88,7 +98,7 @@ public class XslSheetFactory {
      * The getXslSheetArray method performs a database query to
      * return an array of XslSheets
      * @return
-     *     array of discs. 
+     *     array of xslSheets. 
      * @exception PapillonBusinessException
      *   If there is a problem retrieving disc information.
      */
@@ -111,6 +121,117 @@ public class XslSheetFactory {
         return theXslArray;
     }
     
+    /** 
+    * The getXslSheetArray method performs a database query to
+    * return an array of XslSheets for the given dictionary
+    * @param dictionaryName
+    * @return
+    *     array of xslSheets for the given dictionary + global xslSheets. 
+    * @exception PapillonBusinessException
+    *   If there is a problem retrieving disc information.
+    */
+    public static XslSheet[] getApplicableXslSheets(String dictionaryName) 
+    throws PapillonBusinessException {
+        Vector xslSheets = new Vector();
+
+        try {
+            XslSheetQuery query = new XslSheetQuery(CurrentDBTransaction.get());
+            query.setQueryDictionaryName(dictionaryName);
+            query.addOrderByName(true);
+            XslSheetDO[] DOarray = query.getDOArray();
+            for ( int i = 0; i < DOarray.length; i++ )
+                xslSheets.add(new XslSheet(DOarray[i]));
+            
+            query.reset();
+            query.setQueryDictionaryName(null);
+            query.addOrderByName(true);
+            DOarray = query.getDOArray();
+            for ( int i = 0; i < DOarray.length; i++ )
+                xslSheets.add(new XslSheet(DOarray[i]));
+            
+        }catch(Exception ex) {
+            throw new PapillonBusinessException("Exception in getXslSheetsArray()", ex);
+        }
+        
+        return (XslSheet []) xslSheets.toArray((XslSheet []) null);
+    }
+    
+    /** 
+    * The getXslSheetArray method performs a database query to
+    * return an array of XslSheets for the given dictionary
+    * @param dictionaryName
+    * @param volumeName
+    * @return
+    *     array of xslSheets for the given dictionary + global xslSheets. 
+    * @exception PapillonBusinessException
+    *   If there is a problem retrieving disc information.
+    */
+    public static XslSheet[] getApplicableXslSheets(String dictionaryName, String volumeName) 
+    throws PapillonBusinessException {
+        Vector xslSheets = new Vector();
+        
+        try {
+            XslSheetQuery query = new XslSheetQuery(CurrentDBTransaction.get());
+            query.setQueryDictionaryName(dictionaryName);
+            query.setQueryVolumeName(volumeName);
+            query.addOrderByName(true);
+            XslSheetDO[] DOarray = query.getDOArray();
+            for ( int i = 0; i < DOarray.length; i++ )
+                xslSheets.add(new XslSheet(DOarray[i]));
+            
+            query.reset();
+            query.setQueryDictionaryName(null);
+            query.addOrderByName(true);
+            DOarray = query.getDOArray();
+            for ( int i = 0; i < DOarray.length; i++ )
+                xslSheets.add(new XslSheet(DOarray[i]));
+            
+        }catch(Exception ex) {
+            throw new PapillonBusinessException("Exception in getXslSheetsArray()", ex);
+        }
+        
+        return (XslSheet []) xslSheets.toArray((XslSheet []) null);
+    }
+    
+    public XslSheet getDefaultXslSheet(String dictionaryName, String volumeName) throws PapillonBusinessException {
+        XslSheet theXsl = null;
+        
+        try {
+            XslSheetQuery query = new XslSheetQuery(CurrentDBTransaction.get());
+            //set query
+            query.setQueryDictionaryName(dictionaryName);
+            query.setQueryVolumeName(volumeName);
+            query.setQueryDefaultxsl("Y");
+            
+            // Throw an exception if more than one query is found
+            query.requireUniqueInstance();
+            XslSheetDO theXslSheetDO = query.getNextDO();
+            
+            if (null == theXslSheetDO) {
+                query.reset();
+                query.setQueryDictionaryName(dictionaryName);
+                query.setQueryDefaultxsl("Y");
+                query.requireUniqueInstance();
+                theXslSheetDO = query.getNextDO();
+                if (null == theXslSheetDO) {
+                    query.reset();
+                    query.setQueryDefaultxsl("Y");
+                    query.requireUniqueInstance();
+                    theXslSheetDO = query.getNextDO();
+                }
+            }
+            theXsl = new XslSheet(theXslSheetDO);
+            if (null == theXsl) {
+                // Here we should generate an exception or display an HTML message
+                fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Exception in findDefaultxslsheet(): no default existing XSL sheet");
+            }
+            return theXsl;
+        } catch(Exception ex) {
+            throw new PapillonBusinessException("Exception in getDefaultXslSheet()", ex);
+        }
+        
+        
+    }
     
     public static String parseXslSheet(URL fileURL) 
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
@@ -169,6 +290,8 @@ public class XslSheetFactory {
         try {
             XslSheetQuery query = new XslSheetQuery(CurrentDBTransaction.get());
             //set query
+            query.setQueryDictionaryName(null);
+            query.setQueryVolumeName(null);
             query.setQueryDefaultxsl("Y");
             // Throw an exception if more than one message is found
             query.requireUniqueInstance();
@@ -202,7 +325,7 @@ public class XslSheetFactory {
         return theXsl;
     }
 	
-	public static void AddXslSheet(String name,String description,String code,boolean defaultXsl)
+	public static void AddXslSheet(String name, String dictionaryName, String volumeName, String description,String code,boolean defaultXsl)
     throws fr.imag.clips.papillon.business.PapillonBusinessException{
         if ((name!=null) && (code!=null)) {
             //search for an existing
@@ -211,6 +334,8 @@ public class XslSheetFactory {
             if (Existe.isEmpty()) {
                 XslSheet mySheet=new XslSheet();
                 mySheet.setName(name);
+                mySheet.setDictionaryName(dictionaryName);
+                mySheet.setVolumeName(volumeName);
                 mySheet.setDescription(description);
                 mySheet.setCode(code);
                 mySheet.setDefaultxsl(defaultXsl);
@@ -229,7 +354,7 @@ public class XslSheetFactory {
     }
 
 
-    public static void AddAndReplaceXslSheet(String name,String description,String code,boolean defaultXsl)
+    public static void AddAndReplaceXslSheet(String name, String dictionaryName, String volumeName, String description,String code,boolean defaultXsl)
     throws fr.imag.clips.papillon.business.PapillonBusinessException {
         if ((name!=null) && (code!=null)) {
             //search for an existing
@@ -241,6 +366,8 @@ public class XslSheetFactory {
 			}
 			XslSheet mySheet=new XslSheet();
 			mySheet.setName(name);
+            mySheet.setDictionaryName(dictionaryName);
+            mySheet.setVolumeName(volumeName);
 			mySheet.setDescription(description);
 			mySheet.setCode(code);
 			mySheet.setDefaultxsl(defaultXsl);

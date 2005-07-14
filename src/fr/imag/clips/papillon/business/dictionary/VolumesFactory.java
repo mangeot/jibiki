@@ -3,6 +3,14 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.10  2005/07/14 13:48:53  serasset
+ * Added columns dictionaryname and volumename to the xslsheets.
+ * Modified the XslSheet and XslSheetFactory accordingly.
+ * Modified AdminXsl interface accordingly.
+ * Modified DictionariesFactory and VolumesFactory to allow several xsl-sheets and to
+ * correctly provide dictionaryName/volumeName to XslSheetFactory.
+ * Cleanup of several errors in papillon_static doml file.
+ *
  * Revision 1.9  2005/06/23 09:48:17  mangeot
  * Bug fix in xpath completion and creation-date cdm element
  *
@@ -136,6 +144,8 @@ public class VolumesFactory {
 	protected final static String VIRTUAL_ATTRIBUTE="virtual";
 	protected final static String XPATH_ATTRIBUTE="xpath";
 	protected final static String INDEX_ATTRIBUTE="index";
+	protected final static String NAME_ATTRIBUTE="name";
+	protected final static String DEFAULT_ATTRIBUTE="default";
 		
 	public static Volume newVolume(String dictname, Element volume, URL fileURL)
 		throws fr.imag.clips.papillon.business.PapillonBusinessException, java.io.IOException {
@@ -297,14 +307,22 @@ public class VolumesFactory {
                 if (null != resVolume) {
                     resVolume.save();
                     
-					Element stylesheet =(Element)docXml.getElementsByTagName(XSLSHEET_TAG).item(0);
-					
-					if (null != stylesheet) {
-                        String ref = stylesheet.getAttributeNS(XLINK_URI,HREF_ATTRIBUTE);
-                        URL resultURL = new URL(fileURL,ref);
-                        String xslString = fr.imag.clips.papillon.business.xsl.XslSheetFactory.parseXslSheet(resultURL);
-                        fr.imag.clips.papillon.business.xsl.XslSheetFactory.AddXslSheet(resVolume.getName(),null,xslString,false);
-					}
+                    NodeList stylesheets =(NodeList)docXml.getElementsByTagName(XSLSHEET_TAG);
+                    
+					for (int i=0; i<stylesheets.getLength(); i++) {
+                        Element stylesheet = (Element) stylesheets.item(i);
+                        
+                        if (null != stylesheet) {
+                            String ref = stylesheet.getAttributeNS(XLINK_URI,HREF_ATTRIBUTE);
+                            String name = stylesheet.getAttribute(NAME_ATTRIBUTE);
+                            String isDefault = stylesheet.getAttribute(DEFAULT_ATTRIBUTE);
+                            boolean isDefaultXsl = (null != isDefault && isDefault.equals("true"));
+                            
+                            URL resultURL = new URL(fileURL,ref);
+                            String xslString = fr.imag.clips.papillon.business.xsl.XslSheetFactory.parseXslSheet(resultURL);
+                            fr.imag.clips.papillon.business.xsl.XslSheetFactory.AddXslSheet(name, dict.getName(), resVolume.getName(),null,xslString,isDefaultXsl);
+                        }
+                    }
 
                     if (resVolume.getLocation().equals(Volume.LOCAL_LOCATION) && !virtual) {
 						VolumeEntriesFactory.createVolumeTables(resVolume);

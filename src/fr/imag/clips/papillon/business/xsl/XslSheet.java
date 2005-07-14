@@ -9,6 +9,14 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.5  2005/07/14 13:48:53  serasset
+ * Added columns dictionaryname and volumename to the xslsheets.
+ * Modified the XslSheet and XslSheetFactory accordingly.
+ * Modified AdminXsl interface accordingly.
+ * Modified DictionariesFactory and VolumesFactory to allow several xsl-sheets and to
+ * correctly provide dictionaryName/volumeName to XslSheetFactory.
+ * Cleanup of several errors in papillon_static doml file.
+ *
  * Revision 1.4  2005/05/24 12:51:22  serasset
  * Updated many aspect of the Papillon project to handle lexalp project.
  * 1. Layout is now parametrable in the application configuration file.
@@ -141,6 +149,86 @@ public class XslSheet {
         }
     }
  
+    
+    /**
+        * Get dictionaryName of the xslsheets
+     *
+     * @return dictionaryName of the xslsheets
+     *
+     * @exception DataObjectException
+     *   If the object is not found in the database.
+     */
+    public String getDictionaryName () 
+        throws PapillonBusinessException 
+    {
+        try {
+            return this.myDO.getDictionaryName();
+        } catch(DataObjectException  ex) {
+            throw new PapillonBusinessException("Error getting XslSheet's dictionary name", ex);
+        }
+    }
+    
+    
+    /**
+        * Set dictionaryName of the xslsheets
+     *
+     * @param dictionaryName of the xslsheets
+     *
+     * @exception DataObjectException
+     *   If the object is not found in the database.
+     */
+    public void setDictionaryName ( String dictionaryName )
+        throws PapillonBusinessException 
+    {
+        try {
+            myDO.setDictionaryName(dictionaryName);   
+        } catch(DataObjectException ex) {
+            throw new PapillonBusinessException("Error setting XslSheet's dictionary name", ex);
+        }
+    }
+    
+    
+    ////////////////////////// data member VolumeName
+    
+    /**
+        * Get volumeName of the xslsheets
+     *
+     * @return volumeName of the xslsheets
+     *
+     * @exception DataObjectException
+     *   If the object is not found in the database.
+     */
+    public String getVolumeName () 
+        throws PapillonBusinessException
+    {
+        try {
+            return this.myDO.getVolumeName();
+        } catch(DataObjectException  ex) {
+            throw new PapillonBusinessException("Error getting XslSheet's volume name", ex);
+        }
+    }
+    
+    
+    /**
+        * Set volumeName of the xslsheets
+     *
+     * @param volumeName of the xslsheets
+     *
+     * @exception DataObjectException
+     *   If the object is not found in the database.
+     */
+    public void setVolumeName ( String volumeName )
+        throws PapillonBusinessException 
+    {
+        try {
+            myDO.setVolumeName(volumeName);   
+        } catch(DataObjectException ex) {
+            throw new PapillonBusinessException("Error setting XslSheet's volume name", ex);
+        }
+    }
+    
+    
+    
 ////////////////////////// data member Default
  public boolean getDefaultxsl () throws PapillonBusinessException {
         try {

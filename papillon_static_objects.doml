@@ -7,6 +7,14 @@
  * $Id$
  *************************************************
  * $Log$
+ * Revision 1.7  2005/07/14 13:48:53  serasset
+ * Added columns dictionaryname and volumename to the xslsheets.
+ * Modified the XslSheet and XslSheetFactory accordingly.
+ * Modified AdminXsl interface accordingly.
+ * Modified DictionariesFactory and VolumesFactory to allow several xsl-sheets and to
+ * correctly provide dictionaryName/volumeName to XslSheetFactory.
+ * Cleanup of several errors in papillon_static doml file.
+ *
  * Revision 1.6  2005/06/15 16:48:27  mangeot
  * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
  *
@@ -104,6 +112,12 @@
           <column id="name" usedForQuery="true">
             <type dbType="VARCHAR" javaType="String" size="255"/>
           </column>
+          <column id="dictionaryName" usedForQuery="true">
+            <type dbType="VARCHAR" javaType="String" size="255" canBeNull="true"/>
+          </column>
+           <column id="volumeName" usedForQuery="true">
+            <type dbType="VARCHAR" javaType="String" size="255" canBeNull="true"/>
+          </column>
           <column id="description">
             <javadoc>/**
  * A simple and short description of what this xsl sheet does.
@@ -125,7 +139,7 @@
             <javadoc>/**
  * The author or authors of the document
  */</javadoc>
-            <type canBeNull="true" dbType="LONGVARCHAR" javaType="String" size="1024"/>
+            <type canBeNull="true" dbType="LONGVARCHAR" javaType="String"/>
           </column>
           <column id="owner" usedForQuery="true">
             <javadoc>/**
@@ -157,7 +171,7 @@
         </table>
         <table dbTableName="informationfiles" id="fr.imag.clips.papillon.data.InformationFile">
           <column id="filename" usedForQuery="true">
-            <type dbType="LONGVARCHAR" javaType="String" size="1024"/>
+            <type dbType="LONGVARCHAR" javaType="String"/>
           </column>
           <column id="filetype" usedForQuery="true">
             <type dbType="LONGVARCHAR" javaType="String"/>
@@ -262,7 +276,7 @@
           <indexColumn id="status"/>
         </index>
         </table>
-        <table dbTableName="history" id="fr.imag.clips.papillon.data.History"/>
+        
         <table id="fr.imag.clips.papillon.data.PapillonAxi" dbTableName="papillonaxi">
           <column id="id" usedForQuery="true">
             <javadoc>/**
@@ -327,7 +341,7 @@
             <javadoc>/**
  * password of the user previously encrypted !
  */</javadoc>
-            <type dbType="VARBINARY" javaType="byte[]" size="40"/>
+            <type dbType="VARBINARY" javaType="byte[]"/>
           </column>
           <column id="email" usedForQuery="true">
             <javadoc>/**
@@ -371,7 +385,7 @@
             <javadoc>/**
  * password of the group previously encrypted !
  */</javadoc>
-            <type dbType="VARBINARY" javaType="byte[]" size="40"/>
+            <type dbType="VARBINARY" javaType="byte[]"/>
           </column>
           <column id="users" usedForQuery="true">
             <javadoc>/**

@@ -19,6 +19,14 @@
 	<td><b>Name:&nbsp;</b></td>
 	<td><input name="name" type="text" size="64" value=""/></td>
 </tr>
+<tr>	
+	<td><b>Dictionary Name:&nbsp;</b></td>
+	<td><input name="dictionaryName" type="text" size="64" value=""/></td>
+</tr>
+<tr>	
+	<td><b>Volume Name:&nbsp;</b></td>
+	<td><input name="volumeName" type="text" size="64" value=""/></td>
+</tr>
 <tr>
 	<td><b>Description:&nbsp; </b></td>
 	<td><input name="description" type="text" size="64" value=""/></td>
@@ -40,7 +48,8 @@
 <table summary="Existing XSL Sheets">
 <tr><th colspan="4">XSL sheets currently in the database:</th></tr>
 <tr id="TemplateRow">
-	<td><span id="XslName">name</span> (<span id="XslDesc">description</span>) <b><span id="XslDefault">default</span></b></td>
+	<td><span id="XslName">name</span> [<span id="XslDictionaryName">dictionary</span>/<span id="XslVolumeName">volume</span>] 
+      (<span id="XslDesc">description</span>) <b><span id="XslDefault">default</span></b></td>
 	<td><a href="" id="SeeAnchor">See</a></td>
 	<td><a href="" id="RemoveAnchor" onclick="return confirm('Are you sure you want to remove the Xsl Sheet?')">Remove</a></td>
 	<td><a href="" id="DefaultAnchor">Make Default</a></td>
