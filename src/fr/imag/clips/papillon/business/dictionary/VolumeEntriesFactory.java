@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.16  2005/07/16 13:41:52  mangeot
+ * Added findEntryByContributionId
+ *
  * Revision 1.15  2005/07/16 12:58:31  serasset
  * Added limit parameter to query functions
  * Added a parameter to Formater initializations
@@ -789,7 +792,35 @@ public class VolumeEntriesFactory {
         throws PapillonBusinessException {
 			return findEntryByKey(myDict, myVolume, Volume.CDM_entryId, Volume.DEFAULT_LANG, entryId);
         }
-		
+	
+    /**
+		* The findEntryByContributionId method performs a database query to
+     * return a VolumeEntry
+     *
+     * @param id, the object id of the entries table.
+     * @return the corresponding VolumeEntry
+     * @exception PapillonBusinessException
+     *    if there is a problem retrieving message.
+     */
+    public static VolumeEntry findEntryByContributionId(String volumeName, String entryId)
+        throws PapillonBusinessException {
+			Volume volume;
+            Dictionary dict;
+            try {
+                volume = VolumesFactory.findVolumeByName(volumeName);
+                dict = DictionariesFactory.findDictionaryByName(volume.getDictname());
+            }
+            catch(Exception ex) {
+				return null;
+            }
+			return findEntryByContributionId(dict, volume, entryId);
+		}
+
+	protected static VolumeEntry findEntryByContributionId(Dictionary myDict, Volume myVolume, String entryId)
+        throws PapillonBusinessException {
+			return findEntryByKey(myDict, myVolume, Volume.CDM_contributionId, Volume.DEFAULT_LANG, entryId);
+        }
+	
     public static VolumeEntry newEntry(Dictionary dict, Volume volume, String headword, org.w3c.dom.Document docdom)
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
 			
