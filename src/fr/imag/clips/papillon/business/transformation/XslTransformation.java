@@ -4,6 +4,9 @@
  *$Id$
  *------------------------
  *$Log$
+ *Revision 1.7  2005/07/16 13:59:45  mangeot
+ *Fixed XML view bug
+ *
  *Revision 1.6  2005/07/16 12:58:31  serasset
  *Added limit parameter to query functions
  *Added a parameter to Formater initializations
@@ -100,7 +103,8 @@ import fr.imag.clips.papillon.business.PapillonBusinessException;
 
 public class XslTransformation implements ResultFormatter {
 
-
+	public static final String XML_FORMATTER = "XML";
+	
 	// Constants
 	// Note: I use constants extensively because the XSL transformations are a little
 	// bit slow
@@ -112,14 +116,20 @@ public class XslTransformation implements ResultFormatter {
         // Find the correct XslSheet or xslsheet sequence for the given parameters.
         // FIXME: I currently use the same strategy, but this has to be redefined.
         currentXslSheetSequence = new Vector();
-
-        // Get the dictionary sheet...
-        currentXslSheetSequence.add(XslSheetFactory.findXslSheetByName(dict.getName()));
-        // Then the volume one...
-        currentXslSheetSequence.add(XslSheetFactory.findXslSheetByName(vol.getName()));
-        // Last, the defaut one
-        currentXslSheetSequence.add(XslSheetFactory.findDefaultXslSheet());
-
+		
+		String formatter = (String) parameter;
+		
+		if (formatter!=null && !formatter.equals("")) {
+			currentXslSheetSequence.add(XslSheetFactory.findXslSheetByName(formatter));
+		}
+		else {
+			// Get the dictionary sheet...
+			currentXslSheetSequence.add(XslSheetFactory.findXslSheetByName(dict.getName()));
+			// Then the volume one...
+			currentXslSheetSequence.add(XslSheetFactory.findXslSheetByName(vol.getName()));
+			// Last, the defaut one
+			currentXslSheetSequence.add(XslSheetFactory.findDefaultXslSheet());
+		}
         // FIXME: How can the user specify a xsl if there is the choice between several...
         
     }

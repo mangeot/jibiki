@@ -10,6 +10,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.21  2005/07/16 13:59:45  mangeot
+ *  Fixed XML view bug
+ *
  *  Revision 1.20  2005/07/16 12:58:31  serasset
  *  Added limit parameter to query functions
  *  Added a parameter to Formater initializations
@@ -181,14 +184,6 @@ import fr.imag.clips.papillon.presentation.xhtml.orig.*;
  */
 public class ConsultExpert extends PapillonBasePO {
 
-    /**
-     *  Description of the Field
-     */
-    protected final static String TEXTE = "texte";
-    /**
-     *  Description of the Field
-     */
-    protected final static String XML = "xml";
 
     /**
      *  Description of the Field
@@ -197,7 +192,7 @@ public class ConsultExpert extends PapillonBasePO {
     /**
      *  Description of the Field
      */
-    protected final static String XSLID = "xslid";
+    protected final static String FORMATTER_PARAMETER = "formatter";
 
     /**
      *  Description of the Field
@@ -472,7 +467,7 @@ public class ConsultExpert extends PapillonBasePO {
 		}
 
         String handle = myGetParameter(HANDLE);
-        String xslid = myGetParameter(XSLID);
+        String formatter = myGetParameter(FORMATTER_PARAMETER);
 
         if (handle != null && !handle.equals("")) {
             submit = "lookup";
@@ -574,7 +569,7 @@ public class ConsultExpert extends PapillonBasePO {
 				status[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_EXACT+1];
 				myKeys.add(status);
 
-                addEntries(resources, volume, sourceLanguage, targetLanguages, Headwords, strategy1, myKeys, Clauses, anyContains, handle, xslid, this.getUser(), offset);
+                addEntries(resources, volume, sourceLanguage, targetLanguages, Headwords, strategy1, myKeys, Clauses, anyContains, handle, formatter, this.getUser(), offset);
                 Utility.removeElement(content.getElementFoksEntries());
             }
         } else {
@@ -748,7 +743,7 @@ public class ConsultExpert extends PapillonBasePO {
      *      to be added to the Entries attribute
      * @param  handle                                              The feature
      *      to be added to the Entries attribute
-     * @param  xslid                                               The feature
+     * @param  formatter                                               The feature
      *      to be added to the Entries attribute
      * @param  myUser                                              The feature
      *      to be added to the Entries attribute
@@ -769,7 +764,7 @@ public class ConsultExpert extends PapillonBasePO {
      * @exception  javax.xml.transform.TransformerException        Description
      *      of the Exception
      */
-    protected void addEntries(String[] resources, String volume, String source, String[] targets, String[] Headwords, int strategy1, Vector myKeys,  Vector myClauses, String anyContains, String handle, String xslid, User myUser, int offset)
+    protected void addEntries(String[] resources, String volume, String source, String[] targets, String[] Headwords, int strategy1, Vector myKeys,  Vector myClauses, String anyContains, String handle, String formatter, User myUser, int offset)
              throws PapillonBusinessException,
             ClassNotFoundException,
             HttpPresentationException,
@@ -821,7 +816,7 @@ public class ConsultExpert extends PapillonBasePO {
                 addEntryTable(EntryCollection, targets, offset);
             } else {
                 Utility.removeElement(content.getElementEntryListTable());
-                addFewEntries(EntryCollection, xslid);
+                addFewEntries(EntryCollection, formatter);
                 // If the entry is remote, it is already an HTML node
             }
             Utility.removeElement(content.getElementSorryMessage());
@@ -1059,16 +1054,10 @@ public class ConsultExpert extends PapillonBasePO {
 
             Vector xslList = new Vector();
 
-            XslSheet myXmlSheet = XslSheetFactory.findXslSheetByName("XML");
-            if (myXmlSheet != null && !myXmlSheet.isEmpty()) {
-                xslList.add(myXmlSheet);
-            }
+			xslList.add(XslTransformation.XML_FORMATTER);
             // FIXME: We have too much XslSheets so I put only XML and DEC
             // but it should not be hardcoded!
-            XslSheet myDECSheet = XslSheetFactory.findXslSheetByName("DEC");
-            if (myDECSheet != null && !myDECSheet.isEmpty()) {
-                xslList.add(myDECSheet);
-            }
+            //    xslList.add("DEC");
             // size + 1 for the default xsl sheet
             XslSheetsNumber = xslList.size() + 1;
             //  XslSheetsNumber = xslList.size();
@@ -1101,7 +1090,7 @@ public class ConsultExpert extends PapillonBasePO {
             //adding xslchoice
             for (int i = 0; i < xslList.size(); i++) {
                 // Le nom de la stylesheet
-                String name = ((XslSheet) xslList.elementAt(i)).getName();
+                String name = (String) xslList.elementAt(i);
                 //creation de la data cell
                 cell = theDoc.createElement("td");
                 anchor = theDoc.createElement("a");
@@ -1109,7 +1098,7 @@ public class ConsultExpert extends PapillonBasePO {
                 anchor.setAttribute("href", this.getUrl() + "?" +
                         VOLUME_PARAMETER + "=" + volume + "&" +
                         HANDLE + "=" + handle + "&" +
-                        XSLID + "=" + ((XslSheet) xslList.elementAt(i)).getHandle() + "&" +
+                        FORMATTER_PARAMETER + "=" + name + "&" +
                         content.NAME_LOOKUP + "=" + "lookup");
                 anchor.appendChild(xslName);
                 cell.appendChild(anchor);
@@ -1181,16 +1170,16 @@ public class ConsultExpert extends PapillonBasePO {
      *
      * @param  EntryCollection
      *      The feature to be added to the FewEntries attribute
-     * @param  xslid
+     * @param  formatter
      *      The feature to be added to the FewEntries attribute
      * @exception  fr.imag.clips.papillon.business.PapillonBusinessException
      *      Description of the Exception
      */
-    protected void addFewEntries(Collection EntryCollection, String xslid)
+    protected void addFewEntries(Collection EntryCollection, String formatter)
              throws fr.imag.clips.papillon.business.PapillonBusinessException {
         if (EntryCollection != null && EntryCollection.size() > 0) {
             for (Iterator myIterator = EntryCollection.iterator(); myIterator.hasNext(); ) {
-				addEntry((QueryResult) myIterator.next(), xslid);
+				addEntry((QueryResult) myIterator.next(), formatter);
             }
         } else {
             Utility.removeElement(content.getElementEntryListTable());
@@ -1205,18 +1194,17 @@ public class ConsultExpert extends PapillonBasePO {
      *
      * @param  EntryCollection
      *      The feature to be added to the FewEntries attribute
-     * @param  xslid
+     * @param  formatter
      *      The feature to be added to the FewEntries attribute
      * @exception  fr.imag.clips.papillon.business.PapillonBusinessException
      *      Description of the Exception
      */
-    protected void addEntry(QueryResult qr, String xslid)
+    protected void addEntry(QueryResult qr, String formatter)
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
             VolumeEntry myEntry = qr.getSourceEntry();
             // get the apropriate transformer.
-            ResultFormatter rf = ResultFormatterFactory.getFormatter(qr, null, ResultFormatterFactory.XHTML_DIALECT,null);
+            ResultFormatter rf = ResultFormatterFactory.getFormatter(qr, formatter, ResultFormatterFactory.XHTML_DIALECT,null);
             //rf.initializeFormatter(qr.getSourceEntry().getDictionary(), qr.getSourceEntry().getVolume() , null, ResultFormatterFactory.XHTML_DIALECT,null);
-            String[] formatters = ResultFormatterFactory.getAvailableFormatters(qr.getSourceEntry().getVolume(), ResultFormatterFactory.XHTML_DIALECT,null);
 			Element myHtmlElt = (Element)rf.getFormattedResult(qr);
             
 			addElement(myHtmlElt, myEntry.getVolumeName(), myEntry.getHandle(),  myEntry.getDictionaryName(), myEntry.getType());
