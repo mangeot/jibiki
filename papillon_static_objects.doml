@@ -7,6 +7,9 @@
  * $Id$
  *************************************************
  * $Log$
+ * Revision 1.8  2005/07/16 12:21:05  mangeot
+ * dictionaryname and volumename from xslsheets cannot be null any more
+ *
  * Revision 1.7  2005/07/14 13:48:53  serasset
  * Added columns dictionaryname and volumename to the xslsheets.
  * Modified the XslSheet and XslSheetFactory accordingly.
@@ -113,10 +116,10 @@
             <type dbType="VARCHAR" javaType="String" size="255"/>
           </column>
           <column id="dictionaryName" usedForQuery="true">
-            <type dbType="VARCHAR" javaType="String" size="255" canBeNull="true"/>
+            <type dbType="VARCHAR" javaType="String" size="255"/>
           </column>
            <column id="volumeName" usedForQuery="true">
-            <type dbType="VARCHAR" javaType="String" size="255" canBeNull="true"/>
+            <type dbType="VARCHAR" javaType="String" size="255"/>
           </column>
           <column id="description">
             <javadoc>/**
