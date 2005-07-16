@@ -7,6 +7,9 @@
  *  $Id$
  *  
  *  $Log$
+ *  Revision 1.5  2005/07/16 13:42:08  mangeot
+ *  *** empty log message ***
+ *
  *  Revision 1.4  2005/06/15 16:48:28  mangeot
  *  Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
  *
@@ -24,10 +27,11 @@
 ]>
 <xsl:stylesheet version="1.0"
 	xmlns:d='http://www-clips.imag.fr/geta/services/dml' 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:xlink="http://www.w3.org/1999/xlink"
 	xmlns="http://www.w3.org/1999/xhtml"
-	exclude-result-prefixes="d xlink xsl">
+	exclude-result-prefixes="d xlink xsl xsi">
 
 <xsl:output method="html" encoding="utf-8" indent="yes"/> 
 
