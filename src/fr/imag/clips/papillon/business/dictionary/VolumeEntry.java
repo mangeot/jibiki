@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.18  2005/07/16 12:52:37  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.17  2005/06/23 09:48:17  mangeot
  * Bug fix in xpath completion and creation-date cdm element
  *
@@ -363,6 +366,20 @@ public class VolumeEntry implements IAnswer {
 			}
 		}
 	
+	/**
+		* Gets the homograph number of the volumeEntry
+	 *
+	 * @return the homograph number as a String.
+	 * @exception PapillonBusinessException if an error occurs
+	 *   retrieving data (usually due to an underlying data layer
+						  *   error).
+	 */
+	public String getHomographNumber() throws PapillonBusinessException {
+		String hn = "";
+		hn = ParseVolume.getCdmString(this, Volume.CDM_homographNumber, this.getSourceLanguage());
+		return hn;
+	}
+
 	/**
 		* Gets the dom of the entry
 	 *

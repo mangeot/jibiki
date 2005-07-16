@@ -16,6 +16,9 @@
  *$Id$
  *------------------------------------------
  *$Log$
+ *Revision 1.2  2005/07/16 12:48:04  mangeot
+ **** empty log message ***
+ *
  *Revision 1.1  2005/07/16 09:15:58  mangeot
  *Added HomographNumberComparator and ParticuleComparator
  *
@@ -34,9 +37,9 @@ public class ParticuleComparator implements java.util.Comparator {
 	// -1 (or any -ve number) if a < b
 	public final int compare (Object a, Object b) {
 		int res = 0;
-		if (((VolumeEntry)a).getSourceLanguage().equals("est") &&
-			((VolumeEntry)b).getSourceLanguage().equals("est") &&) {
-			try {
+		try {
+			if (((VolumeEntry)a).getSourceLanguage().equals("est") &&
+				((VolumeEntry)b).getSourceLanguage().equals("est")) {
 				String hwA = ((VolumeEntry)a).getParticule();
 				String hwB = ((VolumeEntry)b).getParticule();
 				if (hwA != null && hwB != null) {
@@ -58,9 +61,9 @@ public class ParticuleComparator implements java.util.Comparator {
 					res = hwA.compareTo(hwB);
 				}
 			}
-			catch (Exception e) {
-				res = 0;
-			}
+		}
+		catch (Exception e) {
+			res = 0;
 		}
 		return res;
 	} 
