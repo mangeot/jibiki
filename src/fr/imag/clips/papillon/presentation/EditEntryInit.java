@@ -10,6 +10,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.13  2005/07/16 13:44:13  mangeot
+ * bug fix
+ *
  * Revision 1.12  2005/06/15 16:48:28  mangeot
  * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
  *
@@ -230,7 +233,9 @@ public class EditEntryInit extends PapillonBasePO {
 			"&" + EditEntry.EntryHandle_PARAMETER + "=" + myEntry.getHandle());
 		case STEP_EDIT:
 			myEntry = VolumeEntriesFactory.findEntryByHandle(volume, entryHandle);
-			if (myEntry.getAuthor().equals(this.getUser().getLogin())) {
+			if (myEntry.getAuthor().equals(this.getUser().getLogin()) &&
+				!myEntry.getStatus().equals(VolumeEntry.VALIDATED_STATUS) &&
+				!myEntry.getStatus().equals(VolumeEntry.DELETED_STATUS)) {
 				throw new ClientPageRedirectException(EditEntryURL + "?" + EditEntry.VolumeName_PARAMETER + "=" + myEntry.getVolumeName() + 
 				"&" + EditEntry.EntryHandle_PARAMETER + "=" + myEntry.getHandle());
 			}
