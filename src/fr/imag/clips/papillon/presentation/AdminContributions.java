@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.13  2005/07/16 13:43:15  mangeot
+ * Added do not search for replaced entries
+ *
  * Revision 1.12  2005/07/16 12:58:31  serasset
  * Added limit parameter to query functions
  * Added a parameter to Formater initializations
@@ -423,6 +426,12 @@ public class AdminContributions extends PapillonBasePO {
 				key3[2] = VolumeEntry.DELETED_STATUS;
 				key3[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_NOT_EQUAL+1];			
 				myKeys.add(key3);			
+				String[] key4 = new String[4];
+				key4[0] = Volume.CDM_contributionStatus;
+				key4[1] = Volume.DEFAULT_LANG;
+				key4[2] = VolumeEntry.REPLACED_STATUS;
+				key4[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_NOT_EQUAL+1];			
+				myKeys.add(key4);			
 			}
 			if (creationDate !=null && !creationDate.equals("")) {
 				String[] creationDateKey = new String[4];
@@ -462,6 +471,7 @@ public class AdminContributions extends PapillonBasePO {
 					VolumeEntry myContrib = VolumeEntriesFactory.findEntryByHandle(volumeString, entryid);
 					if (null != myContrib && !myContrib.isEmpty()) {
 						myContrib.setFinished(this.getUser());
+						entryid = null;
 						userMessage = "Contribution " +  myContrib.getHandle() + " / " +
 							myContrib.getHeadword() + " finished";
 					}
@@ -676,10 +686,14 @@ public class AdminContributions extends PapillonBasePO {
 					if (myContrib!=null && !myContrib.isEmpty()) {						
 						// FIXME: hack for the GDEF estonian volume
 						String headword = myContrib.getHeadword();
-						if (myContrib.getVolumeName().equals("GDEF_est")) {
+						if (myContrib.getSourceLanguage().equals("est")) {
 							String particule = myContrib.getParticule();
 							if(particule!=null && !particule.equals("")) {
 								headword = particule + " " + headword;
+							}
+							String homograph = myContrib.getHomographNumber();
+							if(homograph!=null && !homograph.equals("")) {
+								headword = headword + " " + homograph;
 							}
 						}
 						
