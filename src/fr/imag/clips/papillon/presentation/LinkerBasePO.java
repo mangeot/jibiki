@@ -9,6 +9,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.2  2005/07/16 16:25:26  mangeot
+ *  Adapted the linker to the GDEF project + bug fixes
+ *
  *  Revision 1.1  2005/07/08 08:22:46  serasset
  *  Reviewed the Abstract/BasePO hierarchy (moved some methods up in the tree).
  *  Added base classes to allow independant browsing window to establish links during edition.
@@ -20,7 +23,7 @@ package fr.imag.clips.papillon.presentation;
 
 // Papillon import
 //import fr.imag.clips.papillon.business.user.User;
-import fr.imag.clips.papillon.presentation.xhtmllexalp.orig.*;
+import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
 // Enhydra SuperServlet imports
 import com.lutris.appserver.server.httpPresentation.HttpPresentation;
@@ -73,9 +76,7 @@ import org.enhydra.xml.io.DOMFormatter;
  * @created    December 8, 2004
  */
 public abstract class LinkerBasePO extends AbstractPO {
-    
-    public static final String PACKAGE = "fr.imag.clips.papillon.presentation.xhtmllexalp";
-    
+        
         // JavaScript to add in the header
     /**
         *  Description of the Field
@@ -122,7 +123,7 @@ public abstract class LinkerBasePO extends AbstractPO {
 
             
             // Création du document
-            linkerLayout = (LinkerLayoutXHTML) MultilingualXHtmlTemplateFactory.createTemplate(PACKAGE, "LinkerLayoutXHTML", this.myComms, this.sessionData);
+            linkerLayout = (LinkerLayoutXHTML) MultilingualXHtmlTemplateFactory.createTemplate("LinkerLayoutXHTML", this.myComms, this.sessionData);
                        
             //Insertion du contenu dans le document vide.
             linkerLayout.getElementBrowsingForm().appendChild(linkerLayout.importNode(form, true));

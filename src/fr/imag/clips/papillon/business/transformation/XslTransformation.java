@@ -4,6 +4,9 @@
  *$Id$
  *------------------------
  *$Log$
+ *Revision 1.8  2005/07/16 16:25:26  mangeot
+ *Adapted the linker to the GDEF project + bug fixes
+ *
  *Revision 1.7  2005/07/16 13:59:45  mangeot
  *Fixed XML view bug
  *
@@ -158,7 +161,9 @@ public class XslTransformation implements ResultFormatter {
 					Dictionary myDictionary = myAnswer.getDictionary();
 					String[] targets = myVolume.getTargetLanguagesArray();
 					for (int j=0;j<targets.length;j++) {
-						NodeList myNodeList = ParseVolume.getCdmElements(myAnswer, Volume.CDM_translationReflexie, targets[j]);
+						String target = targets[j];
+						if (target != null && !target.equals("")) {
+						NodeList myNodeList = ParseVolume.getCdmElements(myAnswer, Volume.CDM_translationReflexie, target);
 						if ((myNodeList != null) && (myNodeList.getLength()>0)) {
 							for (int i=0; i<myNodeList.getLength();i++) {
 								Node myNode = myNodeList.item(i);
@@ -175,6 +180,7 @@ public class XslTransformation implements ResultFormatter {
 								}
 							}
 						}
+					}
 					}
 					doc = (Node)myAnswer.getDom();
 					for (int i=0; i < currentXslSheetSequence.size(); i++) {

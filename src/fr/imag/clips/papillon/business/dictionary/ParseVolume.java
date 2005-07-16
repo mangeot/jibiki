@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.11  2005/07/16 16:25:26  mangeot
+ * Adapted the linker to the GDEF project + bug fixes
+ *
  * Revision 1.10  2005/06/24 10:35:57  mangeot
  * Minor bug fixes
  *
@@ -515,9 +518,9 @@ public class ParseVolume {
 	protected static org.w3c.dom.NodeList getCdmElements(IAnswer myEntry, String CdmElement, String lang, org.apache.xml.utils.PrefixResolver aPrefixResolver) 
 		throws PapillonBusinessException {
 			org.w3c.dom.NodeList resNodeList = null;
-			//fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getCdmElements: " + CdmElement + " " + lang);
+			// fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getCdmElements: " + CdmElement + " " + lang);
 			java.util.Hashtable CdmElementsTable = myEntry.getVolume().getCdmElements();
-			if (CdmElementsTable != null) {
+			if (lang != null && !lang.equals("") && CdmElementsTable != null) {
 				java.util.Hashtable tmpTable = (java.util.Hashtable) CdmElementsTable.get(lang);
 				if (tmpTable != null) {
 					java.util.Vector myVector = (java.util.Vector) tmpTable.get(CdmElement);
@@ -543,11 +546,11 @@ public class ParseVolume {
 					}
 				}
 				else {
-					fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getCdmElements: tmpTable == null for lang: " + lang);
+					fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getCdmElements: " + CdmElement + " tmpTable == null for lang: " + lang);
 				}
 			}
 			else {
-				fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getCdmElements: CdmElementsTable == null");
+				fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getCdmElements: " + CdmElement + " CdmElementsTable == null");
 			}
 			return resNodeList;
 		}

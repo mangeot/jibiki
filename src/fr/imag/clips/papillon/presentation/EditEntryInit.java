@@ -10,6 +10,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.14  2005/07/16 16:25:26  mangeot
+ * Adapted the linker to the GDEF project + bug fixes
+ *
  * Revision 1.13  2005/07/16 13:44:13  mangeot
  * bug fix
  *
@@ -143,7 +146,7 @@ public class EditEntryInit extends PapillonBasePO {
     protected final static String ConsultExpertURL = "ConsultExpert.po";
     protected final static String ConsultExpertVolumeParameter = "VOLUME";
     protected final static String ConsultExpertHandleParameter = "handle";
-    protected final static String ConsultExpertXslidParameter = "xslid";
+    protected final static String ConsultExpertFormatterParameter = "xslid";
     protected final static String EditEntryURL = "EditEntry.po";
 
     protected final static int STEP_INIT = 1;
@@ -366,9 +369,9 @@ public class EditEntryInit extends PapillonBasePO {
 
 			// The entry id
 		    String href = ConsultExpertURL + "?"
-			+ ConsultExpertVolumeParameter + "="
+			+ ConsultExpert.VOLUME_PARAMETER + "="
 			+ myEntry.getVolumeName() + "&"
-			+ ConsultExpertHandleParameter + "="
+			+ ConsultExpert.HANDLE_PARAMETER + "="
 			+ myEntry.getHandle();
 			
 		    entryIdAnchor.setHref(href);
@@ -412,18 +415,13 @@ public class EditEntryInit extends PapillonBasePO {
 			}
 
 		    // The view XML anchor
-			XslSheet xmlSheet = XslSheetFactory.findXslSheetByName("XML");
-			String xslid = "";
-			if (null != xmlSheet && !xmlSheet.isEmpty()) {
-				xslid = xmlSheet.getHandle();
-			} 
 		    href = ConsultExpertURL + "?"
-			+ ConsultExpertVolumeParameter + "="
-			+ myEntry.getVolumeName() + "&"
-			+ ConsultExpertHandleParameter + "="
-			+ myEntry.getHandle() + "&"
-			+ ConsultExpertXslidParameter + "="
-			+ xslid; 
+				+ ConsultExpert.VOLUME_PARAMETER + "="
+				+ myEntry.getVolumeName() + "&"
+				+ ConsultExpert.HANDLE_PARAMETER + "="
+				+ myEntry.getHandle() + "&"
+			+ ConsultExpert.FORMATTER_PARAMETER + "="
+			+ fr.imag.clips.papillon.business.transformation.XslTransformation.XML_FORMATTER; 
 			
 			viewXmlAnchor.setHref(href);
 

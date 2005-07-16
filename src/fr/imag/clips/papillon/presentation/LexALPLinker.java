@@ -9,6 +9,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.3  2005/07/16 16:25:26  mangeot
+ *  Adapted the linker to the GDEF project + bug fixes
+ *
  *  Revision 1.2  2005/07/16 12:58:31  serasset
  *  Added limit parameter to query functions
  *  Added a parameter to Formater initializations
@@ -231,7 +234,7 @@ public class LexALPLinker extends LinkerBasePO {
     }
     
     public Node getResultList() throws Exception {
-        LinkerResultListXHTML resultsListTmpl = (LinkerResultListXHTML) MultilingualXHtmlTemplateFactory.createTemplate(PACKAGE, "LinkerResultListXHTML", this.myComms, this.sessionData);
+        LinkerResultListXHTML resultsListTmpl = (LinkerResultListXHTML) MultilingualXHtmlTemplateFactory.createTemplate("LinkerResultListXHTML", this.myComms, this.sessionData);
 
         parameters.initializeSearchParameters(this);
 

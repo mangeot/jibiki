@@ -10,6 +10,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.22  2005/07/16 16:25:26  mangeot
+ *  Adapted the linker to the GDEF project + bug fixes
+ *
  *  Revision 1.21  2005/07/16 13:59:45  mangeot
  *  Fixed XML view bug
  *
@@ -188,7 +191,7 @@ public class ConsultExpert extends PapillonBasePO {
     /**
      *  Description of the Field
      */
-    protected final static String HANDLE = "handle";
+    protected final static String HANDLE_PARAMETER = "handle";
     /**
      *  Description of the Field
      */
@@ -466,7 +469,7 @@ public class ConsultExpert extends PapillonBasePO {
             offset = Integer.parseInt(offsetString);
 		}
 
-        String handle = myGetParameter(HANDLE);
+        String handle = myGetParameter(HANDLE_PARAMETER);
         String formatter = myGetParameter(FORMATTER_PARAMETER);
 
         if (handle != null && !handle.equals("")) {
@@ -913,7 +916,7 @@ public class ConsultExpert extends PapillonBasePO {
                 // l'entry
                 href = this.getUrl() + "?"
                          + VOLUME_PARAMETER + "=" + myEntry.getVolumeName() + "&"
-                         + HANDLE + "=" + myEntry.getHandle() + "&"
+                         + HANDLE_PARAMETER + "=" + myEntry.getHandle() + "&"
                          + content.NAME_SOURCE + "=" + myEntry.getSourceLanguage() + "&"
                          + serializeParameterForUrl(content.NAME_TARGETS, targets) + "&"
                          + content.NAME_Strategy1 + "=" + strategyString1 + "&"
@@ -1081,7 +1084,7 @@ public class ConsultExpert extends PapillonBasePO {
             Text xslName = theDoc.createTextNode("Default");
             anchor.setAttribute("href", this.getUrl() + "?" +
                     VOLUME_PARAMETER + "=" + volume + "&" +
-                    HANDLE + "=" + handle + "&" +
+                    HANDLE_PARAMETER + "=" + handle + "&" +
                     content.NAME_LOOKUP + "=" + "lookup");
             anchor.appendChild(xslName);
             cell.appendChild(anchor);
@@ -1097,7 +1100,7 @@ public class ConsultExpert extends PapillonBasePO {
                 xslName = theDoc.createTextNode(name);
                 anchor.setAttribute("href", this.getUrl() + "?" +
                         VOLUME_PARAMETER + "=" + volume + "&" +
-                        HANDLE + "=" + handle + "&" +
+                        HANDLE_PARAMETER + "=" + handle + "&" +
                         FORMATTER_PARAMETER + "=" + name + "&" +
                         content.NAME_LOOKUP + "=" + "lookup");
                 anchor.appendChild(xslName);

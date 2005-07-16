@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.13  2005/07/16 16:25:26  mangeot
+ * Adapted the linker to the GDEF project + bug fixes
+ *
  * Revision 1.12  2005/06/20 16:55:05  mangeot
  * multiple bug fixes
  *
@@ -235,24 +238,7 @@ public class EditEntry extends PapillonBasePO {
 		// updateElement
 		if (myVolumeEntry!=null) {
 			updateEntry(myVolumeEntry, myEntry, this.getComms().request.getParameterNames());
-			String homographWord = VolumeEntriesFactory.setGDEFFrenchTranslations(myVolumeEntry, homographId);
 			myVolumeEntry.save();
-			if (homographWord !=null && !homographWord.equals("")) {
-				homographWord = myUrlEncode(homographWord);
-				String queryStringCopy = queryString
-				+ "&" + HomographId_PARAMETER + "=";
-				queryStringCopy = queryStringCopy.replaceAll("&",ChooseEntry.Ampersand);
-				queryStringCopy = queryStringCopy.replaceAll("=",ChooseEntry.Equal);
-				
-				String otherVolume = VolumesFactory.getSymetricVolumeName(volumeName);
-				
-				String newUrl = ChooseEntryURL 
-					+ "?" + ChooseEntry.ChooseEntry_PARAMETER + "=" + homographWord
-					+ "&" + ChooseEntry.Volume_PARAMETER + "=" + otherVolume
-					+ "&" + ChooseEntry.QueryString_PARAMETER + "=" + queryStringCopy;
-
-				throw new ClientPageRedirectException(newUrl);
-			}
 		}
 
 		// addElement
