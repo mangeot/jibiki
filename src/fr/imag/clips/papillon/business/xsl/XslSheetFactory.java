@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.7  2005/07/16 12:33:23  mangeot
+ * dictionaryname and volumename of xslsheets are now not null
+ *
  * Revision 1.6  2005/07/14 13:48:53  serasset
  * Added columns dictionaryname and volumename to the xslsheets.
  * Modified the XslSheet and XslSheetFactory accordingly.
@@ -290,8 +293,8 @@ public class XslSheetFactory {
         try {
             XslSheetQuery query = new XslSheetQuery(CurrentDBTransaction.get());
             //set query
-            query.setQueryDictionaryName(null);
-            query.setQueryVolumeName(null);
+            query.setQueryDictionaryName("");
+            query.setQueryVolumeName("");
             query.setQueryDefaultxsl("Y");
             // Throw an exception if more than one message is found
             query.requireUniqueInstance();
@@ -334,7 +337,13 @@ public class XslSheetFactory {
             if (Existe.isEmpty()) {
                 XslSheet mySheet=new XslSheet();
                 mySheet.setName(name);
+				if (dictionaryName == null) {
+					dictionaryName = "";
+				}
                 mySheet.setDictionaryName(dictionaryName);
+				if (volumeName == null) {
+					volumeName = "";
+				}
                 mySheet.setVolumeName(volumeName);
                 mySheet.setDescription(description);
                 mySheet.setCode(code);
@@ -366,7 +375,13 @@ public class XslSheetFactory {
 			}
 			XslSheet mySheet=new XslSheet();
 			mySheet.setName(name);
+			if (dictionaryName == null) {
+				dictionaryName = "";
+			}
             mySheet.setDictionaryName(dictionaryName);
+			if (volumeName == null) {
+				volumeName = "";
+			}
             mySheet.setVolumeName(volumeName);
 			mySheet.setDescription(description);
 			mySheet.setCode(code);
