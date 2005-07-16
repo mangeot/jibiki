@@ -9,6 +9,11 @@
  *$Id$
  *------------------------
  *$Log$
+ *Revision 1.2  2005/07/16 12:58:31  serasset
+ *Added limit parameter to query functions
+ *Added a parameter to Formater initializations
+ *Developped a new Advanced search functionality with reusable code for the query form handling...
+ *
  *Revision 1.1  2005/05/24 12:51:21  serasset
  *Updated many aspect of the Papillon project to handle lexalp project.
  *1. Layout is now parametrable in the application configuration file.
@@ -41,7 +46,7 @@ import fr.imag.clips.papillon.business.PapillonBusinessException;
 public interface ResultFormatter {
         
     // FIXME: is it dangerous to allow different formatter for different output languages ?
-    public abstract void initializeFormatter(Dictionary dict, Volume vol, int dialect, String lang)
+    public abstract void initializeFormatter(Dictionary dict, Volume vol, Object parameter, int dialect, String lang)
     throws PapillonBusinessException;
     
     /** 

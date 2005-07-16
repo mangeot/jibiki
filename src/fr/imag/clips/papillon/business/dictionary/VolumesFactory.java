@@ -3,6 +3,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.11  2005/07/16 12:58:31  serasset
+ * Added limit parameter to query functions
+ * Added a parameter to Formater initializations
+ * Developped a new Advanced search functionality with reusable code for the query form handling...
+ *
  * Revision 1.10  2005/07/14 13:48:53  serasset
  * Added columns dictionaryname and volumename to the xslsheets.
  * Modified the XslSheet and XslSheetFactory accordingly.
@@ -469,8 +474,6 @@ public class VolumesFactory {
 	}
 	
 	/* cdmElements Hashtable = {lang => Hashtable} = {CDM_element => Vector} = (xpathString, isIndex, XPath)*/
-    // FIXME: Can we have several XPaths for 1 cdm element ?
-	// (ex: cdm-headword is to be found in headword/abbrev/variant ?)
 	public static Hashtable buildCdmElementsTable(String xmlCode, String tmplEntry, String sourceLanguage) 
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 		Hashtable cdmElements = new Hashtable();

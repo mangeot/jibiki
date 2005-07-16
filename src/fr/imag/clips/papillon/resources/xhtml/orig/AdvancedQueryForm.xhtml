@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>Menu</title>
+    <script type="text/javascript">
+      function addOrRemoveCriterion(caller, action) {
+      document.getElementById('Action').value = action + caller;
+      document.getElementById("SearchForm").submit();
+      }
+    </script>
+  </head>
+  <body>
+    <div id="AdvancedSearchForm" lang="en" xml:lang="en">
+      <form id="SearchForm" action="">
+        <div style="display:block;border-bottom:solid grey 1px; padding:5px;">
+          <table border="0" cellpadding="0" cellspacing="0" summary="Search Form" width="100%">
+            <tr valign="top">
+              <td>
+                <div id="DictionarySelection" style="padding:5px; ">
+                  <b>Find entries in: </b>
+                  <br/>
+                  <!-- MULTIPLE VALUES: TARGETS, DICTIONARIES -->
+                  <select id="Dictionaries" name="DICTIONARIES" multiple="multiple">
+                    <option id="dictionaryTmpl" label="All dictionaries" value="*All*">All dictionaries</option>
+                  </select>
+                </div>
+              </td>
+              <td>
+                <div id="CriteriaZone" style=" padding:5px;">
+                  <script type="text/javascript">
+                    <!-- 
+                    function addOrRemoveCriterion(caller, action) {
+                        document.getElementById('Action').value = action + caller;
+                        document.getElementById("SearchForm").submit();
+                    }
+                   //-->
+                  </script>
+                  <input type="hidden" id="Action" name="ACTION" value=""/>
+                  <b>where:</b>
+                  <br/>
+                  <input type="hidden" id="NumberOfCriteria" name="CRITERIA_NB"/>
+                  <div id="criterion" style="display:block; margin-left: 10px;">
+                    <img id="minus" onclick="addOrRemoveCriterion(this.id, '-');" src="../../media/minus.jpg" alt="-" width="15"/>
+                    <img id="plus" onclick="addOrRemoveCriterion(this.id, '+');" src="../../media/plus.jpg" alt="+" width="15"/>
+                    <select id="Facet" name="FACET">
+                      <option value="cdm-headword" label="Headword">Headword</option>
+                      <option value="cdm-entry-id" label="Entry Id">Entry Id</option>
+                      <option value="cdm-definition" label="Definition">Definition</option>
+                      <option value="cdm-example" label="Context">Context</option>
+                    </select>
+                    <select id="Operator" name="OPERATOR">
+                      <option value="1" label="is">is</option>
+                      <option value="2" label="starts with">starts with</option>
+                      <option value="3" label="ends with">ends with</option>
+                      <option value="4" label="contains">contains</option>
+                    </select>
+                    <input type="text" id="ValueField" name="FACETVALUE" size="14" maxlength="128"/>
+                    <span id="SourceLanguageSelection" class="SourceLanguageSelection">
+                      <label id="SourceLangLabel" for="SourceLang" accesskey="i" >
+                      <span class="accesskey">I</span>n:</label>
+                    <select id="SourceLang" name="SOURCE">
+                      <option id="SourceOptionTemplate" value="NONE" label="NONE">NONE</option>
+                    </select>
+                    </span>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div id="TargetLanguagesSelection" style="padding: 5px">
+                  <b>Show targets languages :</b><br/>
+                  <select id="Targets" name="TARGETS" multiple="multiple">
+                    <option id="TargetTmpl" label="All languages" value="*All*">All languages</option>
+                  </select>
+                </div>
+              </td>
+            </tr>
+          </table>
+          </div>
+          <div style="display:block; padding: 5px;">
+            <b>Display </b>
+            <select id="NumberOfResultPerPage" name="NB_RESULT_PER_PAGE">
+              <option label="10" value="10">10</option>
+              <option label="20" value="20">20</option>
+              <option label="50" value="50">50</option>
+              <option label="100" value="100">100</option>
+              <option label="all" value="0">all</option>
+            </select>
+            <b>results per page using form:</b>
+            <select id="Xsl" name="XSL">
+              <option id="XslTmpl" label="Default Dictionary Form" value="*All*">Default Dictionary Form</option>
+            </select>
+            <input type="hidden" id="Offset" name="OFFSET"/>
+            <input type="submit" name="lookup" value="Go"/>
+          </div>
+      </form>
+    </div>
+  </body>
+</html>

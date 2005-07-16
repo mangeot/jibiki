@@ -7,6 +7,11 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.4  2005/07/16 12:58:31  serasset
+ *  Added limit parameter to query functions
+ *  Added a parameter to Formater initializations
+ *  Developped a new Advanced search functionality with reusable code for the query form handling...
+ *
  *  Revision 1.3  2005/07/08 08:22:46  serasset
  *  Reviewed the Abstract/BasePO hierarchy (moved some methods up in the tree).
  *  Added base classes to allow independant browsing window to establish links during edition.
@@ -306,7 +311,7 @@ public abstract class AbstractPO implements HttpPresentation {
      * @return                                Description of the Return Value
      * @exception  HttpPresentationException  Description of the Exception
      */
-    public String myGetParameter(HttpServletRequest req, String name)
+    public static String myGetParameter(HttpServletRequest req, String name)
         throws HttpPresentationException {
             String res = null;
             try {
@@ -365,7 +370,7 @@ public abstract class AbstractPO implements HttpPresentation {
      * @exception  HttpPresentationException             Description of the
      *      Exception
      */
-    public String[] myGetParameterValues(HttpServletRequest req, String name)
+    public static String[] myGetParameterValues(HttpServletRequest req, String name)
         throws java.io.UnsupportedEncodingException, HttpPresentationException {
             try {
                 String[] res = req.getParameterValues(name);
@@ -462,6 +467,22 @@ public abstract class AbstractPO implements HttpPresentation {
         }
     }
     
+    /**
+        *  Sets the selected attribute of the PapillonBasePO class
+     *
+     * @param  mySelect  The new selected value
+     * @param  myVector  The new selected value
+     */
+    public static void deselectAll(XHTMLSelectElement mySelect) {
+        HTMLCollection myCollection = mySelect.getOptions();
+        int i = 0;
+        while (i < myCollection.getLength()) {
+            ((HTMLOptionElement) myCollection.item(i)).setSelected(false);
+            i++;
+        }
+    }
+    
+        
     /**
         *  Sets the unicodeLabels attribute of the PapillonBasePO class
      *

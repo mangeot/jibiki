@@ -3,6 +3,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.8  2005/07/16 12:58:31  serasset
+ * Added limit parameter to query functions
+ * Added a parameter to Formater initializations
+ * Developped a new Advanced search functionality with reusable code for the query form handling...
+ *
  * Revision 1.7  2005/07/16 12:33:23  mangeot
  * dictionaryname and volumename of xslsheets are now not null
  *
@@ -111,7 +116,7 @@ public class XslSheetFactory {
         
         try {
             XslSheetQuery query = new XslSheetQuery(CurrentDBTransaction.get());
-	    query.addOrderByName(true);
+            query.addOrderByName(true);
             XslSheetDO[] DOarray = query.getDOArray();
             theXslArray = new XslSheet[ DOarray.length ];
             for ( int i = 0; i < DOarray.length; i++ )
@@ -123,6 +128,7 @@ public class XslSheetFactory {
          
         return theXslArray;
     }
+    
     
     /** 
     * The getXslSheetArray method performs a database query to
@@ -196,7 +202,7 @@ public class XslSheetFactory {
         return (XslSheet []) xslSheets.toArray((XslSheet []) null);
     }
     
-    public XslSheet getDefaultXslSheet(String dictionaryName, String volumeName) throws PapillonBusinessException {
+    public static XslSheet getDefaultXslSheet(String dictionaryName, String volumeName) throws PapillonBusinessException {
         XslSheet theXsl = null;
         
         try {

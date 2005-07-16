@@ -3,6 +3,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.15  2005/07/16 12:58:31  serasset
+ * Added limit parameter to query functions
+ * Added a parameter to Formater initializations
+ * Developped a new Advanced search functionality with reusable code for the query form handling...
+ *
  * Revision 1.14  2005/06/24 10:35:57  mangeot
  * Minor bug fixes
  *
@@ -219,12 +224,12 @@ public class VolumeEntriesFactory {
      */
 	
 	
-	public static Vector getVolumeEntriesVector(Dictionary dict, Volume volume, Vector Keys1, Vector Keys2, String any, int offset) throws PapillonBusinessException {
+	public static Vector getVolumeEntriesVector(Dictionary dict, Volume volume, Vector Keys1, Vector Keys2, String any, int offset, int limit) throws PapillonBusinessException {
         Vector MyTable = null;
 		PapillonLogger.writeDebugMsg("getVolumeEntriesVector: " + volume.getName());
         if (null != volume) {
             if (volume.getLocation().equals(Volume.LOCAL_LOCATION)) {
-                MyTable = getDbTableEntriesVector(dict, volume,Keys1, Keys2, any, offset);
+                MyTable = getDbTableEntriesVector(dict, volume,Keys1, Keys2, any, offset, limit);
             }
             else if (volume.getLocation().equals(Volume.REMOTE_LOCATION)) {
                 MyTable = getRemoteVolumeEntriesVector(dict, volume, Keys1, Keys2, any);
@@ -266,14 +271,15 @@ public class VolumeEntriesFactory {
                                                     Vector Keys2,
 													String any)
         throws PapillonBusinessException {
-			return getVolumeNameEntriesVector(volumeName, Keys1, Keys2, any, 0);
+			return getVolumeNameEntriesVector(volumeName, Keys1, Keys2, any, 0, 0);
 		}
 	
     public static Vector getVolumeNameEntriesVector(String volumeName,
                                                     Vector Keys,
                                                     Vector Clauses,
 													String any,
-													int offset)
+													int offset,
+                                                    int limit)
         throws PapillonBusinessException {
 			Vector resultVector = null;
 			if (volumeName != null && !volumeName.equals("")) {
@@ -284,7 +290,7 @@ public class VolumeEntriesFactory {
 					if (volume != null && !volume.isEmpty()) {
 						dict = DictionariesFactory.findDictionaryByName(volume.getDictname());
 						if (dict != null && !dict.isEmpty()) {
-							resultVector = getDbTableEntriesVector(dict, volume, Keys, Clauses, any, offset);
+							resultVector = getDbTableEntriesVector(dict, volume, Keys, Clauses, any, offset, limit);
 						}
 					}
 				}
@@ -295,7 +301,7 @@ public class VolumeEntriesFactory {
 			return resultVector;
         }
 	
-    protected static Vector getDbTableEntriesVector(Dictionary dict, Volume volume, Vector Keys, Vector Clauses, String any, int offset) throws PapillonBusinessException {
+    protected static Vector getDbTableEntriesVector(Dictionary dict, Volume volume, Vector Keys, Vector Clauses, String any, int offset, int limit) throws PapillonBusinessException {
         Vector theEntries = theEntries = new Vector();
 		
 		String volumeTableName = volume.getDbname();
@@ -332,6 +338,8 @@ public class VolumeEntriesFactory {
 				if (Keys != null) {
 					for (java.util.Enumeration enumKeys = Keys.elements(); enumKeys.hasMoreElements();) {
 						String[] key = (String[]) enumKeys.nextElement();
+                        // debug
+                        //System.out.println(key[0] + " | " + key[1] + " | " + key[2] + " | " + key[3]);
 						if (key!=null && key[2] !=null && !key[2].equals("")) {
 							myQueryBuilder = new com.lutris.dods.builder.generator.query.QueryBuilder(Columns);
 							if (IndexFactory.databaseVendor != null) {
@@ -354,6 +362,8 @@ public class VolumeEntriesFactory {
 				if (Clauses != null) {
 					for (java.util.Enumeration enumClauses = Clauses.elements(); enumClauses.hasMoreElements();) {
 						String clause = (String) enumClauses.nextElement();
+                        // debug
+                        //System.out.println(clause);
 						if (clause!=null && !clause.equals("")) {
 							myQueryBuilder = new com.lutris.dods.builder.generator.query.QueryBuilder(Columns);
 							if (IndexFactory.databaseVendor != null) {
@@ -369,7 +379,7 @@ public class VolumeEntriesFactory {
 					}
 				}
 				
-				query.getQueryBuilder().setMaxRows(DictionariesFactory.MaxRetrievedEntries);
+				query.getQueryBuilder().setMaxRows((0 == limit) ? DictionariesFactory.MaxRetrievedEntries : limit);
 				query.getQueryBuilder().addEndClause("OFFSET " + offset);
 				query.getQueryBuilder().addOrderByColumn("multilingual_sort('" + volume.getSourceLanguage() + "',headword)","");
 				// debug
@@ -404,6 +414,7 @@ public class VolumeEntriesFactory {
 		return theEntries;
 	}
 	
+    // FIXME: Should the query building code be factorized ?
     public static int getDbTableEntriesCount(Volume volume, Vector Keys, Vector clausesVector, String any) throws PapillonBusinessException {
         int countEntries = 0;
 		
@@ -476,6 +487,7 @@ public class VolumeEntriesFactory {
 		return countEntries;
 	}
 	
+    // FIXME: Should the query building code be factorized ?
     protected static void processVolume(Dictionary dict, Volume volume, Vector myKeys, Vector myClauses, IVolumeEntryProcessor myProcessor) throws PapillonBusinessException {
 		final int MaxRetrievedEntries = 500;
 		int offset = 0;
@@ -725,6 +737,7 @@ public class VolumeEntriesFactory {
      * @exception PapillonBusinessException
      *    if there is a problem retrieving message.
      */
+    // FIXME: Shouldn't we use: getDbTableEntriesVector ?
 	protected static VolumeEntry findEntryByKey(Dictionary myDict, Volume myVolume, String key, String lang, String value) throws PapillonBusinessException {
 		VolumeEntry resEntry = null;
 		if (value != null && !value.equals("")) {
@@ -856,6 +869,7 @@ public class VolumeEntriesFactory {
             }
         }
 	
+    // FIXME: mmmm, GDEF in a method name... that's suspect... Try to find the reason and provide a general solution for such things...
 	public static String setGDEFFrenchTranslations(IAnswer myAnswer, String homographId) throws PapillonBusinessException {
 		String homographWord = "";
 		//Headword[0] = key

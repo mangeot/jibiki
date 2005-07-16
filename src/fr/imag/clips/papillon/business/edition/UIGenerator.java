@@ -8,6 +8,11 @@
  * $Id$
  *---------------------------------------------------------
  * $Log$
+ * Revision 1.10  2005/07/16 12:58:31  serasset
+ * Added limit parameter to query functions
+ * Added a parameter to Formater initializations
+ * Developped a new Advanced search functionality with reusable code for the query form handling...
+ *
  * Revision 1.9  2005/06/16 16:09:17  mangeot
  * *** empty log message ***
  *
@@ -244,7 +249,8 @@ public class UIGenerator {
 			setIdCorrespondingSubmitInputs(entryNodeName, itfElt, newId);
 			setIdCorrespondingLabel(entryNodeName, itfElt, newId);
 			setIdCorrespondingSelectCheckbox(entryNodeName,itfElt, newId);
-	
+            setClassCorrespondingLinkers(entryNodeName,itfElt, newId);
+            
 			// special handling of the xsd:choice schema directive
 			Node parentNode = entryNode.getParentNode();
 			if (parentNode!= null && !parentNode.getNodeName().equals(CHOICE_NODE_NAME)) {
@@ -481,6 +487,24 @@ public class UIGenerator {
 		}
 		return found;
 	}
+    
+    protected static boolean setClassCorrespondingLinkers(String correspName, Element itfElt, String newId) {
+		//		PapillonLogger.writeDebugMsg("setIdCorrespondingLinkers: " + correspName);
+		boolean found = false;
+		NodeList myNodeList = itfElt.getElementsByTagName ("img");
+		for (int i=0;i<myNodeList.getLength ();i++) {
+			Element currentElt = (Element) myNodeList.item(i);
+			String classValue = currentElt.getAttribute("class");
+            //System.out.println(classValue);
+			if (classValue !=null && classValue.indexOf(correspName) >= 0) {
+                classValue = classValue.replaceFirst(correspName,newId);
+                currentElt.setAttribute("class", classValue);
+                found = true;
+			}	
+		}
+		return found;
+	}
+    
 	
 	protected static boolean setIdValueCorrespondingTextInput(String correspName, Element itfElt, String newId, String value) {
 		//		PapillonLogger.writeDebugMsg("findCorrespondingTextInput: " + correspName);

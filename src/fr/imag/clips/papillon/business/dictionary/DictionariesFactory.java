@@ -3,6 +3,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.17  2005/07/16 12:58:31  serasset
+ * Added limit parameter to query functions
+ * Added a parameter to Formater initializations
+ * Developped a new Advanced search functionality with reusable code for the query form handling...
+ *
  * Revision 1.16  2005/07/14 13:48:53  serasset
  * Added columns dictionaryname and volumename to the xslsheets.
  * Modified the XslSheet and XslSheetFactory accordingly.
@@ -154,10 +159,17 @@ import com.lutris.dods.builder.generator.query.QueryBuilder;
 import fr.imag.clips.papillon.business.user.User;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.PapillonLogger;
+import fr.imag.clips.papillon.business.dictionary.QueryParameter;
+import fr.imag.clips.papillon.business.dictionary.Dictionary;
 
 import com.lutris.appserver.server.sql.ObjectId;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Vector;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Enumeration;
 
 // For URLs
 import java.net.*;
@@ -500,7 +512,7 @@ public class DictionariesFactory {
 															int offset) 
 		throws PapillonBusinessException {
 			//	Collection qrset = new HashSet();
-				Collection qrset = new Vector();
+            Collection qrset = new Vector();
 			if (null != dict 
 				&& Utility.IsInArray(source, dict.getSourceLanguagesArray())
 				&& Utility.IsInArray(targets, dict.getTargetLanguagesArray())) {
@@ -508,8 +520,9 @@ public class DictionariesFactory {
 				if (null != volumes && volumes.length > 0) {
 					for (int i=0;i<volumes.length;i++) {
 						Volume myVolume = volumes[i];
-						Vector entriesVector = VolumeEntriesFactory.getVolumeEntriesVector(dict, myVolume, Keys1, Keys2, anyContains, offset);
-                        						Iterator iter = entriesVector.iterator();
+                        // FIXME: get the limit argument
+						Vector entriesVector = VolumeEntriesFactory.getVolumeEntriesVector(dict, myVolume, Keys1, Keys2, anyContains, offset, 0);
+                        Iterator iter = entriesVector.iterator();
 						while (iter.hasNext()) {
 							VolumeEntry ve = (VolumeEntry) iter.next();
 							qrset.addAll(expandResult(ve,targets,user));
@@ -622,7 +635,8 @@ public class DictionariesFactory {
 									myKey[0]= Volume.CDM_translation;
 								}
 							}
-							Vector entriesVector = VolumeEntriesFactory.getVolumeEntriesVector(dict, myVolume, theKeys1, theKeys2, anyContains, offset);
+                            // FIXME: get the limit argument
+							Vector entriesVector = VolumeEntriesFactory.getVolumeEntriesVector(dict, myVolume, theKeys1, theKeys2, anyContains, offset, 0);
                             // TODO: Do we have to expand translations in this case ? Is reverse lookup only for direct dictionaries ?
                             Iterator iter = entriesVector.iterator();
                             while (iter.hasNext()) {
@@ -650,10 +664,52 @@ public class DictionariesFactory {
 		catch(Exception ex) {
 			throw new PapillonBusinessException("Exception in getVolumeNameEntriesVector()", ex);
 		}
-		entriesTable = VolumeEntriesFactory.getVolumeEntriesVector(dict, volume,Keys, null, null,0);
+		entriesTable = VolumeEntriesFactory.getVolumeEntriesVector(dict, volume,Keys, null, null,0, 0);
 		return entriesTable;
 	}
-	
+    
+    //*********************************************
+    // New set of queries, using QueryParameters
+    // These queries are different, because they do not use a global notion of source language
+    // The source language is attached in the keys of the parameter, meaning we can ask
+    // for entries with a french headword and a german headword...
+    // Question is: what does this mean (german headword is translation or it is a term bank ?)
+    // Problem: One meaning is find an entry with xxx in french, connected to an entry with yyy in german
+    //          Which is meaningfull in the case of a pivot dictionary, but which means that we should detect it
+    //          and make the appropriate query on the axie level...
+	//*********************************************
+    public static Collection doQuery(QueryParameter qp, User user) throws PapillonBusinessException {
+        // FIXME: what about reverse access ?
+        Collection qrset = new Vector();
+        try {
+            // Iterate on all the dictionaries and then on all the volumes...
+            for (int id = 0; id < qp.getDictionaryNames().length; id++) {
+                Dictionary d = findDictionaryByName(qp.getDictionaryNames()[id]);
+                // FIXME: There, I should determine the type of dictionary.
+                // FIXME: and perform the corresponding request
+                Volume[] volumes = VolumesFactory.getVolumesArray(d.getName());
+                for (int iv=0; iv < volumes.length; iv++) {
+                    Volume vol = volumes[iv];
+                    Vector entriesVector = VolumeEntriesFactory.getVolumeEntriesVector(d, vol, qp.getCriteria(), null, null, qp.getOffset(), qp.getLimit());
+                    Iterator iter = entriesVector.iterator();
+                    while (iter.hasNext()) {
+                        VolumeEntry ve = (VolumeEntry) iter.next();
+                        qrset.addAll(expandResult(ve,qp.getTargets(),user));
+                    }
+                    
+                }
+            }
+        } catch (PapillonBusinessException e) {
+            throw e;
+        }
+        return qrset;
+    }
+    
+    
+    
+    //*********************************************
+    
+    
 	public static Collection getAxiesCollectionByHeadword(Dictionary dict, String source, User user, String headword, int strategy) throws PapillonBusinessException {
 		Collection axies = new Vector();
 		String[] Headword = new String[4];

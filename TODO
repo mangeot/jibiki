@@ -2,7 +2,12 @@
 - Revoir la partie XSLSheet pour des formes plus sympas...
 - Reporter localisation sur le xhtml et supprimer les fichiers html.
 - Supprimer le traitement spécifique des Axies Papillon
+- Rendre le code indépendant du GDEF (ou mettre les dépendances dans des classes prévue pour).
 
+BUG: - type="NewBlock" appears in the entry element ? and is saved in the database ?
+
+- Dans la gestion des XSL, pour l'instant, il faut que le nom de la xsl soit egal au nom du dictionnaire. Ce n'est plus
+  vraiment nécessaire vu qu'on connait maintenant le dictionnaire concerné par la xsl. Mais le code de Mathieu doit etre adapté.
 - Revoir le DML, le rendre valide, répercuter les nouveautés (liens bilingues inter volumes, nouveau xsl-sheet...)
 - Distinguer l'espace de nom des meta données et les structures de dico Papillon.
 - Revoir les classes Home et consultExpert qui ont beaucoup de code commun...
@@ -13,7 +18,7 @@
 - Construire une axie via une page ad-hoc...
 - créer des raccourcis pour la création d'axies/lexies
 - Faire page de sélection de termref/axieref dans une fenêtre spécifique avec mise à jour des champs automatiquement.
-  - En cours: développer la recherche et aire les mise à jour via javascripts...
+  - En cours: développer la recherche et faire les mise à jour via javascripts...
 - Faire des validations automatiques paramêtrables par les metadata pour remplissage de champs admin à la sauvegarde d'une entrée.
   - Peut-être simplement définir une classe spécifique pour cela... (que l'on peut désigner dans les metadata)
   - Et vérifier tous les éléments qui ne sont pas obligatoires, groupes, status, etc... Ces infos sont soit des infos de la partie contribution,
@@ -65,7 +70,10 @@ FAIT:
     étant le layout papillon. Ainsi, chaque presentation object rendra un layout qui dépendra de l'instance.
 - Suppression d'un redirect à l'édition, qui servait à faire apparaitre le bloc ajouté; utilisation de location.hash = 'NewBlock' (en javascript)
 - Suppression de la table "contributions" du fichier doml. (cf Mathieu...)
+- Nettoyage du doml static, suppression des erreurs dans le code SQL. Suppression de la table history.
+- Ajout des colonnes dictionaryName et volumeName dans les XslSheets.
 - Bug fixes:
   - Solved a bug when the language (d:lang) is not specified in the interface template
   - Solved a bug where half of the childs of an xml element where removed... (when editing it, in certain situations)
   - Solved a bug where an incorrect node was said to correspond with an interface element id.
+  

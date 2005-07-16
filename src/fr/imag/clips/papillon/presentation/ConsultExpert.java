@@ -10,6 +10,11 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.20  2005/07/16 12:58:31  serasset
+ *  Added limit parameter to query functions
+ *  Added a parameter to Formater initializations
+ *  Developped a new Advanced search functionality with reusable code for the query form handling...
+ *
  *  Revision 1.19  2005/06/24 10:35:57  mangeot
  *  Minor bug fixes
  *
@@ -1153,7 +1158,7 @@ public class ConsultExpert extends PapillonBasePO {
             XHTMLElement entryDiv = (XHTMLElement) content.getElementEntryDiv();
             entryDiv.removeAttribute("id");
 
-            if (entryDiv.getChildNodes().getLength() > 0) {
+            while (entryDiv.hasChildNodes()) {
                 entryDiv.removeChild(entryDiv.getFirstChild());
             }
 
@@ -1209,8 +1214,8 @@ public class ConsultExpert extends PapillonBasePO {
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
             VolumeEntry myEntry = qr.getSourceEntry();
             // get the apropriate transformer.
-            ResultFormatter rf = ResultFormatterFactory.getFormatter(qr,ResultFormatterFactory.XHTML_DIALECT,null);
-            rf.initializeFormatter(qr.getSourceEntry().getDictionary(), qr.getSourceEntry().getVolume() ,ResultFormatterFactory.XHTML_DIALECT,null);
+            ResultFormatter rf = ResultFormatterFactory.getFormatter(qr, null, ResultFormatterFactory.XHTML_DIALECT,null);
+            //rf.initializeFormatter(qr.getSourceEntry().getDictionary(), qr.getSourceEntry().getVolume() , null, ResultFormatterFactory.XHTML_DIALECT,null);
             String[] formatters = ResultFormatterFactory.getAvailableFormatters(qr.getSourceEntry().getVolume(), ResultFormatterFactory.XHTML_DIALECT,null);
 			Element myHtmlElt = (Element)rf.getFormattedResult(qr);
             

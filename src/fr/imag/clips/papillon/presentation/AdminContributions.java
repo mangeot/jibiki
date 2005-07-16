@@ -9,6 +9,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.12  2005/07/16 12:58:31  serasset
+ * Added limit parameter to query functions
+ * Added a parameter to Formater initializations
+ * Developped a new Advanced search functionality with reusable code for the query form handling...
+ *
  * Revision 1.11  2005/06/23 09:48:17  mangeot
  * Bug fix in xpath completion and creation-date cdm element
  *
@@ -587,7 +592,8 @@ public class AdminContributions extends PapillonBasePO {
                 ContribVector.add(VolumeEntriesFactory.findEntryByHandle(volumeString, entryid));
             }
             else {
-				ContribVector = VolumeEntriesFactory.getVolumeNameEntriesVector(volumeString, Keys1, Keys2, anyContains, offset);
+                // FIXME: fix the limit parameter
+				ContribVector = VolumeEntriesFactory.getVolumeNameEntriesVector(volumeString, Keys1, Keys2, anyContains, offset, 0);
             }
             // If there are too much entries ie > MaxDisplayedEntries,
             // we display a table of entries instead of the entries

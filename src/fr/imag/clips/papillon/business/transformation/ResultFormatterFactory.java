@@ -9,6 +9,11 @@
  *$Id$
  *------------------------
  *$Log$
+ *Revision 1.4  2005/07/16 12:58:31  serasset
+ *Added limit parameter to query functions
+ *Added a parameter to Formater initializations
+ *Developped a new Advanced search functionality with reusable code for the query form handling...
+ *
  *Revision 1.3  2005/06/16 13:41:15  mangeot
  *Bugfixed in the default formatter
  *
@@ -43,14 +48,14 @@ public class ResultFormatterFactory {
     public static final int XML_DIALECT = 4;
     public static final int PLAINTEXT_DIALECT = 5;
 
-    
-    public static ResultFormatter getFormatter(QueryResult qr, int dialect, String lang)
+    // parameter is a string that is passed to the formatter. 
+    public static ResultFormatter getFormatter(QueryResult qr, Object parameter, int dialect, String lang)
         throws PapillonBusinessException {
         // returns the formatter for the appropriate volume or dictionary.
-        return getFormatter(qr.getSourceEntry().getDictionary(), qr.getSourceEntry().getVolume(), dialect, lang);
+        return getFormatter(qr.getSourceEntry().getDictionary(), qr.getSourceEntry().getVolume(), parameter, dialect, lang);
     }
     
-    public static ResultFormatter getFormatter(Dictionary dict, Volume vol, int dialect, String lang) 
+    public static ResultFormatter getFormatter(Dictionary dict, Volume vol, Object parameter, int dialect, String lang) 
         throws PapillonBusinessException {
         // returns the formatter for the appropriate volume or dictionary.
         // FIXME: Maybe the dialect and/or lang could be use to select a formatter class name.
@@ -70,7 +75,7 @@ public class ResultFormatterFactory {
         ResultFormatter formatter = null;
         try {
             formatter = (ResultFormatter) Class.forName(formatterClassName).newInstance();
-            formatter.initializeFormatter(dict, vol, dialect, lang);
+            formatter.initializeFormatter(dict, vol, parameter, dialect, lang);
         } catch (java.lang.ClassNotFoundException e) {
             throw new PapillonBusinessException("Could not initialize formatter. [class: " + formatterClassName + "]", e);
         } catch (java.lang.InstantiationException e) {

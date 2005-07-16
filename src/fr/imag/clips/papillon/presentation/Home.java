@@ -10,6 +10,11 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.10  2005/07/16 12:58:31  serasset
+ *  Added limit parameter to query functions
+ *  Added a parameter to Formater initializations
+ *  Developped a new Advanced search functionality with reusable code for the query form handling...
+ *
  *  Revision 1.9  2005/06/15 16:48:28  mangeot
  *  Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
  *
@@ -806,8 +811,8 @@ public class Home extends PapillonBasePO {
 		throws fr.imag.clips.papillon.business.PapillonBusinessException
     {
         // get the apropriate transformer.
-        ResultFormatter rf = ResultFormatterFactory.getFormatter(qr,ResultFormatterFactory.XHTML_DIALECT,null);
-        rf.initializeFormatter(qr.getSourceEntry().getDictionary(), qr.getSourceEntry().getVolume() ,ResultFormatterFactory.XHTML_DIALECT,null);
+        ResultFormatter rf = ResultFormatterFactory.getFormatter(qr, null, ResultFormatterFactory.XHTML_DIALECT,null);
+        //rf.initializeFormatter(qr.getSourceEntry().getDictionary(), qr.getSourceEntry().getVolume() , null, ResultFormatterFactory.XHTML_DIALECT,null);
         
         addElement(content, (Element)rf.getFormattedResult(qr), qr.getSourceEntry().getDictionaryName());
                    

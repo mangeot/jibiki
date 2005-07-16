@@ -4,6 +4,11 @@
  * $Id$
  *------------------------
  * $Log$
+ * Revision 1.3  2005/07/16 12:58:31  serasset
+ * Added limit parameter to query functions
+ * Added a parameter to Formater initializations
+ * Developped a new Advanced search functionality with reusable code for the query form handling...
+ *
  * Revision 1.2  2005/05/25 13:31:08  serasset
  * Return a monolingual entry even if the lexie is not linked to an axie.
  * LexALP transformer now formats simple monolingual query results.
@@ -70,17 +75,24 @@ public class LexALPFormatter implements ResultFormatter {
 	protected static final DocumentBuilderFactory myDocumentBuilderFactory = DocumentBuilderFactory.newInstance();
 	protected static DocumentBuilder myDocumentBuilder; 	
 
+    protected XslSheet dictXsl = null;
     
     protected Dictionary currentDictionary;
     protected Volume sourceVolume;
     
-    public void initializeFormatter(Dictionary dict, Volume vol, int dialect, String lang) throws PapillonBusinessException {
+    public void initializeFormatter(Dictionary dict, Volume vol, Object parameter, int dialect, String lang) throws PapillonBusinessException {
         currentDictionary = dict;
         sourceVolume = vol;
         try {
             if (myDocumentBuilder==null) {
                 myDocumentBuilder = myDocumentBuilderFactory.newDocumentBuilder();
-            } 
+            }
+            // if parameter is given, it is the name of the xsl...
+            if (null != parameter) {
+                dictXsl = XslSheetFactory.findXslSheetByName((String) parameter);
+            } else {
+                dictXsl = XslSheetFactory.getDefaultXslSheet(dict.getName(), vol.getName());
+            }
         } catch (javax.xml.parsers.ParserConfigurationException e) {
             throw new PapillonBusinessException("CRITICAL: error initializing document builder !", e);
         }
@@ -94,7 +106,6 @@ public class LexALPFormatter implements ResultFormatter {
             Element div = res.createElement("div");
             res.appendChild(div);
             // First format the source entry
-            XslSheet dictXsl = XslSheetFactory.findXslSheetByName(currentDictionary.getName());
             Document doc = qr.getSourceEntry().getDom();
             
             if (null != dictXsl && ! dictXsl.isEmpty()) {

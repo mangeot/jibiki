@@ -4,6 +4,11 @@
  *$Id$
  *------------------------
  *$Log$
+ *Revision 1.6  2005/07/16 12:58:31  serasset
+ *Added limit parameter to query functions
+ *Added a parameter to Formater initializations
+ *Developped a new Advanced search functionality with reusable code for the query form handling...
+ *
  *Revision 1.5  2005/06/17 12:38:56  mangeot
  *Changed lexiesCollection into lexiesHashtable in order to implement the getDirectTranslations
  *
@@ -103,7 +108,7 @@ public class XslTransformation implements ResultFormatter {
 	
     protected Vector currentXslSheetSequence = null;
     
-    public void initializeFormatter(Dictionary dict, Volume vol, int dialect, String lang) throws PapillonBusinessException {
+    public void initializeFormatter(Dictionary dict, Volume vol, Object parameter, int dialect, String lang) throws PapillonBusinessException {
         // Find the correct XslSheet or xslsheet sequence for the given parameters.
         // FIXME: I currently use the same strategy, but this has to be redefined.
         currentXslSheetSequence = new Vector();
@@ -329,6 +334,7 @@ public class XslTransformation implements ResultFormatter {
 	}
 
 
+    // FIXME: This is only called by DictEngine (dictd protocol). This should be handle via the notion of "dialect" of xslsheets.
 	public static String applyXslSheetForText(IAnswer answer)
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 			

@@ -9,6 +9,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.7  2005/07/16 12:58:31  serasset
+ * Added limit parameter to query functions
+ * Added a parameter to Formater initializations
+ * Developped a new Advanced search functionality with reusable code for the query form handling...
+ *
  * Revision 1.6  2005/06/23 13:57:19  mangeot
  * Added removeTemplateRows
  *
@@ -579,7 +584,8 @@ public class ChangeAuthor extends PapillonBasePO {
 	
     protected void addEntries(Volume myVolume, Vector Keys1, Vector clausesVector)
         throws PapillonBusinessException,java.io.UnsupportedEncodingException {
-			Vector entriesVector = VolumeEntriesFactory.getVolumeNameEntriesVector(myVolume.getName(), Keys1, clausesVector, null,0);
+            // FIXME: fix the limit parameter
+			Vector entriesVector = VolumeEntriesFactory.getVolumeNameEntriesVector(myVolume.getName(), Keys1, clausesVector, null,0, 0);
 			addEntryTable(entriesVector);
 		}
 	

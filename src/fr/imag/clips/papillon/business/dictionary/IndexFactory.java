@@ -3,6 +3,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.10  2005/07/16 12:58:31  serasset
+ * Added limit parameter to query functions
+ * Added a parameter to Formater initializations
+ * Developped a new Advanced search functionality with reusable code for the query form handling...
+ *
  * Revision 1.9  2005/06/15 16:48:27  mangeot
  * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
  *
@@ -137,7 +142,7 @@ public class IndexFactory {
 		}
 	}
 		
-		
+    // FIXME: only used by queries on the JM_dict, question: why ?
 	protected static Vector getEntriesVector(Dictionary dict, Volume volume, Vector Keys1, Vector Keys2, int offset) throws PapillonBusinessException {
 		Vector theEntries = new Vector();
 		VolumeEntry myEntry = null;

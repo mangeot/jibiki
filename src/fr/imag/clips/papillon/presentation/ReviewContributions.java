@@ -9,6 +9,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.12  2005/07/16 12:58:31  serasset
+ * Added limit parameter to query functions
+ * Added a parameter to Formater initializations
+ * Developped a new Advanced search functionality with reusable code for the query form handling...
+ *
  * Revision 1.11  2005/06/15 16:48:28  mangeot
  * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
  *
@@ -704,7 +709,8 @@ public class ReviewContributions extends PapillonBasePO {
         org.xml.sax.SAXException,
         javax.xml.parsers.ParserConfigurationException,
         javax.xml.transform.TransformerException {
-			Vector ContribVector = VolumeEntriesFactory.getVolumeNameEntriesVector(volume, Keys1, Keys2, null, offset);
+            // FIXME: fix the limit parameter
+            Vector ContribVector = VolumeEntriesFactory.getVolumeNameEntriesVector(volume, Keys1, Keys2, null, offset, 0);
             if (null != ContribVector) {
 				if (sortBy !=null && !sortBy.equals("") && !sortBy.equals(VolumeEntriesFactory.HEADWORD_SORT)) {
 					VolumeEntriesFactory.sort(ContribVector, sortBy);
