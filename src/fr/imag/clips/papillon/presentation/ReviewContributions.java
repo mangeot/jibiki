@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.13  2005/07/16 13:43:51  mangeot
+ * src/fr/imag/clips/papillon/presentation/ReviewContributions.java
+ *
  * Revision 1.12  2005/07/16 12:58:31  serasset
  * Added limit parameter to query functions
  * Added a parameter to Formater initializations
@@ -465,6 +468,12 @@ public class ReviewContributions extends PapillonBasePO {
 				key3[2] = VolumeEntry.DELETED_STATUS;
 				key3[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_NOT_EQUAL+1];			
 				myKeys.add(key3);			
+				String[] key4 = new String[4];
+				key4[0] = Volume.CDM_contributionStatus;
+				key4[1] = Volume.DEFAULT_LANG;
+				key4[2] = VolumeEntry.REPLACED_STATUS;
+				key4[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_NOT_EQUAL+1];			
+				myKeys.add(key4);			
 			}
 			if (author !=null && !author.equals("")) {
 				String[] authorKey = new String[4];
@@ -560,6 +569,15 @@ public class ReviewContributions extends PapillonBasePO {
 						myContrib.setValidated(this.getUser());
 						userMessage = "Contribution " +  myContrib.getContributionId() + " / " +
 							myContrib.getHeadword() + " integrated in the dictionary...";
+						String originalContribId = myContrib.getOriginalContributionId();
+						if (originalContribId != null && !originalContribId.equals("")) {
+							VolumeEntry oldContrib = VolumeEntriesFactory.findEntryByContributionId(volume, originalContribId);
+							if (null != oldContrib && !oldContrib.isEmpty()) {
+								oldContrib.setReplaced(this.getUser());
+								userMessage += " Old contribution " + myContrib.getContributionId() + " / " +
+									myContrib.getHeadword() + " replaced.";
+							}
+						}
 					}
 				}
 				addContributions(volume, myKeys, myClauses, sortBy, queryString, offset);
@@ -821,10 +839,14 @@ public class ReviewContributions extends PapillonBasePO {
                         } 					
 					// FIXME: hack for the GDEF estonian volume
 						String headword = myContrib.getHeadword();
-						if (myContrib.getVolumeName().equals("GDEF_est")) {
+						if (myContrib.getSourceLanguage().equals("est")) {
 							String particule = myContrib.getParticule();
 							if(particule!=null && !particule.equals("")) {
 								headword = particule + " " + headword;
+							}
+							String homograph = myContrib.getHomographNumber();
+							if(homograph!=null && !homograph.equals("")) {
+								headword = headword + " " + homograph;
 							}
 						}
                         content.setTextViewContribText(headword);
