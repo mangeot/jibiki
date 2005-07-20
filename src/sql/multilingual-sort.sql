@@ -583,6 +583,22 @@ CREATE OR REPLACE FUNCTION ita_sort( varchar )
  END;
 ' LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
 
+-- eng English
+--
+-- for the moment do nothing
+CREATE OR REPLACE FUNCTION eng_sort( varchar ) 
+ RETURNS varchar AS '
+
+ DECLARE
+  tmp		varchar;
+  result	varchar := '''';
+  length	integer;
+ BEGIN
+  return( $1 );
+ END;
+' LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
+
+
 
 
 -- jpn Japanese
