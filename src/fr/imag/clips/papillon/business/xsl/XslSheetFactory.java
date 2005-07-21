@@ -3,6 +3,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.9  2005/07/21 09:37:47  serasset
+ * LexALPLinker had a pb with package since MM modification.
+ * Lexalp query menu leads to AdvancedSearch.
+ * XslSheetFactory's get default xsl for dict and volume now sets the names to "" during fallback.
+ *
  * Revision 1.8  2005/07/16 12:58:31  serasset
  * Added limit parameter to query functions
  * Added a parameter to Formater initializations
@@ -219,11 +224,14 @@ public class XslSheetFactory {
             if (null == theXslSheetDO) {
                 query.reset();
                 query.setQueryDictionaryName(dictionaryName);
+                query.setQueryVolumeName("");
                 query.setQueryDefaultxsl("Y");
                 query.requireUniqueInstance();
                 theXslSheetDO = query.getNextDO();
                 if (null == theXslSheetDO) {
                     query.reset();
+                    query.setQueryDictionaryName("");
+                    query.setQueryVolumeName("");
                     query.setQueryDefaultxsl("Y");
                     query.requireUniqueInstance();
                     theXslSheetDO = query.getNextDO();
@@ -238,8 +246,6 @@ public class XslSheetFactory {
         } catch(Exception ex) {
             throw new PapillonBusinessException("Exception in getDefaultXslSheet()", ex);
         }
-        
-        
     }
     
     public static String parseXslSheet(URL fileURL) 

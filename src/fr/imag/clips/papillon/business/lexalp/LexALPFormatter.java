@@ -4,6 +4,11 @@
  * $Id$
  *------------------------
  * $Log$
+ * Revision 1.4  2005/07/21 09:37:47  serasset
+ * LexALPLinker had a pb with package since MM modification.
+ * Lexalp query menu leads to AdvancedSearch.
+ * XslSheetFactory's get default xsl for dict and volume now sets the names to "" during fallback.
+ *
  * Revision 1.3  2005/07/16 12:58:31  serasset
  * Added limit parameter to query functions
  * Added a parameter to Formater initializations
@@ -96,7 +101,6 @@ public class LexALPFormatter implements ResultFormatter {
         } catch (javax.xml.parsers.ParserConfigurationException e) {
             throw new PapillonBusinessException("CRITICAL: error initializing document builder !", e);
         }
-        // FIXME: How can the user specify a xsl if there is the choice between several...
         
     }
         

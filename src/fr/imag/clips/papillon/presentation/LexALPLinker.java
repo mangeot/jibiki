@@ -9,6 +9,11 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.4  2005/07/21 09:37:47  serasset
+ *  LexALPLinker had a pb with package since MM modification.
+ *  Lexalp query menu leads to AdvancedSearch.
+ *  XslSheetFactory's get default xsl for dict and volume now sets the names to "" during fallback.
+ *
  *  Revision 1.3  2005/07/16 16:25:26  mangeot
  *  Adapted the linker to the GDEF project + bug fixes
  *
@@ -234,7 +239,7 @@ public class LexALPLinker extends LinkerBasePO {
     }
     
     public Node getResultList() throws Exception {
-        LinkerResultListXHTML resultsListTmpl = (LinkerResultListXHTML) MultilingualXHtmlTemplateFactory.createTemplate("LinkerResultListXHTML", this.myComms, this.sessionData);
+        LinkerResultListXHTML resultsListTmpl = (LinkerResultListXHTML) MultilingualXHtmlTemplateFactory.createTemplate("fr.imag.clips.papillon.presentation.xhtmllexalp", "LinkerResultListXHTML", this.myComms, this.sessionData);
 
         parameters.initializeSearchParameters(this);
 
