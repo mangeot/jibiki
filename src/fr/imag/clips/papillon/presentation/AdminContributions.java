@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.14  2005/07/21 15:09:20  mangeot
+ * Bug fixes and corrections mainly for the GDEF project
+ *
  * Revision 1.13  2005/07/16 13:43:15  mangeot
  * Added do not search for replaced entries
  *
@@ -179,6 +182,7 @@ public class AdminContributions extends PapillonBasePO {
 	
 	protected final static String ALL="*ALL*";
 	protected final static String AnyContains_PARAMETER="AnyContains";
+	protected final static String HEADWORD_PARAMETER="HEADWORD";
 	protected final static String OFFSET_PARAMETER="OFFSET";
 	protected final static String REMOVE_CONTRIB_PARAMETER="RemoveContrib";
 	protected final static String MARK_FINISHED_PARAMETER="MarkFinished";
@@ -223,6 +227,7 @@ public class AdminContributions extends PapillonBasePO {
 			String URL = null;
 			String lookup = req.getParameter(content.NAME_LOOKUP);
 			String volumeString = req.getParameter(content.NAME_VOLUME);
+			String headword = req.getParameter(HEADWORD_PARAMETER);
 			String entryid = req.getParameter(ENTRYID);
 			String xslid = req.getParameter(XSLID);
 			String sortBy = req.getParameter(SORTBY_PARAMETER);
@@ -387,6 +392,14 @@ public class AdminContributions extends PapillonBasePO {
 			if (status != null && status.equals(ALL)) {
 				status = null;
 			}
+			
+			// headword
+			if (headword != null && !headword.equals("")) {
+				search1 = "cdm-headword";
+				search1text = headword;
+				strategy1 = IQuery.STRATEGY_EXACT;
+			}			
+			
 			Vector myKeys = new Vector();
 			Vector myClauses = new Vector();
 			if (search1 !=null && !search1.equals("")  &&

@@ -10,6 +10,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.23  2005/07/21 15:09:20  mangeot
+ *  Bug fixes and corrections mainly for the GDEF project
+ *
  *  Revision 1.22  2005/07/16 16:25:26  mangeot
  *  Adapted the linker to the GDEF project + bug fixes
  *
@@ -1134,11 +1137,19 @@ public class ConsultExpert extends PapillonBasePO {
         try {
             //for the entry content
             XHTMLTableRowElement originalEntryRow = content.getElementEntryRow();
+			XHTMLElement deleteButton =  content.getElementDeleteButton();
+			XHTMLAnchorElement deleteHref =  content.getElementDeleteHref();
             Node entryTable = originalEntryRow.getParentNode();
             //for the entry content
             content.getElementResourceName().removeAttribute("id");
             content.setTextResourceName(resource);
 
+			// the delete button
+			if (this.getUser().isValidator()) {
+				deleteHref.setHref(deleteHref.getHref() + handle);
+				deleteButton.setAttribute("class","");
+			}
+			
             //for the lexie content
             XHTMLTableCellElement entryCell = (XHTMLTableCellElement) originalEntryRow.getFirstChild();
 

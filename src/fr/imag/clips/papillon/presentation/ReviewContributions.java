@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.14  2005/07/21 15:09:20  mangeot
+ * Bug fixes and corrections mainly for the GDEF project
+ *
  * Revision 1.13  2005/07/16 13:43:51  mangeot
  * src/fr/imag/clips/papillon/presentation/ReviewContributions.java
  *
@@ -190,6 +193,7 @@ public class ReviewContributions extends PapillonBasePO {
 	protected final static int STEP_REMOVE = 4;
 	protected final static int STEP_REVISE = 5;
 	protected final static int STEP_VALIDATE = 6;
+	protected final static int STEP_REMOVE_VALIDATED = 7;
 
 	protected final static String ALL="*ALL*";
 	protected final static String EditURL="EditEntry.po";
@@ -198,8 +202,10 @@ public class ReviewContributions extends PapillonBasePO {
 
 	protected final static String VIEW_CONTRIB_PARAMETER="ViewContrib";
 	protected final static String AnyContains_PARAMETER="AnyContains";
+	protected final static String HEADWORD_PARAMETER="HEADWORD";
 	protected final static String OFFSET_PARAMETER="OFFSET";
 	protected final static String REMOVE_CONTRIB_PARAMETER="RemoveContrib";
+	protected final static String REMOVE_VALIDATED_CONTRIB_PARAMETER="DeleteContrib";
 	protected final static String REVISE_CONTRIB_PARAMETER="ReviseContrib";
 	protected final static String VALIDATE_CONTRIB_PARAMETER="ValidateContrib";
 	protected final static String CONTRIBID_PARAMETER="ContribId";
@@ -242,11 +248,12 @@ public class ReviewContributions extends PapillonBasePO {
 		
 			String lookup = req.getParameter(content.NAME_LOOKUP);
 			String volume = req.getParameter(content.NAME_VOLUME);
+			String headword = req.getParameter(HEADWORD_PARAMETER);
 		// hidden arguments
 			String contribid = req.getParameter(CONTRIBID_PARAMETER);
 			String xslid = req.getParameter(XSLID_PARAMETER);
 			String sortBy = req.getParameter(SORTBY_PARAMETER);
-			
+						
 			if (sortBy==null || sortBy.equals("")) {
 				sortBy=VolumeEntriesFactory.HEADWORD_SORT;
 			}
@@ -429,6 +436,14 @@ public class ReviewContributions extends PapillonBasePO {
 			if (status != null && status.equals(ALL)) {
 				status = null;
 			}
+			
+			// headword
+			if (headword != null && !headword.equals("")) {
+				search1 = "cdm-headword";
+				search1text = headword;
+				strategy1 = IQuery.STRATEGY_EXACT;
+			}
+			
 			Vector myKeys = new Vector();
 			Vector myClauses = new Vector();
 			if (search1 !=null && !search1.equals("")  &&
@@ -524,8 +539,11 @@ public class ReviewContributions extends PapillonBasePO {
 		}
 		else if (null != contribid && null != myGetParameter(VALIDATE_CONTRIB_PARAMETER)) {
 			step = STEP_VALIDATE;
-		}
-
+		}	
+		else if (null != contribid && null != myGetParameter(REMOVE_VALIDATED_CONTRIB_PARAMETER)) {
+			step = STEP_REMOVE_VALIDATED;
+		}		
+		
 		String userMessage = null;
 
 		switch (step) {
@@ -546,6 +564,19 @@ public class ReviewContributions extends PapillonBasePO {
 						userMessage = "Contribution " +  myContrib.getHandle() + " / " +
 						myContrib.getHeadword() + " removed...";
 						myContrib.delete();
+					}
+				}
+					addContributions(volume, myKeys, myClauses, sortBy, queryString, offset);
+				break;
+			case STEP_REMOVE_VALIDATED:
+				contribid = myGetParameter(CONTRIBID_PARAMETER);
+				if (contribid !=null && !contribid.equals("") &&
+					this.getUser().isValidator()) {
+					VolumeEntry myContrib = VolumeEntriesFactory.findEntryByHandle(volume, contribid);
+					if (null != myContrib && !myContrib.isEmpty()) {
+						userMessage = "Validated contribution " +  myContrib.getHandle() + " / " +
+						myContrib.getHeadword() + " deleted...";
+						myContrib.setReplaced(this.getUser());
 					}
 				}
 				addContributions(volume, myKeys, myClauses, sortBy, queryString, offset);

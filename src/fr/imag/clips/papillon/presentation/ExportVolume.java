@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2005/07/21 15:09:20  mangeot
+ * Bug fixes and corrections mainly for the GDEF project
+ *
  * Revision 1.2  2005/06/15 16:48:28  mangeot
  * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
  *
@@ -62,12 +65,15 @@ import fr.imag.clips.papillon.business.utility.Utility;
 import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.dictionary.IQuery;
 import fr.imag.clips.papillon.business.dictionary.Volume;
+import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
+import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
 
 
 public class ExportVolume extends PapillonBasePO {
 
 	protected final static String ALL="*ALL*";
 	protected final static String SORTBY_PARAMETER="SortBy";
+	protected final static String AnyContains_PARAMETER="AnyContains";
     protected final static String BASE_DIR_CONFIG = "Papillon.Informations.baseDir";
     protected final static String MEDIA_DIR_CONFIG = "Papillon.Informations.mediaDir";
 	protected final static String EXPORT_VOLUME_DIR="export";
@@ -92,7 +98,6 @@ public class ExportVolume extends PapillonBasePO {
     }
 
 
-
     public Node getContent()
         throws javax.xml.parsers.ParserConfigurationException,
 			HttpPresentationException,
@@ -107,35 +112,114 @@ public class ExportVolume extends PapillonBasePO {
 
 		String export = myGetParameter(content.NAME_EXPORT);
 		String volume = myGetParameter(content.NAME_VOLUME);
-		String author = myGetParameter(content.NAME_AUTHOR);
-		String status = myGetParameter(content.NAME_STATUS);
 		String sortBy = myGetParameter(SORTBY_PARAMETER);
 
         // If the page is called with parameters, take the requested action
 		if (export != null && volume != null) {
 		
+			// search1
+			String search1 = myGetParameter(content.NAME_search1);
+			String search1text = myGetParameter(content.NAME_search1text);
+			
+			// search2
+			String search2 = myGetParameter(content.NAME_search2);
+			String search2text = myGetParameter(content.NAME_search2text);
+			
+			String anyContains = null;
+			
+			
+			if (null != search1 && null != search1text && !search1text.equals("")) {
+				if (search1.equals(AnyContains_PARAMETER)) {
+					anyContains = search1text;
+				}
+			}
+			
+			if (null != search2 && null != search2text && !search2text.equals("")) {
+				if (search2.equals(AnyContains_PARAMETER)) {
+					anyContains = search2text;
+				}
+			}
+			
+			// strategy1
+			String strategyString1 = myGetParameter(content.NAME_Strategy1);
+			int strategy1 = IQuery.STRATEGY_NONE;
+			if (null != strategyString1 && !strategyString1.equals("")) {
+				strategy1 = Integer.parseInt(strategyString1);
+			}
+			
+			String strategyString2 = myGetParameter(content.NAME_Strategy2);
+			int strategy2 = IQuery.STRATEGY_NONE;
+						
+			// status
+			String status = myGetParameter(content.NAME_STATUS);
 			if (status != null && status.equals(ALL)) {
 				status = null;
 			}
-
-		
+			
 			java.util.Vector myKeys = new java.util.Vector();
 			java.util.Vector myClauses = new java.util.Vector();
-			if (author != null && !author.equals("")) {
-				String[] myKey = new String[4];
-				myKey[0] = Volume.CDM_contributionAuthor;
-				myKey[1] = Volume.DEFAULT_LANG;
-				myKey[2] = author;
-				myKey[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_EXACT+1];
-				myKeys.add(myKey);
+			Volume myVolume = VolumesFactory.findVolumeByName(volume);
+			String source = "eng";
+			if (myVolume !=null && !myVolume.isEmpty()) {
+				source = myVolume.getSourceLanguage();
 			}
-			if (status != null && !status.equals("")) {
-				String[] myKey = new String[4];
-				myKey[0] = Volume.CDM_contributionStatus;
-				myKey[1] = Volume.DEFAULT_LANG;
-				myKey[2] = status;
-				myKey[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_EXACT+1];
-				myKeys.add(myKey);
+			if (search1 !=null && !search1.equals("")  &&
+				search1text != null && !search1text.equals("")) {
+				if (strategy1 == IQuery.STRATEGY_GREATER_THAN ||
+					strategy1 == IQuery.STRATEGY_GREATER_THAN_OR_EQUAL ||
+					strategy1 == IQuery.STRATEGY_LESS_THAN ||
+					strategy1 == IQuery.STRATEGY_LESS_THAN_OR_EQUAL) {
+					String clause = "key='" + search1 + "'";
+					clause += " and " + source + "_sort(value)" + IQuery.QueryBuilderStrategy[strategy1+1] + " " + source + "_sort('" + search1text +"') "; 
+					myClauses.add(clause);
+				}
+				else {
+					String[] key1 = new String[4];
+					key1[0] = search1;
+					key1[2] = search1text;
+					key1[3] = IQuery.QueryBuilderStrategy[strategy1+1];
+					myKeys.add(key1);
+				}
+			}
+			if (search2 !=null && !search2.equals("") &&
+				search2text != null && !search2text.equals("")) {
+				if (strategy2 == IQuery.STRATEGY_GREATER_THAN ||
+					strategy2 == IQuery.STRATEGY_GREATER_THAN_OR_EQUAL ||
+					strategy2 == IQuery.STRATEGY_LESS_THAN ||
+					strategy2 == IQuery.STRATEGY_LESS_THAN_OR_EQUAL) {
+					String clause = "key='" + search2 + "'";
+					clause += " and " + source + "_sort(value)" + IQuery.QueryBuilderStrategy[strategy2+1] + " " + source + "_sort('" + search2text +"') "; 
+					myClauses.add(clause);
+				}
+				else {
+					String[] key2 = new String[4];
+					key2[0] = search2;
+					key2[2] = search2text;
+					key2[3] = IQuery.QueryBuilderStrategy[strategy2+1];
+					myKeys.add(key2);
+				}
+			}
+			if (status !=null && !status.equals("")) {
+				String[] key2 = new String[4];
+				key2[0] = Volume.CDM_contributionStatus;
+				key2[1] = Volume.DEFAULT_LANG;
+				key2[2] = status;
+				key2[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_EXACT+1];			
+				myKeys.add(key2);
+			}
+			else {
+				String[] key2 = new String[4];
+				key2[0] = Volume.CDM_contributionStatus;
+				key2[1] = Volume.DEFAULT_LANG;
+				key2[2] = VolumeEntry.VALIDATED_STATUS;
+				key2[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_NOT_EQUAL+1];			
+				myKeys.add(key2);			
+				String[] key3 = new String[4];
+				key3[0] = Volume.CDM_contributionStatus;
+				key3[1] = Volume.DEFAULT_LANG;
+				key3[2] = VolumeEntry.DELETED_STATUS;
+				key3[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_NOT_EQUAL+1];			
+				myKeys.add(key3);			
 			}
 		
 			java.io.File fileDir = new java.io.File(getExportAbsoluteDir());

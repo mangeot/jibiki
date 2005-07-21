@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2005/07/21 15:09:20  mangeot
+ * Bug fixes and corrections mainly for the GDEF project
+ *
  * Revision 1.3  2005/06/15 16:48:27  mangeot
  * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
  *
@@ -26,6 +29,7 @@ public interface IQuery {
     public static final int STRATEGY_NONE = -1;
     // exact "Match words exactly"
     public static final int STRATEGY_EXACT = 0;
+    public static final int STRATEGY_EQUAL = 0;
 
     // prefix "Match prefixes"
     public static final int STRATEGY_PREFIX = 1;

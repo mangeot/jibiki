@@ -35,12 +35,69 @@
     </select>
 	</td>
 </tr>
-<tr>
-	<td><b>Author:</b></td>
-	<td>
-		<input name="AUTHOR" type="text" size="15"/>
-	</td>
-	<td colspan="2"><input name="EXPORT" type="submit" value="Export"/></td>
+         <tr>
+            <td style="bgcolor:#4682b4;">
+             <select id="search1" name="search1">
+                <option value="cdm-headword" label="headword">headword</option>
+                <option value="cdm-headword-variant" label="variant">variant</option>
+                <option value="cdm-pos" label="part-of-speech">part-of-speech</option>
+                <option value="gdef-est-domaine" label="domain">domain</option>
+                <option value="cdm-translation" label="translation">translation</option>
+                <option value="cdm-example" label="examples">example</option>
+                <option value="gdef-est-traduction-exemple" label="eg. translations">eg. translation</option>
+                <option value="gdef-est-locution" label="idioms">idiom</option>
+                <option value="gdef-est-traduction-locution" label="idiom translation">idiom translation</option>
+                <option value="cdm-contribution-author" label="author">author</option>
+                <option value="cdm-contribution-reviewer" label="reviewer">reviewer</option>
+                <option value="cdm-contribution-creation-date" label="creation date">creation date</option>
+                <option value="cdm-contribution-revision-date" label="revision date">revision date</option>
+                <option value="AnyContains" label="any part">any part</option>
+              </select><br/>
+              <select id="Strategy1" name="Strategy1">
+                <option value="0" label="=">=</option>
+                <option value="1" label="begins with">begins with</option>
+                <option value="2" label="ends with">ends with</option>
+                <option value="3" label="contains">contains</option>
+                <option value="13" label="&lt;">&lt;</option>
+                <option value="14" label="≤">≤</option>
+                <option value="11" label="&gt;">&gt;</option>
+                <option value="12" label="≥">≥</option>
+              </select><br/>
+                <input id="search1text" name="search1text" type="text" size="15" value="" />
+           </td>
+			<td>
+                and
+			</td>
+            <td style="bgcolor:#4682b4;">
+              <select id="search2" name="search2">
+                <option value="cdm-headword" label="headword">headword</option>
+                <option value="cdm-headword-variant" label="variant">variant</option>
+                <option value="cdm-pos" label="part-of-speech">part-of-speech</option>
+                <option value="gdef-est-domaine" label="le domaine">domain</option>
+                <option value="cdm-translation" label="translation">translation</option>
+                <option value="cdm-example" label="examples">example</option>
+                <option value="gdef-est-traduction-exemple" label="eg. translations">eg. translation</option>
+                <option value="gdef-est-locution" label="idioms">idiom</option>
+                <option value="gdef-est-traduction-locution" label="idiom translation">idiom translation</option>
+                <option value="cdm-contribution-author" label="author">author</option>
+                <option value="cdm-contribution-reviewer" label="reviewer">reviewer</option>
+                <option value="cdm-contribution-creation-date" label="creation date">creation date</option>
+                <option value="cdm-contribution-review-date" label="revision date">revision date</option>
+                <option value="AnyContains" label="any part">any part</option>
+              </select><br/>
+              <select id="Strategy2" name="Strategy2">
+                <option value="0" label="=">=</option>
+                <option value="1" label="begins with">begins with</option>
+                <option value="2" label="ends with">ends with</option>
+                <option value="3" label="contains">contains</option>
+                <option value="13" label="&lt;">&lt;</option>
+                <option value="14" label="≤">≤</option>
+                <option value="11" label="&gt;">&gt;</option>
+                <option value="12" label="≥">≥</option>
+              </select><br/>
+              <input id="search2text" name="search2text" type="text" size="15" value="" />
+            </td>
+		<td><input name="EXPORT" type="submit" value="Export"/></td>
 </tr>
 </table>
 </form>
