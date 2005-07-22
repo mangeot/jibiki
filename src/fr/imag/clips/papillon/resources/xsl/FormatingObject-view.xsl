@@ -7,7 +7,7 @@
  *  $Id$
  *  
  *  $Log$
- *  Revision 1.3  2005/07/22 08:54:32  mangeot
+ *  Revision 1.1  2005/07/22 08:54:32  mangeot
  *  *** empty log message ***
  *
  *
@@ -16,9 +16,10 @@
 <xsl:stylesheet version="1.0"
 	xmlns:d='http://www-clips.imag.fr/geta/services/dml' 
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+	xmlns:fo="http://www.w3.org/1999/XSL/Format"
 	xmlns="http://www.w3.org/1999/xhtml">
 
-<xsl:output method="text" encoding="utf-8" indent="no"/> 
+<xsl:output method="xml" encoding="utf-8" indent="no"/> 
 
 <!-- general templates please do not modify -->
 
@@ -28,7 +29,7 @@
 <xsl:template match="comment()"></xsl:template>
 
 
-<xsl:template match="/"><xsl:apply-templates/></xsl:template>
+<xsl:template match="/"><fo:block><xsl:apply-templates/></fo:block></xsl:template>
 
 <!-- volume specific templates -->
 
