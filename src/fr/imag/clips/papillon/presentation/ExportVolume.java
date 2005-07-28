@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.5  2005/07/28 14:59:07  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.4  2005/07/28 13:06:47  mangeot
  * - Added the possibility to export in PDF format. The conversion into PDF is don
  * e via the fop package that has to be installed (see ToolsForPapillon)
@@ -255,6 +258,8 @@ public class ExportVolume extends PapillonBasePO {
 				this.getSessionData().writeUserMessage(userMessage);
 				PapillonLogger.writeDebugMsg(userMessage);
 			}
+			PapillonLogger.writeDebugMsg("ClientPageRedirectException: " + getExportRelativeDir() + filename);
+			
 			throw new ClientPageRedirectException(getExportRelativeDir() + filename); 
 		}
         

@@ -184,9 +184,11 @@ Papillon.Informations.fileExtensionHandler.xsl     = "fr.imag.clips.papillon.bus
 Papillon.Informations.tmpDir = "/tmp/"
 # Absolute path to the information section base dir.
 Papillon.Informations.baseDir = "/home/gdef/informations/main/presentation/"
+Servlet.Static.DocRoot = "/home/gdef/informations/main/presentation/info_media"
 # Relative path to the media directory (the directory that contains gifs, jpgs, etc. that are added 
 # while importing a file). This directory is relative to the server's information section base Dir. 
 Papillon.Informations.mediaDir = "info_media/"
+Channel.CM_1.channel_0.Url = "info_media/"
 
 # The list of categories that are to be used for the informationn file section
 # The main list is to be used to identify sections in the database (this should not be changed in
