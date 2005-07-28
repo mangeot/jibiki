@@ -14,6 +14,9 @@
 #papillon.xmlapi.jar=/Library/Java/Extensions/xalan-j_2_4_1/bin/xml-apis.jar
 #UNUSED:papillon.ant.jar=/Library/Java/Extensions/jakarta-ant-1.5.1/lib/ant.jar
 #papillon.pgsql.jar=/usr/local/pgsql/share/java/postgresql.jar
+#papillon.fop.jar=/Library/Java/Extensions/fop-0.20.5/build/fop.jar
+#papillon.avalon.jar=/Library/Java/Extensions/fop-0.20.5/lib/avalon-framework-cvs-20020806.jar
+#papillon.batik.jar=/Library/Java/Extensions/fop-0.20.5/lib/batik.jar
 
 # Enhydra dirs
 # enhydra.dir=/Library/Java/Extensions/enhydra5.1
@@ -27,6 +30,9 @@ papillon.xerces.jar=/usr/local/src/xalan-j_2_4_1/bin/xercesImpl.jar
 papillon.xmlapi.jar=/usr/local/src/xalan-j_2_4_1/bin/xml-apis.jar
 #UNUSED: papillon.ant.jar=/usr/local/src/jakarta-ant-1.5.1/lib/ant.jar
 papillon.pgsql.jar=/usr/share/pgsql/pg73b1jdbc3.jar
+papillon.fop.jar=/usr/local/src/fop-0.20.5/build/fop.jar
+papillon.avalon.jar=/usr/local/src/fop-0.20.5/lib/avalon-framework-cvs-20020806.jar
+papillon.batik.jar=/usr/local/src/fop-0.20.5/lib/batik.jar
 
 # Enhydra dirs
 enhydra.dir=/usr/local/enhydra5.0-for-papillon

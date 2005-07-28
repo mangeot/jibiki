@@ -9,6 +9,10 @@
  *$Id$
  *------------------------
  *$Log$
+ *Revision 1.5  2005/07/28 13:06:47  mangeot
+ *- Added the possibility to export in PDF format. The conversion into PDF is don
+ *e via the fop package that has to be installed (see ToolsForPapillon)
+ *
  *Revision 1.4  2005/07/16 12:58:31  serasset
  *Added limit parameter to query functions
  *Added a parameter to Formater initializations
@@ -47,6 +51,7 @@ public class ResultFormatterFactory {
     public static final int WML_DIALECT = 3;
     public static final int XML_DIALECT = 4;
     public static final int PLAINTEXT_DIALECT = 5;
+    public static final int PDF_DIALECT = 6;
 
     // parameter is a string that is passed to the formatter. 
     public static ResultFormatter getFormatter(QueryResult qr, Object parameter, int dialect, String lang)

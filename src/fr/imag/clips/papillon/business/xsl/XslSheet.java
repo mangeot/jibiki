@@ -9,6 +9,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.6  2005/07/28 13:06:47  mangeot
+ * - Added the possibility to export in PDF format. The conversion into PDF is don
+ * e via the fop package that has to be installed (see ToolsForPapillon)
+ *
  * Revision 1.5  2005/07/14 13:48:53  serasset
  * Added columns dictionaryname and volumename to the xslsheets.
  * Modified the XslSheet and XslSheetFactory accordingly.
@@ -63,6 +67,7 @@ import com.lutris.dods.builder.generator.query.DataObjectException;
 public class XslSheet {
 	
 	public final static String DEFAULT_view = "DEFAULT";
+	public final static String FO_view = "FormatingObject";
 	public final static String TEXT_view = "TEXT";
 	public final static String TEXT_suffix = "-text";
 	public final static String XML_view = "XML";

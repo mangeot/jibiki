@@ -9,6 +9,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.6  2005/07/28 13:06:47  mangeot
+ * - Added the possibility to export in PDF format. The conversion into PDF is don
+ * e via the fop package that has to be installed (see ToolsForPapillon)
+ *
  * Revision 1.5  2005/06/16 10:42:15  mangeot
  * Added and modified files for the GDEF project
  *
@@ -61,6 +65,7 @@ import fr.imag.clips.papillon.business.locales.*;
  * Application-wide data would go here.
  */
 public class Papillon extends StandardApplication {
+	
     protected static final String PRIORITY_PACKAGE_CONFIG = "Papillon.Presentation.PriorityPackage";
     protected static final String LAYOUT_CONFIG = "Papillon.LayoutClassName";
     protected static final String COOKIE_CONFIG = "Papillon.LoginCookieName";

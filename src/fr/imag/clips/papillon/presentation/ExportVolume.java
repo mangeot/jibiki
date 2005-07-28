@@ -9,6 +9,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2005/07/28 13:06:47  mangeot
+ * - Added the possibility to export in PDF format. The conversion into PDF is don
+ * e via the fop package that has to be installed (see ToolsForPapillon)
+ *
  * Revision 1.3  2005/07/21 15:09:20  mangeot
  * Bug fixes and corrections mainly for the GDEF project
  *
@@ -70,13 +74,19 @@ import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
 
 
 public class ExportVolume extends PapillonBasePO {
-
+	
 	protected final static String ALL="*ALL*";
+	protected final static String DEFAULT="*default*";
 	protected final static String SORTBY_PARAMETER="SortBy";
 	protected final static String AnyContains_PARAMETER="AnyContains";
     protected final static String BASE_DIR_CONFIG = "Papillon.Informations.baseDir";
     protected final static String MEDIA_DIR_CONFIG = "Papillon.Informations.mediaDir";
 	protected final static String EXPORT_VOLUME_DIR="export";
+	
+	protected static final String XMLFormat = Integer.toString(fr.imag.clips.papillon.business.transformation.ResultFormatterFactory.XML_DIALECT);
+	protected static final String XHTMLFormat = Integer.toString(fr.imag.clips.papillon.business.transformation.ResultFormatterFactory.XHTML_DIALECT);
+	protected static final String TEXTFormat = Integer.toString(fr.imag.clips.papillon.business.transformation.ResultFormatterFactory.PLAINTEXT_DIALECT);
+	protected static final String PDFFormat = Integer.toString(fr.imag.clips.papillon.business.transformation.ResultFormatterFactory.PDF_DIALECT);
     
     protected static ExportVolumeTmplXHTML content;
 
@@ -113,10 +123,11 @@ public class ExportVolume extends PapillonBasePO {
 		String export = myGetParameter(content.NAME_EXPORT);
 		String volume = myGetParameter(content.NAME_VOLUME);
 		String sortBy = myGetParameter(SORTBY_PARAMETER);
+		String outputFormat = myGetParameter(content.NAME_FORMAT);
 
         // If the page is called with parameters, take the requested action
 		if (export != null && volume != null) {
-		
+					
 			// search1
 			String search1 = myGetParameter(content.NAME_search1);
 			String search1text = myGetParameter(content.NAME_search1text);
@@ -225,26 +236,26 @@ public class ExportVolume extends PapillonBasePO {
 			java.io.File fileDir = new java.io.File(getExportAbsoluteDir());
 			fileDir.mkdirs();
 			
-			String filename = createFileName(volume);
+			String filename = createFileName(volume, this.getUser().getLogin(), outputFormat);
 			java.io.File exportFile = new java.io.File(fileDir.getCanonicalPath() + File.separator + filename);
 			exportFile.createNewFile();
 		
 			FileOutputStream fileOutStream = new FileOutputStream(exportFile.getCanonicalFile());
 			
 			java.util.zip.GZIPOutputStream myGZipOutStream = new java.util.zip.GZIPOutputStream(fileOutStream);
-		
-			fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory.exportVolume(volume, myKeys, myClauses, myGZipOutStream);
-		
+			
+			fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory.exportVolume(volume, myKeys, myClauses, outputFormat, myGZipOutStream);
+			
 			PapillonLogger.writeDebugMsg("Compressing volume");
 			myGZipOutStream.close();
-		
+			
 			String userMessage = "Volume " + volume + " exported";
 			
 			if (userMessage != null) {
 				this.getSessionData().writeUserMessage(userMessage);
 				PapillonLogger.writeDebugMsg(userMessage);
 			}
-			throw new ClientPageRedirectException(getExportRelativeDir() + filename); 			
+			throw new ClientPageRedirectException(getExportRelativeDir() + filename); 
 		}
         
 		addConsultForm(volume);
@@ -277,7 +288,32 @@ public class ExportVolume extends PapillonBasePO {
             volumeSelect.appendChild(volumeOptionTemplate.cloneNode(true));
         }
         volumeSelect.removeChild(volumeOptionTemplate);
-    }
+
+       /* XHTMLOptionElement xslOptionTemplate = content.getElementXslOptionTemplate();
+        Node xslSelect = xslOptionTemplate.getParentNode();
+        xslOptionTemplate.removeAttribute("id");
+        Text xslTextTemplate = (Text)xslOptionTemplate.getFirstChild(); 
+		
+		fr.imag.clips.papillon.business.xsl.XslSheet[] AllXsls = fr.imag.clips.papillon.business.xsl.XslSheetFactory.getXslSheetsArray();
+		
+        for (int i = 0; i < AllXsls.length; i++) {
+            String xslName = AllXsls[i].getName();
+            String xslDescription = AllXsls[i].getDescription();
+			if (xslDescription != null && !xslDescription.equals("")) {
+				xslDescription = " (" + xslDescription + ")";
+			}
+			else {
+				xslDescription = "";
+			}
+			xslName += xslDescription;
+            xslOptionTemplate.setValue(AllXsls[i].getHandle());
+            xslOptionTemplate.setLabel(xslName);
+            xslTextTemplate.setData(xslName);
+            xslSelect.appendChild(xslOptionTemplate.cloneNode(true));
+        }
+        xslSelect.removeChild(xslOptionTemplate); */
+				
+	}
 	
 	       
 	protected String getExportAbsoluteDir() throws PapillonPresentationException {            
@@ -316,9 +352,23 @@ public class ExportVolume extends PapillonBasePO {
 	}
 
 	       
-	protected String createFileName(String volume) {
+	protected String createFileName(String volume, String login, String format) {
 		String timestamp = "" + new java.util.Date().getTime();
-		String fileName = volume + "-" + timestamp + ".xml.gz";
+		String extension = "";
+		if (format !=null && format.equals(XHTMLFormat)) {
+			extension = ".html";
+		}
+		else if (format !=null && format.equals(TEXTFormat)) {
+			extension = ".txt";
+		}
+		else if (format !=null && format.equals(PDFFormat)) {
+			extension = ".pdf";
+		}
+		else {
+			extension = ".xml";
+		}
+		
+		String fileName = volume + "-" + login + "-" + timestamp + extension + ".gz";
 		return fileName;
 	}
 					      

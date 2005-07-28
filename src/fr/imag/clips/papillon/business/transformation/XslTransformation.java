@@ -4,6 +4,10 @@
  *$Id$
  *------------------------
  *$Log$
+ *Revision 1.9  2005/07/28 13:06:47  mangeot
+ *- Added the possibility to export in PDF format. The conversion into PDF is don
+ *e via the fop package that has to be installed (see ToolsForPapillon)
+ *
  *Revision 1.8  2005/07/16 16:25:26  mangeot
  *Adapted the linker to the GDEF project + bug fixes
  *
@@ -350,40 +354,84 @@ public class XslTransformation implements ResultFormatter {
 	}
 
 
-    // FIXME: This is only called by DictEngine (dictd protocol). This should be handle via the notion of "dialect" of xslsheets.
-	public static String applyXslSheetForText(IAnswer answer)
+    // FIXME: This is only called by DictEngine (dictd protocol). This should be handled via the notion of "dialect" of xslsheets.
+	public static String applyXslSheetsForText(IAnswer answer)
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 			
-			String result = "";
-			XslSheet theXslSheet;
+			org.w3c.dom.Document resultDOM = answer.getDom();
+			String resultString = "";
 			try {
-				// We apply one XSL
-				// First, the one for the volume if there is
-				theXslSheet = XslSheetFactory.findXslSheetByName(answer.getVolumeName() + XslSheet.TEXT_suffix);
+				// We apply cascades of XSL
+				// First, the one for the dictionary if there is
+				XslSheet theXslSheet = XslSheetFactory.findXslSheetByName(answer.getDictionaryName());
+				if (!theXslSheet.isEmpty()) {
+					resultDOM = Transform((Node)resultDOM, theXslSheet);					
+					// Second, the one for the volume if there is
+					theXslSheet = XslSheetFactory.findXslSheetByName(answer.getVolumeName());
+					if (null != theXslSheet && !theXslSheet.isEmpty()) {
+						resultDOM = Transform((Node)resultDOM, theXslSheet);
+					}
+				}
+				// Last, the default one
+				theXslSheet = XslSheetFactory.findXslSheetByName(XslSheet.TEXT_view);
+				if (!theXslSheet.isEmpty()) {
+					resultString = XslTransformation.TransformToText((Node)resultDOM, theXslSheet);
+				}
+				if (resultString == null || resultString.equals("")) {
+					resultString = answer.getXmlCode();
+				}
+				
+/*				theXslSheet = XslSheetFactory.findXslSheetByName(answer.getVolumeName() + XslSheet.TEXT_suffix);
 				if (theXslSheet.isEmpty()) {
 					theXslSheet = XslSheetFactory.findXslSheetByName(answer.getDictionaryName() + XslSheet.TEXT_suffix);
 				}
-				// Second, the one for the dictionary if there is
+ 
 				if (theXslSheet.isEmpty()) {
 					theXslSheet = XslSheetFactory.findXslSheetByName(XslSheet.TEXT_view);
 				}
-				// Last, the default one
+
 				if (!theXslSheet.isEmpty()) {	
 					Document resultDoc = answer.getDom();				
 					result = TransformToText((Node)resultDoc, theXslSheet);
 				}
 				else {
 					result = answer.getXmlCode();
-				}
+				} */
 			}
 			catch(Exception ex) {
 				throw new fr.imag.clips.papillon.business.PapillonBusinessException("Exception in applyXslSheetForXml()", ex);
 			}
-			return result;
+			return resultString;
 		}
 	
-
-
+    // This should be handle via the notion of "dialect" of xslsheets.
+	public static Element applyXslSheetsForFo(IAnswer answer)
+		throws fr.imag.clips.papillon.business.PapillonBusinessException {
+			org.w3c.dom.Document result = answer.getDom();
+            try {
+				// We apply cascades of XSL
+				// First, the one for the dictionary if there is
+				XslSheet theXslSheet = XslSheetFactory.findXslSheetByName(answer.getDictionaryName());
+				if (!theXslSheet.isEmpty()) {
+					result = Transform((Node)result, theXslSheet);					
+					// Second, the one for the volume if there is
+					theXslSheet = XslSheetFactory.findXslSheetByName(answer.getVolumeName());
+					if (null != theXslSheet && !theXslSheet.isEmpty()) {
+						result = Transform((Node)result, theXslSheet);
+					}
+					// Last, the default one
+					theXslSheet = XslSheetFactory.findXslSheetByName(XslSheet.FO_view);
+					if (!theXslSheet.isEmpty()) {
+						result = XslTransformation.Transform((Node)result, theXslSheet);
+					}
+				}
+			}
+			catch(Exception ex) {
+				throw new fr.imag.clips.papillon.business.PapillonBusinessException("Exception in applyXslSheets()", ex);
+			}	
+			return result.getDocumentElement();
+		}
+		
 	public static void resetCache() {
 		XslSheetCache = new Hashtable();
 	}

@@ -11,6 +11,10 @@ Id:
   
 Log:
    $Log$
+   Revision 1.12  2005/07/28 13:06:47  mangeot
+   - Added the possibility to export in PDF format. The conversion into PDF is don
+   e via the fop package that has to be installed (see ToolsForPapillon)
+
    Revision 1.11  2005/06/16 12:44:43  mangeot
    Deleted the gdef special targets and tasks. Not useful any more.
    for the GDEF projet, compile using: -Dapplication.name=GDEF
@@ -144,10 +148,9 @@ Most useful targets:
     <pathelement path="${papillon.xalan.jar}"/>
     <pathelement path="${papillon.xerces.jar}"/>
     <pathelement path="${papillon.xmlapi.jar}"/>
-    <pathelement path="${papillon.regexp.jar}"/>
-    <pathelement path="${papillon.uigenerator.jar}"/>
-    <pathelement path="${papillon.concepts.jar}"/>
+    <!--pathelement path="${papillon.regexp.jar}"/-->
     <pathelement path="${papillon.pgsql.jar}"/>
+    <pathelement path="${papillon.fop.jar}"/>
   </path>
 
     <path id="enhydra.classpath">
@@ -353,7 +356,9 @@ For Lexalp, call ant using -Dapplication.name=Lexalp
      <filter token="XERCES_LIB"  value="${papillon.xerces.jar}" />
      <filter token="XMLAPI_LIB"  value="${papillon.xmlapi.jar}" />
      <filter token="PGSQL_JDBC_DRIVER" value="${papillon.pgsql.jar}" />
-     <filter token="CONCEPTS_LIB" value="${papillon.concepts.jar}" />
+     <filter token="FOP_LIB" value="${papillon.fop.jar}" />
+     <filter token="AVALON_LIB" value="${papillon.avalon.jar}" />
+     <filter token="BATIK_LIB" value="${papillon.batik.jar}" />
      <!-- /Papillon-specific filters -->
 
      <copy todir="${dir.output}"

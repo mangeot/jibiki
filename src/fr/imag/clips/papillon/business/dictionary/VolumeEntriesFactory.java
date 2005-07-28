@@ -3,6 +3,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.17  2005/07/28 13:06:47  mangeot
+ * - Added the possibility to export in PDF format. The conversion into PDF is don
+ * e via the fop package that has to be installed (see ToolsForPapillon)
+ *
  * Revision 1.16  2005/07/16 13:41:52  mangeot
  * Added findEntryByContributionId
  *
@@ -214,6 +218,42 @@ public class VolumeEntriesFactory {
 	protected final static String VOLUME_GDEF_tes = "GDEF_tes";
 	protected final static String VOLUME_GDEF_est_sep = "#";
 	protected final static String VOLUME_GDEF_est_prefix = "fra.";
+	
+	protected static final String XMLFormat = Integer.toString(fr.imag.clips.papillon.business.transformation.ResultFormatterFactory.XML_DIALECT);
+	protected static final String XHTMLFormat = Integer.toString(fr.imag.clips.papillon.business.transformation.ResultFormatterFactory.XHTML_DIALECT);
+	protected static final String TEXTFormat = Integer.toString(fr.imag.clips.papillon.business.transformation.ResultFormatterFactory.PLAINTEXT_DIALECT);
+	protected static final String PDFFormat = Integer.toString(fr.imag.clips.papillon.business.transformation.ResultFormatterFactory.PDF_DIALECT);
+	
+	protected static final String XhtmlHeader = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
+		+ "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n"
+		+ "<html>\n"
+		+ "  <head>\n"
+		+ "    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n"
+		+ "    <link href=\"http://www.estfra.ee/css/gdef-home.css\" rel=\"StyleSheet\" type=\"text/css\" />\n"
+		+ "    <title>Papillon Generated Dictionary</title>\n"
+		+ "  </head>\n"
+		+ "  <body>\n"
+		+ "    <h1>Papillon Generated Dictionary</h1>\n";
+	
+	protected static final String XhtmlFooter = "</body>\n"
+		+ "</html>\n";
+	
+	protected static final String TextHeader = "Dictionary:\n\n";
+	protected static final String TextFooter = "";
+	
+	public static final String FoHeader = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+		+ "<fo:root xmlns:fo=\"http://www.w3.org/1999/XSL/Format\">\n"
+		+ "  <fo:layout-master-set>\n"
+		+ "    <fo:simple-page-master master-name=\"simpleA4\" page-height=\"29.7cm\" page-width=\"21cm\" margin-top=\"2cm\" margin-bottom=\"2cm\" margin-left=\"2cm\" margin-right=\"2cm\">\n"
+		+ "      <fo:region-body/>\n"
+		+ "    </fo:simple-page-master>\n"
+		+ "  </fo:layout-master-set>\n"
+		+ "  <fo:page-sequence master-reference=\"simpleA4\">\n"
+		+ "    <fo:flow flow-name=\"xsl-region-body\">";
+		
+	public static final String FoFooter = "    </fo:flow>\n"
+		+ "  </fo:page-sequence>\n"
+		+ "</fo:root>\n";
 	
 	protected static com.lutris.dods.builder.generator.query.RDBColumn[] Columns = new com.lutris.dods.builder.generator.query.RDBColumn[1];
 	
@@ -591,7 +631,7 @@ public class VolumeEntriesFactory {
 		}
 
 
-	public static void exportVolume(String volumeName, Vector myKeys, Vector clauseVector, java.io.OutputStream myOutStream) 
+	public static void exportVolume(String volumeName, Vector myKeys, Vector clauseVector, String outputFormat, java.io.OutputStream myOutStream) 
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 			
 			Volume myVolume = VolumesFactory.findVolumeByName(volumeName);
@@ -608,14 +648,50 @@ public class VolumeEntriesFactory {
 						String endTag = "</" + contribString + ">";
 						xmlFooter = tmplEntry.substring(tmplEntry.indexOf(endTag)+endTag.length()+1);
 					}
-					
-					fr.imag.clips.papillon.business.dictionary.IVolumeEntryProcessor myProcessor = new fr.imag.clips.papillon.business.dictionary.ExportVolumeEntryProcessor(myOutStream);
-					
+										
 					PapillonLogger.writeDebugMsg("Start writing volume " + volumeName);
+					fr.imag.clips.papillon.business.transformation.FOProcessor myFOProcessor = null;
+					
 					try {
-						myOutStream.write(xmlHeader.getBytes("UTF-8"));
+						if (outputFormat != null && outputFormat.equals(XHTMLFormat)) {
+							myOutStream.write(XhtmlHeader.getBytes("UTF-8"));
+						}
+						else if (outputFormat != null && outputFormat.equals(TEXTFormat)) {
+							myOutStream.write(TextHeader.getBytes("UTF-8"));
+						}
+						else if (outputFormat != null && outputFormat.equals(PDFFormat)) {
+							myFOProcessor = new fr.imag.clips.papillon.business.transformation.FOProcessor(myOutStream);
+							myOutStream = myFOProcessor.getOutputStreamAsInput();
+							myOutStream.write(FoHeader.getBytes("UTF-8"));
+						}
+						else {
+							myOutStream.write(xmlHeader.getBytes("UTF-8"));
+						}
+
+						String helloWorld = "<fo:block>Hello World!</fo:block>";
+						myOutStream.write(helloWorld.getBytes("UTF-8"));
+						PapillonLogger.writeDebugMsg(helloWorld);
+
+						fr.imag.clips.papillon.business.dictionary.IVolumeEntryProcessor myProcessor = new fr.imag.clips.papillon.business.dictionary.ExportVolumeEntryProcessor(outputFormat, myOutStream);
+						PapillonLogger.writeDebugMsg("Processor created");
 						fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory.processVolume(myDict, myVolume, myKeys, clauseVector, myProcessor);
-						myOutStream.write(xmlFooter.getBytes("UTF-8"));
+						PapillonLogger.writeDebugMsg("Volume processed");
+						
+						
+						if (outputFormat != null && outputFormat.equals(XHTMLFormat)) {
+							myOutStream.write(XhtmlFooter.getBytes("UTF-8"));
+						}
+						else if (outputFormat != null && outputFormat.equals(TEXTFormat)) {
+							myOutStream.write(TextFooter.getBytes("UTF-8"));
+						}
+						else if (outputFormat != null && outputFormat.equals(PDFFormat)) {
+							myOutStream.write(FoFooter.getBytes("UTF-8"));
+							PapillonLogger.writeDebugMsg("Processing Formating Object to PDF");
+							myFOProcessor.renderOutputStream();
+						}
+						else {
+							myOutStream.write(xmlFooter.getBytes("UTF-8"));
+						}
 					}
 					catch (Exception ex) {
 						throw new PapillonBusinessException("Error in writing an UTF-8 String: ", ex);
