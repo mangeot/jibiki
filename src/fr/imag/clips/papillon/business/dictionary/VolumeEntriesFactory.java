@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.18  2005/07/28 15:34:34  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.17  2005/07/28 13:06:47  mangeot
  * - Added the possibility to export in PDF format. The conversion into PDF is don
  * e via the fop package that has to be installed (see ToolsForPapillon)
@@ -667,10 +670,6 @@ public class VolumeEntriesFactory {
 						else {
 							myOutStream.write(xmlHeader.getBytes("UTF-8"));
 						}
-
-						String helloWorld = "<fo:block>Hello World!</fo:block>";
-						myOutStream.write(helloWorld.getBytes("UTF-8"));
-						PapillonLogger.writeDebugMsg(helloWorld);
 
 						fr.imag.clips.papillon.business.dictionary.IVolumeEntryProcessor myProcessor = new fr.imag.clips.papillon.business.dictionary.ExportVolumeEntryProcessor(outputFormat, myOutStream);
 						PapillonLogger.writeDebugMsg("Processor created");

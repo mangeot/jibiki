@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.6  2005/07/28 15:34:34  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.5  2005/07/28 14:59:07  mangeot
  * *** empty log message ***
  *
@@ -83,6 +86,7 @@ public class ExportVolume extends PapillonBasePO {
 	protected final static String SORTBY_PARAMETER="SortBy";
 	protected final static String AnyContains_PARAMETER="AnyContains";
     protected final static String BASE_DIR_CONFIG = "Papillon.Informations.baseDir";
+    protected final static String RELATIVE_DIR_CONFIG = "Papillon.Informations.relativeDir";
     protected final static String MEDIA_DIR_CONFIG = "Papillon.Informations.mediaDir";
 	protected final static String EXPORT_VOLUME_DIR="export";
 	
@@ -258,7 +262,7 @@ public class ExportVolume extends PapillonBasePO {
 				this.getSessionData().writeUserMessage(userMessage);
 				PapillonLogger.writeDebugMsg(userMessage);
 			}
-			PapillonLogger.writeDebugMsg("ClientPageRedirectException: " + getExportRelativeDir() + filename);
+			System.out.println("ClientPageRedirectException: " + getExportRelativeDir() + filename);
 			
 			throw new ClientPageRedirectException(getExportRelativeDir() + filename); 
 		}
@@ -342,9 +346,14 @@ public class ExportVolume extends PapillonBasePO {
 	}
 
 	protected String getExportRelativeDir() throws PapillonPresentationException {            
+		String baseDir = "";
 		String mediaDir = "";
 		try {
+			baseDir = com.lutris.appserver.server.Enhydra.getApplication().getConfig().getString(RELATIVE_DIR_CONFIG);
 			mediaDir = com.lutris.appserver.server.Enhydra.getApplication().getConfig().getString(MEDIA_DIR_CONFIG);
+			if (! baseDir.endsWith(File.separator)) {
+				baseDir = baseDir + File.separator;
+			}
 			if (! mediaDir.endsWith(File.separator)) {
 				mediaDir = mediaDir + File.separator;
 			}
@@ -352,8 +361,8 @@ public class ExportVolume extends PapillonBasePO {
 		catch (com.lutris.util.ConfigException ex) {
 			throw new PapillonPresentationException("Error in Papillon Configuration File: ", ex);
 		}
-		mediaDir = mediaDir + EXPORT_VOLUME_DIR + File.separator;
-		return mediaDir;
+		baseDir = baseDir + mediaDir + EXPORT_VOLUME_DIR + File.separator;
+		return baseDir;
 	}
 
 	       
