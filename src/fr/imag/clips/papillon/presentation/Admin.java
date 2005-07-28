@@ -9,6 +9,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.8  2005/07/28 14:36:56  mangeot
+ * Added a News presentation page that takes a static xhtml page and displays it.
+ * People can edit this static page on the server by accessing it via ftp or ssh.
+ * There is a cache that can be reset via the Admin.po page.
+ *
  * Revision 1.7  2005/06/15 16:48:28  mangeot
  * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
  *
@@ -146,6 +151,9 @@ public class Admin extends PapillonBasePO {
             }
 			else if (null != req.getParameter(content.NAME_ResetLanguagesCache)) {
 				Languages.resetCache();
+            }
+			else if (null != req.getParameter(content.NAME_ResetNewsCache)) {
+				fr.imag.clips.papillon.presentation.News.resetCache();
             }
 			else if (null != req.getParameter(content.NAME_SetHTMLDomCaches)) {
 				String setCacheString = myGetParameter(content.NAME_HTMLDomCaches);
