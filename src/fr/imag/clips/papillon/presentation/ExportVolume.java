@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.7  2005/07/28 16:40:33  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.6  2005/07/28 15:34:34  mangeot
  * *** empty log message ***
  *
@@ -262,7 +265,7 @@ public class ExportVolume extends PapillonBasePO {
 				this.getSessionData().writeUserMessage(userMessage);
 				PapillonLogger.writeDebugMsg(userMessage);
 			}
-			System.out.println("ClientPageRedirectException: " + getExportRelativeDir() + filename);
+			PapillonLogger.writeDebugMsg("ClientPageRedirectException: " + getExportRelativeDir() + filename);
 			
 			throw new ClientPageRedirectException(getExportRelativeDir() + filename); 
 		}

@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.15  2005/07/28 16:40:33  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.14  2005/07/21 15:09:20  mangeot
  * Bug fixes and corrections mainly for the GDEF project
  *
@@ -225,12 +228,12 @@ public class AdminContributions extends PapillonBasePO {
 			
 			//String URL = req.getParameter(content.NAME_URL);
 			String URL = null;
-			String lookup = req.getParameter(content.NAME_LOOKUP);
-			String volumeString = req.getParameter(content.NAME_VOLUME);
-			String headword = req.getParameter(HEADWORD_PARAMETER);
-			String entryid = req.getParameter(ENTRYID);
-			String xslid = req.getParameter(XSLID);
-			String sortBy = req.getParameter(SORTBY_PARAMETER);
+			String lookup = myGetParameter(content.NAME_LOOKUP);
+			String volumeString = myGetParameter(content.NAME_VOLUME);
+			String headword = myGetParameter(HEADWORD_PARAMETER);
+			String entryid = myGetParameter(ENTRYID);
+			String xslid = myGetParameter(XSLID);
+			String sortBy = myGetParameter(SORTBY_PARAMETER);
 			
 			if (sortBy==null || sortBy.equals("")) {
 				sortBy=VolumeEntriesFactory.HEADWORD_SORT;
