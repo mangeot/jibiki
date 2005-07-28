@@ -7,3 +7,4 @@ Modifications since Papillon5.0 :
   - upload de dictionnaire/volume/etc. in a transaction + rollback if a pb occurs.
   - The Layout is now configurable in the conf file.
   - Volume whose source language is "axi" is now considered as the pivot volume in a pivot dictionary.
+  - Added the possibility to export in PDF format. The conversion into PDF is done via the fop package that has to be installed (see ToolsForPapillon)
