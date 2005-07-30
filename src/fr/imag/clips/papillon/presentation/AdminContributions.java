@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.16  2005/07/30 16:23:07  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.15  2005/07/28 16:40:33  mangeot
  * *** empty log message ***
  *
@@ -702,7 +705,8 @@ public class AdminContributions extends PapillonBasePO {
 					if (myContrib!=null && !myContrib.isEmpty()) {						
 						// FIXME: hack for the GDEF estonian volume
 						String headword = myContrib.getHeadword();
-						if (myContrib.getSourceLanguage().equals("est")) {
+						if (myContrib.getSourceLanguage().equals("est") ||
+							myContrib.getSourceLanguage().equals("tes")) {
 							String particule = myContrib.getParticule();
 							if(particule!=null && !particule.equals("")) {
 								headword = particule + " " + headword;
@@ -712,9 +716,7 @@ public class AdminContributions extends PapillonBasePO {
 								headword = headword + " " + homograph;
 							}
 						}
-						
-						
-						content.setTextViewContribText(headword);
+                        content.setTextViewContribText(headword);
 						viewContribAnchor.setHref(this.getUrl() + "?"
 												  + ENTRYID + "=" + myContrib.getHandle()
 												  + "&" + content.NAME_VOLUME + "=" + myContrib.getVolumeName()
