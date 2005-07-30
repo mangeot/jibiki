@@ -16,6 +16,9 @@
  *$Id$
  *------------------------------------------
  *$Log$
+ *Revision 1.3  2005/07/30 16:03:27  mangeot
+ *Bug fixes
+ *
  *Revision 1.2  2005/07/16 12:48:04  mangeot
  **** empty log message ***
  *
@@ -38,28 +41,10 @@ public class ParticuleComparator implements java.util.Comparator {
 	public final int compare (Object a, Object b) {
 		int res = 0;
 		try {
-			if (((VolumeEntry)a).getSourceLanguage().equals("est") &&
-				((VolumeEntry)b).getSourceLanguage().equals("est")) {
-				String hwA = ((VolumeEntry)a).getParticule();
-				String hwB = ((VolumeEntry)b).getParticule();
-				if (hwA != null && hwB != null) {
-					hwA = hwA.toLowerCase();
-					hwB = hwB.toLowerCase();
-					
-					if (hwA.indexOf("-") == 0) {
-						hwA = hwA.substring(1);
-					}
-					if (hwA.indexOf("+") == 0) {
-						hwA = hwA.substring(1);
-					}
-					if (hwB.indexOf("-") == 0) {
-						hwB = hwB.substring(1);
-					}
-					if (hwB.indexOf("+") == 0) {
-						hwB = hwB.substring(1);
-					}
-					res = hwA.compareTo(hwB);
-				}
+			String hwA = ((VolumeEntry)a).getParticule();
+			String hwB = ((VolumeEntry)b).getParticule();
+			if (hwA != null && hwB != null) {
+				res = hwA.compareTo(hwB);
 			}
 		}
 		catch (Exception e) {

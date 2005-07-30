@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.16  2005/07/30 16:03:28  mangeot
+ * Bug fixes
+ *
  * Revision 1.15  2005/07/28 16:40:33  mangeot
  * *** empty log message ***
  *
@@ -873,7 +876,8 @@ public class ReviewContributions extends PapillonBasePO {
                         } 					
 					// FIXME: hack for the GDEF estonian volume
 						String headword = myContrib.getHeadword();
-						if (myContrib.getSourceLanguage().equals("est")) {
+						if (myContrib.getSourceLanguage().equals("est") ||
+							myContrib.getSourceLanguage().equals("tes")) {
 							String particule = myContrib.getParticule();
 							if(particule!=null && !particule.equals("")) {
 								headword = particule + " " + headword;

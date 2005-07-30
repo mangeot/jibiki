@@ -14,6 +14,9 @@
  *$Id$
  *------------------------------------------
  *$Log$
+ *Revision 1.2  2005/07/30 16:03:27  mangeot
+ *Bug fixes
+ *
  *Revision 1.1  2005/07/16 09:15:58  mangeot
  *Added HomographNumberComparator and ParticuleComparator
  *
@@ -34,25 +37,10 @@ public class HomographNumberComparator implements java.util.Comparator {
 	public final int compare (Object a, Object b) {
 		int res = 0;
 		try {
-			String hwA = ((VolumeEntry)a).getHomographNumber();
-			String hwB = ((VolumeEntry)b).getHomographNumber();
-			if (hwA != null && hwB != null) {
-				hwA = hwA.toLowerCase();
-				hwB = hwB.toLowerCase();
-				
-				if (hwA.indexOf("-") == 0) {
-					hwA = hwA.substring(1);
-				}
-				if (hwA.indexOf("+") == 0) {
-					hwA = hwA.substring(1);
-				}
-				if (hwB.indexOf("-") == 0) {
-					hwB = hwB.substring(1);
-				}
-				if (hwB.indexOf("+") == 0) {
-					hwB = hwB.substring(1);
-				}
-				res = hwA.compareTo(hwB);
+			String hnA = ((VolumeEntry)a).getHomographNumber();
+			String hnB = ((VolumeEntry)b).getHomographNumber();
+			if (hnA != null && hnB != null) {
+				res = hnA.compareTo(hnB);
 			}
 		}
 		catch (Exception e) {
