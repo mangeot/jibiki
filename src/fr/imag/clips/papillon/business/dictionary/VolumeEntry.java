@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.19  2005/07/30 16:10:17  mangeot
+ * Bug fix when headword was edited but not changed in the db
+ *
  * Revision 1.18  2005/07/16 12:52:37  mangeot
  * *** empty log message ***
  *
@@ -342,9 +345,21 @@ public class VolumeEntry implements IAnswer {
 			throw new PapillonBusinessException("Error getting volumeEntry's headword", ex);
 		} 
 		if (headword == null || headword.equals("")) {
-			headword = ParseVolume.getCdmString(this, Volume.CDM_headword, this.getSourceLanguage());
+			headword = getCdmHeadword();
 		}
 		return headword;
+	}
+	
+	/**
+		* Gets the headword of the volumeEntry extracted from the XML
+	 *
+	 * @return the subject.
+	 * @exception PapillonBusinessException if an error occurs
+	 *   retrieving data (usually due to an underlying data layer
+						  *   error).
+	 */
+	public String getCdmHeadword() throws PapillonBusinessException {
+		return ParseVolume.getCdmString(this, Volume.CDM_headword, this.getSourceLanguage());
 	}
 	
 	public void setHeadword() throws PapillonBusinessException {

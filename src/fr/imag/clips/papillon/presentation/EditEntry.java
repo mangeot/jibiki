@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.14  2005/07/30 16:10:17  mangeot
+ * Bug fix when headword was edited but not changed in the db
+ *
  * Revision 1.13  2005/07/16 16:25:26  mangeot
  * Adapted the linker to the GDEF project + bug fixes
  *
@@ -333,6 +336,7 @@ public class EditEntry extends PapillonBasePO {
 	protected void saveEntry(VolumeEntry myVolumeEntry, String author, String saveComment, String referrer) 
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 		if (myVolumeEntry!=null) {
+			myVolumeEntry.setHeadword(myVolumeEntry.getCdmHeadword());
 			myVolumeEntry.setModification(author,saveComment);
 			myVolumeEntry.save();
 		}
