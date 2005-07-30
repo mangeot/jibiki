@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.19  2005/07/30 13:52:13  mangeot
+ * Commit due to some conflicts between directories. Beware !
+ *
  * Revision 1.18  2005/07/28 15:34:34  mangeot
  * *** empty log message ***
  *
@@ -673,6 +676,7 @@ public class VolumeEntriesFactory {
 
 						fr.imag.clips.papillon.business.dictionary.IVolumeEntryProcessor myProcessor = new fr.imag.clips.papillon.business.dictionary.ExportVolumeEntryProcessor(outputFormat, myOutStream);
 						PapillonLogger.writeDebugMsg("Processor created");
+
 						fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory.processVolume(myDict, myVolume, myKeys, clauseVector, myProcessor);
 						PapillonLogger.writeDebugMsg("Volume processed");
 						

@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.8  2005/07/30 13:52:13  mangeot
+ * Commit due to some conflicts between directories. Beware !
+ *
  * Revision 1.7  2005/07/28 16:40:33  mangeot
  * *** empty log message ***
  *
@@ -265,8 +268,7 @@ public class ExportVolume extends PapillonBasePO {
 				this.getSessionData().writeUserMessage(userMessage);
 				PapillonLogger.writeDebugMsg(userMessage);
 			}
-			PapillonLogger.writeDebugMsg("ClientPageRedirectException: " + getExportRelativeDir() + filename);
-			
+			PapillonLogger.writeDebugMsg("ClientPageRedirectException: " + getExportRelativeDir() + filename);			
 			throw new ClientPageRedirectException(getExportRelativeDir() + filename); 
 		}
         
