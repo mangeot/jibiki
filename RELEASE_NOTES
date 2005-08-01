@@ -7,4 +7,11 @@ Modifications since Papillon5.0 :
   - upload de dictionnaire/volume/etc. in a transaction + rollback if a pb occurs.
   - The Layout is now configurable in the conf file.
   - Volume whose source language is "axi" is now considered as the pivot volume in a pivot dictionary.
-  - Added the possibility to export in PDF format. The conversion into PDF is done via the fop package that has to be installed (see ToolsForPapillon)
+
+  - MM: Added the possibility to export in PDF format. The conversion into PDF is done via the fop package that has to be installed (see ToolsForPapillon)
+  - MM: Corrected an important bug in the editor that forbidded to change a boolean value from true to false.
+Beware, you have to edit the existing interface templates by hands:
+ 1- duplicate all the input elements with name='boolean' and type='checkbox'.
+ - for each input element pair,    
+   2- change one input element name into name='booleantrue' 
+   3- change the other input element type to type='hidden'
