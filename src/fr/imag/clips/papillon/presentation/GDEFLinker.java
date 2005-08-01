@@ -9,6 +9,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.2  2005/08/01 10:58:22  mangeot
+ *  Suppressed the 3rd click on the linker window when only one link has been found
+ *
  *  Revision 1.1  2005/07/16 16:42:05  mangeot
  *  iLinker adapted from LexAlpLinker developed by GS
  *
@@ -75,6 +78,10 @@ import org.enhydra.xml.io.DOMFormatter;
  */
 public class GDEFLinker extends LinkerBasePO {
         
+	protected final static String javascriptHeader = "function loadFunction () {\n";
+	protected final static String javascriptBody = "	return 0;\n";
+	protected final static String javascriptFooter = "}\n";
+		
     // Search form Parameters
     public class SearchFormParameters {
         public boolean isInitialized = false;
@@ -229,8 +236,30 @@ public class GDEFLinker extends LinkerBasePO {
         action.removeAttribute("id");
         
 
-        if (results.size() != 0) 
-            noResultsMessage.getParentNode().removeChild(noResultsMessage);
+        if (results.size() == 1) {
+			VolumeEntry ve = (VolumeEntry) results.iterator().next();
+			String javascriptRedir = javascriptHeader 
+				+ "updateParent('" + ve.getEntryId() + "', '" + ve.getSourceLanguage() + "')"
+				+ "\n"
+				+ javascriptFooter;
+			this.addToHeaderScript(javascriptRedir);
+			
+		} 
+        else if (results.size() > 1) {
+			this.addToHeaderScript(javascriptHeader + javascriptBody + javascriptFooter);
+			noResultsMessage.getParentNode().removeChild(noResultsMessage);
+		}
+		else {
+			String submitButton = myGetParameter(LinkerSearchFormXHTML.NAME_lookup);
+			if (submitButton == null || submitButton.equals("")) {
+				noResultsMessage.getParentNode().removeChild(noResultsMessage);
+			}
+			else if (parameters.facet.equals(Volume.CDM_headword)) {
+				XHTMLAnchorElement creationAnchor = resultsListTmpl.getElementCreateMissingEntryAnchor();
+				creationAnchor.setHref(creationAnchor.getHref() + parameters.facetValue);
+			}
+			this.addToHeaderScript(javascriptHeader + javascriptBody + javascriptFooter);
+		}
         
         Iterator iter = results.iterator();
         while(iter.hasNext()) {

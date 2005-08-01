@@ -10,6 +10,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.16  2005/08/01 10:58:22  mangeot
+ * Suppressed the 3rd click on the linker window when only one link has been found
+ *
  * Revision 1.15  2005/08/01 08:34:03  mangeot
  * Added method getCompleteHeadword for VolumeEntry that concatenates the homograph number and the particule to the headword
  *
@@ -184,7 +187,7 @@ public class EditEntryInit extends PapillonBasePO {
 		String submitLookupEdit = myGetParameter(content.NAME_LookupEdit);
 		String submitCreate = myGetParameter(content.NAME_CreateAnyway);		
 		String volume = myGetParameter(content.NAME_VOLUME);
-		String headword = myGetParameter(content.NAME_Headword);
+		String headword = myGetParameter(content.NAME_HEADWORD);
 		String partialMatch = myGetParameter(content.NAME_PartialMatch);
 		String entryHandle = myGetParameter(HANDLE_PARAMETER);
 		
@@ -270,7 +273,7 @@ public class EditEntryInit extends PapillonBasePO {
 	java.io.UnsupportedEncodingException {
 
 		// Addin the headword
-	    HTMLInputElement headwordInputElt = content.getElementHeadword();
+	    HTMLInputElement headwordInputElt = content.getElementHEADWORD();
 		headwordInputElt.setValue(headword);
 
 	    // Adding the appropriate source languages to the source list

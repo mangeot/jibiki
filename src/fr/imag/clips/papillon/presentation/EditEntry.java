@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.15  2005/08/01 10:58:22  mangeot
+ * Suppressed the 3rd click on the linker window when only one link has been found
+ *
  * Revision 1.14  2005/07/30 16:10:17  mangeot
  * Bug fix when headword was edited but not changed in the db
  *
@@ -152,7 +155,7 @@ public class EditEntry extends PapillonBasePO {
     protected final static String ContributionsVolumeParameter = "VOLUME";
 	
 	
-	protected final static String newBockRedirectionJavascript = "function loadFunction () {\n"
+	protected final static String newBlockRedirectionJavascript = "function loadFunction () {\n"
 		+ "   window.location.hash='NewBlock';\n"
 		+ "}\n";
 
@@ -252,7 +255,7 @@ public class EditEntry extends PapillonBasePO {
 				String parentElement = submitAdd.substring(plus+1);
 				String[] siblingElements = myGetParameterValues(Select_PARAMETER);
 				UIGenerator.addElement(elementName,parentElement,myEntry, myTemplateEntry, siblingElements);
-				this.setHeaderScript(newBockRedirectionJavascript);
+				this.setHeaderScript(newBlockRedirectionJavascript);
 			}
 		}
 		// deleteElements MUST be after updateElement because it modifies the element ids.
@@ -264,7 +267,7 @@ public class EditEntry extends PapillonBasePO {
 				String parentElement = submitDelete.substring(plus+1);
 				String[] selectedElements = myGetParameterValues(Select_PARAMETER);
 				UIGenerator.deleteElements(elementName,selectedElements,myEntry);
-				this.setHeaderScript(newBockRedirectionJavascript);
+				this.setHeaderScript(newBlockRedirectionJavascript);
 			}
 		}
 		else if (submitChoose!=null && !submitChoose.equals("")
