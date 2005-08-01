@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.18  2005/08/01 17:37:33  mangeot
+ * Bug fix in sort function
+ *
  * Revision 1.17  2005/08/01 08:34:03  mangeot
  * Added method getCompleteHeadword for VolumeEntry that concatenates the homograph number and the particule to the headword
  *
@@ -240,10 +243,6 @@ public class AdminContributions extends PapillonBasePO {
 			String entryid = myGetParameter(ENTRYID);
 			String xslid = myGetParameter(XSLID);
 			String sortBy = myGetParameter(SORTBY_PARAMETER);
-			
-			if (sortBy==null || sortBy.equals("")) {
-				sortBy=VolumeEntriesFactory.HEADWORD_SORT;
-			}
 			
 			if (volumeString!=null &&!volumeString.equals("")) {
 				this.setPreference(content.NAME_VOLUME,volumeString);
@@ -630,7 +629,7 @@ public class AdminContributions extends PapillonBasePO {
             // If there are too much entries ie > MaxDisplayedEntries,
             // we display a table of entries instead of the entries
             if (null != ContribVector) {
-				if (sortBy !=null && !sortBy.equals("") && !sortBy.equals(VolumeEntriesFactory.HEADWORD_SORT)) {
+				if (sortBy !=null && !sortBy.equals("")) {
 					VolumeEntriesFactory.sort(ContribVector, sortBy);
 				}
                 addEntryTable(ContribVector, queryString);

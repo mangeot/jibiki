@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.18  2005/08/01 17:37:33  mangeot
+ * Bug fix in sort function
+ *
  * Revision 1.17  2005/08/01 08:34:03  mangeot
  * Added method getCompleteHeadword for VolumeEntry that concatenates the homograph number and the particule to the headword
  *
@@ -263,10 +266,6 @@ public class ReviewContributions extends PapillonBasePO {
 			String xslid = myGetParameter(XSLID_PARAMETER);
 			String sortBy = myGetParameter(SORTBY_PARAMETER);
 						
-			if (sortBy==null || sortBy.equals("")) {
-				sortBy=VolumeEntriesFactory.HEADWORD_SORT;
-			}
-			
 			if (volume!=null &&!volume.equals("")) {
 				this.setPreference(content.NAME_VOLUME,volume);
 			}
@@ -575,7 +574,7 @@ public class ReviewContributions extends PapillonBasePO {
 						myContrib.delete();
 					}
 				}
-					addContributions(volume, myKeys, myClauses, sortBy, queryString, offset);
+				addContributions(volume, myKeys, myClauses, sortBy, queryString, offset);
 				break;
 			case STEP_REMOVE_VALIDATED:
 				contribid = myGetParameter(CONTRIBID_PARAMETER);
@@ -770,7 +769,7 @@ public class ReviewContributions extends PapillonBasePO {
             // FIXME: fix the limit parameter
             Vector ContribVector = VolumeEntriesFactory.getVolumeNameEntriesVector(volume, Keys1, Keys2, null, offset, 0);
             if (null != ContribVector) {
-				if (sortBy !=null && !sortBy.equals("") && !sortBy.equals(VolumeEntriesFactory.HEADWORD_SORT)) {
+				if (sortBy !=null && !sortBy.equals("")) {
 					VolumeEntriesFactory.sort(ContribVector, sortBy);
 				}
 			}

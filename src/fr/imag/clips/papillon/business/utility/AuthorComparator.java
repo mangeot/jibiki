@@ -12,6 +12,9 @@
 *$Id$
 *------------------------------------------
 *$Log$
+*Revision 1.4  2005/08/01 17:37:33  mangeot
+*Bug fix in sort function
+*
 *Revision 1.3  2005/07/16 09:15:58  mangeot
 *Added HomographNumberComparator and ParticuleComparator
 *
@@ -36,7 +39,7 @@ public class AuthorComparator implements java.util.Comparator {
 	// e.g. +1 (or any +ve number) if a > b
 	// 0 if a == b
 	// -1 (or any -ve number) if a < b
-	public final int compare ( Object a, Object b) {
+	public final int compare (Object a, Object b) {
 		int res = 0;
 		try {
 			res = (((VolumeEntry)a).getAuthor().toLowerCase()).compareTo(((VolumeEntry)b).getAuthor().toLowerCase());

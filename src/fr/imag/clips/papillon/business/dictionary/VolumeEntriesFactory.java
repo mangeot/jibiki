@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.20  2005/08/01 17:37:33  mangeot
+ * Bug fix in sort function
+ *
  * Revision 1.19  2005/07/30 13:52:13  mangeot
  * Commit due to some conflicts between directories. Beware !
  *
@@ -1056,29 +1059,28 @@ public class VolumeEntriesFactory {
 	}
 	
 	public static void sort (Vector EntryVector, String sortBy) {
-		if (sortBy.equals(AUTHOR_SORT)) {
-			Collections.sort(EntryVector, new fr.imag.clips.papillon.business.utility.AuthorComparator());
-		}
-		else if (sortBy.equals(CREATION_DATE_SORT)) {
-			Collections.sort(EntryVector, new fr.imag.clips.papillon.business.utility.CreationDateComparator());
-		}
-		else if (sortBy.equals(HEADWORD_SORT)) {
-			Collections.sort(EntryVector, new fr.imag.clips.papillon.business.utility.HeadwordComparator());
-		}
-		else if (sortBy.equals(ORIGINAL_CONTRIBUTION_ID_SORT)) {
-			Collections.sort(EntryVector, new fr.imag.clips.papillon.business.utility.OriginalContributionIdComparator());
-		}
-		else if (sortBy.equals(REVIEW_DATE_SORT)) {
-			Collections.sort(EntryVector, new fr.imag.clips.papillon.business.utility.ReviewDateComparator());
-		}
-		else if (sortBy.equals(REVIEWER_SORT)) {
-			Collections.sort(EntryVector, new fr.imag.clips.papillon.business.utility.ReviewerComparator());
-		}
-		else if (sortBy.equals(STATUS_SORT)) {
-			Collections.sort(EntryVector, new fr.imag.clips.papillon.business.utility.StatusComparator());
-		}
-		else {
-			Collections.sort(EntryVector, new fr.imag.clips.papillon.business.utility.HeadwordComparator());
+		if (sortBy != null && !sortBy.equals("")) {
+			if (sortBy.equals(AUTHOR_SORT)) {
+				Collections.sort(EntryVector, new fr.imag.clips.papillon.business.utility.AuthorComparator());
+			}
+			else if (sortBy.equals(CREATION_DATE_SORT)) {
+				Collections.sort(EntryVector, new fr.imag.clips.papillon.business.utility.CreationDateComparator());
+			}
+			else if (sortBy.equals(HEADWORD_SORT)) {
+				Collections.sort(EntryVector, new fr.imag.clips.papillon.business.utility.HeadwordComparator());
+			}
+			else if (sortBy.equals(ORIGINAL_CONTRIBUTION_ID_SORT)) {
+				Collections.sort(EntryVector, new fr.imag.clips.papillon.business.utility.OriginalContributionIdComparator());
+			}
+			else if (sortBy.equals(REVIEW_DATE_SORT)) {
+				Collections.sort(EntryVector, new fr.imag.clips.papillon.business.utility.ReviewDateComparator());
+			}
+			else if (sortBy.equals(REVIEWER_SORT)) {
+				Collections.sort(EntryVector, new fr.imag.clips.papillon.business.utility.ReviewerComparator());
+			}
+			else if (sortBy.equals(STATUS_SORT)) {
+				Collections.sort(EntryVector, new fr.imag.clips.papillon.business.utility.StatusComparator());
+			}
 		}
 	}
 	
