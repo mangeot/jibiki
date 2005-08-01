@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.22  2005/08/01 16:52:45  mangeot
+ * Fixed missing reviewer, reviewdate, validator, validator date when setReviewed and setValdiated where called
+ *
  * Revision 1.21  2005/08/01 09:27:09  mangeot
  * Bug fix
  *
@@ -917,11 +920,13 @@ public class VolumeEntry implements IAnswer {
 	public void setReviewed(fr.imag.clips.papillon.business.user.User myUser) 
 		throws PapillonBusinessException {
 		if (null != this.getStatus() && this.getStatus().equals(VolumeEntry.FINISHED_STATUS)) {
-				this.setModification(myUser.getLogin(),VolumeEntry.REVIEWED_STATUS);
-				this.setStatus(VolumeEntry.REVIEWED_STATUS);
-				this.save();
-				ContributionLog myContribLog = ContributionsFactory.newContributionLog(myUser, this);
-				myContribLog.save();
+			this.setReviewer(myUser.getLogin());
+			this.setReviewDate();
+			this.setModification(myUser.getLogin(),VolumeEntry.REVIEWED_STATUS);
+			this.setStatus(VolumeEntry.REVIEWED_STATUS);
+			this.save();
+			ContributionLog myContribLog = ContributionsFactory.newContributionLog(myUser, this);
+			myContribLog.save();
 		}
 	}
 
@@ -936,18 +941,20 @@ public class VolumeEntry implements IAnswer {
 	public void setValidated(fr.imag.clips.papillon.business.user.User myUser) 
 		throws PapillonBusinessException {
 		if (null != this.getStatus() && this.getStatus().equals(VolumeEntry.REVIEWED_STATUS)) {
-				this.setModification(myUser.getLogin(),VolumeEntry.VALIDATED_STATUS);
-				this.setStatus(VolumeEntry.VALIDATED_STATUS);
-				this.save();
-				String origId = this.getOriginalContributionId();
-				if (origId !=null && !origId.equals("")) {
-					VolumeEntry myEntry = VolumeEntriesFactory.findEntryByEntryId(this.getVolumeName(), origId);
-					if (myEntry != null && !myEntry.isEmpty()) {
-						myEntry.setReplaced(myUser);
-					}
+			this.setValidator(myUser.getLogin());
+			this.setValidationDate();
+			this.setModification(myUser.getLogin(),VolumeEntry.VALIDATED_STATUS);
+			this.setStatus(VolumeEntry.VALIDATED_STATUS);
+			this.save();
+			String origId = this.getOriginalContributionId();
+			if (origId !=null && !origId.equals("")) {
+				VolumeEntry myEntry = VolumeEntriesFactory.findEntryByEntryId(this.getVolumeName(), origId);
+				if (myEntry != null && !myEntry.isEmpty()) {
+					myEntry.setReplaced(myUser);
 				}
-				ContributionLog myContribLog = ContributionsFactory.newContributionLog(myUser, this);
-				myContribLog.save();
+			}
+			ContributionLog myContribLog = ContributionsFactory.newContributionLog(myUser, this);
+			myContribLog.save();
 		}
 	}
 
