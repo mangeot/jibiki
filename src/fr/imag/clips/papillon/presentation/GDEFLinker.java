@@ -9,6 +9,14 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.3  2005/08/01 15:03:41  mangeot
+ *  Corrected an important bug in the editor that forbidded to change a boolean value from true to false.
+ *  Beware, you have to edit the existing interface templates by hands:
+ *  1- duplicate all the input elements with name='boolean' and type='checkbox'.
+ *  - for each input element pair,
+ *   2- change one input element name into name='booleantrue'
+ *   3- change the other input element type to type='hidden'
+ *
  *  Revision 1.2  2005/08/01 10:58:22  mangeot
  *  Suppressed the 3rd click on the linker window when only one link has been found
  *
@@ -203,12 +211,23 @@ public class GDEFLinker extends LinkerBasePO {
         key[3] = IQuery.QueryBuilderStrategy[parameters.comparisonOperator];
         keys.add(key);
         
+		/* WE authorize a link to any entry (validated or not) */
+		/* 
+			String[] key2 = new String[4];
+		 key2[0] = Volume.CDM_contributionStatus;
+		 key2[1] = Volume.DEFAULT_LANG;
+		 key2[2] = VolumeEntry.VALIDATED_STATUS;
+		 key2[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_EXACT+1];			
+		 keys.add(key2);		
+		 */
+		
 		String[] key2 = new String[4];
-		key2[0] = Volume.CDM_contributionStatus;
-		key2[1] = Volume.DEFAULT_LANG;
-		key2[2] = VolumeEntry.VALIDATED_STATUS;
-		key2[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_EXACT+1];			
-		keys.add(key2);			
+		 key2[0] = Volume.CDM_contributionStatus;
+		 key2[1] = Volume.DEFAULT_LANG;
+		 key2[2] = VolumeEntry.REPLACED_STATUS;
+		 key2[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_NOT_EQUAL+1];			
+		 keys.add(key2);		
+		 
         
         
         Collection results = new Vector();

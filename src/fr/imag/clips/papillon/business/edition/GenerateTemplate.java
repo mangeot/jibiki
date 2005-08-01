@@ -8,6 +8,14 @@
  * $Id$
  *---------------------------------------------------------
  * $Log$
+ * Revision 1.10  2005/08/01 15:03:41  mangeot
+ * Corrected an important bug in the editor that forbidded to change a boolean value from true to false.
+ * Beware, you have to edit the existing interface templates by hands:
+ * 1- duplicate all the input elements with name='boolean' and type='checkbox'.
+ * - for each input element pair,
+ *  2- change one input element name into name='booleantrue'
+ *  3- change the other input element type to type='hidden'
+ *
  * Revision 1.9  2005/07/05 09:21:59  serasset
  * Template interface generator now correctly generates attribute names (with an @).
  * Target languages are now correctly handled when querying a pivot multilingual dictionary.
@@ -369,7 +377,8 @@ public class GenerateTemplate {
 			}
 			// for a boolean, we use a checkbox.
 			else if (typeName!= null && typeName.equals("boolean")) {
-				interfaceBuffer.write("    <input name=\"" + UIGenerator.BOOLEAN_ATTR_NAME + "\" type=\"checkbox\" value='" + elementName + "' />\n");			
+				interfaceBuffer.write("    <input name=\"" + UIGenerator.BOOLEAN_ATTR_NAME + "\" type=\"hidden\" value='" + elementName + "' />\n");			
+				interfaceBuffer.write("    <input name=\"" + UIGenerator.BOOLEAN_TRUE_ATTR_NAME + "\" type=\"checkbox\" value='" + elementName + "' />\n");			
 				interfaceBuffer.write("<br />\n");					
 			}
 			else if (typeName!= null && typeName.equals("integer")) {

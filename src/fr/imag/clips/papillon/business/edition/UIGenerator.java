@@ -8,6 +8,14 @@
  * $Id$
  *---------------------------------------------------------
  * $Log$
+ * Revision 1.11  2005/08/01 15:03:41  mangeot
+ * Corrected an important bug in the editor that forbidded to change a boolean value from true to false.
+ * Beware, you have to edit the existing interface templates by hands:
+ * 1- duplicate all the input elements with name='boolean' and type='checkbox'.
+ * - for each input element pair,
+ *  2- change one input element name into name='booleantrue'
+ *  3- change the other input element type to type='hidden'
+ *
  * Revision 1.10  2005/07/16 12:58:31  serasset
  * Added limit parameter to query functions
  * Added a parameter to Formater initializations
@@ -61,6 +69,7 @@ public class UIGenerator {
 	public static final String SELECT_ATTR_NAME = "select";
 	public static final String CHOOSE_ATTR_NAME = "choose";
 	public static final String BOOLEAN_ATTR_NAME = "boolean";
+	public static final String BOOLEAN_TRUE_ATTR_NAME = "booleantrue";
 	public static final String TYPE_ATTR_NAME = "type";
 	
 	public static final String CHOICE_NODE_NAME = "xsd:choice";
@@ -576,13 +585,14 @@ public class UIGenerator {
 	protected static boolean setIdValueCorrespondingBooleanCheckbox(String correspName, Element itfElt, String newId, String newValue) {
 		// PapillonLogger.writeDebugMsg("setIdValueCorrespondingBooleanCheckbox: " + correspName + " id: " + newId + " value: " + newValue);
 		boolean found = false;
+		int foundInt = 0;
 		NodeList myNodeList = itfElt.getElementsByTagName ("input");
 		int i=0;
 		while (i<myNodeList.getLength () && !found) {
 			Element currentElt = (Element) myNodeList.item(i);
 			String name = currentElt.getAttribute("name");
 			String type = currentElt.getAttribute("type");
-			if (name.equals(BOOLEAN_ATTR_NAME) && type.equals("checkbox")) {
+			if (name.equals(BOOLEAN_TRUE_ATTR_NAME) && type.equals("checkbox")) {
 				String value = currentElt.getAttribute("value");
 				if (value.equals(correspName)) {
 					if (newValue!=null && newValue.equals("true")) {
@@ -590,10 +600,19 @@ public class UIGenerator {
 					}
 					currentElt.setAttribute("id",newId);
 					currentElt.setAttribute("value",newId);
-					found = true;
+					foundInt++;
+				}
+			}	
+			else if (name.equals(BOOLEAN_ATTR_NAME) && type.equals("hidden")) {
+				String value = currentElt.getAttribute("value");
+				if (value.equals(correspName)) {
+					currentElt.setAttribute("id",newId);
+					currentElt.setAttribute("value",newId);
+					foundInt++;
 				}
 			}	
 			i++;	
+			found = (foundInt == 2);
 		}		
 		return found;
 	}

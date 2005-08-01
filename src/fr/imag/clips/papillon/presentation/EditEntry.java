@@ -9,6 +9,14 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.16  2005/08/01 15:03:41  mangeot
+ * Corrected an important bug in the editor that forbidded to change a boolean value from true to false.
+ * Beware, you have to edit the existing interface templates by hands:
+ * 1- duplicate all the input elements with name='boolean' and type='checkbox'.
+ * - for each input element pair,
+ *  2- change one input element name into name='booleantrue'
+ *  3- change the other input element type to type='hidden'
+ *
  * Revision 1.15  2005/08/01 10:58:22  mangeot
  * Suppressed the 3rd click on the linker window when only one link has been found
  *
@@ -142,6 +150,7 @@ public class EditEntry extends PapillonBasePO {
     protected static String Choose_PARAMETER = UIGenerator.CHOOSE_ATTR_NAME;  
     protected static String Select_PARAMETER = UIGenerator.SELECT_ATTR_NAME;  
     protected static String Boolean_PARAMETER = UIGenerator.BOOLEAN_ATTR_NAME;  
+    protected static String BooleanTrue_PARAMETER = UIGenerator.BOOLEAN_TRUE_ATTR_NAME;  
     protected static String Update_PARAMETER = "Update";  
     protected static String Save_PARAMETER = "Save";  
     protected static String SaveComment_PARAMETER = "SaveComment";  
@@ -312,13 +321,19 @@ public class EditEntry extends PapillonBasePO {
 		return myInterface;
 	}
 	
-	protected void updateBooleanElements(String[] elements, Element myEntry) {
+	protected void updateBooleanElements(String[] booleanElements, String[] trueElements, Element myEntry) {
 	// FIXME: a problem here: the element ids change when one element is deleted.
 	// the second element of the same type will not be deleted
-		for (int i=0; i<elements.length;i++) {
-			String elt = elements[i];
-			if (elt != null) {
-				UIGenerator.updateElement(elt, "true", myEntry);
+		java.util.List myList = java.util.Arrays.asList(trueElements);
+		for (int i=0; i<booleanElements.length;i++) {
+			String elt = booleanElements[i];
+			if (elt != null && !elt.equals("")) {
+				if (myList.contains(elt)) {
+					UIGenerator.updateElement(elt, "true", myEntry);
+				}
+				else {
+					UIGenerator.updateElement(elt, "false", myEntry);
+				}
 			}
 		}
 	}
@@ -333,7 +348,7 @@ public class EditEntry extends PapillonBasePO {
 				UIGenerator.updateElement(parameterName,myGetParameter(parameterName),entryElt);
 			}
 		}
-		updateBooleanElements(myGetParameterValues(Boolean_PARAMETER),entryElt);
+		updateBooleanElements(myGetParameterValues(Boolean_PARAMETER),myGetParameterValues(BooleanTrue_PARAMETER), entryElt);
 	}
 			
 	protected void saveEntry(VolumeEntry myVolumeEntry, String author, String saveComment, String referrer) 
