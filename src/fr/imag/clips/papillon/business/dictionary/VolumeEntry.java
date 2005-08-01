@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.20  2005/08/01 08:34:03  mangeot
+ * Added method getCompleteHeadword for VolumeEntry that concatenates the homograph number and the particule to the headword
+ *
  * Revision 1.19  2005/07/30 16:10:17  mangeot
  * Bug fix when headword was edited but not changed in the db
  *
@@ -349,6 +352,28 @@ public class VolumeEntry implements IAnswer {
 		}
 		return headword;
 	}
+	
+	/**
+		* Gets the headword, homograph number and particule of the volumeEntry
+	 *
+	 * @return the subject.
+	 * @exception PapillonBusinessException if an error occurs
+	 *   retrieving data (usually due to an underlying data layer
+						  *   error).
+	 */
+	public String getCompleteHeadword() throws PapillonBusinessException {
+		String headword = null;
+		String particule = this.getParticule();
+		if (particule!=null && !particule.equals("")) {
+			headword = particule + " " + headword;
+		}
+		String homograph = this.getHomographNumber();
+		if (homograph!=null && !homograph.equals("")) {
+			headword = headword + " " + homograph;
+		}
+		return headword;
+	}
+	
 	
 	/**
 		* Gets the headword of the volumeEntry extracted from the XML

@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.17  2005/08/01 08:34:03  mangeot
+ * Added method getCompleteHeadword for VolumeEntry that concatenates the homograph number and the particule to the headword
+ *
  * Revision 1.16  2005/07/30 16:23:07  mangeot
  * *** empty log message ***
  *
@@ -703,20 +706,7 @@ public class AdminContributions extends PapillonBasePO {
 					VolumeEntry myContrib = (VolumeEntry) ContribVector.elementAt(i);
 					
 					if (myContrib!=null && !myContrib.isEmpty()) {						
-						// FIXME: hack for the GDEF estonian volume
-						String headword = myContrib.getHeadword();
-						if (myContrib.getSourceLanguage().equals("est") ||
-							myContrib.getSourceLanguage().equals("tes")) {
-							String particule = myContrib.getParticule();
-							if(particule!=null && !particule.equals("")) {
-								headword = particule + " " + headword;
-							}
-							String homograph = myContrib.getHomographNumber();
-							if(homograph!=null && !homograph.equals("")) {
-								headword = headword + " " + homograph;
-							}
-						}
-                        content.setTextViewContribText(headword);
+                        content.setTextViewContribText(myContrib.getCompleteHeadword());
 						viewContribAnchor.setHref(this.getUrl() + "?"
 												  + ENTRYID + "=" + myContrib.getHandle()
 												  + "&" + content.NAME_VOLUME + "=" + myContrib.getVolumeName()

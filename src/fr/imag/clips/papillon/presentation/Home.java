@@ -10,6 +10,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.11  2005/08/01 08:34:03  mangeot
+ *  Added method getCompleteHeadword for VolumeEntry that concatenates the homograph number and the particule to the headword
+ *
  *  Revision 1.10  2005/07/16 12:58:31  serasset
  *  Added limit parameter to query functions
  *  Added a parameter to Formater initializations
@@ -664,7 +667,7 @@ public class Home extends PapillonBasePO {
                 
                 // Le vocable
                 //            String vocable = theDicArray[i].getKey1();
-                content.setTextVocable(myEntry.getHeadword());
+                content.setTextVocable(myEntry.getCompleteHeadword());
                 
                 // l'entry id
                 href = this.getUrl() + "?"

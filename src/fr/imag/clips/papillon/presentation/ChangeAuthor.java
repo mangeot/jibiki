@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.8  2005/08/01 08:34:03  mangeot
+ * Added method getCompleteHeadword for VolumeEntry that concatenates the homograph number and the particule to the headword
+ *
  * Revision 1.7  2005/07/16 12:58:31  serasset
  * Added limit parameter to query functions
  * Added a parameter to Formater initializations
@@ -625,18 +628,8 @@ public class ChangeAuthor extends PapillonBasePO {
 					VolumeEntry myContrib = (VolumeEntry) ContribVector.elementAt(i);
 					
 					if (myContrib!=null && !myContrib.isEmpty()) {						
-						// FIXME: hack for the GDEF estonian volume
-						String headword = myContrib.getHeadword();
-						if (myContrib.getVolumeName().equals("GDEF_est")) {
-							String particule = myContrib.getParticule();
-							if(particule!=null && !particule.equals("")) {
-								headword = particule + " " + headword;
-							}
-						}
-						
-						
 						// headword
-						content.setTextHeadwordList(headword);
+						content.setTextHeadwordList(myContrib.getCompleteHeadword());
 
 						// entry id
 						content.setTextEntryIdList(myContrib.getEntryId());

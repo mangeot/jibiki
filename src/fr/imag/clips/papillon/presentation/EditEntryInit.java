@@ -10,6 +10,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.15  2005/08/01 08:34:03  mangeot
+ * Added method getCompleteHeadword for VolumeEntry that concatenates the homograph number and the particule to the headword
+ *
  * Revision 1.14  2005/07/16 16:25:26  mangeot
  * Adapted the linker to the GDEF project + bug fixes
  *
@@ -365,7 +368,7 @@ public class EditEntryInit extends PapillonBasePO {
 		    VolumeEntry myEntry = (VolumeEntry)entriesIterator.next();
 
 		    // The headword
-		    content.setTextHeadwordList(myEntry.getHeadword());
+		    content.setTextHeadwordList(myEntry.getCompleteHeadword());
 
 			// The entry id
 		    String href = ConsultExpertURL + "?"
