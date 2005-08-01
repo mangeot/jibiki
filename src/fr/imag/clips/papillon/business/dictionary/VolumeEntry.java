@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.21  2005/08/01 09:27:09  mangeot
+ * Bug fix
+ *
  * Revision 1.20  2005/08/01 08:34:03  mangeot
  * Added method getCompleteHeadword for VolumeEntry that concatenates the homograph number and the particule to the headword
  *
@@ -362,7 +365,7 @@ public class VolumeEntry implements IAnswer {
 						  *   error).
 	 */
 	public String getCompleteHeadword() throws PapillonBusinessException {
-		String headword = null;
+		String headword = this.getHeadword();
 		String particule = this.getParticule();
 		if (particule!=null && !particule.equals("")) {
 			headword = particule + " " + headword;
