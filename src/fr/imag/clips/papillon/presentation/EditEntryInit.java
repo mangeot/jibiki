@@ -10,6 +10,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.17  2005/08/02 08:27:16  mangeot
+ * Now, the display of an entry with EditEntryInit is done in the page itself.
+ *
  * Revision 1.16  2005/08/01 10:58:22  mangeot
  * Suppressed the 3rd click on the linker window when only one link has been found
  *
@@ -114,7 +117,7 @@ import java.util.Iterator;
 import java.util.Vector;
 
 // DOM imports
-import org.w3c.dom.html.*;
+import org.enhydra.xml.xhtml.dom.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -145,20 +148,21 @@ import fr.imag.clips.papillon.business.xsl.XslSheetFactory;
 public class EditEntryInit extends PapillonBasePO {
 
     protected final static String HANDLE_PARAMETER = "handle";
+    protected final static String FORMATTER_PARAMETER = "formatter";
+    protected final static String VIEW_PARAMETER = "submitView";
 
     protected final static String ContributionsURL = "AdminContributions.po";
     protected final static String ContributionsVolumeParameter = "VOLUME";
 
-    protected final static String ConsultExpertURL = "ConsultExpert.po";
-    protected final static String ConsultExpertVolumeParameter = "VOLUME";
-    protected final static String ConsultExpertHandleParameter = "handle";
-    protected final static String ConsultExpertFormatterParameter = "xslid";
     protected final static String EditEntryURL = "EditEntry.po";
+	protected final static String XML_FORMATTER = fr.imag.clips.papillon.business.transformation.XslTransformation.XML_FORMATTER; 
+
 
     protected final static int STEP_INIT = 1;
     protected final static int STEP_LOOKUP_EDIT = 2;
     protected final static int STEP_CREATE = 3;
     protected final static int STEP_EDIT = 4;
+    protected final static int STEP_VIEW = 5;
 
     protected EditEntryInitXHTML content;
 
@@ -186,10 +190,12 @@ public class EditEntryInit extends PapillonBasePO {
 	    // On regarde d'abord les parametres qui nous sont demandes.
 		String submitLookupEdit = myGetParameter(content.NAME_LookupEdit);
 		String submitCreate = myGetParameter(content.NAME_CreateAnyway);		
+		String submitView = myGetParameter(VIEW_PARAMETER);		
 		String volume = myGetParameter(content.NAME_VOLUME);
 		String headword = myGetParameter(content.NAME_HEADWORD);
 		String partialMatch = myGetParameter(content.NAME_PartialMatch);
 		String entryHandle = myGetParameter(HANDLE_PARAMETER);
+		String formatter = myGetParameter(FORMATTER_PARAMETER);
 		
 		if (volume!=null &&!volume.equals("")) {
 			this.setPreference(content.NAME_VOLUME,volume);
@@ -204,7 +210,12 @@ public class EditEntryInit extends PapillonBasePO {
 		}
 
 		int step = STEP_INIT;
-		if (submitLookupEdit!=null &&!submitLookupEdit.equals("")
+		if (submitView !=null &&!submitView.equals("")
+			&& volume!=null && !volume.equals("")
+			&& entryHandle!=null && !entryHandle.equals("")) {
+			step = STEP_VIEW;
+		}
+		else if (submitLookupEdit!=null &&!submitLookupEdit.equals("")
 			&& volume!=null && !volume.equals("")
 			&& headword!=null && !headword.equals("")) {
 			step = STEP_LOOKUP_EDIT;
@@ -225,11 +236,13 @@ public class EditEntryInit extends PapillonBasePO {
 		VolumeEntry myEntry = null;
 				
 	    switch (step) {
-		case STEP_LOOKUP_EDIT:
-		    volume = myGetParameter(content.NAME_VOLUME);
-			displayLookupResults(volume, headword, strategy, this.getUserPreferredLanguage());
-		    break;
-		case STEP_CREATE:
+			case STEP_VIEW:
+				displayEntry(volume, entryHandle, formatter);
+				break;
+			case STEP_LOOKUP_EDIT:
+				displayLookupResults(volume, headword, strategy);
+				break;
+			case STEP_CREATE:
 			myEntry = VolumeEntriesFactory.createEmptyEntry(volume);
 			myEntry.setCreationDate();
 			myEntry.setHeadword(headword);
@@ -273,11 +286,11 @@ public class EditEntryInit extends PapillonBasePO {
 	java.io.UnsupportedEncodingException {
 
 		// Addin the headword
-	    HTMLInputElement headwordInputElt = content.getElementHEADWORD();
+	    XHTMLInputElement headwordInputElt = content.getElementHEADWORD();
 		headwordInputElt.setValue(headword);
 
 	    // Adding the appropriate source languages to the source list
-	    HTMLOptionElement volumeOptionTemplate = content.getElementVolumeOptionTemplate();
+	    XHTMLOptionElement volumeOptionTemplate = content.getElementVolumeOptionTemplate();
 	    Node volumeSelect = volumeOptionTemplate.getParentNode();
 	    volumeOptionTemplate.removeAttribute("id");
 	    // We assume that the option element has only one text child
@@ -303,7 +316,35 @@ public class EditEntryInit extends PapillonBasePO {
 	    volumeSelect.removeChild(volumeOptionTemplate);
 	}
 
-    protected void displayLookupResults (String volumeName, String headword, int strategy, String lang)
+    protected void displayEntry (String volumeName, String handle, String formatter)
+		throws PapillonBusinessException,
+		java.io.UnsupportedEncodingException,
+		HttpPresentationException {
+			
+			removeEntryListTable();
+			
+			Volume myVolume = VolumesFactory.findVolumeByName(volumeName);
+			String[] targets = null;
+			if (myVolume != null && !myVolume.isEmpty()) {
+				targets = myVolume.getTargetLanguagesArray();
+			}
+			Collection EntryCollection = DictionariesFactory.findAnswerAndTranslations(volumeName, handle, targets, this.getUser());
+
+			if (EntryCollection != null && EntryCollection.size()>0) {
+				QueryResult myQueryResult = (QueryResult) EntryCollection.iterator().next();
+				VolumeEntry myEntry = myQueryResult.getSourceEntry();
+				// get the apropriate transformer.
+				fr.imag.clips.papillon.business.transformation.ResultFormatter rf = fr.imag.clips.papillon.business.transformation.ResultFormatterFactory.getFormatter(myQueryResult, formatter, fr.imag.clips.papillon.business.transformation.ResultFormatterFactory.XHTML_DIALECT, null);
+				
+				Element myXhtmlElt = (Element)rf.getFormattedResult(myQueryResult);
+				
+				XHTMLElement entryDiv = (XHTMLElement) content.getElementEntryDiv();
+				entryDiv.appendChild(content.importNode(myXhtmlElt, true));
+				
+			}
+		}
+	
+    protected void displayLookupResults (String volumeName, String headword, int strategy)
 	throws PapillonBusinessException,
 	java.io.UnsupportedEncodingException,
 	HttpPresentationException {
@@ -336,19 +377,19 @@ public class EditEntryInit extends PapillonBasePO {
 	fr.imag.clips.papillon.business.PapillonBusinessException {
 
 	    // On récupère les éléments du layout
-	    HTMLTableRowElement entryListRow = content.getElementEntryListRow();
-		HTMLAnchorElement entryIdAnchor = content.getElementViewEntryAnchor();
-	    HTMLElement headwordElement = content.getElementHeadwordList();
-	    HTMLElement posElement = content.getElementPosList();
-	    HTMLElement authorElement = content.getElementEntryAuthorList();
-	    HTMLAnchorElement editAnchor = content.getElementEditEntryAnchor();
-	    HTMLAnchorElement viewXmlAnchor = content.getElementViewXmlEntryAnchor();
-	    HTMLElement editElement = content.getElementEditMessage();
-	    HTMLElement copyElement = content.getElementCopyMessage();
+	    XHTMLTableRowElement entryListRow = content.getElementEntryListRow();
+		XHTMLAnchorElement entryIdAnchor = content.getElementViewEntryAnchor();
+	    XHTMLElement headwordElement = content.getElementHeadwordList();
+	    XHTMLElement posElement = content.getElementPosList();
+	    XHTMLElement authorElement = content.getElementEntryAuthorList();
+	    XHTMLAnchorElement editAnchor = content.getElementEditEntryAnchor();
+	    XHTMLAnchorElement viewXmlAnchor = content.getElementViewXmlEntryAnchor();
+	    XHTMLElement editElement = content.getElementEditMessage();
+	    XHTMLElement copyElement = content.getElementCopyMessage();
 
 		// Recuperating the elements for the formula
-		HTMLTableRowElement formulaRow = content.getElementFormulaRow();
-		HTMLElement formulaElement = content.getElementFormula();
+		XHTMLTableRowElement formulaRow = content.getElementFormulaRow();
+		XHTMLElement formulaElement = content.getElementFormula();
 		
 
 	    //      we don't take off the id attribute because we will take the element off later...
@@ -374,11 +415,10 @@ public class EditEntryInit extends PapillonBasePO {
 		    content.setTextHeadwordList(myEntry.getCompleteHeadword());
 
 			// The entry id
-		    String href = ConsultExpertURL + "?"
-			+ ConsultExpert.VOLUME_PARAMETER + "="
-			+ myEntry.getVolumeName() + "&"
-			+ ConsultExpert.HANDLE_PARAMETER + "="
-			+ myEntry.getHandle();
+		    String href = this.getUrl() + "?"
+				+ content.NAME_VOLUME + "="+ myEntry.getVolumeName() + "&"
+				+ VIEW_PARAMETER + "=" + VIEW_PARAMETER + "&"
+				+ HANDLE_PARAMETER + "=" + myEntry.getHandle();
 			
 		    entryIdAnchor.setHref(href);
 
@@ -397,10 +437,8 @@ public class EditEntryInit extends PapillonBasePO {
 
 		    // The edit anchor
 		   href = this.getUrl() + "?"
-			+ content.NAME_VOLUME + "="
-			+ myEntry.getVolumeName() + "&"
-			+ HANDLE_PARAMETER + "="
-			+ myEntry.getHandle();
+			+ content.NAME_VOLUME + "=" + myEntry.getVolumeName() + "&"
+			+ HANDLE_PARAMETER + "=" + myEntry.getHandle();
 			
 			// the Edit button
 			if (myEntry.getAuthor().equals(this.getUser().getLogin())
@@ -421,13 +459,11 @@ public class EditEntryInit extends PapillonBasePO {
 			}
 
 		    // The view XML anchor
-		    href = ConsultExpertURL + "?"
-				+ ConsultExpert.VOLUME_PARAMETER + "="
-				+ myEntry.getVolumeName() + "&"
-				+ ConsultExpert.HANDLE_PARAMETER + "="
-				+ myEntry.getHandle() + "&"
-			+ ConsultExpert.FORMATTER_PARAMETER + "="
-			+ fr.imag.clips.papillon.business.transformation.XslTransformation.XML_FORMATTER; 
+		    href = this.getUrl() + "?"
+				+ content.NAME_VOLUME + "="+ myEntry.getVolumeName() + "&"
+				+ VIEW_PARAMETER + "=" + VIEW_PARAMETER + "&"
+				+ FORMATTER_PARAMETER + "=" + XML_FORMATTER + "&"
+				+ HANDLE_PARAMETER + "=" + myEntry.getHandle();
 			
 			viewXmlAnchor.setHref(href);
 
@@ -435,8 +471,8 @@ public class EditEntryInit extends PapillonBasePO {
 			content.setTextFormula(myEntry.getDefinition());
 
 
-			HTMLElement cloneEntry = (HTMLElement)entryListRow.cloneNode(true);
-			HTMLElement cloneFormula = (HTMLElement)formulaRow.cloneNode(true);
+			XHTMLElement cloneEntry = (XHTMLElement)entryListRow.cloneNode(true);
+			XHTMLElement cloneFormula = (XHTMLElement)formulaRow.cloneNode(true);
 
 		    //      we have to take off the id attribute because we did not take it off the original
 			cloneEntry.removeAttribute("id");

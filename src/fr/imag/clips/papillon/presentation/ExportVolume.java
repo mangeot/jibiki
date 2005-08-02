@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.9  2005/08/02 08:27:16  mangeot
+ * Now, the display of an entry with EditEntryInit is done in the page itself.
+ *
  * Revision 1.8  2005/07/30 13:52:13  mangeot
  * Commit due to some conflicts between directories. Beware !
  *
@@ -281,6 +284,10 @@ public class ExportVolume extends PapillonBasePO {
 	protected void addConsultForm(String selectedVolume) 
         throws fr.imag.clips.papillon.business.PapillonBusinessException, 
                 HttpPresentationException {
+					
+		XHTMLAnchorElement repositoryAnchor = content.getElementRepositoryAnchor();
+		repositoryAnchor.setHref(this.getExportRelativeDir());
+					
            // Adding the appropriate source languages to the source list
         XHTMLOptionElement volumeOptionTemplate = content.getElementVolumeOptionTemplate();
         Node volumeSelect = volumeOptionTemplate.getParentNode();
