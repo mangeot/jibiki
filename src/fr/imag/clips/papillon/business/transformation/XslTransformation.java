@@ -4,6 +4,10 @@
  *$Id$
  *------------------------
  *$Log$
+ *Revision 1.10  2005/08/02 14:41:49  mangeot
+ *Work on stylesheets and
+ *added a reset button for Review and AdminContrib forms
+ *
  *Revision 1.9  2005/07/28 13:06:47  mangeot
  *- Added the possibility to export in PDF format. The conversion into PDF is don
  *e via the fop package that has to be installed (see ToolsForPapillon)
@@ -404,7 +408,7 @@ public class XslTransformation implements ResultFormatter {
 			return resultString;
 		}
 	
-    // This should be handle via the notion of "dialect" of xslsheets.
+    // This should be handled via the notion of "dialect" of xslsheets.
 	public static Element applyXslSheetsForFo(IAnswer answer)
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 			org.w3c.dom.Document result = answer.getDom();
@@ -419,11 +423,11 @@ public class XslTransformation implements ResultFormatter {
 					if (null != theXslSheet && !theXslSheet.isEmpty()) {
 						result = Transform((Node)result, theXslSheet);
 					}
-					// Last, the default one
-					theXslSheet = XslSheetFactory.findXslSheetByName(XslSheet.FO_view);
-					if (!theXslSheet.isEmpty()) {
-						result = XslTransformation.Transform((Node)result, theXslSheet);
-					}
+				}
+				// Last, the default one
+				theXslSheet = XslSheetFactory.findXslSheetByName(XslSheet.FO_view);
+				if (!theXslSheet.isEmpty()) {
+					result = XslTransformation.Transform((Node)result, theXslSheet);
 				}
 			}
 			catch(Exception ex) {

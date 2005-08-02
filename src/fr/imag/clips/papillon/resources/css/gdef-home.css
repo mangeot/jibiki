@@ -297,6 +297,9 @@ p.standard {
 .gray {
 	color:  gray;
 }
+.comment {
+	color:  gray;
+}
 .hidden {
 	display: none;
 }
@@ -336,10 +339,6 @@ A.hide {text-decoration: none}
 	font-wheight : bold;
 	color : #69FF69; 
 
-}
-.comment {
-	font-style : italic;
-	color :  #BEBEBE;
 }
 .space {
 	color: #faecc9;

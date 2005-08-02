@@ -9,6 +9,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.19  2005/08/02 14:41:49  mangeot
+ * Work on stylesheets and
+ * added a reset button for Review and AdminContrib forms
+ *
  * Revision 1.18  2005/08/01 17:37:33  mangeot
  * Bug fix in sort function
  *
@@ -231,13 +235,10 @@ public class AdminContributions extends PapillonBasePO {
 			content = (AdminContributionsTmplXHTML)MultilingualXHtmlTemplateFactory.createTemplate("AdminContributionsTmplXHTML", this.getComms(), this.getSessionData());
 			
 			HttpPresentationRequest req = this.getComms().request;
-			
-			//TEMPORAIRE :avec l URL
-			//AJOUT D ENTREE DE DICO
-			
-			//String URL = req.getParameter(content.NAME_URL);
+						
 			String URL = null;
 			String lookup = myGetParameter(content.NAME_LOOKUP);
+			String reset = myGetParameter(content.NAME_RESET);
 			String volumeString = myGetParameter(content.NAME_VOLUME);
 			String headword = myGetParameter(HEADWORD_PARAMETER);
 			String entryid = myGetParameter(ENTRYID);
@@ -502,10 +503,15 @@ public class AdminContributions extends PapillonBasePO {
 				this.getSessionData().writeUserMessage(userMessage);
 				PapillonLogger.writeDebugMsg(userMessage);
 			}
-			
-			addConsultForm(volumeString, creationDate, creationDateStrategyString, reviewDate, reviewDateStrategyString, search1, search1text, strategyString1, search2, search2text, strategyString2, status);
-			
-			addContributions(entryid, volumeString, this.getUser(), myKeys, myClauses, anyContains, offset, xslid, sortBy, queryString);
+			if (reset != null) {
+				this.resetPreferences();
+				addConsultForm(null, null, null, null, null, null, null, null, null, null, null, null);
+			}
+			else {
+				addConsultForm(volumeString, creationDate, creationDateStrategyString, reviewDate, reviewDateStrategyString, search1, search1text, strategyString1, search2, search2text, strategyString2, status);
+				
+				addContributions(entryid, volumeString, this.getUser(), myKeys, myClauses, anyContains, offset, xslid, sortBy, queryString);
+			}
 			
 			removeTemplateRows();
 			

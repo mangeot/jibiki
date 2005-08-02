@@ -9,6 +9,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.6  2005/08/02 14:41:49  mangeot
+ * Work on stylesheets and
+ * added a reset button for Review and AdminContrib forms
+ *
  * Revision 1.5  2005/05/24 12:51:22  serasset
  * Updated many aspect of the Papillon project to handle lexalp project.
  * 1. Layout is now parametrable in the application configuration file.
@@ -219,4 +223,13 @@ public class PapillonSessionData {
 				}
 			}
 		}
+	
+	public void resetPreferences(String url) {
+		for (java.util.Enumeration e = PreferencesTable.elements() ; e.hasMoreElements() ;) {
+			String key = (String) e.nextElement();
+			if (key.regionMatches(0,url,0,url.length())) {
+				this.PreferencesTable.put(key, "");
+			}
+		}		
+	}
 }

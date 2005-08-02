@@ -9,6 +9,10 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.4  2005/08/02 14:41:49  mangeot
+ *  Work on stylesheets and
+ *  added a reset button for Review and AdminContrib forms
+ *
  *  Revision 1.3  2005/07/08 08:22:46  serasset
  *  Reviewed the Abstract/BasePO hierarchy (moved some methods up in the tree).
  *  Added base classes to allow independant browsing window to establish links during edition.
@@ -392,6 +396,19 @@ public abstract class PapillonBasePO extends AbstractPO {
     public void setPreference(String name, String value, boolean persistent)
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
             this.getSessionData().setPreference(getUrl(), name, value, persistent);
+        }
+    
+    /**
+        *  Resets the preferences of the PapillonBasePO object to the empty String ""
+     *
+     * @param  url
+     *      The url of the page to reset
+     * @exception  fr.imag.clips.papillon.business.PapillonBusinessException
+     *      Description of the Exception
+     */
+    public void resetPreferences()
+        throws fr.imag.clips.papillon.business.PapillonBusinessException {
+            this.getSessionData().resetPreferences(getUrl());
         }
     
     

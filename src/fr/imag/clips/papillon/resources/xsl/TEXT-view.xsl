@@ -7,6 +7,10 @@
  *  $Id$
  *  
  *  $Log$
+ *  Revision 1.4  2005/08/02 14:41:49  mangeot
+ *  Work on stylesheets and
+ *  added a reset button for Review and AdminContrib forms
+ *
  *  Revision 1.3  2005/07/22 08:54:32  mangeot
  *  *** empty log message ***
  *
@@ -18,11 +22,14 @@
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns="http://www.w3.org/1999/xhtml">
 
+<xsl:strip-space elements="*" />
+
 <xsl:output method="text" encoding="utf-8" indent="no"/> 
 
 <!-- general templates please do not modify -->
 
 <!-- here I do not use the xsl:copy because it copies also xmlns: attributes -->
+<xsl:template match="d:*" priority="-1"><xsl:apply-templates /></xsl:template>
 <xsl:template match="*" priority="-1"><xsl:apply-templates /></xsl:template>
 
 <xsl:template match="comment()"></xsl:template>
@@ -30,17 +37,31 @@
 
 <xsl:template match="/"><xsl:apply-templates/></xsl:template>
 
+<!-- xhtml templates -->
+<xsl:template match="br"><xsl:text>
+</xsl:text></xsl:template>
+
+
+<!-- dml specific templates -->
+<xsl:template match="d:br"><xsl:text>
+</xsl:text></xsl:template>
+
+<xsl:template match="d:comment"><xsl:apply-templates /><xsl:text>
+</xsl:text></xsl:template>
+
+<xsl:template match="d:space"><xsl:text> </xsl:text></xsl:template>
+
+
 <!-- volume specific templates -->
 
-<xsl:template match="d:entry">
-<xsl:apply-templates select="d:headword"/>
-<xsl:apply-templates select="d:pronunciation"/>
-<xsl:apply-templates select="d:pos"/>
-</xsl:template>
+<xsl:template match="d:contribution"><xsl:text>
+Contribution: 
+</xsl:text><xsl:apply-templates select="*" /><xsl:text>
+</xsl:text></xsl:template>
 
-<xsl:template match="d:headword">
-<xsl:apply-templates />
-</xsl:template>
+<xsl:template match="d:entry"><xsl:apply-templates select="*" /></xsl:template>
+
+<xsl:template match="d:headword"><xsl:apply-templates /></xsl:template>
 
 <xsl:template match="d:pronunciation">
 <xsl:if test="text()!=''"> /<xsl:apply-templates />/</xsl:if>
@@ -50,20 +71,9 @@
 <xsl:if test="text()!=''">, <xsl:apply-templates /></xsl:if>
 </xsl:template>
 
-<xsl:template match="d:mot">
-  <d:headword>
-	<xsl:apply-templates/>
-  </d:headword>
-</xsl:template>
-
-<xsl:template match="d:type">
-  <d:space/>
-	<xsl:apply-templates/>
-</xsl:template>
-
 <xsl:template match="d:particule">
    <xsl:if test="text()!=''">
-      <xsl:apply-templates/><d:space/>
+      <xsl:apply-templates/><xsl:text> </xsl:text>
     </xsl:if>
 </xsl:template>
 
@@ -85,26 +95,13 @@
 	<xsl:apply-templates/>
 </xsl:template>
 
-<xsl:template match="d:bloc-gram">
-  <d:sense>
-	<xsl:apply-templates/>
-  </d:sense>
+<xsl:template match="d:sense">
+<xsl:text>
+</xsl:text>
+	<xsl:apply-templates select="*"/>
 </xsl:template>
 
-<xsl:template match="d:cat-gram">
-  <d:pos>
-	<xsl:apply-templates/>
-  </d:pos>
-</xsl:template>
-
-<xsl:template match="d:bloc-semantique">
-  <d:sense>
-	<xsl:apply-templates select="d:registre-sens-vedette"/>
-	<xsl:apply-templates select="d:indication-sem1"/>
-	<xsl:apply-templates select="d:sous-bloc-semantique"/>
-	<xsl:apply-templates select="d:bloc-exemples"/>
-  </d:sense>
-</xsl:template>
+<xsl:template match="d:cat-gram"><xsl:apply-templates/></xsl:template>
 
 <xsl:template match="registre-sens-vedette">
    <xsl:if test="text()!=''">
@@ -128,11 +125,7 @@
 </xsl:template>
 
 <xsl:template match="d:indication-sem2">
-	<xsl:if test="text()!=''">
-		<d:label>
-			<xsl:apply-templates/>
-		</d:label>
-	</xsl:if>
+	<xsl:if test="text()!=''"><xsl:apply-templates/></xsl:if>
 </xsl:template>
 
 <xsl:template match="d:bloc-contextuel">
@@ -168,38 +161,27 @@
 </xsl:template>
 
 <xsl:template match="d:apres">
-  <d:fra>
 	<xsl:apply-templates/>
-  </d:fra>
 </xsl:template>
 
 <xsl:template match="d:registre-equiv">
-  <d:fra>
-	<xsl:apply-templates/>
-  </d:fra>
+	<xsl:apply-templates select="*"/>
 </xsl:template>
 
-<xsl:template match="d:rection-est">
-  <d:est>
+<xsl:template match="d:rection-equiv-est">
 	<xsl:apply-templates/>
-  </d:est>
 </xsl:template>
 
-<xsl:template match="d:rection-fra">
-  <d:fra>
+<xsl:template match="d:rection-equiv-fra">
 	<xsl:apply-templates/>
-  </d:fra>
 </xsl:template>
 
-<xsl:template match="d:bloc-exemples">
-  <d:exemples><xsl:text>Exemples :</xsl:text><d:space/>
-	<xsl:apply-templates/>
-  </d:exemples>
+<xsl:template match="d:exemples">
+<xsl:text>
+Exemples : </xsl:text><xsl:apply-templates select="*"/>
 </xsl:template>
 
-<xsl:template match="d:exemple">
-	<xsl:apply-templates/>
-</xsl:template>
+<xsl:template match="d:exemple"><xsl:apply-templates/></xsl:template>
 
 <xsl:template match="d:exemple-est">
  <d:est>
@@ -217,10 +199,9 @@
   </d:fra>
 </xsl:template>
 
-<xsl:template match="d:bloc-phraseol">
-  <d:idioms><xsl:text>Phraséologie :</xsl:text><d:space/>
-	<xsl:apply-templates/>
-  </d:idioms>
+<xsl:template match="d:idioms">
+<xsl:text>
+Phraséologie : </xsl:text><xsl:apply-templates select="*"/>
 </xsl:template>
 
 <xsl:template match="d:unite-phraseol">
@@ -263,28 +244,18 @@
 <xsl:template match="d:bloc-renvois">
   <d:sense><xsl:text>Renvois :</xsl:text><d:space/>
   	<xsl:for-each select="d:renvoi-phraseol">
-	<a>
-	<xsl:attribute name="href">
-    	<xsl:value-of select="text()"/>
-  	</xsl:attribute> 
 	<xsl:apply-templates/>
-	</a>
    <xsl:if test="position()!=last()">
-      <xsl:text>,</xsl:text><d:space/>
+      <xsl:text>, </xsl:text>
     </xsl:if>
 	</xsl:for-each>
   </d:sense>
 </xsl:template>
 
 <xsl:template match="d:renvoi-phraseol">
-	<a>
-	<xsl:attribute name="href">
-    	<xsl:value-of select="text()"/>
-  	</xsl:attribute> 
 	<xsl:apply-templates/>
-	</a>
-   <xsl:if test="position()!=last()">
-      <xsl:text>,</xsl:text><d:space/>
+  <xsl:if test="position()!=last()">
+      <xsl:text>, </xsl:text>
     </xsl:if>
 </xsl:template>
 

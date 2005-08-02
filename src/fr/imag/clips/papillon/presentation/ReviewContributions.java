@@ -9,6 +9,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.19  2005/08/02 14:41:49  mangeot
+ * Work on stylesheets and
+ * added a reset button for Review and AdminContrib forms
+ *
  * Revision 1.18  2005/08/01 17:37:33  mangeot
  * Bug fix in sort function
  *
@@ -206,6 +210,7 @@ public class ReviewContributions extends PapillonBasePO {
 	protected final static int STEP_REVISE = 5;
 	protected final static int STEP_VALIDATE = 6;
 	protected final static int STEP_REMOVE_VALIDATED = 7;
+	protected final static int STEP_RESET = 8;
 
 	protected final static String ALL="*ALL*";
 	protected final static String EditURL="EditEntry.po";
@@ -258,7 +263,8 @@ public class ReviewContributions extends PapillonBasePO {
 		// decoding the CGI arguments
 		String queryString = "";
 		
-			String lookup = myGetParameter(content.NAME_LOOKUP);
+		String lookup = myGetParameter(content.NAME_LOOKUP);
+		String reset = myGetParameter(content.NAME_RESET);
 			String volume = myGetParameter(content.NAME_VOLUME);
 			String headword = myGetParameter(HEADWORD_PARAMETER);
 		// hidden arguments
@@ -551,6 +557,9 @@ public class ReviewContributions extends PapillonBasePO {
 		else if (null != contribid && null != myGetParameter(REMOVE_VALIDATED_CONTRIB_PARAMETER)) {
 			step = STEP_REMOVE_VALIDATED;
 		}		
+		else if (null != reset) {
+			step = STEP_RESET;
+		}		
 		
 		String userMessage = null;
 
@@ -621,6 +630,9 @@ public class ReviewContributions extends PapillonBasePO {
 				}
 				addContributions(volume, myKeys, myClauses, sortBy, queryString, offset);
 				break;
+			case STEP_RESET:
+				this.resetPreferences();
+				break;
 			default:
 				break;
 			}	
@@ -629,12 +641,20 @@ public class ReviewContributions extends PapillonBasePO {
                 this.getSessionData().writeUserMessage(userMessage);
                 PapillonLogger.writeDebugMsg(userMessage);
             }
-           
-        addConsultForm(volume, status, author, reviewer, 
-			creationDate, creationDateStrategyString, 
-			reviewDate, reviewDateStrategyString, 
-			search1, search1text, strategyString1, 
-			search2, search2text, strategyString2);
+		if (step != STEP_RESET) {
+			addConsultForm(volume, status, author, reviewer, 
+						   creationDate, creationDateStrategyString, 
+						   reviewDate, reviewDateStrategyString, 
+						   search1, search1text, strategyString1, 
+						   search2, search2text, strategyString2);
+		}
+		else {
+			addConsultForm(null, null, null, null, 
+						   null, null, 
+						   null, null, 
+						   null, null, null, 
+						   null, null, null);
+		}
 
         removeTemplateRows();
         

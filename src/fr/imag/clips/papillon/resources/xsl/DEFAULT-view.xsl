@@ -7,6 +7,10 @@
  *  $Id$
  *  
  *  $Log$
+ *  Revision 1.6  2005/08/02 14:41:49  mangeot
+ *  Work on stylesheets and
+ *  added a reset button for Review and AdminContrib forms
+ *
  *  Revision 1.5  2005/07/16 13:42:08  mangeot
  *  *** empty log message ***
  *
@@ -54,16 +58,23 @@
 </span>
 </xsl:template>
 
+<!-- formating dml elements -->
+
+<xsl:template match="d:br"><br /></xsl:template>
+
+<xsl:template match="d:comment"><span class="comment"><xsl:apply-templates/></span><br /></xsl:template>
+
+<xsl:template match="d:space">&nbsp;</xsl:template>
+
+
+<!-- content dml elements -->
+
 <xsl:template match="d:examples">		
-<blockquote>
-<span class="examples"><xsl:apply-templates/></span>
-</blockquote>
+<blockquote><span class="examples"><xsl:apply-templates/></span></blockquote>
 </xsl:template>
 
 <xsl:template match="d:idioms">		
-<blockquote>
-<span class="idioms"><xsl:apply-templates/></span>
-</blockquote>
+<blockquote><span class="idioms"><xsl:apply-templates/></span></blockquote>
 </xsl:template>
 
 <xsl:template match="d:reflexie">		
@@ -77,49 +88,36 @@
 
 <xsl:template match="d:pronunciation">
 <xsl:if test="text()">		
-<xsl:text>/</xsl:text>
-<span class="pronunciation"><xsl:apply-templates/></span>
-<xsl:text>/</xsl:text>
+<xsl:text>/</xsl:text><span class="pronunciation"><xsl:apply-templates/></span><xsl:text>/</xsl:text>
 </xsl:if>
 </xsl:template>
 
 <xsl:template match="d:pos">
-<xsl:if test="text()">		
-<span class="pos"><xsl:apply-templates/></span>
-</xsl:if>
+<xsl:if test="text()"><span class="pos"><xsl:apply-templates/></span></xsl:if>
 </xsl:template>
 
 <xsl:template match="d:headword">		
-<xsl:if test="text()">
-<span class="headword"><xsl:apply-templates/></span>
-</xsl:if>
-</xsl:template>
-
-<xsl:template match="d:writing">		
-<xsl:if test="text()">
-<xsl:text>【</xsl:text>
-<span class="writing"><xsl:apply-templates/></span>
-<xsl:text>】</xsl:text>
-</xsl:if>
+<xsl:if test="text()"><span class="headword"><xsl:apply-templates/></span></xsl:if>
 </xsl:template>
 
 <xsl:template match="d:reading">		
-<xsl:if test="text()">
-<span class="reading">[<xsl:apply-templates/>]</span>
-</xsl:if>
+<xsl:if test="text()"><span class="reading">[<xsl:apply-templates/>]</span></xsl:if>
+</xsl:template>
+
+<xsl:template match="d:sense">		
+<blockquote><span class="sense"><xsl:apply-templates/></span></blockquote>
 </xsl:template>
 
 <xsl:template match="d:translations">		
 <blockquote><xsl:apply-templates/></blockquote>
 </xsl:template>
 
-<xsl:template match="d:sense">		
-<blockquote>
-<span class="sense"><xsl:apply-templates/></span>
-</blockquote>
+<xsl:template match="d:writing">		
+<xsl:if test="text()">
+<xsl:text>【</xsl:text><span class="writing"><xsl:apply-templates/></span><xsl:text>】</xsl:text>
+</xsl:if>
 </xsl:template>
 
-<xsl:template match="d:space">&nbsp;</xsl:template>
 
  <xsl:template name="alternated-row">
         <xsl:attribute name="class">
