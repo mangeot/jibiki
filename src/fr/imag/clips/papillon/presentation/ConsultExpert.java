@@ -10,6 +10,10 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.25  2005/08/03 10:22:03  mangeot
+ *  Fixed a bug in ConsultExpert for the deleteEntry button
+ *  + added a reset Button
+ *
  *  Revision 1.24  2005/08/01 08:34:03  mangeot
  *  Added method getCompleteHeadword for VolumeEntry that concatenates the homograph number and the particule to the headword
  *
@@ -202,40 +206,17 @@ public class ConsultExpert extends PapillonBasePO {
      *  Description of the Field
      */
     protected final static String FORMATTER_PARAMETER = "formatter";
-
-    /**
-     *  Description of the Field
-     */
     protected final static String VOLUME_PARAMETER = "VOLUME";
-    /**
-     *  Description of the Field
-     */
     protected final static String AnyContains_PARAMETER = "AnyContains";
+	protected final static String OFFSET_PARAMETER = "OFFSET";
+    protected final static String ANY_RESOURCE = "*ANY*";
+    protected final static String ANY_TARGET = "*ANY*";
 
+    protected final static String ContributionsVolumeParameter = "VOLUME";
     /**
      *  Description of the Field
      */
     protected final static String ContributionsURL = "AdminContributions.po";
-    /**
-     *  Description of the Field
-     */
-    protected final static String ContributionsVolumeParameter = "VOLUME";
-
-    /**
-     *  Description of the Field
-     */
-    protected final static String ANY_RESOURCE = "*ANY*";
-    /**
-     *  Description of the Field
-     */
-    protected final static String ANY_TARGET = "*ANY*";
-
-	/**
-	*  Description of the Field
-	*/
-   protected final static String OFFSET_PARAMETER = "OFFSET";
-
-
     /**
      *  Description of the Field
      */
@@ -245,91 +226,16 @@ public class ConsultExpert extends PapillonBasePO {
      *  Description of the Field
      */
     protected int XslSheetsNumber = 1;
-
-    /**
-     *  Description of the Field
-     */
-    protected Languages Languages;
-    /**
-     *  Description of the Field
-     */
-    protected AvailableLanguages MyAvailableLanguages;
-
-    /**
-     *  Description of the Field
-     */
-    protected String[] allSourceLanguages;
-    /**
-     *  Description of the Field
-     */
-    protected String[] allTargetLanguages;
-    /**
-     *  Description of the Field
-     */
-    protected String[] allResources;
-
-    /**
-     *  Description of the Field
-     */
-    protected String sourceLanguage;
-    /**
-     *  Description of the Field
-     */
-    protected String[] targetLanguages;
-    /**
-     *  Description of the Field
-     */
-    protected String[] originalTargets;
-    /**
-     *  Description of the Field
-     */
-    protected String[] resources;
-    /**
-     *  Description of the Field
-     */
-    protected String[] originalResources;
+	
     /**
      *  Description of the Field
      */
     protected String login = null;
-    /**
-     *  Description of the Field
-     */
-    protected String search1;
-    /**
-     *  Description of the Field
-     */
-    protected String search1text;
-    /**
-     *  Description of the Field
-     */
-    protected String search2;
-    /**
-     *  Description of the Field
-     */
-    protected String search2text;
-    /**
-     *  Description of the Field
-     */
-    protected String strategyString1;
-    /**
-     *  Description of the Field
-     */
-    protected String strategyString2;
-    /**
-     *  Description of the Field
-     */
-    protected int strategy1 = IQuery.STRATEGY_NONE;
-    /**
-     *  Description of the Field
-     */
-    protected int strategy2 = IQuery.STRATEGY_NONE;
 
     /**
      *  Description of the Field
      */
     protected ConsultExpertXHTML content;
-
 
     /**
      *  Description of the Method
@@ -340,7 +246,6 @@ public class ConsultExpert extends PapillonBasePO {
         return false;
     }
 
-
     /**
      *  Description of the Method
      *
@@ -349,7 +254,6 @@ public class ConsultExpert extends PapillonBasePO {
     protected boolean userMayUseThisPO() {
         return true;
     }
-
 
     /**
      *  Gets the currentSection attribute of the ConsultExpert object
@@ -388,49 +292,50 @@ public class ConsultExpert extends PapillonBasePO {
      *      of the Exception
      */
     public Node getContent()
-             throws HttpPresentationException,
-            IOException,
-            TransformerConfigurationException,
-            org.xml.sax.SAXException,
-            javax.xml.parsers.ParserConfigurationException,
-            java.io.IOException,
-            javax.xml.transform.TransformerException,
-            ClassNotFoundException,
-            PapillonBusinessException,
-            UnsupportedEncodingException {
+		throws HttpPresentationException,
+		IOException,
+		TransformerConfigurationException,
+		org.xml.sax.SAXException,
+		javax.xml.parsers.ParserConfigurationException,
+		java.io.IOException,
+		javax.xml.transform.TransformerException,
+		ClassNotFoundException,
+		PapillonBusinessException,
+		UnsupportedEncodingException {
 
         // Content creation
         content = (ConsultExpertXHTML) MultilingualXHtmlTemplateFactory.createTemplate("ConsultExpertXHTML", this.getComms(), this.getSessionData());
 
         // On regarde d'abord les parametres qui nous sont demandes.
-        String submit = myGetParameter(content.NAME_LOOKUP);
-        sourceLanguage = myGetParameter(content.NAME_SOURCE);
+		String submitLookup = myGetParameter(content.NAME_LOOKUP);
+		String submitReset = myGetParameter(content.NAME_RESET);
+        String sourceLanguage = myGetParameter(content.NAME_SOURCE);
         if (sourceLanguage != null && !sourceLanguage.equals("")) {
             this.setPreference(content.NAME_SOURCE, sourceLanguage);
         } else {
             sourceLanguage = this.getPreference(content.NAME_SOURCE);
         }
-        targetLanguages = myGetParameterValues(content.NAME_TARGETS);
-        originalTargets = targetLanguages;
-        resources = myGetParameterValues(content.NAME_RESOURCES);
-        originalResources = resources;
+        String[] targetLanguages = myGetParameterValues(content.NAME_TARGETS);
+        String[] originalTargets = targetLanguages;
+        String[] resources = myGetParameterValues(content.NAME_RESOURCES);
+        String[] originalResources = resources;
         String volume = myGetParameter(VOLUME_PARAMETER);
 
-        search1 = myGetParameter(content.NAME_search1);
+        String search1 = myGetParameter(content.NAME_search1);
         if (search1 != null && !search1.equals("")) {
             this.setPreference(content.NAME_search1, search1);
         } else {
             search1 = this.getPreference(content.NAME_search1);
         }
-        search1text = myGetParameter(content.NAME_search1text);
+        String search1text = myGetParameter(content.NAME_search1text);
 		
-        search2 = myGetParameter(content.NAME_search2);
+        String search2 = myGetParameter(content.NAME_search2);
         if (search2 != null && !search2.equals("")) {
             this.setPreference(content.NAME_search2, search2);
         } else {
             search2 = this.getPreference(content.NAME_search2);
         }
-        search2text = myGetParameter(content.NAME_search2text);
+        String search2text = myGetParameter(content.NAME_search2text);
 
         String anyContains = null;
 
@@ -447,24 +352,24 @@ public class ConsultExpert extends PapillonBasePO {
             }
         }
 
-        strategyString1 = myGetParameter(content.NAME_Strategy1);
+        String strategyString1 = myGetParameter(content.NAME_Strategy1);
         if (strategyString1 != null && !strategyString1.equals("")) {
             this.setPreference(content.NAME_Strategy1, strategyString1);
         } else {
             strategyString1 = this.getPreference(content.NAME_Strategy1);
         }
-        strategy1 = IQuery.STRATEGY_NONE;
+        int strategy1 = IQuery.STRATEGY_NONE;
         if (null != strategyString1 && !strategyString1.equals("")) {
             strategy1 = Integer.parseInt(strategyString1);
         }
 
-        strategyString2 = myGetParameter(content.NAME_Strategy2);
+        String strategyString2 = myGetParameter(content.NAME_Strategy2);
         if (strategyString2 != null && !strategyString2.equals("")) {
             this.setPreference(content.NAME_Strategy2, strategyString2);
         } else {
             strategyString2 = this.getPreference(content.NAME_Strategy2);
         }
-        strategy2 = IQuery.STRATEGY_NONE;
+        int strategy2 = IQuery.STRATEGY_NONE;
         if (null != strategyString2 && !strategyString2.equals("")) {
             strategy2 = Integer.parseInt(strategyString2);
         }
@@ -479,7 +384,7 @@ public class ConsultExpert extends PapillonBasePO {
         String formatter = myGetParameter(FORMATTER_PARAMETER);
 
         if (handle != null && !handle.equals("")) {
-            submit = "lookup";
+            submitLookup = "lookup";
         }
 
         // Consultation of several headwords at one time
@@ -491,11 +396,11 @@ public class ConsultExpert extends PapillonBasePO {
 		}
 
         // FIXME: Just get the first language for the moment. Architecture of this part should be revised.
-        MyAvailableLanguages = new AvailableLanguages();
+        AvailableLanguages MyAvailableLanguages = new AvailableLanguages();
 
-        allSourceLanguages = MyAvailableLanguages.getSourceLanguagesArray();
-        allTargetLanguages = MyAvailableLanguages.getTargetLanguagesArray();
-        allResources = DictionariesFactory.getDictionariesNamesArray();
+        String[] allSourceLanguages = MyAvailableLanguages.getSourceLanguagesArray();
+        String[] allTargetLanguages = MyAvailableLanguages.getTargetLanguagesArray();
+        String[] allResources = DictionariesFactory.getDictionariesNamesArray();
 
         if (null != targetLanguages && targetLanguages.length > 0) {
             if (targetLanguages[0].equals(ANY_TARGET)) {
@@ -509,13 +414,10 @@ public class ConsultExpert extends PapillonBasePO {
         }
 
         // Header Script
-        //     setHeaderScript(buildLanguagesScript());
+        //     setHeaderScript(buildLanguagesScript(AvailableLanguages myAvailableLanguages));
 
-        // Content creation
-        // Adding the Consult HTML form
-        addConsultForm();
 
-        if (null != submit && !submit.equals("")) {
+        if (submitLookup != null && !submitLookup.equals("")) {
             // Lemmatize the entry Testing phase ...
             if (Headwords !=null &&
 				strategy1 == IQuery.STRATEGY_LEMMATIZE) {
@@ -540,7 +442,7 @@ public class ConsultExpert extends PapillonBasePO {
 				strategy1 == IQuery.STRATEGY_FOKS && sourceLanguage.equals("jpn")) {
                 Vector foksVector = VolumeEntriesFactory.getFoksEntriesVector(Headwords[0]);
                 if (foksVector != null && foksVector.size() > 0) {
-                    addFoksEntryTable(foksVector);
+                    addFoksEntryTable(foksVector, sourceLanguage, originalTargets, originalResources);
                     strategy1 = IQuery.STRATEGY_EXACT;
                     Utility.removeElement(content.getElementSorryMessage());
                 } else {
@@ -578,7 +480,13 @@ public class ConsultExpert extends PapillonBasePO {
 				status[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_EXACT+1];
 				myKeys.add(status);
 
-                addEntries(resources, volume, sourceLanguage, targetLanguages, Headwords, strategy1, myKeys, Clauses, anyContains, handle, formatter, this.getUser(), offset);
+                addEntries(resources, volume, sourceLanguage, targetLanguages, 
+						   Headwords, strategy1, 
+						   search1, search1text, strategyString1,
+						   search2, search2text, strategyString2,
+						   myKeys, Clauses, 
+						   anyContains, handle, formatter, 
+						   this.getUser(), offset);
                 Utility.removeElement(content.getElementFoksEntries());
             }
         } else {
@@ -589,6 +497,24 @@ public class ConsultExpert extends PapillonBasePO {
             Utility.removeElement(content.getElementSorryMessage());
         }
 
+		if (submitReset != null) {
+			this.resetPreferences();
+			addConsultForm(null, allSourceLanguages,
+						   null, allTargetLanguages,
+						   null, allResources,
+						   null, null,
+						   null, null,
+						   IQuery.STRATEGY_EXACT, IQuery.STRATEGY_EXACT);
+		}
+		else {
+			addConsultForm(sourceLanguage, allSourceLanguages,
+						   originalTargets, allTargetLanguages, 
+						   originalResources, allResources,
+						   search1, search1text,
+						   search2, search2text,
+						   strategy1, strategy2);
+		}
+		
         return content.getElementConsultContent();
     }
 
@@ -600,11 +526,16 @@ public class ConsultExpert extends PapillonBasePO {
      * @exception  HttpPresentationException     Description of the Exception
      * @exception  UnsupportedEncodingException  Description of the Exception
      */
-    protected void addConsultForm()
-             throws PapillonBusinessException,
-            HttpPresentationException,
-            UnsupportedEncodingException {
-
+    protected void addConsultForm(String sourceLanguage, String[] allSourceLanguages,
+								  String[] originalTargets, String[] allTargetLanguages, 
+								  String[] originalResources, String[] allResources,
+								  String search1, String search1text,
+								  String search2, String search2text,
+								  int strategy1, int strategy2)
+		throws PapillonBusinessException,
+		HttpPresentationException,
+		UnsupportedEncodingException {
+				
         // Adding the appropriate source languages to the source list
         XHTMLOptionElement sourceOptionTemplate = content.getElementSourceOptionTemplate();
         Node sourceSelect = sourceOptionTemplate.getParentNode();
@@ -773,7 +704,15 @@ public class ConsultExpert extends PapillonBasePO {
      * @exception  javax.xml.transform.TransformerException        Description
      *      of the Exception
      */
-    protected void addEntries(String[] resources, String volume, String source, String[] targets, String[] Headwords, int strategy1, Vector myKeys,  Vector myClauses, String anyContains, String handle, String formatter, User myUser, int offset)
+    protected void addEntries(String[] resources, String volume, 
+							  String source, String[] targets, 
+							  String[] Headwords, int strategy1, 
+							  String search1, String search1text, String strategyString1,
+							  String search2, String search2text, String strategyString2,
+							  Vector myKeys,  Vector myClauses, 
+							  String anyContains, String handle, 
+							  String formatter, 
+							  User myUser, int offset)
              throws PapillonBusinessException,
             ClassNotFoundException,
             HttpPresentationException,
@@ -796,7 +735,7 @@ public class ConsultExpert extends PapillonBasePO {
 				for (int i=0; i< Headwords.length; i++) {
 					String[] Headword = new String[4];
 					Headword[0] = Volume.CDM_headword;
-					Headword[1] = sourceLanguage;
+					Headword[1] = source;
 					Headword[2] = Headwords[i];
 					Headword[3] = IQuery.QueryBuilderStrategy[strategy1+1];
 					myKeys.add(Headword);
@@ -822,8 +761,11 @@ public class ConsultExpert extends PapillonBasePO {
 			}
             if (EntryCollection.size() > DictionariesFactory.MaxDisplayedEntries) {
                 Utility.removeElement(content.getElementVolumeEntries());
-                addEntryTable(EntryCollection, targets, offset);
-            } else {
+				addEntryTable(EntryCollection, source, resources, targets, 
+							  search1, search1text, strategyString1,
+							  search2, search2text, strategyString2,
+							  offset);
+			} else {
                 Utility.removeElement(content.getElementEntryListTable());
                 addFewEntries(EntryCollection, formatter);
                 // If the entry is remote, it is already an HTML node
@@ -848,9 +790,15 @@ public class ConsultExpert extends PapillonBasePO {
      * @exception  java.io.UnsupportedEncodingException  Description of the
      *      Exception
      */
-    protected void addEntryTable(Collection qrset, String[] targets, int offset)
-             throws PapillonBusinessException,
-            java.io.UnsupportedEncodingException {
+    protected void addEntryTable(Collection qrset, 
+								 String source,
+								 String[] originalResources,
+								 String[] targets, 
+								 String search1, String search1text, String strategyString1,
+								 String search2, String search2text, String strategyString2,
+								 int offset)
+		throws PapillonBusinessException,
+		java.io.UnsupportedEncodingException {
 
         PapillonLogger.writeDebugMsg("addEntryTable, size: " + qrset.size());
         // On récupère les éléments du layout
@@ -892,8 +840,8 @@ public class ConsultExpert extends PapillonBasePO {
 			+ content.NAME_search1text + "=" + search1text + "&"
 			+ content.NAME_search2 + "=" + search2 + "&"
 			+ content.NAME_search2text + "=" + search2text + "&"
-			+ content.NAME_SOURCE + "=" + sourceLanguage + "&"
-			+ serializeParameterForUrl(content.NAME_TARGETS, originalTargets) + "&"
+			+ content.NAME_SOURCE + "=" + source + "&"
+			+ serializeParameterForUrl(content.NAME_TARGETS, targets) + "&"
 			+ content.NAME_Strategy1 + "=" + strategyString1 + "&"
 			+ content.NAME_Strategy2 + "=" + strategyString2 + "&"
 			+ content.NAME_LOOKUP + "=" + content.NAME_LOOKUP + "&"
@@ -987,7 +935,7 @@ public class ConsultExpert extends PapillonBasePO {
      * @exception  java.io.UnsupportedEncodingException  Description of the
      *      Exception
      */
-    protected void addFoksEntryTable(Vector EntryVector)
+    protected void addFoksEntryTable(Vector EntryVector, String sourceLanguage, String[] originalTargets, String[] originalResources)
              throws PapillonBusinessException,
             java.io.UnsupportedEncodingException {
 
@@ -1148,8 +1096,9 @@ public class ConsultExpert extends PapillonBasePO {
             content.setTextResourceName(resource);
 
 			// the delete button
+			String originalDeleteHref = deleteHref.getHref();
 			if (this.getUser().isValidator()) {
-				deleteHref.setHref(deleteHref.getHref() + handle);
+				deleteHref.setHref(originalDeleteHref + handle);
 				deleteButton.setAttribute("class","");
 			}
 			
@@ -1171,6 +1120,10 @@ public class ConsultExpert extends PapillonBasePO {
             entryDiv.appendChild(content.importNode(element, true));
 
             XHTMLTableRowElement entryRow = (XHTMLTableRowElement) originalEntryRow.cloneNode(true);
+			
+			// resetting original deleteHref
+			deleteHref.setHref(originalDeleteHref);
+			
             entryRow.removeAttribute("id");
 
             entryTable.appendChild(entryRow);
@@ -1235,7 +1188,7 @@ public class ConsultExpert extends PapillonBasePO {
      * @exception  fr.imag.clips.papillon.business.PapillonBusinessException
      *      Description of the Exception
      */
-    protected String buildLanguagesScript()
+    protected String buildLanguagesScript(AvailableLanguages MyAvailableLanguages, String[] allSourceLanguages)
              throws fr.imag.clips.papillon.business.PapillonBusinessException {
 
         String[] AllLanguages = MyAvailableLanguages.getAllLanguagesArray();
