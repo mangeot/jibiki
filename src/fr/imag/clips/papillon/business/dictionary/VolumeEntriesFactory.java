@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.21  2005/08/05 18:44:38  mangeot
+ * Bug fixes + ProcessVolume.po page creation
+ *
  * Revision 1.20  2005/08/01 17:37:33  mangeot
  * Bug fix in sort function
  *
@@ -705,6 +708,21 @@ public class VolumeEntriesFactory {
 				}
 			}
 		}
+	
+	public static void convertVolume(String volumeName, Vector myKeys, Vector clauseVector, String stylesheetHandle) throws PapillonBusinessException {
+		
+		Volume myVolume = VolumesFactory.findVolumeByName(volumeName);
+		if (myVolume !=null && !myVolume.isEmpty()) {
+			Dictionary myDict = DictionariesFactory.findDictionaryByName(myVolume.getDictname());
+			if (myDict !=null && !myDict.isEmpty()) {
+				fr.imag.clips.papillon.business.dictionary.IVolumeEntryProcessor myProcessor = new fr.imag.clips.papillon.business.dictionary.ConvertVolumeEntryProcessor(stylesheetHandle);
+				PapillonLogger.writeDebugMsg("Processor created");
+				fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory.processVolume(myDict, myVolume, myKeys, clauseVector, myProcessor);
+				PapillonLogger.writeDebugMsg("Volume processed");
+			}
+		}
+	}
+	
 	
 	public static Vector getFoksEntriesVector(String headword) throws PapillonBusinessException {
         Vector theEntries = new Vector();

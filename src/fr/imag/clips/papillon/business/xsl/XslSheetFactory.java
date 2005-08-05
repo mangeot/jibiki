@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.10  2005/08/05 18:44:38  mangeot
+ * Bug fixes + ProcessVolume.po page creation
+ *
  * Revision 1.9  2005/07/21 09:37:47  serasset
  * LexALPLinker had a pb with package since MM modification.
  * Lexalp query menu leads to AdvancedSearch.
@@ -279,7 +282,7 @@ public class XslSheetFactory {
      * @exception PapillonBusinessException
      *    if there is a problem retrieving message.
      */
-    public static XslSheet findXslSheetByID(String id) 
+    public static XslSheet findXslSheetByHandle(String id) 
         throws PapillonBusinessException {
         XslSheet theXsl = null;
         
@@ -293,7 +296,7 @@ public class XslSheetFactory {
             theXsl = new XslSheet(theXslSheetDO);
             return theXsl;
         }catch(Exception ex) {
-            throw new PapillonBusinessException("Exception in findXslSheetByID()", ex);
+            throw new PapillonBusinessException("Exception in findXslSheetByHandle()", ex);
         }
     }
     
@@ -335,7 +338,7 @@ public class XslSheetFactory {
             XslSheetDO theXslSheetDO = query.getNextDO();			
             theXsl = new XslSheet(theXslSheetDO);
         }catch(Exception ex) {
-            throw new PapillonBusinessException("Exception in findXslSheetByID()", ex);
+            throw new PapillonBusinessException("Exception in findXslSheetByHandle()", ex);
         }
         return theXsl;
     }

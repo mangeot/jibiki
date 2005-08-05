@@ -4,6 +4,9 @@
  *$Id$
  *------------------------
  *$Log$
+ *Revision 1.11  2005/08/05 18:44:38  mangeot
+ *Bug fixes + ProcessVolume.po page creation
+ *
  *Revision 1.10  2005/08/02 14:41:49  mangeot
  *Work on stylesheets and
  *added a reset button for Review and AdminContrib forms
@@ -222,7 +225,7 @@ public class XslTransformation implements ResultFormatter {
 	/**
     Transform the xml source by processing it with an xsl sheet.
 	 */
-    protected static Document Transform(Node xmlSource, XslSheet xslSheet)
+    public static Document Transform(Node xmlSource, XslSheet xslSheet)
 		throws fr.imag.clips.papillon.business.PapillonBusinessException,
 		javax.xml.transform.TransformerConfigurationException,
 		javax.xml.parsers.ParserConfigurationException,
@@ -317,7 +320,7 @@ public class XslTransformation implements ResultFormatter {
 
 				// If the user selected one precise XSL
 				if ((null != xslid) && (!xslid.trim().equals(""))) {
-					theXslSheet = XslSheetFactory.findXslSheetByID(xslid);
+					theXslSheet = XslSheetFactory.findXslSheetByHandle(xslid);
 					result = XslTransformation.Transform((Node)result, theXslSheet);
 				}
 				else {

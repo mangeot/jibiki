@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.7  2005/08/05 18:44:38  mangeot
+ * Bug fixes + ProcessVolume.po page creation
+ *
  * Revision 1.6  2005/07/14 13:48:53  serasset
  * Added columns dictionaryname and volumename to the xslsheets.
  * Modified the XslSheet and XslSheetFactory accordingly.
@@ -176,7 +179,7 @@ public class AdminXsl extends PapillonBasePO {
                 
             } else if ( (null != req.getParameter(REMOVE_PARAMETER))) {
                 String handle = req.getParameter(REMOVE_PARAMETER);
-                XslSheet theSheet = XslSheetFactory.findXslSheetByID(handle);
+                XslSheet theSheet = XslSheetFactory.findXslSheetByHandle(handle);
                 theSheet.delete();
                 userMessage = "XslSheet " + theSheet.getName() + " removed...";
             } else if ((null != req.getParameter(DEFAULT_XSL))) {
@@ -185,14 +188,14 @@ public class AdminXsl extends PapillonBasePO {
                 if ( !(theOldDefaultSheet.isEmpty()) )
                     {theOldDefaultSheet.setDefaultxsl(false);
                      theOldDefaultSheet.save();}                     
-                XslSheet theSheet = XslSheetFactory.findXslSheetByID(handle);
+                XslSheet theSheet = XslSheetFactory.findXslSheetByHandle(handle);
                 theSheet.setDefaultxsl(true);
                 theSheet.save();
                 userMessage = "XslSheet " + theSheet.getName() + " set default...";
             }
             else if ( (null != req.getParameter(SEE_PARAMETER))) {
                 String handle = req.getParameter(SEE_PARAMETER);
-                XslSheet theSheet = XslSheetFactory.findXslSheetByID(handle);
+                XslSheet theSheet = XslSheetFactory.findXslSheetByHandle(handle);
                 //adding an XML file
                 addXml(theSheet.getXmlCode());
             }

@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.10  2005/08/05 18:44:38  mangeot
+ * Bug fixes + ProcessVolume.po page creation
+ *
  * Revision 1.9  2005/08/02 08:27:16  mangeot
  * Now, the display of an entry with EditEntryInit is done in the page itself.
  *
@@ -112,7 +115,7 @@ public class ExportVolume extends PapillonBasePO {
 
     protected boolean userMayUseThisPO() {
         try {
-            return this.getUser().isValidator();
+            return this.getUser().isSpecialist();
         } catch (fr.imag.clips.papillon.business.PapillonBusinessException ex) {
             this.getSessionData().writeUserMessage("Error getting the authorisation to use this PO.");
         }
@@ -138,8 +141,8 @@ public class ExportVolume extends PapillonBasePO {
 
 		String export = myGetParameter(content.NAME_EXPORT);
 		String volume = myGetParameter(content.NAME_VOLUME);
-		String sortBy = myGetParameter(SORTBY_PARAMETER);
 		String outputFormat = myGetParameter(content.NAME_FORMAT);
+		String stylesheet = myGetParameter(content.NAME_STYLESHEET);
 
         // If the page is called with parameters, take the requested action
 		if (export != null && volume != null) {
@@ -248,31 +251,7 @@ public class ExportVolume extends PapillonBasePO {
 				key3[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_NOT_EQUAL+1];			
 				myKeys.add(key3);			
 			}
-		
-			java.io.File fileDir = new java.io.File(getExportAbsoluteDir());
-			fileDir.mkdirs();
-			
-			String filename = createFileName(volume, this.getUser().getLogin(), outputFormat);
-			java.io.File exportFile = new java.io.File(fileDir.getCanonicalPath() + File.separator + filename);
-			exportFile.createNewFile();
-		
-			FileOutputStream fileOutStream = new FileOutputStream(exportFile.getCanonicalFile());
-			
-			java.util.zip.GZIPOutputStream myGZipOutStream = new java.util.zip.GZIPOutputStream(fileOutStream);
-			
-			fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory.exportVolume(volume, myKeys, myClauses, outputFormat, myGZipOutStream);
-			
-			PapillonLogger.writeDebugMsg("Compressing volume");
-			myGZipOutStream.close();
-			
-			String userMessage = "Volume " + volume + " exported";
-			
-			if (userMessage != null) {
-				this.getSessionData().writeUserMessage(userMessage);
-				PapillonLogger.writeDebugMsg(userMessage);
-			}
-			PapillonLogger.writeDebugMsg("ClientPageRedirectException: " + getExportRelativeDir() + filename);			
-			throw new ClientPageRedirectException(getExportRelativeDir() + filename); 
+			exportVolume(volume, myKeys, myClauses, outputFormat);
 		}
         
 		addConsultForm(volume);
@@ -336,7 +315,36 @@ public class ExportVolume extends PapillonBasePO {
 				
 	}
 	
-	       
+	protected void exportVolume(String volume, java.util.Vector myKeys, java.util.Vector myClauses, String outputFormat) 
+		throws fr.imag.clips.papillon.business.PapillonBusinessException,
+		java.io.IOException,
+		PapillonPresentationException {
+		java.io.File fileDir = new java.io.File(getExportAbsoluteDir());
+		fileDir.mkdirs();
+		
+		String filename = createFileName(volume, this.getUser().getLogin(), outputFormat);
+		java.io.File exportFile = new java.io.File(fileDir.getCanonicalPath() + File.separator + filename);
+		exportFile.createNewFile();
+		
+		FileOutputStream fileOutStream = new FileOutputStream(exportFile.getCanonicalFile());
+		
+		java.util.zip.GZIPOutputStream myGZipOutStream = new java.util.zip.GZIPOutputStream(fileOutStream);
+		
+		fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory.exportVolume(volume, myKeys, myClauses, outputFormat, myGZipOutStream);
+		
+		PapillonLogger.writeDebugMsg("Compressing volume");
+		myGZipOutStream.close();
+		
+		String userMessage = "Volume " + volume + " exported";
+		
+		if (userMessage != null) {
+			this.getSessionData().writeUserMessage(userMessage);
+			PapillonLogger.writeDebugMsg(userMessage);
+		}
+		PapillonLogger.writeDebugMsg("ClientPageRedirectException: " + getExportRelativeDir() + filename);			
+		throw new ClientPageRedirectException(getExportRelativeDir() + filename); 
+	}
+	
 	protected String getExportAbsoluteDir() throws PapillonPresentationException {            
 		String baseDir = "";
 		String mediaDir = "";
