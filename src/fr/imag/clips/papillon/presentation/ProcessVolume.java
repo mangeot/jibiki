@@ -9,11 +9,8 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.11  2005/08/05 18:49:17  mangeot
+ * Revision 1.1  2005/08/05 18:47:02  mangeot
  * *** empty log message ***
- *
- * Revision 1.10  2005/08/05 18:44:38  mangeot
- * Bug fixes + ProcessVolume.po page creation
  *
  * Revision 1.9  2005/08/02 08:27:16  mangeot
  * Now, the display of an entry with EditEntryInit is done in the page itself.
@@ -83,7 +80,7 @@ import java.util.Date;
 import java.text.DateFormat;
 import java.io.*;
 
-import fr.imag.clips.papillon.presentation.xhtml.orig.ExportVolumeTmplXHTML;
+import fr.imag.clips.papillon.presentation.xhtml.orig.ProcessVolumeTmplXHTML;
 
 import fr.imag.clips.papillon.data.*;
 import fr.imag.clips.papillon.business.utility.Utility;
@@ -94,23 +91,14 @@ import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
 
 
-public class ExportVolume extends PapillonBasePO {
+public class ProcessVolume extends PapillonBasePO {
 	
 	protected final static String ALL="*ALL*";
 	protected final static String DEFAULT="*default*";
 	protected final static String SORTBY_PARAMETER="SortBy";
 	protected final static String AnyContains_PARAMETER="AnyContains";
-    protected final static String BASE_DIR_CONFIG = "Papillon.Informations.baseDir";
-    protected final static String RELATIVE_DIR_CONFIG = "Papillon.Informations.relativeDir";
-    protected final static String MEDIA_DIR_CONFIG = "Papillon.Informations.mediaDir";
-	protected final static String EXPORT_VOLUME_DIR="export";
-	
-	protected static final String XMLFormat = Integer.toString(fr.imag.clips.papillon.business.transformation.ResultFormatterFactory.XML_DIALECT);
-	protected static final String XHTMLFormat = Integer.toString(fr.imag.clips.papillon.business.transformation.ResultFormatterFactory.XHTML_DIALECT);
-	protected static final String TEXTFormat = Integer.toString(fr.imag.clips.papillon.business.transformation.ResultFormatterFactory.PLAINTEXT_DIALECT);
-	protected static final String PDFFormat = Integer.toString(fr.imag.clips.papillon.business.transformation.ResultFormatterFactory.PDF_DIALECT);
-    
-    protected static ExportVolumeTmplXHTML content;
+	    
+    protected static ProcessVolumeTmplXHTML content;
 
     protected boolean loggedInUserRequired() {
         return true;
@@ -118,7 +106,7 @@ public class ExportVolume extends PapillonBasePO {
 
     protected boolean userMayUseThisPO() {
         try {
-            return this.getUser().isSpecialist();
+            return this.getUser().isValidator();
         } catch (fr.imag.clips.papillon.business.PapillonBusinessException ex) {
             this.getSessionData().writeUserMessage("Error getting the authorisation to use this PO.");
         }
@@ -138,16 +126,16 @@ public class ExportVolume extends PapillonBasePO {
 			fr.imag.clips.papillon.presentation.PapillonPresentationException {
         
         // Création du contenu
-        content = (ExportVolumeTmplXHTML)MultilingualXHtmlTemplateFactory.createTemplate("ExportVolumeTmplXHTML", this.getComms(), this.getSessionData());
+        content = (ProcessVolumeTmplXHTML)MultilingualXHtmlTemplateFactory.createTemplate("ProcessVolumeTmplXHTML", this.getComms(), this.getSessionData());
 	  
         HttpPresentationRequest req = this.getComms().request;
 
-		String export = myGetParameter(content.NAME_EXPORT);
+		String convert = myGetParameter(content.NAME_CONVERT);
 		String volume = myGetParameter(content.NAME_VOLUME);
-		String outputFormat = myGetParameter(content.NAME_FORMAT);
+		String stylesheetHandle = myGetParameter(content.NAME_STYLESHEET);
 
         // If the page is called with parameters, take the requested action
-		if (export != null && volume != null) {
+		if (convert != null && volume != null) {
 					
 			// search1
 			String search1 = myGetParameter(content.NAME_search1);
@@ -253,7 +241,7 @@ public class ExportVolume extends PapillonBasePO {
 				key3[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_NOT_EQUAL+1];			
 				myKeys.add(key3);			
 			}
-			exportVolume(volume, myKeys, myClauses, outputFormat);
+			convertVolume(volume, myKeys, myClauses, stylesheetHandle);
 		}
         
 		addConsultForm(volume);
@@ -265,10 +253,7 @@ public class ExportVolume extends PapillonBasePO {
 	protected void addConsultForm(String selectedVolume) 
         throws fr.imag.clips.papillon.business.PapillonBusinessException, 
                 HttpPresentationException {
-					
-		XHTMLAnchorElement repositoryAnchor = content.getElementRepositoryAnchor();
-		repositoryAnchor.setHref(this.getExportRelativeDir());
-					
+										
            // Adding the appropriate source languages to the source list
         XHTMLOptionElement volumeOptionTemplate = content.getElementVolumeOptionTemplate();
         Node volumeSelect = volumeOptionTemplate.getParentNode();
@@ -291,7 +276,7 @@ public class ExportVolume extends PapillonBasePO {
         }
         volumeSelect.removeChild(volumeOptionTemplate);
 
-       /* XHTMLOptionElement xslOptionTemplate = content.getElementXslOptionTemplate();
+		XHTMLOptionElement xslOptionTemplate = content.getElementXslOptionTemplate();
         Node xslSelect = xslOptionTemplate.getParentNode();
         xslOptionTemplate.removeAttribute("id");
         Text xslTextTemplate = (Text)xslOptionTemplate.getFirstChild(); 
@@ -313,101 +298,22 @@ public class ExportVolume extends PapillonBasePO {
             xslTextTemplate.setData(xslName);
             xslSelect.appendChild(xslOptionTemplate.cloneNode(true));
         }
-        xslSelect.removeChild(xslOptionTemplate); */
+        xslSelect.removeChild(xslOptionTemplate);
 				
 	}
 	
-	protected void exportVolume(String volume, java.util.Vector myKeys, java.util.Vector myClauses, String outputFormat) 
-		throws fr.imag.clips.papillon.business.PapillonBusinessException,
-		java.io.IOException,
-		PapillonPresentationException {
-		java.io.File fileDir = new java.io.File(getExportAbsoluteDir());
-		fileDir.mkdirs();
+	
+	protected void convertVolume (String volume, java.util.Vector myKeys, java.util.Vector myClauses, String stylesheetHandle) 
+		throws fr.imag.clips.papillon.business.PapillonBusinessException {
+		PapillonLogger.writeDebugMsg("Converting volume");
+
+		fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory.convertVolume(volume, myKeys, myClauses, stylesheetHandle);
 		
-		String filename = createFileName(volume, this.getUser().getLogin(), outputFormat);
-		java.io.File exportFile = new java.io.File(fileDir.getCanonicalPath() + File.separator + filename);
-		exportFile.createNewFile();
-		
-		FileOutputStream fileOutStream = new FileOutputStream(exportFile.getCanonicalFile());
-		
-		java.util.zip.GZIPOutputStream myGZipOutStream = new java.util.zip.GZIPOutputStream(fileOutStream);
-		
-		fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory.exportVolume(volume, myKeys, myClauses, outputFormat, myGZipOutStream);
-		
-		PapillonLogger.writeDebugMsg("Compressing volume");
-		myGZipOutStream.close();
-		
-		String userMessage = "Volume " + volume + " exported";
+		String userMessage = "Volume " + volume + " converted";
 		
 		if (userMessage != null) {
 			this.getSessionData().writeUserMessage(userMessage);
 			PapillonLogger.writeDebugMsg(userMessage);
 		}
-		PapillonLogger.writeDebugMsg("ClientPageRedirectException: " + getExportRelativeDir() + filename);			
-		throw new ClientPageRedirectException(getExportRelativeDir() + filename); 
 	}
-	
-	protected String getExportAbsoluteDir() throws PapillonPresentationException {            
-		String baseDir = "";
-		String mediaDir = "";
-		try {
-			baseDir = com.lutris.appserver.server.Enhydra.getApplication().getConfig().getString(BASE_DIR_CONFIG);
-			mediaDir = com.lutris.appserver.server.Enhydra.getApplication().getConfig().getString(MEDIA_DIR_CONFIG);
-			if (! baseDir.endsWith(File.separator)) {
-				baseDir = baseDir + File.separator;
-			}
-			if (! mediaDir.endsWith(File.separator)) {
-				mediaDir = mediaDir + File.separator;
-			}
-		}
-		catch (com.lutris.util.ConfigException ex) {
-			throw new PapillonPresentationException("Error in Papillon Configuration File: ", ex);
-		}
-		baseDir = baseDir + mediaDir + EXPORT_VOLUME_DIR + File.separator;
-		return baseDir;
-	}
-
-	protected String getExportRelativeDir() throws PapillonPresentationException {            
-		String baseDir = "";
-		String mediaDir = "";
-		try {
-			baseDir = com.lutris.appserver.server.Enhydra.getApplication().getConfig().getString(RELATIVE_DIR_CONFIG);
-			mediaDir = com.lutris.appserver.server.Enhydra.getApplication().getConfig().getString(MEDIA_DIR_CONFIG);
-			if (! baseDir.endsWith(File.separator)) {
-				baseDir = baseDir + File.separator;
-			}
-			if (! mediaDir.endsWith(File.separator)) {
-				mediaDir = mediaDir + File.separator;
-			}
-		}
-		catch (com.lutris.util.ConfigException ex) {
-			throw new PapillonPresentationException("Error in Papillon Configuration File: ", ex);
-		}
-		baseDir = baseDir + mediaDir + EXPORT_VOLUME_DIR + File.separator;
-		return baseDir;
-	}
-
-	       
-	protected String createFileName(String volume, String login, String format) {
-		String timestamp = "" + new java.util.Date().getTime();
-		String extension = "";
-		if (format !=null && format.equals(XHTMLFormat)) {
-			extension = ".html";
-		}
-		else if (format !=null && format.equals(TEXTFormat)) {
-			extension = ".txt";
-		}
-		else if (format !=null && format.equals(PDFFormat)) {
-			extension = ".pdf";
-		}
-		else {
-			extension = ".xml";
-		}
-		
-		String fileName = volume + "-" + login + "-" + timestamp + extension + ".gz";
-		return fileName;
-	}
-					      
-
-
 }
