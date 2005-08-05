@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.12  2005/08/05 19:55:39  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.11  2005/08/05 18:49:17  mangeot
  * *** empty log message ***
  *
@@ -238,20 +241,6 @@ public class ExportVolume extends PapillonBasePO {
 				key2[2] = status;
 				key2[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_EXACT+1];			
 				myKeys.add(key2);
-			}
-			else {
-				String[] key2 = new String[4];
-				key2[0] = Volume.CDM_contributionStatus;
-				key2[1] = Volume.DEFAULT_LANG;
-				key2[2] = VolumeEntry.VALIDATED_STATUS;
-				key2[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_NOT_EQUAL+1];			
-				myKeys.add(key2);			
-				String[] key3 = new String[4];
-				key3[0] = Volume.CDM_contributionStatus;
-				key3[1] = Volume.DEFAULT_LANG;
-				key3[2] = VolumeEntry.DELETED_STATUS;
-				key3[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_NOT_EQUAL+1];			
-				myKeys.add(key3);			
 			}
 			exportVolume(volume, myKeys, myClauses, outputFormat);
 		}

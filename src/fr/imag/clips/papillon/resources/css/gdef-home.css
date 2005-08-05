@@ -442,8 +442,8 @@ A.hide {text-decoration: none}
 
 /* CDM elements */
 .entry {
-	display: block;
-    margin-left: 12 pt;
+	/*display: block;
+    margin-left: 12 pt; */
 }
 
 .sense {
