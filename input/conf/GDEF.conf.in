@@ -275,7 +275,7 @@ Papillon.Logging.StoreQueryLogs = true
 #
 #
 # is dictd listening? 
-Dictd.Listen = true
+Dictd.Listen = false
 
 # dictd listening port
 Dictd.Port = 2628
