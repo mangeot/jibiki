@@ -64,7 +64,7 @@ public class DictEngine implements IDictEngine {
 			// is there a way to obtain a dom result which is a text string?
 			if (view!=null && !view.equals("")) {
 				if (view.equals(IDictEngine.TEXT_view)) {
-					res = XslTransformation.applyXslSheetForText(entry);
+					res = XslTransformation.applyXslSheetsForText(entry);
 				}
 				else if (view.equals(IDictEngine.HTML_view)) {
 					res = XslTransformation.applyXslSheetsAndSerialize(entry);
