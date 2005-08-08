@@ -10,6 +10,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.12  2005/08/08 07:06:40  mangeot
+ *  Added a cache for the validated and reviewed entries count in Home.java
+ *
  *  Revision 1.11  2005/08/01 08:34:03  mangeot
  *  Added method getCompleteHeadword for VolumeEntry that concatenates the homograph number and the particule to the headword
  *
@@ -274,6 +277,14 @@ public class Home extends PapillonBasePO {
 	protected String headword;
 	
 	protected String partialMatchString;
+	
+	protected static int GDEF_estValidatedEntriesCount = 0;
+
+	protected static int GDEF_estReviewedEntriesCount = 0;
+	
+	protected static java.util.Calendar myCalendar = new java.util.GregorianCalendar();
+
+	protected static int DAY_OF_MONTH = 0;
 
 
     /**
@@ -893,12 +904,15 @@ public class Home extends PapillonBasePO {
 			&& GDEFReviewedEntryCountFra != null && GDEFReviewedEntryCountEst != null) {
 			Volume GDEFVolume = VolumesFactory.findVolumeByName("GDEF_est");
 			if (GDEFVolume!=null) {
-				int validatedEntriesCount =  GDEFVolume.getCount(VolumeEntry.VALIDATED_STATUS);
-				int reviewedEntriesCount =  GDEFVolume.getCount(VolumeEntry.REVIEWED_STATUS);
-				Utility.setText(GDEFValidatedEntryCountFra,"" + validatedEntriesCount);
-				Utility.setText(GDEFValidatedEntryCountEst,"" + validatedEntriesCount);
-				Utility.setText(GDEFReviewedEntryCountFra,"" + reviewedEntriesCount);
-				Utility.setText(GDEFReviewedEntryCountEst,"" + reviewedEntriesCount);
+				if (myCalendar.get(myCalendar.DAY_OF_MONTH) != DAY_OF_MONTH) {
+					GDEF_estValidatedEntriesCount = GDEFVolume.getCount(VolumeEntry.VALIDATED_STATUS);
+					GDEF_estReviewedEntriesCount = GDEFVolume.getCount(VolumeEntry.REVIEWED_STATUS);
+					DAY_OF_MONTH = myCalendar.get(myCalendar.DAY_OF_MONTH);
+				}
+				Utility.setText(GDEFValidatedEntryCountFra,"" + GDEF_estValidatedEntriesCount);
+				Utility.setText(GDEFValidatedEntryCountEst,"" + GDEF_estValidatedEntriesCount);
+				Utility.setText(GDEFReviewedEntryCountFra,"" + GDEF_estReviewedEntriesCount);
+				Utility.setText(GDEFReviewedEntryCountEst,"" + GDEF_estReviewedEntriesCount);
 			}
 		}
 		
