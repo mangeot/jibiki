@@ -16,7 +16,7 @@ CREATE OR REPLACE FUNCTION deu_sort( varchar )
 
  DECLARE
  i		integer;
-  tmp		varchar;
+  tmp		char;
   result	varchar := '''';
   length	integer;
  BEGIN
@@ -211,10 +211,12 @@ CREATE OR REPLACE FUNCTION est_sort( varchar )
  RETURNS varchar AS '
 
  DECLARE
-  tmp		varchar;
+  tmp		char;
   result	varchar := '''';
   length	integer;
  BEGIN
+ 	result := complete_numbers($1);
+ 	IF result = '''' THEN
  	length = char_length($1);
   	FOR i IN 1.. length LOOP
   		tmp := SUBSTR( $1, i, 1 );
@@ -386,6 +388,7 @@ CREATE OR REPLACE FUNCTION est_sort( varchar )
     result:= result || ''99'';
   END IF;
 	END LOOP;
+  END IF;
   return( result );
  END;
 ' LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
@@ -400,7 +403,7 @@ CREATE OR REPLACE FUNCTION fra_sort( varchar )
 
  DECLARE
  i		integer;
-  tmp		varchar;
+  tmp		char;
   result	varchar := '''';
   length	integer;
  BEGIN
@@ -595,7 +598,7 @@ CREATE OR REPLACE FUNCTION ita_sort( varchar )
  RETURNS varchar AS '
 
  DECLARE
-  tmp		varchar;
+  tmp		char;
   result	varchar := '''';
   length	integer;
  BEGIN
@@ -610,7 +613,7 @@ CREATE OR REPLACE FUNCTION eng_sort( varchar )
  RETURNS varchar AS '
 
  DECLARE
-  tmp		varchar;
+  tmp		char;
   result	varchar := '''';
   length	integer;
  BEGIN
@@ -630,7 +633,7 @@ CREATE OR REPLACE FUNCTION jpn_sort( varchar )
  RETURNS varchar AS '
 
  DECLARE
-  tmp		varchar;
+  tmp		char;
   result	varchar := '''';
   length	integer;
  BEGIN
@@ -648,7 +651,7 @@ CREATE OR REPLACE FUNCTION kor_sort( varchar )
  RETURNS varchar AS '
 
  DECLARE
-  tmp		varchar;
+  tmp		char;
   result	varchar := '''';
   length	integer;
  BEGIN
@@ -665,7 +668,7 @@ CREATE OR REPLACE FUNCTION msa_sort( varchar )
  RETURNS varchar AS '
 
  DECLARE
-  tmp		varchar;
+  tmp		char;
   result	varchar := '''';
   length	integer;
  BEGIN
@@ -683,7 +686,7 @@ CREATE OR REPLACE FUNCTION slo_sort( varchar )
  RETURNS varchar AS '
 
  DECLARE
-  tmp		varchar;
+  tmp		char;
   result	varchar := '''';
   length	integer;
  BEGIN
@@ -701,7 +704,7 @@ CREATE OR REPLACE FUNCTION tha_sort( varchar )
  RETURNS varchar AS '
 
  DECLARE
-  tmp		varchar;
+  tmp		char;
   result	varchar := '''';
   length	integer;
  BEGIN
@@ -719,7 +722,7 @@ CREATE OR REPLACE FUNCTION vie_sort( varchar )
  RETURNS varchar AS '
 
  DECLARE
-  tmp		varchar;
+  tmp		char;
   result	varchar := '''';
   length	integer;
  BEGIN
@@ -736,7 +739,7 @@ CREATE OR REPLACE FUNCTION zho_sort( varchar )
  RETURNS varchar AS '
 
  DECLARE
-  tmp		varchar;
+  tmp		char;
   result	varchar := '''';
   length	integer;
  BEGIN
@@ -753,7 +756,7 @@ CREATE OR REPLACE FUNCTION tes_sort( varchar )
  RETURNS varchar AS '
 
  DECLARE
-  tmp		varchar;
+  tmp		char;
   result	varchar := '''';
   length	integer;
  BEGIN
@@ -949,4 +952,30 @@ CREATE OR REPLACE FUNCTION multilingual_sort( varchar,varchar )
   return( result );
  END;
 ' LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
+
+CREATE OR REPLACE FUNCTION complete_numbers( varchar ) 
+ RETURNS varchar AS '
+
+ DECLARE
+  first	char;
+  zeros	varchar := ''000000000000000000000000'';
+  result	varchar := '''';
+  lvar		integer;
+  lempty	integer;
+ BEGIN
+ 	lvar := char_length($1);
+ 	first := SUBSTR( $1, 1, 1 );
+ 	lempty := char_length(zeros);
+	IF first >= ''0'' AND first <= ''9'' THEN
+		result := $1;
+		IF lvar < lempty THEN
+    			result:= SUBSTR( zeros, 1, lempty-lvar ) || result;
+    		END IF;
+  	ELSE
+    		result:= '''';
+  	END IF; 
+  	return( result );
+ END;
+' LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
+
 
