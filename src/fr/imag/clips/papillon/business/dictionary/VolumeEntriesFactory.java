@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.22  2005/08/16 11:25:04  mangeot
+ * Modified findEntryByEntryId because it can return several results depending on the status. I take in priority order VALIDATED > REVIEWED > FINISHED > NOT FINISHED
+ *
  * Revision 1.21  2005/08/05 18:44:38  mangeot
  * Bug fixes + ProcessVolume.po page creation
  *
@@ -890,7 +893,69 @@ public class VolumeEntriesFactory {
 	
 	protected static VolumeEntry findEntryByEntryId(Dictionary myDict, Volume myVolume, String entryId)
         throws PapillonBusinessException {
-			return findEntryByKey(myDict, myVolume, Volume.CDM_entryId, Volume.DEFAULT_LANG, entryId);
+			Vector answersVector = null;
+			
+			Vector myKeys = new Vector();
+			String[] statusReplaced = new String[4];
+			statusReplaced[0] = Volume.CDM_entryId;
+			statusReplaced[1] = Volume.DEFAULT_LANG;
+			statusReplaced[2] = VolumeEntry.REPLACED_STATUS;
+			statusReplaced[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_NOT_EQUAL+1];
+			myKeys.add(statusReplaced);
+			
+			String[] statusDeleted = new String[4];
+			statusDeleted[0] = Volume.CDM_entryId;
+			statusDeleted[1] = Volume.DEFAULT_LANG;
+			statusDeleted[2] = VolumeEntry.DELETED_STATUS;
+			statusDeleted[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_NOT_EQUAL+1];
+			myKeys.add(statusDeleted);
+			
+			String[] entryIdArray = new String[4];
+			entryIdArray[0] = Volume.CDM_entryId;
+			entryIdArray[1] = Volume.DEFAULT_LANG;
+			entryIdArray[2] = entryId;
+			entryIdArray[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_EXACT+1];
+			myKeys.add(entryIdArray);
+						
+			answersVector = getDbTableEntriesVector(myDict, myVolume, myKeys, null , null, 0, 0);
+			
+			VolumeEntry resultEntry = null;
+			
+			if (answersVector.size()>0) {
+				if (answersVector.size()==1) {
+				resultEntry = (VolumeEntry) answersVector.firstElement();
+				}
+				else if (answersVector.size()>1) {
+					VolumeEntry tempEntry = null;
+					VolumeEntry reviewedEntry = null;
+					VolumeEntry finishedEntry = null;
+					VolumeEntry notFinishedEntry = null;
+					for (java.util.Enumeration enumEntries = answersVector.elements(); enumEntries.hasMoreElements();) {
+						tempEntry = (VolumeEntry) enumEntries.nextElement();
+						if (tempEntry.getStatus().equals(VolumeEntry.VALIDATED_STATUS)) {
+							resultEntry = tempEntry;
+						}
+						if (tempEntry.getStatus().equals(VolumeEntry.REVIEWED_STATUS)) {
+							reviewedEntry = tempEntry;
+						}
+						if (tempEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS)) {
+							finishedEntry = tempEntry;
+						}
+					}
+					if (resultEntry == null) {
+						if (reviewedEntry !=null) {
+							resultEntry = reviewedEntry;
+						}
+						else if (finishedEntry !=null) {
+							resultEntry = finishedEntry;
+						}
+						else {
+							resultEntry = tempEntry;
+						}
+					}
+				}
+			}
+			return resultEntry;
         }
 	
     /**
