@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.23  2005/08/16 12:11:18  mangeot
+ * Bug fix in findEntryByEntryId method
+ *
  * Revision 1.22  2005/08/16 11:25:04  mangeot
  * Modified findEntryByEntryId because it can return several results depending on the status. I take in priority order VALIDATED > REVIEWED > FINISHED > NOT FINISHED
  *
@@ -893,67 +896,77 @@ public class VolumeEntriesFactory {
 	
 	protected static VolumeEntry findEntryByEntryId(Dictionary myDict, Volume myVolume, String entryId)
         throws PapillonBusinessException {
-			Vector answersVector = null;
-			
-			Vector myKeys = new Vector();
-			String[] statusReplaced = new String[4];
-			statusReplaced[0] = Volume.CDM_entryId;
-			statusReplaced[1] = Volume.DEFAULT_LANG;
-			statusReplaced[2] = VolumeEntry.REPLACED_STATUS;
-			statusReplaced[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_NOT_EQUAL+1];
-			myKeys.add(statusReplaced);
-			
-			String[] statusDeleted = new String[4];
-			statusDeleted[0] = Volume.CDM_entryId;
-			statusDeleted[1] = Volume.DEFAULT_LANG;
-			statusDeleted[2] = VolumeEntry.DELETED_STATUS;
-			statusDeleted[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_NOT_EQUAL+1];
-			myKeys.add(statusDeleted);
-			
-			String[] entryIdArray = new String[4];
-			entryIdArray[0] = Volume.CDM_entryId;
-			entryIdArray[1] = Volume.DEFAULT_LANG;
-			entryIdArray[2] = entryId;
-			entryIdArray[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_EXACT+1];
-			myKeys.add(entryIdArray);
-						
-			answersVector = getDbTableEntriesVector(myDict, myVolume, myKeys, null , null, 0, 0);
-			
 			VolumeEntry resultEntry = null;
+			if (entryId != null && !entryId.equals("")) {
+				
+				
+				Vector answersVector = null;
+				
+				Vector myKeys = new Vector();
+				/*			String[] statusReplaced = new String[4];
+				statusReplaced[0] = Volume.CDM_contributionStatus;
+				statusReplaced[1] = Volume.DEFAULT_LANG;
+				statusReplaced[2] = VolumeEntry.REPLACED_STATUS;
+				statusReplaced[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_NOT_EQUAL+1];
+				myKeys.add(statusReplaced);
+				
+				String[] statusDeleted = new String[4];
+				statusDeleted[0] = Volume.CDM_contributionStatus;
+				statusDeleted[1] = Volume.DEFAULT_LANG;
+				statusDeleted[2] = VolumeEntry.DELETED_STATUS;
+				statusDeleted[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_NOT_EQUAL+1];
+				myKeys.add(statusDeleted); */
+				
+				String[] entryIdArray = new String[4];
+				entryIdArray[0] = Volume.CDM_entryId;
+				entryIdArray[1] = Volume.DEFAULT_LANG;
+				entryIdArray[2] = entryId;
+				entryIdArray[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_EXACT+1];
+				myKeys.add(entryIdArray);
+				
+				answersVector = getDbTableEntriesVector(myDict, myVolume, myKeys, null , null, 0, 0);
+				
+				if (answersVector.size()>0) {
+					if (answersVector.size()==1) {
+						resultEntry = (VolumeEntry) answersVector.firstElement();
+					}
+					else if (answersVector.size()>1) {
+						VolumeEntry tempEntry = null;
+						VolumeEntry reviewedEntry = null;
+						VolumeEntry finishedEntry = null;
+						VolumeEntry notFinishedEntry = null;
+						for (java.util.Enumeration enumEntries = answersVector.elements(); enumEntries.hasMoreElements();) {
+							tempEntry = (VolumeEntry) enumEntries.nextElement();
+							if (tempEntry.getStatus().equals(VolumeEntry.VALIDATED_STATUS)) {
+								resultEntry = tempEntry;
+							}
+							if (tempEntry.getStatus().equals(VolumeEntry.REVIEWED_STATUS)) {
+								reviewedEntry = tempEntry;
+							}
+							if (tempEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS)) {
+								finishedEntry = tempEntry;
+							}
+							if (tempEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS)) {
+								notFinishedEntry = tempEntry;
+							}
+						}
+						if (resultEntry == null) {
+							if (reviewedEntry !=null) {
+								resultEntry = reviewedEntry;
+							}
+							else if (finishedEntry !=null) {
+								resultEntry = finishedEntry;
+							}
+							else if (notFinishedEntry !=null) {
+								resultEntry = finishedEntry;
+							}
+						}
+					}
+				}
+			}
 			
-			if (answersVector.size()>0) {
-				if (answersVector.size()==1) {
-				resultEntry = (VolumeEntry) answersVector.firstElement();
-				}
-				else if (answersVector.size()>1) {
-					VolumeEntry tempEntry = null;
-					VolumeEntry reviewedEntry = null;
-					VolumeEntry finishedEntry = null;
-					VolumeEntry notFinishedEntry = null;
-					for (java.util.Enumeration enumEntries = answersVector.elements(); enumEntries.hasMoreElements();) {
-						tempEntry = (VolumeEntry) enumEntries.nextElement();
-						if (tempEntry.getStatus().equals(VolumeEntry.VALIDATED_STATUS)) {
-							resultEntry = tempEntry;
-						}
-						if (tempEntry.getStatus().equals(VolumeEntry.REVIEWED_STATUS)) {
-							reviewedEntry = tempEntry;
-						}
-						if (tempEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS)) {
-							finishedEntry = tempEntry;
-						}
-					}
-					if (resultEntry == null) {
-						if (reviewedEntry !=null) {
-							resultEntry = reviewedEntry;
-						}
-						else if (finishedEntry !=null) {
-							resultEntry = finishedEntry;
-						}
-						else {
-							resultEntry = tempEntry;
-						}
-					}
-				}
+			if (resultEntry != null) {
+				PapillonLogger.writeDebugMsg("Translation selected: " + resultEntry.getHeadword() + " status: " + resultEntry.getStatus());
 			}
 			return resultEntry;
         }
