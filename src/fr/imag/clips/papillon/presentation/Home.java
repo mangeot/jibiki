@@ -10,6 +10,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.13  2005/08/16 08:09:58  mangeot
+ *  *** empty log message ***
+ *
  *  Revision 1.12  2005/08/08 07:06:40  mangeot
  *  Added a cache for the validated and reviewed entries count in Home.java
  *
@@ -904,6 +907,7 @@ public class Home extends PapillonBasePO {
 			&& GDEFReviewedEntryCountFra != null && GDEFReviewedEntryCountEst != null) {
 			Volume GDEFVolume = VolumesFactory.findVolumeByName("GDEF_est");
 			if (GDEFVolume!=null) {
+				myCalendar = new java.util.GregorianCalendar();
 				if (myCalendar.get(myCalendar.DAY_OF_MONTH) != DAY_OF_MONTH) {
 					GDEF_estValidatedEntriesCount = GDEFVolume.getCount(VolumeEntry.VALIDATED_STATUS);
 					GDEF_estReviewedEntriesCount = GDEFVolume.getCount(VolumeEntry.REVIEWED_STATUS);
