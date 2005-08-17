@@ -9,6 +9,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.17  2005/08/17 12:58:16  mangeot
+ * Fixed a bug when creating an entry from an existing one.
+ * From now on, the entry id is the same.
+ * Added the links into ReviewContributions.java
+ *
  * Revision 1.16  2005/08/01 15:03:41  mangeot
  * Corrected an important bug in the editor that forbidded to change a boolean value from true to false.
  * Beware, you have to edit the existing interface templates by hands:
@@ -156,12 +161,11 @@ public class EditEntry extends PapillonBasePO {
     protected static String SaveComment_PARAMETER = "SaveComment";  
 	
 	protected final static String AdminContributionsURL = "AdminContributions.po";
-	protected final static String ChooseEntryURL = "ChooseEntry.po";
 	protected final static String EditEntryInitURL = "EditEntryInit.po";
 	protected final static String ReviewContributionsURL = "ReviewContributions.po";
-    protected final static String ContributionsLookupParameter = "LOOKUP";
-    protected final static String ContributionsHeadwordParameter = "HEADWORD";
-    protected final static String ContributionsVolumeParameter = "VOLUME";
+    protected final static String ContributionsViewParameter = AdminContributions.VIEW_CONTRIB_PARAMETER;
+    protected final static String ContributionsHandleParameter = AdminContributions.HANDLE_PARAMETER;
+    protected final static String ContributionsVolumeParameter = AdminContributions.VOLUME_PARAMETER;
 	
 	
 	protected final static String newBlockRedirectionJavascript = "function loadFunction () {\n"
@@ -359,14 +363,14 @@ public class EditEntry extends PapillonBasePO {
 			myVolumeEntry.save();
 		}
 		if (referrer.indexOf(ReviewContributionsURL)>0) {
-			throw new ClientPageRedirectException(ReviewContributionsURL+ "?" + ContributionsVolumeParameter + "=" + myVolumeEntry.getVolumeName()
-			+ "&" + ContributionsHeadwordParameter + "=" + myUrlEncode(myVolumeEntry.getHeadword())
-			+ "&" + ContributionsLookupParameter + "=on");
+			throw new ClientPageRedirectException(ReviewContributionsURL + "?" + ContributionsVolumeParameter + "=" + myVolumeEntry.getVolumeName()
+			+ "&" + ContributionsHandleParameter + "=" + myVolumeEntry.getHandle()
+			+ "&" + ContributionsViewParameter + "=" + ContributionsViewParameter);
 		}
 		else {
 			throw new ClientPageRedirectException(AdminContributionsURL + "?" + ContributionsVolumeParameter + "=" + myVolumeEntry.getVolumeName()
-			+ "&" + ContributionsHeadwordParameter + "=" + myUrlEncode(myVolumeEntry.getHeadword())
-			+ "&" + ContributionsLookupParameter + "=on");
+			+ "&" + ContributionsHandleParameter + "=" + myVolumeEntry.getHandle()
+			+ "&" + ContributionsViewParameter + "=" + ContributionsViewParameter);
 		}
 	}
        

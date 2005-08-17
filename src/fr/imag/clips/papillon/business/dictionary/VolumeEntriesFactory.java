@@ -3,6 +3,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.24  2005/08/17 12:58:16  mangeot
+ * Fixed a bug when creating an entry from an existing one.
+ * From now on, the entry id is the same.
+ * Added the links into ReviewContributions.java
+ *
  * Revision 1.23  2005/08/16 12:11:18  mangeot
  * Bug fix in findEntryByEntryId method
  *
@@ -999,23 +1004,16 @@ public class VolumeEntriesFactory {
 			return findEntryByKey(myDict, myVolume, Volume.CDM_contributionId, Volume.DEFAULT_LANG, entryId);
         }
 	
-    public static VolumeEntry newEntry(Dictionary dict, Volume volume, String headword, org.w3c.dom.Document docdom)
-        throws fr.imag.clips.papillon.business.PapillonBusinessException {
-			
-            VolumeEntry newEntry=new VolumeEntry(dict, volume);
-            //dom avant toute chose !
-            newEntry.setDom((org.w3c.dom.Document) docdom.cloneNode(true));
-            //headword
-            newEntry.setHeadword(headword);
-			
-			newEntry.setEntryId();
-            
-            return newEntry;
-        }
-	
 	public static VolumeEntry newEntryFromExisting(VolumeEntry existingEntry) 
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
-			VolumeEntry resEntry = newEntry(existingEntry.getDictionary(), existingEntry.getVolume(), existingEntry.getHeadword(), existingEntry.getDom());
+			VolumeEntry resEntry = new VolumeEntry(existingEntry.getDictionary(), existingEntry.getVolume());
+            //dom avant toute chose !
+            resEntry.setDom((org.w3c.dom.Document) existingEntry.getDom().cloneNode(true));
+            //headword
+            resEntry.setHeadword(existingEntry.getHeadword());
+
+			resEntry.setEntryIdIfNull();
+			
 			return resEntry;
 		}
 	

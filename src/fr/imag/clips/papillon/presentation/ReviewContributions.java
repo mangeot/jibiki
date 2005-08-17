@@ -9,6 +9,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.20  2005/08/17 12:58:16  mangeot
+ * Fixed a bug when creating an entry from an existing one.
+ * From now on, the entry id is the same.
+ * Added the links into ReviewContributions.java
+ *
  * Revision 1.19  2005/08/02 14:41:49  mangeot
  * Work on stylesheets and
  * added a reset button for Review and AdminContrib forms
@@ -216,17 +221,17 @@ public class ReviewContributions extends PapillonBasePO {
 	protected final static String EditURL="EditEntry.po";
 	protected final static String EditVolumeParameter=EditEntry.VolumeName_PARAMETER;
 	protected final static String EditHandleParameter=EditEntry.EntryHandle_PARAMETER;
+	protected final static String XML_FORMATTER = fr.imag.clips.papillon.business.transformation.XslTransformation.XML_FORMATTER; 
 
 	protected final static String VIEW_CONTRIB_PARAMETER="ViewContrib";
 	protected final static String AnyContains_PARAMETER="AnyContains";
-	protected final static String HEADWORD_PARAMETER="HEADWORD";
 	protected final static String OFFSET_PARAMETER="OFFSET";
 	protected final static String REMOVE_CONTRIB_PARAMETER="RemoveContrib";
 	protected final static String REMOVE_VALIDATED_CONTRIB_PARAMETER="DeleteContrib";
 	protected final static String REVISE_CONTRIB_PARAMETER="ReviseContrib";
 	protected final static String VALIDATE_CONTRIB_PARAMETER="ValidateContrib";
 	protected final static String CONTRIBID_PARAMETER="ContribId";
-    protected final static String XSLID_PARAMETER="xslid";
+    protected final static String FORMATTER_PARAMETER="formatter";
     protected final static String SORTBY_PARAMETER="SortBy";
 	
     
@@ -266,10 +271,9 @@ public class ReviewContributions extends PapillonBasePO {
 		String lookup = myGetParameter(content.NAME_LOOKUP);
 		String reset = myGetParameter(content.NAME_RESET);
 			String volume = myGetParameter(content.NAME_VOLUME);
-			String headword = myGetParameter(HEADWORD_PARAMETER);
 		// hidden arguments
 			String contribid = myGetParameter(CONTRIBID_PARAMETER);
-			String xslid = myGetParameter(XSLID_PARAMETER);
+			String formatter = myGetParameter(FORMATTER_PARAMETER);
 			String sortBy = myGetParameter(SORTBY_PARAMETER);
 						
 			if (volume!=null &&!volume.equals("")) {
@@ -451,13 +455,6 @@ public class ReviewContributions extends PapillonBasePO {
 				status = null;
 			}
 			
-			// headword
-			if (headword != null && !headword.equals("")) {
-				search1 = "cdm-headword";
-				search1text = headword;
-				strategy1 = IQuery.STRATEGY_EXACT;
-			}
-			
 			Vector myKeys = new Vector();
 			Vector myClauses = new Vector();
 			if (search1 !=null && !search1.equals("")  &&
@@ -539,7 +536,7 @@ public class ReviewContributions extends PapillonBasePO {
 		
 
 		int step = STEP_DEFAULT;
-		if (null != lookup || this.getReferrer() !=null && this.getReferrer().indexOf(EditURL)>0) {
+		if (null != lookup) {
 			step = STEP_LOOKUP;
 		}
 		else if (null != contribid && null != myGetParameter(VIEW_CONTRIB_PARAMETER)) {
@@ -571,7 +568,7 @@ public class ReviewContributions extends PapillonBasePO {
 				addContributions(volume, myKeys, myClauses, sortBy, queryString, offset);
 				break;
 			case STEP_VIEW:
-				addContribution(volume, contribid, xslid, queryString);
+				addContribution(volume, contribid, formatter, queryString);
 				break;
 			case STEP_REMOVE:
 				contribid = myGetParameter(CONTRIBID_PARAMETER);
@@ -622,8 +619,8 @@ public class ReviewContributions extends PapillonBasePO {
 							VolumeEntry oldContrib = VolumeEntriesFactory.findEntryByContributionId(volume, originalContribId);
 							if (null != oldContrib && !oldContrib.isEmpty()) {
 								oldContrib.setReplaced(this.getUser());
-								userMessage += " Old contribution " + myContrib.getContributionId() + " / " +
-									myContrib.getHeadword() + " replaced.";
+								userMessage += " Old contribution " + oldContrib.getContributionId() + " / " +
+									oldContrib.getHeadword() + " replaced.";
 							}
 						}
 					}
@@ -763,20 +760,15 @@ public class ReviewContributions extends PapillonBasePO {
 			this.setSelected(statusSelect,status);
     }
 
-    protected void addContribution(String volumeString, String contribid, String xslid, String queryString)
-        throws PapillonBusinessException,
-        ClassNotFoundException,
-        HttpPresentationException,
-        IOException,
-        TransformerConfigurationException,
-        org.xml.sax.SAXException,
-        javax.xml.parsers.ParserConfigurationException,
-        javax.xml.transform.TransformerException {
-			Vector EntryVector = new Vector();
-			EntryVector.add(VolumeEntriesFactory.findEntryByHandle(volumeString, contribid));
-			addContributions(EntryVector, xslid, queryString, 0);
-		}
-
+	protected void addContribution(String volumeString, String entryHandle, String formatter, String queryString) 
+		throws PapillonBusinessException,
+		java.io.UnsupportedEncodingException,
+		HttpPresentationException,
+		java.io.IOException {
+			java.util.Collection ContribCollection = displayEntry(volumeString, entryHandle, formatter);
+			addEntryTable(ContribCollection, queryString, 0);
+	}
+	
     protected void addContributions(String volume, Vector Keys1, Vector Keys2, String sortBy, String queryString, int offset)
         throws PapillonBusinessException,
         ClassNotFoundException,
@@ -793,10 +785,10 @@ public class ReviewContributions extends PapillonBasePO {
 					VolumeEntriesFactory.sort(ContribVector, sortBy);
 				}
 			}
-			addContributions(ContribVector, null, queryString, offset);
+			addContributions(ContribVector, queryString, offset);
 		}
 
-	protected void addContributions(Collection EntryCollection, String xslid, String queryString, int offset)
+	protected void addContributions(Collection EntryCollection, String queryString, int offset)
 		throws PapillonBusinessException,
 		ClassNotFoundException,
 		HttpPresentationException,
@@ -813,12 +805,40 @@ public class ReviewContributions extends PapillonBasePO {
 				if (EntryCollection.size() < MaxDisplayedEntries) {
 					for(Iterator entriesIterator = EntryCollection.iterator(); entriesIterator.hasNext();) {
 						IAnswer myAnswer = (VolumeEntry)entriesIterator.next();
-						addElement(XslTransformation.applyXslSheets(myAnswer, xslid),myAnswer.getVolumeName(),myAnswer.getHandle());
+						addElement(XslTransformation.applyXslSheets(myAnswer));
 					}
 				}
 			}
 		}
-    
+   
+	protected java.util.Collection displayEntry (String volumeName, String handle, String formatter)
+		throws PapillonBusinessException,
+		java.io.UnsupportedEncodingException,
+		HttpPresentationException,
+		java.io.IOException {
+			
+			Volume myVolume = VolumesFactory.findVolumeByName(volumeName);
+			java.util.Vector myVector = new Vector();
+			String[] targets = null;
+			if (myVolume != null && !myVolume.isEmpty()) {
+				targets = myVolume.getTargetLanguagesArray();
+			}
+			java.util.Collection EntryCollection = DictionariesFactory.findAnswerAndTranslations(volumeName, handle, targets, this.getUser());
+			
+			if (EntryCollection != null && EntryCollection.size()>0) {
+				QueryResult myQueryResult = (QueryResult) EntryCollection.iterator().next();
+				VolumeEntry myEntry = myQueryResult.getSourceEntry();
+				myVector.add(myEntry);
+				// get the apropriate transformer.
+				fr.imag.clips.papillon.business.transformation.ResultFormatter rf = fr.imag.clips.papillon.business.transformation.ResultFormatterFactory.getFormatter(myQueryResult, formatter, fr.imag.clips.papillon.business.transformation.ResultFormatterFactory.XHTML_DIALECT, null);
+				
+				
+				Element myXhtmlElt = (Element)rf.getFormattedResult(myQueryResult);
+				addElement(myXhtmlElt);
+			}
+			return (java.util.Collection) myVector;
+		}
+	
 
     protected void addEntryTable (Collection EntryCollection, String queryString, int offset)
         throws PapillonBusinessException,
@@ -891,24 +911,17 @@ public class ReviewContributions extends PapillonBasePO {
 				for(Iterator entriesIterator = EntryCollection.iterator(); entriesIterator.hasNext();) {
                     VolumeEntry myContrib = (VolumeEntry) entriesIterator.next();
 					if (myContrib !=null && !myContrib.isEmpty()) {
-					XslSheet xmlSheet = XslSheetFactory.findXslSheetByName("XML");
-                        String xslid = "";
-                        if (null != xmlSheet && !xmlSheet.isEmpty()) {
-                            xslid = xmlSheet.getHandle();
-                        } 					
                        content.setTextViewContribText(myContrib.getCompleteHeadword());
                         viewContribAnchor.setHref(this.getUrl() + "?"
-												  + VIEW_CONTRIB_PARAMETER + "=on"
+												  + VIEW_CONTRIB_PARAMETER + "=" + VIEW_CONTRIB_PARAMETER
                                                   + "&" + CONTRIBID_PARAMETER + "=" + myContrib.getHandle()
-                                                  + "&" + content.NAME_VOLUME + "=" + myContrib.getVolumeName()
-												  + queryString);
+                                                  + "&" + content.NAME_VOLUME + "=" + myContrib.getVolumeName());
 
                         viewXmlAnchor.setHref(this.getUrl() + "?"
-											  + VIEW_CONTRIB_PARAMETER + "=on"
+											  + VIEW_CONTRIB_PARAMETER + "=" + VIEW_CONTRIB_PARAMETER
                                               + "&" + CONTRIBID_PARAMETER + "=" + myContrib.getHandle()
 											  + "&" + content.NAME_VOLUME + "=" + myContrib.getVolumeName()
-						                      + "&" + XSLID_PARAMETER + "="  + xslid
-											  + queryString);
+						                      + "&" + FORMATTER_PARAMETER + "="  + XML_FORMATTER);
 
                         content.setTextVolumeName(myContrib.getVolumeName());
                         content.setTextAuthor(myContrib.getAuthor());
@@ -935,7 +948,6 @@ public class ReviewContributions extends PapillonBasePO {
 							removeContribAnchor.setHref(this.getUrl() + "?"
 								   + REMOVE_CONTRIB_PARAMETER + "=on"
 								   + "&" + CONTRIBID_PARAMETER + "=" + myContrib.getHandle()
-								   + "&" + content.NAME_VOLUME + "=" + myContrib.getVolumeName()
 								   + queryString);
 							content.setTextRemoveMessage(removeMessage);
 						}
@@ -958,9 +970,8 @@ public class ReviewContributions extends PapillonBasePO {
 								&& this.getUser().isSpecialist() 
 								&& this.getUser().isInNormalGroups(myContrib.getGroups())) {
 								reviseContribAnchor.setHref(this.getUrl() + "?"
-									 + REVISE_CONTRIB_PARAMETER + "=on"
+									 + REVISE_CONTRIB_PARAMETER + "=" + REVISE_CONTRIB_PARAMETER
 									 + "&" + CONTRIBID_PARAMETER + "=" + myContrib.getHandle()
-								     + "&" + content.NAME_VOLUME + "=" + myContrib.getVolumeName()
 								     + queryString);
 								reviseContribAnchor.setAttribute("class","");	 
 							}
@@ -970,9 +981,8 @@ public class ReviewContributions extends PapillonBasePO {
 							if (myContrib.getStatus().equals(VolumeEntry.REVIEWED_STATUS)
 								&& this.getUser().isValidator()) {
 								validateContribAnchor.setHref(this.getUrl() + "?"
-									 + VALIDATE_CONTRIB_PARAMETER + "=on"
+									 + VALIDATE_CONTRIB_PARAMETER + "=" + VALIDATE_CONTRIB_PARAMETER
 									 + "&" + CONTRIBID_PARAMETER + "=" + myContrib.getHandle()
-								     + "&" + content.NAME_VOLUME + "=" + myContrib.getVolumeName()
 								     + queryString);
 								validateContribAnchor.removeAttribute("class");	 
 							}
@@ -990,7 +1000,7 @@ public class ReviewContributions extends PapillonBasePO {
                 }
             }
 
-    protected void addElement (Element element, String table, String handle)
+    protected void addElement (Element element)
         throws HttpPresentationException,
         PapillonBusinessException,
         java.io.IOException {
