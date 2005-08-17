@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.5  2005/08/17 14:27:42  mangeot
+ * Added groups lists in user profile and from now on, displays the groups as a listinstead of a text box
+ *
  * Revision 1.4  2005/05/24 12:51:21  serasset
  * Updated many aspect of the Papillon project to handle lexalp project.
  * 1. Layout is now parametrable in the application configuration file.
@@ -76,6 +79,7 @@ public class Group {
 	
     public final static String ADMIN_GROUP = "admin";
     public final static String SPECIALIST_GROUP = "specialist";
+    public final static String VALIDATOR_GROUP = "validator";
     protected final static String PASSWORD_STRING = "Papillon.Groups.Groups.Password";
     protected final static String PASSWORD_ENCODING = "US-ASCII";
     protected final static String USERS_SEPARATOR_STRING = "#";

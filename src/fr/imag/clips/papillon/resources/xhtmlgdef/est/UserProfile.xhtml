@@ -11,22 +11,29 @@
 <!-- change password -->
 <table width="600" border="0" cellspacing="0" cellpadding="10" summary="ChangePassword">
 <tr>	
-	<th colspan="2"><h3>Muuda salas&otilde;na</h3></th>
+	<th colspan="2"><h3>Group list</h3></th>
+</tr>
+<tr>
+    <td><b>Groups:</b></td>     
+    <td><span id="GroupList">Groups</span></td>
+</tr>
+<tr>	
+	<th colspan="2"><h3>Muuda salasõna</h3></th>
 </tr>
 <tr>
     <td><b>Kasutajanimi:</b></td>     
     <td><span id="CPLogin">Kasutajanimi</span></td>
 </tr>
 <tr>
-    <td><b><label for="CPPassword">Praegune salas&otilde;na:</label></b></td>     
+    <td><b><label for="CPPassword">Praegune salasõna:</label></b></td>     
     <td><input id="CPPassword" name="CPPassword" type="password" size="10" value=""/></td>
 </tr>
 <tr>
-    <td><b><label for="NewPassword">Uus salas&otilde;na:</label></b></td>     
+    <td><b><label for="NewPassword">Uus salasõna:</label></b></td>     
     <td><input id="NewPassword" name="NewPassword" type="password" size="10" value=""/></td>
 </tr>
 <tr>
-    <td><b><label for="NewPassword2">Kinnita uus salas&otilde;na:</label></b></td>     
+    <td><b><label for="NewPassword2">Kinnita uus salasõna:</label></b></td>     
     <td><input id="NewPassword2" name="NewPassword2" type="password" size="10" value=""/></td>
 </tr>
 <tr>
@@ -72,10 +79,14 @@
 </tr>
 <tr>
     <td><b><label for="Group">T&ouml;&ouml;r&uuml;hm:</label></b></td>     
-    <td><input id="Group" name="Group" type="text" size="10" value=""/></td>
+    <td>
+	<select id="Group" name="Group">
+		<option id="GroupOptionTemplate" value="group name" label="group name">group name</option>
+	</select>
+	</td>
 </tr>
 <tr>
-    <td><b><label for="GroupPassword">T&ouml;&ouml;r&uuml;hma salas&otilde;na:</label></b></td>     
+    <td><b><label for="GroupPassword">T&ouml;&ouml;r&uuml;hma salasõna:</label></b></td>     
     <td><input id="GroupPassword" name="GroupPassword" type="password" size="10" value=""/></td>
 </tr>
 <tr>
@@ -96,7 +107,7 @@
     <td><span id="DLogin">Kasutajanimi</span></td>
 </tr>
 <tr>
-    <td><b><label for="DPassword">Salas&otilde;na:</label></b></td>     
+    <td><b><label for="DPassword">Salasõna:</label></b></td>     
     <td><input id="DPassword" name="DPassword" type="password" size="10" value=""/></td>
 </tr>
 <tr>

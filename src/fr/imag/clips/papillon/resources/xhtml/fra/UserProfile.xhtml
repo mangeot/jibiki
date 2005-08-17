@@ -11,6 +11,13 @@
 <!-- change password -->
 <table width="600" border="0" cellspacing="0" cellpadding="10" summary="ChangePassword">
 <tr>	
+	<th colspan="2"><h3>Liste des groupes</h3></th>
+</tr>
+<tr>
+    <td><b>Groupes :</b></td>     
+    <td><span id="GroupList">Groupes</span></td>
+</tr>
+<tr>	
 	<th colspan="2"><h3>Changer le mot de passe</h3></th>
 </tr>
 <tr>
@@ -72,7 +79,11 @@
 </tr>
 <tr>
     <td><b><label for="Group">Groupe&nbsp;:</label></b></td>     
-    <td><input id="Group" name="Group" type="text" size="10" value=""/></td>
+    <td>
+	<select id="Group" name="Group">
+		<option id="GroupOptionTemplate" value="group name" label="group name">group name</option>
+	</select>
+	</td>
 </tr>
 <tr>
     <td><b><label for="GroupPassword">Mot de passe du groupe&nbsp;:</label></b></td>     

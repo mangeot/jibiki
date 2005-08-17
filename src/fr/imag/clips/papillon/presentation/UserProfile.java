@@ -10,6 +10,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.6  2005/08/17 14:27:42  mangeot
+ * Added groups lists in user profile and from now on, displays the groups as a listinstead of a text box
+ *
  * Revision 1.5  2005/05/24 12:51:22  serasset
  * Updated many aspect of the Papillon project to handle lexalp project.
  * 1. Layout is now parametrable in the application configuration file.
@@ -70,7 +73,7 @@ import com.lutris.appserver.server.httpPresentation.HttpPresentationException;
 import com.lutris.appserver.server.httpPresentation.ClientPageRedirectException;
 
 //import org.enhydra.xml.xmlc.XMLObject;
-import org.w3c.dom.html.*;
+import org.enhydra.xml.xhtml.dom.*;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
@@ -82,11 +85,6 @@ import fr.imag.clips.papillon.business.message.MessageDBLoader;
 
 // Standard imports
 import java.io.IOException;
-import java.util.Date;
-import java.text.DateFormat;
-import java.io.*;
-
-import org.apache.xerces.dom.*;
 
 // for users
 import fr.imag.clips.papillon.business.user.*;
@@ -206,6 +204,17 @@ public class UserProfile extends PapillonBasePO {
 		protected void addProfileForm() throws fr.imag.clips.papillon.business.PapillonBusinessException {
 
 			content.setTextUserName(this.getUser().getName());
+			
+			String[] groups = this.getUser().getGroupsArray();
+			String groupsString = "";
+			String comma = ", ";
+			for (int i=0; i<groups.length;i++) {
+				groupsString += comma + groups[i];
+			}
+			if (groupsString.startsWith(comma)) {
+				groupsString = groupsString.substring(comma.length());
+			}
+			content.setTextGroupList(groupsString);
 
 			String login = this.getUser().getLogin();
 			content.setTextCPLogin(login);
@@ -213,11 +222,28 @@ public class UserProfile extends PapillonBasePO {
 			content.setTextAGLogin(login);
 			content.setTextDLogin(login);
 
-			HTMLInputElement nameInput = content.getElementNameInput();
+			XHTMLInputElement nameInput = content.getElementNameInput();
 			nameInput.setValue(this.getUser().getName());
 			
-			HTMLInputElement emailInput = content.getElementEmailInput();
+			XHTMLInputElement emailInput = content.getElementEmailInput();
 			emailInput.setValue(this.getUser().getEmail());
 			
+			XHTMLOptionElement groupOption = content.getElementGroupOptionTemplate();
+			groupOption.removeAttribute("id");
+			Node optionParent = groupOption.getParentNode();
+			// We assume that the option element has only one text child 
+			// (it should be this way if the HTML is valid...)
+			Text groupTextTemplate = (Text)groupOption.getFirstChild(); 
+			
+			Group[] GroupsTable = GroupsFactory.getAllGroupsArray();
+			
+			for (int i=0; i<GroupsTable.length; i++) {
+				String myGroupName = GroupsTable[i].getName();
+				groupOption.setValue(myGroupName);
+				groupOption.setLabel(myGroupName);
+				groupTextTemplate.setData(myGroupName);
+				optionParent.appendChild(groupOption.cloneNode(true));
+			}
+			optionParent.removeChild(groupOption);
 		}
 }

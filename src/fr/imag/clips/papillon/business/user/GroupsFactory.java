@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.5  2005/08/17 14:27:42  mangeot
+ * Added groups lists in user profile and from now on, displays the groups as a listinstead of a text box
+ *
  * Revision 1.4  2005/05/24 12:51:22  serasset
  * Updated many aspect of the Papillon project to handle lexalp project.
  * 1. Layout is now parametrable in the application configuration file.
@@ -55,7 +58,7 @@ import fr.imag.clips.papillon.business.utility.*;
 /**
  * Used to find the instances of xslsheet.
  */
-public class GroupsFactory{
+public class GroupsFactory {
 
     public static GroupAnswer createUniqueGroup(String name,
                                               String password,
@@ -129,40 +132,6 @@ public class GroupsFactory{
             ex.printStackTrace();
             throw new PapillonBusinessException("Exception in findGroupByHandle()", ex);
         }
-    }
-
-    public static GroupAnswer createUniqueGroup(String name,
-                                              String password,
-                                              String password2)
-    throws fr.imag.clips.papillon.business.PapillonBusinessException {
-        Group myGroup = null;
-        String answerMessage = "";
-
-        if (name==null || name.equals("")) {
-            answerMessage = "Group name empty";
-        }
-        else if (password==null || password.equals("") &&
-                 password2==null || password2.equals("")) {
-            answerMessage = "Group password empty";
-        }
-        else if (!password.equals(password2)) {
-            answerMessage = "Different passwords";
-        }
-        else {
-            //search for an existing group
-            Group Existe=GroupsFactory.findGroupByName(name);
-            if (!Existe.isEmpty()) {
-                answerMessage = "Group " + name + " already in the database";
-            }
-            else {//doesn't exist, create:
-				myGroup=new Group();
-				myGroup.setName(name);
-				myGroup.setPassword(password);
-				myGroup.save();
-				answerMessage =  "Group: "+ myGroup.getName() + " added";
-            }
-        }
-        return new GroupAnswer(myGroup,answerMessage);
     }
 
     public static GroupAnswer changeGroupPassword(String name,
@@ -250,8 +219,27 @@ public class GroupsFactory{
     }
         
 	public static Group[] getGroupsArray()  
-        throws PapillonBusinessException {
+	throws PapillonBusinessException {
 		return getGroupsArray(null,null);
+	}
+    
+	public static Group[] getAllGroupsArray()  
+	throws PapillonBusinessException {
+		Group[] tmpGroup = getGroupsArray(null,null);
+		Vector myGroupsVector = new Vector(java.util.Arrays.asList(tmpGroup));
+		Group specialistGroup = new Group();
+		specialistGroup.setName(Group.SPECIALIST_GROUP);
+		myGroupsVector.add(specialistGroup);
+
+		Group validatorGroup = new Group();
+		validatorGroup.setName(Group.VALIDATOR_GROUP);
+		myGroupsVector.add(validatorGroup);
+
+		Group adminGroup = new Group();
+		adminGroup.setName(Group.ADMIN_GROUP);
+		myGroupsVector.add(adminGroup);
+		
+		return (Group[]) myGroupsVector.toArray(new Group[0]);
 	}
     
     public static Group[] getGroupsArray(String name, String password) 

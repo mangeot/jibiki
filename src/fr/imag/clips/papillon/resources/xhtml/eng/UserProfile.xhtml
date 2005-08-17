@@ -11,6 +11,13 @@
 <!-- change password -->
 <table width="600" border="0" cellspacing="0" cellpadding="10" summary="ChangePassword">
 <tr>	
+	<th colspan="2"><h3>Group list</h3></th>
+</tr>
+<tr>
+    <td><b>Groups:</b></td>     
+    <td><span id="GroupList">Groups</span></td>
+</tr>
+<tr>	
 	<th colspan="2"><h3>Change Your Password</h3></th>
 </tr>
 <tr>
@@ -36,9 +43,9 @@
 </form>
 
 <br/>
-<!-- change mail addresse -->
+<!-- change mail address -->
 <form  action="UserProfile.po" method="post">
-<table width="600" border="0" cellspacing="0" cellpadding="10" summary="ChangeMailAddresse">
+<table width="600" border="0" cellspacing="0" cellpadding="10" summary="ChangeMailAddress">
 <tr>	
 	<th colspan="2"><h3>Edit Your Name and Email</h3></th>
 </tr>
@@ -72,7 +79,11 @@
 </tr>
 <tr>
     <td><b><label for="Group">Group:</label></b></td>     
-    <td><input id="Group" name="Group" type="text" size="10" value=""/></td>
+    <td>
+	<select id="Group" name="Group">
+		<option id="GroupOptionTemplate" value="group name" label="group name">group name</option>
+	</select>
+	</td>
 </tr>
 <tr>
     <td><b><label for="GroupPassword">Group Password:</label></b></td>     
