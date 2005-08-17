@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.20  2005/08/17 09:29:54  mangeot
+ * Added links in AdminContributions
+ *
  * Revision 1.19  2005/08/02 14:41:49  mangeot
  * Work on stylesheets and
  * added a reset button for Review and AdminContrib forms
@@ -195,15 +198,16 @@ public class AdminContributions extends PapillonBasePO {
 	protected final static String EditURL="EditEntry.po";
 	protected final static String EditVolumeParameter=EditEntry.VolumeName_PARAMETER;
 	protected final static String EditHandleParameter=EditEntry.EntryHandle_PARAMETER;
+	protected final static String XML_FORMATTER = fr.imag.clips.papillon.business.transformation.XslTransformation.XML_FORMATTER; 
 	
 	protected final static String ALL="*ALL*";
 	protected final static String AnyContains_PARAMETER="AnyContains";
 	protected final static String HEADWORD_PARAMETER="HEADWORD";
+    protected final static String FORMATTER_PARAMETER="formatter";
 	protected final static String OFFSET_PARAMETER="OFFSET";
 	protected final static String REMOVE_CONTRIB_PARAMETER="RemoveContrib";
 	protected final static String MARK_FINISHED_PARAMETER="MarkFinished";
 	protected final static String ENTRYID="entryid";
-    protected final static String XSLID="xslid";
     protected final static String SORTBY_PARAMETER="SortBy";
     
     protected static AdminContributionsTmplXHTML content;
@@ -242,7 +246,7 @@ public class AdminContributions extends PapillonBasePO {
 			String volumeString = myGetParameter(content.NAME_VOLUME);
 			String headword = myGetParameter(HEADWORD_PARAMETER);
 			String entryid = myGetParameter(ENTRYID);
-			String xslid = myGetParameter(XSLID);
+			String formatter = myGetParameter(FORMATTER_PARAMETER);
 			String sortBy = myGetParameter(SORTBY_PARAMETER);
 			
 			if (volumeString!=null &&!volumeString.equals("")) {
@@ -510,7 +514,7 @@ public class AdminContributions extends PapillonBasePO {
 			else {
 				addConsultForm(volumeString, creationDate, creationDateStrategyString, reviewDate, reviewDateStrategyString, search1, search1text, strategyString1, search2, search2text, strategyString2, status);
 				
-				addContributions(entryid, volumeString, this.getUser(), myKeys, myClauses, anyContains, offset, xslid, sortBy, queryString);
+				addContributions(entryid, volumeString, this.getUser(), myKeys, myClauses, anyContains, offset, formatter, sortBy, queryString);
 			}
 			
 			removeTemplateRows();
@@ -614,7 +618,7 @@ public class AdminContributions extends PapillonBasePO {
 			
 		}
 	
-    protected void addContributions(String entryid, String volumeString, User myUser, Vector Keys1, Vector Keys2, String anyContains, int offset, String xslid, String sortBy, String queryString)
+    protected void addContributions(String entryid, String volumeString, User myUser, Vector Keys1, Vector Keys2, String anyContains, int offset, String formatter, String sortBy, String queryString)
         throws PapillonBusinessException,
         ClassNotFoundException,
         HttpPresentationException,
@@ -624,9 +628,9 @@ public class AdminContributions extends PapillonBasePO {
         javax.xml.parsers.ParserConfigurationException,
         javax.xml.transform.TransformerException {
 						
-			Vector ContribVector = new Vector();
+			Vector ContribVector = null;
             if (null != entryid && !entryid.equals("")) {
-                ContribVector.add(VolumeEntriesFactory.findEntryByHandle(volumeString, entryid));
+				displayEntry (volumeString, entryid, formatter);
             }
             else {
                 // FIXME: fix the limit parameter
@@ -643,7 +647,7 @@ public class AdminContributions extends PapillonBasePO {
                     for(int i = 0; i < ContribVector.size(); i++) {
 						IAnswer myAnswer = (IAnswer)ContribVector.get(i);
 						if (myAnswer!=null && !myAnswer.isEmpty()) {
-							addElement(XslTransformation.applyXslSheets(myAnswer, xslid));
+							addElement(XslTransformation.applyXslSheets(myAnswer, null));
 						}
 					}
 				}
@@ -748,15 +752,9 @@ public class AdminContributions extends PapillonBasePO {
 						}
 						
 						// view XML
-						XslSheet xmlSheet = XslSheetFactory.findXslSheetByName("XML");
-						String xslid = "";
-						if (null != xmlSheet && !xmlSheet.isEmpty()) {
-							xslid = xmlSheet.getHandle();
-						} 
-						
 						viewXmlAnchor.setHref(this.getUrl() + "?"
 											  + ENTRYID + "=" + myContrib.getHandle() 
-											  + "&" + XSLID + "=" + xslid
+											  + "&" + FORMATTER_PARAMETER + "=" + XML_FORMATTER
 											  + queryString);
 						
 						// edit contrib
@@ -814,7 +812,39 @@ public class AdminContributions extends PapillonBasePO {
             //entryTable.removeChild(entryRow);
         }
 	
-    
+	protected void displayEntry (String volumeName, String handle, String formatter)
+		throws PapillonBusinessException,
+		java.io.UnsupportedEncodingException,
+		HttpPresentationException {
+						
+			Volume myVolume = VolumesFactory.findVolumeByName(volumeName);
+			String[] targets = null;
+			if (myVolume != null && !myVolume.isEmpty()) {
+				targets = myVolume.getTargetLanguagesArray();
+			}
+			java.util.Collection EntryCollection = DictionariesFactory.findAnswerAndTranslations(volumeName, handle, targets, this.getUser());
+			
+			if (EntryCollection != null && EntryCollection.size()>0) {
+				QueryResult myQueryResult = (QueryResult) EntryCollection.iterator().next();
+				VolumeEntry myEntry = myQueryResult.getSourceEntry();
+				// get the apropriate transformer.
+				fr.imag.clips.papillon.business.transformation.ResultFormatter rf = fr.imag.clips.papillon.business.transformation.ResultFormatterFactory.getFormatter(myQueryResult, formatter, fr.imag.clips.papillon.business.transformation.ResultFormatterFactory.XHTML_DIALECT, null);
+				
+				Element myXhtmlElt = (Element)rf.getFormattedResult(myQueryResult);
+				
+				XHTMLTableRowElement originalEntryRow = content.getElementEntryRow();
+				Node entryTable=originalEntryRow.getParentNode();
+				XHTMLTableRowElement entryRow = (XHTMLTableRowElement)originalEntryRow.cloneNode(true);
+				XHTMLTableCellElement entryCell= (XHTMLTableCellElement)entryRow.getFirstChild();
+				entryRow.removeAttribute("id");
+				entryCell.removeAttribute("id");
+
+				entryCell.appendChild(content.importNode(myXhtmlElt, true));
+				entryTable.appendChild(entryRow);
+				
+			}
+		}
+	
     
     
     protected void removeTemplateRows() {
