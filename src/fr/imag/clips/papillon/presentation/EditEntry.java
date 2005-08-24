@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.18  2005/08/24 13:59:35  serasset
+ * Added FIXME comments.
+ *
  * Revision 1.17  2005/08/17 12:58:16  mangeot
  * Fixed a bug when creating an entry from an existing one.
  * From now on, the entry id is the same.
@@ -320,6 +323,7 @@ public class EditEntry extends PapillonBasePO {
 	//	System.out.println(Utility.NodeToString(myInterface));
 	// save at the end because fillTemplate modifies the entry DOM
 	// when there is a block anchor
+        // FIXME: WHY THE HELL SHOULD THE BLOCK ANCHOR BE ADDED TO AN ENTRY ?????
 		myVolumeEntry.save();
 		
 		return myInterface;
@@ -354,13 +358,13 @@ public class EditEntry extends PapillonBasePO {
 		}
 		updateBooleanElements(myGetParameterValues(Boolean_PARAMETER),myGetParameterValues(BooleanTrue_PARAMETER), entryElt);
 	}
-			
+
 	protected void saveEntry(VolumeEntry myVolumeEntry, String author, String saveComment, String referrer) 
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 		if (myVolumeEntry!=null) {
 			myVolumeEntry.setHeadword(myVolumeEntry.getCdmHeadword());
 			myVolumeEntry.setModification(author,saveComment);
-			myVolumeEntry.save();
+            myVolumeEntry.save();
 		}
 		if (referrer.indexOf(ReviewContributionsURL)>0) {
 			throw new ClientPageRedirectException(ReviewContributionsURL + "?" + ContributionsVolumeParameter + "=" + myVolumeEntry.getVolumeName()
