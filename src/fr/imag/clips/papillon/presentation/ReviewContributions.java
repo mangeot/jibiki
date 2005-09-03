@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.21  2005/09/03 11:19:19  mangeot
+ * Bug fix in redirection after reviewing
+ *
  * Revision 1.20  2005/08/17 12:58:16  mangeot
  * Fixed a bug when creating an entry from an existing one.
  * From now on, the entry id is the same.
@@ -223,14 +226,14 @@ public class ReviewContributions extends PapillonBasePO {
 	protected final static String EditHandleParameter=EditEntry.EntryHandle_PARAMETER;
 	protected final static String XML_FORMATTER = fr.imag.clips.papillon.business.transformation.XslTransformation.XML_FORMATTER; 
 
-	protected final static String VIEW_CONTRIB_PARAMETER="ViewContrib";
+	protected final static String VIEW_CONTRIB_PARAMETER=AdminContributions.VIEW_CONTRIB_PARAMETER;
 	protected final static String AnyContains_PARAMETER="AnyContains";
 	protected final static String OFFSET_PARAMETER="OFFSET";
 	protected final static String REMOVE_CONTRIB_PARAMETER="RemoveContrib";
 	protected final static String REMOVE_VALIDATED_CONTRIB_PARAMETER="DeleteContrib";
 	protected final static String REVISE_CONTRIB_PARAMETER="ReviseContrib";
 	protected final static String VALIDATE_CONTRIB_PARAMETER="ValidateContrib";
-	protected final static String CONTRIBID_PARAMETER="ContribId";
+	protected final static String HANDLE_PARAMETER=AdminContributions.HANDLE_PARAMETER;
     protected final static String FORMATTER_PARAMETER="formatter";
     protected final static String SORTBY_PARAMETER="SortBy";
 	
@@ -272,7 +275,7 @@ public class ReviewContributions extends PapillonBasePO {
 		String reset = myGetParameter(content.NAME_RESET);
 			String volume = myGetParameter(content.NAME_VOLUME);
 		// hidden arguments
-			String contribid = myGetParameter(CONTRIBID_PARAMETER);
+			String contribid = myGetParameter(HANDLE_PARAMETER);
 			String formatter = myGetParameter(FORMATTER_PARAMETER);
 			String sortBy = myGetParameter(SORTBY_PARAMETER);
 						
@@ -571,7 +574,7 @@ public class ReviewContributions extends PapillonBasePO {
 				addContribution(volume, contribid, formatter, queryString);
 				break;
 			case STEP_REMOVE:
-				contribid = myGetParameter(CONTRIBID_PARAMETER);
+				contribid = myGetParameter(HANDLE_PARAMETER);
 				if (contribid !=null && !contribid.equals("")) {
 					VolumeEntry myContrib = VolumeEntriesFactory.findEntryByHandle(volume, contribid);
 					if (null != myContrib && !myContrib.isEmpty()) {
@@ -583,7 +586,7 @@ public class ReviewContributions extends PapillonBasePO {
 				addContributions(volume, myKeys, myClauses, sortBy, queryString, offset);
 				break;
 			case STEP_REMOVE_VALIDATED:
-				contribid = myGetParameter(CONTRIBID_PARAMETER);
+				contribid = myGetParameter(HANDLE_PARAMETER);
 				if (contribid !=null && !contribid.equals("") &&
 					this.getUser().isValidator()) {
 					VolumeEntry myContrib = VolumeEntriesFactory.findEntryByHandle(volume, contribid);
@@ -596,7 +599,7 @@ public class ReviewContributions extends PapillonBasePO {
 				addContributions(volume, myKeys, myClauses, sortBy, queryString, offset);
 				break;
 			case STEP_REVISE:
-				contribid = myGetParameter(CONTRIBID_PARAMETER);
+				contribid = myGetParameter(HANDLE_PARAMETER);
 				if (contribid !=null && !contribid.equals("") && this.getUser().isSpecialist()) {
 					VolumeEntry myContrib = VolumeEntriesFactory.findEntryByHandle(volume, contribid);
 					if (null != myContrib && !myContrib.isEmpty()) {
@@ -914,12 +917,12 @@ public class ReviewContributions extends PapillonBasePO {
                        content.setTextViewContribText(myContrib.getCompleteHeadword());
                         viewContribAnchor.setHref(this.getUrl() + "?"
 												  + VIEW_CONTRIB_PARAMETER + "=" + VIEW_CONTRIB_PARAMETER
-                                                  + "&" + CONTRIBID_PARAMETER + "=" + myContrib.getHandle()
+                                                  + "&" + HANDLE_PARAMETER + "=" + myContrib.getHandle()
                                                   + "&" + content.NAME_VOLUME + "=" + myContrib.getVolumeName());
 
                         viewXmlAnchor.setHref(this.getUrl() + "?"
 											  + VIEW_CONTRIB_PARAMETER + "=" + VIEW_CONTRIB_PARAMETER
-                                              + "&" + CONTRIBID_PARAMETER + "=" + myContrib.getHandle()
+                                              + "&" + HANDLE_PARAMETER + "=" + myContrib.getHandle()
 											  + "&" + content.NAME_VOLUME + "=" + myContrib.getVolumeName()
 						                      + "&" + FORMATTER_PARAMETER + "="  + XML_FORMATTER);
 
@@ -947,7 +950,7 @@ public class ReviewContributions extends PapillonBasePO {
 							|| this.getUser().isValidator()) {
 							removeContribAnchor.setHref(this.getUrl() + "?"
 								   + REMOVE_CONTRIB_PARAMETER + "=on"
-								   + "&" + CONTRIBID_PARAMETER + "=" + myContrib.getHandle()
+								   + "&" + HANDLE_PARAMETER + "=" + myContrib.getHandle()
 								   + queryString);
 							content.setTextRemoveMessage(removeMessage);
 						}
@@ -971,7 +974,7 @@ public class ReviewContributions extends PapillonBasePO {
 								&& this.getUser().isInNormalGroups(myContrib.getGroups())) {
 								reviseContribAnchor.setHref(this.getUrl() + "?"
 									 + REVISE_CONTRIB_PARAMETER + "=" + REVISE_CONTRIB_PARAMETER
-									 + "&" + CONTRIBID_PARAMETER + "=" + myContrib.getHandle()
+									 + "&" + HANDLE_PARAMETER + "=" + myContrib.getHandle()
 								     + queryString);
 								reviseContribAnchor.setAttribute("class","");	 
 							}
@@ -982,7 +985,7 @@ public class ReviewContributions extends PapillonBasePO {
 								&& this.getUser().isValidator()) {
 								validateContribAnchor.setHref(this.getUrl() + "?"
 									 + VALIDATE_CONTRIB_PARAMETER + "=" + VALIDATE_CONTRIB_PARAMETER
-									 + "&" + CONTRIBID_PARAMETER + "=" + myContrib.getHandle()
+									 + "&" + HANDLE_PARAMETER + "=" + myContrib.getHandle()
 								     + queryString);
 								validateContribAnchor.removeAttribute("class");	 
 							}
