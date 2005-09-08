@@ -3,8 +3,8 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.25  2005/08/24 13:59:35  serasset
- * Added FIXME comments.
+ * Revision 1.26  2005/09/08 15:04:25  mangeot
+ * *** empty log message ***
  *
  * Revision 1.24  2005/08/17 12:58:16  mangeot
  * Fixed a bug when creating an entry from an existing one.
@@ -823,6 +823,7 @@ public class VolumeEntriesFactory {
 			VolumeEntry theEntry = null;
 			VolumeEntryDO theVolumeEntryDO = null;
 			
+			
 			int intId = 0;
 			try {
 				intId = Integer.parseInt(handle);
@@ -1048,7 +1049,7 @@ public class VolumeEntriesFactory {
 	public static void createVolumeTables(Volume volume)
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
             try {
-				// FIXME: this if is bad code, temporary solution !
+				// this if is bad code, temporary solution !
 				if (!volume.getDbname().equals("papillonaxi")) {
 					ManageDatabase.createVolumeTable(volume.getDbname());
 				}

@@ -10,6 +10,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.27  2005/09/08 15:04:25  mangeot
+ *  *** empty log message ***
+ *
  *  Revision 1.26  2005/09/08 14:13:07  mangeot
  *  Bug fix in Validated contrib deletion process
  *
@@ -1088,7 +1091,7 @@ public class ConsultExpert extends PapillonBasePO {
      *      Element attribute
      * @exception  PapillonBusinessException  Description of the Exception
      */
-    protected void addElement(Element element, String table, String handle, String resource, int type)
+    protected void addElement(Element element, String table, String handle, String resource, String volume, int type)
              throws PapillonBusinessException {
         try {
             //for the entry content
@@ -1105,7 +1108,7 @@ public class ConsultExpert extends PapillonBasePO {
 			if (this.getUser().isValidator()) {
 				String newHref = originalDeleteHref + "?"
 				+ ContributionsDeleteParameter + "=" + ContributionsDeleteParameter + "&"
-				+ ContributionsVolumeParameter + "=" + resource + "&"
+				+ ContributionsVolumeParameter + "=" + volume + "&"
 				+ ContributionsHandleParameter + "=" + handle;
 				deleteHref.setHref(newHref);
 				deleteButton.setAttribute("class","");
@@ -1186,7 +1189,7 @@ public class ConsultExpert extends PapillonBasePO {
             //rf.initializeFormatter(qr.getSourceEntry().getDictionary(), qr.getSourceEntry().getVolume() , null, ResultFormatterFactory.XHTML_DIALECT,null);
 			Element myHtmlElt = (Element)rf.getFormattedResult(qr);
             
-			addElement(myHtmlElt, myEntry.getVolumeName(), myEntry.getHandle(),  myEntry.getDictionaryName(), myEntry.getType());
+			addElement(myHtmlElt, myEntry.getVolumeName(), myEntry.getHandle(),  myEntry.getDictionaryName(), myEntry.getVolumeName(), myEntry.getType());
 		}
 	
     /**

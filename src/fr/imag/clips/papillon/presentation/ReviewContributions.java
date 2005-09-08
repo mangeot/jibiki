@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.23  2005/09/08 15:04:25  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.22  2005/09/08 14:13:08  mangeot
  * Bug fix in Validated contrib deletion process
  *
@@ -281,7 +284,7 @@ public class ReviewContributions extends PapillonBasePO {
 			String contribid = myGetParameter(HANDLE_PARAMETER);
 			String formatter = myGetParameter(FORMATTER_PARAMETER);
 			String sortBy = myGetParameter(SORTBY_PARAMETER);
-									
+											
 			if (volume!=null &&!volume.equals("")) {
 				this.setPreference(VOLUME_PARAMETER,volume);
 			}
@@ -595,6 +598,9 @@ public class ReviewContributions extends PapillonBasePO {
 						userMessage = "Validated contribution " +  myContrib.getHandle() + " / " +
 						myContrib.getHeadword() + " deleted...";
 						myContrib.setReplaced(this.getUser());
+					}
+					else {
+						PapillonLogger.writeDebugMsg("Remove null contrib!");	
 					}
 				}
 				addContributions(volume, myKeys, myClauses, sortBy, queryString, offset);
