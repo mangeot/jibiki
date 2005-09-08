@@ -8,6 +8,9 @@
  * $Id$
  *---------------------------------------------------------
  * $Log$
+ * Revision 1.11  2005/09/08 12:59:57  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.10  2005/08/01 15:03:41  mangeot
  * Corrected an important bug in the editor that forbidded to change a boolean value from true to false.
  * Beware, you have to edit the existing interface templates by hands:
@@ -58,7 +61,7 @@ public class GenerateTemplate {
 		"	<title>Interface Template</title>\n" +
 		"</head>\n" +
 		"<body>\n" +
-		"<form  action=\"EditEntry.po\" id=\"default\" name=\"default\" xml:lang=\"en\" lang=\"en\" d:lang=\"eng\">\n" +
+		"<form  action=\"EditEntry.po\" id=\"default\" name=\"default\" method=\"post\" accept-charset=\"utf-8\" enctype=\"application/x-www-form-urlencoded\" xml:lang=\"en\" lang=\"en\" d:lang=\"eng\">\n" +
 		"<h1 align=\"center\">Edition interface</h1>\n" +
 		"<input name=\"" + EditEntry.VolumeName_PARAMETER + "\" type=\"hidden\" value=\"\" />\n" +
 		"<input name=\"" + EditEntry.EntryHandle_PARAMETER + "\" type=\"hidden\" value=\"\" />\n" +
