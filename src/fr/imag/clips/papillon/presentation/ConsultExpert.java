@@ -10,6 +10,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.26  2005/09/08 14:13:07  mangeot
+ *  Bug fix in Validated contrib deletion process
+ *
  *  Revision 1.25  2005/08/03 10:22:03  mangeot
  *  Fixed a bug in ConsultExpert for the deleteEntry button
  *  + added a reset Button
@@ -212,7 +215,9 @@ public class ConsultExpert extends PapillonBasePO {
     protected final static String ANY_RESOURCE = "*ANY*";
     protected final static String ANY_TARGET = "*ANY*";
 
-    protected final static String ContributionsVolumeParameter = "VOLUME";
+    protected final static String ContributionsVolumeParameter = ReviewContributions.VOLUME_PARAMETER;
+    protected final static String ContributionsHandleParameter = ReviewContributions.HANDLE_PARAMETER;
+	protected final static String ContributionsDeleteParameter = ReviewContributions.REMOVE_VALIDATED_CONTRIB_PARAMETER;
     /**
      *  Description of the Field
      */
@@ -1098,7 +1103,11 @@ public class ConsultExpert extends PapillonBasePO {
 			// the delete button
 			String originalDeleteHref = deleteHref.getHref();
 			if (this.getUser().isValidator()) {
-				deleteHref.setHref(originalDeleteHref + handle);
+				String newHref = originalDeleteHref + "?"
+				+ ContributionsDeleteParameter + "=" + ContributionsDeleteParameter + "&"
+				+ ContributionsVolumeParameter + "=" + resource + "&"
+				+ ContributionsHandleParameter + "=" + handle;
+				deleteHref.setHref(newHref);
 				deleteButton.setAttribute("class","");
 			}
 			

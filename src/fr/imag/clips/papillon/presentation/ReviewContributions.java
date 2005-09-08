@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.22  2005/09/08 14:13:08  mangeot
+ * Bug fix in Validated contrib deletion process
+ *
  * Revision 1.21  2005/09/03 11:19:19  mangeot
  * Bug fix in redirection after reviewing
  *
@@ -220,6 +223,8 @@ public class ReviewContributions extends PapillonBasePO {
 	protected final static int STEP_REMOVE_VALIDATED = 7;
 	protected final static int STEP_RESET = 8;
 
+	protected static ReviewContributionsTmplXHTML content;
+	
 	protected final static String ALL="*ALL*";
 	protected final static String EditURL="EditEntry.po";
 	protected final static String EditVolumeParameter=EditEntry.VolumeName_PARAMETER;
@@ -234,12 +239,10 @@ public class ReviewContributions extends PapillonBasePO {
 	protected final static String REVISE_CONTRIB_PARAMETER="ReviseContrib";
 	protected final static String VALIDATE_CONTRIB_PARAMETER="ValidateContrib";
 	protected final static String HANDLE_PARAMETER=AdminContributions.HANDLE_PARAMETER;
+	protected final static String VOLUME_PARAMETER=content.NAME_VOLUME;
     protected final static String FORMATTER_PARAMETER="formatter";
     protected final static String SORTBY_PARAMETER="SortBy";
 	
-    
-    protected static ReviewContributionsTmplXHTML content;
-
     protected boolean loggedInUserRequired() {
         return true;
     }
@@ -273,21 +276,21 @@ public class ReviewContributions extends PapillonBasePO {
 		
 		String lookup = myGetParameter(content.NAME_LOOKUP);
 		String reset = myGetParameter(content.NAME_RESET);
-			String volume = myGetParameter(content.NAME_VOLUME);
+			String volume = myGetParameter(VOLUME_PARAMETER);
 		// hidden arguments
 			String contribid = myGetParameter(HANDLE_PARAMETER);
 			String formatter = myGetParameter(FORMATTER_PARAMETER);
 			String sortBy = myGetParameter(SORTBY_PARAMETER);
-						
+									
 			if (volume!=null &&!volume.equals("")) {
-				this.setPreference(content.NAME_VOLUME,volume);
+				this.setPreference(VOLUME_PARAMETER,volume);
 			}
 			else {
-				volume = this.getPreference(content.NAME_VOLUME);
+				volume = this.getPreference(VOLUME_PARAMETER);
 			}
 			
 			if (volume!=null && !volume.equals("")) {
-				queryString += "&" + content.NAME_VOLUME + "=" + volume;
+				queryString += "&" + VOLUME_PARAMETER + "=" + volume;
 			}
 			
 			//author
@@ -574,7 +577,6 @@ public class ReviewContributions extends PapillonBasePO {
 				addContribution(volume, contribid, formatter, queryString);
 				break;
 			case STEP_REMOVE:
-				contribid = myGetParameter(HANDLE_PARAMETER);
 				if (contribid !=null && !contribid.equals("")) {
 					VolumeEntry myContrib = VolumeEntriesFactory.findEntryByHandle(volume, contribid);
 					if (null != myContrib && !myContrib.isEmpty()) {
@@ -586,7 +588,6 @@ public class ReviewContributions extends PapillonBasePO {
 				addContributions(volume, myKeys, myClauses, sortBy, queryString, offset);
 				break;
 			case STEP_REMOVE_VALIDATED:
-				contribid = myGetParameter(HANDLE_PARAMETER);
 				if (contribid !=null && !contribid.equals("") &&
 					this.getUser().isValidator()) {
 					VolumeEntry myContrib = VolumeEntriesFactory.findEntryByHandle(volume, contribid);
@@ -599,7 +600,6 @@ public class ReviewContributions extends PapillonBasePO {
 				addContributions(volume, myKeys, myClauses, sortBy, queryString, offset);
 				break;
 			case STEP_REVISE:
-				contribid = myGetParameter(HANDLE_PARAMETER);
 				if (contribid !=null && !contribid.equals("") && this.getUser().isSpecialist()) {
 					VolumeEntry myContrib = VolumeEntriesFactory.findEntryByHandle(volume, contribid);
 					if (null != myContrib && !myContrib.isEmpty()) {
@@ -918,12 +918,12 @@ public class ReviewContributions extends PapillonBasePO {
                         viewContribAnchor.setHref(this.getUrl() + "?"
 												  + VIEW_CONTRIB_PARAMETER + "=" + VIEW_CONTRIB_PARAMETER
                                                   + "&" + HANDLE_PARAMETER + "=" + myContrib.getHandle()
-                                                  + "&" + content.NAME_VOLUME + "=" + myContrib.getVolumeName());
+                                                  + "&" + VOLUME_PARAMETER + "=" + myContrib.getVolumeName());
 
                         viewXmlAnchor.setHref(this.getUrl() + "?"
 											  + VIEW_CONTRIB_PARAMETER + "=" + VIEW_CONTRIB_PARAMETER
                                               + "&" + HANDLE_PARAMETER + "=" + myContrib.getHandle()
-											  + "&" + content.NAME_VOLUME + "=" + myContrib.getVolumeName()
+											  + "&" + VOLUME_PARAMETER + "=" + myContrib.getVolumeName()
 						                      + "&" + FORMATTER_PARAMETER + "="  + XML_FORMATTER);
 
                         content.setTextVolumeName(myContrib.getVolumeName());
