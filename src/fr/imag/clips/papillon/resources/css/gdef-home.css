@@ -140,8 +140,9 @@ H4.blockTitle {
 }
 
 .popupMenu  a:hover {
-   text-decoration:none;
+   background: #887;
    color:#fff;
+   text-decoration: none;
 }
 
 .popupMenu ul {
@@ -378,7 +379,7 @@ A.hide {text-decoration: none}
 	}
 
 .est	{
-	font-family: sans-serif;
+	font-family: "Helvetica", sans-serif;
 	color: #FF9911;
 	}
 

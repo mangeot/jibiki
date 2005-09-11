@@ -6,6 +6,9 @@
  * ---------------------------------------------------
  *
  * $Log$
+ * Revision 1.7  2005/09/11 09:55:48  mangeot
+ * Several presentation bug fixes for IExplorer compatability
+ *
  * Revision 1.6  2005/04/11 12:29:11  mangeot
  * Merge between the XPathAndMultipleKeys and the trunk
  *
@@ -140,8 +143,9 @@ body {
 }
 
 .popupMenu  a:hover {
-   text-decoration:none;
+   background: #887;
    color:#fff;
+   text-decoration: none;
 }
 
 .popupMenu ul {
