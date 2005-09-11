@@ -10,6 +10,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.28  2005/09/11 16:53:06  mangeot
+ *  Bug fix
+ *
  *  Revision 1.27  2005/09/08 15:04:25  mangeot
  *  *** empty log message ***
  *
@@ -1105,7 +1108,7 @@ public class ConsultExpert extends PapillonBasePO {
 
 			// the delete button
 			String originalDeleteHref = deleteHref.getHref();
-			if (this.getUser().isValidator()) {
+			if (this.getUser() != null && this.getUser().isValidator()) {
 				String newHref = originalDeleteHref + "?"
 				+ ContributionsDeleteParameter + "=" + ContributionsDeleteParameter + "&"
 				+ ContributionsVolumeParameter + "=" + volume + "&"
