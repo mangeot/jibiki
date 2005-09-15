@@ -9,6 +9,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.5  2005/09/15 13:21:04  mangeot
+ *  Fixed a bug when non registered users could not change their preferred language permanently
+ *
  *  Revision 1.4  2005/08/02 14:41:49  mangeot
  *  Work on stylesheets and
  *  added a reset button for Review and AdminContrib forms
@@ -318,24 +321,33 @@ public abstract class PapillonBasePO extends AbstractPO {
         // We recuperate a permanent cookie if the user has logged before
         if (this.getUser() == null || this.getUser().isEmpty()) {
             User cookieUser = this.getLoginCookieUser();
+			// if the user is registered
             if (cookieUser != null && !cookieUser.isEmpty()) {
-                PapillonLogger.writeDebugMsg("User from cookie: "
-                                             + cookieUser.getName());
+                PapillonLogger.writeDebugMsg("Registered user from cookie: " + cookieUser.getName());
+				getSessionData().setUser(cookieUser);
+				getSessionData().setUserAcceptLanguages(userAcceptLanguage);
+				getSessionData().setUserPreferredLanguage(cookieUser.getLang());
+				getSessionData().setClientWithLabelDisplayProblems(getComms().request.getHeader("User-Agent"));
+				PapillonSessionManager.addNewSession(getComms().session, cookieUser);
             }
-            getSessionData().setUser(cookieUser);
-            getSessionData().setUserAcceptLanguages(userAcceptLanguage);
-            if (cookieUser != null && !cookieUser.isEmpty()) {
-                getSessionData().setUserPreferredLanguage(cookieUser.getLang());
+            else {
+				cookieUser = (fr.imag.clips.papillon.business.user.User) getComms().session.getUser();
+				// if the user is unregistered but active in this session
+				if (cookieUser != null) {
+					PapillonLogger.writeDebugMsg("Unregistered user from cookie: " + cookieUser.getName());
+				}
+				else {
+					// if the user is unregistered and not active in this session
+					cookieUser = new User();
+					cookieUser.setLang((String) browserAcceptLanguages.get(0));
+					cookieUser.setName(getComms().request.getRemoteHost());
+					cookieUser.setLogin("Not registered");
+					cookieUser.setEmail(getComms().request.getRemoteUser() + "@" + getComms().request.getRemoteAddr());
+					getSessionData().setUserAcceptLanguages(userAcceptLanguage);
+					getSessionData().setClientWithLabelDisplayProblems(getComms().request.getHeader("User-Agent"));
+					PapillonSessionManager.addNewSession(getComms().session, cookieUser);
+				}
             }
-            getSessionData().setClientWithLabelDisplayProblems(getComms().request.getHeader("User-Agent"));
-            
-            if (cookieUser == null) {
-                cookieUser = new User();
-                cookieUser.setName(getComms().request.getRemoteHost());
-                cookieUser.setLogin("Not registered");
-                cookieUser.setEmail(getComms().request.getRemoteUser() + "@" + getComms().request.getRemoteAddr());
-            }
-            PapillonSessionManager.addNewSession(getComms().session, cookieUser);
         }
     }
     

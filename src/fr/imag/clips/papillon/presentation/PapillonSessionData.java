@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.7  2005/09/15 13:21:04  mangeot
+ * Fixed a bug when non registered users could not change their preferred language permanently
+ *
  * Revision 1.6  2005/08/02 14:41:49  mangeot
  * Work on stylesheets and
  * added a reset button for Review and AdminContrib forms
@@ -69,7 +72,7 @@ public class PapillonSessionData {
     
     protected User sessionUser = null;
     protected StringBuffer userMessage = null;
-    protected ArrayList acceptLanguages = new ArrayList();
+    protected ArrayList acceptLanguages = null;
     protected boolean ClientWithLabelDisplayProblems = false;
 	protected Hashtable PreferencesTable = null;
     
@@ -95,7 +98,9 @@ public class PapillonSessionData {
      * @param lang the language name (3 characters String).
      */
     public void setUserPreferredLanguage(String lang) {
+		if (this.acceptLanguages != null) {
 			this.acceptLanguages.set(0, lang);
+		}
     }
 
     public ArrayList getUserAcceptLanguages() {
