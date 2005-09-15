@@ -337,7 +337,7 @@ A.hide {text-decoration: none}
 }
 
 .separator {
-	font-wheight : bold;
+	font-weight : bold;
 	color : #69FF69; 
 
 }
@@ -352,13 +352,13 @@ A.hide {text-decoration: none}
 /* The lang attribute with CSS2 :lang function */
 :lang(ar)       {font-family: "Traditional Arabic", serif; font-size: 1.2em;}
 :lang(zh-Hant)  {font-family: PMingLiU,MingLiU, serif;}
-:lang(zh-Hans)  {font-family: SimSum-18030;SimHei, serif;}
+:lang(zh-Hans)  {font-family: SimSum-18030,SimHei, serif;}
 :lang(din)      {font-family: "Doulos SIL", serif;} 
 
 /* The lang attribute with lang|= selector */
 *[lang|="ar"]   {font-family: "Traditional Arabic", serif; font-size: 1.2em;}
 *[lang|="zh-Hant"]      {font-family: PMingLiU,MingLiU, serif;}
-*[lang|="zh-Hans"]      {font-family: SimSum-18030;SimHei, serif;}
+*[lang|="zh-Hans"]      {font-family: SimSum-18030,SimHei, serif;}
 *[lang|="din"]  {font-family: "Doulos SIL", serif;} 
 
 /* The ISO-639-2/T 3 letter codes */
@@ -479,7 +479,7 @@ A.hide {text-decoration: none}
 
 .translations {
         display: block;
-        margin-left: 30 pt;
+        margin-left: 3 px;
 }
 .translation {
 	font-style : normal;
