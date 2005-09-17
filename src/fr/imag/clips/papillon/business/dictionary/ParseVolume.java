@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.12  2005/09/17 11:15:39  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.11  2005/07/16 16:25:26  mangeot
  * Adapted the linker to the GDEF project + bug fixes
  *
@@ -333,7 +336,7 @@ public class ParseVolume {
 							for (int i=0; i<resNodeList.getLength();i++) {
 								org.w3c.dom.Node myNode = resNodeList.item(i);
 								String value = myNode.getNodeValue();
-								if (value != null) {
+								if (value != null && !value.trim().equals("")) {
 									//	PapillonLogger.writeDebugMsg("Parse entry, node value: " + value);
 									Index myIndex = IndexFactory.newIndex(myEntry.getVolume().getIndexDbname(),CdmElement,lang,value, myEntry.getHandle());
 									myIndex.save();
