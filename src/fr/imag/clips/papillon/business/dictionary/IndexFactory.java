@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.11  2005/09/17 11:32:51  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.10  2005/07/16 12:58:31  serasset
  * Added limit parameter to query functions
  * Added a parameter to Formater initializations
@@ -320,20 +323,26 @@ public class IndexFactory {
 	public static Index newIndex(String table, String key, String lang, String value, String handle)
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 			//
-			Index newIndex=new Index(table);
-			// name of the key
-			newIndex.setKey(key);
-			// lang of the key
-			if (lang.length()==3) {
-				newIndex.setLang(lang);
+			Index newIndex = null;
+			if (value != null) {
+				value = value.trim();
+				if (!value.equals("")) {
+					newIndex=new Index(table);
+					// name of the key
+					newIndex.setKey(key);
+					// lang of the key
+					if (lang.length()==3) {
+						newIndex.setLang(lang);
+					}
+					else {
+						newIndex.setLang(Volume.DEFAULT_LANG);
+					}
+					// value of the key
+					newIndex.setValue(value);
+					// entry id
+					newIndex.setEntryId(handle);
+				}
 			}
-			else {
-				newIndex.setLang(Volume.DEFAULT_LANG);
-			}
-			// value of the key
-			newIndex.setValue(value);
-			// entry id
-			newIndex.setEntryId(handle);
 			return newIndex;
 		}
 	
