@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.19  2005/10/04 10:21:24  mangeot
+ * Experimental implementation of moving up and down blocks
+ *
  * Revision 1.18  2005/08/24 13:59:35  serasset
  * Added FIXME comments.
  *
@@ -153,6 +156,8 @@ public class EditEntry extends PapillonBasePO {
 	public static String HomographId_PARAMETER = "HomographId";
     public static String AddCall_PARAMETER = "AddCall";
     public static String DelCall_PARAMETER = "DelCall";
+    public static String MoveUpCall_PARAMETER = "MoveUpCall";
+    public static String MoveDownCall_PARAMETER = "MoveDownCall";
     public static String ChooseCall_PARAMETER = "ChooseCall";
 	
     protected static String Choose_PARAMETER = UIGenerator.CHOOSE_ATTR_NAME;  
@@ -195,6 +200,8 @@ public class EditEntry extends PapillonBasePO {
         // Management of the parameters
 	    String submitAdd = myGetParameter(AddCall_PARAMETER);
 	    String submitDelete = myGetParameter(DelCall_PARAMETER);
+	    String submitMoveUp = myGetParameter(MoveUpCall_PARAMETER);
+	    String submitMoveDown = myGetParameter(MoveDownCall_PARAMETER);
 	    String submitChoose = myGetParameter(ChooseCall_PARAMETER);
 	    String select = myGetParameter(Select_PARAMETER);
 	    String choose = myGetParameter(Choose_PARAMETER);
@@ -212,7 +219,7 @@ public class EditEntry extends PapillonBasePO {
 		}
 				
 		// buidling the queryString
-		String queryString = this.getUrl() + "?" 
+/*		String queryString = this.getUrl() + "?" 
 					+ VolumeName_PARAMETER + "=" + myUrlEncode(volumeName)
 					+ "&" + EntryHandle_PARAMETER + "=" + myUrlEncode(entryHandle);
 		
@@ -239,7 +246,7 @@ public class EditEntry extends PapillonBasePO {
 		}
 		if (referrer!=null && !referrer.equals("")) {
 			queryString +=  "&" + Referrer_PARAMETER + "=" + myUrlEncode(referrer);
-		}
+		} */
 		
 		ArrayList languages = this.getSessionData().getUserAcceptLanguages();
 
@@ -276,7 +283,7 @@ public class EditEntry extends PapillonBasePO {
 		}
 		// deleteElements MUST be after updateElement because it modifies the element ids.
 		else if (submitDelete!=null && !submitDelete.equals("")
-					&& select != null && !select.equals("")) {
+				 && select != null && !select.equals("")) {
 			int plus =  submitDelete.indexOf(UIGenerator.PARAMETERS_SEPARATOR);
 			if (plus > 0) {
 				String elementName = submitDelete.substring(0,plus);
@@ -286,6 +293,31 @@ public class EditEntry extends PapillonBasePO {
 				this.setHeaderScript(newBlockRedirectionJavascript);
 			}
 		}
+		// moveElementsUp
+		else if (submitMoveUp!=null && !submitMoveUp.equals("")
+				 && select != null && !select.equals("")) {
+			int plus =  submitMoveUp.indexOf(UIGenerator.PARAMETERS_SEPARATOR);
+			if (plus > 0) {
+				String elementName = submitMoveUp.substring(0,plus);
+				String parentElement = submitMoveUp.substring(plus+1);
+				String[] selectedElements = myGetParameterValues(Select_PARAMETER);
+				UIGenerator.moveElementsUp(elementName, parentElement, selectedElements, myEntry);
+				this.setHeaderScript(newBlockRedirectionJavascript);
+			}
+		}
+		// move Elements Down
+		else if (submitMoveDown!=null && !submitMoveDown.equals("")
+				 && select != null && !select.equals("")) {
+			int plus =  submitMoveDown.indexOf(UIGenerator.PARAMETERS_SEPARATOR);
+			if (plus > 0) {
+				String elementName = submitMoveDown.substring(0,plus);
+				String parentElement = submitMoveDown.substring(plus+1);
+				String[] selectedElements = myGetParameterValues(Select_PARAMETER);
+				UIGenerator.moveElementsDown(elementName, parentElement, selectedElements, myEntry);
+				this.setHeaderScript(newBlockRedirectionJavascript);
+			}
+		}
+		// Choose elements 
 		else if (submitChoose!=null && !submitChoose.equals("")
 					&& choose != null && !choose.equals("")) {
 			int plus =  submitChoose.indexOf(UIGenerator.PARAMETERS_SEPARATOR);

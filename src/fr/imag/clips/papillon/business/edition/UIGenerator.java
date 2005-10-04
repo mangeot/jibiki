@@ -8,6 +8,9 @@
  * $Id$
  *---------------------------------------------------------
  * $Log$
+ * Revision 1.12  2005/10/04 10:21:24  mangeot
+ * Experimental implementation of moving up and down blocks
+ *
  * Revision 1.11  2005/08/01 15:03:41  mangeot
  * Corrected an important bug in the editor that forbidded to change a boolean value from true to false.
  * Beware, you have to edit the existing interface templates by hands:
@@ -191,7 +194,7 @@ public class UIGenerator {
 		Vector removeNodes = new Vector();
 		for (int i=0; i<elementIds.length;i++) {
 			String elementId = elementIds[i];
-//			PapillonLogger.writeDebugMsg("deleteElement: " + elementName + " eltId: " + elementId);
+			//			PapillonLogger.writeDebugMsg("deleteElement: " + elementName + " eltId: " + elementId);
             
 			nodeMatcher.reset(elementId);
             if (nodeMatcher.find()) {
@@ -214,6 +217,79 @@ public class UIGenerator {
 		if (parentNode !=null && parentNode.getNodeType()==Node.ELEMENT_NODE) {
 			((Element)parentNode).setAttribute(TYPE_ATTR_NAME,NEW_BLOCK_ANCHOR);
 		}
+	}
+	
+	public static boolean moveElementsUp(String elementName, String parentId, String[] elementIds, Element entryElt) {
+		return moveElements(elementName, parentId, elementIds, entryElt, true);
+	}
+	
+	public static boolean moveElementsDown(String elementName, String parentId, String[] elementIds, Element entryElt) {
+		return moveElements(elementName, parentId, elementIds, entryElt, false);
+	}
+	
+	public static boolean moveElements(String elementName, String parentId, String[] elementIds, Element entryElt, boolean up) {
+		boolean result = false;
+		PapillonLogger.writeDebugMsg("moveElement: up" + up + " name: "  + elementName + " parentId: " + parentId + " eltid1: " + elementIds[0]);
+
+		/* looking for the targeted elements */
+		NodeList myNodeList = entryElt.getElementsByTagName (elementName);
+		Vector moveNodes = new Vector();
+		for (int i=0; i<elementIds.length; i++) {
+			String elementId = elementIds[i];
+			nodeMatcher.reset(elementId);
+			if (nodeMatcher.find()) {
+				String currentName = nodeMatcher.group(1);
+				String currentNb = nodeMatcher.group(2);
+				if (elementName!=null && elementName.equals(currentName)) {
+					int itemNb = Integer.parseInt(currentNb);
+					Element resultElt = (Element) myNodeList.item(itemNb);
+					moveNodes.add(resultElt);
+				}
+			}
+		}
+		/* looking for the parent element */
+		nodeMatcher.reset(parentId);
+        if (nodeMatcher.find()) {
+            String parentName = nodeMatcher.group(1);
+            String parentNb = nodeMatcher.group(2);
+			
+			Element parentElt = findElementInEntry(parentName, parentNb, entryElt);
+			/* moving up targeted element */
+			if (parentElt!=null) {
+				NodeList myChildrenList = parentElt.getChildNodes();
+				Element beforeElement = null;
+				Element afterElement = null;
+				for (int i=0; i<myChildrenList.getLength();i++) {
+                    Node tmpNode = myChildrenList.item(i);
+					if (tmpNode.getNodeType() == Node.ELEMENT_NODE) {
+						Element currentElt = (Element) tmpNode;
+						if (moveNodes.contains(currentElt)) {
+							if (up) {
+								afterElement = currentElt; 
+							}
+							else {
+								beforeElement = currentElt; 
+							}
+						}
+						else {
+							if (up) {
+								beforeElement = currentElt;
+							}
+							else {
+								afterElement = currentElt; 
+							}
+						}
+						if (beforeElement != null && afterElement != null) {
+							PapillonLogger.writeDebugMsg("swapElements: " + afterElement.getTagName());
+							parentElt.removeChild(afterElement);
+							parentElt.insertBefore(afterElement,beforeElement);
+							result = true;
+						}
+					}
+				}
+			}
+		}
+		return result;
 	}
 	
 	public static boolean setValueInput(Element itfElt, String correspName, String value) {
