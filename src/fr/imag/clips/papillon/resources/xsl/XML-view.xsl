@@ -5,6 +5,9 @@
  *
  *  $Id$
  *  $Log$
+ *  Revision 1.4  2005/10/14 19:02:17  mangeot
+ *  *** empty log message ***
+ *
  *  Revision 1.3  2005/05/24 12:51:22  serasset
  *  Updated many aspect of the Papillon project to handle lexalp project.
  *  1. Layout is now parametrable in the application configuration file.
@@ -91,7 +94,14 @@ I would like to find a solution in genreal for HTML entities...
 <xsl:for-each select="ancestor::*">&nbsp;</xsl:for-each>
 </xsl:if>
 <span class="xmlcar">&lt;/</span>
-<span class="xmlelement"><xsl:value-of select="name()" /></span>
+<xsl:if test="substring-before(name(),concat(':',local-name()))!=''">
+<span class="xmlnsprefix"><xsl:value-of select="substring-before(name(),concat(':',local-name()))"/>
+</span>	
+<xsl:if test="substring-before(name(),concat(':',local-name()))!=''">
+<span class="xmlcar">:</span>
+</xsl:if>
+</xsl:if>
+<span class="xmlelement"><xsl:value-of select="local-name()"/></span>
 <span class="xmlcar">&gt;</span>
 </xsl:if>
 </xsl:template>
