@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.20  2005/10/15 08:34:24  mangeot
+ * Bug fix
+ *
  * Revision 1.19  2005/10/04 10:21:24  mangeot
  * Experimental implementation of moving up and down blocks
  *
@@ -398,7 +401,7 @@ public class EditEntry extends PapillonBasePO {
 			myVolumeEntry.setModification(author,saveComment);
             myVolumeEntry.save();
 		}
-		if (referrer.indexOf(ReviewContributionsURL)>0) {
+		if (referrer != null && referrer.indexOf(ReviewContributionsURL)>0) {
 			throw new ClientPageRedirectException(ReviewContributionsURL + "?" + ContributionsVolumeParameter + "=" + myVolumeEntry.getVolumeName()
 			+ "&" + ContributionsHandleParameter + "=" + myVolumeEntry.getHandle()
 			+ "&" + ContributionsViewParameter + "=" + ContributionsViewParameter);
