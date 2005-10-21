@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2005/10/21 11:20:46  mangeot
+ * Modified the contributors board to add the best contributor and best reviewer
+ *
  * Revision 1.2  2005/06/15 16:48:28  mangeot
  * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
  *
@@ -159,17 +162,39 @@ public class ContributorsBoard extends PapillonBasePO {
             theLogin.removeAttribute("id");
 			
             //adding the volumes description
+			int contributionsMax = 0;
+			int revisionsMax = 0;
+			int validationsMax = 0;
+			String bestContributor = "";
+			String bestReviewer = "";
+			String bestValidator = "";
+				
 			for (int i=0; i< UsersVector.size(); i++) {
 				java.util.Vector myVector = (java.util.Vector) UsersVector.elementAt(i);
 				User myUser = (User) myVector.elementAt(0);
+				int finished = Integer.parseInt((String) myVector.elementAt(1));
+				int reviewed = Integer.parseInt((String) myVector.elementAt(2));
+				int validated = Integer.parseInt((String) myVector.elementAt(3));
 				content.setTextName(myUser.getName());
 				content.setTextLogin(myUser.getLogin());
-				content.setTextFinished((String) myVector.elementAt(1));
-				content.setTextReviewed((String) myVector.elementAt(2));
-				content.setTextValidated((String) myVector.elementAt(3));
+				content.setTextFinished("" + finished);
+				content.setTextReviewed("" + reviewed);
+				content.setTextValidated("" + validated);
+				if (contributionsMax < finished) {
+					contributionsMax = finished;
+					bestContributor = myUser.getName();
+				}
+				if (revisionsMax < reviewed) {
+					revisionsMax = reviewed;
+					bestReviewer = myUser.getName();
+				}
 				theRowParent.appendChild(theRow.cloneNode(true));
             }
             theRowParent.removeChild(theRow);
+			content.setTextBestContributor(bestContributor);
+			content.setTextMaxContributions("" + contributionsMax);
+ 			content.setTextBestReviewer(bestReviewer);
+			content.setTextMaxRevisions("" + revisionsMax);
         }
 		
 	protected void addBoardForm(String selectedVolume, String fromDate, String toDate)
