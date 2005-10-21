@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.5  2005/10/21 12:18:10  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.4  2005/10/21 12:15:35  mangeot
  * *** empty log message ***
  *
@@ -207,7 +210,9 @@ public class ContributorsBoard extends PapillonBasePO {
  			content.setTextBestReviewer(bestReviewer);
 			content.setTextMaxRevisions("" + revisionsMax);
 			
-			content.setTextTotalContributions("" + contributionsTotal);
+			content.setTextTotalFinished("" + contributionsTotal);
+			content.setTextTotalReviewed("" + contributionsTotal);
+			content.setTextTotalValidated("" + contributionsTotal);
         }
 		
 	protected void addBoardForm(String selectedVolume, String fromDate, String toDate)
