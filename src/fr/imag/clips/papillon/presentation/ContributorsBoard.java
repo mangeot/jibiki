@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2005/10/21 12:15:35  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.3  2005/10/21 11:20:46  mangeot
  * Modified the contributors board to add the best contributor and best reviewer
  *
@@ -154,6 +157,8 @@ public class ContributorsBoard extends PapillonBasePO {
             XHTMLTableRowElement theRow = content.getElementTemplateRow();
             XHTMLElement theName = content.getElementName();
             XHTMLElement theLogin = content.getElementLogin();
+			XHTMLElement theTableDiv = content.getElementContributorsTable();
+			theTableDiv.setAttribute("class","");
 
             Node theRowParent = theRow.getParentNode();
 
@@ -165,6 +170,9 @@ public class ContributorsBoard extends PapillonBasePO {
 			int contributionsMax = 0;
 			int revisionsMax = 0;
 			int validationsMax = 0;
+			int contributionsTotal = 0;
+			int revisionsTotal = 0;
+			int validationsTotal = 0;
 			String bestContributor = "";
 			String bestReviewer = "";
 			String bestValidator = "";
@@ -175,6 +183,9 @@ public class ContributorsBoard extends PapillonBasePO {
 				int finished = Integer.parseInt((String) myVector.elementAt(1));
 				int reviewed = Integer.parseInt((String) myVector.elementAt(2));
 				int validated = Integer.parseInt((String) myVector.elementAt(3));
+				contributionsTotal += finished;
+				revisionsTotal += reviewed;
+				validationsTotal += validated;
 				content.setTextName(myUser.getName());
 				content.setTextLogin(myUser.getLogin());
 				content.setTextFinished("" + finished);
@@ -195,6 +206,8 @@ public class ContributorsBoard extends PapillonBasePO {
 			content.setTextMaxContributions("" + contributionsMax);
  			content.setTextBestReviewer(bestReviewer);
 			content.setTextMaxRevisions("" + revisionsMax);
+			
+			content.setTextTotalContributions("" + contributionsTotal);
         }
 		
 	protected void addBoardForm(String selectedVolume, String fromDate, String toDate)
