@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.7  2005/11/01 14:12:02  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.6  2005/10/21 12:24:16  mangeot
  * *** empty log message ***
  *
@@ -83,7 +86,7 @@ public class ContributorsBoard extends PapillonBasePO {
 
     protected boolean userMayUseThisPO() {
         try {
-            return this.getUser().isValidator();
+            return this.getUser().isSpecialist();
         } catch (fr.imag.clips.papillon.business.PapillonBusinessException ex) {
             this.getSessionData().writeUserMessage("Error getting the authorisation to use this PO.");
         }
