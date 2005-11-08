@@ -10,6 +10,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.7  2005/11/08 16:40:28  mangeot
+ * Small bug fix
+ *
  * Revision 1.6  2005/08/17 14:27:42  mangeot
  * Added groups lists in user profile and from now on, displays the groups as a listinstead of a text box
  *
@@ -208,8 +211,10 @@ public class UserProfile extends PapillonBasePO {
 			String[] groups = this.getUser().getGroupsArray();
 			String groupsString = "";
 			String comma = ", ";
-			for (int i=0; i<groups.length;i++) {
-				groupsString += comma + groups[i];
+			if (groups != null ) {
+				for (int i=0; i<groups.length;i++) {
+					groupsString += comma + groups[i];
+				}
 			}
 			if (groupsString.startsWith(comma)) {
 				groupsString = groupsString.substring(comma.length());
