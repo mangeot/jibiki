@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.23  2005/11/09 17:38:59  mangeot
+ * small bug fixes
+ *
  * Revision 1.22  2005/08/01 16:52:45  mangeot
  * Fixed missing reviewer, reviewdate, validator, validator date when setReviewed and setValdiated where called
  *
@@ -1066,9 +1069,11 @@ public class VolumeEntry implements IAnswer {
 	}
 	
 	protected String createNewId (String headword) throws PapillonBusinessException {
+		headword = headword.trim();
 		String entryId = this.getSourceLanguage() + "." +
 		headword + "." + this.getHandle();
 		entryId = entryId.replace(' ', '_');
+		entryId = entryId.replace('\'', '_');
 		return Utility.encodeXMLEntities(entryId);
 	}
 	

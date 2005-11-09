@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.14  2005/11/09 17:38:59  mangeot
+ * small bug fixes
+ *
  * Revision 1.13  2005/09/17 11:32:51  mangeot
  * *** empty log message ***
  *
@@ -266,13 +269,7 @@ public class ParseVolume {
 		//	PapillonLogger.writeDebugMsg("Parse entry [" + entryString + "]");
 		org.w3c.dom.Document myDoc = Utility.buildDOMTree(entryString);
 		if (myDoc!=null) {
-			IAnswer myAnswer = null;
-			if (myVolume.getName().equals(PapillonPivotFactory.VOLUMENAME)) {
-				myAnswer = new Axie(myDict, myVolume);
-			}
-			else {
-				myAnswer = new VolumeEntry(myDict, myVolume);
-			}
+			IAnswer myAnswer = new VolumeEntry(myDict, myVolume);
 			// myEntry.setXmlCode(entryString) is called by myEntry.save();
 			myAnswer.setDom(myDoc);
 			((VolumeEntry)myAnswer).setAuthor();
