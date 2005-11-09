@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.19  2005/11/09 15:28:44  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.18  2005/11/09 13:30:31  mangeot
  * *** empty log message ***
  *
@@ -312,7 +315,7 @@ public class DictionariesFactory {
                             String ref = stylesheet.getAttributeNS(XLINK_URI,HREF_ATTRIBUTE);
                             String name = stylesheet.getAttribute(NAME_ATTRIBUTE);
 							if (name == null || name.equals("")) {
-								name = myDict.getName() + myDict.getHandle();
+								name = myDict.getName() + "." + myDict.getHandle();
 							}
                             String isDefault = stylesheet.getAttribute(DEFAULT_ATTRIBUTE);
                             boolean isDefaultXsl = (null != isDefault && isDefault.equals("true"));

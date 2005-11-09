@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.13  2005/11/09 15:28:44  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.12  2005/11/09 13:30:31  mangeot
  * *** empty log message ***
  *
@@ -324,7 +327,7 @@ public class VolumesFactory {
                             String ref = stylesheet.getAttributeNS(XLINK_URI,HREF_ATTRIBUTE);
                             String name = stylesheet.getAttribute(NAME_ATTRIBUTE);
 							if (name == null || name.equals("")) {
-								name = resVolume.getName() + resVolume.getHandle();
+								name = resVolume.getName() + "." + resVolume.getHandle();
 							}
 							
                             String isDefault = stylesheet.getAttribute(DEFAULT_ATTRIBUTE);
