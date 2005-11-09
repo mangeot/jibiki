@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.27  2005/11/09 17:44:05  mangeot
+ * Deleted axi volume table special handling, not needed any more
+ *
  * Revision 1.26  2005/09/08 15:04:25  mangeot
  * *** empty log message ***
  *
@@ -1049,10 +1052,7 @@ public class VolumeEntriesFactory {
 	public static void createVolumeTables(Volume volume)
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
             try {
-				// this if is bad code, temporary solution !
-				if (!volume.getDbname().equals("papillonaxi")) {
-					ManageDatabase.createVolumeTable(volume.getDbname());
-				}
+				ManageDatabase.createVolumeTable(volume.getDbname());
 				IndexFactory.createIndexTable(volume);
 			}
             catch (Exception e) {
