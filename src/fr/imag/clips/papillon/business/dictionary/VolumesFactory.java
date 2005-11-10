@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.17  2005/11/10 13:20:01  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.16  2005/11/10 13:12:38  mangeot
  * *** empty log message ***
  *
@@ -681,7 +684,8 @@ public class VolumesFactory {
 					+ VolumeEntry.ContributionFooter;
 				org.w3c.dom.Document newEntryDoc = Utility.buildDOMTree(newEntryString);
 				Node newEntryNode = templateDoc.importNode(newEntryDoc.getDocumentElement(),true);
-				myEntryNode.getParentNode().replaceChild(myEntryNode,newEntryNode);
+				Node entryParent = myEntryNode.getParentNode();
+				entryParent.replaceChild(newEntryNode, myEntryNode);
 				tmplEntry = Utility.NodeToString(templateDoc);
 			}
 		}
