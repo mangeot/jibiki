@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.15  2005/11/10 12:18:12  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.14  2005/11/10 12:14:56  mangeot
  * *** empty log message ***
  *
@@ -669,10 +672,14 @@ public class VolumesFactory {
 			
 			if (tmplEntry.indexOf("<" + entryString)>=0 && tmplEntry.indexOf("<" + contribString)<0) {
 				String entryHead = tmplEntry.substring(0,tmplEntry.indexOf("<" + entryString)-1); 
+				PapillonLogger.writeDebugMsg("updateTemplateEntry: entryHead: " + entryHead);
 				String entryContent = tmplEntry.substring(tmplEntry.indexOf("<" + entryString)); 
 				String endTag = "</" + entryString + ">";
+				PapillonLogger.writeDebugMsg("updateTemplateEntry: endTag: " + endTag);
 				entryContent = entryContent.substring(0,entryContent.indexOf(endTag) + endTag.length());
+				PapillonLogger.writeDebugMsg("updateTemplateEntry: entryContent: " + entryContent);
 				String entryFoot =  tmplEntry.substring(tmplEntry.indexOf(endTag) + endTag.length()+1);
+				PapillonLogger.writeDebugMsg("updateTemplateEntry: entryFoot: " + entryFoot);
 				
 				tmplEntry = entryHead 
 					+ VolumeEntry.ContributionHeader
