@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.14  2005/11/10 12:14:56  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.13  2005/11/09 15:28:44  mangeot
  * *** empty log message ***
  *
@@ -656,9 +659,13 @@ public class VolumesFactory {
 	public static String updateTemplateEntry(String tmplEntry, Hashtable cdmElements) {
 		if (tmplEntry !=null && !tmplEntry.equals("")) {
 			String contribPath = getCdmXPathString(cdmElements, Volume.CDM_contribution, Volume.DEFAULT_LANG);
+			PapillonLogger.writeDebugMsg("updateTemplateEntry: contribPath: " + contribPath);
 			String contribString = Volume.getTagNameFromXPath(contribPath);
+			PapillonLogger.writeDebugMsg("updateTemplateEntry: contribString: " + contribString);
 			String entryString = getCdmXPathString(cdmElements, Volume.CDM_entry, Volume.DEFAULT_LANG);
+			PapillonLogger.writeDebugMsg("updateTemplateEntry: entryPath: " + entryString);
 			entryString = Volume.getTagNameFromXPath(entryString);
+			PapillonLogger.writeDebugMsg("updateTemplateEntry: entryString: " + entryString);
 			
 			if (tmplEntry.indexOf("<" + entryString)>=0 && tmplEntry.indexOf("<" + contribString)<0) {
 				String entryHead = tmplEntry.substring(0,tmplEntry.indexOf("<" + entryString)-1); 
