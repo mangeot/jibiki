@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.18  2005/11/10 13:28:20  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.17  2005/11/10 13:20:01  mangeot
  * *** empty log message ***
  *
@@ -210,14 +213,14 @@ public class VolumesFactory {
             String schema = getXmlCode(volume,XMLSCHEMA_TAG, fileURL);
             String tmplInterface = getXmlCode(volume,TEMPLATE_INTERFACE_TAG, fileURL);
             String tmplEntry = getXmlCode(volume,TEMPLATE_ENTRY_TAG, fileURL);
-			
-			// Embedding the entry into a contribution element
-			tmplEntry = updateTemplateEntry(tmplEntry, cdmElements);
-			
+						
 			org.w3c.dom.Document myDoc = Utility.buildDOMTree(tmplEntry);
 			if (myDoc != null) {
 				ParseVolume.compileXPathTable(cdmElements, myDoc.getDocumentElement());
 			}
+
+			// Embedding the entry into a contribution element
+			tmplEntry = updateTemplateEntry(tmplEntry, cdmElements);
 			
             String xmlCode=Utility.NodeToString(volume);
             return createUniqueVolume(name, dictname, dbname, location, source, targets, href, cdmElements, xmlCode, schema, tmplInterface, tmplEntry, reverse);
