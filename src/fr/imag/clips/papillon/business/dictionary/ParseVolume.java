@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.20  2005/11/10 17:25:22  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.19  2005/11/10 17:17:20  mangeot
  * *** empty log message ***
  *
@@ -290,7 +293,7 @@ public class ParseVolume {
 	
 	protected static boolean parseEntry(Dictionary myDict, Volume myVolume, String entryString, boolean logContribs) throws PapillonBusinessException {
 		boolean result=false;
-			PapillonLogger.writeDebugMsg("Parse entry [" + entryString + "]");
+			// PapillonLogger.writeDebugMsg("Parse entry [" + entryString + "]");
 		org.w3c.dom.Document myDoc = Utility.buildDOMTree(entryString);
 		if (myDoc!=null) {
 			IAnswer myAnswer = new VolumeEntry(myDict, myVolume);

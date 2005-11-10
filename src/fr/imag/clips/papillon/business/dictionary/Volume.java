@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.10  2005/11/10 17:25:22  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.9  2005/11/10 13:42:26  mangeot
  * *** empty log message ***
  *
@@ -536,7 +539,7 @@ public class Volume {
 		if (res == null || res.equals("")) {
 			fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Error 2: CDM Element null for name: " + name + " " + lang + " Hashtable: " + this.CDM_elements.toString());
 		}
-		fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getCdmXPathString: " + name + " : " + res);
+		// fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getCdmXPathString: " + name + " : " + res);
 		return res;
 	}
 	
@@ -545,7 +548,7 @@ public class Volume {
 	}
 	
 	protected static String getTagNameFromXPath (String xPathString, boolean letNamespacePrefix) {
-		fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getTagNameFromXPath: " + xPathString);
+		// fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getTagNameFromXPath: " + xPathString);
 		String res = xPathString;
 		if (res != null) {
 			int text = res.indexOf("/text()");

@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.26  2005/11/10 17:25:22  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.25  2005/11/10 14:59:38  mangeot
  * *** empty log message ***
  *
@@ -595,7 +598,7 @@ public class VolumesFactory {
 	/* cdmElements Hashtable = {lang => Hashtable} = {CDM_element => Vector} = (xpathString, isIndex, XPath)*/
 	protected static void completeCdmElementsTable(Hashtable elementsTable, String sourceLanguage) {
 		String currentXpath = getCdmXPathString(elementsTable, Volume.CDM_volume, Volume.DEFAULT_LANG);
-		PapillonLogger.writeDebugMsg("completeCdmElementsTable: currentXpath: " + currentXpath);
+		// PapillonLogger.writeDebugMsg("completeCdmElementsTable: currentXpath: " + currentXpath);
 
 	// contribution tags
 		currentXpath += "/" + VolumeEntry.contributionTag;
