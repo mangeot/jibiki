@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.24  2005/11/10 14:52:55  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.23  2005/11/10 14:49:16  mangeot
  * *** empty log message ***
  *
@@ -573,13 +576,10 @@ public class VolumesFactory {
 				java.util.Vector eltVector = (java.util.Vector) tmpTable.get(CDM_element);
 				if (eltVector != null && eltVector.size()>=2) {
 					String xpathString =  (String) eltVector.elementAt(0);
-					PapillonLogger.writeDebugMsg("updateCdmElementsTable: old xpathString: " + xpathString);
-					PapillonLogger.writeDebugMsg("updateCdmElementsTable: contribPath: " + contribPath);
-					PapillonLogger.writeDebugMsg("updateCdmElementsTable: entryPath: " + entryPath);
 					if (xpathString.indexOf(contribPath)<0 
 						&& xpathString.indexOf(entryPath)==0) {
 						PapillonLogger.writeDebugMsg("updateCdmElementsTable: old xpathString: " + xpathString);
-						xpathString = searchAndReplace(xpathString,entryPath,contribPath + "/" + entryTag);
+						xpathString = searchAndReplace(xpathString,entryPath,contribPath + "/" + VolumeEntry.dataTag + "/" + entryTag);
 						PapillonLogger.writeDebugMsg("updateCdmElementsTable: new xpathString: " + xpathString);
 						eltVector.remove(0);
 						eltVector.add(0,xpathString);
