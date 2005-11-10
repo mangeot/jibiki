@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.21  2005/11/10 17:31:21  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.20  2005/11/10 17:25:22  mangeot
  * *** empty log message ***
  *
@@ -365,7 +368,7 @@ public class ParseVolume {
 								String value = myNode.getNodeValue();
 								if (value != null) { 
 									value = value.trim();
-									if (value.equals("")) {
+									if (!value.equals("")) {
 										//	PapillonLogger.writeDebugMsg("Parse entry, node value: " + value);
 										Index myIndex = IndexFactory.newIndex(myEntry.getVolume().getIndexDbname(),CdmElement,lang,value, myEntry.getHandle());
 										if (myIndex != null && !myIndex.isEmpty()) {
