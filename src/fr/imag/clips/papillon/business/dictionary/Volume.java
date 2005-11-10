@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.8  2005/11/10 13:12:38  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.7  2005/06/17 16:49:47  mangeot
  * *** empty log message ***
  *
@@ -170,6 +173,7 @@ public class Volume {
     public static final  String CDM_pos = "cdm-pos";
     public static final  String CDM_pronunciation = "cdm-pronunciation";
     public static final  String CDM_definition = "cdm-definition";
+    public static final  String CDM_templateEntry = "cdm-template-entry";
     public static final  String CDM_translation = "cdm-translation";
     // FIXME: Added by Gilles for distinction between translations in a bilingual dictionary and
     // FIXME: translation links to target entries in another volume.

@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.15  2005/11/10 13:12:38  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.14  2005/11/09 17:38:59  mangeot
  * small bug fixes
  *
@@ -515,27 +518,25 @@ public class ParseVolume {
 	
 	public static org.w3c.dom.NodeList getCdmElements(IAnswer myEntry, String CdmElement, String lang) 
 		throws PapillonBusinessException {
-			org.w3c.dom.Element rootElt = myEntry.getDom().getDocumentElement();
-			org.apache.xml.utils.PrefixResolver tmpPrefixResolver = new org.apache.xml.utils.PrefixResolverDefault(rootElt);
-			return getCdmElements(myEntry, CdmElement, lang, tmpPrefixResolver);
+			return getCdmElements(myEntry.getDom(), CdmElement, lang, myEntry.getVolume().getCdmElements());
 		}
 	
-	protected static org.w3c.dom.NodeList getCdmElements(IAnswer myEntry, String CdmElement, String lang, org.apache.xml.utils.PrefixResolver aPrefixResolver) 
+	protected static org.w3c.dom.NodeList getCdmElements(org.w3c.dom.Document myEntryDOM, String CdmElement, String lang, java.util.Hashtable CdmElementsTable) 
 		throws PapillonBusinessException {
 			org.w3c.dom.NodeList resNodeList = null;
 			// fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getCdmElements: " + CdmElement + " " + lang);
-			java.util.Hashtable CdmElementsTable = myEntry.getVolume().getCdmElements();
 			if (lang != null && !lang.equals("") && CdmElementsTable != null) {
+				org.w3c.dom.Element rootElt = myEntryDOM.getDocumentElement();
+				org.apache.xml.utils.PrefixResolver tmpPrefixResolver = new org.apache.xml.utils.PrefixResolverDefault(rootElt);
 				java.util.Hashtable tmpTable = (java.util.Hashtable) CdmElementsTable.get(lang);
 				if (tmpTable != null) {
 					java.util.Vector myVector = (java.util.Vector) tmpTable.get(CdmElement);
 					org.apache.xpath.XPath myXPath = null;
 					if (myVector!= null && myVector.size()==3) {
 						myXPath =  (org.apache.xpath.XPath) myVector.elementAt(2);
-						org.w3c.dom.Document myDoc = myEntry.getDom();
-						if (myXPath != null && myDoc != null) {
+						if (myXPath != null && myEntryDOM != null) {
 							try {
-								org.apache.xpath.objects.XObject myXObject = myXPath.execute(new org.apache.xpath.XPathContext(),myDoc.getDocumentElement(),aPrefixResolver);
+								org.apache.xpath.objects.XObject myXObject = myXPath.execute(new org.apache.xpath.XPathContext(),myEntryDOM.getDocumentElement(),tmpPrefixResolver);
 								resNodeList = myXObject.nodelist();
 							}
 							catch (javax.xml.transform.TransformerException e) {
@@ -560,7 +561,7 @@ public class ParseVolume {
 			return resNodeList;
 		}
 	
-	public static org.w3c.dom.Node getCdmElement(IAnswer myEntry, String CdmElement)
+					public static org.w3c.dom.Node getCdmElement(IAnswer myEntry, String CdmElement)
 		throws PapillonBusinessException {
 			return getCdmElement(myEntry, CdmElement, Volume.DEFAULT_LANG);
 		}

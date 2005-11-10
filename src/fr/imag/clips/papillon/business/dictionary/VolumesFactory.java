@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.16  2005/11/10 13:12:38  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.15  2005/11/10 12:18:12  mangeot
  * *** empty log message ***
  *
@@ -541,7 +544,8 @@ public class VolumesFactory {
 		String volumeString = Volume.getTagNameFromXPath(volumePath);
 		String contribPath = getCdmXPathString(cdmElements, Volume.CDM_contribution, Volume.DEFAULT_LANG);
 		String contribString = Volume.getTagNameFromXPath(contribPath);
-		String entryString = getCdmXPathString(cdmElements, Volume.CDM_entry, Volume.DEFAULT_LANG);
+		String templateEntryString = getCdmXPathString(cdmElements, Volume.CDM_entry, Volume.DEFAULT_LANG);
+		String entryString = templateEntryString;
 		entryString = Volume.getTagNameFromXPath(entryString);
 		String newXpath = contribPath + "/" + VolumeEntry.dataTag + "/" + entryString;
 		for (java.util.Enumeration langKeys = cdmElements.keys(); langKeys.hasMoreElements();) {
@@ -562,6 +566,8 @@ public class VolumesFactory {
 				}
 			}
 		}
+		/* Here I keep the original entry xpath in order to use it when I load the template entry */
+		addCdmElementInTable(cdmElements,Volume.CDM_templateEntry,Volume.DEFAULT_LANG,templateEntryString, false);
 	}
 	
 	/* cdmElements Hashtable = {lang => Hashtable} = {CDM_element => Vector} = (xpathString, isIndex, XPath)*/
@@ -659,33 +665,24 @@ public class VolumesFactory {
 	
 	// embeds the template entry into a contribution element 
 	
-	public static String updateTemplateEntry(String tmplEntry, Hashtable cdmElements) {
-		if (tmplEntry !=null && !tmplEntry.equals("")) {
-			String contribPath = getCdmXPathString(cdmElements, Volume.CDM_contribution, Volume.DEFAULT_LANG);
-			PapillonLogger.writeDebugMsg("updateTemplateEntry: contribPath: " + contribPath);
-			String contribString = Volume.getTagNameFromXPath(contribPath);
-			PapillonLogger.writeDebugMsg("updateTemplateEntry: contribString: " + contribString);
-			String entryString = getCdmXPathString(cdmElements, Volume.CDM_entry, Volume.DEFAULT_LANG);
-			PapillonLogger.writeDebugMsg("updateTemplateEntry: entryPath: " + entryString);
-			entryString = Volume.getTagNameFromXPath(entryString);
-			PapillonLogger.writeDebugMsg("updateTemplateEntry: entryString: " + entryString);
-			
-			if (tmplEntry.indexOf("<" + entryString)>=0 && tmplEntry.indexOf("<" + contribString)<0) {
-				String entryHead = tmplEntry.substring(0,tmplEntry.indexOf("<" + entryString)-1); 
-				PapillonLogger.writeDebugMsg("updateTemplateEntry: entryHead: " + entryHead);
-				String entryContent = tmplEntry.substring(tmplEntry.indexOf("<" + entryString)); 
-				String endTag = "</" + entryString + ">";
-				PapillonLogger.writeDebugMsg("updateTemplateEntry: endTag: " + endTag);
-				entryContent = entryContent.substring(0,entryContent.indexOf(endTag) + endTag.length());
-				PapillonLogger.writeDebugMsg("updateTemplateEntry: entryContent: " + entryContent);
-				String entryFoot =  tmplEntry.substring(tmplEntry.indexOf(endTag) + endTag.length()+1);
-				PapillonLogger.writeDebugMsg("updateTemplateEntry: entryFoot: " + entryFoot);
-				
-				tmplEntry = entryHead 
-					+ VolumeEntry.ContributionHeader
-					+ entryContent + "\n"
-					+ VolumeEntry.ContributionFooter
-					+ entryFoot;
+	public static String updateTemplateEntry(String tmplEntry, Hashtable cdmElements) 
+		throws fr.imag.clips.papillon.business.PapillonBusinessException {
+		if (tmplEntry !=null && !tmplEntry.equals("")) {			
+			org.w3c.dom.Document templateDoc = Utility.buildDOMTree(tmplEntry);
+			org.w3c.dom.NodeList contribNodeList = ParseVolume.getCdmElements(templateDoc, Volume.CDM_contribution, Volume.DEFAULT_LANG, cdmElements);
+			org.w3c.dom.NodeList entryNodeList = ParseVolume.getCdmElements(templateDoc, Volume.CDM_templateEntry, Volume.DEFAULT_LANG, cdmElements);
+
+			if ((contribNodeList == null || contribNodeList.getLength()==0)
+				&& (entryNodeList != null && entryNodeList.getLength()==1)) {
+				Node myEntryNode = entryNodeList.item(0);
+				String entryString = Utility.NodeToString(myEntryNode);
+				String newEntryString = VolumeEntry.ContributionHeader
+					+ entryString + "\n"
+					+ VolumeEntry.ContributionFooter;
+				org.w3c.dom.Document newEntryDoc = Utility.buildDOMTree(newEntryString);
+				Node newEntryNode = templateDoc.importNode(newEntryDoc.getDocumentElement(),true);
+				myEntryNode.getParentNode().replaceChild(myEntryNode,newEntryNode);
+				tmplEntry = Utility.NodeToString(templateDoc);
 			}
 		}
 		return tmplEntry;
