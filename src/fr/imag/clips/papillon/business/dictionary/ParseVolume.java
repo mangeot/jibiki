@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.19  2005/11/10 17:17:20  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.18  2005/11/10 17:08:53  mangeot
  * *** empty log message ***
  *
@@ -356,12 +359,15 @@ public class ParseVolume {
 						if (resNodeList !=null) { 
 							for (int i=0; i<resNodeList.getLength();i++) {
 								org.w3c.dom.Node myNode = resNodeList.item(i);
-								String value = myNode.getNodeValue().trim();
-								if (value != null && !value.equals("")) {
-									//	PapillonLogger.writeDebugMsg("Parse entry, node value: " + value);
-									Index myIndex = IndexFactory.newIndex(myEntry.getVolume().getIndexDbname(),CdmElement,lang,value, myEntry.getHandle());
-									if (myIndex != null && !myIndex.isEmpty()) {
-										myIndex.save();
+								String value = myNode.getNodeValue();
+								if (value != null) { 
+									value = value.trim();
+									if (value.equals("")) {
+										//	PapillonLogger.writeDebugMsg("Parse entry, node value: " + value);
+										Index myIndex = IndexFactory.newIndex(myEntry.getVolume().getIndexDbname(),CdmElement,lang,value, myEntry.getHandle());
+										if (myIndex != null && !myIndex.isEmpty()) {
+											myIndex.save();
+										}
 									}
 								}
 							}
