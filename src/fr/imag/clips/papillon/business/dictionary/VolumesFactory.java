@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.25  2005/11/10 14:59:38  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.24  2005/11/10 14:52:55  mangeot
  * *** empty log message ***
  *
@@ -578,9 +581,7 @@ public class VolumesFactory {
 					String xpathString =  (String) eltVector.elementAt(0);
 					if (xpathString.indexOf(contribPath)<0 
 						&& xpathString.indexOf(entryPath)==0) {
-						PapillonLogger.writeDebugMsg("updateCdmElementsTable: old xpathString: " + xpathString);
 						xpathString = searchAndReplace(xpathString,entryPath,contribPath + "/" + VolumeEntry.dataTag + "/" + entryTag);
-						PapillonLogger.writeDebugMsg("updateCdmElementsTable: new xpathString: " + xpathString);
 						eltVector.remove(0);
 						eltVector.add(0,xpathString);
 					}

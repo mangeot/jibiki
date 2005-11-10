@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.17  2005/11/10 14:59:38  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.16  2005/11/10 13:35:09  mangeot
  * *** empty log message ***
  *
@@ -205,7 +208,13 @@ public class ParseVolume {
 			int firstEntryIndex = -1;
 			while (buffer.ready() && firstEntryIndex <0) {
 				bufferLine = buffer.readLine();
-				firstEntryIndex = bufferLine.indexOf("<" + CDM_Entry);
+				firstEntryIndex = bufferLine.indexOf("<" + CDM_Entry + " ");
+				if (firstEntryIndex < 0) {
+					firstEntryIndex = bufferLine.indexOf("<" + CDM_Entry + "\t");
+				}
+				if (firstEntryIndex < 0) {
+					firstEntryIndex = bufferLine.indexOf("<" + CDM_Entry + ">");
+				}
 				if (firstEntryIndex < 0) {
 					firstEntryIndex = bufferLine.indexOf("<" + CDM_Contribution);
 					isContributionVolume = (firstEntryIndex >=0);
