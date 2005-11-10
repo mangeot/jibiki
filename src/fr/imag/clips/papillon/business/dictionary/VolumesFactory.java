@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.21  2005/11/10 14:23:27  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.20  2005/11/10 14:11:14  mangeot
  * *** empty log message ***
  *
@@ -559,7 +562,7 @@ public class VolumesFactory {
 		String templateEntryString = getCdmXPathString(cdmElements, Volume.CDM_entry, Volume.DEFAULT_LANG);
 		String entryString = templateEntryString;
 		entryString = Volume.getTagNameFromXPath(entryString);
-		String newXpath = "/" + contribPath + "/" + VolumeEntry.dataTag + "/" + entryString;
+		String newXpath = contribPath + "/" + VolumeEntry.dataTag + "/" + entryString;
 		entryString = "/" + entryString;  
 		for (java.util.Enumeration langKeys = cdmElements.keys(); langKeys.hasMoreElements();) {
 			String lang = (String) langKeys.nextElement();
@@ -573,13 +576,12 @@ public class VolumesFactory {
 					PapillonLogger.writeDebugMsg("updateCdmElementsTable: volumeString: " + volumeString);
 					PapillonLogger.writeDebugMsg("updateCdmElementsTable: entryString: " + entryString);
 					PapillonLogger.writeDebugMsg("updateCdmElementsTable: newXpath: " + newXpath);
+					PapillonLogger.writeDebugMsg("updateCdmElementsTable: contribString: " + contribString);
 					if ((xpathString.indexOf(entryString + "/")>0 
 						 ||
-						(xpathString.indexOf(entryString + "[")>0))
+						xpathString.indexOf(entryString + "[")>0)
 						 &&
-						(xpathString.indexOf(contribString + "/")<0) 
-						 ||
-						(xpathString.indexOf(contribString + "[")<0)) {
+						xpathString.indexOf(contribString)<0) {
 						xpathString = searchAndReplace(xpathString,volumeString,entryString,newXpath);
 						PapillonLogger.writeDebugMsg("updateCdmElementsTable: new xpathString: " + xpathString);
 						eltVector.remove(0);
