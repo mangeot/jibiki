@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.22  2005/11/10 14:45:44  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.21  2005/11/10 14:23:27  mangeot
  * *** empty log message ***
  *
@@ -555,15 +558,10 @@ public class VolumesFactory {
 	/* cdmElements Hashtable = {lang => Hashtable} = {CDM_element => Vector} = (xpathString, isIndex, XPath)*/
 	protected static void updateCdmElementsTable(Hashtable cdmElements) {
 	
-		String volumePath = getCdmXPathString(cdmElements, Volume.CDM_volume, Volume.DEFAULT_LANG);
-		String volumeString = "/" + Volume.getTagNameFromXPath(volumePath) + "/";
 		String contribPath = getCdmXPathString(cdmElements, Volume.CDM_contribution, Volume.DEFAULT_LANG);
-		String contribString = "/" + Volume.getTagNameFromXPath(contribPath);
-		String templateEntryString = getCdmXPathString(cdmElements, Volume.CDM_entry, Volume.DEFAULT_LANG);
-		String entryString = templateEntryString;
-		entryString = Volume.getTagNameFromXPath(entryString);
-		String newXpath = contribPath + "/" + VolumeEntry.dataTag + "/" + entryString;
-		entryString = "/" + entryString;  
+		String entryPath = getCdmXPathString(cdmElements, Volume.CDM_entry, Volume.DEFAULT_LANG);
+		String entryTag = Volume.getTagNameFromXPath(entryPath);
+
 		for (java.util.Enumeration langKeys = cdmElements.keys(); langKeys.hasMoreElements();) {
 			String lang = (String) langKeys.nextElement();
 			java.util.Hashtable tmpTable =  (java.util.Hashtable) cdmElements.get(lang);
@@ -572,17 +570,10 @@ public class VolumesFactory {
 				java.util.Vector eltVector = (java.util.Vector) tmpTable.get(CDM_element);
 				if (eltVector != null && eltVector.size()>=2) {
 					String xpathString =  (String) eltVector.elementAt(0);
-					PapillonLogger.writeDebugMsg("updateCdmElementsTable: old xpathString: " + xpathString);
-					PapillonLogger.writeDebugMsg("updateCdmElementsTable: volumeString: " + volumeString);
-					PapillonLogger.writeDebugMsg("updateCdmElementsTable: entryString: " + entryString);
-					PapillonLogger.writeDebugMsg("updateCdmElementsTable: newXpath: " + newXpath);
-					PapillonLogger.writeDebugMsg("updateCdmElementsTable: contribString: " + contribString);
-					if ((xpathString.indexOf(entryString + "/")>0 
-						 ||
-						xpathString.indexOf(entryString + "[")>0)
-						 &&
-						xpathString.indexOf(contribString)<0) {
-						xpathString = searchAndReplace(xpathString,volumeString,entryString,newXpath);
+					if (xpathString.indexOf(contribPath)<0 
+						&& xpathString.indexOf(entryPath)>0) {
+						PapillonLogger.writeDebugMsg("updateCdmElementsTable: old xpathString: " + xpathString);
+						xpathString = searchAndReplace(xpathString,entryPath,contribPath + "/" + entryTag);
 						PapillonLogger.writeDebugMsg("updateCdmElementsTable: new xpathString: " + xpathString);
 						eltVector.remove(0);
 						eltVector.add(0,xpathString);
@@ -591,7 +582,7 @@ public class VolumesFactory {
 			}
 		}
 		/* Here I keep the original entry xpath in order to use it when I load the template entry */
-		addCdmElementInTable(cdmElements,Volume.CDM_templateEntry,Volume.DEFAULT_LANG,templateEntryString, false);
+		addCdmElementInTable(cdmElements,Volume.CDM_templateEntry,Volume.DEFAULT_LANG,entryPath, false);
 	}
 	
 	/* cdmElements Hashtable = {lang => Hashtable} = {CDM_element => Vector} = (xpathString, isIndex, XPath)*/
@@ -744,16 +735,9 @@ public class VolumesFactory {
 		tmpTable.put(elt,xpathAndIndexVector);
 	}
 	
-	protected static String searchAndReplace(String theString, String startSubstring, String endSubstring, String replaceSubstring) {
-		int startIndex = theString.indexOf(startSubstring);
-		if (startIndex >= 0) {
-			int endIndex = theString.indexOf(endSubstring, startIndex+startSubstring.length()) + endSubstring.length();
-			if (endIndex > startIndex) {
-				String searchedSubstring = theString.substring(startIndex, endIndex);
-				String searchedRegex = "\\Q" + searchedSubstring + "\\E";
-				theString = theString.replaceAll(searchedRegex, replaceSubstring);
-			}
-		}
+	protected static String searchAndReplace(String theString, String search, String replace) {
+		String searchedRegex = "\\Q" + search + "\\E";
+		theString = theString.replaceAll(searchedRegex, replace);
 		return theString;
 	}
 	
