@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.16  2005/11/10 13:35:09  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.15  2005/11/10 13:12:38  mangeot
  * *** empty log message ***
  *
@@ -139,7 +142,10 @@ public class ParseVolume {
 					res = str;
 					break;
 				}
-				if (str.indexOf("<" + CDM_entry)>=0) {
+				if ((str.indexOf("<" + CDM_entry + " ")>=0) ||
+					(str.indexOf("<" + CDM_entry + "\t")>=0) ||
+					(str.indexOf("<" + CDM_entry + "\n")>=0) ||
+					(str.indexOf("<" + CDM_entry + ">")>=0)){
 					break;
 				}
 			}
