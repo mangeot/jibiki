@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.28  2005/11/14 22:06:07  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.27  2005/11/09 17:44:05  mangeot
  * Deleted axi volume table special handling, not needed any more
  *
@@ -1066,17 +1069,12 @@ public class VolumeEntriesFactory {
     public static void dropVolumeTables(Volume volume)
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
             try {
-                //FIXME: this if is bad code, temporary solution !
-                if (volume.getName().equals(PapillonPivotFactory.VOLUMENAME)) {
-                    ManageDatabase.truncateTable(volume.getDbname());
-                }
-                else {
-                    ManageDatabase.dropTable(volume.getDbname());
-                }
+				ManageDatabase.dropTable(volume.getDbname());
 				IndexFactory.dropIndexTable(volume.getIndexDbname());
             }
             catch (Exception e) {
-                throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in deleteVolumeTable with volume: " + volume, e);
+//                throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in deleteVolumeTable with volume: " + volume, e);
+				PapillonLogger.writeDebugMsg("Exception in createVolumeTables with volume: " + volume.getName() + ", probably the tables already exist.");
             }
         }
 	
