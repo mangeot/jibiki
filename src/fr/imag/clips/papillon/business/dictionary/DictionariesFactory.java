@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.23  2005/11/14 23:21:57  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.22  2005/11/14 22:57:27  mangeot
  * *** empty log message ***
  *
@@ -773,7 +776,6 @@ public class DictionariesFactory {
         QueryResult qr = new QueryResult();
         qr.setSourceEntry(ve);
 		String category = ve.getDictionary().getCategory();
-		PapillonLogger.writeDebugMsg("expandResult: before");
 		if (!category.equals("monolingual")) {
 			String type = ve.getDictionary().getType();
 			if (type.equals("pivot")) {
@@ -797,7 +799,6 @@ public class DictionariesFactory {
             qr.setResultKind(QueryResult.UNIQUE_RESULT);
             myVector.add(qr);
         }
-		PapillonLogger.writeDebugMsg("expandResult: after");
 		return myVector;
         
     }
