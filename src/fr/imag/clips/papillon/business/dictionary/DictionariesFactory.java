@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.21  2005/11/14 22:49:06  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.20  2005/11/14 22:28:45  mangeot
  * *** empty log message ***
  *
@@ -781,6 +784,7 @@ public class DictionariesFactory {
 			}
 			else {
 				// type monovolume: bilingual in the same file
+				// type monodirectional: bilingual in the same file
 				qr.setResultKind(QueryResult.UNIQUE_RESULT);
 				myVector.add(qr);
 			}

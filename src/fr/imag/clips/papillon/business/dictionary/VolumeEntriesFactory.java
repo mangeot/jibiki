@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.30  2005/11/14 22:49:06  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.29  2005/11/14 22:08:07  mangeot
  * *** empty log message ***
  *
@@ -417,7 +420,7 @@ public class VolumeEntriesFactory {
 					for (java.util.Enumeration enumKeys = Keys.elements(); enumKeys.hasMoreElements();) {
 						String[] key = (String[]) enumKeys.nextElement();
                         // debug
-                        //System.out.println(key[0] + " | " + key[1] + " | " + key[2] + " | " + key[3]);
+                        System.out.println(key[0] + " | " + key[1] + " | " + key[2] + " | " + key[3]);
 						if (key!=null && key[2] !=null && !key[2].equals("")) {
 							myQueryBuilder = new com.lutris.dods.builder.generator.query.QueryBuilder(Columns);
 							if (IndexFactory.databaseVendor != null) {
@@ -436,12 +439,13 @@ public class VolumeEntriesFactory {
 						}
 					}
 				}
+				fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getDbTableEntriesVector: between key & clause");
 				
 				if (Clauses != null) {
 					for (java.util.Enumeration enumClauses = Clauses.elements(); enumClauses.hasMoreElements();) {
 						String clause = (String) enumClauses.nextElement();
                         // debug
-                        //System.out.println(clause);
+                        System.out.println(clause);
 						if (clause!=null && !clause.equals("")) {
 							myQueryBuilder = new com.lutris.dods.builder.generator.query.QueryBuilder(Columns);
 							if (IndexFactory.databaseVendor != null) {
@@ -461,7 +465,7 @@ public class VolumeEntriesFactory {
 				query.getQueryBuilder().addEndClause("OFFSET " + offset);
 				query.getQueryBuilder().addOrderByColumn("multilingual_sort('" + volume.getSourceLanguage() + "',headword)","");
 				// debug
-				//query.getQueryBuilder().debug();
+				query.getQueryBuilder().debug();
 			
 				VolumeEntryDO[] DOarray = query.getDOArray();
 				if (null != DOarray) {
@@ -489,6 +493,7 @@ public class VolumeEntriesFactory {
 				throw new PapillonBusinessException("Exception in getDbtableEntriesVector()", ex);
 			}
 		}
+		fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getDbTableEntriesVector: end");
 		return theEntries;
 	}
 	

@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.24  2005/11/14 22:49:06  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.23  2005/11/09 17:38:59  mangeot
  * small bug fixes
  *
@@ -279,9 +282,9 @@ public class VolumeEntry implements IAnswer {
 			this.setDictionary(newDict);
         }
         catch(DatabaseManagerException ex) {
-            throw new PapillonBusinessException("Error creating empty Volume", ex);
+            throw new PapillonBusinessException("Error creating VolumeEntry", ex);
         } catch(ObjectIdException ex) {
-            throw new PapillonBusinessException("Error creating empty Volume", ex);
+            throw new PapillonBusinessException("Error creating VolumeEntry", ex);
         }
     }
 	
@@ -299,7 +302,7 @@ public class VolumeEntry implements IAnswer {
 				this.setDictionary(newDict);
 			}
 			catch(DataObjectException ex) {
-				throw new PapillonBusinessException("Error creating axie ", ex);
+				throw new PapillonBusinessException("Error creating VolumeEntry", ex);
 			}
 			
 		}
