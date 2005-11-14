@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.8  2005/11/14 21:46:26  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.7  2005/06/15 16:48:28  mangeot
  * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
  *
@@ -266,8 +269,8 @@ public class AdminVolumes extends PapillonBasePO {
 			Volume myVolume = VolumesFactory.parseVolumeMetadata(dict, myURL, parseEntries, logContribs);
 
             if (null != myVolume && !myVolume.isEmpty()) {
-				userMessage = "adding "+ myVolume.getName() + " volume" + " // " + myVolume.getDictname() + " // "  + myVolume.getDbname() + " // " + myVolume.getSourceLanguage() + " // " + myVolume.getTargetLanguages() + " // " + myVolume.getVolumeRef();
-                myVolume.save();
+				userMessage = "adding " + myVolume.getName() + " volume" + " // " + myVolume.getDictname() + " // "  + myVolume.getDbname() + " // " + myVolume.getSourceLanguage() + " // " + myVolume.getTargetLanguages() + " // " + myVolume.getVolumeRef();
+				myVolume.save();
 				fr.imag.clips.papillon.business.edition.UITemplates.resetCache();
             } else {
                 userMessage = "Ignoring volume";

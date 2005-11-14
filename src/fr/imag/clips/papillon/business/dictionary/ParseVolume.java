@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.22  2005/11/14 21:46:25  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.21  2005/11/10 17:31:21  mangeot
  * *** empty log message ***
  *
@@ -133,6 +136,7 @@ public class ParseVolume {
         }
 	
 	protected static void parseVolume (Dictionary myDict, Volume myVolume, String url, boolean logContribs) throws PapillonBusinessException {
+		VolumeEntriesFactory.createVolumeTables(myVolume);
 		String xmlHeader = getXMLHeader(url, myVolume.getCdmEntry());
 		String encoding = getEncoding(xmlHeader);
 		parseEntries(myDict, myVolume, url, encoding, logContribs);

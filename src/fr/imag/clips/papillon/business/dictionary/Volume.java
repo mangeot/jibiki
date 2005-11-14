@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.11  2005/11/14 21:46:25  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.10  2005/11/10 17:25:22  mangeot
  * *** empty log message ***
  *
@@ -502,13 +505,13 @@ public class Volume {
 	}
 	
     /**
-		* Gets a CDM XPath of the Volume
+	 * Gets a CDM XPath of the Volume
      *
      * @param the name of the CDM XPath as a String.
      * @return the CDM XPath as a String.
      * @exception PapillonBusinessException if an error occurs
      *   retrieving data (usually due to an underlying data layer
-						  *   error).
+	 *   error).
      */
     protected String getCdmXPathString(String name) {
 		return getCdmXPathString(name,DEFAULT_LANG);
