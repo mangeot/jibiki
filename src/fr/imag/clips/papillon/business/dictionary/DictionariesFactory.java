@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.20  2005/11/14 22:28:45  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.19  2005/11/09 15:28:44  mangeot
  * *** empty log message ***
  *
@@ -771,10 +774,15 @@ public class DictionariesFactory {
                 qr.setResultKind(QueryResult.AXIE_COLLECTION_RESULT);
 				myVector = getPivotResults(qr, ve.getSourceLanguage(), realTargets, user);
 			}
-			if (type.equals("direct")) {
+			else if (type.equals("direct")) {
                 String[] realTargets = Utility.ArrayIntersection(ve.getVolume().getTargetLanguagesArray(), targets);
                 qr.setResultKind(QueryResult.DIRECT_TRANSLATIONS_RESULT);
 				myVector = getDirectResults(qr, ve.getSourceLanguage(), realTargets, user);
+			}
+			else {
+				// type monovolume: bilingual in the same file
+				qr.setResultKind(QueryResult.UNIQUE_RESULT);
+				myVector.add(qr);
 			}
 		} else {
             // monolingual
