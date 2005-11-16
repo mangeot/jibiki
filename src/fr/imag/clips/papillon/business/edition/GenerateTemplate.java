@@ -8,6 +8,9 @@
  * $Id$
  *---------------------------------------------------------
  * $Log$
+ * Revision 1.13  2005/11/16 16:58:55  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.12  2005/11/16 16:52:43  mangeot
  * *** empty log message ***
  *
@@ -77,7 +80,7 @@ public class GenerateTemplate {
 	protected final static String xmlFooter = "<br /><br />\n" +
 		"<input name=\"Update\" type=\"submit\" value=\"Update\" />\n" +
 		"<input name=\"Save\" type=\"submit\" value=\"Save\" />\n" + 
-		"<label for=\"SaveComment\">Comment:</label> <input name=\"SaveComment\" type=\"text\" />\n" +
+		"<label for=\"SaveComment\">Comment:</label> <input name=\"SaveComment\" id=\"SaveComment\" type=\"text\" />\n" +
 		"</div>\n" +
 		"</form>\n" +
 		"</body>\n" +
