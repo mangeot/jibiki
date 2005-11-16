@@ -6,6 +6,9 @@
  * ---------------------------------------------------
  *
  * $Log$
+ * Revision 1.11  2005/11/16 17:53:19  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.10  2005/11/16 17:50:32  mangeot
  * *** empty log message ***
  *
@@ -367,7 +370,7 @@ A.hide {text-decoration: none}
 /*--------------------------------------*/
 /* For the editor */
 /*--------------------------------------*/
-TD.block {
+td.block {
   /*  display: block; */
     text-align: center;
     border-style: solid;
@@ -376,7 +379,7 @@ TD.block {
     border-color: black;
 }
 
-H4.blockTitle {
+h4.blockTitle {
 	text-align: center; 
 	color:blue;
 }
@@ -683,5 +686,5 @@ tr.sense {
 	}
 	
 /* Styles for FOKS results */
-TD.result {background: #e6e6fa; font-size: 11px;}
-TH.result {background: #fdcfcf;font-family: Arial, sans-serif; font-size: 11px;} 
+td.result {background: #e6e6fa; font-size: 11px;}
+th.result {background: #fdcfcf;font-family: Arial, sans-serif; font-size: 11px;} 
