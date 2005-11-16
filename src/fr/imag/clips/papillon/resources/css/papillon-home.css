@@ -6,6 +6,9 @@
  * ---------------------------------------------------
  *
  * $Log$
+ * Revision 1.8  2005/11/16 17:41:47  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.7  2005/09/11 09:55:48  mangeot
  * Several presentation bug fixes for IExplorer compatability
  *
@@ -477,6 +480,14 @@ H4.blockTitle {
 .sense {
 	display: block;
 }
+	/* I have to add a special rule because there is a conflict with the interface */
+	/* This conflict should be solved quickly! */
+	/* The temporary workaround is to put an element name */
+	/* By chance, it is not the same in the interface for the sense object! */
+tr.sense {
+	display: inline;
+}
+
 
 .headword {
 	font-weight: bold;
