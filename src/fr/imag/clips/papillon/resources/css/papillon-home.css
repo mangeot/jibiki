@@ -6,6 +6,9 @@
  * ---------------------------------------------------
  *
  * $Log$
+ * Revision 1.10  2005/11/16 17:50:32  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.9  2005/11/16 17:45:21  mangeot
  * *** empty log message ***
  *
@@ -489,7 +492,6 @@ span.sense {
 }
 
 tr.sense {
-	display: inline;
 }
 
 
