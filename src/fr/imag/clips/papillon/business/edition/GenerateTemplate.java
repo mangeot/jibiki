@@ -8,6 +8,9 @@
  * $Id$
  *---------------------------------------------------------
  * $Log$
+ * Revision 1.12  2005/11/16 16:52:43  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.11  2005/09/08 12:59:57  mangeot
  * *** empty log message ***
  *
@@ -61,8 +64,9 @@ public class GenerateTemplate {
 		"	<title>Interface Template</title>\n" +
 		"</head>\n" +
 		"<body>\n" +
-		"<form  action=\"EditEntry.po\" id=\"default\" name=\"default\" method=\"post\" accept-charset=\"utf-8\" enctype=\"application/x-www-form-urlencoded\" xml:lang=\"en\" lang=\"en\" d:lang=\"eng\">\n" +
-		"<h1 align=\"center\">Edition interface</h1>\n" +
+		"<form  action=\"EditEntry.po\" id=\"default\" method=\"post\" accept-charset=\"utf-8\" enctype=\"application/x-www-form-urlencoded\" xml:lang=\"en\" lang=\"en\" d:lang=\"eng\">\n" +
+		"<h1 style=\"text-align:center\">Edition interface</h1>\n" +
+		"<div>\n" +
 		"<input name=\"" + EditEntry.VolumeName_PARAMETER + "\" type=\"hidden\" value=\"\" />\n" +
 		"<input name=\"" + EditEntry.EntryHandle_PARAMETER + "\" type=\"hidden\" value=\"\" />\n" +
 		"<input name=\"" + EditEntry.Referrer_PARAMETER + "\" type=\"hidden\" value=\"\" />\n" +
@@ -71,9 +75,10 @@ public class GenerateTemplate {
 		"<input name=\"" + EditEntry.ChooseCall_PARAMETER + "\" type=\"hidden\" value=\"\" />\n";
 	
 	protected final static String xmlFooter = "<br /><br />\n" +
-		"<input name=\"Update\" type=\"Submit\" value=\"Update\" />\n" +
-		"<input name=\"Save\" type=\"Submit\" value=\"Save\" />\n" + 
+		"<input name=\"Update\" type=\"submit\" value=\"Update\" />\n" +
+		"<input name=\"Save\" type=\"submit\" value=\"Save\" />\n" + 
 		"<label for=\"SaveComment\">Comment:</label> <input name=\"SaveComment\" type=\"text\" />\n" +
+		"</div>\n" +
 		"</form>\n" +
 		"</body>\n" +
 		"</html>\n";
@@ -193,14 +198,14 @@ public class GenerateTemplate {
 				interfaceBuffer.write("      <h4 class='blockTitle'>" + elementNameDisplay + "</h4>\n");
 			}
 			else if (elementType==GenerateTemplate.CHOICE_ELEMENT) {
-				interfaceBuffer.write("<" + UIGenerator.ITF_ELT_NAME + " " + UIGenerator.ITF_ATTR_NAME  + "=\"" + elementName + "\">" + "\n");
+				interfaceBuffer.write("<" + UIGenerator.ITF_ELT_INLINE_NAME + " " + UIGenerator.ITF_ATTR_NAME  + "=\"" + elementName + "\">" + "\n");
 				interfaceBuffer.write("<label for=\"" + elementName + "\">"+ elementNameDisplay + ":</label>\n");
 				interfaceBuffer.write("<input name=\"" + UIGenerator.CHOOSE_ATTR_NAME + "\" type=\"checkbox\" value=\"" + elementName + "\" />\n");
 				interfaceBuffer.write("<br />\n");
 				interfaceBuffer.write("<span title=\"" + elementName + "\" class=\"" + UIGenerator.ITF_HIDDEN_STYLE + "\">\n");
 			}
 			else {
-				interfaceBuffer.write("<" + UIGenerator.ITF_ELT_NAME + " " + UIGenerator.ITF_ATTR_NAME  + "=\"" + elementName + "\">" + "\n");
+				interfaceBuffer.write("<" + UIGenerator.ITF_ELT_INLINE_NAME + " " + UIGenerator.ITF_ATTR_NAME  + "=\"" + elementName + "\">" + "\n");
 			}
 			baseType = declaration.getTypeDefinition ();
 			String typeName = declaration.getName() + "Type";
@@ -285,9 +290,9 @@ public class GenerateTemplate {
 										int newTypeElement = DEFAULT_ELEMENT;
 										if (tempParticle.getIsMaxOccursUnbounded() && term.getName()!=null) {
 											// list	
-											interfaceBuffer.write("<table align='center' border='0' cellpadding='5' cellspacing='2' summary='List of " + term.getName() + "s' width='100%'>\n");
-											interfaceBuffer.write("  <tr bgcolor='#fbbe78'>\n");
-											interfaceBuffer.write("    <td align='center' width='25'>\n");
+											interfaceBuffer.write("<table border='0' cellpadding='5' cellspacing='2' summary='List of " + term.getName() + "s' width='100%'>\n");
+											interfaceBuffer.write("  <tr style='background-color: #fbbe78'>\n");
+											interfaceBuffer.write("    <td style='text-align:center' width='25'>\n");
 											interfaceBuffer.write("      <input name='" + elementName + "' onclick=\"this.form.AddCall.value='" + term.getName() + UIGenerator.PARAMETERS_SEPARATOR + "\" type=\"submit\" value=\"+\" />\n");
 											interfaceBuffer.write("      <input name='" + elementName + "' onclick=\"this.form.DelCall.value='" + term.getName() + UIGenerator.PARAMETERS_SEPARATOR + "\" type=\"submit\" value=\"-\" />\n");
 											interfaceBuffer.write("    </td>\n");
@@ -345,14 +350,14 @@ public class GenerateTemplate {
 				//				interfaceBuffer.write("  </blockquote>\n");	
 	}
 			if (elementType==GenerateTemplate.CHOICE_ELEMENT) {
-				interfaceBuffer.write("</" + UIGenerator.ITF_ELT_NAME + ">\n");	
-				interfaceBuffer.write("</" + UIGenerator.ITF_ELT_NAME + ">\n");	
+				interfaceBuffer.write("</" + UIGenerator.ITF_ELT_INLINE_NAME + ">\n");	
+				interfaceBuffer.write("</" + UIGenerator.ITF_ELT_INLINE_NAME + ">\n");	
 			}
 			else if (elementType==GenerateTemplate.LIST_ELEMENT) {
 				interfaceBuffer.write("    </td>\n  </tr>\n");
 			}
 			else  {
-				interfaceBuffer.write("</" + UIGenerator.ITF_ELT_NAME + ">\n");	
+				interfaceBuffer.write("</" + UIGenerator.ITF_ELT_INLINE_NAME + ">\n");	
 			}
 		}
 		catch (java.io.IOException IOEx) {

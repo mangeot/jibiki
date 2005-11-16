@@ -8,6 +8,9 @@
  * $Id$
  *---------------------------------------------------------
  * $Log$
+ * Revision 1.13  2005/11/16 16:52:43  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.12  2005/10/04 10:21:24  mangeot
  * Experimental implementation of moving up and down blocks
  *
@@ -65,8 +68,9 @@ public class UIGenerator {
 	public static final String ID_SEPARATOR = ".";
 	public static final String ATTR_SEPARATOR = ".@";
 	public static final String PARAMETERS_SEPARATOR = "+";
-	public static final String ITF_ELT_NAME = "span";
-	public static final String ITF_DUPLICATE_ELT_NAME = "tr";
+	public static final String ITF_ELT_BLOCK_NAME = "div";
+	public static final String ITF_ELT_INLINE_NAME = "span";
+	public static final String ITF_ELT_DUPLICATE_NAME = "tr";
 	public static final String ITF_ATTR_NAME = "class";
 	public static final String ITF_HIDDEN_STYLE = "hidden";
 	public static final String SELECT_ATTR_NAME = "select";
@@ -457,7 +461,7 @@ public class UIGenerator {
 		//PapillonLogger.writeDebugMsg("findCorrespondingElement " + entryElt.getNodeName() + " itfelt: " + itfElt.getNodeName() + " class: " + itfElt.getAttribute(ITF_ATTR_NAME));
 		Element resultElt = null;
 		String entryEltName = entryElt.getNodeName();
-		NodeList myNodeList = itfElt.getElementsByTagName (ITF_DUPLICATE_ELT_NAME);
+		NodeList myNodeList = itfElt.getElementsByTagName (ITF_ELT_DUPLICATE_NAME);
 		int i=0;
 		while (i<myNodeList.getLength () && resultElt==null) {
 			Element currentElt = (Element) myNodeList.item(i);
@@ -472,7 +476,23 @@ public class UIGenerator {
 			i++;	
 		}
 		if (resultElt==null) {
-			myNodeList = itfElt.getElementsByTagName (ITF_ELT_NAME);
+			myNodeList = itfElt.getElementsByTagName (ITF_ELT_BLOCK_NAME);
+			i=0;
+			while (i<myNodeList.getLength () && resultElt==null) {
+				Element currentElt = (Element) myNodeList.item(i);
+				String myAttr = currentElt.getAttribute(ITF_ATTR_NAME);
+				if (myAttr !=null) {
+					if (myAttr.equals(entryEltName)) {
+						// In any case, we take the first corresponding child
+						// because after we duplicate from an empty template 
+						resultElt = currentElt;
+					}
+				}	
+				i++;	
+			}			
+		}
+		if (resultElt==null) {
+			myNodeList = itfElt.getElementsByTagName (ITF_ELT_INLINE_NAME);
 			i=0;
 			while (i<myNodeList.getLength () && resultElt==null) {
 				Element currentElt = (Element) myNodeList.item(i);
