@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.28  2005/11/16 14:36:11  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.27  2005/11/14 21:46:26  mangeot
  * *** empty log message ***
  *
@@ -382,6 +385,8 @@ public class VolumesFactory {
                     }
 
                     if (resVolume.getLocation().equals(Volume.LOCAL_LOCATION) && !virtual) {
+						VolumeEntriesFactory.createVolumeTables(resVolume);
+						PapillonLogger.writeDebugMsg("parseVolume: volumeTables created");
 						if (parseEntries) {
 							URL resultURL = new URL(fileURL,resVolume.getVolumeRef());
 							ParseVolume.parseVolume(dict, resVolume, resultURL.toString(), logContribs);
