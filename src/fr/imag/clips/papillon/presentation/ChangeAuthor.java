@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.9  2005/11/18 22:40:18  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.8  2005/08/01 08:34:03  mangeot
  * Added method getCompleteHeadword for VolumeEntry that concatenates the homograph number and the particule to the headword
  *
@@ -178,6 +181,19 @@ public class ChangeAuthor extends PapillonBasePO {
 				queryString += "&" + content.NAME_AUTHOR + "=" + author;
 			}
 
+			// Strategy author
+			String strategyAuthorString = myGetParameter(content.NAME_StrategyAuthor);
+			if (strategyAuthorString != null && !strategyAuthorString.equals("")) {
+				this.setPreference(content.NAME_StrategyAuthor, strategyAuthorString);
+			} else {
+				strategyAuthorString = this.getPreference(content.NAME_StrategyAuthor);
+			}
+			int strategyAuthor = IQuery.STRATEGY_NONE;
+			if (null != strategyAuthorString && !strategyAuthorString.equals("")) {
+				strategyAuthor = Integer.parseInt(strategyAuthorString);
+			}
+			
+			
 			// reviewer
 			String reviewer = myGetParameter(content.NAME_REVIEWER);
 			if (lookup !=null && !lookup.equals("")) {
@@ -403,7 +419,7 @@ public class ChangeAuthor extends PapillonBasePO {
 				authorKey[0] = Volume.CDM_contributionAuthor;
 				authorKey[1] = Volume.DEFAULT_LANG;
 				authorKey[2] = author;
-				authorKey[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_EXACT+1];			
+				authorKey[3] = IQuery.QueryBuilderStrategy[strategyAuthor+1];			
 				myKeys1.add(authorKey);
 			}
 			if (reviewer !=null && !reviewer.equals("")) {
