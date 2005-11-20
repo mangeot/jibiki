@@ -4,6 +4,9 @@
 *$Id$
 *------------------------------------------
 *$Log$
+*Revision 1.8  2005/11/20 18:03:22  mangeot
+**** empty log message ***
+*
 *Revision 1.7  2005/07/16 12:58:31  serasset
 *Added limit parameter to query functions
 *Added a parameter to Formater initializations
@@ -124,6 +127,7 @@ public class Utility {
 						StringWriter myStringWriter = new StringWriter();
 						myOutputFormat.setMethod("text");
 						myOutputFormat.setIndenting(true);
+						myOutputFormat.setOmitDocumentType(true);
             XMLSerializer myXMLSerializer = new XMLSerializer(myStringWriter, myOutputFormat);
             myXMLSerializer.serialize(N);
             res= myStringWriter.toString();
@@ -206,6 +210,7 @@ public class Utility {
 						StringWriter myStringWriter = new StringWriter();
 						myOutputFormat.setMethod("text");
 						myOutputFormat.setIndenting(true);
+						myOutputFormat.setOmitDocumentType(true);
 						XMLSerializer myXMLSerializer = new XMLSerializer(myStringWriter, myOutputFormat);
             myXMLSerializer.serialize(N);
             res= myStringWriter.toString();

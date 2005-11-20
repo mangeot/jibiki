@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.12  2005/11/20 18:03:22  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.11  2005/11/14 21:46:25  mangeot
  * *** empty log message ***
  *
@@ -163,7 +166,7 @@ import fr.imag.clips.papillon.business.utility.Utility;
 
 
 /**
-* Represents a Volume. 
+ * Represents a Volume. 
  */
 public class Volume {
 	
@@ -189,8 +192,8 @@ public class Volume {
     public static final  String CDM_translationReflexie = "cdm-translation-ref";
     public static final  String CDM_example = "cdm-example";
     public static final  String CDM_idiom = "cdm-idiom";
-    public static final  String CDM_key1 = "cdm-key1";
-    public static final  String CDM_key2 = "cdm-key2";	
+   // public static final  String CDM_key1 = "cdm-key1";
+   // public static final  String CDM_key2 = "cdm-key2";	
   
 	// history tags
 	public static final  String CDM_history = "cdm-history";
@@ -222,19 +225,44 @@ public class Volume {
     public static final  String CDM_originalContributionId = "cdm-original-contribution-id";
 
 	
-	// constants added to manage axies, it should be generic...
+	/* constants added to manage axies, it should be generic...
     public static final  String CDM_axiSemanticCat = "axi-semantic-cat";
     public static final  String CDM_axiSynonyms = "axi-synonyms";
     public static final  String CDM_axiLanguage = "axi-language";
     public static final  String CDM_axiLanguageAttribute = "axi-language-attribute";
     public static final  String CDM_axiReflexie = "axi-reflexie";
-    public static final  String CDM_axiRefaxie = "axi-refaxie";
+    public static final  String CDM_axiRefaxie = "axi-refaxie"; */
 
 	// gdef tags
 	public static final  String CDM_gdefEstParticule = "gdef-est-particule";
   
 	// other constants
 	public final static String DEFAULT_LANG = "#NA";
+	
+	public final static String[] indexElements = { 
+		CDM_entryId, 
+		CDM_headword,
+		CDM_homographNumber,
+		CDM_reading,
+		CDM_writing,
+		CDM_pronunciation,
+		CDM_pos,
+		CDM_translation,
+		CDM_translationReflexie,
+		CDM_gdefEstParticule,
+		
+// contribution CDM elements
+		CDM_contributionId,
+		CDM_originalContributionId,
+		CDM_contributionAuthor,
+		CDM_contributionGroup,
+		CDM_contributionCreationDate,
+		CDM_contributionReviewDate,
+		CDM_contributionReviewer,
+		CDM_contributionValidationDate,
+		CDM_contributionValidator,
+		CDM_contributionStatus
+	};
 		
 	// local variables
 /*
@@ -244,12 +272,12 @@ public class Volume {
 	protected java.util.Hashtable CDM_elements =  null;
 	
     /**
-		* The DO of the Volume.
+	 * The DO of the Volume.
      */
     protected VolumeDO myDO = null;
 	
     /**
-		* The public constructor.
+	 * The public constructor.
      */
     public Volume() throws PapillonBusinessException {
         try {
@@ -285,12 +313,12 @@ public class Volume {
 	
 	
     /**
-		* Gets the object id for the Volume
+	 * Gets the object id for the Volume
      *
      * @return the object id.
      * @exception PapillonBusinessException if an error occurs
      *   retrieving data (usually due to an underlying data layer
-						  *   error).
+	 *   error).
      */
     public String getHandle()
         throws PapillonBusinessException {
@@ -302,12 +330,12 @@ public class Volume {
 		}
 	
     /**
-		* Gets the name of the Volume
+	 * Gets the name of the Volume
      *
      * @return the name.
      * @exception PapillonBusinessException if an error occurs
      *   retrieving data (usually due to an underlying data layer
-						  *   error).
+	 *   error).
      */
     public String getName()
         throws PapillonBusinessException {
@@ -328,12 +356,12 @@ public class Volume {
     
 	
     /**
-		* Gets the dictname of the Volume
+	 * Gets the dictname of the Volume
      *
      * @return the dictname.
      * @exception PapillonBusinessException if an error occurs
      *   retrieving data (usually due to an underlying data layer
-						  *   error).
+	 *   error).
      */
     public String getDictname() 
         throws PapillonBusinessException {
@@ -354,12 +382,12 @@ public class Volume {
 	
 	
     /**
-        * Gets the dbname of the Volume
+	 * Gets the dbname of the Volume
      *
      * @return the dbname.
      * @exception PapillonBusinessException if an error occurs
      *   retrieving data (usually due to an underlying data layer
-                          *   error).
+     *   error).
      */
     public String getDbname()
         throws PapillonBusinessException {
@@ -385,12 +413,12 @@ public class Volume {
 		}
 	
     /**
-        * Gets the location of the Volume
+	 * Gets the location of the Volume
      *
      * @return the dbname.
      * @exception PapillonBusinessException if an error occurs
      *   retrieving data (usually due to an underlying data layer
-                          *   error).
+     *   error).
      */
     public String getLocation()
         throws PapillonBusinessException {
@@ -411,12 +439,12 @@ public class Volume {
 	
 	
     /**
-		* Gets the source language of the Volume
+	 * Gets the source language of the Volume
      *
      * @return the source language.
      * @exception PapillonBusinessException if an error occurs
      *   retrieving data (usually due to an underlying data layer
-						  *   error).
+     *   error).
      */
     public String getSourceLanguage() 
         throws PapillonBusinessException {
@@ -437,12 +465,12 @@ public class Volume {
 	
 	
     /**
-		* Gets the target languages of the Volume
+	 * Gets the target languages of the Volume
      *
      * @return the target languages.
      * @exception PapillonBusinessException if an error occurs
      *   retrieving data (usually due to an underlying data layer
-						  *   error).
+	 *   error).
      */
     public String getTargetLanguages() 
         throws PapillonBusinessException {
@@ -468,12 +496,12 @@ public class Volume {
 	
 	
     /**
-		* Gets the href of the Volume
+	 * Gets the href of the Volume
      *
      * @return the href.
      * @exception PapillonBusinessException if an error occurs
      *   retrieving data (usually due to an underlying data layer
-						  *   error).
+	 *   error).
      */
     public String getVolumeRef() 
         throws PapillonBusinessException {
@@ -493,12 +521,12 @@ public class Volume {
 		}
 	
     /**
-		* Gets the CDM elements Hashtable of the Volume
+	 * Gets the CDM elements Hashtable of the Volume
      *
      * @return the  CDM elements Hashtable.
      * @exception PapillonBusinessException if an error occurs
      *   retrieving data (usually due to an underlying data layer
-						  *   error).
+	 *   error).
      */
     public java.util.Hashtable getCdmElements() {
 		return this.CDM_elements;
@@ -518,14 +546,14 @@ public class Volume {
 	}
 	
     /**
-		* Gets a CDM XPath of the Volume
+	 * Gets a CDM XPath of the Volume
      *
      * @param the name of the CDM element as a String.
      * @param the language of the CDM element as a ISO 639-2/T 3 letters String.
      * @return the CDM XPath as a String.
      * @exception PapillonBusinessException if an error occurs
      *   retrieving data (usually due to an underlying data layer
-						  *   error).
+	 *   error).
      */
     protected String getCdmXPathString(String name, String lang) {
 		String res = null;
@@ -573,36 +601,36 @@ public class Volume {
 	}
 	
     /**
-		* Gets the CDM volume of the Volume
+	 * Gets the CDM volume of the Volume
      *
      * @return the CDM volume tag name as a String.
      * @exception PapillonBusinessException if an error occurs
      *   retrieving data (usually due to an underlying data layer
-						  *   error).
+	 *   error).
      */
     public String getCdmVolume() {
 		return getTagNameFromXPath(getCdmXPathString(this.CDM_volume));
 	}
 
     /**
-		* Gets the CDM entry of the Volume
+	 * Gets the CDM entry of the Volume
      *
      * @return the  CDM entry tag name as a String.
      * @exception PapillonBusinessException if an error occurs
      *   retrieving data (usually due to an underlying data layer
-						  *   error).
+	 *   error).
      */
     public String getCdmEntry() {
 		return getTagNameFromXPath(getCdmXPathString(this.CDM_entry));
 	}
 
     /**
-		* Gets the local tag name of the CDM entry of the Volume
+	 * Gets the local tag name of the CDM entry of the Volume
      *
      * @return the  CDM entry tag name as a String.
      * @exception PapillonBusinessException if an error occurs
      *   retrieving data (usually due to an underlying data layer
-						  *   error).
+	 *   error).
      */
     public String getCdmLocalEntry() {
 		return Utility.getLocalTagName(getTagNameFromXPath(getCdmXPathString(this.CDM_entry)));
@@ -613,107 +641,107 @@ public class Volume {
 	}
 
     /**
-		* Gets the CDM headword of the Volume
+	 * Gets the CDM headword of the Volume
      *
      * @return the  CDM headword tag name as a String.
      * @exception PapillonBusinessException if an error occurs
      *   retrieving data (usually due to an underlying data layer
-						  *   error).
+	 *   error).
      */
     public String getCdmHeadword() throws fr.imag.clips.papillon.business.PapillonBusinessException {
 		return getTagNameFromXPath(getCdmXPathString(this.CDM_headword, this.getSourceLanguage()));
 	}
 
     /**
-		* Gets the CDM history of the Volume
+	 * Gets the CDM history of the Volume
      *
      * @return the  CDM history tag name as a String.
      * @exception PapillonBusinessException if an error occurs
      *   retrieving data (usually due to an underlying data layer
-						  *   error).
+	 *   error).
      */
     public String getCdmHistory() {
 		return getTagNameFromXPath(getCdmXPathString(this.CDM_history));
 	}
 
     /**
-		* Gets the CDM modification of the Volume
+	 * Gets the CDM modification of the Volume
      *
      * @return the  CDM modification tag name as a String.
      * @exception PapillonBusinessException if an error occurs
      *   retrieving data (usually due to an underlying data layer
-						  *   error).
+	 *   error).
      */
     public String getCdmModification() {
 		return getTagNameFromXPath(getCdmXPathString(this.CDM_modification));
 	}
 
     /**
-		* Gets the CDM author of the Volume
+	 * Gets the CDM author of the Volume
      *
      * @return the  CDM author tag name as a String.
      * @exception PapillonBusinessException if an error occurs
      *   retrieving data (usually due to an underlying data layer
-						  *   error).
+	 *   error).
      */
     public String getCdmModificationAuthor() {
 		return getTagNameFromXPath(getCdmXPathString(this.CDM_modificationAuthor));
 	}
 
     /**
-		* Gets the CDM date of the Volume
+	 * Gets the CDM date of the Volume
      *
      * @return the  CDM date tag name as a String.
      * @exception PapillonBusinessException if an error occurs
      *   retrieving data (usually due to an underlying data layer
-						  *   error).
+	 *   error).
      */
     public String getCdmModificationDate() {
 		return getTagNameFromXPath(getCdmXPathString(this.CDM_modificationDate));
 	}
 
     /**
-		* Gets the CDM comment of the Volume
+	 * Gets the CDM comment of the Volume
      *
      * @return the CDM comment tag name as a String.
      * @exception PapillonBusinessException if an error occurs
      *   retrieving data (usually due to an underlying data layer
-						  *   error).
+	 *   error).
      */
     public String getCdmModificationComment() {
 		return getTagNameFromXPath(getCdmXPathString(this.CDM_modificationComment));
 	}
 
     /**
-		* Gets the CDM groups element of the Volume
+	 * Gets the CDM groups element of the Volume
      *
      * @return the CDM comment tag name as a String.
      * @exception PapillonBusinessException if an error occurs
      *   retrieving data (usually due to an underlying data layer
-						  *   error).
+	 *   error).
      */
     public String getCdmContributionGroups() {
 		return getTagNameFromXPath(getCdmXPathString(this.CDM_contributionGroups));
 	}
 	
     /**
-		* Gets the CDM group of the Volume
+	 * Gets the CDM group of the Volume
      *
      * @return the CDM comment tag name as a String.
      * @exception PapillonBusinessException if an error occurs
      *   retrieving data (usually due to an underlying data layer
-						  *   error).
+	 *   error).
      */
     public String getCdmContributionGroup() {
 		return getTagNameFromXPath(getCdmXPathString(this.CDM_contributionGroup));
 	}
 	
 	/**
-		* Sets the CDM elements Hashtable of the Volume
+	 * Sets the CDM elements Hashtable of the Volume
      *
      * @exception PapillonBusinessException if an error occurs
      *   retrieving data (usually due to an underlying data layer
-						  *   error).
+	 *   error).
      */
 	public void setCdmElements() 
         throws PapillonBusinessException {
@@ -721,24 +749,24 @@ public class Volume {
 	}
 	
 	/**
-		* Sets the CDM elements Hashtable of the Volume
+	 * Sets the CDM elements Hashtable of the Volume
      *
      * @param the CDM elements as an Hashtable.
      * @exception PapillonBusinessException if an error occurs
      *   retrieving data (usually due to an underlying data layer
-						  *   error).
+	 *   error).
      */
 	public void setCdmElements(java.util.Hashtable elements) {
         this.CDM_elements = elements;
 	}
 	
     /**
-		* Gets the xml code of the volume metadata file
+	 * Gets the xml code of the volume metadata file
      *
      * @return the xml code as a string.
      * @exception PapillonBusinessException if an error occurs
      *   retrieving data (usually due to an underlying data layer
-						  *   error).
+	 *   error).
      */
     public String getXmlCode()
         throws PapillonBusinessException {
@@ -768,12 +796,12 @@ public class Volume {
     
     
     /**
-		* Gets the xml code of the volume xml schema file
+	 * Gets the xml code of the volume xml schema file
      *
      * @return the xml code as a string.
      * @exception PapillonBusinessException if an error occurs
      *   retrieving data (usually due to an underlying data layer
-						  *   error).
+	 *   error).
      */
     public String getXmlSchema() throws PapillonBusinessException {
         try {
@@ -793,12 +821,12 @@ public class Volume {
 		}
 	
 	/**
-		* Gets the xml code of the edition interface template
+	 * Gets the xml code of the edition interface template
      *
      * @return the xml code as a string.
      * @exception PapillonBusinessException if an error occurs
      *   retrieving data (usually due to an underlying data layer
-						  *   error).
+	 *   error).
      */
     public String getTemplateInterface()
 		throws PapillonBusinessException {
@@ -810,12 +838,12 @@ public class Volume {
 		}
     
 	/**
-		* Sets the xml code of the edition interface template
+	 * Sets the xml code of the edition interface template
      *
      * @param the xml code as a string.
      * @exception PapillonBusinessException if an error occurs
      *   retrieving data (usually due to an underlying data layer
-						  *   error).
+	 *   error).
      */
 	public void setTemplateInterface(String code)
         throws PapillonBusinessException {
@@ -827,12 +855,12 @@ public class Volume {
 		}
 	
     /**
-		* Gets the xml code of  template entry of the volume
+	 * Gets the xml code of  template entry of the volume
      *
      * @return the xml code as a string.
      * @exception PapillonBusinessException if an error occurs
      *   retrieving data (usually due to an underlying data layer
-						  *   error).
+	 *   error).
      */
     public String getTemplateEntry()
 		throws PapillonBusinessException {
@@ -853,12 +881,12 @@ public class Volume {
 		}
 	
     /**
-		* Gets the xml code of  template entry of the volume
+	 * Gets the xml code of  template entry of the volume
      *
      * @return the xml code as a string.
      * @exception PapillonBusinessException if an error occurs
      *   retrieving data (usually due to an underlying data layer
-						  *   error).
+	 *   error).
      */
     public boolean IsReverseLookup()
 		throws PapillonBusinessException {
@@ -869,7 +897,7 @@ public class Volume {
 				throw new PapillonBusinessException("Error getting volume reverse lookup", ex);
 			}
 		}
-	
+		
 	public void setReverseLookup(boolean reverse)
 		throws PapillonBusinessException {
 			try {
@@ -880,12 +908,24 @@ public class Volume {
 		}
 	
     /**
-		* Gets the xml code footer of the volume
+	 * IsIndexCDMElement tells if the CDM element has to be indexed in the db
+     *
+     * @return a boolean.
+     * @exception PapillonBusinessException if an error occurs
+     *   retrieving data (usually due to an underlying data layer
+	 *   error).
+     */
+    public static boolean isIndexCDMElement(String eltName) {
+		return java.util.Arrays.asList(indexElements).contains(eltName);
+	}
+
+    /**
+	 * Gets the xml code footer of the volume
      *
      * @return the xml code as a string.
      * @exception PapillonBusinessException if an error occurs
      *   retrieving data (usually due to an underlying data layer
-						  *   error).
+	 *   error).
      */
     public String getXmlFooter()
 		throws PapillonBusinessException {
@@ -906,12 +946,12 @@ public class Volume {
  		}
 
     /**
-		* getCount get entries number of the volume
+	 * getCount get entries number of the volume
      *
      * @return the number of entries as an integer.
      * @exception PapillonBusinessException if an error occurs
      *   retrieving data (usually due to an underlying data layer
-						  *   error).
+	 *   error).
      */
 	public int getCount()  
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
@@ -934,11 +974,11 @@ public class Volume {
 	
 	
     /**
-		* Saves the Volume into the database.
+	 * Saves the Volume into the database.
      *
      * @exception PapillonBusinessException if an error occurs
      *   deleting data (usually due to an underlying data layer
-						*   error).
+	 *   error).
      */
     public void save() 
         throws PapillonBusinessException {
@@ -951,11 +991,11 @@ public class Volume {
 		}
     
     /**
-		* Deletes the Volume from the database.
+	 * Deletes the Volume from the database.
      *
      * @exception PapillonBusinessException if an error occurs
      *   deleting data (usually due to an underlying data layer
-						*   error).
+	 *   error).
      */
     public void deleteAll() 
         throws PapillonBusinessException {

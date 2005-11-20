@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.29  2005/11/20 18:03:22  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.28  2005/11/16 14:36:11  mangeot
  * *** empty log message ***
  *
@@ -199,7 +202,6 @@ public class VolumesFactory {
 	protected final static String LOCATION_ATTRIBUTE="location";
 	protected final static String VIRTUAL_ATTRIBUTE="virtual";
 	protected final static String XPATH_ATTRIBUTE="xpath";
-	protected final static String INDEX_ATTRIBUTE="index";
 	protected final static String NAME_ATTRIBUTE="name";
 	protected final static String DEFAULT_ATTRIBUTE="default";
 		
@@ -567,9 +569,7 @@ public class VolumesFactory {
 					lang = langAttr.getValue();
 				}
 				String xpath = myElt.getAttribute(XPATH_ATTRIBUTE);
-				String index = myElt.getAttribute(INDEX_ATTRIBUTE);
-				boolean isindex = (index != null && index.equals("true"));
-				addCdmElementInTable(cdmElements,eltName,lang,xpath, isindex);
+				addCdmElementInTable(cdmElements,eltName,lang,xpath, Volume.isIndexCDMElement(eltName));
 			}
 		}
 		completeCdmElementsTable(cdmElements, sourceLanguage);
@@ -613,88 +613,88 @@ public class VolumesFactory {
 	// contribution tags
 		currentXpath += "/" + VolumeEntry.contributionTag;
 		if (getCdmXPathString(elementsTable, Volume.CDM_contribution, Volume.DEFAULT_LANG) == null) {
-			addCdmElementInTable(elementsTable,Volume.CDM_contribution,Volume.DEFAULT_LANG,currentXpath, false);
+			addCdmElementInTable(elementsTable,Volume.CDM_contribution,Volume.DEFAULT_LANG,currentXpath, Volume.isIndexCDMElement(Volume.CDM_contribution));
 		}
 		if (getCdmXPathString(elementsTable, Volume.CDM_contributionId, Volume.DEFAULT_LANG) == null) {
-			addCdmElementInTable(elementsTable,Volume.CDM_contributionId,Volume.DEFAULT_LANG,currentXpath + "/@" + VolumeEntry.contributionIdAttr, true);
+			addCdmElementInTable(elementsTable,Volume.CDM_contributionId,Volume.DEFAULT_LANG,currentXpath + "/@" + VolumeEntry.contributionIdAttr, Volume.isIndexCDMElement(Volume.CDM_contributionId));
 		}
 		if (getCdmXPathString(elementsTable, Volume.CDM_originalContributionId, Volume.DEFAULT_LANG) == null) {
-			addCdmElementInTable(elementsTable,Volume.CDM_originalContributionId,Volume.DEFAULT_LANG,currentXpath + "/@" + VolumeEntry.originalContributionIdAttr, true);
+			addCdmElementInTable(elementsTable,Volume.CDM_originalContributionId,Volume.DEFAULT_LANG,currentXpath + "/@" + VolumeEntry.originalContributionIdAttr, Volume.isIndexCDMElement(Volume.CDM_originalContributionId));
 		}
 		currentXpath += "/" + VolumeEntry.metadataTag;
 		if (getCdmXPathString(elementsTable, Volume.CDM_contributionAuthorElement, Volume.DEFAULT_LANG) == null) {
-			addCdmElementInTable(elementsTable,Volume.CDM_contributionAuthorElement,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.authorTag, false);
+			addCdmElementInTable(elementsTable,Volume.CDM_contributionAuthorElement,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.authorTag, Volume.isIndexCDMElement(Volume.CDM_contributionAuthorElement));
 		}
 		if (getCdmXPathString(elementsTable, Volume.CDM_contributionAuthor, Volume.DEFAULT_LANG) == null) {
-			addCdmElementInTable(elementsTable,Volume.CDM_contributionAuthor,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.authorTag + "/text()", true);
+			addCdmElementInTable(elementsTable,Volume.CDM_contributionAuthor,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.authorTag + "/text()", Volume.isIndexCDMElement(Volume.CDM_contributionAuthor));
 		}
 		if (getCdmXPathString(elementsTable, Volume.CDM_contributionGroups, Volume.DEFAULT_LANG) == null) {
-			addCdmElementInTable(elementsTable,Volume.CDM_contributionGroups,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.groupsTag, false);
+			addCdmElementInTable(elementsTable,Volume.CDM_contributionGroups,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.groupsTag, Volume.isIndexCDMElement(Volume.CDM_contributionGroups));
 		}
 		if (getCdmXPathString(elementsTable, Volume.CDM_contributionGroup, Volume.DEFAULT_LANG) == null) {
-			addCdmElementInTable(elementsTable,Volume.CDM_contributionGroup,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.groupsTag + "/" + VolumeEntry.groupTag + "/text()", true);
+			addCdmElementInTable(elementsTable,Volume.CDM_contributionGroup,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.groupsTag + "/" + VolumeEntry.groupTag + "/text()", Volume.isIndexCDMElement(Volume.CDM_contributionGroup));
 		}
 		if (getCdmXPathString(elementsTable, Volume.CDM_contributionCreationDateElement, Volume.DEFAULT_LANG) == null) {
-			addCdmElementInTable(elementsTable,Volume.CDM_contributionCreationDateElement,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.creationDateTag, false);
+			addCdmElementInTable(elementsTable,Volume.CDM_contributionCreationDateElement,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.creationDateTag, Volume.isIndexCDMElement(Volume.CDM_contributionCreationDateElement));
 		}
 		if (getCdmXPathString(elementsTable, Volume.CDM_contributionCreationDate, Volume.DEFAULT_LANG) == null) {
-			addCdmElementInTable(elementsTable,Volume.CDM_contributionCreationDate,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.creationDateTag + "/text()", true);
+			addCdmElementInTable(elementsTable,Volume.CDM_contributionCreationDate,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.creationDateTag + "/text()", Volume.isIndexCDMElement(Volume.CDM_contributionCreationDate));
 		}
 		if (getCdmXPathString(elementsTable, Volume.CDM_contributionReviewDateElement, Volume.DEFAULT_LANG) == null) {
-			addCdmElementInTable(elementsTable,Volume.CDM_contributionReviewDateElement,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.reviewDateTag, false);
+			addCdmElementInTable(elementsTable,Volume.CDM_contributionReviewDateElement,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.reviewDateTag, Volume.isIndexCDMElement(Volume.CDM_contributionReviewDateElement));
 		}
 		if (getCdmXPathString(elementsTable, Volume.CDM_contributionReviewDate, Volume.DEFAULT_LANG) == null) {
-			addCdmElementInTable(elementsTable,Volume.CDM_contributionReviewDate,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.reviewDateTag + "/text()", true);
+			addCdmElementInTable(elementsTable,Volume.CDM_contributionReviewDate,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.reviewDateTag + "/text()", Volume.isIndexCDMElement(Volume.CDM_contributionReviewDate));
 		}
 		if (getCdmXPathString(elementsTable, Volume.CDM_contributionReviewerElement, Volume.DEFAULT_LANG) == null) {
-			addCdmElementInTable(elementsTable,Volume.CDM_contributionReviewerElement,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.reviewerTag, false);
+			addCdmElementInTable(elementsTable,Volume.CDM_contributionReviewerElement,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.reviewerTag, Volume.isIndexCDMElement(Volume.CDM_contributionReviewerElement));
 		}
 		if (getCdmXPathString(elementsTable, Volume.CDM_contributionReviewer, Volume.DEFAULT_LANG) == null) {
-			addCdmElementInTable(elementsTable,Volume.CDM_contributionReviewer,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.reviewerTag + "/text()", true);
+			addCdmElementInTable(elementsTable,Volume.CDM_contributionReviewer,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.reviewerTag + "/text()", Volume.isIndexCDMElement(Volume.CDM_contributionReviewer));
 		}
 		if (getCdmXPathString(elementsTable, Volume.CDM_contributionValidationDateElement, Volume.DEFAULT_LANG) == null) {
-			addCdmElementInTable(elementsTable,Volume.CDM_contributionValidationDateElement,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.validationDateTag, false);
+			addCdmElementInTable(elementsTable,Volume.CDM_contributionValidationDateElement,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.validationDateTag, Volume.isIndexCDMElement(Volume.CDM_contributionValidationDateElement));
 		}
 		if (getCdmXPathString(elementsTable, Volume.CDM_contributionValidationDate, Volume.DEFAULT_LANG) == null) {
-			addCdmElementInTable(elementsTable,Volume.CDM_contributionValidationDate,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.validationDateTag + "/text()", true);
+			addCdmElementInTable(elementsTable,Volume.CDM_contributionValidationDate,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.validationDateTag + "/text()", Volume.isIndexCDMElement(Volume.CDM_contributionValidationDate));
 		}
 		if (getCdmXPathString(elementsTable, Volume.CDM_contributionValidatorElement, Volume.DEFAULT_LANG) == null) {
-			addCdmElementInTable(elementsTable,Volume.CDM_contributionValidatorElement,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.validatorTag, false);
+			addCdmElementInTable(elementsTable,Volume.CDM_contributionValidatorElement,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.validatorTag, Volume.isIndexCDMElement(Volume.CDM_contributionValidatorElement));
 		}
 		if (getCdmXPathString(elementsTable, Volume.CDM_contributionValidator, Volume.DEFAULT_LANG) == null) {
-			addCdmElementInTable(elementsTable,Volume.CDM_contributionValidator,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.validatorTag + "/text()", true);
+			addCdmElementInTable(elementsTable,Volume.CDM_contributionValidator,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.validatorTag + "/text()", Volume.isIndexCDMElement(Volume.CDM_contributionValidator));
 		}
 		if (getCdmXPathString(elementsTable, Volume.CDM_contributionStatusElement, Volume.DEFAULT_LANG) == null) {
-			addCdmElementInTable(elementsTable,Volume.CDM_contributionStatusElement,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.statusTag, false);
+			addCdmElementInTable(elementsTable,Volume.CDM_contributionStatusElement,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.statusTag, Volume.isIndexCDMElement(Volume.CDM_contributionStatusElement));
 		}
 		if (getCdmXPathString(elementsTable, Volume.CDM_contributionStatus, Volume.DEFAULT_LANG) == null) {
-			addCdmElementInTable(elementsTable,Volume.CDM_contributionStatus,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.statusTag + "/text()", true);
+			addCdmElementInTable(elementsTable,Volume.CDM_contributionStatus,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.statusTag + "/text()", Volume.isIndexCDMElement(Volume.CDM_contributionStatus));
 		}
 		
 		currentXpath += "/" + VolumeEntry.historyTag;
 		if (getCdmXPathString(elementsTable, Volume.CDM_history, Volume.DEFAULT_LANG) == null) {
-			addCdmElementInTable(elementsTable,Volume.CDM_history,Volume.DEFAULT_LANG,currentXpath, false);
+			addCdmElementInTable(elementsTable,Volume.CDM_history,Volume.DEFAULT_LANG,currentXpath, Volume.isIndexCDMElement(Volume.CDM_history));
 		}
 
 		currentXpath += "/" + VolumeEntry.modificationTag;
 		if (getCdmXPathString(elementsTable, Volume.CDM_modification, Volume.DEFAULT_LANG) == null) {
-			addCdmElementInTable(elementsTable,Volume.CDM_modification,Volume.DEFAULT_LANG,currentXpath, false);
+			addCdmElementInTable(elementsTable,Volume.CDM_modification,Volume.DEFAULT_LANG,currentXpath, Volume.isIndexCDMElement(Volume.CDM_modification));
 		}
 		if (getCdmXPathString(elementsTable, Volume.CDM_modificationAuthor, Volume.DEFAULT_LANG) == null) {
-			addCdmElementInTable(elementsTable,Volume.CDM_modificationAuthor,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.authorTag + "/text()", false);
+			addCdmElementInTable(elementsTable,Volume.CDM_modificationAuthor,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.authorTag + "/text()", Volume.isIndexCDMElement(Volume.CDM_modificationAuthor));
 		}
 		if (getCdmXPathString(elementsTable, Volume.CDM_modificationDate, Volume.DEFAULT_LANG) == null) {
-			addCdmElementInTable(elementsTable,Volume.CDM_modificationDate,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.dateTag + "/text()", false);
+			addCdmElementInTable(elementsTable,Volume.CDM_modificationDate,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.dateTag + "/text()", Volume.isIndexCDMElement(Volume.CDM_modificationDate));
 		}
 		if (getCdmXPathString(elementsTable, Volume.CDM_modificationComment, Volume.DEFAULT_LANG) == null) {
-			addCdmElementInTable(elementsTable,Volume.CDM_modificationComment,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.commentTag + "/text()", false);
+			addCdmElementInTable(elementsTable,Volume.CDM_modificationComment,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.commentTag + "/text()", Volume.isIndexCDMElement(Volume.CDM_modificationComment));
 		}
 		
 		if (getCdmXPathString(elementsTable, Volume.CDM_headwordElement, sourceLanguage) == null) {
 			String headwordXpath = getCdmXPathString(elementsTable, Volume.CDM_headword, sourceLanguage);
 			if (headwordXpath != null && headwordXpath.indexOf("/text()")>0) {
 				headwordXpath = headwordXpath.substring(0,headwordXpath.indexOf("/text()"));
-				addCdmElementInTable(elementsTable,Volume.CDM_headwordElement,sourceLanguage,headwordXpath, false);
+				addCdmElementInTable(elementsTable,Volume.CDM_headwordElement,sourceLanguage,headwordXpath, Volume.isIndexCDMElement(Volume.CDM_headwordElement));
 			}
 		}
 	}
