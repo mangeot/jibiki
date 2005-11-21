@@ -8,6 +8,9 @@
  * $Id$
  *---------------------------------------------------------
  * $Log$
+ * Revision 1.14  2005/11/21 14:16:29  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.13  2005/11/16 16:58:55  mangeot
  * *** empty log message ***
  *
@@ -193,7 +196,7 @@ public class GenerateTemplate {
 			if (elementType==GenerateTemplate.LIST_ELEMENT) {
 				interfaceBuffer.write("  <tr " +  UIGenerator.ITF_ATTR_NAME  + "=\"" + elementName + "\" bgcolor='#ffebdc'>\n");
 				interfaceBuffer.write("    <td align='center' valign='top' width='25'>\n");
-				interfaceBuffer.write("		 <a name=\"" + elementName + "\"> </a>");
+				interfaceBuffer.write("		 <a name=\"" + elementName + "\"> </a>");
 				interfaceBuffer.write("<input name=\"" + UIGenerator.SELECT_ATTR_NAME + "\" type=\"checkbox\" value=\"" + elementName + "\" />");
 				interfaceBuffer.write("\n");
 				interfaceBuffer.write("    </td>\n");

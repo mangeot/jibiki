@@ -8,6 +8,9 @@
  * $Id$
  *---------------------------------------------------------
  * $Log$
+ * Revision 1.14  2005/11/21 14:16:29  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.13  2005/11/16 16:52:43  mangeot
  * *** empty log message ***
  *
@@ -462,22 +465,8 @@ public class UIGenerator {
 		Element resultElt = null;
 		String entryEltName = entryElt.getNodeName();
 		NodeList myNodeList = itfElt.getElementsByTagName (ITF_ELT_DUPLICATE_NAME);
-		int i=0;
-		while (i<myNodeList.getLength () && resultElt==null) {
-			Element currentElt = (Element) myNodeList.item(i);
-			String myAttr = currentElt.getAttribute(ITF_ATTR_NAME);
-			if (myAttr !=null) {
-				if (myAttr.equals(entryEltName)) {
-					// In any case, we take the first corresponding child
-					// because after we duplicate from an empty template 
-					resultElt = currentElt;
-				}
-			}	
-			i++;	
-		}
-		if (resultElt==null) {
-			myNodeList = itfElt.getElementsByTagName (ITF_ELT_BLOCK_NAME);
-			i=0;
+		if (myNodeList != null &&myNodeList.getLength ()>0) {
+			int i=0;
 			while (i<myNodeList.getLength () && resultElt==null) {
 				Element currentElt = (Element) myNodeList.item(i);
 				String myAttr = currentElt.getAttribute(ITF_ATTR_NAME);
@@ -489,22 +478,42 @@ public class UIGenerator {
 					}
 				}	
 				i++;	
+			}
+		}
+		if (resultElt==null) {
+			myNodeList = itfElt.getElementsByTagName (ITF_ELT_BLOCK_NAME);
+			if (myNodeList != null &&myNodeList.getLength ()>0) {
+				int i=0;
+				while (i<myNodeList.getLength () && resultElt==null) {
+					Element currentElt = (Element) myNodeList.item(i);
+					String myAttr = currentElt.getAttribute(ITF_ATTR_NAME);
+					if (myAttr !=null) {
+						if (myAttr.equals(entryEltName)) {
+							// In any case, we take the first corresponding child
+							// because after we duplicate from an empty template 
+							resultElt = currentElt;
+						}
+					}	
+					i++;	
+				}
 			}			
 		}
 		if (resultElt==null) {
 			myNodeList = itfElt.getElementsByTagName (ITF_ELT_INLINE_NAME);
-			i=0;
-			while (i<myNodeList.getLength () && resultElt==null) {
-				Element currentElt = (Element) myNodeList.item(i);
-				String myAttr = currentElt.getAttribute(ITF_ATTR_NAME);
-				if (myAttr !=null) {
-					if (myAttr.equals(entryEltName)) {
-						// In any case, we take the first corresponding child
-						// because after we duplicate from an empty template 
-						resultElt = currentElt;
-					}
-				}	
-				i++;	
+			if (myNodeList != null &&myNodeList.getLength ()>0) {
+				int i=0;
+				while (i<myNodeList.getLength () && resultElt==null) {
+					Element currentElt = (Element) myNodeList.item(i);
+					String myAttr = currentElt.getAttribute(ITF_ATTR_NAME);
+					if (myAttr !=null) {
+						if (myAttr.equals(entryEltName)) {
+							// In any case, we take the first corresponding child
+							// because after we duplicate from an empty template 
+							resultElt = currentElt;
+						}
+					}	
+					i++;	
+				}
 			}			
 		}
 		// if template is true, it means that if nothing is found, the result is null
