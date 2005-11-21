@@ -8,6 +8,9 @@
  * $Id$
  *---------------------------------------------------------
  * $Log$
+ * Revision 1.15  2005/11/21 17:41:36  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.14  2005/11/21 14:16:29  mangeot
  * *** empty log message ***
  *
@@ -70,7 +73,7 @@ public class GenerateTemplate {
 		"	<title>Interface Template</title>\n" +
 		"</head>\n" +
 		"<body>\n" +
-		"<form  action=\"EditEntry.po\" id=\"default\" method=\"post\" accept-charset=\"utf-8\" enctype=\"application/x-www-form-urlencoded\" xml:lang=\"en\" lang=\"en\" d:lang=\"eng\">\n" +
+		"<form  action=\"EditEntry.po\" id=\"default\" name=\"default\" method=\"post\" accept-charset=\"utf-8\" enctype=\"application/x-www-form-urlencoded\" xml:lang=\"en\" lang=\"en\" d:lang=\"eng\">\n" +
 		"<h1 style=\"text-align:center\">Edition interface</h1>\n" +
 		"<div>\n" +
 		"<input name=\"" + EditEntry.VolumeName_PARAMETER + "\" type=\"hidden\" value=\"\" />\n" +

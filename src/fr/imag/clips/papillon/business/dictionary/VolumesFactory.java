@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.31  2005/11/21 17:41:36  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.30  2005/11/21 12:46:40  mangeot
  * *** empty log message ***
  *
@@ -640,6 +643,9 @@ public class VolumesFactory {
 		if (getCdmXPathString(elementsTable, Volume.CDM_originalContributionId, Volume.DEFAULT_LANG) == null) {
 			addCdmElementInTable(elementsTable,Volume.CDM_originalContributionId,Volume.DEFAULT_LANG,currentXpath + "/@" + VolumeEntry.originalContributionIdAttr, Volume.isIndexCDMElement(Volume.CDM_originalContributionId));
 		}
+		if (getCdmXPathString(elementsTable, Volume.CDM_contributionDataElement, Volume.DEFAULT_LANG) == null) {
+			addCdmElementInTable(elementsTable,Volume.CDM_contributionDataElement,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.dataTag, Volume.isIndexCDMElement(Volume.CDM_contributionDataElement));
+		}
 		currentXpath += "/" + VolumeEntry.metadataTag;
 		if (getCdmXPathString(elementsTable, Volume.CDM_contributionAuthorElement, Volume.DEFAULT_LANG) == null) {
 			addCdmElementInTable(elementsTable,Volume.CDM_contributionAuthorElement,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.authorTag, Volume.isIndexCDMElement(Volume.CDM_contributionAuthorElement));
@@ -711,8 +717,10 @@ public class VolumesFactory {
 		
 		if (getCdmXPathString(elementsTable, Volume.CDM_headwordElement, sourceLanguage) == null) {
 			String headwordXpath = getCdmXPathString(elementsTable, Volume.CDM_headword, sourceLanguage);
-			if (headwordXpath != null && headwordXpath.indexOf("/text()")>0) {
-				headwordXpath = headwordXpath.substring(0,headwordXpath.indexOf("/text()"));
+			if (headwordXpath != null) {
+				if (headwordXpath.indexOf("/text()")>0) {
+					headwordXpath = headwordXpath.substring(0,headwordXpath.indexOf("/text()"));
+				}
 				addCdmElementInTable(elementsTable,Volume.CDM_headwordElement,sourceLanguage,headwordXpath, Volume.isIndexCDMElement(Volume.CDM_headwordElement));
 			}
 		}
@@ -730,15 +738,17 @@ public class VolumesFactory {
 			if ((contribNodeList == null || contribNodeList.getLength()==0)
 				&& (entryNodeList != null && entryNodeList.getLength()==1)) {
 				Node myEntryNode = entryNodeList.item(0);
-				String entryString = Utility.NodeToString(myEntryNode);
-				String newEntryString = VolumeEntry.ContributionHeader
-					+ entryString + "\n"
-					+ VolumeEntry.ContributionFooter;
-				org.w3c.dom.Document newEntryDoc = Utility.buildDOMTree(newEntryString);
-				Node newEntryNode = templateDoc.importNode(newEntryDoc.getDocumentElement(),true);
+				String contributionString = VolumeEntry.ContributionHeader + VolumeEntry.ContributionFooter;
+				org.w3c.dom.Document contributionDoc = Utility.buildDOMTree(contributionString);
+				Node contributionNode = templateDoc.importNode(contributionDoc.getDocumentElement(),true);				
 				Node entryParent = myEntryNode.getParentNode();
-				entryParent.replaceChild(newEntryNode, myEntryNode);
-				tmplEntry = Utility.NodeToString(templateDoc);
+				entryParent.replaceChild(contributionNode, myEntryNode);
+				NodeList dataNodeList = ParseVolume.getCdmElements(templateDoc, Volume.CDM_contributionDataElement, Volume.DEFAULT_LANG, cdmElements);
+				if (dataNodeList != null && dataNodeList.getLength()==1) {
+					Node dataNode = dataNodeList.item(0);
+					dataNode.appendChild(myEntryNode);
+					tmplEntry = Utility.NodeToString(templateDoc);
+				}
 			}
 		}
 		return tmplEntry;

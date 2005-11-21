@@ -4,6 +4,9 @@
 *$Id$
 *------------------------------------------
 *$Log$
+*Revision 1.9  2005/11/21 17:41:36  mangeot
+**** empty log message ***
+*
 *Revision 1.8  2005/11/20 18:03:22  mangeot
 **** empty log message ***
 *
@@ -108,6 +111,8 @@ public class Utility {
 	// variables
 	protected static DocumentBuilder myDocumentBuilder = null;
 	protected static SerializerToText mySerializerToText = new SerializerToText();
+	// Use a Transformer for output
+	protected static final TransformerFactory myTransformerFactory = TransformerFactory.newInstance();
 	// FIXME: there may be an encoding problem because we use the default encoding here instead of UTF-8
 	// in order to build the Outputformat("text","UTF-8",true);	
 	protected static OutputFormat myOutputFormat = new OutputFormat();
@@ -120,24 +125,38 @@ public class Utility {
      *   retrieving data (usually due to an underlying data layer
      *   error).
      */
-   public static String NodeToString(Element N) {
-		 String res = "";
-        if (N!=null) {
-					try {
-						StringWriter myStringWriter = new StringWriter();
-						myOutputFormat.setMethod("text");
-						myOutputFormat.setIndenting(true);
-						myOutputFormat.setOmitDocumentType(true);
-            XMLSerializer myXMLSerializer = new XMLSerializer(myStringWriter, myOutputFormat);
-            myXMLSerializer.serialize(N);
-            res= myStringWriter.toString();
-					}
-					catch (java.io.IOException ioe) {
-						PapillonLogger.writeDebugMsg ("NodeToString: java.io.IOException: " + ioe);
-					}
-        }
-				return res;
+	/* prints XML declaration */
+	public static String NodeToString(Document doc) {
+		return NodeToString(doc.getDocumentElement(), true);
+	}
+	
+	public static String NodeToString(Document doc, boolean printXmlDeclaration) {
+		return NodeToString(doc.getDocumentElement(), printXmlDeclaration);
+	}
+	
+	public static String NodeToString(Element elt) {
+		return NodeToString(elt, true);
+	}
+	
+	public static String NodeToString(Element elt, boolean printXmlDeclaration) {
+		String res = "";
+        if (elt!=null) {
+			try {
+				StringWriter myStringWriter = new StringWriter();
+				myOutputFormat.setMethod("text");
+				myOutputFormat.setIndenting(true);
+				myOutputFormat.setOmitDocumentType(true);
+				myOutputFormat.setOmitXMLDeclaration(!printXmlDeclaration);
+				XMLSerializer myXMLSerializer = new XMLSerializer(myStringWriter, myOutputFormat);
+				myXMLSerializer.serialize(elt);
+				res= myStringWriter.toString();
 			}
+			catch (java.io.IOException ioe) {
+				PapillonLogger.writeDebugMsg ("NodeToString: java.io.IOException: " + ioe);
+			}
+        }
+		return res;
+	}
     
    public static void writeNodeToSystemOut(Node n) {
        try {
@@ -179,49 +198,75 @@ public class Utility {
      *   retrieving data (usually due to an underlying data layer
      *   error).
      */
-    public static String NodeToString(Node N) {
-			String res = "";
-        if (N!=null ) {
-					try {
-						StringWriter myStringWriter = new StringWriter();
-            mySerializerToText.setWriter(myStringWriter);
-            mySerializerToText.serialize(N);
-            res= myStringWriter.toString();
-					}
-					catch (java.io.IOException ioe) {
-						PapillonLogger.writeDebugMsg ("NodeToString: java.io.IOException: " + ioe);
-					}
-        }
-				return res;
+	
+	/*
+	 The unsolved dilemna is the following: 
+	 - the first implementation does not seem to work when the XML is not prefixed
+	  or there is no accessible xml schema
+	 - the second implementation does not output the namespace URIs when the elements are prefixed
+	 */
+	
+	public static String NodeToString(Node N) {
+		return NodeToString(N,true);
+	}
+	
+	public static String NodeToString(Node N, boolean printXmlDeclaration) {
+	   String res = "";
+	   if (N!=null ) {
+		   try {
+			   StringWriter myStringWriter = new StringWriter();
+			   mySerializerToText.m_shouldNotWriteXMLHeader = (!printXmlDeclaration);
+			   mySerializerToText.setWriter(myStringWriter);
+			   mySerializerToText.serialize(N);
+			   res= myStringWriter.toString();
+		   }
+		   catch (java.io.IOException ioe) {
+			   PapillonLogger.writeDebugMsg ("NodeToString: java.io.IOException: " + ioe);
+		   }
+	   }
+	   return res;
+			}  
+   
+	/*
+	 public static String NodeToString(Node N) {
+		 NodeToString(N,true);
+	 }
+		 public static String NodeToString(Node N, boolean printXmlDeclaration) {
+		StringWriter myStringWriter = new StringWriter();
+		try {
+			// indent and omit xml declaration 
+			Transformer myTransformer = myTransformerFactory.newTransformer();
+			myTransformer.setOutputProperty(javax.xml.transform.OutputKeys.INDENT,"yes");
+			if (!printXmlDeclaration) {
+				myTransformer.setOutputProperty(javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION,"yes");
 			}
+			myTransformer.setOutputProperty(javax.xml.transform.OutputKeys.STANDALONE,"yes");
+			DOMSource source = new DOMSource(n);
+			StreamResult result = new StreamResult(myStringWriter);
 
-		/**
-     * Serialize the DOM Document
-     *
-     * @return the xml code as a string.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-     *   error).
-     */
-  public static String NodeToString(Document N) {
-		String res = "";
-    if (N!= null && N.getDocumentElement()!=null ) {
-				try {
-						StringWriter myStringWriter = new StringWriter();
-						myOutputFormat.setMethod("text");
-						myOutputFormat.setIndenting(true);
-						myOutputFormat.setOmitDocumentType(true);
-						XMLSerializer myXMLSerializer = new XMLSerializer(myStringWriter, myOutputFormat);
-            myXMLSerializer.serialize(N);
-            res= myStringWriter.toString();
-				}
-				catch (java.io.IOException ioe) {
-					PapillonLogger.writeDebugMsg ("NodeToString: java.io.IOException: " + ioe);
-				}
-			}
-		return res;
-		}
-		
+			myTransformer.transform(source, result); 
+		} catch (TransformerConfigurationException tce) {
+			// Error generated by the parser
+			PapillonLogger.writeDebugMsg("NodeToString: Transformer Factory error " + tce.getMessage());
+			
+			// Use the contained exception, if any
+			Throwable x = tce;
+			if (tce.getException() != null)
+				x = tce.getException();
+			x.printStackTrace(); 
+		} catch (TransformerException te) {
+			// Error generated by the parser
+			PapillonLogger.writeDebugMsg("NodeToString: Transformation error " + te.getMessage());			
+			// Use the contained exception, if any
+			Throwable x = te;
+			if (te.getException() != null)
+				x = te.getException();
+			x.printStackTrace();
+		}    
+		return myStringWriter.toString();
+	}
+	 */
+	
 		/**
      * Builds a DOM document from an URL
      *

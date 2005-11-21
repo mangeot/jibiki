@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.14  2005/11/21 17:41:36  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.13  2005/11/21 12:46:40  mangeot
  * *** empty log message ***
  *
@@ -224,6 +227,7 @@ public class Volume {
     public static final  String CDM_contributionValidatorElement = "cdm-contribution-validator-element";
     public static final  String CDM_contributionStatus = "cdm-contribution-status";
     public static final  String CDM_contributionStatusElement = "cdm-contribution-status-element";
+    public static final  String CDM_contributionDataElement = "cdm-contribution-data-element";
     public static final  String CDM_headwordElement = "cdm-headword-element";
     public static final  String CDM_originalContributionId = "cdm-original-contribution-id";
 
