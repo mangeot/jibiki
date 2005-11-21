@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.30  2005/11/21 12:46:40  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.29  2005/11/20 18:03:22  mangeot
  * *** empty log message ***
  *
@@ -198,6 +201,7 @@ public class VolumesFactory {
 	protected final static String XML_FOOTER_TAG = "volume-xml-footer";
 
 	protected final static String HREF_ATTRIBUTE="href";
+	protected final static String INDEX_ATTRIBUTE="index";
 	protected final static String LANG_ATTRIBUTE="lang";
 	protected final static String LOCATION_ATTRIBUTE="location";
 	protected final static String VIRTUAL_ATTRIBUTE="virtual";
@@ -563,13 +567,28 @@ public class VolumesFactory {
 			if (myNode.getNodeType() == Node.ELEMENT_NODE) {
 				Element myElt = (Element) myNode;
 				String eltName = myElt.getTagName();
+				
+				/* determine the language of the cdm element */
 				String lang = Volume.DEFAULT_LANG;
 				Attr langAttr = myElt.getAttributeNodeNS(DML_URI, LANG_ATTRIBUTE);
 				if (langAttr != null) {
 					lang = langAttr.getValue();
 				}
+				else if (Volume.isLangCDMElement(eltName)) {
+					lang = sourceLanguage;
+				}
+				
+				/* determine if the cdm element has to be indexed */
+				boolean isIndex = false;
+				String index = myElt.getAttribute(INDEX_ATTRIBUTE);
+				isIndex = (index != null && index.equals("true"));
+				if (!isIndex) {
+					isIndex = Volume.isIndexCDMElement(eltName);
+				}		   
+
 				String xpath = myElt.getAttribute(XPATH_ATTRIBUTE);
-				addCdmElementInTable(cdmElements,eltName,lang,xpath, Volume.isIndexCDMElement(eltName));
+				PapillonLogger.writeDebugMsg("addCdmElementInTable: " + eltName + " lang: " + lang + " index: " + isIndex + " xpath: " + xpath);
+				addCdmElementInTable(cdmElements,eltName,lang,xpath, isIndex);
 			}
 		}
 		completeCdmElementsTable(cdmElements, sourceLanguage);

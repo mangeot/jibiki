@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.13  2005/11/21 12:46:40  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.12  2005/11/20 18:03:22  mangeot
  * *** empty log message ***
  *
@@ -242,11 +245,12 @@ public class Volume {
 	public final static String[] indexElements = { 
 		CDM_entryId, 
 		CDM_headword,
-		CDM_homographNumber,
 		CDM_reading,
 		CDM_writing,
 		CDM_pronunciation,
 		CDM_pos,
+		CDM_example,
+		CDM_idiom,
 		CDM_translation,
 		CDM_translationReflexie,
 		CDM_gdefEstParticule,
@@ -264,6 +268,19 @@ public class Volume {
 		CDM_contributionStatus
 	};
 		
+	public final static String[] langElements = { 
+		CDM_headword,
+		CDM_reading,
+		CDM_writing,
+		CDM_pronunciation,
+		CDM_pos,
+		CDM_example,
+		CDM_idiom,
+		CDM_translation,
+		CDM_translationReflexie,
+		CDM_gdefEstParticule,
+	};
+	
 	// local variables
 /*
  * table schema:
@@ -908,17 +925,30 @@ public class Volume {
 		}
 	
     /**
-	 * IsIndexCDMElement tells if the CDM element has to be indexed in the db
+		* IsIndexCDMElement tells if the CDM element has to be indexed in the db
+     *
+     * @return a boolean.
+     * @exception PapillonBusinessException if an error occurs
+     *   retrieving data (usually due to an underlying data layer
+						  *   error).
+     */
+    public static boolean isIndexCDMElement(String eltName) {
+		return java.util.Arrays.asList(indexElements).contains(eltName);
+	}
+	
+    /**
+	 * IsLangCDMElement tells if the CDM element needs a language 
+	 * if yes, we will add the source languageif no one was specified
      *
      * @return a boolean.
      * @exception PapillonBusinessException if an error occurs
      *   retrieving data (usually due to an underlying data layer
 	 *   error).
      */
-    public static boolean isIndexCDMElement(String eltName) {
-		return java.util.Arrays.asList(indexElements).contains(eltName);
+    public static boolean isLangCDMElement(String eltName) {
+		return java.util.Arrays.asList(langElements).contains(eltName);
 	}
-
+	
     /**
 	 * Gets the xml code footer of the volume
      *
