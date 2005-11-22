@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.9  2005/11/22 13:21:02  mangeot
+ * I moved the VolumeEntriesFactory.createVolumeTables out of the database transactions in AdminDictionaries.java and Adminvolumes.java because otherwise, it is not possible to reload metadata when the data tables already exist (in this case, the transaction does not commit).
+ *
  * Revision 1.8  2005/11/14 21:46:26  mangeot
  * *** empty log message ***
  *
@@ -264,9 +267,10 @@ public class AdminVolumes extends PapillonBasePO {
         
         // Create and Register the transaction
         CurrentDBTransaction.registerNewDBTransaction();
+		Volume myVolume = null;
         try {
 			Dictionary dict = DictionariesFactory.findDictionaryByName(req.getParameter(content.NAME_Dictionary));
-			Volume myVolume = VolumesFactory.parseVolumeMetadata(dict, myURL, parseEntries, logContribs);
+			myVolume = VolumesFactory.parseVolumeMetadata(dict, myURL, parseEntries, logContribs);
 
             if (null != myVolume && !myVolume.isEmpty()) {
 				userMessage = "adding " + myVolume.getName() + " volume" + " // " + myVolume.getDictname() + " // "  + myVolume.getDbname() + " // " + myVolume.getSourceLanguage() + " // " + myVolume.getTargetLanguages() + " // " + myVolume.getVolumeRef();
@@ -291,7 +295,13 @@ public class AdminVolumes extends PapillonBasePO {
         } finally {
             CurrentDBTransaction.releaseCurrentDBTransaction();
         }
-        return userMessage;
+		/* I put this code here because otherwise, it is not possible to commit the transaction 
+			when volume tables already exist.
+			This is the case when the metadata needs to be reloaded but not the data */
+		if (myVolume!=null) {
+			VolumeEntriesFactory.createVolumeTables(myVolume);
+		}
+		return userMessage;
     }
 
 	

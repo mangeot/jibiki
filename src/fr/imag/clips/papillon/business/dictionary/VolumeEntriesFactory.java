@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.32  2005/11/22 13:21:02  mangeot
+ * I moved the VolumeEntriesFactory.createVolumeTables out of the database transactions in AdminDictionaries.java and Adminvolumes.java because otherwise, it is not possible to reload metadata when the data tables already exist (in this case, the transaction does not commit).
+ *
  * Revision 1.31  2005/11/14 22:53:26  mangeot
  * *** empty log message ***
  *
@@ -1069,7 +1072,7 @@ public class VolumeEntriesFactory {
 			}
             catch (Exception e) {
 				//   throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in createVolumeTables with volume: " + volume.getName(), e);
-				PapillonLogger.writeDebugMsg("Exception in createVolumeTables with volume: " + volume.getName() + ", probably the tables already exist.");
+				PapillonLogger.writeDebugMsg("createVolumeTables with volume: " + volume.getName() + ", probably the tables already exist.");
             }			
 		}
 	

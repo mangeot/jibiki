@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.33  2005/11/22 13:21:02  mangeot
+ * I moved the VolumeEntriesFactory.createVolumeTables out of the database transactions in AdminDictionaries.java and Adminvolumes.java because otherwise, it is not possible to reload metadata when the data tables already exist (in this case, the transaction does not commit).
+ *
  * Revision 1.32  2005/11/22 10:47:04  mangeot
  * *** empty log message ***
  *
@@ -397,9 +400,9 @@ public class VolumesFactory {
                     }
 
                     if (resVolume.getLocation().equals(Volume.LOCAL_LOCATION) && !virtual) {
-						VolumeEntriesFactory.createVolumeTables(resVolume);
 						PapillonLogger.writeDebugMsg("parseVolume: volumeTables created");
 						if (parseEntries) {
+							VolumeEntriesFactory.createVolumeTables(resVolume);
 							URL resultURL = new URL(fileURL,resVolume.getVolumeRef());
 							ParseVolume.parseVolume(dict, resVolume, resultURL.toString(), logContribs);
 						}
@@ -738,8 +741,6 @@ public class VolumesFactory {
 			org.w3c.dom.NodeList contribNodeList = ParseVolume.getCdmElements(templateDoc, Volume.CDM_contribution, Volume.DEFAULT_LANG, cdmElements);
 			org.w3c.dom.NodeList entryNodeList = ParseVolume.getCdmElements(templateDoc, Volume.CDM_templateEntry, Volume.DEFAULT_LANG, cdmElements);
 
-			//PapillonLogger.writeDebugMsg("updateTemplateEntry: contribNodeList empty: " + (contribNodeList == null || contribNodeList.getLength()==0));
-			//PapillonLogger.writeDebugMsg("updateTemplateEntry: entryNodeList exists: " + (entryNodeList != null && entryNodeList.getLength()==1));
 			if ((contribNodeList == null || contribNodeList.getLength()==0)
 				&& (entryNodeList != null && entryNodeList.getLength()==1)) {
 				Node myEntryNode = entryNodeList.item(0);
@@ -749,18 +750,14 @@ public class VolumesFactory {
 				Node entryParent = myEntryNode.getParentNode();
 				entryParent.replaceChild(contributionNode, myEntryNode);
 				NodeList dataNodeList = ParseVolume.getCdmElements(templateDoc, Volume.CDM_contributionDataElement, Volume.DEFAULT_LANG, cdmElements);
-				//PapillonLogger.writeDebugMsg("updateTemplateEntry: dataNodeList exists: " + (dataNodeList != null && dataNodeList.getLength()==1));
 				if (dataNodeList != null && dataNodeList.getLength()==1) {
 					Node dataNode = dataNodeList.item(0);
-				//	PapillonLogger.writeDebugMsg("updateTemplateEntry: templateDoc avant append: " + Utility.NodeToString(templateDoc));
-				//	PapillonLogger.writeDebugMsg("updateTemplateEntry: dataNode avant append: " + Utility.NodeToString((Element)dataNode));
-				//	PapillonLogger.writeDebugMsg("updateTemplateEntry: entryNode avant append: " + Utility.NodeToString((Element)myEntryNode));
 					dataNode.appendChild(myEntryNode);
-				//	PapillonLogger.writeDebugMsg("updateTemplateEntry: templateDoc après append: " + Utility.NodeToString(templateDoc));
 					tmplEntry = Utility.NodeToString(templateDoc);
 				}
 			}
 		}
+		//PapillonLogger.writeDebugMsg("updateTemplateEntry: templateEntry final: " + tmplEntry);
 		return tmplEntry;
 	}
 	

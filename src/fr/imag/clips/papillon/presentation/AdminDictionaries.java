@@ -9,6 +9,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.7  2005/11/22 13:21:02  mangeot
+ *  I moved the VolumeEntriesFactory.createVolumeTables out of the database transactions in AdminDictionaries.java and Adminvolumes.java because otherwise, it is not possible to reload metadata when the data tables already exist (in this case, the transaction does not commit).
+ *
  *  Revision 1.6  2005/06/15 16:48:28  mangeot
  *  Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
  *
@@ -236,8 +239,9 @@ public class AdminDictionaries extends PapillonBasePO {
         
         // Create and Register the transaction
         CurrentDBTransaction.registerNewDBTransaction();
+		Dictionary myDict = null;
         try {
-            Dictionary myDict = DictionariesFactory.parseDictionaryMetadata(myURL, parseVolumes, parseEntries, logContribs);
+            myDict = DictionariesFactory.parseDictionaryMetadata(myURL, parseVolumes, parseEntries, logContribs);
             if (null != myDict && !myDict.isEmpty()) {
                 userMessage = "adding " + myDict.getName() + " dictionary" + " // " + myDict.getCategory() + " // " + myDict.getType() + " // " + myDict.getDomain() + " // " + myDict.getLegal() + " // " + myDict.getSourceLanguages() + " // " + myDict.getTargetLanguages();
                 myDict.save();
@@ -260,6 +264,16 @@ public class AdminDictionaries extends PapillonBasePO {
         } finally {
             CurrentDBTransaction.releaseCurrentDBTransaction();
         }
+		/* I put this code here because otherwise, it is not possible to commit the transaction 
+			when volume tables already exist.
+			This is the case when the metadata needs to be reloaded but not the data */
+		if (myDict !=null) {
+			Volume[] myVolumes = VolumesFactory.getVolumesArray(myDict.getName());
+			
+			for (int i=0;i<myVolumes.length;i++) {
+				VolumeEntriesFactory.createVolumeTables(myVolumes[i]);
+			}
+		}
         return userMessage;
     }
 
