@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.25  2005/11/23 13:42:27  mangeot
+ * Added cdmEntryIdElement for setting the entry id even if it is not an attribute
+ *
  * Revision 1.24  2005/11/14 22:49:06  mangeot
  * *** empty log message ***
  *
@@ -536,7 +539,7 @@ public class VolumeEntry implements IAnswer {
 	}
 
 	protected void setEntryId(String newId) throws PapillonBusinessException {
-		ParseVolume.setCdmElement(this, Volume.CDM_entryId, newId);
+		ParseVolume.setCdmElement(this, Volume.CDM_entryIdElement, newId);
 	}
 	
 	

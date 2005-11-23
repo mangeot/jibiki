@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.34  2005/11/23 13:42:27  mangeot
+ * Added cdmEntryIdElement for setting the entry id even if it is not an attribute
+ *
  * Revision 1.33  2005/11/22 13:21:02  mangeot
  * I moved the VolumeEntriesFactory.createVolumeTables out of the database transactions in AdminDictionaries.java and Adminvolumes.java because otherwise, it is not possible to reload metadata when the data tables already exist (in this case, the transaction does not commit).
  *
@@ -728,6 +731,15 @@ public class VolumesFactory {
 					headwordXpath = headwordXpath.substring(0,headwordXpath.indexOf("/text()"));
 				}
 				addCdmElementInTable(elementsTable,Volume.CDM_headwordElement,sourceLanguage,headwordXpath, Volume.isIndexCDMElement(Volume.CDM_headwordElement));
+			}
+		}
+		if (getCdmXPathString(elementsTable, Volume.CDM_entryIdElement, Volume.DEFAULT_LANG) == null) {
+			String entryidxpath = getCdmXPathString(elementsTable, Volume.CDM_entryId, Volume.DEFAULT_LANG);
+			if (entryidxpath != null) {
+				if (entryidxpath.indexOf("/text()")>0) {
+					entryidxpath = entryidxpath.substring(0,entryidxpath.indexOf("/text()"));
+				}
+				addCdmElementInTable(elementsTable,Volume.CDM_entryIdElement,Volume.DEFAULT_LANG,entryidxpath, Volume.isIndexCDMElement(Volume.CDM_entryIdElement));
 			}
 		}
 	}

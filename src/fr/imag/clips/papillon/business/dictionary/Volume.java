@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.15  2005/11/23 13:42:27  mangeot
+ * Added cdmEntryIdElement for setting the entry id even if it is not an attribute
+ *
  * Revision 1.14  2005/11/21 17:41:36  mangeot
  * *** empty log message ***
  *
@@ -198,6 +201,9 @@ public class Volume {
     public static final  String CDM_translationReflexie = "cdm-translation-ref";
     public static final  String CDM_example = "cdm-example";
     public static final  String CDM_idiom = "cdm-idiom";
+	// xpaths calculated from previous ones
+    public static final  String CDM_headwordElement = "cdm-headword-element";
+	public static final  String CDM_entryIdElement = "cdm-entry-id-element";
    // public static final  String CDM_key1 = "cdm-key1";
    // public static final  String CDM_key2 = "cdm-key2";	
   
@@ -228,17 +234,16 @@ public class Volume {
     public static final  String CDM_contributionStatus = "cdm-contribution-status";
     public static final  String CDM_contributionStatusElement = "cdm-contribution-status-element";
     public static final  String CDM_contributionDataElement = "cdm-contribution-data-element";
-    public static final  String CDM_headwordElement = "cdm-headword-element";
     public static final  String CDM_originalContributionId = "cdm-original-contribution-id";
 
 	
-	/* constants added to manage axies, it should be generic...
+	/* constants added to manage axies, it should be generic...*/
     public static final  String CDM_axiSemanticCat = "axi-semantic-cat";
     public static final  String CDM_axiSynonyms = "axi-synonyms";
     public static final  String CDM_axiLanguage = "axi-language";
     public static final  String CDM_axiLanguageAttribute = "axi-language-attribute";
     public static final  String CDM_axiReflexie = "axi-reflexie";
-    public static final  String CDM_axiRefaxie = "axi-refaxie"; */
+    public static final  String CDM_axiRefaxie = "axi-refaxie"; 
 
 	// gdef tags
 	public static final  String CDM_gdefEstParticule = "gdef-est-particule";
