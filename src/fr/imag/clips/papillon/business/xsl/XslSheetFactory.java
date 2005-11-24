@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.11  2005/11/24 13:29:56  mangeot
+ * findXslSheetByName does not throw an exception if more than one xslsheet bear the same name.
+ *
  * Revision 1.10  2005/08/05 18:44:38  mangeot
  * Bug fixes + ProcessVolume.po page creation
  *
@@ -334,7 +337,8 @@ public class XslSheetFactory {
             //set query
             query.setQueryName(Name);
             // Throw an exception if more than one message is found
-            query.requireUniqueInstance();
+			// Now several xslsheets can use the same name.
+            //query.requireUniqueInstance();
             XslSheetDO theXslSheetDO = query.getNextDO();			
             theXsl = new XslSheet(theXslSheetDO);
         }catch(Exception ex) {
