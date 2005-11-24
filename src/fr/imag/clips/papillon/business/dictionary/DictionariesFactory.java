@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.26  2005/11/24 11:09:53  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.25  2005/11/24 11:07:43  mangeot
  * *** empty log message ***
  *
@@ -835,7 +838,7 @@ public class DictionariesFactory {
             Collection axies = PapillonPivotFactory.findAxiesByLexie(mySourceEntry, myUser);
             
             // If the entry is not connected to an axie, return the proto
-            if (axies != null && axies.size() == 0) {
+            if (axies == null || axies.size() == 0) {
                 proto.setResultKind(QueryResult.UNIQUE_RESULT);
                 qrset.add(proto);
             }
