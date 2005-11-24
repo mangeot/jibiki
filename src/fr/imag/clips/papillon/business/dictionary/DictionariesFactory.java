@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.25  2005/11/24 11:07:43  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.24  2005/11/24 11:05:22  mangeot
  * *** empty log message ***
  *
@@ -838,7 +841,8 @@ public class DictionariesFactory {
             }
             
             // For each axie, get the requested set of target lexies.
-            for (Iterator iter = axies.iterator(); iter.hasNext();) {
+            else {
+				for (Iterator iter = axies.iterator(); iter.hasNext();) {
                 // FIXME: Typecasting will not work for papillon until axies are treated normally...
                 VolumeEntry myAxie = (VolumeEntry) iter.next();
                 Hashtable resLexies = new Hashtable();
@@ -856,7 +860,7 @@ public class DictionariesFactory {
                 qr.setLexiesHashtable(resLexies);
                 
                 qrset.add(qr);
-                
+                }
             }
             // Return a collection of axieset...
             
