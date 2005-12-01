@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.25  2005/12/01 16:13:42  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.24  2005/11/16 14:36:11  mangeot
  * *** empty log message ***
  *
@@ -341,12 +344,11 @@ public class ParseVolume {
 				java.util.Hashtable tmpTable =  (java.util.Hashtable) CdmElementsTable.get(lang);
 				for (java.util.Enumeration keys = tmpTable.keys(); keys.hasMoreElements();) {
 					String CdmElement = (String) keys.nextElement();
-					//	PapillonLogger.writeDebugMsg("Parse entry, key " + CDM_element + ":");
+					// PapillonLogger.writeDebugMsg("Parse entry, key " + CdmElement + ":");
 					java.util.Vector myVector = (java.util.Vector) tmpTable.get(CdmElement);
 					org.apache.xpath.XPath myXPath = null;
 					boolean isIndex = false;
 					if (myVector != null) {
-						//	System.out.println("ParseVolume.parseEntry myVector.size: " + myVector.size());
 						if (myVector.size()==3) {
 							isIndex = ((Boolean) myVector.elementAt(1)).booleanValue();
 							if (isIndex) {
@@ -361,6 +363,7 @@ public class ParseVolume {
 								myVector.add(myXPath);
 							}
 						}
+						//PapillonLogger.writeDebugMsg("Parse entry, key " + CdmElement + " /xpath: " + (String) myVector.elementAt(0));
 					}
 					if (myXPath != null) {
 						org.w3c.dom.NodeList resNodeList = null;
@@ -375,10 +378,11 @@ public class ParseVolume {
 							for (int i=0; i<resNodeList.getLength();i++) {
 								org.w3c.dom.Node myNode = resNodeList.item(i);
 								String value = myNode.getNodeValue();
+								//PapillonLogger.writeDebugMsg("Parse entry, node " + myNode.getNodeName() + " /value: " + value);
 								if (value != null) { 
 									value = value.trim();
 									if (!value.equals("")) {
-										//	PapillonLogger.writeDebugMsg("Parse entry, node value: " + value);
+											//PapillonLogger.writeDebugMsg("Parse entry, node value: " + value);
 										Index myIndex = IndexFactory.newIndex(myEntry.getVolume().getIndexDbname(),CdmElement,lang,value, myEntry.getHandle());
 										if (myIndex != null && !myIndex.isEmpty()) {
 											myIndex.save();
@@ -386,6 +390,9 @@ public class ParseVolume {
 									}
 								}
 							}
+						}
+						else {
+							// PapillonLogger.writeDebugMsg("Parse entry, node list null for CdmElement: " + CdmElement + ":");
 						}
 					}
 				}

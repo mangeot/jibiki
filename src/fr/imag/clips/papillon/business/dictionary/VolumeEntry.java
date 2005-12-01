@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.26  2005/12/01 16:13:42  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.25  2005/11/23 13:42:27  mangeot
  * Added cdmEntryIdElement for setting the entry id even if it is not an attribute
  *
@@ -1075,7 +1078,9 @@ public class VolumeEntry implements IAnswer {
 	}
 	
 	protected String createNewId (String headword) throws PapillonBusinessException {
-		headword = headword.trim();
+		if (headword != null) {
+			headword = headword.trim();
+		}
 		String entryId = this.getSourceLanguage() + "." +
 		headword + "." + this.getHandle();
 		entryId = entryId.replace(' ', '_');
