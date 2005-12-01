@@ -3,6 +3,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.33  2005/12/01 15:34:28  mangeot
+ * MM: I solved the problem of already created tables by creating an sql query for retrieving the table names. If the name already exists, VolumeEntriesFactory.createVolumeTables do not create the tables.
+ * It allows the administrator to delete and reload only the metadata files without dropping the whole data.
+ * The method is ManageDatabase.getTableNames() and it returns a vector with all the table names created by the database user (usually "papillon").
+ *
  * Revision 1.32  2005/11/22 13:21:02  mangeot
  * I moved the VolumeEntriesFactory.createVolumeTables out of the database transactions in AdminDictionaries.java and Adminvolumes.java because otherwise, it is not possible to reload metadata when the data tables already exist (in this case, the transaction does not commit).
  *
@@ -1064,16 +1069,25 @@ public class VolumeEntriesFactory {
             }
         }
 	
-	public static void createVolumeTables(Volume volume)
+	public static boolean createVolumeTables(Volume volume)
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
+			boolean answer = false;
             try {
-				ManageDatabase.createVolumeTable(volume.getDbname());
-				IndexFactory.createIndexTable(volume);
+				java.util.Vector TableNames = ManageDatabase.getTableNames();
+				if (!TableNames.contains(volume.getDbname())) {
+					ManageDatabase.createVolumeTable(volume.getDbname());
+				}
+				if (!TableNames.contains(volume.getIndexDbname())) {
+					IndexFactory.createIndexTable(volume);
+				}
+				answer = true;
 			}
             catch (Exception e) {
 				//   throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in createVolumeTables with volume: " + volume.getName(), e);
 				PapillonLogger.writeDebugMsg("createVolumeTables with volume: " + volume.getName() + ", probably the tables already exist.");
-            }			
+   				answer = false;
+			}
+			return answer;
 		}
 	
 	
@@ -1081,8 +1095,14 @@ public class VolumeEntriesFactory {
     public static void dropVolumeTables(Volume volume)
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
             try {
+				java.util.Vector TableNames = ManageDatabase.getTableNames();
+				if (TableNames.contains(volume.getDbname())) {
+					ManageDatabase.dropTable(volume.getDbname());
+				}
+				if (!TableNames.contains(volume.getIndexDbname())) {
+					IndexFactory.dropIndexTable(volume.getIndexDbname());
+				}
 				ManageDatabase.dropTable(volume.getDbname());
-				IndexFactory.dropIndexTable(volume.getIndexDbname());
             }
             catch (Exception e) {
 //                throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in deleteVolumeTable with volume: " + volume, e);

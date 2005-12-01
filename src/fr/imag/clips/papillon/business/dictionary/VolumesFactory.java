@@ -3,6 +3,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.35  2005/12/01 15:34:28  mangeot
+ * MM: I solved the problem of already created tables by creating an sql query for retrieving the table names. If the name already exists, VolumeEntriesFactory.createVolumeTables do not create the tables.
+ * It allows the administrator to delete and reload only the metadata files without dropping the whole data.
+ * The method is ManageDatabase.getTableNames() and it returns a vector with all the table names created by the database user (usually "papillon").
+ *
  * Revision 1.34  2005/11/23 13:42:27  mangeot
  * Added cdmEntryIdElement for setting the entry id even if it is not an attribute
  *
@@ -403,9 +408,8 @@ public class VolumesFactory {
                     }
 
                     if (resVolume.getLocation().equals(Volume.LOCAL_LOCATION) && !virtual) {
-						PapillonLogger.writeDebugMsg("parseVolume: volumeTables created");
+						VolumeEntriesFactory.createVolumeTables(resVolume);
 						if (parseEntries) {
-							VolumeEntriesFactory.createVolumeTables(resVolume);
 							URL resultURL = new URL(fileURL,resVolume.getVolumeRef());
 							ParseVolume.parseVolume(dict, resVolume, resultURL.toString(), logContribs);
 						}

@@ -9,6 +9,11 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.8  2005/12/01 15:34:28  mangeot
+ *  MM: I solved the problem of already created tables by creating an sql query for retrieving the table names. If the name already exists, VolumeEntriesFactory.createVolumeTables do not create the tables.
+ *  It allows the administrator to delete and reload only the metadata files without dropping the whole data.
+ *  The method is ManageDatabase.getTableNames() and it returns a vector with all the table names created by the database user (usually "papillon").
+ *
  *  Revision 1.7  2005/11/22 13:21:02  mangeot
  *  I moved the VolumeEntriesFactory.createVolumeTables out of the database transactions in AdminDictionaries.java and Adminvolumes.java because otherwise, it is not possible to reload metadata when the data tables already exist (in this case, the transaction does not commit).
  *
@@ -264,16 +269,6 @@ public class AdminDictionaries extends PapillonBasePO {
         } finally {
             CurrentDBTransaction.releaseCurrentDBTransaction();
         }
-		/* I put this code here because otherwise, it is not possible to commit the transaction 
-			when volume tables already exist.
-			This is the case when the metadata needs to be reloaded but not the data */
-		if (myDict !=null) {
-			Volume[] myVolumes = VolumesFactory.getVolumesArray(myDict.getName());
-			
-			for (int i=0;i<myVolumes.length;i++) {
-				VolumeEntriesFactory.createVolumeTables(myVolumes[i]);
-			}
-		}
         return userMessage;
     }
 

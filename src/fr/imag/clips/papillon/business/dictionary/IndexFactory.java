@@ -3,6 +3,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.12  2005/12/01 15:34:28  mangeot
+ * MM: I solved the problem of already created tables by creating an sql query for retrieving the table names. If the name already exists, VolumeEntriesFactory.createVolumeTables do not create the tables.
+ * It allows the administrator to delete and reload only the metadata files without dropping the whole data.
+ * The method is ManageDatabase.getTableNames() and it returns a vector with all the table names created by the database user (usually "papillon").
+ *
  * Revision 1.11  2005/09/17 11:32:51  mangeot
  * *** empty log message ***
  *
@@ -366,7 +371,7 @@ public class IndexFactory {
 				createIndexForTable(volume.getIndexDbname());
 			}
 			catch (Exception e) {
-				throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in createIndexTable for volume: " + volume.getName(), e);
+				throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in createIndexTable " + volume.getIndexDbname() + " for volume: " + volume.getName(), e);
 			}
 		}
 	

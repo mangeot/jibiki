@@ -28,11 +28,14 @@ import org.enhydra.dods.DODS;
 public class ManageDatabase implements Query {
 
 
-    protected static String createTableSql = "CREATE TABLE ";
-    protected static String createIndexSql = "CREATE INDEX ";
-    protected static String truncateTableSql = "TRUNCATE TABLE ";
-    protected static String dropTableSql = "DROP TABLE ";
-    protected static String dropIndexSql = "DROP INDEX ";
+    protected static final String createTableSql = "CREATE TABLE ";
+    protected static final String createIndexSql = "CREATE INDEX ";
+    protected static final String truncateTableSql = "TRUNCATE TABLE ";
+    protected static final String dropTableSql = "DROP TABLE ";
+    protected static final String dropIndexSql = "DROP INDEX ";
+	
+	protected static final String DatabaseUserString = "DatabaseManager.DB.papillon.Connection.User";
+	
 
     
     protected String currentSQL = "";
@@ -45,7 +48,7 @@ public class ManageDatabase implements Query {
         this.currentSQL = sql;
     }
     
-    /**
+   /**
         * WARNING!	 This method is	disabled.
      * The reason is that this special set of Queries do not return any result.
      * Moreover, it is also disabled in Quries implementations.
@@ -190,36 +193,87 @@ public class ManageDatabase implements Query {
 		}
     }
     
-    
+    public static java.util.Vector getTableNames ()
+        throws PapillonBusinessException {
+			String sql = "SELECT tablename FROM pg_tables where tableowner='papillon'";
+			
+			java.util.Vector TableNames = new java.util.Vector();
+            DBConnection myDbConnection = null;
+            try {
+                myDbConnection = Enhydra.getDatabaseManager().allocateConnection();
+				String databaseUser = Enhydra.getApplication().getConfig().getString(DatabaseUserString);
+
+				com.lutris.dods.builder.generator.query.QueryBuilder myQueryBuilder = new com.lutris.dods.builder.generator.query.QueryBuilder("pg_tables");
+				com.lutris.dods.builder.generator.query.RDBTable pg_tables = new com.lutris.dods.builder.generator.query.RDBTable("pg_tables");
+				com.lutris.dods.builder.generator.query.RDBColumn tableOwnerColumn = new com.lutris.dods.builder.generator.query.RDBColumn(pg_tables,"tableowner");
+				myQueryBuilder.addWhere(tableOwnerColumn, databaseUser);
+				java.sql.ResultSet myResultSet = myQueryBuilder.executeQuery(myDbConnection);
+               while (myResultSet.next()) {
+				   TableNames.addElement(myResultSet.getString("tablename"));
+	//			   fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getTableNames.table: " + myResultSet.getString("tablename"));
+			   }
+            }  catch(SQLException se) {
+                //very important to throw out bad connections
+				System.out.println("SQL exception: ");
+				se.printStackTrace();
+                if(myDbConnection.handleException(se)) myDbConnection=null;
+            } catch(Exception e) {
+				String err = "ERROR DatabaseConnexion: Exception while running the query: " + sql;
+				System.out.println(err);
+				e.printStackTrace();
+				//throw new PapillonBusinessException( err, e );
+            } finally {
+                if(myDbConnection!=null) {
+					try {
+						myDbConnection.reset();
+						myDbConnection.release();
+					}
+					catch ( SQLException e ) { 
+						String err = "ERROR DatabaseConnexion2: Exception while running the query: " + sql;
+						System.out.println(err);
+						e.printStackTrace();
+//						throw new PapillonBusinessException( err, e );
+					}
+                }
+            }
+			return TableNames;
+        }
+	
     public ResultSet executeQuery(DBConnection conn) throws SQLException {
         conn.execute(currentSQL);
         return null;
     }
 
     
-//    
-//    protected static void executeSql (String sql)
-//        throws java.sql.SQLException {
-//            DBConnection myDbConnection = null;
-//            try {
-//                myDbConnection = Enhydra.getDatabaseManager().allocateConnection();
-//                
-//                myDbConnection.execute(sql);
-//                
-//            }  catch(SQLException se) {
-//                se.printStackTrace();
-//                //very important to throw out bad connections
-//                
-//                if(myDbConnection.handleException(se)) myDbConnection=null;
-//            } catch(Exception e) {
-//                e.printStackTrace();
-//            } finally {
-//                if(myDbConnection!=null) {
-//                    myDbConnection.reset();
-//                    myDbConnection.release();
-//                }
-//            }
-//        }
+/*
+    protected static void simpleExecuteSql (String sql)
+        throws PapillonBusinessException {
+            DBConnection myDbConnection = null;
+            try {
+                myDbConnection = Enhydra.getDatabaseManager().allocateConnection();
+                
+                myDbConnection.execute(sql);
+                
+            }  catch(SQLException se) {
+                //very important to throw out bad connections
+                
+                if(myDbConnection.handleException(se)) myDbConnection=null;
+            } catch(Exception e) {
+				String err = "ERROR DatabaseConnexion: Exception while running the query: " + sql;
+				throw new PapillonBusinessException( err, e );
+            } finally {
+                if(myDbConnection!=null) {
+					try {
+						myDbConnection.reset();
+						myDbConnection.release();
+					}
+					catch ( SQLException e ) { 
+						String err = "ERROR DatabaseConnexion: Exception while running the query: " + sql;
+						throw new PapillonBusinessException( err, e );
+					}
+                }
+            }
+        } */
 //    
 //    protected static void executeSqlQuery (String sql)
 //        throws java.sql.SQLException {
