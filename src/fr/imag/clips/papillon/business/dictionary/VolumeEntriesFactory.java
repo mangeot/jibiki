@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.34  2005/12/01 17:17:25  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.33  2005/12/01 15:34:28  mangeot
  * MM: I solved the problem of already created tables by creating an sql query for retrieving the table names. If the name already exists, VolumeEntriesFactory.createVolumeTables do not create the tables.
  * It allows the administrator to delete and reload only the metadata files without dropping the whole data.
@@ -1099,10 +1102,9 @@ public class VolumeEntriesFactory {
 				if (TableNames.contains(volume.getDbname())) {
 					ManageDatabase.dropTable(volume.getDbname());
 				}
-				if (!TableNames.contains(volume.getIndexDbname())) {
+				if (TableNames.contains(volume.getIndexDbname())) {
 					IndexFactory.dropIndexTable(volume.getIndexDbname());
 				}
-				ManageDatabase.dropTable(volume.getDbname());
             }
             catch (Exception e) {
 //                throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in deleteVolumeTable with volume: " + volume, e);
