@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.16  2005/12/04 15:22:39  mangeot
+ * Fixed the volume parsing when the volume element is not the root element
+ *
  * Revision 1.15  2005/11/23 13:42:27  mangeot
  * Added cdmEntryIdElement for setting the entry id even if it is not an attribute
  *
@@ -291,6 +294,8 @@ public class Volume {
 	};
 	
 	// local variables
+	protected final static String XmlFooterSeparator = "$$$###$$$";
+
 /*
  * table schema:
  * String lang (ISO 639-2/T) -> CDM_element -> Vector (String xpath, boolean is_index, XPath xpath_compiled) 
@@ -968,19 +973,28 @@ public class Volume {
      */
     public String getXmlFooter()
 		throws PapillonBusinessException {
-			String xmlFooter = null;
-			try {
-				Document docXml = Utility.buildDOMTree(this.getXmlCode());
-				Element footerElement=(Element)docXml.getElementsByTagName(VolumesFactory.XML_FOOTER_TAG).item(0);
-				if (footerElement!=null) {
-					xmlFooter = Utility.getStringValue(footerElement);
-				}
-			} catch(Exception ex) {
-				throw new PapillonBusinessException("Error getting volume xml footer code", ex);
+			
+			String xmlFooter = "</" + this.getCdmVolume() + ">";
+			
+			String templateEntry = this.getTemplateEntry();
+			
+			org.w3c.dom.Document templateDoc = Utility.buildDOMTree(templateEntry);
+			
+			org.w3c.dom.NodeList volumeNodes = ParseVolume.getCdmElements(templateDoc, Volume.CDM_volume, Volume.DEFAULT_LANG, this.getCdmElements()); 
+
+			if (volumeNodes != null && volumeNodes.getLength() >0) {
+				org.w3c.dom.Node volumeNode = volumeNodes.item(0);
+				org.w3c.dom.Text myTextNode = templateDoc.createTextNode(Volume.XmlFooterSeparator);
+				volumeNode.appendChild(myTextNode);
+				templateEntry = Utility.NodeToString(templateDoc);
+				int XmlFooterSeparatorIndex = templateEntry.lastIndexOf(Volume.XmlFooterSeparator);
+				
+				xmlFooter = templateEntry.substring(XmlFooterSeparatorIndex+Volume.XmlFooterSeparator.length());
 			}
-			if (xmlFooter == null || xmlFooter.equals("")) {
-				xmlFooter = "</" + this.getCdmVolume() + ">";
+			else {
+				fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getXmlFooter: volumesNodes null: " + xmlFooter);
 			}
+			fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getXmlFooter: " + xmlFooter);
 			return xmlFooter;
  		}
 

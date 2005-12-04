@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.36  2005/12/04 15:22:39  mangeot
+ * Fixed the volume parsing when the volume element is not the root element
+ *
  * Revision 1.35  2005/12/01 15:34:28  mangeot
  * MM: I solved the problem of already created tables by creating an sql query for retrieving the table names. If the name already exists, VolumeEntriesFactory.createVolumeTables do not create the tables.
  * It allows the administrator to delete and reload only the metadata files without dropping the whole data.
@@ -756,7 +759,7 @@ public class VolumesFactory {
 			org.w3c.dom.Document templateDoc = Utility.buildDOMTree(tmplEntry);
 			org.w3c.dom.NodeList contribNodeList = ParseVolume.getCdmElements(templateDoc, Volume.CDM_contribution, Volume.DEFAULT_LANG, cdmElements);
 			org.w3c.dom.NodeList entryNodeList = ParseVolume.getCdmElements(templateDoc, Volume.CDM_templateEntry, Volume.DEFAULT_LANG, cdmElements);
-
+			
 			if ((contribNodeList == null || contribNodeList.getLength()==0)
 				&& (entryNodeList != null && entryNodeList.getLength()==1)) {
 				Node myEntryNode = entryNodeList.item(0);
@@ -772,8 +775,11 @@ public class VolumesFactory {
 					tmplEntry = Utility.NodeToString(templateDoc);
 				}
 			}
+			else {
+				PapillonLogger.writeDebugMsg("updateTemplateEntry: contribNodeList null? " + (contribNodeList == null) + " entryNodeList null?: " + (entryNodeList == null));
+			}
 		}
-		//PapillonLogger.writeDebugMsg("updateTemplateEntry: templateEntry final: " + tmplEntry);
+		PapillonLogger.writeDebugMsg("updateTemplateEntry: templateEntry final: " + tmplEntry);
 		return tmplEntry;
 	}
 	

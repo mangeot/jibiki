@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.26  2005/12/04 15:22:39  mangeot
+ * Fixed the volume parsing when the volume element is not the root element
+ *
  * Revision 1.25  2005/12/01 16:13:42  mangeot
  * *** empty log message ***
  *
@@ -534,12 +537,12 @@ public class ParseVolume {
 					String xpathString =  (String) eltVector.elementAt(0);
 					org.apache.xpath.XPath myXPath = compileXPath(xpathString, myRootElt);
 					if (myXPath != null) {
-						PapillonLogger.writeDebugMsg("compileXPathTable: xpath not null: " + xpathString);
+						PapillonLogger.writeDebugMsg("compileXPathTable: CDM element: " + CDM_element + " xpath not null: " + xpathString);
 						eltVector.add(myXPath);
 						result = true;
 					}
 					else {
-						PapillonLogger.writeDebugMsg("compileXPathTable: xpath null: " + xpathString);
+						PapillonLogger.writeDebugMsg("compileXPathTable: CDM element: " + CDM_element + " xpath null: " + xpathString);
 					}
 				}
 			}
@@ -567,7 +570,7 @@ public class ParseVolume {
 			return getCdmElements(myEntry.getDom(), CdmElement, lang, myEntry.getVolume().getCdmElements());
 		}
 	
-	protected static org.w3c.dom.NodeList getCdmElements(org.w3c.dom.Document myEntryDOM, String CdmElement, String lang, java.util.Hashtable CdmElementsTable) 
+	public static org.w3c.dom.NodeList getCdmElements(org.w3c.dom.Document myEntryDOM, String CdmElement, String lang, java.util.Hashtable CdmElementsTable) 
 		throws PapillonBusinessException {
 			org.w3c.dom.NodeList resNodeList = null;
 			// fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getCdmElements: " + CdmElement + " " + lang);

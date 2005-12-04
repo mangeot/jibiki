@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.27  2005/12/04 15:22:39  mangeot
+ * Fixed the volume parsing when the volume element is not the root element
+ *
  * Revision 1.26  2005/12/01 16:13:42  mangeot
  * *** empty log message ***
  *
@@ -407,6 +410,9 @@ public class VolumeEntry implements IAnswer {
 	
 	public void setHeadword() throws PapillonBusinessException {
 		String word = ParseVolume.getCdmString(this, Volume.CDM_headword, this.getSourceLanguage());
+		if (word != null) {
+			word = word.trim();
+		}
 		try {
 			myDO.setHeadword(word);
 		} catch(DataObjectException ex) {
