@@ -966,6 +966,8 @@ CREATE OR REPLACE FUNCTION multilingual_sort( varchar,varchar )
     result:= kor_sort(word);
  ELSIF lang = ''msa'' THEN
     result:= msa_sort(word);
+ ELSIF lang = ''tes'' THEN
+    result:= tes_sort(word);
  ELSIF lang = ''tha'' THEN
     result:= tha_sort(word);
  ELSIF lang = ''vie'' THEN
