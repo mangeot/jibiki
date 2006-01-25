@@ -10,6 +10,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.19  2006/01/25 16:30:10  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.18  2006/01/25 15:28:27  mangeot
  * MM: Modified the EditEntryInit to force database lookup before creating a new entry
  *
@@ -166,6 +169,7 @@ public class EditEntryInit extends PapillonBasePO {
     protected final static int STEP_CREATE = 3;
     protected final static int STEP_EDIT = 4;
     protected final static int STEP_VIEW = 5;
+    protected final static int STEP_CREATE_ANYWAY = 6;
 
     protected EditEntryInitXHTML content;
 
@@ -192,7 +196,8 @@ public class EditEntryInit extends PapillonBasePO {
 
 	    // On regarde d'abord les parametres qui nous sont demandes.
 		String submitLookupEdit = myGetParameter(content.NAME_LookupEdit);
-		String submitCreate = myGetParameter(content.NAME_CreateAnyway);		
+		String submitCreate = myGetParameter(content.NAME_Create);		
+		String submitCreateAnyway = myGetParameter(content.NAME_CreateAnyway);		
 		String submitView = myGetParameter(VIEW_PARAMETER);		
 		String volume = myGetParameter(content.NAME_VOLUME);
 		String volumeAnyway = myGetParameter(content.NAME_VOLUME_ANYWAY);
@@ -210,8 +215,10 @@ public class EditEntryInit extends PapillonBasePO {
 		}
 
 		int strategy = IQuery.STRATEGY_EXACT;
+		boolean partialMatchBoolean = false;
 		if (null != partialMatch && !partialMatch.equals("")) {
 			strategy = IQuery.STRATEGY_SUBSTRING;
+			partialMatchBoolean = true;
 		}
 
 		int step = STEP_INIT;
@@ -226,9 +233,14 @@ public class EditEntryInit extends PapillonBasePO {
 			step = STEP_LOOKUP_EDIT;
 		}
 		else if (submitCreate!=null && !submitCreate.equals("")
-			&& volumeAnyway!=null && !volumeAnyway.equals("") 
-			&& headwordAnyway!=null && !headwordAnyway.equals("")) {
+			&& volume!=null && !volume.equals("") 
+			&& headword!=null && !headword.equals("")) {
 			step = STEP_CREATE;
+		}
+		else if (submitCreate!=null && !submitCreate.equals("")
+				 && volumeAnyway!=null && !volumeAnyway.equals("") 
+				 && headwordAnyway!=null && !headwordAnyway.equals("")) {
+			step = STEP_CREATE_ANYWAY;
 		}
 		else if (volume!=null && !volume.equals("") 
 			&& entryHandle!=null && !entryHandle.equals("")) {
@@ -248,9 +260,12 @@ public class EditEntryInit extends PapillonBasePO {
 				displayLookupResults(volume, headword, strategy, myUser);
 				break;
 			case STEP_CREATE:
-				createNewEntry(volume, headword, myUser);
+				displayLookupResultsAndCreate(volume, headword, strategy, myUser);
 				break;
-		case STEP_EDIT:
+			case STEP_CREATE_ANYWAY:
+				createNewEntry(volumeAnyway, headwordAnyway, myUser);
+				break;
+			case STEP_EDIT:
 			myEntry = VolumeEntriesFactory.findEntryByHandle(volume, entryHandle);
 			if (myEntry.getAuthor().equals(this.getUser().getLogin()) &&
 				!myEntry.getStatus().equals(VolumeEntry.VALIDATED_STATUS) &&
@@ -274,11 +289,11 @@ public class EditEntryInit extends PapillonBasePO {
 		    removeCreateAnywayForm();
 		    break;
 	    }
-		displayLookupInterface(volume, headword);
+		displayLookupInterface(volume, headword, partialMatchBoolean);
 	    return content.getElementEditEntryInitContent();
 	}
 
-    protected void displayLookupInterface(String volume, String headword)
+    protected void displayLookupInterface(String volume, String headword, boolean partialMatch)
 	throws fr.imag.clips.papillon.business.PapillonBusinessException,
 	HttpPresentationException,
 	java.io.UnsupportedEncodingException {
@@ -299,6 +314,10 @@ public class EditEntryInit extends PapillonBasePO {
 		if (volumeHiddenElt != null) {
 			volumeHiddenElt.setValue(volume);
 		}
+		
+		XHTMLInputElement partialMatchInputElt = content.getElementPartialMatch();
+		partialMatchInputElt.setChecked(partialMatch);
+
 		
 	    // Adding the appropriate source languages to the source list
 	    XHTMLOptionElement volumeOptionTemplate = content.getElementVolumeOptionTemplate();
@@ -376,12 +395,41 @@ public class EditEntryInit extends PapillonBasePO {
 		    addEntriesTable(EntryCollection);
 		}
 	    else {
-			//this.getSessionData().writeUserMessage("Sorry, entry not found! Please check the volume.");
-			createNewEntry(volumeName, headword, myUser);
+			this.getSessionData().writeUserMessage("Sorry, entry not found! Please check the volume.");
 			removeEntryListTable();
 		}
 	}
 	
+    protected void displayLookupResultsAndCreate (String volumeName, String headword, int strategy,  User myUser)
+		throws PapillonBusinessException,
+		java.io.UnsupportedEncodingException,
+		HttpPresentationException {
+			
+			//Headword[0] = key
+			//Headword[1] = lang
+			//Headword[2] = value
+			//Headword[3] = strategy
+			String[] Headword = new String[4];
+			Headword[0] = Volume.CDM_headword;
+			Headword[1] = null;
+			Headword[2] = headword;
+			Headword[3] = IQuery.QueryBuilderStrategy[strategy+1];
+			Vector myVector = new Vector();
+			myVector.add(Headword);
+			
+			Collection EntryCollection = DictionariesFactory.getVolumeEntriesCollection(volumeName, this.getUser(), myVector);
+			
+			
+			if (EntryCollection != null && EntryCollection.size()>0) {
+				addEntriesTable(EntryCollection);
+			}
+			else {
+				//this.getSessionData().writeUserMessage("Sorry, entry not found! Please check the volume.");
+				createNewEntry(volumeName, headword, myUser);
+				removeEntryListTable();
+			}
+		}
+
 	protected void createNewEntry (String volume, String headword, User myUser) throws
 		fr.imag.clips.papillon.business.PapillonBusinessException {
 			VolumeEntry myEntry = VolumeEntriesFactory.createEmptyEntry(volume);
