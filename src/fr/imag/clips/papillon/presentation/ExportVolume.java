@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.13  2006/01/25 10:13:06  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.12  2005/08/05 19:55:39  mangeot
  * *** empty log message ***
  *
@@ -160,6 +163,14 @@ public class ExportVolume extends PapillonBasePO {
 			String search2 = myGetParameter(content.NAME_search2);
 			String search2text = myGetParameter(content.NAME_search2text);
 			
+			// search3
+			String search3 = myGetParameter(content.NAME_search3);
+			String search3text = myGetParameter(content.NAME_search3text);
+			
+			// search4
+			String search4 = myGetParameter(content.NAME_search4);
+			String search4text = myGetParameter(content.NAME_search4text);
+			
 			String anyContains = null;
 			
 			
@@ -167,11 +178,20 @@ public class ExportVolume extends PapillonBasePO {
 				if (search1.equals(AnyContains_PARAMETER)) {
 					anyContains = search1text;
 				}
-			}
-			
+			}			
 			if (null != search2 && null != search2text && !search2text.equals("")) {
 				if (search2.equals(AnyContains_PARAMETER)) {
 					anyContains = search2text;
+				}
+			}
+			if (null != search3 && null != search3text && !search3text.equals("")) {
+				if (search3.equals(AnyContains_PARAMETER)) {
+					anyContains = search3text;
+				}
+			}
+			if (null != search4 && null != search4text && !search4text.equals("")) {
+				if (search4.equals(AnyContains_PARAMETER)) {
+					anyContains = search4text;
 				}
 			}
 			
@@ -181,10 +201,25 @@ public class ExportVolume extends PapillonBasePO {
 			if (null != strategyString1 && !strategyString1.equals("")) {
 				strategy1 = Integer.parseInt(strategyString1);
 			}
-			
+			// strategy2
 			String strategyString2 = myGetParameter(content.NAME_Strategy2);
 			int strategy2 = IQuery.STRATEGY_NONE;
-						
+			if (null != strategyString2 && !strategyString2.equals("")) {
+				strategy2 = Integer.parseInt(strategyString2);
+			}
+			// strategy3
+			String strategyString3 = myGetParameter(content.NAME_Strategy3);
+			int strategy3 = IQuery.STRATEGY_NONE;
+			if (null != strategyString3 && !strategyString3.equals("")) {
+				strategy3 = Integer.parseInt(strategyString3);
+			}
+			// strategy4
+			String strategyString4 = myGetParameter(content.NAME_Strategy4);
+			int strategy4 = IQuery.STRATEGY_NONE;
+			if (null != strategyString4 && !strategyString4.equals("")) {
+				strategy4 = Integer.parseInt(strategyString4);
+			}
+			
 			// status
 			String status = myGetParameter(content.NAME_STATUS);
 			if (status != null && status.equals(ALL)) {
@@ -232,6 +267,42 @@ public class ExportVolume extends PapillonBasePO {
 					key2[2] = search2text;
 					key2[3] = IQuery.QueryBuilderStrategy[strategy2+1];
 					myKeys.add(key2);
+				}
+			}
+			if (search3 !=null && !search3.equals("") &&
+				search3text != null && !search3text.equals("")) {
+				if (strategy3 == IQuery.STRATEGY_GREATER_THAN ||
+					strategy3 == IQuery.STRATEGY_GREATER_THAN_OR_EQUAL ||
+					strategy3 == IQuery.STRATEGY_LESS_THAN ||
+					strategy3 == IQuery.STRATEGY_LESS_THAN_OR_EQUAL) {
+					String clause = "key='" + search3 + "'";
+					clause += " and " + source + "_sort(value)" + IQuery.QueryBuilderStrategy[strategy3+1] + " " + source + "_sort('" + search3text +"') "; 
+					myClauses.add(clause);
+				}
+				else {
+					String[] key3 = new String[4];
+					key3[0] = search3;
+					key3[2] = search3text;
+					key3[3] = IQuery.QueryBuilderStrategy[strategy3+1];
+					myKeys.add(key3);
+				}
+			}
+			if (search4 !=null && !search4.equals("") &&
+				search4text != null && !search4text.equals("")) {
+				if (strategy4 == IQuery.STRATEGY_GREATER_THAN ||
+					strategy4 == IQuery.STRATEGY_GREATER_THAN_OR_EQUAL ||
+					strategy4 == IQuery.STRATEGY_LESS_THAN ||
+					strategy4 == IQuery.STRATEGY_LESS_THAN_OR_EQUAL) {
+					String clause = "key='" + search4 + "'";
+					clause += " and " + source + "_sort(value)" + IQuery.QueryBuilderStrategy[strategy4+1] + " " + source + "_sort('" + search4text +"') "; 
+					myClauses.add(clause);
+				}
+				else {
+					String[] key4 = new String[4];
+					key4[0] = search4;
+					key4[2] = search4text;
+					key4[3] = IQuery.QueryBuilderStrategy[strategy4+1];
+					myKeys.add(key4);
 				}
 			}
 			if (status !=null && !status.equals("")) {
