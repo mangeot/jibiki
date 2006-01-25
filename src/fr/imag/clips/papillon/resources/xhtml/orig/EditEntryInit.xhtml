@@ -39,6 +39,11 @@
   </tr>
     </tbody>
 </table>
+<form  id="CreateAnywayForm" action="EditEntryInit.po">
+	<input id="HEADWORD_ANYWAY" name="HEADWORD_ANYWAY" type="hidden" value="" />
+	<input id="HEADWORD_DISABLED" name="HEADWORD_DISABLED" size="15" type="text" disabled="disabled" value="" />
+	<input name="CreateAnyway" id="CreateAnywayButton" type="submit" value="Create anyway"/>
+</form>
 <form  id="LookupForm" action="EditEntryInit.po">
 <table width="100%" border="0" summary="HeadwordLookupTable" id="HeadwordLookupTable" cellpadding="0">
 <thead>
@@ -63,8 +68,7 @@
 </tr>
 <tr valign="top" id="ButtonsLookupRow">
 	<td>
-		<input name="LookupEdit" id="LookupEditButton" type="submit" value="Lookup"/>
-		<input name="CreateAnyway" id="CreateAnywayButton" type="submit" value="Create anyway"/>
+		<input name="LookupEdit" id="LookupEditButton" type="submit" value="Lookup &amp; Create"/>
 	</td>
 </tr>
 </table>
