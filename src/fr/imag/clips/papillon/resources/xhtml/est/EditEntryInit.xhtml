@@ -42,6 +42,14 @@
     </tbody>
 </table>
 </div>
+<form  id="CreateAnywayForm" action="EditEntryInit.po">
+ <p>
+	<input id="VOLUME_ANYWAY" name="VOLUME_ANYWAY" type="hidden" value="" />
+	<input id="HEADWORD_ANYWAY" name="HEADWORD_ANYWAY" type="hidden" value="" />
+	<input id="HEADWORD_DISABLED" name="HEADWORD_DISABLED" size="15" type="text" disabled="disabled" value="" />
+	<input name="CreateAnyway" id="CreateAnywayButton" type="submit" value="Loo uus artikkel"/>
+ </p>
+</form>
 <form  id="LookupForm" action="EditEntryInit.po">
 <table width="100%" border="0" summary="HeadwordLookupTable" id="HeadwordLookupTable" cellpadding="0">
 <thead>
@@ -67,7 +75,6 @@
 <tr valign="top" id="ButtonsLookupRow">
 	<td>
 		<input name="LookupEdit" id="LookupEditButton" type="submit" value="Vaata"/>
-		<input name="CreateAnyway" id="CreateAnywayButton" type="submit" value="Loo uus artikkel"/>
 	</td>
 </tr>
 </table>

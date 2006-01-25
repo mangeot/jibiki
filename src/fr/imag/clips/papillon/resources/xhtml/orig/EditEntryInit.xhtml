@@ -7,6 +7,7 @@
 <body>
 <div id="EditEntryInitContent" xml:lang="en" lang="en"> 
 <h1><span id="UserName">Name</span> Edition interface</h1>
+<div>
 <table id="EntryListTable" width="100%" frame="hsides" border="0" summary="Entries" >
 <thead id="EntryListTableHead">
      <tr>
@@ -39,10 +40,14 @@
   </tr>
     </tbody>
 </table>
+</div>
 <form  id="CreateAnywayForm" action="EditEntryInit.po">
+ <p>
+	<input id="VOLUME_ANYWAY" name="VOLUME_ANYWAY" type="hidden" value="" />
 	<input id="HEADWORD_ANYWAY" name="HEADWORD_ANYWAY" type="hidden" value="" />
 	<input id="HEADWORD_DISABLED" name="HEADWORD_DISABLED" size="15" type="text" disabled="disabled" value="" />
 	<input name="CreateAnyway" id="CreateAnywayButton" type="submit" value="Create anyway"/>
+ </p>
 </form>
 <form  id="LookupForm" action="EditEntryInit.po">
 <table width="100%" border="0" summary="HeadwordLookupTable" id="HeadwordLookupTable" cellpadding="0">

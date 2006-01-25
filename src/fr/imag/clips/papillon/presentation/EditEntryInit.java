@@ -10,6 +10,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.18  2006/01/25 15:28:27  mangeot
+ * MM: Modified the EditEntryInit to force database lookup before creating a new entry
+ *
  * Revision 1.17  2005/08/02 08:27:16  mangeot
  * Now, the display of an entry with EditEntryInit is done in the page itself.
  *
@@ -192,7 +195,9 @@ public class EditEntryInit extends PapillonBasePO {
 		String submitCreate = myGetParameter(content.NAME_CreateAnyway);		
 		String submitView = myGetParameter(VIEW_PARAMETER);		
 		String volume = myGetParameter(content.NAME_VOLUME);
+		String volumeAnyway = myGetParameter(content.NAME_VOLUME_ANYWAY);
 		String headword = myGetParameter(content.NAME_HEADWORD);
+		String headwordAnyway = myGetParameter(content.NAME_HEADWORD_ANYWAY);
 		String partialMatch = myGetParameter(content.NAME_PartialMatch);
 		String entryHandle = myGetParameter(HANDLE_PARAMETER);
 		String formatter = myGetParameter(FORMATTER_PARAMETER);
@@ -221,8 +226,8 @@ public class EditEntryInit extends PapillonBasePO {
 			step = STEP_LOOKUP_EDIT;
 		}
 		else if (submitCreate!=null && !submitCreate.equals("")
-			&& volume!=null && !volume.equals("") 
-			&& headword!=null && !headword.equals("")) {
+			&& volumeAnyway!=null && !volumeAnyway.equals("") 
+			&& headwordAnyway!=null && !headwordAnyway.equals("")) {
 			step = STEP_CREATE;
 		}
 		else if (volume!=null && !volume.equals("") 
@@ -240,19 +245,11 @@ public class EditEntryInit extends PapillonBasePO {
 				displayEntry(volume, entryHandle, formatter);
 				break;
 			case STEP_LOOKUP_EDIT:
-				displayLookupResults(volume, headword, strategy);
+				displayLookupResults(volume, headword, strategy, myUser);
 				break;
 			case STEP_CREATE:
-			myEntry = VolumeEntriesFactory.createEmptyEntry(volume);
-			myEntry.setCreationDate();
-			myEntry.setHeadword(headword);
-			myEntry.setAuthor(myUser.getLogin());
-			myEntry.setGroups(myUser.getGroupsArray());
-			myEntry.setStatus(VolumeEntry.NOT_FINISHED_STATUS);
-			myEntry.save();
-			String headwordParam = myUrlEncode(headword);
-		    throw new ClientPageRedirectException(EditEntryURL + "?" + EditEntry.VolumeName_PARAMETER + "=" + volume + 
-			"&" + EditEntry.EntryHandle_PARAMETER + "=" + myEntry.getHandle());
+				createNewEntry(volume, headword, myUser);
+				break;
 		case STEP_EDIT:
 			myEntry = VolumeEntriesFactory.findEntryByHandle(volume, entryHandle);
 			if (myEntry.getAuthor().equals(this.getUser().getLogin()) &&
@@ -274,6 +271,7 @@ public class EditEntryInit extends PapillonBasePO {
 			}
 		default:
 		    removeEntryListTable();
+		    removeCreateAnywayForm();
 		    break;
 	    }
 		displayLookupInterface(volume, headword);
@@ -289,6 +287,19 @@ public class EditEntryInit extends PapillonBasePO {
 	    XHTMLInputElement headwordInputElt = content.getElementHEADWORD();
 		headwordInputElt.setValue(headword);
 
+	    XHTMLInputElement headwordInputDisabledElt = content.getElementHEADWORD_DISABLED();
+		if (headwordInputDisabledElt != null) {
+			headwordInputDisabledElt.setValue(headword);
+		}
+	    XHTMLInputElement headwordHiddenElt = content.getElementHEADWORD_ANYWAY();
+		if (headwordHiddenElt != null) {
+			headwordHiddenElt.setValue(headword);
+		}
+	    XHTMLInputElement volumeHiddenElt = content.getElementVOLUME_ANYWAY();
+		if (volumeHiddenElt != null) {
+			volumeHiddenElt.setValue(volume);
+		}
+		
 	    // Adding the appropriate source languages to the source list
 	    XHTMLOptionElement volumeOptionTemplate = content.getElementVolumeOptionTemplate();
 	    Node volumeSelect = volumeOptionTemplate.getParentNode();
@@ -302,16 +313,13 @@ public class EditEntryInit extends PapillonBasePO {
 	    for (int i = 0; i < AllVolumes.length; i++) {
 		Volume myVolume = AllVolumes[i];
 		String itf = myVolume.getTemplateInterface();
-		// FIXME: trick to avoid displaying Papillon axies...
-		if (itf != null && !itf.equals("") && !myVolume.getName().equals(PapillonPivotFactory.VOLUMENAME)) {
-		    volumeOptionTemplate.setValue(myVolume.getName());
-		    volumeOptionTemplate.setLabel(myVolume.getName());
-		    // Je dois ici mettre un text dans l'OPTION, car les browser PC ne sont pas conformes aux
-      // specs W3C.
-		    volumeOptionTemplate.setSelected(myVolume.getName().equals(volume));
-		    volumeTextTemplate.setData(myVolume.getName());
-		    volumeSelect.appendChild(volumeOptionTemplate.cloneNode(true));
-		}
+		volumeOptionTemplate.setValue(myVolume.getName());
+		volumeOptionTemplate.setLabel(myVolume.getName());
+		// Je dois ici mettre un text dans l'OPTION, car les browser PC ne sont pas conformes aux
+        // specs W3C.
+		volumeOptionTemplate.setSelected(myVolume.getName().equals(volume));
+		volumeTextTemplate.setData(myVolume.getName());
+		volumeSelect.appendChild(volumeOptionTemplate.cloneNode(true));
 	    }
 	    volumeSelect.removeChild(volumeOptionTemplate);
 	}
@@ -344,7 +352,7 @@ public class EditEntryInit extends PapillonBasePO {
 			}
 		}
 	
-    protected void displayLookupResults (String volumeName, String headword, int strategy)
+    protected void displayLookupResults (String volumeName, String headword, int strategy,  User myUser)
 	throws PapillonBusinessException,
 	java.io.UnsupportedEncodingException,
 	HttpPresentationException {
@@ -368,10 +376,25 @@ public class EditEntryInit extends PapillonBasePO {
 		    addEntriesTable(EntryCollection);
 		}
 	    else {
-			this.getSessionData().writeUserMessage("Sorry, entry not found! Please check the volume.");
+			//this.getSessionData().writeUserMessage("Sorry, entry not found! Please check the volume.");
+			createNewEntry(volumeName, headword, myUser);
 			removeEntryListTable();
 		}
 	}
+	
+	protected void createNewEntry (String volume, String headword, User myUser) throws
+		fr.imag.clips.papillon.business.PapillonBusinessException {
+			VolumeEntry myEntry = VolumeEntriesFactory.createEmptyEntry(volume);
+			myEntry.setCreationDate();
+			myEntry.setHeadword(headword);
+			myEntry.setAuthor(myUser.getLogin());
+			myEntry.setGroups(myUser.getGroupsArray());
+			myEntry.setStatus(VolumeEntry.NOT_FINISHED_STATUS);
+			myEntry.save();
+		    throw new ClientPageRedirectException(EditEntryURL + "?" + EditEntry.VolumeName_PARAMETER + "=" + volume + 
+												  "&" + EditEntry.EntryHandle_PARAMETER + "=" + myEntry.getHandle());
+	}
+
 
     protected void addEntriesTable (Collection EntryCollection) throws
 	fr.imag.clips.papillon.business.PapillonBusinessException {
@@ -501,6 +524,13 @@ public class EditEntryInit extends PapillonBasePO {
 		Element myElement = content.getElementEntryListTable();
 		Node myParent = myElement.getParentNode();
 		myParent.removeChild(myElement);
-		}
+	}
+	
+    protected void removeCreateAnywayForm () {
+		Element myElement = content.getElementCreateAnywayForm();
+		Node myParent = myElement.getParentNode();
+		myParent.removeChild(myElement);
+	}
+	
 }
 
