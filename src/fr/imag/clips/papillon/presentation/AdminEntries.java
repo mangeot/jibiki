@@ -9,6 +9,22 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.8  2006/01/25 14:05:21  mangeot
+ * MM: I modified the import of entries
+ * Now, I check if an existing entry with the same id already exists in the database.
+ * If yes, the user has to choose with several strategies:
+ * - ParseVolume.ReplaceExistingEntry_Ignore
+ * 	Do not import the new entry if there is already one in the
+ * 	DB with the same entry
+ * - ParseVolume.ReplaceExistingEntry_ReplaceAnyway
+ * 	Replace the existing entry by the new one
+ * - ParseVolume.ReplaceExistingEntry_ReplaceIfSameStatus
+ * 	Replace the existing entry by the new one if their status is the same
+ * - ParseVolume.ReplaceExistingEntry_ReplaceIfFinished
+ * 	Replace the existing entry by the new one if the status of the
+ * 	existing entry is 'not_finished' and the one of the new entry is
+ * 	'finished'
+ *
  * Revision 1.7  2005/06/15 16:48:28  mangeot
  * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
  *
@@ -137,13 +153,19 @@ public class AdminEntries extends PapillonBasePO {
         String urlString = myGetParameter(content.NAME_URL);
         String submitAdd = myGetParameter(content.NAME_ADD);
         String logContributions = myGetParameter(content.NAME_LogContributions);
+        String replaceExistingString = myGetParameter(content.NAME_ReplaceExisting);
+		int replaceExisting = ParseVolume.ReplaceExistingEntry_Ignore;
+		if (null != replaceExistingString && !replaceExistingString.equals("")) {
+			replaceExisting = Integer.parseInt(replaceExistingString);
+		}
+		
 		
 		boolean logContribs = (logContributions!=null && !logContributions.equals(""));
         
         if (volumeString!=null && !volumeString.equals("") &&
 			urlString!=null && !urlString.equals("") &&
 			submitAdd!=null && !submitAdd.equals("")) {
-            String userMessage = handleVolumeAddition(volumeString, urlString, logContribs);
+            String userMessage = handleVolumeAddition(volumeString, urlString, replaceExisting, logContribs);
 			if (userMessage != null) {
 				this.getSessionData().writeUserMessage(userMessage);
 				PapillonLogger.writeDebugMsg(userMessage);
@@ -154,7 +176,7 @@ public class AdminEntries extends PapillonBasePO {
         return content.getElementFormulaire();
     }
 	
-	protected String handleVolumeAddition(String volumeString, String urlString, boolean logContribs) 
+	protected String handleVolumeAddition(String volumeString, String urlString, int replaceExisting, boolean logContribs) 
 		throws fr.imag.clips.papillon.business.PapillonBusinessException, 
 			HttpPresentationException {
         String userMessage;
@@ -164,7 +186,7 @@ public class AdminEntries extends PapillonBasePO {
         try {
 			java.net.URL myURL = new java.net.URL(urlString);
 			PapillonLogger.writeDebugMsg(myURL.toString());
-			ParseVolume.parseVolume(volumeString, myURL.toString(), logContribs);
+			ParseVolume.parseVolume(volumeString, myURL.toString(), replaceExisting, logContribs);
 			userMessage = "Volume: " + volumeString + " / URL: " + myURL + " downloaded...";
            // everything was correct, commit the transaction...
 //            ((DBTransaction) CurrentDBTransaction.get()).commit();

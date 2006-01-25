@@ -3,6 +3,22 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.27  2006/01/25 14:05:21  mangeot
+ * MM: I modified the import of entries
+ * Now, I check if an existing entry with the same id already exists in the database.
+ * If yes, the user has to choose with several strategies:
+ * - ParseVolume.ReplaceExistingEntry_Ignore
+ * 	Do not import the new entry if there is already one in the
+ * 	DB with the same entry
+ * - ParseVolume.ReplaceExistingEntry_ReplaceAnyway
+ * 	Replace the existing entry by the new one
+ * - ParseVolume.ReplaceExistingEntry_ReplaceIfSameStatus
+ * 	Replace the existing entry by the new one if their status is the same
+ * - ParseVolume.ReplaceExistingEntry_ReplaceIfFinished
+ * 	Replace the existing entry by the new one if the status of the
+ * 	existing entry is 'not_finished' and the one of the new entry is
+ * 	'finished'
+ *
  * Revision 1.26  2005/12/04 15:22:39  mangeot
  * Fixed the volume parsing when the volume element is not the root element
  *
@@ -83,6 +99,12 @@ import java.util.Hashtable;
 public class ParseVolume {
 	
 	// constants
+	// public constants for import
+	public static final int ReplaceExistingEntry_Ignore = 0;
+	public static final int ReplaceExistingEntry_ReplaceAnyway = 1;
+	public static final int ReplaceExistingEntry_ReplaceIfSameStatus = 2;
+	public static final int ReplaceExistingEntry_ReplaceIfFinished = 3;
+
 	// constants for Foks
 	protected static final int FOKS_TOKENS = 4;
 	protected static final String FOKS_DELIMITER = "\t";
@@ -95,6 +117,7 @@ public class ParseVolume {
 	protected static final String XMLHEADER = "<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>";
 	protected static final String XMLDECLSTART = "<?xml ";
 	protected static final int MAX_TRY = 5;
+
 	
 	public static int parseFoksVolume (String url) throws PapillonBusinessException {
 		return parseFoksVolume(url, FOKS_ENCODING, FOKS_DELIMITER,FOKS_TOKENS);
@@ -138,19 +161,25 @@ public class ParseVolume {
 			return entry;
 		}
 	
-	public static void parseVolume (String volumeName, String URL, boolean logContribs)
+	public static void parseVolume (String volumeName, String URL, int replaceExisting, boolean logContribs)
         throws PapillonBusinessException {
 			Volume volume = VolumesFactory.findVolumeByName(volumeName);
 			Dictionary dict = DictionariesFactory.findDictionaryByName(volume.getDictname());
             if (!volume.isEmpty()) {
-                parseVolume(dict, volume,URL, logContribs);
+                parseVolume(dict, volume,URL, replaceExisting, logContribs);
             }
         }
 	
 	protected static void parseVolume (Dictionary myDict, Volume myVolume, String url, boolean logContribs) throws PapillonBusinessException {
 		String xmlHeader = getXMLHeader(url, myVolume.getCdmEntry());
 		String encoding = getEncoding(xmlHeader);
-		parseEntries(myDict, myVolume, url, encoding, logContribs);
+		parseEntries(myDict, myVolume, url, encoding, ReplaceExistingEntry_Ignore, logContribs);
+	}
+	
+	protected static void parseVolume (Dictionary myDict, Volume myVolume, String url, int replaceExisting, boolean logContribs) throws PapillonBusinessException {
+		String xmlHeader = getXMLHeader(url, myVolume.getCdmEntry());
+		String encoding = getEncoding(xmlHeader);
+		parseEntries(myDict, myVolume, url, encoding, replaceExisting, logContribs);
 	}
 	
 	protected static String getXMLHeader(String url, String CDM_entry) throws PapillonBusinessException {
@@ -212,7 +241,7 @@ public class ParseVolume {
 		return res;
 	}
 	
-	protected static int parseEntries(Dictionary myDict, Volume myVolume, String url, String encoding, boolean logContribs) throws PapillonBusinessException {
+	protected static int parseEntries(Dictionary myDict, Volume myVolume, String url, String encoding, int replaceExisting, boolean logContribs) throws PapillonBusinessException {
 		PapillonLogger.writeDebugMsg("parseEntries, encoding: [" + encoding + "]");
 		int countEntries = 0;
 		try {
@@ -278,7 +307,7 @@ public class ParseVolume {
 						bufferLine = bufferLine.substring(entryIndex);
 					}
 					if (entryBuffer.length()>xmlHeaderBuffer.length()) {
-						if (parseEntry(myDict,myVolume,entryBuffer.append(xmlFooterBuffer), logContribs)) {
+						if (parseEntry(myDict,myVolume,entryBuffer.append(xmlFooterBuffer), replaceExisting, logContribs)) {
 							countEntries++;
 						}
 						entryBuffer = new StringBuffer();
@@ -292,7 +321,7 @@ public class ParseVolume {
 			}
 			buffer.close();
 			inStream.close();
-			if (parseEntry(myDict,myVolume,entryBuffer.append(xmlFooterBuffer), logContribs)) {
+			if (parseEntry(myDict,myVolume,entryBuffer.append(xmlFooterBuffer), replaceExisting, logContribs)) {
 				countEntries++;
 			}
 			PapillonLogger.writeDebugMsg("volume parsed, " + countEntries + " entries added.");
@@ -305,28 +334,58 @@ public class ParseVolume {
 		return countEntries;
 	}
 	
-	protected static boolean parseEntry(Dictionary myDict, Volume myVolume, StringBuffer entryBuffer, boolean logContribs) throws PapillonBusinessException {
-		return parseEntry(myDict, myVolume, entryBuffer.toString(), logContribs);
+	protected static boolean parseEntry(Dictionary myDict, Volume myVolume, StringBuffer entryBuffer, int replaceExisting, boolean logContribs) throws PapillonBusinessException {
+		return parseEntry(myDict, myVolume, entryBuffer.toString(), replaceExisting, logContribs);
 	}
 	
-	protected static boolean parseEntry(Dictionary myDict, Volume myVolume, String entryString, boolean logContribs) throws PapillonBusinessException {
+	protected static boolean parseEntry(Dictionary myDict, Volume myVolume, String entryString, int replaceExisting, boolean logContribs) throws PapillonBusinessException {
 		boolean result=false;
 			// PapillonLogger.writeDebugMsg("Parse entry [" + entryString + "]");
 		org.w3c.dom.Document myDoc = Utility.buildDOMTree(entryString);
 		if (myDoc!=null) {
-			IAnswer myAnswer = new VolumeEntry(myDict, myVolume);
-			// myEntry.setXmlCode(entryString) is called by myEntry.save();
-			myAnswer.setDom(myDoc);
-			((VolumeEntry)myAnswer).setAuthor();
-			((VolumeEntry)myAnswer).setCreationDate();
-			((VolumeEntry)myAnswer).setHeadword();
-			((VolumeEntry)myAnswer).setStatus();
-			// parseEntry(myEntry) is called by myEntry.save();
-			result = myAnswer.save();
-			if (logContribs) {
-				ContributionsFactory.createContributionLogsFromExistingEntry((VolumeEntry)myAnswer);
+			VolumeEntry newEntry = new VolumeEntry(myDict, myVolume);
+			// newEntry.setXmlCode(entryString) is called by myEntry.save();
+			newEntry.setDom(myDoc);
+			newEntry.setAuthor();
+			newEntry.setCreationDate();
+			newEntry.setHeadword();
+			newEntry.setStatus();
+			// parseEntry(newEntry) is called by myEntry.save();
+			String entryId = newEntry.getEntryId();
+			VolumeEntry existingEntry = VolumeEntriesFactory.findEntryByEntryId(myDict, myVolume, entryId);
+			if (existingEntry != null && !existingEntry.isEmpty()) {
+				switch (replaceExisting) {
+					case ReplaceExistingEntry_Ignore:
+						break;
+					case ReplaceExistingEntry_ReplaceAnyway:
+						existingEntry.delete();
+						result = newEntry.save();
+						break;
+					case ReplaceExistingEntry_ReplaceIfSameStatus:
+						if (newEntry.getStatus().equals(existingEntry.getStatus())) {
+							existingEntry.delete();
+							result = newEntry.save();
+						}
+						break;
+					case ReplaceExistingEntry_ReplaceIfFinished:
+						if (existingEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS) &&
+							newEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS)) {
+							existingEntry.delete();
+							result = newEntry.save();
+						}
+						break;
+					default:
+						break;
+				}
 			}
-			PapillonLogger.writeDebugMsg("Adding entry " + myAnswer.getHeadword() + " // " + myAnswer.getId());
+			else {
+				result = newEntry.save();
+			}
+				
+			if (logContribs) {
+				ContributionsFactory.createContributionLogsFromExistingEntry(newEntry);
+			}
+			PapillonLogger.writeDebugMsg("Adding entry " + newEntry.getHeadword() + " // " + newEntry.getId());
 		}
 		else {
 			PapillonLogger.writeDebugMsg("Entry not valid: " + entryString);
