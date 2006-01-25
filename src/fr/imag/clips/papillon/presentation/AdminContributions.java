@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.22  2006/01/25 17:06:09  mangeot
+ * Fixed the sort buttons
+ *
  * Revision 1.21  2005/08/17 12:58:16  mangeot
  * Fixed a bug when creating an entry from an existing one.
  * From now on, the entry id is the same.
@@ -254,23 +257,23 @@ public class AdminContributions extends PapillonBasePO {
 			HttpPresentationRequest req = this.getComms().request;
 						
 			String URL = null;
-			String lookup = myGetParameter(content.NAME_LOOKUP);
+			String lookup = myGetParameter(LOOKUP_PARAMETER);
 			String reset = myGetParameter(content.NAME_RESET);
-			String volumeString = myGetParameter(content.NAME_VOLUME);
+			String volumeString = myGetParameter(VOLUME_PARAMETER);
 			String entryid = myGetParameter(HANDLE_PARAMETER);
 			String formatter = myGetParameter(FORMATTER_PARAMETER);
 			String sortBy = myGetParameter(SORTBY_PARAMETER);
 			
 			if (volumeString!=null &&!volumeString.equals("")) {
-				this.setPreference(content.NAME_VOLUME,volumeString);
+				this.setPreference(VOLUME_PARAMETER,volumeString);
 			}
 			else {
-				volumeString = this.getPreference(content.NAME_VOLUME);
+				volumeString = this.getPreference(VOLUME_PARAMETER);
 			}
 			
-			String queryString = "";
+			String queryString = "&" + LOOKUP_PARAMETER + "=" + LOOKUP_PARAMETER;
 			if (volumeString!=null && !volumeString.equals("")) {
-				queryString += "&" + content.NAME_VOLUME + "=" + volumeString;
+				queryString += "&" + VOLUME_PARAMETER + "=" + volumeString;
 			}
 
 			// CreationDate

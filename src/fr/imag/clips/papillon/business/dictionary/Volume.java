@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.17  2006/01/25 17:06:09  mangeot
+ * Fixed the sort buttons
+ *
  * Revision 1.16  2005/12/04 15:22:39  mangeot
  * Fixed the volume parsing when the volume element is not the root element
  *
@@ -282,6 +285,8 @@ public class Volume {
 		
 	public final static String[] langElements = { 
 		CDM_headword,
+		CDM_homographNumber,
+		CDM_headwordVariant,
 		CDM_reading,
 		CDM_writing,
 		CDM_pronunciation,
