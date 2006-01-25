@@ -10,6 +10,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.20  2006/01/25 16:36:43  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.19  2006/01/25 16:30:10  mangeot
  * *** empty log message ***
  *
@@ -237,7 +240,7 @@ public class EditEntryInit extends PapillonBasePO {
 			&& headword!=null && !headword.equals("")) {
 			step = STEP_CREATE;
 		}
-		else if (submitCreate!=null && !submitCreate.equals("")
+		else if (submitCreateAnyway!=null && !submitCreateAnyway.equals("")
 				 && volumeAnyway!=null && !volumeAnyway.equals("") 
 				 && headwordAnyway!=null && !headwordAnyway.equals("")) {
 			step = STEP_CREATE_ANYWAY;
