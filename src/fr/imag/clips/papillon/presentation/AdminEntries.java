@@ -9,6 +9,15 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.9  2006/02/09 10:49:28  mangeot
+ * Added 3 new options when importing entries:
+ * - ParseVolume.ReplaceExistingEntry_CopyAnyway
+ * - ParseVolume.ReplaceExistingEntry_CopyIfSameStatus
+ * - ParseVolume.ReplaceExistingEntry_CopyIfFinished
+ * Creates a new entry id before importing the entry in the database
+ * And added a log for the ParseVolume.MAX_DISCARDED_ENTRIES_LOGGED = 500
+ * first entries that are discarded (not imported)
+ *
  * Revision 1.8  2006/01/25 14:05:21  mangeot
  * MM: I modified the import of entries
  * Now, I check if an existing entry with the same id already exists in the database.
@@ -186,8 +195,9 @@ public class AdminEntries extends PapillonBasePO {
         try {
 			java.net.URL myURL = new java.net.URL(urlString);
 			PapillonLogger.writeDebugMsg(myURL.toString());
-			ParseVolume.parseVolume(volumeString, myURL.toString(), replaceExisting, logContribs);
+			String message = ParseVolume.parseVolume(volumeString, myURL.toString(), replaceExisting, logContribs);
 			userMessage = "Volume: " + volumeString + " / URL: " + myURL + " downloaded...";
+			userMessage += message;
            // everything was correct, commit the transaction...
 //            ((DBTransaction) CurrentDBTransaction.get()).commit();
         } catch (Exception e) {

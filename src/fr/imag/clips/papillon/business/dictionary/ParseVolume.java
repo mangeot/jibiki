@@ -3,6 +3,15 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.28  2006/02/09 10:49:28  mangeot
+ * Added 3 new options when importing entries:
+ * - ParseVolume.ReplaceExistingEntry_CopyAnyway
+ * - ParseVolume.ReplaceExistingEntry_CopyIfSameStatus
+ * - ParseVolume.ReplaceExistingEntry_CopyIfFinished
+ * Creates a new entry id before importing the entry in the database
+ * And added a log for the ParseVolume.MAX_DISCARDED_ENTRIES_LOGGED = 500
+ * first entries that are discarded (not imported)
+ *
  * Revision 1.27  2006/01/25 14:05:21  mangeot
  * MM: I modified the import of entries
  * Now, I check if an existing entry with the same id already exists in the database.
@@ -104,6 +113,11 @@ public class ParseVolume {
 	public static final int ReplaceExistingEntry_ReplaceAnyway = 1;
 	public static final int ReplaceExistingEntry_ReplaceIfSameStatus = 2;
 	public static final int ReplaceExistingEntry_ReplaceIfFinished = 3;
+	public static final int ReplaceExistingEntry_CopyAnyway = 4;
+	public static final int ReplaceExistingEntry_CopyIfSameStatus = 5;
+	public static final int ReplaceExistingEntry_CopyIfFinished = 6;
+	
+	public static final int MAX_DISCARDED_ENTRIES_LOGGED = 500;
 
 	// constants for Foks
 	protected static final int FOKS_TOKENS = 4;
@@ -161,25 +175,30 @@ public class ParseVolume {
 			return entry;
 		}
 	
-	public static void parseVolume (String volumeName, String URL, int replaceExisting, boolean logContribs)
+	public static String parseVolume (String volumeName, String URL, int replaceExisting, boolean logContribs)
         throws PapillonBusinessException {
+			String message = "";
 			Volume volume = VolumesFactory.findVolumeByName(volumeName);
 			Dictionary dict = DictionariesFactory.findDictionaryByName(volume.getDictname());
             if (!volume.isEmpty()) {
-                parseVolume(dict, volume,URL, replaceExisting, logContribs);
+                message = parseVolume(dict, volume,URL, replaceExisting, logContribs);
             }
+			else {
+				message = "The volume does not exist!";
+			}
+			return message;
         }
 	
-	protected static void parseVolume (Dictionary myDict, Volume myVolume, String url, boolean logContribs) throws PapillonBusinessException {
+	protected static String parseVolume (Dictionary myDict, Volume myVolume, String url, boolean logContribs) throws PapillonBusinessException {
 		String xmlHeader = getXMLHeader(url, myVolume.getCdmEntry());
 		String encoding = getEncoding(xmlHeader);
-		parseEntries(myDict, myVolume, url, encoding, ReplaceExistingEntry_Ignore, logContribs);
+		return parseEntries(myDict, myVolume, url, encoding, ReplaceExistingEntry_Ignore, logContribs);
 	}
 	
-	protected static void parseVolume (Dictionary myDict, Volume myVolume, String url, int replaceExisting, boolean logContribs) throws PapillonBusinessException {
+	protected static String parseVolume (Dictionary myDict, Volume myVolume, String url, int replaceExisting, boolean logContribs) throws PapillonBusinessException {
 		String xmlHeader = getXMLHeader(url, myVolume.getCdmEntry());
 		String encoding = getEncoding(xmlHeader);
-		parseEntries(myDict, myVolume, url, encoding, replaceExisting, logContribs);
+		return parseEntries(myDict, myVolume, url, encoding, replaceExisting, logContribs);
 	}
 	
 	protected static String getXMLHeader(String url, String CDM_entry) throws PapillonBusinessException {
@@ -241,9 +260,11 @@ public class ParseVolume {
 		return res;
 	}
 	
-	protected static int parseEntries(Dictionary myDict, Volume myVolume, String url, String encoding, int replaceExisting, boolean logContribs) throws PapillonBusinessException {
+	protected static String parseEntries(Dictionary myDict, Volume myVolume, String url, String encoding, int replaceExisting, boolean logContribs) throws PapillonBusinessException {
 		PapillonLogger.writeDebugMsg("parseEntries, encoding: [" + encoding + "]");
 		int countEntries = 0;
+		String message = "";
+		java.util.Vector DiscardedEntries = new Vector();
 		try {
 			java.net.URL myUrl = new java.net.URL(url);
 			java.io.InputStream inStream = myUrl.openStream();
@@ -307,7 +328,7 @@ public class ParseVolume {
 						bufferLine = bufferLine.substring(entryIndex);
 					}
 					if (entryBuffer.length()>xmlHeaderBuffer.length()) {
-						if (parseEntry(myDict,myVolume,entryBuffer.append(xmlFooterBuffer), replaceExisting, logContribs)) {
+						if (parseEntry(myDict,myVolume,entryBuffer.append(xmlFooterBuffer), replaceExisting, logContribs, DiscardedEntries)) {
 							countEntries++;
 						}
 						entryBuffer = new StringBuffer();
@@ -321,24 +342,30 @@ public class ParseVolume {
 			}
 			buffer.close();
 			inStream.close();
-			if (parseEntry(myDict,myVolume,entryBuffer.append(xmlFooterBuffer), replaceExisting, logContribs)) {
+			if (parseEntry(myDict,myVolume,entryBuffer.append(xmlFooterBuffer), replaceExisting, logContribs, DiscardedEntries)) {
 				countEntries++;
 			}
-			PapillonLogger.writeDebugMsg("volume parsed, " + countEntries + " entries added.");
-		} catch (java.io.FileNotFoundException exp) {
+			message = "volume parsed, " + countEntries + " entries added.";
+			PapillonLogger.writeDebugMsg(message);
+			message += " Entries discarded: ";
+			for (java.util.Iterator iter = DiscardedEntries.iterator(); iter.hasNext();) {
+               message +=  (String) iter.next() + ", ";
+			} 
+		}
+		catch (java.io.FileNotFoundException exp) {
 			throw new PapillonBusinessException("FileNotFoundException: " + myVolume.getVolumeRef(), exp);
 			
 		} catch (java.io.IOException exp) {
 			throw new PapillonBusinessException("ParseVolume.parseFoksVolume, error IOException", exp);
 		}
-		return countEntries;
+		return message;
 	}
 	
-	protected static boolean parseEntry(Dictionary myDict, Volume myVolume, StringBuffer entryBuffer, int replaceExisting, boolean logContribs) throws PapillonBusinessException {
-		return parseEntry(myDict, myVolume, entryBuffer.toString(), replaceExisting, logContribs);
+	protected static boolean parseEntry(Dictionary myDict, Volume myVolume, StringBuffer entryBuffer, int replaceExisting, boolean logContribs, java.util.Vector DiscardedEntries) throws PapillonBusinessException {
+		return parseEntry(myDict, myVolume, entryBuffer.toString(), replaceExisting, logContribs, DiscardedEntries);
 	}
 	
-	protected static boolean parseEntry(Dictionary myDict, Volume myVolume, String entryString, int replaceExisting, boolean logContribs) throws PapillonBusinessException {
+	protected static boolean parseEntry(Dictionary myDict, Volume myVolume, String entryString, int replaceExisting, boolean logContribs, java.util.Vector DiscardedEntries) throws PapillonBusinessException {
 		boolean result=false;
 			// PapillonLogger.writeDebugMsg("Parse entry [" + entryString + "]");
 		org.w3c.dom.Document myDoc = Utility.buildDOMTree(entryString);
@@ -352,40 +379,66 @@ public class ParseVolume {
 			newEntry.setStatus();
 			// parseEntry(newEntry) is called by myEntry.save();
 			String entryId = newEntry.getEntryId();
-			VolumeEntry existingEntry = VolumeEntriesFactory.findEntryByEntryId(myDict, myVolume, entryId);
-			if (existingEntry != null && !existingEntry.isEmpty()) {
-				switch (replaceExisting) {
-					case ReplaceExistingEntry_Ignore:
-						break;
-					case ReplaceExistingEntry_ReplaceAnyway:
-						existingEntry.delete();
-						result = newEntry.save();
-						break;
-					case ReplaceExistingEntry_ReplaceIfSameStatus:
-						if (newEntry.getStatus().equals(existingEntry.getStatus())) {
+			if (entryId != null) {
+				VolumeEntry existingEntry = VolumeEntriesFactory.findEntryByEntryId(myDict, myVolume, entryId);
+				if (existingEntry != null && !existingEntry.isEmpty()) {
+					switch (replaceExisting) {
+						case ReplaceExistingEntry_Ignore:
+							break;
+						case ReplaceExistingEntry_ReplaceAnyway:
 							existingEntry.delete();
 							result = newEntry.save();
-						}
-						break;
-					case ReplaceExistingEntry_ReplaceIfFinished:
-						if (existingEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS) &&
-							newEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS)) {
-							existingEntry.delete();
+							break;
+						case ReplaceExistingEntry_ReplaceIfSameStatus:
+							if (newEntry.getStatus().equals(existingEntry.getStatus())) {
+								existingEntry.delete();
+								result = newEntry.save();
+							}
+							break;
+						case ReplaceExistingEntry_ReplaceIfFinished:
+							if (existingEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS) &&
+								newEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS)) {
+								existingEntry.delete();
+								result = newEntry.save();
+							}
+							break;
+						case ReplaceExistingEntry_CopyAnyway:
+							newEntry.setEntryId();
 							result = newEntry.save();
-						}
-						break;
-					default:
-						break;
+							break;
+						case ReplaceExistingEntry_CopyIfSameStatus:
+							if (newEntry.getStatus().equals(existingEntry.getStatus())) {
+								newEntry.setEntryId();
+								result = newEntry.save();
+							}
+							break;
+						case ReplaceExistingEntry_CopyIfFinished:
+							if (existingEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS) &&
+								newEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS)) {
+								newEntry.setEntryId();
+								result = newEntry.save();
+							}
+							break;
+						default:
+							break;
+					}
+				}
+				else {
+					result = newEntry.save();
 				}
 			}
+			if (result) {
+				if (logContribs) {
+					ContributionsFactory.createContributionLogsFromExistingEntry(newEntry);
+				}
+				PapillonLogger.writeDebugMsg("Adding entry " + newEntry.getHeadword() + " // " + newEntry.getId());
+			}
 			else {
-				result = newEntry.save();
-			}
-				
-			if (logContribs) {
-				ContributionsFactory.createContributionLogsFromExistingEntry(newEntry);
-			}
-			PapillonLogger.writeDebugMsg("Adding entry " + newEntry.getHeadword() + " // " + newEntry.getId());
+				PapillonLogger.writeDebugMsg("Discarding entry " + newEntry.getHeadword() + " // " + newEntry.getId());
+				if (DiscardedEntries.size()<MAX_DISCARDED_ENTRIES_LOGGED) {
+					DiscardedEntries.add(entryId);
+				}
+			}			
 		}
 		else {
 			PapillonLogger.writeDebugMsg("Entry not valid: " + entryString);
