@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.23  2006/02/13 10:20:58  mangeot
+ * Fixed a bug ain AdminContributions that forbidded to "finish' a contribution
+ *
  * Revision 1.22  2006/01/25 17:06:09  mangeot
  * Fixed the sort buttons
  *
@@ -271,7 +274,7 @@ public class AdminContributions extends PapillonBasePO {
 				volumeString = this.getPreference(VOLUME_PARAMETER);
 			}
 			
-			String queryString = "&" + LOOKUP_PARAMETER + "=" + LOOKUP_PARAMETER;
+			String queryString = "";
 			if (volumeString!=null && !volumeString.equals("")) {
 				queryString += "&" + VOLUME_PARAMETER + "=" + volumeString;
 			}
