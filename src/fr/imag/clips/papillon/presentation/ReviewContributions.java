@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.24  2006/02/18 19:19:55  mangeot
+ * Added a different style (red bold) for contributions that are copies of validated entries in AdminContributions.java and ReviewContributions.java
+ *
  * Revision 1.23  2005/09/08 15:04:25  mangeot
  * *** empty log message ***
  *
@@ -936,6 +939,16 @@ public class ReviewContributions extends PapillonBasePO {
                         content.setTextAuthor(myContrib.getAuthor());
                         content.setTextCreationDate(Utility.PapillonShortDateFormat.format(myContrib.getCreationDate()));
                         content.setTextStatus(myContrib.getStatus());
+						
+						// IsNewEntry
+						boolean isNewEntry = myContrib.getOriginalContributionId()==null || myContrib.getOriginalContributionId().equals("");
+						if (isNewEntry) {
+							entryListRow.setAttribute("class",AdminContributions.newEntryClass);
+						}
+						else {
+							entryListRow.setAttribute("class","");
+						}
+						
 												
 						// edit contrib
 						// FIXME hack because we cannot reedit yet axies ...

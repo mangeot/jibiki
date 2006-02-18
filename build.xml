@@ -11,6 +11,9 @@ Id:
   
 Log:
    $Log$
+   Revision 1.13  2006/02/18 19:19:55  mangeot
+   Added a different style (red bold) for contributions that are copies of validated entries in AdminContributions.java and ReviewContributions.java
+
    Revision 1.12  2005/07/28 13:06:47  mangeot
    - Added the possibility to export in PDF format. The conversion into PDF is don
    e via the fop package that has to be installed (see ToolsForPapillon)
@@ -151,6 +154,7 @@ Most useful targets:
     <!--pathelement path="${papillon.regexp.jar}"/-->
     <pathelement path="${papillon.pgsql.jar}"/>
     <pathelement path="${papillon.fop.jar}"/>
+    <pathelement path="${papillon.observateur.jar}"/>
   </path>
 
     <path id="enhydra.classpath">
@@ -359,6 +363,7 @@ For Lexalp, call ant using -Dapplication.name=Lexalp
      <filter token="FOP_LIB" value="${papillon.fop.jar}" />
      <filter token="AVALON_LIB" value="${papillon.avalon.jar}" />
      <filter token="BATIK_LIB" value="${papillon.batik.jar}" />
+     <filter token="OBSERVATEUR_LIB" value="${papillon.observateur.jar}" />
      <!-- /Papillon-specific filters -->
 
      <copy todir="${dir.output}"

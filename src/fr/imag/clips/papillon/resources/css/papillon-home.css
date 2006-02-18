@@ -6,6 +6,9 @@
  * ---------------------------------------------------
  *
  * $Log$
+ * Revision 1.12  2006/02/18 19:19:55  mangeot
+ * Added a different style (red bold) for contributions that are copies of validated entries in AdminContributions.java and ReviewContributions.java
+ *
  * Revision 1.11  2005/11/16 17:53:19  mangeot
  * *** empty log message ***
  *
@@ -581,6 +584,13 @@ tr.sense {
 	color: black;
 	}
 	
+/* Other styles */
+
+.newentry {
+	color: red;
+	font-weight: bold;
+}
+
 	
 /* Styles for Header links */
 	

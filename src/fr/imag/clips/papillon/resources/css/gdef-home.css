@@ -533,7 +533,14 @@ A.hide {text-decoration: none}
 	font-weight: bold;
 	color: black;
 	}
-	
+
+/* Other styles */
+
+.newentry {
+	color: red;
+	font-weight: bold;
+}
+
 	
 /* Styles for Header links */
 	
