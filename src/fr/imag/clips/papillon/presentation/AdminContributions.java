@@ -9,8 +9,8 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.23  2006/02/13 10:20:58  mangeot
- * Fixed a bug ain AdminContributions that forbidded to "finish' a contribution
+ * Revision 1.24  2006/02/18 17:57:21  mangeot
+ * MM: Fixed a problem when, in the editor, the last element of a list was deleted. The user still could enter data but it was not saved because the XML structure was modified. Now, I check if a list still has an element.
  *
  * Revision 1.22  2006/01/25 17:06:09  mangeot
  * Fixed the sort buttons
@@ -274,7 +274,7 @@ public class AdminContributions extends PapillonBasePO {
 				volumeString = this.getPreference(VOLUME_PARAMETER);
 			}
 			
-			String queryString = "";
+			String queryString = "&" + LOOKUP_PARAMETER + "=" + LOOKUP_PARAMETER;
 			if (volumeString!=null && !volumeString.equals("")) {
 				queryString += "&" + VOLUME_PARAMETER + "=" + volumeString;
 			}

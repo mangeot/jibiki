@@ -8,6 +8,9 @@
  * $Id$
  *---------------------------------------------------------
  * $Log$
+ * Revision 1.15  2006/02/18 17:57:21  mangeot
+ * MM: Fixed a problem when, in the editor, the last element of a list was deleted. The user still could enter data but it was not saved because the XML structure was modified. Now, I check if a list still has an element.
+ *
  * Revision 1.14  2005/11/21 14:16:29  mangeot
  * *** empty log message ***
  *
@@ -107,7 +110,7 @@ public class UIGenerator {
 		//PapillonLogger.writeDebugMsg("addElement: " + elementName + " parent: " + parentId);
         
 		Element siblingElement = null;
-		if (siblingIds.length>0) {
+		if (siblingIds != null && siblingIds.length>0) {
 			String siblingId = siblingIds[siblingIds.length-1]; 
             nodeMatcher.reset(siblingId);
             if (nodeMatcher.find()) {
@@ -196,12 +199,12 @@ public class UIGenerator {
         return false;
 	}
 	
-	public static void deleteElements(String elementName, String[] elementIds, Element entryElt) {
+	public static void deleteElements(String elementName, String parentId, String[] elementIds, Element entryElt, Element entryTemplate) {
 		NodeList myNodeList = entryElt.getElementsByTagName (elementName);
 		Vector removeNodes = new Vector();
 		for (int i=0; i<elementIds.length;i++) {
 			String elementId = elementIds[i];
-			//			PapillonLogger.writeDebugMsg("deleteElement: " + elementName + " eltId: " + elementId);
+			//			PapillonLogger.writeDebugMsg("deleteElement: " + elementName + " eltId: " + elementIds[0]);
             
 			nodeMatcher.reset(elementId);
             if (nodeMatcher.find()) {
@@ -222,6 +225,22 @@ public class UIGenerator {
 			parentNode.removeChild(removeElt);
 		}
 		if (parentNode !=null && parentNode.getNodeType()==Node.ELEMENT_NODE) {
+			// If the parent has no more children, add a new child.
+			// There must always be at least one item in a list 
+			int i=0;
+			boolean oneChild = false;
+			NodeList childNodes = parentNode.getChildNodes();
+			while (i<childNodes.getLength() && !oneChild) {
+				Node tmpNode = childNodes.item(i);
+				if (tmpNode.getNodeType() == Node.ELEMENT_NODE) {
+					Element currentElt = (Element) tmpNode;
+					oneChild = currentElt.getTagName().equals(elementName);
+				}
+				i++;
+			}
+			if (!oneChild) {
+				addElement(elementName, parentId, entryElt, entryTemplate, null);
+			}
 			((Element)parentNode).setAttribute(TYPE_ATTR_NAME,NEW_BLOCK_ANCHOR);
 		}
 	}
