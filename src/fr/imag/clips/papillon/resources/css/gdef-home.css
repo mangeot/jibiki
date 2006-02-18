@@ -63,10 +63,10 @@ H4.blockTitle {
    background: white;
    color: #000;
 /*   position: absolute;
-   left: 0; */
-   width: 70%;
-   margin-left: 170px;
-   margin-right: 170px;
+   left: 0; 
+   width: 70%; */
+   margin-left: 160px;
+   margin-right: 0.3em;
    margin-top:0.3em;
 }
 
@@ -537,10 +537,9 @@ A.hide {text-decoration: none}
 /* Other styles */
 
 .newentry {
-	color: red;
+	/*color: red; */
 	font-weight: bold;
 }
-
 	
 /* Styles for Header links */
 	
