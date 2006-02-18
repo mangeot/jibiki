@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.25  2006/02/18 19:33:34  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.24  2006/02/18 19:19:55  mangeot
  * Added a different style (red bold) for contributions that are copies of validated entries in AdminContributions.java and ReviewContributions.java
  *
@@ -943,10 +946,10 @@ public class ReviewContributions extends PapillonBasePO {
 						// IsNewEntry
 						boolean isNewEntry = myContrib.getOriginalContributionId()==null || myContrib.getOriginalContributionId().equals("");
 						if (isNewEntry) {
-							entryListRow.setAttribute("class",AdminContributions.newEntryClass);
+							entryListRow.setAttribute("class","");
 						}
 						else {
-							entryListRow.setAttribute("class","");
+							entryListRow.setAttribute("class",AdminContributions.newEntryClass);
 						}
 						
 												
