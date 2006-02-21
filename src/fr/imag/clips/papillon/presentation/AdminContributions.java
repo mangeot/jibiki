@@ -9,14 +9,8 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.26  2006/02/18 19:33:34  mangeot
+ * Revision 1.27  2006/02/21 13:37:54  mangeot
  * *** empty log message ***
- *
- * Revision 1.25  2006/02/18 19:19:55  mangeot
- * Added a different style (red bold) for contributions that are copies of validated entries in AdminContributions.java and ReviewContributions.java
- *
- * Revision 1.24  2006/02/18 17:57:21  mangeot
- * MM: Fixed a problem when, in the editor, the last element of a list was deleted. The user still could enter data but it was not saved because the XML structure was modified. Now, I check if a list still has an element.
  *
  * Revision 1.22  2006/01/25 17:06:09  mangeot
  * Fixed the sort buttons
@@ -234,8 +228,6 @@ public class AdminContributions extends PapillonBasePO {
 	protected final static String LOOKUP_PARAMETER = AdminContributionsTmplXHTML.NAME_LOOKUP;
 	protected final static String HANDLE_PARAMETER = "HANDLE";
     protected final static String SORTBY_PARAMETER = "SortBy";
-
-    protected final static String newEntryClass = "newentry";
     
     protected static AdminContributionsTmplXHTML content;
 	
@@ -282,7 +274,7 @@ public class AdminContributions extends PapillonBasePO {
 				volumeString = this.getPreference(VOLUME_PARAMETER);
 			}
 			
-			String queryString = "";
+			String queryString = "&" + LOOKUP_PARAMETER + "=" + LOOKUP_PARAMETER;
 			if (volumeString!=null && !volumeString.equals("")) {
 				queryString += "&" + VOLUME_PARAMETER + "=" + volumeString;
 			}
@@ -785,14 +777,7 @@ public class AdminContributions extends PapillonBasePO {
 						}
 						
 						// IsNewEntry
-						boolean isNewEntry = myContrib.getOriginalContributionId()==null || myContrib.getOriginalContributionId().equals("");
-						content.setTextIsNewEntry(new Boolean(isNewEntry).toString());
-						if (isNewEntry) {
-							entryListRow.setAttribute("class","");
-						}
-						else {
-							entryListRow.setAttribute("class",newEntryClass);
-						}
+						content.setTextIsNewEntry(new Boolean(myContrib.getOriginalContributionId()==null || myContrib.getOriginalContributionId().equals("")).toString());
 						
 						// Status
 						content.setTextStatus(myContrib.getStatus());
@@ -817,9 +802,18 @@ public class AdminContributions extends PapillonBasePO {
 											  + "&" + content.NAME_VOLUME + "=" + myContrib.getVolumeName()
 											  + "&" + FORMATTER_PARAMETER + "=" + XML_FORMATTER);
 						
-						editContribAnchor.setHref(EditURL + "?"
+						// edit contrib
+                        //FIXME: encore un hack de plus pour les axies.
+						//For the moment, we cannot reedit axies
+						if (myContrib.getVolumeName().equals(PapillonPivotFactory.VOLUMENAME)) {
+							content.setTextEditContrib("");
+							
+						}
+						else {
+							editContribAnchor.setHref(EditURL + "?"
 														+ EditVolumeParameter + "=" + myContrib.getVolumeName()
 														+ "&"+ EditHandleParameter + "=" + myContrib.getHandle());
+						}
 						
 						// remove contrib
                         removeContribAnchor.setHref(this.getUrl() + "?"

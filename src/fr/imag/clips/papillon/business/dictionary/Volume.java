@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.18  2006/02/21 13:37:54  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.17  2006/01/25 17:06:09  mangeot
  * Fixed the sort buttons
  *
@@ -1013,21 +1016,12 @@ public class Volume {
      */
 	public int getCount()  
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
-			return VolumeEntriesFactory.getDbTableEntriesCount(this, null, null, null);
+			return VolumeEntriesFactory.getVolumeEntriesCount(this);
 	}
 
 	public int getCount(String status) 
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
-			java.util.Vector Keys = new java.util.Vector();
-			String[] statusKey = new String[4];
-			statusKey[0] = Volume.CDM_contributionStatus;
-			statusKey[1] = Volume.DEFAULT_LANG;
-			statusKey[2] = status;
-			statusKey[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_EXACT+1];
-			
-			Keys.add(statusKey);
-			
-			return VolumeEntriesFactory.getDbTableEntriesCount(this, Keys, null, null);
+			return VolumeEntriesFactory.getVolumeEntriesCount(this, status);
 		}
 	
 	

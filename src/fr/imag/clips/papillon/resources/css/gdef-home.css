@@ -419,6 +419,10 @@ A.hide {text-decoration: none}
 	color: #CC0000;
 	}
 
+.sin	{
+	color: black;
+	}
+
 .tha	{
 	font-family: sans-serif;
 	color: #6600FF;
@@ -539,6 +543,7 @@ A.hide {text-decoration: none}
 .newentry {
 	/*color: red; */
 	font-weight: bold;
+	background-color: yellow;
 }
 	
 /* Styles for Header links */

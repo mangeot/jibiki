@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.28  2006/02/21 13:37:54  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.27  2005/12/04 15:22:39  mangeot
  * Fixed the volume parsing when the volume element is not the root element
  *
@@ -1190,6 +1193,8 @@ public class VolumeEntry implements IAnswer {
 		throws PapillonBusinessException {
 			boolean res = false;
 			try {
+				// reset caches
+				VolumeEntriesFactory.resetCountCache(this.getVolume().getName());
 				IndexFactory.deleteIndexForEntryId(this.getVolume().getIndexDbname(), this.getHandle());
 				this.setEntryIdIfNull();
 				this.setContributionIdIfNull();
@@ -1230,6 +1235,8 @@ public class VolumeEntry implements IAnswer {
 				myVolume = VolumesFactory.findVolumeByDbname(this.getTableName());
 			}
 			if (myVolume!=null && ! myVolume.isEmpty()) {
+				// reset caches
+				VolumeEntriesFactory.resetCountCache(myVolume.getName());
 				this.delete(myVolume.getIndexDbname());
 			}
 			else {

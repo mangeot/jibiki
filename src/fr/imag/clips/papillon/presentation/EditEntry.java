@@ -9,8 +9,8 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.21  2006/02/18 19:19:55  mangeot
- * Added a different style (red bold) for contributions that are copies of validated entries in AdminContributions.java and ReviewContributions.java
+ * Revision 1.22  2006/02/21 13:37:54  mangeot
+ * *** empty log message ***
  *
  * Revision 1.20  2005/10/15 08:34:24  mangeot
  * Bug fix
@@ -295,7 +295,7 @@ public class EditEntry extends PapillonBasePO {
 				String elementName = submitDelete.substring(0,plus);
 				String parentElement = submitDelete.substring(plus+1);
 				String[] selectedElements = myGetParameterValues(Select_PARAMETER);
-				UIGenerator.deleteElements(elementName,parentElement,selectedElements,myEntry,myTemplateEntry);
+				UIGenerator.deleteElements(elementName,selectedElements,myEntry);
 				this.setHeaderScript(newBlockRedirectionJavascript);
 			}
 		}

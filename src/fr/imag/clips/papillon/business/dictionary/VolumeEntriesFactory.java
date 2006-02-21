@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.35  2006/02/21 13:37:54  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.34  2005/12/01 17:17:25  mangeot
  * *** empty log message ***
  *
@@ -307,6 +310,9 @@ public class VolumeEntriesFactory {
 		+ "  </fo:page-sequence>\n"
 		+ "</fo:root>\n";
 	
+	protected static java.util.Hashtable VolumeEntriesCountHashtable = new java.util.Hashtable();
+	protected static String NoStatus = "#NoStatus#";
+	
 	protected static com.lutris.dods.builder.generator.query.RDBColumn[] Columns = new com.lutris.dods.builder.generator.query.RDBColumn[1];
 	
     /**
@@ -507,6 +513,60 @@ public class VolumeEntriesFactory {
 			}
 		}
 		return theEntries;
+	}
+	
+	public static int getVolumeEntriesCount(Volume theVolume)
+		throws fr.imag.clips.papillon.business.PapillonBusinessException {
+		return getVolumeEntriesCount(theVolume, null);
+	}
+
+	public static int getVolumeEntriesCount(Volume theVolume, String status)
+		throws fr.imag.clips.papillon.business.PapillonBusinessException {
+		Integer count = null;
+		java.util.Hashtable volumeTable = (java.util.Hashtable) VolumeEntriesCountHashtable.get(theVolume.getName());
+		if (volumeTable != null) {
+			 count = (Integer) volumeTable.get(status);
+			if (count == null) {
+				if (status == null) {
+					count = new Integer(getDbTableEntriesCount(theVolume, null, null, null));
+				}
+				else {
+					java.util.Vector Keys = new java.util.Vector();
+					String[] statusKey = new String[4];
+					statusKey[0] = Volume.CDM_contributionStatus;
+					statusKey[1] = Volume.DEFAULT_LANG;
+					statusKey[2] = status;
+					statusKey[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_EXACT+1];					
+					Keys.add(statusKey);					
+					count = new Integer(getDbTableEntriesCount(theVolume, Keys, null, null));
+				}
+				volumeTable.put(status, count);
+			}
+		}
+		else {
+			volumeTable = new java.util.Hashtable();
+			if (status == null) {
+				count = new Integer(getDbTableEntriesCount(theVolume, null, null, null));
+			}
+			else {
+				java.util.Vector Keys = new java.util.Vector();
+				String[] statusKey = new String[4];
+				statusKey[0] = Volume.CDM_contributionStatus;
+				statusKey[1] = Volume.DEFAULT_LANG;
+				statusKey[2] = status;
+				statusKey[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_EXACT+1];					
+				Keys.add(statusKey);					
+				count = new Integer(getDbTableEntriesCount(theVolume, Keys, null, null));
+			}
+			volumeTable.put(status, count);
+			VolumeEntriesCountHashtable.put(theVolume.getName(),volumeTable);
+		}
+		return count.intValue();
+	}
+	
+	public static boolean resetCountCache(String volumeName) {
+		VolumeEntriesCountHashtable.remove(volumeName);
+		return true;
 	}
 	
     // FIXME: Should the query building code be factorized ?
