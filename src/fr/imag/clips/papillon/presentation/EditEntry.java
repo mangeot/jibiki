@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.23  2006/02/21 15:27:49  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.22  2006/02/21 13:37:54  mangeot
  * *** empty log message ***
  *
@@ -295,7 +298,7 @@ public class EditEntry extends PapillonBasePO {
 				String elementName = submitDelete.substring(0,plus);
 				String parentElement = submitDelete.substring(plus+1);
 				String[] selectedElements = myGetParameterValues(Select_PARAMETER);
-				UIGenerator.deleteElements(elementName,selectedElements,myEntry);
+				UIGenerator.deleteElements(elementName,parentElement,selectedElements,myEntry, myTemplateEntry);
 				this.setHeaderScript(newBlockRedirectionJavascript);
 			}
 		}

@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.36  2006/02/21 15:27:49  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.35  2006/02/21 13:37:54  mangeot
  * *** empty log message ***
  *
@@ -522,12 +525,15 @@ public class VolumeEntriesFactory {
 
 	public static int getVolumeEntriesCount(Volume theVolume, String status)
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
+			if (status == null) {
+				status = NoStatus;
+			}
 		Integer count = null;
 		java.util.Hashtable volumeTable = (java.util.Hashtable) VolumeEntriesCountHashtable.get(theVolume.getName());
 		if (volumeTable != null) {
 			 count = (Integer) volumeTable.get(status);
 			if (count == null) {
-				if (status == null) {
+				if (status.equals(NoStatus)) {
 					count = new Integer(getDbTableEntriesCount(theVolume, null, null, null));
 				}
 				else {
@@ -545,7 +551,7 @@ public class VolumeEntriesFactory {
 		}
 		else {
 			volumeTable = new java.util.Hashtable();
-			if (status == null) {
+			if (status.equals(NoStatus)) {
 				count = new Integer(getDbTableEntriesCount(theVolume, null, null, null));
 			}
 			else {
