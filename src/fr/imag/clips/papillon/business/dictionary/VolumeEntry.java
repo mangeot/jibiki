@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.29  2006/02/22 19:05:56  mangeot
+ * MM: Added default status choice when importing entries
+ *
  * Revision 1.28  2006/02/21 13:37:54  mangeot
  * *** empty log message ***
  *
@@ -904,10 +907,10 @@ public class VolumeEntry implements IAnswer {
 		ParseVolume.setCdmElement(this, Volume.CDM_contributionStatusElement, status);
 	}
 	
-	public void setStatus() throws PapillonBusinessException {
+	public void setStatusIfNotNull(String defaultStatus) throws PapillonBusinessException {
 		String status = ParseVolume.getCdmString(this, Volume.CDM_contributionStatus);
 		if (status == null || status.equals("")) {
-			setStatus(VolumeEntry.VALIDATED_STATUS);
+			setStatus(defaultStatus);
 		}
 	}
 	

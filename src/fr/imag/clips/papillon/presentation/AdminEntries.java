@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.10  2006/02/22 19:05:56  mangeot
+ * MM: Added default status choice when importing entries
+ *
  * Revision 1.9  2006/02/09 10:49:28  mangeot
  * Added 3 new options when importing entries:
  * - ParseVolume.ReplaceExistingEntry_CopyAnyway
@@ -162,6 +165,7 @@ public class AdminEntries extends PapillonBasePO {
         String urlString = myGetParameter(content.NAME_URL);
         String submitAdd = myGetParameter(content.NAME_ADD);
         String logContributions = myGetParameter(content.NAME_LogContributions);
+        String defaultStatus = myGetParameter(content.NAME_DefaultStatus);
         String replaceExistingString = myGetParameter(content.NAME_ReplaceExisting);
 		int replaceExisting = ParseVolume.ReplaceExistingEntry_Ignore;
 		if (null != replaceExistingString && !replaceExistingString.equals("")) {
@@ -174,7 +178,7 @@ public class AdminEntries extends PapillonBasePO {
         if (volumeString!=null && !volumeString.equals("") &&
 			urlString!=null && !urlString.equals("") &&
 			submitAdd!=null && !submitAdd.equals("")) {
-            String userMessage = handleVolumeAddition(volumeString, urlString, replaceExisting, logContribs);
+            String userMessage = handleVolumeAddition(volumeString, urlString, defaultStatus, replaceExisting, logContribs);
 			if (userMessage != null) {
 				this.getSessionData().writeUserMessage(userMessage);
 				PapillonLogger.writeDebugMsg(userMessage);
@@ -185,7 +189,7 @@ public class AdminEntries extends PapillonBasePO {
         return content.getElementFormulaire();
     }
 	
-	protected String handleVolumeAddition(String volumeString, String urlString, int replaceExisting, boolean logContribs) 
+	protected String handleVolumeAddition(String volumeString, String urlString, String defaultStatus, int replaceExisting, boolean logContribs) 
 		throws fr.imag.clips.papillon.business.PapillonBusinessException, 
 			HttpPresentationException {
         String userMessage;
@@ -195,7 +199,7 @@ public class AdminEntries extends PapillonBasePO {
         try {
 			java.net.URL myURL = new java.net.URL(urlString);
 			PapillonLogger.writeDebugMsg(myURL.toString());
-			String message = ParseVolume.parseVolume(volumeString, myURL.toString(), replaceExisting, logContribs);
+			String message = ParseVolume.parseVolume(volumeString, myURL.toString(), defaultStatus, replaceExisting, logContribs);
 			userMessage = "Volume: " + volumeString + " / URL: " + myURL + " downloaded...";
 			userMessage += message;
            // everything was correct, commit the transaction...

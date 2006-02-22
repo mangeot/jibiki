@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.29  2006/02/22 19:05:56  mangeot
+ * MM: Added default status choice when importing entries
+ *
  * Revision 1.28  2006/02/09 10:49:28  mangeot
  * Added 3 new options when importing entries:
  * - ParseVolume.ReplaceExistingEntry_CopyAnyway
@@ -175,13 +178,13 @@ public class ParseVolume {
 			return entry;
 		}
 	
-	public static String parseVolume (String volumeName, String URL, int replaceExisting, boolean logContribs)
+	public static String parseVolume (String volumeName, String URL, String defaultStatus, int replaceExisting, boolean logContribs)
         throws PapillonBusinessException {
 			String message = "";
 			Volume volume = VolumesFactory.findVolumeByName(volumeName);
 			Dictionary dict = DictionariesFactory.findDictionaryByName(volume.getDictname());
             if (!volume.isEmpty()) {
-                message = parseVolume(dict, volume,URL, replaceExisting, logContribs);
+                message = parseVolume(dict, volume,URL, defaultStatus, replaceExisting, logContribs);
             }
 			else {
 				message = "The volume does not exist!";
@@ -192,13 +195,13 @@ public class ParseVolume {
 	protected static String parseVolume (Dictionary myDict, Volume myVolume, String url, boolean logContribs) throws PapillonBusinessException {
 		String xmlHeader = getXMLHeader(url, myVolume.getCdmEntry());
 		String encoding = getEncoding(xmlHeader);
-		return parseEntries(myDict, myVolume, url, encoding, ReplaceExistingEntry_Ignore, logContribs);
+		return parseEntries(myDict, myVolume, url, encoding, VolumeEntry.FINISHED_STATUS, ReplaceExistingEntry_Ignore, logContribs);
 	}
 	
-	protected static String parseVolume (Dictionary myDict, Volume myVolume, String url, int replaceExisting, boolean logContribs) throws PapillonBusinessException {
+	protected static String parseVolume (Dictionary myDict, Volume myVolume, String url, String defaultStatus, int replaceExisting, boolean logContribs) throws PapillonBusinessException {
 		String xmlHeader = getXMLHeader(url, myVolume.getCdmEntry());
 		String encoding = getEncoding(xmlHeader);
-		return parseEntries(myDict, myVolume, url, encoding, replaceExisting, logContribs);
+		return parseEntries(myDict, myVolume, url, encoding, defaultStatus, replaceExisting, logContribs);
 	}
 	
 	protected static String getXMLHeader(String url, String CDM_entry) throws PapillonBusinessException {
@@ -260,7 +263,7 @@ public class ParseVolume {
 		return res;
 	}
 	
-	protected static String parseEntries(Dictionary myDict, Volume myVolume, String url, String encoding, int replaceExisting, boolean logContribs) throws PapillonBusinessException {
+	protected static String parseEntries(Dictionary myDict, Volume myVolume, String url, String encoding, String defaultStatus, int replaceExisting, boolean logContribs) throws PapillonBusinessException {
 		PapillonLogger.writeDebugMsg("parseEntries, encoding: [" + encoding + "]");
 		int countEntries = 0;
 		String message = "";
@@ -328,7 +331,7 @@ public class ParseVolume {
 						bufferLine = bufferLine.substring(entryIndex);
 					}
 					if (entryBuffer.length()>xmlHeaderBuffer.length()) {
-						if (parseEntry(myDict,myVolume,entryBuffer.append(xmlFooterBuffer), replaceExisting, logContribs, DiscardedEntries)) {
+						if (parseEntry(myDict,myVolume,entryBuffer.append(xmlFooterBuffer), defaultStatus, replaceExisting, logContribs, DiscardedEntries)) {
 							countEntries++;
 						}
 						entryBuffer = new StringBuffer();
@@ -342,7 +345,7 @@ public class ParseVolume {
 			}
 			buffer.close();
 			inStream.close();
-			if (parseEntry(myDict,myVolume,entryBuffer.append(xmlFooterBuffer), replaceExisting, logContribs, DiscardedEntries)) {
+			if (parseEntry(myDict,myVolume,entryBuffer.append(xmlFooterBuffer), defaultStatus, replaceExisting, logContribs, DiscardedEntries)) {
 				countEntries++;
 			}
 			message = "volume parsed, " + countEntries + " entries added.";
@@ -361,11 +364,11 @@ public class ParseVolume {
 		return message;
 	}
 	
-	protected static boolean parseEntry(Dictionary myDict, Volume myVolume, StringBuffer entryBuffer, int replaceExisting, boolean logContribs, java.util.Vector DiscardedEntries) throws PapillonBusinessException {
-		return parseEntry(myDict, myVolume, entryBuffer.toString(), replaceExisting, logContribs, DiscardedEntries);
+	protected static boolean parseEntry(Dictionary myDict, Volume myVolume, StringBuffer entryBuffer, String defaultStatus, int replaceExisting, boolean logContribs, java.util.Vector DiscardedEntries) throws PapillonBusinessException {
+		return parseEntry(myDict, myVolume, entryBuffer.toString(), defaultStatus, replaceExisting, logContribs, DiscardedEntries);
 	}
 	
-	protected static boolean parseEntry(Dictionary myDict, Volume myVolume, String entryString, int replaceExisting, boolean logContribs, java.util.Vector DiscardedEntries) throws PapillonBusinessException {
+	protected static boolean parseEntry(Dictionary myDict, Volume myVolume, String entryString, String defaultStatus, int replaceExisting, boolean logContribs, java.util.Vector DiscardedEntries) throws PapillonBusinessException {
 		boolean result=false;
 			// PapillonLogger.writeDebugMsg("Parse entry [" + entryString + "]");
 		org.w3c.dom.Document myDoc = Utility.buildDOMTree(entryString);
@@ -376,7 +379,7 @@ public class ParseVolume {
 			newEntry.setAuthor();
 			newEntry.setCreationDate();
 			newEntry.setHeadword();
-			newEntry.setStatus();
+			newEntry.setStatusIfNotNull(defaultStatus);
 			// parseEntry(newEntry) is called by myEntry.save();
 			String entryId = newEntry.getEntryId();
 			if (entryId != null) {
