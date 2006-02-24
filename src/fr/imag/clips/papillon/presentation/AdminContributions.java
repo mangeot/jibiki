@@ -9,7 +9,7 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.27  2006/02/21 13:37:54  mangeot
+ * Revision 1.28  2006/02/24 22:59:48  mangeot
  * *** empty log message ***
  *
  * Revision 1.22  2006/01/25 17:06:09  mangeot
@@ -274,7 +274,7 @@ public class AdminContributions extends PapillonBasePO {
 				volumeString = this.getPreference(VOLUME_PARAMETER);
 			}
 			
-			String queryString = "&" + LOOKUP_PARAMETER + "=" + LOOKUP_PARAMETER;
+			String queryString = "";
 			if (volumeString!=null && !volumeString.equals("")) {
 				queryString += "&" + VOLUME_PARAMETER + "=" + volumeString;
 			}
