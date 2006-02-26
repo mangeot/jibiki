@@ -9,6 +9,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.5  2006/02/26 22:05:02  mangeot
+ *  *** empty log message ***
+ *
  *  Revision 1.4  2006/02/26 20:24:30  mangeot
  *  *** empty log message ***
  *
@@ -129,7 +132,8 @@ public class BrowseVolume extends AbstractPO {
 						resultsVector = VolumeEntriesFactory.getVolumeNameEntriesVector(myVolume.getName(),
 																						myKeys,
 																						null,
-																						direction,
+																						null,
+																						direction, 
 																						0,
 																						limit);
 						for (int i=0; i<resultsVector.size(); i++) {

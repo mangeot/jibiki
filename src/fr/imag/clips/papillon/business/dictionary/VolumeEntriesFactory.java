@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.40  2006/02/26 22:05:02  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.39  2006/02/26 21:56:05  mangeot
  * *** empty log message ***
  *
@@ -277,6 +280,7 @@ public class VolumeEntriesFactory {
 	public final static String STATUS_SORT = "STATUS_SORT";
 
 	protected final static String MSORT_FIELD = "msort";
+	protected final static String ORDER_DESCENDING = "DESC";
 	
 	// variables used in setGDEFFrenchTranslations
 	protected final static String VOLUME_GDEF_est = "GDEF_est";
@@ -383,13 +387,14 @@ public class VolumeEntriesFactory {
                                                     Vector Keys2,
 													String any)
         throws PapillonBusinessException {
-			return getVolumeNameEntriesVector(volumeName, Keys1, Keys2, any, 0, 0);
+			return getVolumeNameEntriesVector(volumeName, Keys1, Keys2, any, "", 0, 0);
 		}
 	
     public static Vector getVolumeNameEntriesVector(String volumeName,
                                                     Vector Keys,
                                                     Vector Clauses,
 													String any,
+													String order,
 													int offset,
                                                     int limit)
         throws PapillonBusinessException {
@@ -402,7 +407,7 @@ public class VolumeEntriesFactory {
 					if (volume != null && !volume.isEmpty()) {
 						dict = DictionariesFactory.findDictionaryByName(volume.getDictname());
 						if (dict != null && !dict.isEmpty()) {
-							resultVector = getDbTableEntriesVector(dict, volume, Keys, Clauses, any, offset, limit);
+							resultVector = getDbTableEntriesVector(dict, volume, Keys, Clauses, any, order, offset, limit);
 						}
 					}
 				}
@@ -413,7 +418,11 @@ public class VolumeEntriesFactory {
 			return resultVector;
         }
 	
-    protected static Vector getDbTableEntriesVector(Dictionary dict, Volume volume, Vector Keys, Vector Clauses, String any, int offset, int limit) throws PapillonBusinessException {
+	protected static Vector getDbTableEntriesVector(Dictionary dict, Volume volume, Vector Keys, Vector Clauses, String any, int offset, int limit) throws PapillonBusinessException {
+		return getDbTableEntriesVector(dict, volume, Keys, Clauses, any, "", offset, limit);
+	}
+	
+    protected static Vector getDbTableEntriesVector(Dictionary dict, Volume volume, Vector Keys, Vector Clauses, String any, String order, int offset, int limit) throws PapillonBusinessException {
         Vector theEntries = theEntries = new Vector();
 		
 		String volumeTableName = volume.getDbname();
@@ -500,8 +509,12 @@ public class VolumeEntriesFactory {
 				}
 				
 				query.getQueryBuilder().setMaxRows((0 == limit) ? DictionariesFactory.MaxRetrievedEntries : limit);
-				query.getQueryBuilder().addEndClause("OFFSET " + offset);
-				query.getQueryBuilder().addOrderByColumn("multilingual_sort('" + volume.getSourceLanguage() + "',headword)","");
+				// seems to be a bug in the queryBuilder, have to put a space gefore OFFSET
+				query.getQueryBuilder().addEndClause(" OFFSET " + offset);
+				if (order==null || !order.equals(ORDER_DESCENDING)) {
+					order = "";
+				}				
+				query.getQueryBuilder().addOrderByColumn("multilingual_sort('" + volume.getSourceLanguage() + "',headword)",order);
 				// debug
 				//query.getQueryBuilder().debug();
 			
