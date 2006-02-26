@@ -3,7 +3,7 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.38  2006/02/26 21:17:52  mangeot
+ * Revision 1.39  2006/02/26 21:56:05  mangeot
  * *** empty log message ***
  *
  * Revision 1.37  2006/02/26 14:08:16  mangeot
@@ -275,7 +275,8 @@ public class VolumeEntriesFactory {
 	public final static String REVIEW_DATE_SORT = "REVIEW_DATE_SORT";
 	public final static String REVIEWER_SORT = "REVIEWER_SORT";
 	public final static String STATUS_SORT = "STATUS_SORT";
-	public final static String MSORT_FIELD = "msort";
+
+	protected final static String MSORT_FIELD = "msort";
 	
 	// variables used in setGDEFFrenchTranslations
 	protected final static String VOLUME_GDEF_est = "GDEF_est";
@@ -416,14 +417,13 @@ public class VolumeEntriesFactory {
         Vector theEntries = theEntries = new Vector();
 		
 		String volumeTableName = volume.getDbname();
-		String indexDbname = volume.getIndexDbname();
 		if (null != volumeTableName) {
 			try {
 				com.lutris.dods.builder.generator.query.QueryBuilder myQueryBuilder = null; 
-				com.lutris.dods.builder.generator.query.RDBColumn entryidColumn = IndexDO.getEntryIdColumn(indexDbname);
-				com.lutris.dods.builder.generator.query.RDBColumn keyColumn = IndexDO.getKeyColumn(indexDbname);
-				com.lutris.dods.builder.generator.query.RDBColumn langColumn = IndexDO.getLangColumn(indexDbname);
-				com.lutris.dods.builder.generator.query.RDBColumn valueColumn = IndexDO.getValueColumn(indexDbname);
+				com.lutris.dods.builder.generator.query.RDBColumn entryidColumn = IndexDO.getEntryIdColumn(volume.getIndexDbname());
+				com.lutris.dods.builder.generator.query.RDBColumn keyColumn = IndexDO.getKeyColumn(volume.getIndexDbname());
+				com.lutris.dods.builder.generator.query.RDBColumn langColumn = IndexDO.getLangColumn(volume.getIndexDbname());
+				com.lutris.dods.builder.generator.query.RDBColumn valueColumn = IndexDO.getValueColumn(volume.getIndexDbname());
 				com.lutris.dods.builder.generator.query.RDBTable volumeEntryTable = new com.lutris.dods.builder.generator.query.RDBTable(volumeTableName);
 				VolumeEntryDO myDO = VolumeEntryDO.createVirgin(volumeTableName);
 				com.lutris.dods.builder.generator.query.RDBColumn objectidColumn = new com.lutris.dods.builder.generator.query.RDBColumn(volumeEntryTable, myDO.getOIdColumnName());
@@ -467,10 +467,10 @@ public class VolumeEntriesFactory {
 								 key[3] == QueryBuilder.LESS_THAN_OR_EQUAL ||
 								 key[3] == QueryBuilder.GREATER_THAN ||
 								 key[3] == QueryBuilder.GREATER_THAN_OR_EQUAL) {
-								query.getQueryBuilder().addWhere(indexDbname + "." + MSORT_FIELD + key[3]+ "multilingual_sort('" + key[1] + "','" + key[2] + "')");
+								myQueryBuilder.addWhere(MSORT_FIELD + key[3]+ "multilingual_sort('" + key[1] + "','" + key[2] + "')");
 							}
 							else {
-								query.getQueryBuilder().addWhere(valueColumn, key[2],  key[3]);
+								myQueryBuilder.addWhere(valueColumn, key[2],  key[3]);
 							}
 							myQueryBuilder.resetSelectedFields();
 							myQueryBuilder.select(entryidColumn);
@@ -503,7 +503,7 @@ public class VolumeEntriesFactory {
 				query.getQueryBuilder().addEndClause("OFFSET " + offset);
 				query.getQueryBuilder().addOrderByColumn("multilingual_sort('" + volume.getSourceLanguage() + "',headword)","");
 				// debug
-				query.getQueryBuilder().debug();
+				//query.getQueryBuilder().debug();
 			
 				VolumeEntryDO[] DOarray = query.getDOArray();
 				if (null != DOarray) {
