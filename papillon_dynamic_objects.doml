@@ -7,6 +7,9 @@
  * $Id$
  *************************************************
  * $Log$
+ * Revision 1.6  2006/02/26 19:25:00  mangeot
+ * Added a new field in index table: msort=multilingual_sort(lang,value)
+ *
  * Revision 1.5  2005/04/11 12:32:29  mangeot
  * Merge between the XPathAndMultipleKeys branch and the trunk
  *
@@ -77,6 +80,12 @@
  */</javadoc>
             <type canBeNull="true" dbType="VARCHAR" javaType="String" size="255"/>
           </column>
+          <column id="msort" usedForQuery="true">
+            <javadoc>/**
+ * plpsql function: multilingual_sort(lang,value)
+ */</javadoc>
+            <type canBeNull="true" dbType="VARCHAR" javaType="String" size="255"/>
+          </column>
           <column id="entryId" usedForQuery="true">
             <javadoc>/**
  * the entry id
@@ -84,13 +93,16 @@
             <type dbType="VARCHAR" javaType="String" size="255"/>
           </column>
 		  <index id="key_idx">
-          <indexColumn id="key"/>
-          <indexColumn id="lang"/>
-          <indexColumn id="value"/>
-        </index>
+          	<indexColumn id="key"/>
+          	<indexColumn id="lang"/>
+          	<indexColumn id="value"/>
+          </index>
 		  <index id="entryid_idx">
-          <indexColumn id="entryId"/>
-        </index>
+          	<indexColumn id="entryId"/>
+          </index>
+		  <index id="msort_idx">
+          	<indexColumn id="msort"/>
+          </index>
         </table>
     </package>
     </package>
