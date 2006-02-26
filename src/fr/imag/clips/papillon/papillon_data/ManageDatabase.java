@@ -40,6 +40,8 @@ public class ManageDatabase implements Query {
     
     protected String currentSQL = "";
     protected DBTransaction transaction;
+	protected ResultSet resultSet = null;
+	
     /**
         * Public constructor
      */
@@ -163,15 +165,33 @@ public class ManageDatabase implements Query {
         
     }
     
-    protected static void executeSql (String sql) throws PapillonBusinessException {
-        DBTransaction transaction = CurrentDBTransaction.get();
+    public static String multilingual_sort(String lang, String value) throws  PapillonBusinessException {
+ 		String result = lang + value;
+		
+		String sql = "SELECT multilingual_sort('"+ lang + "','" + value + "')";
+		java.util.Vector myResultVector = getStringResultSet(sql,"multilingual_sort");
+		
+		if (myResultVector != null && myResultVector.size()>0) {
+			result = (String) myResultVector.elementAt(0);
+		}
+		return result;
+    }
+
+	protected static void executeSql (String sql) throws PapillonBusinessException {
+		getStringResultSet(sql, null);
+	}
+
+	protected static java.util.Vector getStringResultSet (String sql, String columnName) throws PapillonBusinessException {
+		java.util.Vector resVector = new java.util.Vector();;
+		
+		DBTransaction transaction = CurrentDBTransaction.get();
         ManageDatabase req = new ManageDatabase(transaction, sql);
         //Flush the current transaction (?)
         // Is this really usefull ?
-        if ((transaction!=null) &&
-            (transaction instanceof com.lutris.appserver.server.sql.CachedDBTransaction)) {
-            if(((com.lutris.appserver.server.sql.CachedDBTransaction)transaction).getAutoWrite()) try {
-                transaction.write();
+        if ((req.transaction!=null) &&
+            (req.transaction instanceof com.lutris.appserver.server.sql.CachedDBTransaction)) {
+            if(((com.lutris.appserver.server.sql.CachedDBTransaction)req.transaction).getAutoWrite()) try {
+                req.transaction.write();
             } catch (SQLException sqle) {
                 sqle.printStackTrace();
                 throw new PapillonBusinessException("Couldn't write transaction: "+sqle);
@@ -180,22 +200,26 @@ public class ManageDatabase implements Query {
         // Create the DB Query Object
         DBQuery	dbQuery = null;
         try {
-            if (transaction == null) {
+            if (req.transaction == null) {
                 dbQuery	= DODS.getDatabaseManager().createQuery();
             } else {
-                dbQuery	= transaction.createQuery();
+                dbQuery	= req.transaction.createQuery();
             }
 
             dbQuery.query( req	);	  // invokes executeQuery
+			while (req.resultSet.next() && columnName != null) {
+				resVector.addElement(req.resultSet.getString(columnName));			
+			}
         } catch ( DatabaseManagerException e ) { 
             String err = "ERROR SpecialDatabaseRequest: Could not create a DBQuery.  ";
             throw new PapillonBusinessException( err, e );
         } catch ( SQLException e ) { 
-            String err = "ERROR SpecialDatabaseRequest: Exception while running the query: " + sql;
+            String err = "ERROR SpecialDatabaseRequest: Exception while running the query: " + req.currentSQL;
             throw new PapillonBusinessException( err, e );
         } finally {
             if ( null != dbQuery ) dbQuery.release();
 		}
+		return resVector;
     }
     
     public static java.util.Vector getTableNames ()
@@ -245,10 +269,9 @@ public class ManageDatabase implements Query {
         }
 	
 	
-	
 	public ResultSet executeQuery(DBConnection conn) throws SQLException {
-        conn.execute(currentSQL);
-        return null;
+		this.resultSet = conn.executeQuery(currentSQL);
+        return this.resultSet;
     }
 
     

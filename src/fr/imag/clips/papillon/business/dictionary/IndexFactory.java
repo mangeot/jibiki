@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.14  2006/02/26 19:21:38  mangeot
+ * Work on BrowseVolume
+ *
  * Revision 1.13  2006/02/26 14:08:16  mangeot
  * Added the multilingual_sort(lang,headword) index on volume tables for speeding up the lookup
  *
@@ -136,6 +139,10 @@ public class IndexFactory {
 	public final static String LANG_FIELD = "lang";
 	public final static String VALUE_FIELD = "value";
 	public final static String ENTRYID_FIELD = "entryid";
+	public final static String MSORT_FIELD = "msort";
+	
+	public final static String ORDER_ASCENDING = "";
+	public final static String ORDER_DESCENDING = "DESC";
 	
 	protected final static String databaseName = IndexDO.get_logicalDBName();
 	public static String databaseVendor = null;
@@ -282,6 +289,61 @@ public class IndexFactory {
 		}
 		return theIndex;
 	}
+		
+	public static Vector getIndexEntriesVector(String indexTableName, Vector Keys, String order, int limit) throws PapillonBusinessException {
+        Vector theEntries = new Vector();
+		
+		if (null != indexTableName) {
+			try {
+				com.lutris.dods.builder.generator.query.RDBColumn keyColumn = IndexDO.getKeyColumn(indexTableName);
+				com.lutris.dods.builder.generator.query.RDBColumn langColumn = IndexDO.getLangColumn(indexTableName);
+				com.lutris.dods.builder.generator.query.RDBColumn valueColumn = IndexDO.getValueColumn(indexTableName);
+				IndexQuery query = new IndexQuery(indexTableName, CurrentDBTransaction.get());
+				//fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Index request table: " + indexTableName);
+				
+				if (Keys != null) {
+					for (java.util.Enumeration enumKeys = Keys.elements(); enumKeys.hasMoreElements();) {
+						String[] key = (String[]) enumKeys.nextElement();
+						if (key!=null && key[2] !=null && !key[2].equals("")) {
+							query.getQueryBuilder().addWhere(keyColumn, key[0], QueryBuilder.EQUAL);
+							if (key[1] !=null && !key[1].equals("")) {
+								query.getQueryBuilder().addWhere(langColumn, key[1], QueryBuilder.EQUAL);
+							}
+							if ( key[3] == QueryBuilder.LESS_THAN ||
+								 key[3] == QueryBuilder.LESS_THAN_OR_EQUAL ||
+								 key[3] == QueryBuilder.GREATER_THAN ||
+								 key[3] == QueryBuilder.GREATER_THAN_OR_EQUAL) {
+								query.getQueryBuilder().addWhere(MSORT_FIELD + key[3]+ "multilingual_sort('" + key[1] + "','" + key[2] + "')");
+							}
+							else {
+								query.getQueryBuilder().addWhere(valueColumn, key[2],  key[3]);
+							}
+						}
+					}
+				}				
+				query.getQueryBuilder().setMaxRows((0 == limit) ? DictionariesFactory.MaxRetrievedEntries : limit);
+				if (order==null || !order.equals(ORDER_DESCENDING)) {
+					order = "";
+				}
+				query.getQueryBuilder().addOrderByColumn(MSORT_FIELD,order);
+				// debug
+				//query.getQueryBuilder().debug();
+				
+				IndexDO[] DOarray = query.getDOArray();
+				if (null != DOarray) {
+					for (int j=0; j < DOarray.length; j++) {
+						Index tempIndex = new Index(DOarray[j]);
+						theEntries.add(tempIndex);
+					}
+				}
+			}
+			catch(Exception ex) {
+				throw new PapillonBusinessException("Exception in getIndexEntriesVector()", ex);
+			}
+		}
+		return theEntries;
+	}
+	
 	
 	protected static boolean createIndexForLexiesHashtable(String indexDbname, Axie myAxie)
 		throws PapillonBusinessException {

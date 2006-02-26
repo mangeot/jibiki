@@ -33,8 +33,12 @@
  * $Id$
  *--------------------------------------------------------------
  * $Log$
- * Revision 1.1  2004/12/06 16:38:24  serasset
- * Initial revision
+ * Revision 1.2  2006/02/26 19:21:38  mangeot
+ * Work on BrowseVolume
+ *
+ * Revision 1.1.1.1  2004/12/06 16:38:24  serasset
+ * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
+ * There are still bugs in the code.
  *
  * Revision 1.1.1.1  2002/10/28 16:49:11  serasset
  * Creation of the papillon CVS repository for enhydra 5.0
@@ -353,7 +357,6 @@ public class MultipartRequest implements HttpServletRequest {
                     +" bytes exceeds maximum request size ( "
                     + maxRequestSize +")");
             }	
-            // debug
             
             //
             // content type and boundary
@@ -361,7 +364,6 @@ public class MultipartRequest implements HttpServletRequest {
             String contentType = sR.getContentType();
             if (!(contentType.toLowerCase().startsWith("multipart/form-data")))
                 throw new IllegalArgumentException("Unknown content type.");
-            // debug
 
             int index = contentType.indexOf("boundary=");
             if (index == -1)
@@ -370,9 +372,7 @@ public class MultipartRequest implements HttpServletRequest {
             index += 9;
             
             this.boundary = "--" + contentType.substring(index);
-	
-            // debug
-            
+	            
             // 
             // construct input stream
             //

@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.5  2006/02/26 19:21:38  mangeot
+ * Work on BrowseVolume
+ *
  * Revision 1.4  2005/05/24 12:51:21  serasset
  * Updated many aspect of the Papillon project to handle lexalp project.
  * 1. Layout is now parametrable in the application configuration file.
@@ -261,6 +264,8 @@ public class Index {
     public void save() 
         throws PapillonBusinessException {
         try {
+			String msort = fr.imag.clips.papillon.papillon_data.ManageDatabase.multilingual_sort(this.getLang(), this.getValue());
+			myDO.setMsort(msort);
             this.myDO.commit();
         } catch(Exception ex) {
             throw new PapillonBusinessException("Error saving index", ex);
