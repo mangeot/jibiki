@@ -1,0 +1,122 @@
+/*
+ *  papillon
+ *
+ *  Enhydra super-servlet
+ *
+ *  © Mathieu Mangeot & Gilles Sérasset - GETA CLIPS IMAG
+ *  Projet Papillon
+ *  -----------------------------------------------
+ *  $Id$
+ *  -----------------------------------------------
+ *  $Log$
+ *  Revision 1.1  2006/02/26 14:09:32  mangeot
+ *  *** empty log message ***
+ *
+ *
+ *  -----------------------------------------------
+ *  beta version
+ */
+package fr.imag.clips.papillon.presentation;
+
+import com.lutris.appserver.server.httpPresentation.HttpPresentationException;
+import com.lutris.dods.builder.generator.query.QueryBuilder;
+
+import fr.imag.clips.papillon.business.dictionary.Volume;
+import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
+import fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory;
+
+import fr.imag.clips.papillon.business.utility.Utility;
+
+/**
+*  Description of the Class
+ *
+ * @author     mangeot
+ * @created    February 24, 2006
+ */
+public class BrowseVolume extends AbstractPO {
+    
+	
+    /**
+    *  This method should be implemented in the subclass so that it returns
+     *  true if this particular request requires the user to be logged in,
+     *  otherwise false.
+     *
+     * @return    Description of the Return Value
+     */
+    protected boolean loggedInUserRequired() {
+        return false;
+    }
+    
+    /**
+    *  This method should be implemented in the subclass so that it returns
+     *  true if this particular request requires the user to be logged in,
+     *  otherwise false.
+     *
+     * @return    Description of the Return Value
+     */
+    protected boolean userMayUseThisPO() {
+        return true;
+    }
+	
+    /**
+        *  Returns the complete document.
+     *
+     * @exception  Exception
+     * @exception  HttpPresentationException  Description of the Exception
+     * @exception  IOException                Description of the Exception
+     */
+    public org.w3c.dom.Node getDocument()
+        throws HttpPresentationException, java.io.IOException, Exception {
+			
+			getComms().response.setContentType("text/xml");
+			getComms().response.setEncoding("UTF-8");
+
+			
+			String headword = myGetParameter("HEADWORD");
+			String volumeName = myGetParameter("VOLUME");
+			String source = myGetParameter("SOURCE");
+			String direction = myGetParameter("DIRECTION");
+			
+			if (direction != null && direction.equals("up")) {
+				direction = QueryBuilder.LESS_THAN_OR_EQUAL;
+			}
+			else {
+				direction = QueryBuilder.GREATER_THAN_OR_EQUAL;
+			}
+			
+			int offset = 0;
+			int limit = 40;
+			
+			java.util.Vector myKeys = new java.util.Vector();
+			String[] Headword = new String[4];
+			Headword[0] = Volume.CDM_headword;
+			Headword[1] = source;
+			Headword[2] = headword;
+			Headword[3] = direction;
+			myKeys.add(Headword);
+			
+			java.util.Vector resultsVector = null;
+	
+	       if (headword != null && !headword.equals("") &&
+				volumeName != null && !volumeName.equals("")) {
+				resultsVector = VolumeEntriesFactory.getVolumeNameEntriesVector(volumeName,
+																								 myKeys,
+																								 null,
+																								 null,
+																								 offset,
+																								 limit);
+				
+			}
+							            			
+			String allArray = "";
+			for (int i=0; i<resultsVector.size(); i++) {
+				VolumeEntry myEntry = (VolumeEntry) resultsVector.elementAt(i);
+				allArray += myEntry.getHeadword() + "#,#" + myEntry.getHandle() + "#;#" ;
+			}
+			
+			org.w3c.dom.Document myDoc = Utility.buildDOMTree("<?xml version='1.0' encoding='UTF-8' ?><entries>" + allArray + "</entries>");
+			
+            return (org.w3c.dom.Node) myDoc;
+        }
+    
+}
