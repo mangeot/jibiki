@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.8  2006/02/26 14:04:56  mangeot
+ * Corrected a bug: the content was a static variable, thus there were problems when two users wanted to aces the same page at the same time
+ *
  * Revision 1.7  2005/11/01 14:12:02  mangeot
  * *** empty log message ***
  *
@@ -78,7 +81,7 @@ public class ContributorsBoard extends PapillonBasePO {
     protected final static String SORTBY_PARAMETER="SortBy";
 	protected final static String ALL="*ALL*";
     
-    protected static ContributorsBoardTmplXHTML content;
+    protected ContributorsBoardTmplXHTML content;
 
     protected boolean loggedInUserRequired() {
         return true;

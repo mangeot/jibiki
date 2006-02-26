@@ -75,7 +75,7 @@ public class ConsultInformations extends PapillonBasePO {
     /* The any contains is not yet implemented because we need to query informationFile instead of informationDocument */
     protected final static String ANY_CONTAINS_PARAMETER="anycontains";
 
-    ConsultInformationsTmplXHTML content;        
+    protected ConsultInformationsTmplXHTML content;        
 
 
     public ConsultInformations () {

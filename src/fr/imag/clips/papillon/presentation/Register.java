@@ -47,7 +47,7 @@ import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 public class Register extends PapillonBasePO {
 
 
-    protected static RegisterXHTML content;
+    protected RegisterXHTML content;
 
     protected static String REGISTER_PAGE = "ReNuser";
 

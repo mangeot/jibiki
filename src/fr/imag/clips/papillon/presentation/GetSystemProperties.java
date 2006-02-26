@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.5  2006/02/26 14:04:56  mangeot
+ * Corrected a bug: the content was a static variable, thus there were problems when two users wanted to aces the same page at the same time
+ *
  * Revision 1.4  2005/05/24 12:51:22  serasset
  * Updated many aspect of the Papillon project to handle lexalp project.
  * 1. Layout is now parametrable in the application configuration file.
@@ -79,9 +82,7 @@ public class GetSystemProperties extends PapillonBasePO {
     public Node getContent()
     throws HttpPresentationException, IOException, SessionException {
 
-        SystemPropertiesListXHTML content;
-        // Création du contenu
-        content = (SystemPropertiesListXHTML)MultilingualXHtmlTemplateFactory.createTemplate("SystemPropertiesListXHTML", this.getComms(), this.getSessionData());
+        SystemPropertiesListXHTML content = (SystemPropertiesListXHTML)MultilingualXHtmlTemplateFactory.createTemplate("SystemPropertiesListXHTML", this.getComms(), this.getSessionData());
 
         // Enter Session Properties
 		SessionManager mySessionManager = Enhydra.getSessionManager();

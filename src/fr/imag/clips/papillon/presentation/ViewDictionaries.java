@@ -9,6 +9,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.6  2006/02/26 14:04:56  mangeot
+ *  Corrected a bug: the content was a static variable, thus there were problems when two users wanted to aces the same page at the same time
+ *
  *  Revision 1.5  2005/06/15 16:48:28  mangeot
  *  Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
  *
@@ -93,7 +96,7 @@ public class ViewDictionaries extends PapillonBasePO {
     /**
      *  Description of the Field
      */
-    protected static ViewDictionariesXHTML content;
+    protected ViewDictionariesXHTML content;
 
 
     /**

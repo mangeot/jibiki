@@ -9,6 +9,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.9  2006/02/26 14:04:56  mangeot
+ *  Corrected a bug: the content was a static variable, thus there were problems when two users wanted to aces the same page at the same time
+ *
  *  Revision 1.8  2005/12/01 15:34:28  mangeot
  *  MM: I solved the problem of already created tables by creating an sql query for retrieving the table names. If the name already exists, VolumeEntriesFactory.createVolumeTables do not create the tables.
  *  It allows the administrator to delete and reload only the metadata files without dropping the whole data.
@@ -126,12 +129,6 @@ public class AdminDictionaries extends PapillonBasePO {
     protected final static String REMOVE_ALL_PARAMETER = "RemoveAll";
 
     /**
-     *  Description of the Field
-     */
-    protected static AdminDictionariesXHTML content;
-
-
-    /**
      *  Description of the Method
      *
      * @return    Description of the Return Value
@@ -187,7 +184,7 @@ public class AdminDictionaries extends PapillonBasePO {
             IOException, org.xml.sax.SAXException, javax.xml.transform.TransformerException, PapillonBusinessException {
 
         // Création du contenu
-        content = (AdminDictionariesXHTML) MultilingualXHtmlTemplateFactory.createTemplate("AdminDictionariesXHTML", this.getComms(), this.getSessionData());
+        AdminDictionariesXHTML content = (AdminDictionariesXHTML) MultilingualXHtmlTemplateFactory.createTemplate("AdminDictionariesXHTML", this.getComms(), this.getSessionData());
 
         HttpPresentationRequest req = this.getComms().request;
         // If the page is called with parameters, take the requested action
@@ -203,7 +200,7 @@ public class AdminDictionaries extends PapillonBasePO {
                 String handle = req.getParameter(SEE_PARAMETER);
                 Dictionary dict = DictionariesFactory.findDictionaryByID(handle);
                 //adding an XML file
-                addXml(dict.getXmlCode());
+                addXml(content, dict.getXmlCode());
 
             } else if (null != req.getParameter(REMOVE_PARAMETER)) {
                 String handle = req.getParameter(REMOVE_PARAMETER);
@@ -224,7 +221,7 @@ public class AdminDictionaries extends PapillonBasePO {
         }
 
         //adding the content of the dictionaries table
-        addDictionariesArray();
+        addDictionariesArray(content);
 
         //On rend le contenu correct
         return content.getElementFormulaire();
@@ -232,14 +229,14 @@ public class AdminDictionaries extends PapillonBasePO {
 
     protected String handleDictionaryAddition(HttpPresentationRequest req) throws PapillonBusinessException, HttpPresentationException, java.net.MalformedURLException {
         String userMessage;
-        String urlString = req.getParameter(content.NAME_url);
+        String urlString = req.getParameter(AdminDictionariesXHTML.NAME_url);
         URL myURL = new URL(urlString);
         PapillonLogger.writeDebugMsg(myURL.toString());
-		String parseVolumesString = req.getParameter(content.NAME_AddVolumes);
+		String parseVolumesString = req.getParameter(AdminDictionariesXHTML.NAME_AddVolumes);
 		boolean parseVolumes = (parseVolumesString!=null && !parseVolumesString.equals(""));
-		String parseEntriesString = req.getParameter(content.NAME_AddVolumesAndEntries);
+		String parseEntriesString = req.getParameter(AdminDictionariesXHTML.NAME_AddVolumesAndEntries);
 		boolean parseEntries = (parseEntriesString!=null && !parseEntriesString.equals(""));
-		String logContribsString = req.getParameter(content.NAME_LogContributions);
+		String logContribsString = req.getParameter(AdminDictionariesXHTML.NAME_LogContributions);
 		boolean logContribs = (logContribsString!=null && !logContribsString.equals(""));
         
         // Create and Register the transaction
@@ -280,7 +277,7 @@ public class AdminDictionaries extends PapillonBasePO {
      * @exception  fr.imag.clips.papillon.business.PapillonBusinessException
      *      Description of the Exception
      */
-    protected void addXml(String xmlString)
+    protected void addXml(AdminDictionariesXHTML content, String xmlString)
              throws fr.imag.clips.papillon.business.PapillonBusinessException {
 
         Node xmlNode = XslTransformation.applyXslSheetForXml(xmlString);
@@ -303,7 +300,7 @@ public class AdminDictionaries extends PapillonBasePO {
      * @exception  fr.imag.clips.papillon.business.PapillonBusinessException
      *      Description of the Exception
      */
-    protected void addDictionariesArray()
+    protected void addDictionariesArray(AdminDictionariesXHTML content)
              throws fr.imag.clips.papillon.business.PapillonBusinessException {
 
         Dictionary[] DictsTable = DictionariesFactory.getDictionariesArray();

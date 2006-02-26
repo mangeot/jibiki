@@ -9,6 +9,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.5  2006/02/26 14:04:56  mangeot
+ *  Corrected a bug: the content was a static variable, thus there were problems when two users wanted to aces the same page at the same time
+ *
  *  Revision 1.4  2005/06/23 14:05:36  mangeot
  *  Added EDIT_DATA
  *
@@ -71,7 +74,7 @@ import java.text.DateFormat;
  * @created    December 8, 2004
  */
 public class GDEFLayout implements StdLayout {
-    LayoutXHTML layout;
+    protected LayoutXHTML layout;
     
     // Constructeur avec script
     /**

@@ -10,6 +10,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.8  2006/02/26 14:04:56  mangeot
+ * Corrected a bug: the content was a static variable, thus there were problems when two users wanted to aces the same page at the same time
+ *
  * Revision 1.7  2005/11/08 16:40:28  mangeot
  * Small bug fix
  *
@@ -101,7 +104,7 @@ import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
 public class UserProfile extends PapillonBasePO {
    
-   protected static UserProfileXHTML content;
+   protected UserProfileXHTML content;
 
 
     protected boolean loggedInUserRequired() {

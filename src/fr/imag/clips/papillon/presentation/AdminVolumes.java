@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.11  2006/02/26 14:04:56  mangeot
+ * Corrected a bug: the content was a static variable, thus there were problems when two users wanted to aces the same page at the same time
+ *
  * Revision 1.10  2005/12/01 15:34:28  mangeot
  * MM: I solved the problem of already created tables by creating an sql query for retrieving the table names. If the name already exists, VolumeEntriesFactory.createVolumeTables do not create the tables.
  * It allows the administrator to delete and reload only the metadata files without dropping the whole data.
@@ -151,10 +154,6 @@ public class AdminVolumes extends PapillonBasePO {
     protected final static String ADD_PARAMETER="Add";
     protected final static String ADD_ENTRIES_PARAMETER="AddEntries";
 
-    
-    protected static AdminVolumesXHTML content;
-
-
     protected boolean loggedInUserRequired() {
         return true;
     }
@@ -181,26 +180,26 @@ public class AdminVolumes extends PapillonBasePO {
     {
         
         // Création du contenu
-        content = (AdminVolumesXHTML)MultilingualXHtmlTemplateFactory.createTemplate("AdminVolumesXHTML", this.getComms(), this.getSessionData());
+        AdminVolumesXHTML content = (AdminVolumesXHTML)MultilingualXHtmlTemplateFactory.createTemplate("AdminVolumesXHTML", this.getComms(), this.getSessionData());
 		  
         HttpPresentationRequest req = this.getComms().request;
-				String dictName = myGetParameter(content.NAME_Dictionary);
-				String volName = myGetParameter(content.NAME_Volume);
+				String dictName = myGetParameter(AdminVolumesXHTML.NAME_Dictionary);
+				String volName = myGetParameter(AdminVolumesXHTML.NAME_Volume);
         // If the page is called with parameters, take the requested action
         if (req.getParameterNames().hasMoreElements()) {
             //TEMPORAIRE :avec l URL
             //AJOUT DE DICO
             String userMessage = null;
-            String urlString = myGetParameter(content.NAME_URL);
+            String urlString = myGetParameter(AdminVolumesXHTML.NAME_URL);
             if (null != urlString &&
-				null != myGetParameter(content.NAME_Dictionary)) {
+				null != myGetParameter(AdminVolumesXHTML.NAME_Dictionary)) {
                     userMessage = handleVolumeAddition(req);
                 }
-             else if (null != myGetParameter(content.NAME_Volume) &&
-					null != myGetParameter(content.NAME_URLObject) &&
-					null != myGetParameter(content.NAME_Object)) {
-					String object = myGetParameter(content.NAME_Object);
-					String url = myGetParameter(content.NAME_URLObject);
+             else if (null != myGetParameter(AdminVolumesXHTML.NAME_Volume) &&
+					null != myGetParameter(AdminVolumesXHTML.NAME_URLObject) &&
+					null != myGetParameter(AdminVolumesXHTML.NAME_Object)) {
+					String object = myGetParameter(AdminVolumesXHTML.NAME_Object);
+					String url = myGetParameter(AdminVolumesXHTML.NAME_URLObject);
 					userMessage = this.uploadObject(volName, object, url);
             } 
              else if (null != myGetParameter(REMOVE_METADATA_PARAMETER)) {
@@ -220,23 +219,23 @@ public class AdminVolumes extends PapillonBasePO {
                 String handle = myGetParameter(SEE_METADATA_PARAMETER);
                 Volume volume = VolumesFactory.findVolumeByID(handle);
                 //adding an XML file
-                addXml(volume.getXmlCode());
+                addXml(content, volume.getXmlCode());
             }
             else if (null != myGetParameter(SEE_SCHEMA_PARAMETER)) {
                 String handle = myGetParameter(SEE_SCHEMA_PARAMETER);
                 Volume volume = VolumesFactory.findVolumeByID(handle);
                 //adding an XML file
-                addXml(volume.getXmlSchema());
+                addXml(content, volume.getXmlSchema());
             } else if (null != myGetParameter(SEE_TEMPLATE_PARAMETER)) {
                 String handle = myGetParameter(SEE_TEMPLATE_PARAMETER);
                 Volume volume = VolumesFactory.findVolumeByID(handle);
                 //adding an XML file
-                addXml(volume.getTemplateEntry());
+                addXml(content, volume.getTemplateEntry());
             } else if (null != myGetParameter(SEE_INTERFACE_PARAMETER)) {
                 String handle = myGetParameter(SEE_INTERFACE_PARAMETER);
                 Volume volume = VolumesFactory.findVolumeByID(handle);
                 //adding an XML file
-                addXml(volume.getTemplateInterface());
+                addXml(content, volume.getTemplateInterface());
             } else if (null != myGetParameter(GENERATE_INTERFACE_PARAMETER)) {
                 String handle = myGetParameter(GENERATE_INTERFACE_PARAMETER);
                 Volume volume = VolumesFactory.findVolumeByID(handle);
@@ -250,10 +249,10 @@ public class AdminVolumes extends PapillonBasePO {
         }
         
         //adding the consult form
-        addConsultForm(dictName, volName);
+        addConsultForm(content, dictName, volName);
         
         //adding the content of the volumes table
-        addVolumesArray();
+        addVolumesArray(content);
         
         
         //On rend le contenu correct
@@ -262,19 +261,19 @@ public class AdminVolumes extends PapillonBasePO {
     
 	protected String handleVolumeAddition(HttpPresentationRequest req) throws PapillonBusinessException, HttpPresentationException, java.net.MalformedURLException {
         String userMessage;
-        String urlString = req.getParameter(content.NAME_URL);
+        String urlString = req.getParameter(AdminVolumesXHTML.NAME_URL);
         URL myURL = new URL(urlString);
         PapillonLogger.writeDebugMsg(myURL.toString());
-		String logContribsString = req.getParameter(content.NAME_LogContributions);
+		String logContribsString = req.getParameter(AdminVolumesXHTML.NAME_LogContributions);
 		boolean logContribs = (logContribsString!=null && !logContribsString.equals(""));
-		String parseEntriesString = req.getParameter(content.NAME_AddVolumesAndEntries);
+		String parseEntriesString = req.getParameter(AdminVolumesXHTML.NAME_AddVolumesAndEntries);
 		boolean parseEntries = (parseEntriesString!=null && !parseEntriesString.equals(""));
         
         // Create and Register the transaction
         CurrentDBTransaction.registerNewDBTransaction();
 		Volume myVolume = null;
         try {
-			Dictionary dict = DictionariesFactory.findDictionaryByName(req.getParameter(content.NAME_Dictionary));
+			Dictionary dict = DictionariesFactory.findDictionaryByName(req.getParameter(AdminVolumesXHTML.NAME_Dictionary));
 			myVolume = VolumesFactory.parseVolumeMetadata(dict, myURL, parseEntries, logContribs);
 
             if (null != myVolume && !myVolume.isEmpty()) {
@@ -304,7 +303,7 @@ public class AdminVolumes extends PapillonBasePO {
     }
 
 	
-    protected void addVolumesArray() 
+    protected void addVolumesArray(AdminVolumesXHTML content) 
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
             
         Volume[] VolumesTable=VolumesFactory.getVolumesArray();
@@ -392,7 +391,7 @@ public class AdminVolumes extends PapillonBasePO {
         theRowParent.removeChild(theRow);
     }
     
-    protected void addXml(String xmlString) 
+    protected void addXml(AdminVolumesXHTML content, String xmlString) 
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
             
         Node xmlNode = XslTransformation.applyXslSheetForXml(xmlString);    
@@ -406,7 +405,7 @@ public class AdminVolumes extends PapillonBasePO {
         theXmlParent.removeChild(theXml);
     }
     
-     protected void addConsultForm(String selectedDict, String selectedVolume) 
+     protected void addConsultForm(AdminVolumesXHTML content, String selectedDict, String selectedVolume) 
         throws fr.imag.clips.papillon.business.PapillonBusinessException, 
                 HttpPresentationException {
            // Adding the appropriate source languages to the source list

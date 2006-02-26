@@ -9,8 +9,8 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.23  2006/02/21 15:27:49  mangeot
- * *** empty log message ***
+ * Revision 1.24  2006/02/26 14:04:56  mangeot
+ * Corrected a bug: the content was a static variable, thus there were problems when two users wanted to aces the same page at the same time
  *
  * Revision 1.22  2006/02/21 13:37:54  mangeot
  * *** empty log message ***

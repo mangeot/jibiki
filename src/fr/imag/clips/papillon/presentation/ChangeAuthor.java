@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.10  2006/02/26 14:04:56  mangeot
+ * Corrected a bug: the content was a static variable, thus there were problems when two users wanted to aces the same page at the same time
+ *
  * Revision 1.9  2005/11/18 22:40:18  mangeot
  * *** empty log message ***
  *
@@ -119,9 +122,6 @@ public class ChangeAuthor extends PapillonBasePO {
 	protected final static String AND_CONNECTOR = "AND";
     protected final static String OR_CONNECTOR = "OR";
 
-    
-    protected static ChangeAuthorTmplXHTML content;
-
     protected boolean loggedInUserRequired() {
         return true;
     }
@@ -146,47 +146,47 @@ public class ChangeAuthor extends PapillonBasePO {
         PapillonBusinessException {
         
         // Création du contenu
-        content = (ChangeAuthorTmplXHTML)MultilingualXHtmlTemplateFactory.createTemplate("ChangeAuthorTmplXHTML", this.getComms(), this.getSessionData());
+        ChangeAuthorTmplXHTML content = (ChangeAuthorTmplXHTML)MultilingualXHtmlTemplateFactory.createTemplate("ChangeAuthorTmplXHTML", this.getComms(), this.getSessionData());
 
    //     HttpPresentationRequest req = this.getComms().request;
         
 		// decoding the CGI arguments
 		String queryString = "";
 		
-			String lookup = myGetParameter(content.NAME_LOOKUP);
-			String changeAuthor = myGetParameter(content.NAME_ChangeAuthor);
-			String volume = myGetParameter(content.NAME_VOLUME);
-			String newAuthor = myGetParameter(content.NAME_NewAuthor);
+			String lookup = myGetParameter(ChangeAuthorTmplXHTML.NAME_LOOKUP);
+			String changeAuthor = myGetParameter(ChangeAuthorTmplXHTML.NAME_ChangeAuthor);
+			String volume = myGetParameter(ChangeAuthorTmplXHTML.NAME_VOLUME);
+			String newAuthor = myGetParameter(ChangeAuthorTmplXHTML.NAME_NewAuthor);
 						
 			if (volume!=null &&!volume.equals("")) {
-				this.setPreference(content.NAME_VOLUME,volume);
+				this.setPreference(ChangeAuthorTmplXHTML.NAME_VOLUME,volume);
 			}
 			else {
-				volume = this.getPreference(content.NAME_VOLUME);
+				volume = this.getPreference(ChangeAuthorTmplXHTML.NAME_VOLUME);
 			}
 			
 			if (volume!=null && !volume.equals("")) {
-				queryString += "&" + content.NAME_VOLUME + "=" + volume;
+				queryString += "&" + ChangeAuthorTmplXHTML.NAME_VOLUME + "=" + volume;
 			}
 			
 			//author
-			String author = myGetParameter(content.NAME_AUTHOR);
+			String author = myGetParameter(ChangeAuthorTmplXHTML.NAME_AUTHOR);
 			if (lookup !=null && !lookup.equals("")) {
-				this.setPreference(content.NAME_AUTHOR,author);
+				this.setPreference(ChangeAuthorTmplXHTML.NAME_AUTHOR,author);
 			}
 			else {
-				author = this.getPreference(content.NAME_AUTHOR);
+				author = this.getPreference(ChangeAuthorTmplXHTML.NAME_AUTHOR);
 			}
 			if (author !=null && !author.equals("")) {
-				queryString += "&" + content.NAME_AUTHOR + "=" + author;
+				queryString += "&" + ChangeAuthorTmplXHTML.NAME_AUTHOR + "=" + author;
 			}
 
 			// Strategy author
-			String strategyAuthorString = myGetParameter(content.NAME_StrategyAuthor);
+			String strategyAuthorString = myGetParameter(ChangeAuthorTmplXHTML.NAME_StrategyAuthor);
 			if (strategyAuthorString != null && !strategyAuthorString.equals("")) {
-				this.setPreference(content.NAME_StrategyAuthor, strategyAuthorString);
+				this.setPreference(ChangeAuthorTmplXHTML.NAME_StrategyAuthor, strategyAuthorString);
 			} else {
-				strategyAuthorString = this.getPreference(content.NAME_StrategyAuthor);
+				strategyAuthorString = this.getPreference(ChangeAuthorTmplXHTML.NAME_StrategyAuthor);
 			}
 			int strategyAuthor = IQuery.STRATEGY_NONE;
 			if (null != strategyAuthorString && !strategyAuthorString.equals("")) {
@@ -195,93 +195,93 @@ public class ChangeAuthor extends PapillonBasePO {
 			
 			
 			// reviewer
-			String reviewer = myGetParameter(content.NAME_REVIEWER);
+			String reviewer = myGetParameter(ChangeAuthorTmplXHTML.NAME_REVIEWER);
 			if (lookup !=null && !lookup.equals("")) {
-				this.setPreference(content.NAME_REVIEWER,reviewer);
+				this.setPreference(ChangeAuthorTmplXHTML.NAME_REVIEWER,reviewer);
 			}
 			else {
-				reviewer =  this.getPreference(content.NAME_REVIEWER);
+				reviewer =  this.getPreference(ChangeAuthorTmplXHTML.NAME_REVIEWER);
 			}
 			if (reviewer !=null && !reviewer.equals("")) {
-				queryString += "&" + content.NAME_REVIEWER + "=" + reviewer;
+				queryString += "&" + ChangeAuthorTmplXHTML.NAME_REVIEWER + "=" + reviewer;
 			}
 
 			// CreationDate
-			String creationDate = myGetParameter(content.NAME_CreationDate);
+			String creationDate = myGetParameter(ChangeAuthorTmplXHTML.NAME_CreationDate);
 			if (lookup !=null && !lookup.equals("")) {
-				this.setPreference(content.NAME_CreationDate, creationDate);
+				this.setPreference(ChangeAuthorTmplXHTML.NAME_CreationDate, creationDate);
 			} else {
-				creationDate = this.getPreference(content.NAME_CreationDate);
+				creationDate = this.getPreference(ChangeAuthorTmplXHTML.NAME_CreationDate);
 			}
 			if (creationDate !=null && !creationDate.equals("")) {
-				queryString += "&" + content.NAME_CreationDate + "=" + creationDate;
+				queryString += "&" + ChangeAuthorTmplXHTML.NAME_CreationDate + "=" + creationDate;
 			}
-			String creationDateStrategyString = myGetParameter(content.NAME_StrategyCreationDate);
+			String creationDateStrategyString = myGetParameter(ChangeAuthorTmplXHTML.NAME_StrategyCreationDate);
 			if (creationDateStrategyString != null && !creationDateStrategyString.equals("")) {
-				this.setPreference(content.NAME_StrategyCreationDate, creationDateStrategyString);
+				this.setPreference(ChangeAuthorTmplXHTML.NAME_StrategyCreationDate, creationDateStrategyString);
 			} else {
-				creationDateStrategyString = this.getPreference(content.NAME_StrategyCreationDate);
+				creationDateStrategyString = this.getPreference(ChangeAuthorTmplXHTML.NAME_StrategyCreationDate);
 			}
 			int creationDateStrategy = IQuery.STRATEGY_NONE;
 			if (null != creationDateStrategyString && !creationDateStrategyString.equals("")) {
 				creationDateStrategy = Integer.parseInt(creationDateStrategyString);
 			}
 			if (creationDateStrategyString !=null && !creationDateStrategyString.equals("")) {
-				queryString += "&" + content.NAME_StrategyCreationDate + "=" + creationDateStrategyString;
+				queryString += "&" + ChangeAuthorTmplXHTML.NAME_StrategyCreationDate + "=" + creationDateStrategyString;
 			}
 			
 			// ReviewDate
-			String reviewDate = myGetParameter(content.NAME_ReviewDate);
+			String reviewDate = myGetParameter(ChangeAuthorTmplXHTML.NAME_ReviewDate);
 			if (lookup !=null && !lookup.equals("")) {
-				this.setPreference(content.NAME_ReviewDate, reviewDate);
+				this.setPreference(ChangeAuthorTmplXHTML.NAME_ReviewDate, reviewDate);
 			} else {
-				reviewDate = this.getPreference(content.NAME_ReviewDate);
+				reviewDate = this.getPreference(ChangeAuthorTmplXHTML.NAME_ReviewDate);
 			}
 			if (reviewDate !=null && !reviewDate.equals("")) {
-				queryString += "&" + content.NAME_ReviewDate + "=" + reviewDate;
+				queryString += "&" + ChangeAuthorTmplXHTML.NAME_ReviewDate + "=" + reviewDate;
 			}
-			String reviewDateStrategyString = myGetParameter(content.NAME_StrategyReviewDate);
+			String reviewDateStrategyString = myGetParameter(ChangeAuthorTmplXHTML.NAME_StrategyReviewDate);
 			if (reviewDateStrategyString != null && !reviewDateStrategyString.equals("")) {
-				this.setPreference(content.NAME_StrategyReviewDate, reviewDateStrategyString);
+				this.setPreference(ChangeAuthorTmplXHTML.NAME_StrategyReviewDate, reviewDateStrategyString);
 			} else {
-				reviewDateStrategyString = this.getPreference(content.NAME_StrategyReviewDate);
+				reviewDateStrategyString = this.getPreference(ChangeAuthorTmplXHTML.NAME_StrategyReviewDate);
 			}
 			int reviewDateStrategy = IQuery.STRATEGY_NONE;
 			if (null != reviewDateStrategyString && !reviewDateStrategyString.equals("")) {
 				reviewDateStrategy = Integer.parseInt(reviewDateStrategyString);
 			}
 			if (reviewDateStrategyString !=null && !reviewDateStrategyString.equals("")) {
-				queryString += "&" + content.NAME_StrategyReviewDate + "=" + reviewDateStrategyString;
+				queryString += "&" + ChangeAuthorTmplXHTML.NAME_StrategyReviewDate + "=" + reviewDateStrategyString;
 			}
 			
 			// search1
-			String search1 = myGetParameter(content.NAME_search1);
+			String search1 = myGetParameter(ChangeAuthorTmplXHTML.NAME_search1);
 			if (search1 != null && !search1.equals("")) {
-				this.setPreference(content.NAME_search1, search1);
+				this.setPreference(ChangeAuthorTmplXHTML.NAME_search1, search1);
 			} else {
-				search1 = this.getPreference(content.NAME_search1);
+				search1 = this.getPreference(ChangeAuthorTmplXHTML.NAME_search1);
 			}
 			if (search1 !=null && !search1.equals("")) {
-				queryString += "&" + content.NAME_search1 + "=" + search1;
+				queryString += "&" + ChangeAuthorTmplXHTML.NAME_search1 + "=" + search1;
 			}
-			String search1text = myGetParameter(content.NAME_search1text);
+			String search1text = myGetParameter(ChangeAuthorTmplXHTML.NAME_search1text);
 			if (search1text !=null && !search1text.equals("")) {
-				queryString += "&" + content.NAME_search1text + "=" + search1text;
+				queryString += "&" + ChangeAuthorTmplXHTML.NAME_search1text + "=" + search1text;
 			}
 			
 			// search2
-			String search2 = myGetParameter(content.NAME_search2);
+			String search2 = myGetParameter(ChangeAuthorTmplXHTML.NAME_search2);
 			if (search2 != null && !search2.equals("")) {
-				this.setPreference(content.NAME_search2, search2);
+				this.setPreference(ChangeAuthorTmplXHTML.NAME_search2, search2);
 			} else {
-				search2 = this.getPreference(content.NAME_search2);
+				search2 = this.getPreference(ChangeAuthorTmplXHTML.NAME_search2);
 			}
 			if (search2 !=null && !search2.equals("")) {
-				queryString += "&" + content.NAME_search2 + "=" + search2;
+				queryString += "&" + ChangeAuthorTmplXHTML.NAME_search2 + "=" + search2;
 			}
-			String search2text = myGetParameter(content.NAME_search2text);
+			String search2text = myGetParameter(ChangeAuthorTmplXHTML.NAME_search2text);
 			if (search2text !=null && !search2text.equals("")) {
-				queryString += "&" + content.NAME_search2text + "=" + search2text;
+				queryString += "&" + ChangeAuthorTmplXHTML.NAME_search2text + "=" + search2text;
 			}
 			
 			String anyContains = null;
@@ -300,32 +300,32 @@ public class ChangeAuthor extends PapillonBasePO {
 			}
 			
 			// strategy1
-			String strategyString1 = myGetParameter(content.NAME_Strategy1);
+			String strategyString1 = myGetParameter(ChangeAuthorTmplXHTML.NAME_Strategy1);
 			if (strategyString1 != null && !strategyString1.equals("")) {
-				this.setPreference(content.NAME_Strategy1, strategyString1);
+				this.setPreference(ChangeAuthorTmplXHTML.NAME_Strategy1, strategyString1);
 			} else {
-				strategyString1 = this.getPreference(content.NAME_Strategy1);
+				strategyString1 = this.getPreference(ChangeAuthorTmplXHTML.NAME_Strategy1);
 			}
 			int strategy1 = IQuery.STRATEGY_NONE;
 			if (null != strategyString1 && !strategyString1.equals("")) {
 				strategy1 = Integer.parseInt(strategyString1);
 			}
 			if (strategyString1 !=null && !strategyString1.equals("")) {
-				queryString += "&" + content.NAME_Strategy1 + "=" + strategyString1;
+				queryString += "&" + ChangeAuthorTmplXHTML.NAME_Strategy1 + "=" + strategyString1;
 			}
 			
-			String strategyString2 = myGetParameter(content.NAME_Strategy2);
+			String strategyString2 = myGetParameter(ChangeAuthorTmplXHTML.NAME_Strategy2);
 			if (strategyString2 != null && !strategyString2.equals("")) {
-				this.setPreference(content.NAME_Strategy2, strategyString2);
+				this.setPreference(ChangeAuthorTmplXHTML.NAME_Strategy2, strategyString2);
 			} else {
-				strategyString2 = this.getPreference(content.NAME_Strategy2);
+				strategyString2 = this.getPreference(ChangeAuthorTmplXHTML.NAME_Strategy2);
 			}
 			int strategy2 = IQuery.STRATEGY_NONE;
 			if (null != strategyString2 && !strategyString2.equals("")) {
 				strategy2 = Integer.parseInt(strategyString2);
 			}
 			if (strategyString2 !=null && !strategyString2.equals("")) {
-				queryString += "&" + content.NAME_Strategy2 + "=" + strategyString2;
+				queryString += "&" + ChangeAuthorTmplXHTML.NAME_Strategy2 + "=" + strategyString2;
 			}
 						
 			int offset = 0;
@@ -336,15 +336,15 @@ public class ChangeAuthor extends PapillonBasePO {
 			queryString += "&" + OFFSET_PARAMETER + "=" + offset;
 			
 			// status
-			String status = myGetParameter(content.NAME_STATUS);
+			String status = myGetParameter(ChangeAuthorTmplXHTML.NAME_STATUS);
 			if (lookup!=null &&!lookup.equals("")) {
-				this.setPreference(content.NAME_STATUS,status);
+				this.setPreference(ChangeAuthorTmplXHTML.NAME_STATUS,status);
 			}
 			else {
-				status =  this.getPreference(content.NAME_STATUS);
+				status =  this.getPreference(ChangeAuthorTmplXHTML.NAME_STATUS);
 			}
 			if (status !=null && !status.equals("")) {
-				queryString += "&" + content.NAME_STATUS + "=" + status;
+				queryString += "&" + ChangeAuthorTmplXHTML.NAME_STATUS + "=" + status;
 			}
 			if (status != null && status.equals(ALL)) {
 				status = null;
@@ -462,9 +462,9 @@ public class ChangeAuthor extends PapillonBasePO {
 			case STEP_DEFAULT:
 				break;
 			case STEP_LOOKUP:
-				int count = addContributionsCount(myVolume, myKeys1, clausesVector);
+				int count = addContributionsCount(content, myVolume, myKeys1, clausesVector);
 				if (count <DictionariesFactory.MaxRetrievedEntries) {
-					addEntries(myVolume, myKeys1, clausesVector);
+					addEntries(content, myVolume, myKeys1, clausesVector);
 				} 
 				break;
 			case STEP_CHANGE_AUTHOR:
@@ -480,18 +480,19 @@ public class ChangeAuthor extends PapillonBasePO {
                 PapillonLogger.writeDebugMsg(userMessage);
             }
            
-        addConsultForm(volume, status, author, reviewer, 
+        addConsultForm(content,volume, status, author, reviewer, 
 			creationDate, creationDateStrategyString, 
 			reviewDate, reviewDateStrategyString, 
 			search1, search1text, strategyString1, 
 			search2, search2text, strategyString2);
         
-		removeTemplateRows();
+		removeTemplateRows(content);
 
         //On rend le contenu correct
         return content.getElementFormulaire();
     }
-        protected void addConsultForm(String volume, String status, String author, String reviewer, 
+        protected void addConsultForm(ChangeAuthorTmplXHTML content,
+			String volume, String status, String author, String reviewer, 
 			String creationDate, String creationDateStrategyString, 
 			String reviewDate, String reviewDateStrategyString, 
 			String search1, String search1text, String strategyString1, 
@@ -594,21 +595,21 @@ public class ChangeAuthor extends PapillonBasePO {
 
     }
 	
-    protected int addContributionsCount(Volume myVolume, Vector Keys1, Vector clausesVector)
+    protected int addContributionsCount(ChangeAuthorTmplXHTML content, Volume myVolume, Vector Keys1, Vector clausesVector)
         throws PapillonBusinessException {
 			int count = VolumeEntriesFactory.getDbTableEntriesCount(myVolume, Keys1, clausesVector, null);
 			content.setTextContributionsCount("" + count);
 			return count;
 		}
 	
-    protected void addEntries(Volume myVolume, Vector Keys1, Vector clausesVector)
+    protected void addEntries(ChangeAuthorTmplXHTML content, Volume myVolume, Vector Keys1, Vector clausesVector)
         throws PapillonBusinessException,java.io.UnsupportedEncodingException {
             // FIXME: fix the limit parameter
 			Vector entriesVector = VolumeEntriesFactory.getVolumeNameEntriesVector(myVolume.getName(), Keys1, clausesVector, null,0, 0);
-			addEntryTable(entriesVector);
+			addEntryTable(content, entriesVector);
 		}
 	
-	protected void addEntryTable (Vector ContribVector)
+	protected void addEntryTable (ChangeAuthorTmplXHTML content, Vector ContribVector)
         throws PapillonBusinessException,
         java.io.UnsupportedEncodingException {
 			
@@ -681,7 +682,7 @@ public class ChangeAuthor extends PapillonBasePO {
 			}
         }
 	
-	protected void removeTemplateRows() {
+	protected void removeTemplateRows(ChangeAuthorTmplXHTML content) {
         // EntryListRow
         Element entryListRow = content.getElementEntryListRow();
         Node entryListRowParent = entryListRow.getParentNode();

@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.29  2006/02/26 14:04:56  mangeot
+ * Corrected a bug: the content was a static variable, thus there were problems when two users wanted to aces the same page at the same time
+ *
  * Revision 1.28  2006/02/24 22:59:48  mangeot
  * *** empty log message ***
  *
@@ -228,9 +231,7 @@ public class AdminContributions extends PapillonBasePO {
 	protected final static String LOOKUP_PARAMETER = AdminContributionsTmplXHTML.NAME_LOOKUP;
 	protected final static String HANDLE_PARAMETER = "HANDLE";
     protected final static String SORTBY_PARAMETER = "SortBy";
-    
-    protected static AdminContributionsTmplXHTML content;
-	
+    	
     protected boolean loggedInUserRequired() {
         return true;
     }
@@ -255,7 +256,7 @@ public class AdminContributions extends PapillonBasePO {
         PapillonBusinessException {
 			
 			// Création du contenu
-			content = (AdminContributionsTmplXHTML)MultilingualXHtmlTemplateFactory.createTemplate("AdminContributionsTmplXHTML", this.getComms(), this.getSessionData());
+			AdminContributionsTmplXHTML content = (AdminContributionsTmplXHTML)MultilingualXHtmlTemplateFactory.createTemplate("AdminContributionsTmplXHTML", this.getComms(), this.getSessionData());
 			
 			HttpPresentationRequest req = this.getComms().request;
 						
@@ -513,15 +514,15 @@ public class AdminContributions extends PapillonBasePO {
 			String userMessage = null;
 			switch (step) {
 				case STEP_DEFAULT:
-					addConsultForm(volumeString, creationDate, creationDateStrategyString, reviewDate, reviewDateStrategyString, search1, search1text, strategyString1, search2, search2text, strategyString2, status);
+					addConsultForm(content, volumeString, creationDate, creationDateStrategyString, reviewDate, reviewDateStrategyString, search1, search1text, strategyString1, search2, search2text, strategyString2, status);
 					break;
 				case STEP_LOOKUP:
-					addContributions(volumeString, this.getUser(), myKeys, myClauses, anyContains, offset, sortBy, queryString);
-					addConsultForm(volumeString, creationDate, creationDateStrategyString, reviewDate, reviewDateStrategyString, search1, search1text, strategyString1, search2, search2text, strategyString2, status);
+					addContributions(content, volumeString, this.getUser(), myKeys, myClauses, anyContains, offset, sortBy, queryString);
+					addConsultForm(content, volumeString, creationDate, creationDateStrategyString, reviewDate, reviewDateStrategyString, search1, search1text, strategyString1, search2, search2text, strategyString2, status);
 					break;
 				case STEP_VIEW:
-					addContribution(volumeString, entryid, formatter, queryString);
-					addConsultForm(volumeString, creationDate, creationDateStrategyString, reviewDate, reviewDateStrategyString, search1, search1text, strategyString1, search2, search2text, strategyString2, status);
+					addContribution(content, volumeString, entryid, formatter, queryString);
+					addConsultForm(content, volumeString, creationDate, creationDateStrategyString, reviewDate, reviewDateStrategyString, search1, search1text, strategyString1, search2, search2text, strategyString2, status);
 					break;
 				case STEP_MARK_FINISHED:
 					if (entryid !=null && !entryid.equals("")) {
@@ -533,8 +534,8 @@ public class AdminContributions extends PapillonBasePO {
 								myContrib.getHeadword() + " finished";
 						}
 					}
-					addContributions(volumeString, this.getUser(), myKeys, myClauses, anyContains, offset, sortBy, queryString);
-					addConsultForm(volumeString, creationDate, creationDateStrategyString, reviewDate, reviewDateStrategyString, search1, search1text, strategyString1, search2, search2text, strategyString2, status);
+					addContributions(content, volumeString, this.getUser(), myKeys, myClauses, anyContains, offset, sortBy, queryString);
+					addConsultForm(content, volumeString, creationDate, creationDateStrategyString, reviewDate, reviewDateStrategyString, search1, search1text, strategyString1, search2, search2text, strategyString2, status);
 					break;
 				case STEP_REMOVE:
 					VolumeEntry myContrib = VolumeEntriesFactory.findEntryByHandle(volumeString, entryid);
@@ -544,12 +545,12 @@ public class AdminContributions extends PapillonBasePO {
 						userMessage = "Contribution " +  myContrib.getHandle() + " / " +
 							myContrib.getHeadword() + " removed...";
 					}
-					addContributions(volumeString, this.getUser(), myKeys, myClauses, anyContains, offset, sortBy, queryString);
-					addConsultForm(volumeString, creationDate, creationDateStrategyString, reviewDate, reviewDateStrategyString, search1, search1text, strategyString1, search2, search2text, strategyString2, status);
+					addContributions(content, volumeString, this.getUser(), myKeys, myClauses, anyContains, offset, sortBy, queryString);
+					addConsultForm(content, volumeString, creationDate, creationDateStrategyString, reviewDate, reviewDateStrategyString, search1, search1text, strategyString1, search2, search2text, strategyString2, status);
 					break;
 				case STEP_RESET:
 					this.resetPreferences();
-					addConsultForm(null, null, null, null, null, null, null, null, null, null, null, null);
+					addConsultForm(content, null, null, null, null, null, null, null, null, null, null, null, null);
 					break;
 				default:
 					break;
@@ -559,13 +560,14 @@ public class AdminContributions extends PapillonBasePO {
 				this.getSessionData().writeUserMessage(userMessage);
 				PapillonLogger.writeDebugMsg(userMessage);
 			}
-			removeTemplateRows();
+			removeTemplateRows(content);
 			
 			//On rend le contenu correct
 			return content.getElementFormulaire();
 		}
 	
-	protected void addConsultForm(String volume, 
+	protected void addConsultForm(AdminContributionsTmplXHTML content,
+								  String volume, 
 								  String creationDate, String creationDateStrategyString,
 								  String reviewDate, String reviewDateStrategyString,
 								  String search1, String search1text, 
@@ -660,16 +662,18 @@ public class AdminContributions extends PapillonBasePO {
 			
 		}
 	
-	protected void addContribution(String volumeString, String entryHandle, String formatter, String queryString) 
+	protected void addContribution(AdminContributionsTmplXHTML content, 
+								   String volumeString, String entryHandle, 
+								   String formatter, String queryString) 
 		throws PapillonBusinessException,
 		java.io.UnsupportedEncodingException,
 		HttpPresentationException,
 		java.io.IOException {
-		java.util.Collection ContribCollection = displayEntry(volumeString, entryHandle, formatter);
-		addEntryTable(ContribCollection, queryString);
+		java.util.Collection ContribCollection = displayEntry(content, volumeString, entryHandle, formatter);
+		addEntryTable(content, ContribCollection, queryString);
 	}
 	
-    protected void addContributions(String volumeString, User myUser, Vector Keys1, Vector Keys2, String anyContains, int offset, String sortBy, String queryString)
+    protected void addContributions(AdminContributionsTmplXHTML content, String volumeString, User myUser, Vector Keys1, Vector Keys2, String anyContains, int offset, String sortBy, String queryString)
         throws PapillonBusinessException,
         ClassNotFoundException,
         HttpPresentationException,
@@ -686,12 +690,12 @@ public class AdminContributions extends PapillonBasePO {
 				if (sortBy !=null && !sortBy.equals("")) {
 					VolumeEntriesFactory.sort(ContribVector, sortBy);
 				}
-				addEntryTable((java.util.Collection) ContribVector, queryString);
+				addEntryTable(content, (java.util.Collection) ContribVector, queryString);
 				if (ContribVector.size() < MaxDisplayedEntries) {
 					for(int i = 0; i < ContribVector.size(); i++) {
 						IAnswer myAnswer = (IAnswer)ContribVector.get(i);
 						if (myAnswer!=null && !myAnswer.isEmpty()) {
-							addElement(XslTransformation.applyXslSheets(myAnswer, null));
+							addElement(content, XslTransformation.applyXslSheets(myAnswer, null));
 						}
 					}
 				}
@@ -699,7 +703,7 @@ public class AdminContributions extends PapillonBasePO {
 		}
     
 	
-    protected void addEntryTable (java.util.Collection ContribCollection, String queryString)
+    protected void addEntryTable (AdminContributionsTmplXHTML content, java.util.Collection ContribCollection, String queryString)
         throws PapillonBusinessException,
         java.io.UnsupportedEncodingException {
 			
@@ -833,7 +837,7 @@ public class AdminContributions extends PapillonBasePO {
 			}
         }
 	
-    protected void addElement (Element element)
+    protected void addElement (AdminContributionsTmplXHTML content, Element element)
         throws HttpPresentationException,
         PapillonBusinessException,
         java.io.IOException {
@@ -856,7 +860,7 @@ public class AdminContributions extends PapillonBasePO {
             //entryTable.removeChild(entryRow);
         }
 	
-	protected java.util.Collection displayEntry (String volumeName, String handle, String formatter)
+	protected java.util.Collection displayEntry (AdminContributionsTmplXHTML content, String volumeName, String handle, String formatter)
 		throws PapillonBusinessException,
 		java.io.UnsupportedEncodingException,
 		HttpPresentationException,
@@ -879,14 +883,14 @@ public class AdminContributions extends PapillonBasePO {
 				
 				Element myXhtmlElt = (Element)rf.getFormattedResult(myQueryResult);
 				
-				addElement(myXhtmlElt);
+				addElement(content, myXhtmlElt);
 			}
 			return (java.util.Collection) myVector;
 		}
 	
     
     
-    protected void removeTemplateRows() {
+    protected void removeTemplateRows(AdminContributionsTmplXHTML content) {
         // EntryListRow
         Element entryListRow = content.getElementEntryListRow();
         Node entryListRowParent = entryListRow.getParentNode();

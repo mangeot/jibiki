@@ -9,8 +9,8 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.26  2006/02/21 13:37:54  mangeot
- * *** empty log message ***
+ * Revision 1.27  2006/02/26 14:04:56  mangeot
+ * Corrected a bug: the content was a static variable, thus there were problems when two users wanted to aces the same page at the same time
  *
  * Revision 1.23  2005/09/08 15:04:25  mangeot
  * *** empty log message ***
@@ -228,8 +228,6 @@ public class ReviewContributions extends PapillonBasePO {
 	protected final static int STEP_VALIDATE = 6;
 	protected final static int STEP_REMOVE_VALIDATED = 7;
 	protected final static int STEP_RESET = 8;
-
-	protected static ReviewContributionsTmplXHTML content;
 	
 	protected final static String ALL="*ALL*";
 	protected final static String EditURL="EditEntry.po";
@@ -245,7 +243,7 @@ public class ReviewContributions extends PapillonBasePO {
 	protected final static String REVISE_CONTRIB_PARAMETER="ReviseContrib";
 	protected final static String VALIDATE_CONTRIB_PARAMETER="ValidateContrib";
 	protected final static String HANDLE_PARAMETER=AdminContributions.HANDLE_PARAMETER;
-	protected final static String VOLUME_PARAMETER=content.NAME_VOLUME;
+	protected final static String VOLUME_PARAMETER=ReviewContributionsTmplXHTML.NAME_VOLUME;
     protected final static String FORMATTER_PARAMETER="formatter";
     protected final static String SORTBY_PARAMETER="SortBy";
 	
@@ -273,7 +271,7 @@ public class ReviewContributions extends PapillonBasePO {
         PapillonBusinessException {
         
         // Création du contenu
-        content = (ReviewContributionsTmplXHTML)MultilingualXHtmlTemplateFactory.createTemplate("ReviewContributionsTmplXHTML", this.getComms(), this.getSessionData());
+        ReviewContributionsTmplXHTML content = (ReviewContributionsTmplXHTML)MultilingualXHtmlTemplateFactory.createTemplate("ReviewContributionsTmplXHTML", this.getComms(), this.getSessionData());
 
         HttpPresentationRequest req = this.getComms().request;
         
@@ -577,10 +575,10 @@ public class ReviewContributions extends PapillonBasePO {
 				//addContributions(volume, author, headword, strategy, sortBy, queryString, offset);
 				break;
 			case STEP_LOOKUP:
-				addContributions(volume, myKeys, myClauses, sortBy, queryString, offset);
+				addContributions(content, volume, myKeys, myClauses, sortBy, queryString, offset);
 				break;
 			case STEP_VIEW:
-				addContribution(volume, contribid, formatter, queryString);
+				addContribution(content, volume, contribid, formatter, queryString);
 				break;
 			case STEP_REMOVE:
 				if (contribid !=null && !contribid.equals("")) {
@@ -591,7 +589,7 @@ public class ReviewContributions extends PapillonBasePO {
 						myContrib.delete();
 					}
 				}
-				addContributions(volume, myKeys, myClauses, sortBy, queryString, offset);
+				addContributions(content, volume, myKeys, myClauses, sortBy, queryString, offset);
 				break;
 			case STEP_REMOVE_VALIDATED:
 				if (contribid !=null && !contribid.equals("") &&
@@ -606,7 +604,7 @@ public class ReviewContributions extends PapillonBasePO {
 						PapillonLogger.writeDebugMsg("Remove null contrib!");	
 					}
 				}
-				addContributions(volume, myKeys, myClauses, sortBy, queryString, offset);
+				addContributions(content, volume, myKeys, myClauses, sortBy, queryString, offset);
 				break;
 			case STEP_REVISE:
 				if (contribid !=null && !contribid.equals("") && this.getUser().isSpecialist()) {
@@ -617,7 +615,7 @@ public class ReviewContributions extends PapillonBasePO {
 						myContrib.getHeadword() + " reviewed";
 					}
 				}
-				addContributions(volume, myKeys, myClauses, sortBy, queryString, offset);
+				addContributions(content, volume, myKeys, myClauses, sortBy, queryString, offset);
 				break;
 			case STEP_VALIDATE:
 				if (contribid !=null && !contribid.equals("") && this.getUser().isValidator()) {
@@ -637,7 +635,7 @@ public class ReviewContributions extends PapillonBasePO {
 						}
 					}
 				}
-				addContributions(volume, myKeys, myClauses, sortBy, queryString, offset);
+				addContributions(content, volume, myKeys, myClauses, sortBy, queryString, offset);
 				break;
 			case STEP_RESET:
 				this.resetPreferences();
@@ -651,26 +649,27 @@ public class ReviewContributions extends PapillonBasePO {
                 PapillonLogger.writeDebugMsg(userMessage);
             }
 		if (step != STEP_RESET) {
-			addConsultForm(volume, status, author, reviewer, 
+			addConsultForm(content, volume, status, author, reviewer, 
 						   creationDate, creationDateStrategyString, 
 						   reviewDate, reviewDateStrategyString, 
 						   search1, search1text, strategyString1, 
 						   search2, search2text, strategyString2);
 		}
 		else {
-			addConsultForm(null, null, null, null, 
+			addConsultForm(content, null, null, null, null, 
 						   null, null, 
 						   null, null, 
 						   null, null, null, 
 						   null, null, null);
 		}
 
-        removeTemplateRows();
+        removeTemplateRows(content);
         
         //On rend le contenu correct
         return content.getElementFormulaire();
     }
-        protected void addConsultForm(String volume, String status, String author, String reviewer, 
+        protected void addConsultForm(ReviewContributionsTmplXHTML content, 
+			String volume, String status, String author, String reviewer, 
 			String creationDate, String creationDateStrategyString, 
 			String reviewDate, String reviewDateStrategyString, 
 			String search1, String search1text, String strategyString1, 
@@ -772,16 +771,16 @@ public class ReviewContributions extends PapillonBasePO {
 			this.setSelected(statusSelect,status);
     }
 
-	protected void addContribution(String volumeString, String entryHandle, String formatter, String queryString) 
+	protected void addContribution(ReviewContributionsTmplXHTML content, String volumeString, String entryHandle, String formatter, String queryString) 
 		throws PapillonBusinessException,
 		java.io.UnsupportedEncodingException,
 		HttpPresentationException,
 		java.io.IOException {
-			java.util.Collection ContribCollection = displayEntry(volumeString, entryHandle, formatter);
-			addEntryTable(ContribCollection, queryString, 0);
+			java.util.Collection ContribCollection = displayEntry(content, volumeString, entryHandle, formatter);
+			addEntryTable(content, ContribCollection, queryString, 0);
 	}
 	
-    protected void addContributions(String volume, Vector Keys1, Vector Keys2, String sortBy, String queryString, int offset)
+    protected void addContributions(ReviewContributionsTmplXHTML content, String volume, Vector Keys1, Vector Keys2, String sortBy, String queryString, int offset)
         throws PapillonBusinessException,
         ClassNotFoundException,
         HttpPresentationException,
@@ -797,10 +796,10 @@ public class ReviewContributions extends PapillonBasePO {
 					VolumeEntriesFactory.sort(ContribVector, sortBy);
 				}
 			}
-			addContributions(ContribVector, queryString, offset);
+			addContributions(content, ContribVector, queryString, offset);
 		}
 
-	protected void addContributions(Collection EntryCollection, String queryString, int offset)
+	protected void addContributions(ReviewContributionsTmplXHTML content, Collection EntryCollection, String queryString, int offset)
 		throws PapillonBusinessException,
 		ClassNotFoundException,
 		HttpPresentationException,
@@ -813,17 +812,17 @@ public class ReviewContributions extends PapillonBasePO {
 		// If there are too much entries ie > MaxDisplayedEntries,
         // we display a table of entries instead of the entries
 			if (null != EntryCollection && EntryCollection.size()>0) {
-				addEntryTable(EntryCollection, queryString, offset);
+				addEntryTable(content, EntryCollection, queryString, offset);
 				if (EntryCollection.size() < MaxDisplayedEntries) {
 					for(Iterator entriesIterator = EntryCollection.iterator(); entriesIterator.hasNext();) {
 						IAnswer myAnswer = (VolumeEntry)entriesIterator.next();
-						addElement(XslTransformation.applyXslSheets(myAnswer));
+						addElement(content, XslTransformation.applyXslSheets(myAnswer));
 					}
 				}
 			}
 		}
    
-	protected java.util.Collection displayEntry (String volumeName, String handle, String formatter)
+	protected java.util.Collection displayEntry (ReviewContributionsTmplXHTML content, String volumeName, String handle, String formatter)
 		throws PapillonBusinessException,
 		java.io.UnsupportedEncodingException,
 		HttpPresentationException,
@@ -846,13 +845,13 @@ public class ReviewContributions extends PapillonBasePO {
 				
 				
 				Element myXhtmlElt = (Element)rf.getFormattedResult(myQueryResult);
-				addElement(myXhtmlElt);
+				addElement(content, myXhtmlElt);
 			}
 			return (java.util.Collection) myVector;
 		}
 	
 
-    protected void addEntryTable (Collection EntryCollection, String queryString, int offset)
+    protected void addEntryTable (ReviewContributionsTmplXHTML content, Collection EntryCollection, String queryString, int offset)
         throws PapillonBusinessException,
         java.io.UnsupportedEncodingException {
 
@@ -1012,7 +1011,7 @@ public class ReviewContributions extends PapillonBasePO {
                 }
             }
 
-    protected void addElement (Element element)
+    protected void addElement (ReviewContributionsTmplXHTML content, Element element)
         throws HttpPresentationException,
         PapillonBusinessException,
         java.io.IOException {
@@ -1036,7 +1035,7 @@ public class ReviewContributions extends PapillonBasePO {
         }
 
     
-    protected void removeTemplateRows() {
+    protected void removeTemplateRows(ReviewContributionsTmplXHTML content) {
         // EntryListRow
         Element entryListRow = content.getElementEntryListRow();
         Node entryListRowParent = entryListRow.getParentNode();

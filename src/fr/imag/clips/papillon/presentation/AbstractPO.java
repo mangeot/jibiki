@@ -7,6 +7,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.5  2006/02/26 14:04:56  mangeot
+ *  Corrected a bug: the content was a static variable, thus there were problems when two users wanted to aces the same page at the same time
+ *
  *  Revision 1.4  2005/07/16 12:58:31  serasset
  *  Added limit parameter to query functions
  *  Added a parameter to Formater initializations
@@ -102,14 +105,14 @@ public abstract class AbstractPO implements HttpPresentation {
      */
     protected static String LOGIN_PAGE = "LoginUser.po";
     /**
-     *  Description of the Field
+		*  Description of the Field
      */
     protected static String REGISTER_PAGE = "Register.po";
+ 	
     /**
      *  Description of the Field
      */
     protected static String DESTINATION_AFTER_LOGIN_PARAMETER = "Destination";
-    
     
     /**
     *  This is the procedure that is called when an HTML request occurs.
@@ -153,8 +156,7 @@ public abstract class AbstractPO implements HttpPresentation {
     public HttpPresentationComms getComms() {
         return this.myComms;
     }
-    
-    
+        
     /**
         *  This implements the run method in HttpPresentation.
      *
@@ -182,14 +184,17 @@ public abstract class AbstractPO implements HttpPresentation {
             Node document;
             byte[] buffer;
             
+			// setContentType before calling getDocument
+			// because getDocument can change the content type
+			this.getComms().response.setContentType("text/html");
+			
             document = getDocument();
+			
 
             if (null == document) {
                 this.getComms().response.sendError(HttpPresentationResponse.SC_NOT_FOUND, "Page returned a null Document");
             }
-            
-            comms.response.setContentType("text/html");
-            
+                        
             // Preparation de la sortie...
             OutputOptions options = new OutputOptions();
             options.setDropHtmlSpanIds(true);

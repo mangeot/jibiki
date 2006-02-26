@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2006/02/26 14:04:56  mangeot
+ * Corrected a bug: the content was a static variable, thus there were problems when two users wanted to aces the same page at the same time
+ *
  * Revision 1.3  2005/07/16 12:58:31  serasset
  * Added limit parameter to query functions
  * Added a parameter to Formater initializations
@@ -54,8 +57,6 @@ public class ChooseEntry extends PapillonBasePO {
     protected final static String Ampersand="_@@_";
     protected final static String Equal="_@_";
 
-    protected static ChooseEntryTmplXHTML content;
-
     protected boolean loggedInUserRequired() {
         return true;
     }
@@ -74,7 +75,7 @@ public class ChooseEntry extends PapillonBasePO {
     {
         
         // Création du contenu
-        content = (ChooseEntryTmplXHTML)MultilingualXHtmlTemplateFactory.createTemplate("ChooseEntryTmplXHTML", this.getComms(), this.getSessionData());
+        ChooseEntryTmplXHTML content = (ChooseEntryTmplXHTML)MultilingualXHtmlTemplateFactory.createTemplate("ChooseEntryTmplXHTML", this.getComms(), this.getSessionData());
         
         String volume = myGetParameter(Volume_PARAMETER);
         String queryString = myGetParameter(QueryString_PARAMETER);
@@ -98,8 +99,8 @@ public class ChooseEntry extends PapillonBasePO {
 			
             // FIXME: fix the limit parameter
 			java.util.Vector ContribVector = VolumeEntriesFactory.getVolumeNameEntriesVector(volume, Keys, null, null, 0,0);
-			addEntryTable(ContribVector);
-			addRedirection(queryString);
+			addEntryTable(content, ContribVector);
+			addRedirection(content, queryString);
 		}
 		else if (submit !=null && !submit.equals("") 
 			&& redirection !=null && !redirection.equals("")
@@ -118,7 +119,7 @@ public class ChooseEntry extends PapillonBasePO {
         return content.getElementFormulaire();
     }
 	
-	protected void addRedirection (String redirection)
+	protected void addRedirection (ChooseEntryTmplXHTML content, String redirection)
         throws fr.imag.clips.papillon.business.PapillonBusinessException,
         java.io.UnsupportedEncodingException {
 
@@ -127,7 +128,7 @@ public class ChooseEntry extends PapillonBasePO {
 
 	}
 	    
-	protected void addEntryTable (java.util.Vector ContribVector)
+	protected void addEntryTable (ChooseEntryTmplXHTML content, java.util.Vector ContribVector)
         throws fr.imag.clips.papillon.business.PapillonBusinessException,
         java.io.UnsupportedEncodingException {
 			

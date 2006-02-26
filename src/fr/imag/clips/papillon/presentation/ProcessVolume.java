@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.2  2006/02/26 14:04:56  mangeot
+ * Corrected a bug: the content was a static variable, thus there were problems when two users wanted to aces the same page at the same time
+ *
  * Revision 1.1  2005/08/05 18:47:02  mangeot
  * *** empty log message ***
  *
@@ -98,7 +101,7 @@ public class ProcessVolume extends PapillonBasePO {
 	protected final static String SORTBY_PARAMETER="SortBy";
 	protected final static String AnyContains_PARAMETER="AnyContains";
 	    
-    protected static ProcessVolumeTmplXHTML content;
+    protected ProcessVolumeTmplXHTML content;
 
     protected boolean loggedInUserRequired() {
         return true;

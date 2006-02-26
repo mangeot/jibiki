@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.8  2006/02/26 14:04:56  mangeot
+ * Corrected a bug: the content was a static variable, thus there were problems when two users wanted to aces the same page at the same time
+ *
  * Revision 1.7  2005/08/05 18:44:38  mangeot
  * Bug fixes + ProcessVolume.po page creation
  *
@@ -113,8 +116,6 @@ public class AdminXsl extends PapillonBasePO {
     protected final static String DEFAULT_XSL="defaultxsl";
     protected final static String TYPE_XSL="type";    
 
-    protected static AdminXslTmplXHTML content;
-
     protected boolean loggedInUserRequired() {
         return true;
     }
@@ -137,7 +138,7 @@ public class AdminXsl extends PapillonBasePO {
     {
 
         // Création du contenu
-        content = (AdminXslTmplXHTML)MultilingualXHtmlTemplateFactory.createTemplate("AdminXslTmplXHTML", this.getComms(), this.getSessionData());
+        AdminXslTmplXHTML content = (AdminXslTmplXHTML)MultilingualXHtmlTemplateFactory.createTemplate("AdminXslTmplXHTML", this.getComms(), this.getSessionData());
 		  
         HttpPresentationRequest req = this.getComms().request;
         // If the page is called with parameters, take the requested action
@@ -197,7 +198,7 @@ public class AdminXsl extends PapillonBasePO {
                 String handle = req.getParameter(SEE_PARAMETER);
                 XslSheet theSheet = XslSheetFactory.findXslSheetByHandle(handle);
                 //adding an XML file
-                addXml(theSheet.getXmlCode());
+                addXml(content, theSheet.getXmlCode());
             }
             this.getSessionData().writeUserMessage(userMessage);
             PapillonLogger.writeDebugMsg(userMessage);
@@ -258,7 +259,7 @@ public class AdminXsl extends PapillonBasePO {
         //On rends le contenu correst
         return content.getElementFormulaire();
     }
-    protected void addXml(String xmlString) 
+    protected void addXml(AdminXslTmplXHTML content, String xmlString) 
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
             
         Node xmlNode = XslTransformation.applyXslSheetForXml(xmlString);    

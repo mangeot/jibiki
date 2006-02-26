@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.5  2006/02/26 14:04:56  mangeot
+ * Corrected a bug: the content was a static variable, thus there were problems when two users wanted to aces the same page at the same time
+ *
  * Revision 1.4  2005/05/24 12:51:22  serasset
  * Updated many aspect of the Papillon project to handle lexalp project.
  * 1. Layout is now parametrable in the application configuration file.
@@ -79,9 +82,6 @@ public class AdminUsers extends PapillonBasePO {
     protected final static String MAKESPECIALIST_PARAMETER="MakeSpecialist";
     protected final static String SORTBY_PARAMETER="SortBy";
 
-    
-    protected static AdminUsersTmplXHTML content;
-
     protected boolean loggedInUserRequired() {
         return true;
     }
@@ -107,7 +107,7 @@ public class AdminUsers extends PapillonBasePO {
 			fr.imag.clips.papillon.presentation.PapillonPresentationException {
         
         // Création du contenu
-        content = (AdminUsersTmplXHTML)MultilingualXHtmlTemplateFactory.createTemplate("AdminUsersTmplXHTML", this.getComms(), this.getSessionData());
+        AdminUsersTmplXHTML content = (AdminUsersTmplXHTML)MultilingualXHtmlTemplateFactory.createTemplate("AdminUsersTmplXHTML", this.getComms(), this.getSessionData());
 	  
         HttpPresentationRequest req = this.getComms().request;
 
@@ -166,14 +166,14 @@ public class AdminUsers extends PapillonBasePO {
 		
 		String sortBy = myGetParameter(SORTBY_PARAMETER);
 		
-        addLoggedUsersArray();
-        addUsersArray(sortBy);
+        addLoggedUsersArray(content);
+        addUsersArray(content, sortBy);
         
         //On rend le contenu correct
         return content.getElementFormulaire();
     }
 
-	protected void addLoggedUsersArray()
+	protected void addLoggedUsersArray(AdminUsersTmplXHTML content)
         throws fr.imag.clips.papillon.business.PapillonBusinessException,
 		 fr.imag.clips.papillon.presentation.PapillonPresentationException {
 		
@@ -215,7 +215,7 @@ public class AdminUsers extends PapillonBasePO {
         }
 
 
-    protected void addUsersArray(String sortBy)
+    protected void addUsersArray(AdminUsersTmplXHTML content, String sortBy)
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
 
             User[] UsersTable=UsersFactory.getUsersArray(sortBy);

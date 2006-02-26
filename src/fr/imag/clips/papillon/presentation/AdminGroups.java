@@ -3,12 +3,15 @@
  *
  * Enhydra super-servlet
  * 
- * © Mathieu Mangeot & Gilles Sérasset - GETA CLIPS IMAG
+ * Â© Mathieu Mangeot & Gilles SÃˆrasset - GETA CLIPS IMAG
  * Projet Papillon
  *-----------------------------------------------
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.6  2006/02/26 14:04:56  mangeot
+ * Corrected a bug: the content was a static variable, thus there were problems when two users wanted to aces the same page at the same time
+ *
  * Revision 1.5  2005/05/24 12:51:22  serasset
  * Updated many aspect of the Papillon project to handle lexalp project.
  * 1. Layout is now parametrable in the application configuration file.
@@ -80,8 +83,6 @@ public class AdminGroups extends PapillonBasePO {
 
     protected final static String REMOVE_PARAMETER="Remove";
     
-    protected static AdminGroupsTmplXHTML content;
-
     protected boolean loggedInUserRequired() {
         return true;
     }
@@ -106,8 +107,8 @@ public class AdminGroups extends PapillonBasePO {
 			javax.xml.transform.TransformerException,
 			fr.imag.clips.papillon.presentation.PapillonPresentationException {
         
-        // Création du contenu
-        content = (AdminGroupsTmplXHTML)MultilingualXHtmlTemplateFactory.createTemplate("AdminGroupsTmplXHTML", this.getComms(), this.getSessionData());
+        // CrÃˆation du contenu
+        AdminGroupsTmplXHTML content = (AdminGroupsTmplXHTML)MultilingualXHtmlTemplateFactory.createTemplate("AdminGroupsTmplXHTML", this.getComms(), this.getSessionData());
 	  
         HttpPresentationRequest req = this.getComms().request;
 
@@ -117,12 +118,12 @@ public class AdminGroups extends PapillonBasePO {
             //TEMPORAIRE :avec l URL
             //AJOUT DE DICO
             String userMessage = null;
-            if (myGetParameter(content.NAME_AddGroup)!=null &&
-				myGetParameter(content.NAME_GroupName)!=null &&
-				myGetParameter(content.NAME_GroupPassword)!=null) {
-				String groupName = myGetParameter(content.NAME_GroupName);
-				String groupPassword = myGetParameter(content.NAME_GroupPassword);
-				String groupPassword2 = myGetParameter(content.NAME_GroupPasswordConfirm);
+            if (myGetParameter(AdminGroupsTmplXHTML.NAME_AddGroup)!=null &&
+				myGetParameter(AdminGroupsTmplXHTML.NAME_GroupName)!=null &&
+				myGetParameter(AdminGroupsTmplXHTML.NAME_GroupPassword)!=null) {
+				String groupName = myGetParameter(AdminGroupsTmplXHTML.NAME_GroupName);
+				String groupPassword = myGetParameter(AdminGroupsTmplXHTML.NAME_GroupPassword);
+				String groupPassword2 = myGetParameter(AdminGroupsTmplXHTML.NAME_GroupPasswordConfirm);
 				
                 GroupAnswer myGroupAnswer = GroupsFactory.createUniqueGroup(groupName, groupPassword, groupPassword2, this.getUser().getLogin());
                 userMessage = myGroupAnswer.getMessage();
@@ -144,14 +145,14 @@ public class AdminGroups extends PapillonBasePO {
 			}
         }
 				
-        addGroupsArray();
+        addGroupsArray(content);
         
         //On rend le contenu correct
         return content.getElementFormulaire();
     }
 
 
-    protected void addGroupsArray()
+    protected void addGroupsArray(AdminGroupsTmplXHTML content)
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
 
             Group[] GroupsTable=GroupsFactory.getGroupsArray();

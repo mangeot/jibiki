@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.11  2006/02/26 14:04:56  mangeot
+ * Corrected a bug: the content was a static variable, thus there were problems when two users wanted to aces the same page at the same time
+ *
  * Revision 1.10  2006/02/22 19:05:56  mangeot
  * MM: Added default status choice when importing entries
  *
@@ -135,8 +138,6 @@ public class AdminEntries extends PapillonBasePO {
     protected final static String URL_PARAMETER="url";
     protected final static String VOLUME_PARAMETER="VOLUME";
 
-    protected static AdminEntriesTmplXHTML content;
-
     protected boolean loggedInUserRequired() {
         return true;
     }
@@ -159,7 +160,7 @@ public class AdminEntries extends PapillonBasePO {
 			java.io.UnsupportedEncodingException {
         
         // Création du contenu
-        content = (AdminEntriesTmplXHTML)MultilingualXHtmlTemplateFactory.createTemplate("AdminEntriesTmplXHTML", this.getComms(), this.getSessionData());
+        AdminEntriesTmplXHTML content = (AdminEntriesTmplXHTML)MultilingualXHtmlTemplateFactory.createTemplate("AdminEntriesTmplXHTML", this.getComms(), this.getSessionData());
         
         String volumeString = myGetParameter(content.NAME_VOLUME);
         String urlString = myGetParameter(content.NAME_URL);
@@ -184,7 +185,7 @@ public class AdminEntries extends PapillonBasePO {
 				PapillonLogger.writeDebugMsg(userMessage);
 			}
         }
-        addConsultForm(volumeString);
+        addConsultForm(content, volumeString);
         //On rend le contenu correct
         return content.getElementFormulaire();
     }
@@ -224,7 +225,7 @@ public class AdminEntries extends PapillonBasePO {
 
 	
 	
-	protected void addConsultForm(String selectedVolume) 
+	protected void addConsultForm(AdminEntriesTmplXHTML content, String selectedVolume) 
         throws fr.imag.clips.papillon.business.PapillonBusinessException, 
                 HttpPresentationException {
            // Adding the appropriate source languages to the source list

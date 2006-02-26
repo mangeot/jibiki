@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.14  2006/02/26 14:04:56  mangeot
+ * Corrected a bug: the content was a static variable, thus there were problems when two users wanted to aces the same page at the same time
+ *
  * Revision 1.13  2006/01/25 10:13:06  mangeot
  * *** empty log message ***
  *
@@ -116,7 +119,7 @@ public class ExportVolume extends PapillonBasePO {
 	protected static final String TEXTFormat = Integer.toString(fr.imag.clips.papillon.business.transformation.ResultFormatterFactory.PLAINTEXT_DIALECT);
 	protected static final String PDFFormat = Integer.toString(fr.imag.clips.papillon.business.transformation.ResultFormatterFactory.PDF_DIALECT);
     
-    protected static ExportVolumeTmplXHTML content;
+    protected ExportVolumeTmplXHTML content;
 
     protected boolean loggedInUserRequired() {
         return true;
