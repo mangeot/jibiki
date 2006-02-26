@@ -4,6 +4,9 @@
 *$Id$
 *------------------------------------------
 *$Log$
+*Revision 1.10  2006/02/26 14:08:16  mangeot
+*Added the multilingual_sort(lang,headword) index on volume tables for speeding up the lookup
+*
 *Revision 1.9  2005/11/21 17:41:36  mangeot
 **** empty log message ***
 *
@@ -267,7 +270,32 @@ public class Utility {
 	}
 	 */
 	
-		/**
+	/**
+		* Builds an empty DOM document from scratch
+     *
+     * @return the DOM Document
+     * @exception PapillonBusinessException if an error occurs
+     *   retrieving data (usually due to an underlying data layer
+						  *   error).
+     */
+	public static org.w3c.dom.Document buildDOMTree()	{
+		Document resultDoc = null;
+		try {
+			if (myDocumentBuilder == null) {
+				myDocumentBuilderFactory.setNamespaceAware(true);
+				myDocumentBuilder = myDocumentBuilderFactory.newDocumentBuilder();
+			}			
+			// building the source DOM object
+			
+			resultDoc = myDocumentBuilder.newDocument();
+		}
+		catch (javax.xml.parsers.ParserConfigurationException pce) {
+			PapillonLogger.writeDebugMsg ("ParserConfigurationException: " + pce);
+		}		
+		return resultDoc;
+	}
+
+	/**
      * Builds a DOM document from an URL
      *
      * @return the DOM Document

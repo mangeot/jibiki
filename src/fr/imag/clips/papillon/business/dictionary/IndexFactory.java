@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.13  2006/02/26 14:08:16  mangeot
+ * Added the multilingual_sort(lang,headword) index on volume tables for speeding up the lookup
+ *
  * Revision 1.12  2005/12/01 15:34:28  mangeot
  * MM: I solved the problem of already created tables by creating an sql query for retrieving the table names. If the name already exists, VolumeEntriesFactory.createVolumeTables do not create the tables.
  * It allows the administrator to delete and reload only the metadata files without dropping the whole data.
@@ -390,8 +393,6 @@ public class IndexFactory {
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 			try {
 				ManageDatabase.dropTable(table);
-				// the index is dropped along with the table
-				//			ManageDatabase.dropIndexForTable(table,INDEXED_FIELD);
 			}
 			catch (Exception e) {
 				throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in dropIndexTable: " + table, e);

@@ -138,9 +138,14 @@ public class ManageDatabase implements Query {
         }
     
     public static void createIndexForTable(String table, String name) throws PapillonBusinessException {
-            String query = createIndexSql + table + "_" + name  + "_idx" + " ON " + table + " ( " + name + " )";
-            executeSql(query);
-        }
+		String query = createIndexSql + table + "_" + name  + "_idx" + " ON " + table + " ( " + name + " )";
+		executeSql(query);
+	}
+    
+    public static void createSortIndexForVolumeTable(String table, String lang) throws PapillonBusinessException {
+		String query = createIndexSql + table + "_msort_idx" + " ON " + table + " (multilingual_sort( '" + lang + "',headword ))";
+		executeSql(query);
+	}
     
     public static void dropIndexForTable(String table, String name) throws  PapillonBusinessException {
             String query = dropIndexSql + table + "_" + name + "_idx";
@@ -239,7 +244,9 @@ public class ManageDatabase implements Query {
 			return TableNames;
         }
 	
-    public ResultSet executeQuery(DBConnection conn) throws SQLException {
+	
+	
+	public ResultSet executeQuery(DBConnection conn) throws SQLException {
         conn.execute(currentSQL);
         return null;
     }

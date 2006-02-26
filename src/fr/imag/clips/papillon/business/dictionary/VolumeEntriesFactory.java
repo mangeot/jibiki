@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.37  2006/02/26 14:08:16  mangeot
+ * Added the multilingual_sort(lang,headword) index on volume tables for speeding up the lookup
+ *
  * Revision 1.36  2006/02/21 15:27:49  mangeot
  * *** empty log message ***
  *
@@ -1145,6 +1148,7 @@ public class VolumeEntriesFactory {
 				java.util.Vector TableNames = ManageDatabase.getTableNames();
 				if (!TableNames.contains(volume.getDbname())) {
 					ManageDatabase.createVolumeTable(volume.getDbname());
+					ManageDatabase.createSortIndexForVolumeTable(volume.getDbname(), volume.getSourceLanguage());
 				}
 				if (!TableNames.contains(volume.getIndexDbname())) {
 					IndexFactory.createIndexTable(volume);

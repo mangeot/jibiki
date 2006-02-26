@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.30  2006/02/26 14:08:16  mangeot
+ * Added the multilingual_sort(lang,headword) index on volume tables for speeding up the lookup
+ *
  * Revision 1.29  2006/02/22 19:05:56  mangeot
  * MM: Added default status choice when importing entries
  *
@@ -359,7 +362,7 @@ public class ParseVolume {
 			throw new PapillonBusinessException("FileNotFoundException: " + myVolume.getVolumeRef(), exp);
 			
 		} catch (java.io.IOException exp) {
-			throw new PapillonBusinessException("ParseVolume.parseFoksVolume, error IOException", exp);
+			throw new PapillonBusinessException("ParseVolume.parseEntries, error IOException", exp);
 		}
 		return message;
 	}
