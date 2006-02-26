@@ -9,6 +9,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.3  2006/02/26 19:58:18  mangeot
+ *  *** empty log message ***
+ *
  *  Revision 1.2  2006/02/26 19:21:38  mangeot
  *  Work on BrowseVolume
  *
@@ -39,6 +42,7 @@ import fr.imag.clips.papillon.business.utility.Utility;
  */
 public class BrowseVolume extends AbstractPO {
     
+	protected static final String ALL_STATUS = "*ALL*";
 	
     /**
     *  This method should be implemented in the subclass so that it returns
@@ -76,8 +80,9 @@ public class BrowseVolume extends AbstractPO {
 			getComms().response.setEncoding("UTF-8");
 
 			
-			String headword = myGetParameter("HEADWORD");
 			String volumeName = myGetParameter("VOLUME");
+			String headword = myGetParameter("HEADWORD");
+			String status = myGetParameter("STATUS");
 			String direction = myGetParameter("DIRECTION");
 			
 			String strategy = "";
@@ -108,6 +113,14 @@ public class BrowseVolume extends AbstractPO {
 					Headword[2] = headword;
 					Headword[3] = strategy;
 					myKeys.add(Headword);
+					if (status!=null && !status.equals(ALL_STATUS)) {
+						String[] Status = new String[4];
+						Status[0] = Volume.CDM_contributionStatus;
+						Status[1] = Volume.DEFAULT_LANG;
+						Status[2] = status;
+						Status[3] = QueryBuilder.EQUAL;
+						myKeys.add(Status);
+					}
 					resultsVector = IndexFactory.getIndexEntriesVector(myVolume.getIndexDbname(),
 																	   myKeys,
 																	   direction,
