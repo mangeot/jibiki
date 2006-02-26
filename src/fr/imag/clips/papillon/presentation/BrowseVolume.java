@@ -9,6 +9,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.4  2006/02/26 20:24:30  mangeot
+ *  *** empty log message ***
+ *
  *  Revision 1.3  2006/02/26 19:58:18  mangeot
  *  *** empty log message ***
  *
@@ -28,6 +31,8 @@ import com.lutris.appserver.server.httpPresentation.HttpPresentationException;
 import com.lutris.dods.builder.generator.query.QueryBuilder;
 
 import fr.imag.clips.papillon.business.dictionary.Volume;
+import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
+import fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory;
 import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
 import fr.imag.clips.papillon.business.dictionary.Index;
 import fr.imag.clips.papillon.business.dictionary.IndexFactory;
@@ -101,6 +106,7 @@ public class BrowseVolume extends AbstractPO {
 			}
 			int limit = 40;
 
+			String allArray = "";
 			java.util.Vector resultsVector = null;
 			if (headword != null && !headword.equals("") &&
 				volumeName != null && !volumeName.equals("")) {
@@ -120,17 +126,28 @@ public class BrowseVolume extends AbstractPO {
 						Status[2] = status;
 						Status[3] = QueryBuilder.EQUAL;
 						myKeys.add(Status);
+						resultsVector = VolumeEntriesFactory.getVolumeNameEntriesVector(myVolume.getName(),
+																						myKeys,
+																						null,
+																						direction,
+																						0,
+																						limit);
+						for (int i=0; i<resultsVector.size(); i++) {
+							VolumeEntry myEntry = (VolumeEntry) resultsVector.elementAt(i);
+							allArray += myEntry.getHeadword() + "#,#" + myEntry.getHandle() + "#;#" ;
+						}
 					}
-					resultsVector = IndexFactory.getIndexEntriesVector(myVolume.getIndexDbname(),
-																	   myKeys,
-																	   direction,
-																	   limit);
+					else {
+						resultsVector = IndexFactory.getIndexEntriesVector(myVolume.getIndexDbname(),
+																		   myKeys,
+																		   direction,
+																		   limit);
+						for (int i=0; i<resultsVector.size(); i++) {
+							Index myEntry = (Index) resultsVector.elementAt(i);
+							allArray += myEntry.getValue() + "#,#" + myEntry.getEntryId() + "#;#" ;
+						}
+					}
 				}
-			}
-			String allArray = "";
-			for (int i=0; i<resultsVector.size(); i++) {
-				Index myEntry = (Index) resultsVector.elementAt(i);
-				allArray += myEntry.getValue() + "#,#" + myEntry.getEntryId() + "#;#" ;
 			}
 			
 			org.w3c.dom.Document myDoc = Utility.buildDOMTree("<?xml version='1.0' encoding='UTF-8' ?><entries>" + allArray + "</entries>");
