@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.41  2006/02/27 00:16:57  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.40  2006/02/26 22:05:02  mangeot
  * *** empty log message ***
  *
@@ -388,6 +391,16 @@ public class VolumeEntriesFactory {
 													String any)
         throws PapillonBusinessException {
 			return getVolumeNameEntriesVector(volumeName, Keys1, Keys2, any, "", 0, 0);
+		}
+	
+	public static Vector getVolumeNameEntriesVector(String volumeName,
+                                                    Vector Keys,
+                                                    Vector Clauses,
+													String any,
+													int offset,
+                                                    int limit)
+        throws PapillonBusinessException {
+			return getVolumeNameEntriesVector(volumeName, Keys, Clauses, any, "", offset, limit);
 		}
 	
     public static Vector getVolumeNameEntriesVector(String volumeName,
