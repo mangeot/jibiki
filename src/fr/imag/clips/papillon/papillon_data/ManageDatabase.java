@@ -169,20 +169,18 @@ public class ManageDatabase implements Query {
  		String result = lang + value;
 		
 		String sql = "SELECT multilingual_sort('"+ lang + "','" + value + "')";
-		java.util.Vector myResultVector = getStringResultSet(sql,"multilingual_sort");
+		java.util.Vector myResultVector = executeSqlQuery(sql,"multilingual_sort");
 		
 		if (myResultVector != null && myResultVector.size()>0) {
 			result = (String) myResultVector.elementAt(0);
+		}
+		if (result.length()>255) {
+			result = result.substring(0,254);
 		}
 		return result;
     }
 
 	protected static void executeSql (String sql) throws PapillonBusinessException {
-		getStringResultSet(sql, null);
-	}
-
-	protected static java.util.Vector getStringResultSet (String sql, String columnName) throws PapillonBusinessException {
-		java.util.Vector resVector = new java.util.Vector();;
 		
 		DBTransaction transaction = CurrentDBTransaction.get();
         ManageDatabase req = new ManageDatabase(transaction, sql);
@@ -207,9 +205,6 @@ public class ManageDatabase implements Query {
             }
 
             dbQuery.query( req	);	  // invokes executeQuery
-			while (req.resultSet.next() && columnName != null) {
-				resVector.addElement(req.resultSet.getString(columnName));			
-			}
         } catch ( DatabaseManagerException e ) { 
             String err = "ERROR SpecialDatabaseRequest: Could not create a DBQuery.  ";
             throw new PapillonBusinessException( err, e );
@@ -219,7 +214,6 @@ public class ManageDatabase implements Query {
         } finally {
             if ( null != dbQuery ) dbQuery.release();
 		}
-		return resVector;
     }
     
     public static java.util.Vector getTableNames ()
@@ -274,6 +268,46 @@ public class ManageDatabase implements Query {
         return this.resultSet;
     }
 
+	    /*
+		I keep this function because the other one (executeSql) use a transaction and thus, I cannot retrieve the results because
+		 the resultSet is closed.
+		*/
+	    protected static java.util.Vector executeSqlQuery (String sql, String columnName) {
+	            DBConnection myDbConnection = null;
+	            java.util.Vector resVector = new java.util.Vector();
+	            try {
+	                myDbConnection = Enhydra.getDatabaseManager().allocateConnection();
+	                
+	                ResultSet myResultSet = myDbConnection.executeQuery(sql);
+	                
+	                if(myResultSet != null) {
+						while (myResultSet.next() && columnName != null) {
+							resVector.addElement(myResultSet.getString(columnName));			
+						}
+	                    myResultSet.close();
+	                }
+	            }  catch(SQLException se) {
+	                se.printStackTrace();
+	                //very important to throw out bad connections
+	                
+	                if(myDbConnection.handleException(se)) myDbConnection=null;
+	            } catch(Exception e) {
+	                e.printStackTrace();
+	            } finally {
+	                if(myDbConnection!=null) {
+						try {
+							myDbConnection.reset();
+							myDbConnection.release();
+						}  catch(SQLException se) {
+							se.printStackTrace();
+							//very important to throw out bad connections
+						if(myDbConnection.handleException(se)) myDbConnection=null;
+						}
+	                }
+	            }
+				return resVector;
+	        }
+	
     
 /*
     protected static void simpleExecuteSql (String sql)
