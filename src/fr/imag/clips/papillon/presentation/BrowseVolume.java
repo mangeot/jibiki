@@ -9,6 +9,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.6  2006/02/27 00:04:01  mangeot
+ *  *** empty log message ***
+ *
  *  Revision 1.5  2006/02/26 22:05:02  mangeot
  *  *** empty log message ***
  *
@@ -91,9 +94,19 @@ public class BrowseVolume extends AbstractPO {
 			String volumeName = myGetParameter("VOLUME");
 			String headword = myGetParameter("HEADWORD");
 			String status = myGetParameter("STATUS");
+			String limitString = myGetParameter("LIMIT");
+			
+			int limit = 40;
+			
+			if (limitString!=null && !limitString.equals("")) {
+				limit =Integer.parseInt(limitString);
+			}
+			
 			String direction = myGetParameter("DIRECTION");
+			String direction2 = "";
 			
 			String strategy = "";
+			String strategy2 = "";
 			
 			if (direction != null && direction.equals("up")) {
 				direction = IndexFactory.ORDER_DESCENDING;
@@ -103,11 +116,17 @@ public class BrowseVolume extends AbstractPO {
 				direction = "";
 				strategy = QueryBuilder.GREATER_THAN;
 			}
+			else if  (direction != null && direction.equals("updown")) {
+				limit = limit /2;
+				direction = "";
+				strategy = QueryBuilder.GREATER_THAN_OR_EQUAL;
+				direction2 = IndexFactory.ORDER_DESCENDING;
+				strategy2 =  QueryBuilder.LESS_THAN;
+			}
 			else {
 				direction = "";
 				strategy = QueryBuilder.EQUAL;
 			}
-			int limit = 40;
 
 			String allArray = "";
 			java.util.Vector resultsVector = null;
@@ -117,13 +136,13 @@ public class BrowseVolume extends AbstractPO {
 				if (myVolume != null && !myVolume.isEmpty()) {
 					java.util.Vector myKeys = new java.util.Vector();
 					String[] Headword = new String[4];
+					String[] Status = new String[4];
 					Headword[0] = Volume.CDM_headword;
 					Headword[1] = myVolume.getSourceLanguage();
 					Headword[2] = headword;
 					Headword[3] = strategy;
 					myKeys.add(Headword);
 					if (status!=null && !status.equals(ALL_STATUS)) {
-						String[] Status = new String[4];
 						Status[0] = Volume.CDM_contributionStatus;
 						Status[1] = Volume.DEFAULT_LANG;
 						Status[2] = status;
@@ -150,6 +169,37 @@ public class BrowseVolume extends AbstractPO {
 							Index myEntry = (Index) resultsVector.elementAt(i);
 							allArray += myEntry.getValue() + "#,#" + myEntry.getEntryId() + "#;#" ;
 						}
+					}
+					if (direction2 != "" && strategy2 != "") {
+						myKeys.clear();
+						Headword[3] = strategy2;
+						myKeys.add(Headword);
+						String allArray2 = "";
+						if (status!=null && !status.equals(ALL_STATUS)) {
+							myKeys.add(Status);
+							resultsVector = VolumeEntriesFactory.getVolumeNameEntriesVector(myVolume.getName(),
+																							myKeys,
+																							null,
+																							null,
+																							direction2, 
+																							0,
+																							limit);
+							for (int i=0; i< resultsVector.size(); i++) {
+								VolumeEntry myEntry = (VolumeEntry) resultsVector.elementAt(i);
+								allArray2 += myEntry.getHeadword() + "#,#" + myEntry.getHandle() + "#;#";
+							}
+						}
+						else {
+							resultsVector = IndexFactory.getIndexEntriesVector(myVolume.getIndexDbname(),
+																			   myKeys,
+																			   direction2,
+																			   limit);
+							for (int i=resultsVector.size()-1; i>=0; i--) {
+								Index myEntry = (Index) resultsVector.elementAt(i);
+								allArray2 += myEntry.getValue() + "#,#" + myEntry.getEntryId() + "#;#";
+							}
+						}
+						allArray = allArray2 + allArray;
 					}
 				}
 			}
