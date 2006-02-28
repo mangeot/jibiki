@@ -10,6 +10,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.14  2006/02/28 18:12:15  mangeot
+ *  *** empty log message ***
+ *
  *  Revision 1.13  2005/08/16 08:09:58  mangeot
  *  *** empty log message ***
  *
@@ -401,7 +404,8 @@ public class Home extends PapillonBasePO {
         if (targetLanguage == null || targetLanguage.equals("")) {
             targetLanguages = null;
         } else if (targetLanguage.equals(ALL_TARGETS)) {
-            targetLanguages = MyAvailableLanguages.getTargetLanguagesArray();
+            //targetLanguages = MyAvailableLanguages.getTargetLanguagesArray();
+            targetLanguages = null;
         } else {
             targetLanguages = new String[]{targetLanguage};
         }

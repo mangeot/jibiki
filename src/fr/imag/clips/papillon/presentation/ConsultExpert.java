@@ -10,6 +10,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.29  2006/02/28 18:12:15  mangeot
+ *  *** empty log message ***
+ *
  *  Revision 1.28  2005/09/11 16:53:06  mangeot
  *  Bug fix
  *
@@ -415,7 +418,8 @@ public class ConsultExpert extends PapillonBasePO {
 
         if (null != targetLanguages && targetLanguages.length > 0) {
             if (targetLanguages[0].equals(ANY_TARGET)) {
-                targetLanguages = allTargetLanguages;
+                //targetLanguages = allTargetLanguages;
+                targetLanguages = null;
             }
         }
         if (null != resources && resources.length > 0) {
