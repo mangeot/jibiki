@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.42  2006/02/28 15:26:22  mangeot
+ * Bug fix when creating new tables
+ *
  * Revision 1.41  2006/02/27 00:16:57  mangeot
  * *** empty log message ***
  *
@@ -284,14 +287,7 @@ public class VolumeEntriesFactory {
 
 	protected final static String MSORT_FIELD = "msort";
 	protected final static String ORDER_DESCENDING = "DESC";
-	
-	// variables used in setGDEFFrenchTranslations
-	protected final static String VOLUME_GDEF_est = "GDEF_est";
-	protected final static String VOLUME_GDEF_fra = "GDEF_fra";
-	protected final static String VOLUME_GDEF_tes = "GDEF_tes";
-	protected final static String VOLUME_GDEF_est_sep = "#";
-	protected final static String VOLUME_GDEF_est_prefix = "fra.";
-	
+		
 	protected static final String XMLFormat = Integer.toString(fr.imag.clips.papillon.business.transformation.ResultFormatterFactory.XML_DIALECT);
 	protected static final String XHTMLFormat = Integer.toString(fr.imag.clips.papillon.business.transformation.ResultFormatterFactory.XHTML_DIALECT);
 	protected static final String TEXTFormat = Integer.toString(fr.imag.clips.papillon.business.transformation.ResultFormatterFactory.PLAINTEXT_DIALECT);
@@ -1195,9 +1191,9 @@ public class VolumeEntriesFactory {
 				answer = true;
 			}
             catch (Exception e) {
-				//   throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in createVolumeTables with volume: " + volume.getName(), e);
-				PapillonLogger.writeDebugMsg("createVolumeTables with volume: " + volume.getName() + ", probably the tables already exist.");
    				answer = false;
+				throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in createVolumeTables with volume: " + volume.getName(), e);
+				//PapillonLogger.writeDebugMsg("createVolumeTables with volume: " + volume.getName() + ", probably the tables already exist.");
 			}
 			return answer;
 		}
@@ -1220,79 +1216,7 @@ public class VolumeEntriesFactory {
 				PapillonLogger.writeDebugMsg("Exception in dropVolumeTables with volume: " + volume.getName() + ", probably the tables were already deleted.");
             }
         }
-	
-    // FIXME: mmmm, GDEF in a method name... that's suspect... Try to find the reason and provide a general solution for such things...
-	public static String setGDEFFrenchTranslations(IAnswer myAnswer, String homographId) throws PapillonBusinessException {
-		String homographWord = "";
-		//Headword[0] = key
-		//Headword[1] = lang
-		//Headword[2] = value
-		//Headword[3] = strategy
-		String[] Headword = new String[4];
-		Headword[0] = Volume.CDM_headword;
-		Headword[1] = "fra";
-		Headword[2] = "";
-		Headword[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_EXACT+1];
 		
-		
-		Volume myVolume = myAnswer.getVolume();
-		if (myVolume.getName().equals(VOLUME_GDEF_est) ||
-			myVolume.getName().equals(VOLUME_GDEF_tes)) {
-			NodeList myNodeList = ParseVolume.getCdmElements((VolumeEntry)myAnswer,Volume.CDM_translationReflexie,"fra");
-			if ((myNodeList != null) && (myNodeList.getLength()>0)) {
-				for (int i=0; i<myNodeList.getLength();i++) {
-					org.w3c.dom.Node myNode = myNodeList.item(i);
-					String word = myNode.getNodeValue();
-					if (word !=null && !word.equals("") && word.indexOf(VOLUME_GDEF_est_prefix)!=0) {
-						int lastchar = word.lastIndexOf(VOLUME_GDEF_est_prefix);
-						if (lastchar>=0 && word.length()>lastchar) {
-							word = word.substring(lastchar+1);
-						}
-						lastchar = word.lastIndexOf(VOLUME_GDEF_est_sep);
-						if (lastchar>=0 && word.length()>lastchar) {
-							word = word.substring(lastchar+1);
-						}
-						Headword[2] = word;
-						Vector myVector = new Vector();
-						myVector.add(Headword);
-						Vector myTable = getVolumeNameEntriesVector(VOLUME_GDEF_fra,
-																	myVector,
-																	null,
-																	null);
-						if (myTable.size()==0) {
-							myNode.setNodeValue(VOLUME_GDEF_est_sep + myTable.size() + VOLUME_GDEF_est_sep + word);
-						}
-						else if (myTable.size()==1) {
-							VolumeEntry newAnswer = (VolumeEntry) myTable.elements().nextElement();
-							myNode.setNodeValue(newAnswer.getId());
-						}
-						else if (myTable.size()>1 && homographId !=null && !homographId.equals("")) {
-							String nodeValue = null;
-							int k=0;
-							while (homographId!="" && k<myTable.size()) {
-								VolumeEntry newAnswer = (VolumeEntry) myTable.elementAt(k);
-								if (newAnswer.getEntryId().equals(homographId)) {
-									nodeValue = homographId;
-									homographId = "";
-								}
-								k++;
-							}
-							if (nodeValue == null || nodeValue.equals("")) {
-								nodeValue = VOLUME_GDEF_est_sep + myTable.size() + VOLUME_GDEF_est_sep + word;
-							}
-							myNode.setNodeValue(nodeValue);
-						}
-						else {
-							homographWord = word;
-							myNode.setNodeValue(VOLUME_GDEF_est_sep + myTable.size() + VOLUME_GDEF_est_sep + word);
-						}
-					}
-				}
-			}
-		}
-		return homographWord;
-	}
-	
 	public static void sort (Vector EntryVector) {
 		sort (EntryVector, HEADWORD_SORT);
 	}

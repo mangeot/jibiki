@@ -36,11 +36,10 @@ public class ManageDatabase implements Query {
 	
 	protected static final String DatabaseUserString = "DatabaseManager.DB.papillon.Connection.User";
 	
-
+	protected static java.util.regex.Pattern quotePattern = java.util.regex.Pattern.compile("'");
     
     protected String currentSQL = "";
     protected DBTransaction transaction;
-	protected ResultSet resultSet = null;
 	
     /**
         * Public constructor
@@ -121,6 +120,7 @@ public class ManageDatabase implements Query {
 		"lang VARCHAR(3) DEFAULT '\'''\''    ," +
 		"value VARCHAR(255) DEFAULT '\'''\''    ," +
         "entryid VARCHAR(255) DEFAULT '\'''\''    ," +
+        "msort VARCHAR(255) DEFAULT '\'''\''    ," +
         
         "ObjectId DECIMAL(19,0) NOT NULL PRIMARY KEY," +
         "ObjectVersion INTEGER NOT NULL)";
@@ -164,11 +164,21 @@ public class ManageDatabase implements Query {
         //fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Table: " + table + " dropped");
         
     }
+	
+	public static String replace(String temp) {
+		java.util.regex.Matcher m = quotePattern.matcher(temp);
+		temp = m.replaceAll("\\\\'");
+		m.reset();
+		return temp;
+	}
     
     public static String multilingual_sort(String lang, String value) throws  PapillonBusinessException {
  		String result = lang + value;
 		
-		String sql = "SELECT multilingual_sort('"+ lang + "','" + value + "')";
+		java.util.regex.Matcher quoteMatcher = quotePattern.matcher(value);
+		String newValue = quoteMatcher.replaceAll("\\\\'");
+		
+		String sql = "SELECT multilingual_sort('"+ lang + "','" + newValue + "')";
 		java.util.Vector myResultVector = executeSqlQuery(sql,"multilingual_sort");
 		
 		if (myResultVector != null && myResultVector.size()>0) {
@@ -180,40 +190,53 @@ public class ManageDatabase implements Query {
 		return result;
     }
 
-	protected static void executeSql (String sql) throws PapillonBusinessException {
-		
-		DBTransaction transaction = CurrentDBTransaction.get();
+    private static void executeSql (String sql) throws PapillonBusinessException {
+        
+        DBTransaction transaction = CurrentDBTransaction.get();
         ManageDatabase req = new ManageDatabase(transaction, sql);
+        
         //Flush the current transaction (?)
         // Is this really usefull ?
-        if ((req.transaction!=null) &&
-            (req.transaction instanceof com.lutris.appserver.server.sql.CachedDBTransaction)) {
-            if(((com.lutris.appserver.server.sql.CachedDBTransaction)req.transaction).getAutoWrite()) try {
-                req.transaction.write();
+        if ((transaction!=null) &&
+            (transaction instanceof com.lutris.appserver.server.sql.CachedDBTransaction)) {
+            
+            if(((com.lutris.appserver.server.sql.CachedDBTransaction)transaction).getAutoWrite()) try {
+                transaction.write();
             } catch (SQLException sqle) {
                 sqle.printStackTrace();
                 throw new PapillonBusinessException("Couldn't write transaction: "+sqle);
             }
         }
+        
         // Create the DB Query Object
         DBQuery	dbQuery = null;
+        
         try {
-            if (req.transaction == null) {
+            if (transaction == null) {
                 dbQuery	= DODS.getDatabaseManager().createQuery();
             } else {
-                dbQuery	= req.transaction.createQuery();
+                dbQuery	= transaction.createQuery();
             }
-
+			
             dbQuery.query( req	);	  // invokes executeQuery
+            
         } catch ( DatabaseManagerException e ) { 
             String err = "ERROR SpecialDatabaseRequest: Could not create a DBQuery.  ";
             throw new PapillonBusinessException( err, e );
         } catch ( SQLException e ) { 
-            String err = "ERROR SpecialDatabaseRequest: Exception while running the query: " + req.currentSQL;
+            String err = "ERROR SpecialDatabaseRequest: Exception while running the query: " + sql;
             throw new PapillonBusinessException( err, e );
         } finally {
-            if ( null != dbQuery ) dbQuery.release();
-		}
+            if ( null != dbQuery ) {
+                dbQuery.release();
+            }
+        }
+    }
+    
+    
+    public ResultSet executeQuery(DBConnection conn) throws SQLException {
+        conn.execute(currentSQL);
+        return null;
     }
     
     public static java.util.Vector getTableNames ()
@@ -233,7 +256,6 @@ public class ManageDatabase implements Query {
 				java.sql.ResultSet myResultSet = myQueryBuilder.executeQuery(myDbConnection);
                while (myResultSet.next()) {
 				   TableNames.addElement(myResultSet.getString("tablename"));
-	//			   fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getTableNames.table: " + myResultSet.getString("tablename"));
 			   }
             }  catch(SQLException se) {
                 //very important to throw out bad connections
@@ -262,12 +284,6 @@ public class ManageDatabase implements Query {
 			return TableNames;
         }
 	
-	
-	public ResultSet executeQuery(DBConnection conn) throws SQLException {
-		this.resultSet = conn.executeQuery(currentSQL);
-        return this.resultSet;
-    }
-
 	    /*
 		I keep this function because the other one (executeSql) use a transaction and thus, I cannot retrieve the results because
 		 the resultSet is closed.

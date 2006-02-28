@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.15  2006/02/28 15:26:22  mangeot
+ * Bug fix when creating new tables
+ *
  * Revision 1.14  2006/02/26 19:21:38  mangeot
  * Work on BrowseVolume
  *
@@ -445,6 +448,7 @@ public class IndexFactory {
 			try {
 				ManageDatabase.createIndexForTable(table,KEY_FIELD, KEY_FIELD, LANG_FIELD, VALUE_FIELD);
 				ManageDatabase.createIndexForTable(table,ENTRYID_FIELD);
+				ManageDatabase.createIndexForTable(table,MSORT_FIELD);
 			}
 			catch (Exception e) {
 				throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in createIndexForTable: " + table, e);
