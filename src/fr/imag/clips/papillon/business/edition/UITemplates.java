@@ -8,6 +8,9 @@
  * $Id$
  *---------------------------------------------------------
  * $Log$
+ * Revision 1.6  2006/03/01 16:11:01  mangeot
+ * The edit form is now in an XHTML file
+ *
  * Revision 1.5  2005/06/22 15:55:53  mangeot
  * Solved an unresolved prefix bug when the dml prefix was not in the template entry.
  * Now we use the DmlPrefixResolver to solve this issue.
@@ -38,6 +41,8 @@ public class UITemplates {
 	// constants
 	protected final static String DML_URI = fr.imag.clips.papillon.business.dictionary.DmlPrefixResolver.DML_URI;
 	public static final String DEFAULT_FORM = "default";
+	public static final String DEFAULT_LANG = "default";
+	public static final String EDIT_ENTRY_INTERFACE = "EditEntryInterface";
 	
 	protected static Hashtable defaultTypeTable = new Hashtable();
 	protected static Hashtable defaultLangTable = new Hashtable();
@@ -127,33 +132,36 @@ public class UITemplates {
 	protected static void initInterfaceTable(Element itfElt, String volumeName) {
 		PapillonLogger.writeDebugMsg("initInterfaceTable: Element " + itfElt.toString() + " volume: " + volumeName);
 		if (volumeName!=null && !volumeName.equals("")) {
-			NodeList myNodeList = itfElt.getElementsByTagName("form");		
+			NodeList myNodeList = itfElt.getElementsByTagName("div");		
 			Hashtable typeTable = new Hashtable();
 			if (myNodeList.getLength()>0) {
 				for (int i=0;i<myNodeList.getLength();i++) {
 					Element myForm = (Element) myNodeList.item(i);
-					String type = myForm.getAttribute("name");
-					Hashtable langTable = (Hashtable) typeTable.get(type);
-					if (langTable == null) {
-						langTable = new Hashtable();
+					String name = myForm.getAttribute("name");
+					if (name.equals(EDIT_ENTRY_INTERFACE)) {
+						String type = myForm.getAttribute("type");
+						Hashtable langTable = (Hashtable) typeTable.get(type);
+						if (langTable == null) {
+							langTable = new Hashtable();
+						}
+						String lang = myForm.getAttributeNS(DML_URI,"lang");
+						if (null == lang || lang.equals("")) {
+							lang = "default";
+						}
+						langTable.put(lang, myForm);
+						typeTable.put(type,langTable);
+						String defaultForm = myForm.getAttribute("id");
+						if (defaultForm!=null && defaultForm.equals(DEFAULT_FORM)) {
+							defaultTypeTable.put(volumeName,type);
+							defaultLangTable.put(volumeName,lang);
+						}	
 					}
-					String lang = myForm.getAttributeNS(DML_URI,"lang");
-                    if (null == lang || lang.equals("")) {
-                        lang = "default";
-                    }
-					langTable.put(lang, myForm);
-					typeTable.put(type,langTable);
-					String defaultForm = myForm.getAttribute("id");
-					if (defaultForm!=null && defaultForm.equals(DEFAULT_FORM)) {
-						defaultTypeTable.put(volumeName,type);
-						defaultLangTable.put(volumeName,lang);
-					}	
 					// PapillonLogger.writeDebugMsg("initInterfaceTableResult: " + myForm.toString() +" type " + type + " lang: " + lang);
 				}
 				interfaceTable.put(volumeName,typeTable);
 			}
 			else {
-				PapillonLogger.writeDebugMsg("initInterfaceTable: no form element found");
+				PapillonLogger.writeDebugMsg("initInterfaceTable: no div element found");
 			}
 		}
 		else {
