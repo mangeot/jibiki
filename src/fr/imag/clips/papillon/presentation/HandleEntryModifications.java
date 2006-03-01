@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.2  2006/03/01 15:47:08  mangeot
+ * syntax bug fixes
+ *
  * Revision 1.1  2006/03/01 15:12:31  mangeot
  * Merge between maintrunk and LEXALP_1_1 branch
  *
@@ -155,7 +158,6 @@ public class HandleEntryModifications extends EditingBasePO {
 					String parentElement = submitAdd.substring(plus+1);
 					String[] siblingElements = myGetParameterValues(Select_PARAMETER);
 					UIGenerator.addElement(elementName, parentElement, myEntry, myTemplateEntry, siblingElements);
-					this.setHeaderScript(newBlockRedirectionJavascript);
 				}
 			}
 			// deleteElements MUST be after updateElement because it modifies the element ids.
@@ -167,7 +169,6 @@ public class HandleEntryModifications extends EditingBasePO {
 					String parentElement = submitDelete.substring(plus+1);
 					String[] selectedElements = myGetParameterValues(Select_PARAMETER);
 					UIGenerator.deleteElements(elementName, parentElement, selectedElements, myEntry, myTemplateEntry);
-					this.setHeaderScript(newBlockRedirectionJavascript);
 				}
 			}
 			// moveElementsUp
@@ -179,7 +180,6 @@ public class HandleEntryModifications extends EditingBasePO {
 					String parentElement = submitMoveUp.substring(plus+1);
 					String[] selectedElements = myGetParameterValues(Select_PARAMETER);
 					UIGenerator.moveElementsUp(elementName, parentElement, selectedElements, myEntry);
-					this.setHeaderScript(newBlockRedirectionJavascript);
 				}
 			}
 			// move Elements Down
@@ -191,7 +191,6 @@ public class HandleEntryModifications extends EditingBasePO {
 					String parentElement = submitMoveDown.substring(plus+1);
 					String[] selectedElements = myGetParameterValues(Select_PARAMETER);
 					UIGenerator.moveElementsDown(elementName, parentElement, selectedElements, myEntry);
-					this.setHeaderScript(newBlockRedirectionJavascript);
 				}
 			}
 			// Choose elements 
@@ -210,8 +209,9 @@ public class HandleEntryModifications extends EditingBasePO {
 				saveEntry(myVolumeEntry, this.getUser(), saveComment, referrer);
 			} else {
 				// Save draft and continue edition
-				saveDraftEntry(myVolumeEntry, this.getUser().getLogin(), saveComment, this.getUser());
+				saveDraftEntry(myVolumeEntry, this.getUser().getLogin(), saveComment, this.getUser(), referrer);
 			}
+			return null;
 		}
 	
 	
@@ -248,7 +248,7 @@ public class HandleEntryModifications extends EditingBasePO {
     
 	
 	
-	protected void saveDraftEntry(VolumeEntry myVolumeEntry, String author, String saveComment, User user)
+	protected void saveDraftEntry(VolumeEntry myVolumeEntry, String author, String saveComment, User user, String referrer)
 		throws java.io.UnsupportedEncodingException,
         com.lutris.appserver.server.httpPresentation.HttpPresentationException {
 			
@@ -274,7 +274,7 @@ public class HandleEntryModifications extends EditingBasePO {
 													  EditEntryURL + "?" + 
 													  EditEntry.VolumeName_PARAMETER + "=" + NFVolumeEntry.getVolumeName() + "&" + 
 													  EditEntry.EntryHandle_PARAMETER + "=" + NFVolumeEntry.getHandle() + "&" +
-													  EditEntry.Referrer_PARAMETER + "=" + myURLEncode(referrer));
+													  EditEntry.Referrer_PARAMETER + "=" + myUrlEncode(referrer));
                 
             }
             
@@ -318,7 +318,7 @@ public class HandleEntryModifications extends EditingBasePO {
 												  ConfirmEntryURL + "?" + 
 												  EditEntry.VolumeName_PARAMETER + "=" + myVolumeEntry.getVolumeName() + "&" + 
 												  EditEntry.EntryHandle_PARAMETER + "=" + myVolumeEntry.getHandle() + "&" +
-												  EditEntry.Referrer_PARAMETER + "=" + myURLEncode(referrer));
+												  EditEntry.Referrer_PARAMETER + "=" + myUrlEncode(referrer));
         }
 	
 }

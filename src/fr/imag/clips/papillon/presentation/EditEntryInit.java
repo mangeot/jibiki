@@ -10,6 +10,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.21  2006/03/01 15:47:08  mangeot
+ * syntax bug fixes
+ *
  * Revision 1.20  2006/01/25 16:36:43  mangeot
  * *** empty log message ***
  *
@@ -366,7 +369,7 @@ public class EditEntryInit extends PapillonBasePO {
 				// get the apropriate transformer.
 				fr.imag.clips.papillon.business.transformation.ResultFormatter rf = fr.imag.clips.papillon.business.transformation.ResultFormatterFactory.getFormatter(myQueryResult, formatter, fr.imag.clips.papillon.business.transformation.ResultFormatterFactory.XHTML_DIALECT, null);
 				
-				Element myXhtmlElt = (Element)rf.getFormattedResult(myQueryResult);
+				Element myXhtmlElt = (Element)rf.getFormattedResult(myQueryResult, this.getUser());
 				
 				XHTMLElement entryDiv = (XHTMLElement) content.getElementEntryDiv();
 				entryDiv.appendChild(content.importNode(myXhtmlElt, true));

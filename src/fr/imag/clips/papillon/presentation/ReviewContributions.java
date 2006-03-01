@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.29  2006/03/01 15:47:08  mangeot
+ * syntax bug fixes
+ *
  * Revision 1.28  2006/03/01 15:12:31  mangeot
  * Merge between maintrunk and LEXALP_1_1 branch
  *
@@ -852,7 +855,7 @@ public class ReviewContributions extends PapillonBasePO {
 				
 				
 				Element myXhtmlElt = (Element)rf.getFormattedResult(myQueryResult, this.getUser());
-				addElement(myXhtmlElt);
+				addElement(content, myXhtmlElt);
 			}
 			return (java.util.Collection) myVector;
 		}
