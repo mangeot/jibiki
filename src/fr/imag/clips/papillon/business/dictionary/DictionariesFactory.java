@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.27  2006/03/01 15:12:31  mangeot
+ * Merge between maintrunk and LEXALP_1_1 branch
+ *
  * Revision 1.26  2005/11/24 11:09:53  mangeot
  * *** empty log message ***
  *
@@ -29,6 +32,19 @@
  *
  * Revision 1.18  2005/11/09 13:30:31  mangeot
  * *** empty log message ***
+ *
+ * Revision 1.17.4.2  2006/01/25 15:22:23  fbrunet
+ * Improvement of QueryRequest
+ * Add new search criteria
+ * Add modified status
+ *
+ * Revision 1.17.4.1  2005/12/02 10:04:09  fbrunet
+ * Add Pre/Post edition processing
+ * Add index reconstruction
+ * Add new query request
+ * Add fuzzy search
+ * Add new contribution administration
+ * Add xsl transformation volume
  *
  * Revision 1.17  2005/07/16 12:58:31  serasset
  * Added limit parameter to query functions
@@ -809,11 +825,11 @@ public class DictionariesFactory {
             myVector.add(qr);
         }
 		return myVector;
-        
     }
     
 	public static IAnswer findAnswerByHandle(String volumeName, String handle) throws PapillonBusinessException {
-		IAnswer myAnswer = VolumeEntriesFactory.findEntryByHandle(volumeName, handle);
+		//System.out.println("TEST " + volumeName + " " + handle);
+        IAnswer myAnswer = VolumeEntriesFactory.findEntryByHandle(volumeName, handle);
         // FIXME: Papillon Axies should be treated as ANY other volume entry...
 		if (myAnswer==null || myAnswer.isEmpty()) {
 			myAnswer = PapillonPivotFactory.findAxieByHandle(volumeName, handle);
@@ -848,14 +864,15 @@ public class DictionariesFactory {
 				for (Iterator iter = axies.iterator(); iter.hasNext();) {
                 // FIXME: Typecasting will not work for papillon until axies are treated normally...
                 VolumeEntry myAxie = (VolumeEntry) iter.next();
+                
                 Hashtable resLexies = new Hashtable();
                 
                 for (int i = 0; i < targets.length; i++) {
                     Collection tempCollection = PapillonPivotFactory.findLexiesByAxie(myAxie, targets[i]);
-					for (Iterator iterTarget = tempCollection.iterator(); iterTarget.hasNext();) {
-						VolumeEntry myTargetLexie = (VolumeEntry) iterTarget.next();
-						resLexies.put(myTargetLexie.getEntryId(),myTargetLexie);
-					}
+                    for (Iterator iterTarget = tempCollection.iterator(); iterTarget.hasNext();) {
+                        VolumeEntry myTargetLexie = (VolumeEntry) iterTarget.next();
+                        resLexies.put(myTargetLexie.getEntryId(),myTargetLexie);
+                    }
                 }
                 
                 QueryResult qr = new QueryResult(proto);
@@ -905,6 +922,7 @@ public class DictionariesFactory {
         
     }
 
+    /*
     // FIXME: DEAD CODE !!!
 	protected static Collection oldaddDirectTranslations(Collection entries, String source, String[] targets, User myUser)
 		throws PapillonBusinessException {
@@ -955,7 +973,7 @@ public class DictionariesFactory {
 			}
 			return entries;
 		}
-	
+       
 	protected static String purgeXmlEncodingFlag(String xmlCode) {
 		// Suppress the <?xml version="1.0" encoding="UTF-8"?> from the xml if necessary
 		String flag = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
@@ -965,5 +983,8 @@ public class DictionariesFactory {
 			return xmlCode;
 		}
 	}
+     */
+    
+    
 }
 

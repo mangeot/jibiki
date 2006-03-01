@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.28  2006/03/01 15:12:31  mangeot
+ * Merge between maintrunk and LEXALP_1_1 branch
+ *
  * Revision 1.27  2006/02/26 14:04:56  mangeot
  * Corrected a bug: the content was a static variable, thus there were problems when two users wanted to aces the same page at the same time
  *
@@ -20,6 +23,10 @@
  *
  * Revision 1.21  2005/09/03 11:19:19  mangeot
  * Bug fix in redirection after reviewing
+ *
+ * Revision 1.20.2.1  2006/01/24 13:39:49  fbrunet
+ * Modification view management
+ * Modification LexALP postprocessing
  *
  * Revision 1.20  2005/08/17 12:58:16  mangeot
  * Fixed a bug when creating an entry from an existing one.
@@ -844,8 +851,8 @@ public class ReviewContributions extends PapillonBasePO {
 				fr.imag.clips.papillon.business.transformation.ResultFormatter rf = fr.imag.clips.papillon.business.transformation.ResultFormatterFactory.getFormatter(myQueryResult, formatter, fr.imag.clips.papillon.business.transformation.ResultFormatterFactory.XHTML_DIALECT, null);
 				
 				
-				Element myXhtmlElt = (Element)rf.getFormattedResult(myQueryResult);
-				addElement(content, myXhtmlElt);
+				Element myXhtmlElt = (Element)rf.getFormattedResult(myQueryResult, this.getUser());
+				addElement(myXhtmlElt);
 			}
 			return (java.util.Collection) myVector;
 		}

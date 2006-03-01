@@ -9,6 +9,49 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.2  2006/03/01 15:12:31  mangeot
+ * Merge between maintrunk and LEXALP_1_1 branch
+ *
+ * Revision 1.1.4.8  2006/02/24 13:59:55  fbrunet
+ * Postprocessing during update and save
+ *
+ * Revision 1.1.4.7  2006/02/17 15:16:42  mangeot
+ * Do not display the list of all XSL on the search form any more. Displays only a list of XSL descriptions
+ *
+ * Revision 1.1.4.6  2006/02/17 13:21:25  mangeot
+ *
+ * MM: modified AdvancedQueryForm. getAllTargetLanguages, getAllSourceLanguages and getCdmElementsWithDefaultLanguage are now static in AvailableLanguages.java in order to accelerate the execution.
+ *
+ * Revision 1.1.4.5  2006/02/17 10:41:48  fbrunet
+ * Change QueryCriteria parameters
+ * Add new windows when editing an entry
+ *
+ * Revision 1.1.4.4  2006/01/25 15:22:23  fbrunet
+ * Improvement of QueryRequest
+ * Add new search criteria
+ * Add modified status
+ *
+ * Revision 1.1.4.3  2006/01/24 13:39:49  fbrunet
+ * Modification view management
+ * Modification LexALP postprocessing
+ *
+ * Revision 1.1.4.2  2005/12/02 10:04:09  fbrunet
+ * Add Pre/Post edition processing
+ * Add index reconstruction
+ * Add new query request
+ * Add fuzzy search
+ * Add new contribution administration
+ * Add xsl transformation volume
+ *
+ * Revision 1.1.4.1  2005/08/31 15:01:39  serasset
+ * Applied modifications done on the LEXALP_1_0 branch to updated sources of the
+ * trunk to create a new updated LEXALP_1_1 branch.
+ *
+ * Revision 1.1.2.1  2005/07/22 13:28:32  serasset
+ * Modified EditEntryInit for Lexalp. It now serves as a main page for db maintenance.
+ * Added a function to get url for QueryParameter.
+ * Modified the way xslsheets are handled in order to allow several xslsheet with the same name, different dicts.
+ *
  * Revision 1.1  2005/07/16 12:58:31  serasset
  * Added limit parameter to query functions
  * Added a parameter to Formater initializations
@@ -25,6 +68,9 @@ import java.util.HashSet;
 import java.util.Vector;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Hashtable;
+import java.util.ArrayList;
+import java.util.Enumeration;
 
 import java.util.Date;
 import java.text.DateFormat;
@@ -49,6 +95,8 @@ import org.w3c.dom.Element;
 import fr.imag.clips.papillon.presentation.xhtml.orig.AdvancedQueryFormXHTML;
 import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
 import fr.imag.clips.papillon.business.dictionary.Volume;
+import fr.imag.clips.papillon.business.dictionary.QueryRequest;
+import fr.imag.clips.papillon.business.dictionary.QueryCriteria;
 import fr.imag.clips.papillon.business.dictionary.IQuery;
 import fr.imag.clips.papillon.business.dictionary.QueryParameter;
 import fr.imag.clips.papillon.business.dictionary.Dictionary;
@@ -70,7 +118,10 @@ public class AdvancedQueryForm {
     protected static Pattern actionPattern = Pattern.compile(actionPatternString);
     protected static Matcher actionMatcher = actionPattern.matcher("");
     
-    QueryParameter qparams;
+    QueryParameter qparams;     //FIXME: replace by qrequest
+    QueryRequest qrequest;
+    ArrayList criteriaList;
+    
     String action;
     
     public String[] getRequestedDictionaries(HttpServletRequest req) 
@@ -137,14 +188,51 @@ public class AdvancedQueryForm {
             String facetValue = AbstractPO.myGetParameter(req, AdvancedQueryFormXHTML.NAME_FACETVALUE + "." + Integer.toString(i));
             key[2] = (null == facetValue) ? "" : facetValue;
             String comparator = AbstractPO.myGetParameter(req, AdvancedQueryFormXHTML.NAME_OPERATOR + "." + Integer.toString(i));
-            int comparisonOperator = (comparator != null) ? Integer.valueOf(comparator).intValue() : 0;
-            key[3] = IQuery.QueryBuilderStrategy[comparisonOperator];
+            //int comparisonOperator = (comparator != null) ? Integer.valueOf(comparator).intValue() : 0;
+            //key[3] = IQuery.QueryBuilderStrategy[comparisonOperator];
+            key[3] = comparator;
             
             // Add the criterion to the set
-            if (null != key[0]) criteria.add(key);
+            if (null != key[0]) {
+                criteria.add(key);
+            }
         }
         return criteria;
     }
+    
+    public ArrayList getRequestedCriteria2(HttpServletRequest req) 
+        throws java.io.UnsupportedEncodingException,
+        com.lutris.appserver.server.httpPresentation.HttpPresentationException
+    {
+        String nbc = AbstractPO.myGetParameter(req, AdvancedQueryFormXHTML.NAME_CRITERIA_NB);
+        int nbCriteria = (null == nbc || nbc.equals("")) ? 1 : Integer.valueOf(nbc).intValue();
+        
+        criteriaList = new ArrayList();
+        for(int i=0; i < nbCriteria; i++) {
+            String value = AbstractPO.myGetParameter(req, AdvancedQueryFormXHTML.NAME_FACETVALUE + "." + Integer.toString(i));
+            QueryCriteria criteria = new QueryCriteria();
+            
+            //
+            if ( (null != value) && (!value.equals("")) ) {
+                
+                //
+                String key = AbstractPO.myGetParameter(req, AdvancedQueryFormXHTML.NAME_FACET + "." + Integer.toString(i));
+                String language = AbstractPO.myGetParameter(req, AdvancedQueryFormXHTML.NAME_SOURCE + "." + Integer.toString(i));
+                String strategy = AbstractPO.myGetParameter(req, AdvancedQueryFormXHTML.NAME_OPERATOR + "." + Integer.toString(i));
+                
+                //
+                criteria.add("key", "=", key);
+                criteria.add("value", strategy, value);
+                if ( (language != null) && (!language.equals("")) && (!language.equals("All")) ) criteria.add("lang", "=", language);
+                
+                //
+                criteriaList.add(criteria);
+                    
+            }
+        }
+        return criteriaList;
+    }
+    
     
     public String getRequestedAction(HttpServletRequest req) 
         throws java.io.UnsupportedEncodingException,
@@ -157,6 +245,20 @@ public class AdvancedQueryForm {
         try {
                       
             // Get all the parameters
+            qrequest = new QueryRequest(VolumesFactory.getVolumesArrayName());
+            // FIXME: get volumes and dictionaries names to http request !
+            //qrequest.setVolumesNames(getRequestedDictionaries(comms.request.getHttpServletRequest()));
+            ArrayList criteriaList = getRequestedCriteria2(comms.request.getHttpServletRequest());
+            for (int i = 0; i < criteriaList.size(); i++) {
+                qrequest.addCriteria((QueryCriteria)criteriaList.get(i));
+            }
+            qrequest.setLimit(getRequestedNumberOfResultsPerPage(comms.request.getHttpServletRequest()));
+            qrequest.setOffset(getRequestedOffset(comms.request.getHttpServletRequest()));
+            qrequest.setXsl(getRequestedXsl(comms.request.getHttpServletRequest()));
+            qrequest.setTargets(getRequestedTargetLanguages(comms.request.getHttpServletRequest()));
+            
+            //FIXME: replace by qrequest
+            // Get all the parameters
             qparams = new QueryParameter();
             qparams.setDictionaryNames(getRequestedDictionaries(comms.request.getHttpServletRequest()));
             qparams.setCriteria(getRequestedCriteria(comms.request.getHttpServletRequest()));
@@ -164,7 +266,7 @@ public class AdvancedQueryForm {
             qparams.setOffset(getRequestedOffset(comms.request.getHttpServletRequest()));
             qparams.setXsl(getRequestedXsl(comms.request.getHttpServletRequest()));
             qparams.setTargets(getRequestedTargetLanguages(comms.request.getHttpServletRequest()));
-            
+             
             // Did the user ask the addition or removal of a node ? 
             action = getRequestedAction(comms.request.getHttpServletRequest());
             if (actionOnFormRequested()) {
@@ -181,7 +283,8 @@ public class AdvancedQueryForm {
                         key[0] = Volume.CDM_headword;
                         key[1] = null;
                         key[2] = "";
-                        key[3] = IQuery.QueryBuilderStrategy[0];
+                        //key[3] = IQuery.QueryBuilderStrategy[0];
+                        key[3] = QueryCriteria.EQUAL;
                         qparams.getCriteria().add(key);
                     }
                 } 
@@ -224,7 +327,7 @@ public class AdvancedQueryForm {
         // Populate form with all know target languages
         XHTMLOptionElement targetOption = queryDoc.getElementTargetTmpl();
         targetOption.removeAttribute("id");
-        String[] targetLanguageNames = getAllTargetLanguages();
+        String[] targetLanguageNames = fr.imag.clips.papillon.business.dictionary.AvailableLanguages.getTargetLanguagesArray();
         for (int i = 0; i < targetLanguageNames.length; i++) {
             String lg = targetLanguageNames[i];
             targetOption.setValue(lg);
@@ -236,11 +339,11 @@ public class AdvancedQueryForm {
         targetOption.getParentNode().removeChild(targetOption);
         
         // Populate form with available xsls
-        // FIXME: this should be replaced by a generic set of formatter options
-        XslSheet[] xslsheetsArray = XslSheetFactory.getXslSheetsArray();
+        java.util.Set descriptionSet = XslSheetFactory.getDescriptionSet();
         XHTMLOptionElement xslOption = queryDoc.getElementXslTmpl();
-        for (int i = 0; i < xslsheetsArray.length; i++) {
-            String xsn = xslsheetsArray[i].getName();
+		
+        for (Iterator iter = descriptionSet.iterator(); iter.hasNext();) {
+            String xsn = (String) iter.next();
             xslOption.setValue(xsn);
             xslOption.setLabel(xsn);
             Text txt = (Text) xslOption.getFirstChild();
@@ -265,7 +368,7 @@ public class AdvancedQueryForm {
         }
         
         AbstractPO.setSelected(queryDoc.getElementXsl(),qp.getXsl());
-
+        
         // Then the criteria...
         XHTMLInputElement nbcrit = queryDoc.getElementNumberOfCriteria();
         Element criterion = queryDoc.getElementCriterion();
@@ -275,10 +378,10 @@ public class AdvancedQueryForm {
         XHTMLSelectElement oper = queryDoc.getElementOperator();
         XHTMLInputElement valuefield = queryDoc.getElementValueField();
         Element sourceLangSelectArea = queryDoc.getElementSourceLanguageSelection();
-        XHTMLLabelElement sourceLangLabel = queryDoc.getElementSourceLangLabel();
+        //XHTMLLabelElement sourceLangLabel = queryDoc.getElementSourceLangLabel();
         XHTMLSelectElement sourceLang = queryDoc.getElementSourceLang();
         XHTMLOptionElement sourceOption = queryDoc.getElementSourceOptionTemplate();
-
+        
         nbcrit.removeAttribute("id");
         criterion.removeAttribute("id");
         minus.removeAttribute("id");
@@ -287,18 +390,18 @@ public class AdvancedQueryForm {
         oper.removeAttribute("id");
         valuefield.removeAttribute("id");
         sourceLangSelectArea.removeAttribute("id");
-        sourceLangLabel.removeAttribute("id");
+        //sourceLangLabel.removeAttribute("id");
         sourceLang.removeAttribute("id");
         sourceOption.removeAttribute("id");
         
         // add all source languages in the lang selector
-        String[] sourceLanguageNames = getAllSourceLanguages();
+        String[] sourceLanguageNames = fr.imag.clips.papillon.business.dictionary.AvailableLanguages.getSourceLanguagesArray();
         for (int i = 0; i < sourceLanguageNames.length; i++) {
             String lg = sourceLanguageNames[i];
             sourceOption.setValue(lg);
             sourceOption.setLabel(Languages.localizeLabel(sessionData.getUserPreferredLanguage(),lg));
             Text txt = (Text) sourceOption.getFirstChild();
-            txt.setData(Languages.localizeName(sessionData.getUserPreferredLanguage(),lg));
+            txt.setData("in " + Languages.localizeName(sessionData.getUserPreferredLanguage(),lg));
             sourceOption.getParentNode().appendChild(sourceOption.cloneNode(true));
         }
         sourceOption.getParentNode().removeChild(sourceOption);
@@ -314,7 +417,7 @@ public class AdvancedQueryForm {
             minus.getParentNode().removeChild(minus);
             plus.setAttribute("id", "plus.0");
             sourceLang.setAttribute("id", "SourceLang.0");
-            sourceLangLabel.setAttribute("for", "SourceLang.0");
+            //sourceLangLabel.setAttribute("for", "SourceLang.0");
         } else {
             nbcrit.setValue(Integer.toString(qp.getCriteria().size()));
             Iterator iter = qp.getCriteria().iterator();
@@ -322,8 +425,9 @@ public class AdvancedQueryForm {
             while(iter.hasNext()) {
                 String[] key = (String[]) iter.next();
                 AbstractPO.setSelected(facet,key[0]);
-                int operValue = index(IQuery.QueryBuilderStrategy, key[3]);
-                AbstractPO.setSelected(oper,Integer.toString(operValue));
+                //int operValue = index(IQuery.QueryBuilderStrategy, key[3]);
+                //AbstractPO.setSelected(oper,Integer.toString(operValue));
+                AbstractPO.setSelected(oper, key[3]);
                 valuefield.setValue(key[2]);
                 if (null != key[1] && !key[1].equals(""))
                     AbstractPO.setSelected(sourceLang,key[1]);
@@ -335,10 +439,18 @@ public class AdvancedQueryForm {
                 minus.setAttribute("id", "minus." + istr);
                 plus.setAttribute("id", "plus." + istr);
                 sourceLang.setAttribute("id", "SourceLang." + istr);
-                sourceLangLabel.setAttribute("for", "SourceLang." + istr);
+                //sourceLangLabel.setAttribute("for", "SourceLang." + istr);
                 
+                // Specify what cdm-element appears in advanced lookup and if it needs language selector !
+                // see below "create table to show/hide parameters"
+				if (fr.imag.clips.papillon.business.dictionary.AvailableLanguages.getCdmElementsWithDefaultLanguage().contains(key[0])) {
+					sourceLang.setAttribute("style", "visibility: hidden;");
+				} else {
+					sourceLang.setAttribute("style", "visibility: visible;");
+				}
+                
+                //
                 Node newCriterion = criterion.cloneNode(true);
-                                
                 
                 // Reinit the template node
                 minus.removeAttribute("id");
@@ -362,53 +474,69 @@ public class AdvancedQueryForm {
             criterion.getParentNode().removeChild(criterion);
         }
         
+        // Add by Francis : create table to show/hide parameters
+        // Specify what cdm-element appears in advanced lookup and if it needs language selector ! 
+        XHTMLTableRowElement rowShowHideTemplate = queryDoc.getElementRowShowHideTemplate();
+        rowShowHideTemplate.removeAttribute("id");
+        
+        // Build the data structure in the xhtml
+        Iterator iter = fr.imag.clips.papillon.business.dictionary.AvailableLanguages.getCdmElementsWithDefaultLanguage().iterator();
+        while ( iter.hasNext() ) {
+            String CdmElement = (String)iter.next();
+            
+            //
+            NodeList list = (NodeList) rowShowHideTemplate.getChildNodes();
+            Text parametersToHide = (Text) list.item(0).getFirstChild();
+            parametersToHide.setData(CdmElement);
+            rowShowHideTemplate.getParentNode().appendChild(rowShowHideTemplate.cloneNode(true));
+        }
+        rowShowHideTemplate.getParentNode().removeChild(rowShowHideTemplate);
+        
+        //
         queryForm = queryDoc.getElementAdvancedSearchForm();
-    }
-    
-    protected String[] getAllTargetLanguages() 
-        throws fr.imag.clips.papillon.business.PapillonBusinessException 
-    {
-        Dictionary[] knownDictionaries = DictionariesFactory.getDictionariesArray();
-        HashSet trgtLgSet = new HashSet();
-        for (int i = 0; i < knownDictionaries.length; i++) {
-            String[] tls = knownDictionaries[i].getTargetLanguagesArray();
-            for (int j=0; j < tls.length; j++) {
-                if (null != tls[j] && !tls[j].equals("") && !tls[j].equals("axi")) trgtLgSet.add(tls[j]);
-            }
-        }
-        String[] targetLanguageNames = (String[]) trgtLgSet.toArray(new String[trgtLgSet.size()]);
-        // FIXME: the sort should apply on localized languages (not on 3 letter codes...)
-        Arrays.sort(targetLanguageNames);
+	}
         
-        return targetLanguageNames;
-    }
-    
-    protected String[] getAllSourceLanguages() 
-        throws fr.imag.clips.papillon.business.PapillonBusinessException 
-    {
-        Dictionary[] knownDictionaries = DictionariesFactory.getDictionariesArray();
-        HashSet srcLgSet = new HashSet();
-        for (int i = 0; i < knownDictionaries.length; i++) {
-            String[] tls = knownDictionaries[i].getSourceLanguagesArray();
-            for (int j=0; j < tls.length; j++) {
-                if (null != tls[j] && !tls[j].equals("") && !tls[j].equals("axi")) srcLgSet.add(tls[j]);
-            }
-        }
-        
-        String[] sourceLanguageNames = (String[]) srcLgSet.toArray(new String[srcLgSet.size()]);
-        // FIXME: the sort should apply on localized languages (not on 3 letter codes...)
-        Arrays.sort(sourceLanguageNames);
-        
-        String[] result = new String[srcLgSet.size()+1];
-        result[0] = Volume.DEFAULT_LANG;
-        System.arraycopy(sourceLanguageNames, 0, result, 1, sourceLanguageNames.length);
-        return result;
-    }
-    
     protected static int index(String[] array, String key) {
         int i = 0;
         while( i < array.length && !array[i].equals(key)) i++;
         return i;
+    }
+    
+    
+    public static String getEncodedUrlForParameter(QueryParameter qp) {
+        
+        // View
+        String url = AdvancedQueryFormXHTML.NAME_XSL + "=" + qp.getXsl();
+        url += "&" + AdvancedQueryFormXHTML.NAME_NB_RESULT_PER_PAGE + "=" + qp.getLimit();
+        url += "&" + AdvancedQueryFormXHTML.NAME_OFFSET + "=" + qp.getOffset();
+        
+        // Dictionnaries
+        for (int i = 0; i < qp.getDictionaryNames().length; i++) {
+            url += "&" + AdvancedQueryFormXHTML.NAME_DICTIONARIES  + "=" +  qp.getDictionaryNames()[i];
+        }
+        
+        // Volumes
+        for (int i = 0; i < qp.getTargets().length; i++) {
+            url += "&" + AdvancedQueryFormXHTML.NAME_TARGETS  + "=" +  qp.getTargets()[i];
+        }
+        
+        // CriteriaS
+        Vector criteria = qp.getCriteria();
+        url+= "&" + AdvancedQueryFormXHTML.NAME_CRITERIA_NB + "=" + criteria.size();
+        
+        for(int i=0; i < criteria.size(); i++) {
+            String[] key = (String[])criteria.elementAt(i);            
+            url += "&" + AdvancedQueryFormXHTML.NAME_FACET + "." + Integer.toString(i) + "=" + key[0];
+            if (null != key[1])
+                url += "&" + AdvancedQueryFormXHTML.NAME_SOURCE + "." + Integer.toString(i) + "=" + key[1];
+            url += "&" + AdvancedQueryFormXHTML.NAME_FACETVALUE + "." + Integer.toString(i) + "=" + key[2];
+            //int operValue = index(IQuery.QueryBuilderStrategy, key[3]);
+            //url += "&" + AdvancedQueryFormXHTML.NAME_OPERATOR + "." + Integer.toString(i) + "=" + Integer.toString(operValue); 
+            url += "&" + AdvancedQueryFormXHTML.NAME_OPERATOR + "." + Integer.toString(i) + "=" + key[3]; 
+        }
+        
+        //
+        return url;
     }
     
     /** 
@@ -424,6 +552,18 @@ public class AdvancedQueryForm {
         // Create the advanced query form and fill it with current requested values
         return qparams;
     }
+    
+    public QueryRequest getQueryRequest() {
+        //
+        return qrequest;
+    }
+
+    public ArrayList getCriteriaList() {
+        //
+        return criteriaList;
+    }
+
+    
     
     public boolean actionOnFormRequested() {
         return (null != action && !action.equals(""));

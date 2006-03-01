@@ -9,6 +9,26 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.5  2006/03/01 15:12:31  mangeot
+ *  Merge between maintrunk and LEXALP_1_1 branch
+ *
+ *  Revision 1.4.4.3  2006/01/25 15:22:23  fbrunet
+ *  Improvement of QueryRequest
+ *  Add new search criteria
+ *  Add modified status
+ *
+ *  Revision 1.4.4.2  2006/01/24 13:39:49  fbrunet
+ *  Modification view management
+ *  Modification LexALP postprocessing
+ *
+ *  Revision 1.4.4.1  2005/12/02 10:04:09  fbrunet
+ *  Add Pre/Post edition processing
+ *  Add index reconstruction
+ *  Add new query request
+ *  Add fuzzy search
+ *  Add new contribution administration
+ *  Add xsl transformation volume
+ *
  *  Revision 1.4  2005/07/21 09:37:47  serasset
  *  LexALPLinker had a pb with package since MM modification.
  *  Lexalp query menu leads to AdvancedSearch.
@@ -99,7 +119,7 @@ public class LexALPLinker extends LinkerBasePO {
         public String facet;
         public String comparator;
         public String xsl;
-        public int comparisonOperator;
+        public String comparisonOperator;
         public String [] targets;
         
         // Parameter initialization does not depend on the exact shape of the search form.
@@ -117,8 +137,9 @@ public class LexALPLinker extends LinkerBasePO {
                 facetValue = (null == facetValue) ? "" : facetValue;
                 sourceLang = po.myGetParameter(LinkerSearchFormXHTML.NAME_SOURCE);
                 facet = po.myGetParameter(LinkerSearchFormXHTML.NAME_FACET);
-                comparator = po.myGetParameter(LinkerSearchFormXHTML.NAME_OPERATOR);
-                comparisonOperator = (comparator != null) ? Integer.valueOf(comparator).intValue() : 0;
+                //comparator = po.myGetParameter(LinkerSearchFormXHTML.NAME_OPERATOR);
+                //comparisonOperator = (comparator != null) ? Integer.valueOf(comparator).intValue() : 0;
+                comparisonOperator = po.myGetParameter(LinkerSearchFormXHTML.NAME_OPERATOR);
                 
                 xsl = po.myGetParameter(LinkerSearchFormXHTML.NAME_XSL);
                 
@@ -233,7 +254,8 @@ public class LexALPLinker extends LinkerBasePO {
         
         setSelected(searchForm.getElementSourceLang(), parameters.sourceLang);
         setSelected(searchForm.getElementFacet(), parameters.facet);
-        setSelected(searchForm.getElementOperator(), Integer.toString(parameters.comparisonOperator));
+        setSelected(searchForm.getElementOperator(), parameters.comparisonOperator);
+        //setSelected(searchForm.getElementOperator(), Integer.toString(parameters.comparisonOperator));
 
         return (Node) searchForm.getElementAdvancedSearchForm();
     }
@@ -242,7 +264,51 @@ public class LexALPLinker extends LinkerBasePO {
         LinkerResultListXHTML resultsListTmpl = (LinkerResultListXHTML) MultilingualXHtmlTemplateFactory.createTemplate("fr.imag.clips.papillon.presentation.xhtmllexalp", "LinkerResultListXHTML", this.myComms, this.sessionData);
 
         parameters.initializeSearchParameters(this);
-
+        Collection results = new Vector();
+        
+        //
+        if ((parameters.facetValue != null) && (!parameters.facetValue.equals(""))) {
+            
+            //
+            QueryRequest query = new QueryRequest(VolumesFactory.getVolumesArrayName());
+                        
+            //
+            QueryCriteria criteria = new QueryCriteria();
+            criteria.add("key", QueryCriteria.EQUAL, parameters.facet);
+            criteria.add("value", parameters.comparisonOperator, parameters.facetValue);
+            criteria.add("lang", QueryCriteria.EQUAL, parameters.sourceLang);
+            query.addCriteria(criteria);
+            
+            
+            /*
+            QueryCriteria criteriaFinishedStatus = new QueryCriteria();
+            criteriaFinishedStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);  
+            criteriaFinishedStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.FINISHED_STATUS);
+            //list.add(criteriaFinishedStatus);
+            query.addCriteria(criteriaFinishedStatus);
+            */
+            
+            ArrayList listStatus = new ArrayList();
+            
+            QueryCriteria criteriaFinishedStatus = new QueryCriteria();
+            criteriaFinishedStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);  
+            criteriaFinishedStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.FINISHED_STATUS);
+            listStatus.add(criteriaFinishedStatus);
+            
+            QueryCriteria criteriaValidatedStatus = new QueryCriteria();
+            criteriaValidatedStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);
+            criteriaValidatedStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.MODIFIED_STATUS);
+            listStatus.add(criteriaValidatedStatus);
+            
+            query.addOrCriteriaList(listStatus);
+            
+            
+            //
+            results = query.findLexie(this.getUser());
+        }
+        
+        
+        /*
         String[] key = new String[4];
         key[0] = parameters.facet;
         key[1] = parameters.sourceLang; /// mmm sourceLang determines in which dictionary to look for. should be null here ?
@@ -263,6 +329,8 @@ public class LexALPLinker extends LinkerBasePO {
                 }
             }
         }
+         */
+        
         // Get the list of volumes in which to perform the request (filter the list by source language)
         // Perform the request.
         // display a list view of the result set.
@@ -282,11 +350,13 @@ public class LexALPLinker extends LinkerBasePO {
         
         Iterator iter = results.iterator();
         while(iter.hasNext()) {
-            VolumeEntry ve = (VolumeEntry) iter.next();
+            QueryResult qres = (QueryResult) iter.next();
+            VolumeEntry ve = qres.getSourceEntry();
+            //VolumeEntry ve = (VolumeEntry) iter.next();
             QueryResult qr = new QueryResult(QueryResult.UNIQUE_RESULT, ve);
             ResultFormatter rf = ResultFormatterFactory.getFormatter(qr, "short-list", ResultFormatterFactory.XHTML_DIALECT, null);
             removeChildren(entryNode);
-            Node entryDOM = (Node)rf.getFormattedResult(qr);
+            Node entryDOM = (Node)rf.getFormattedResult(qr, this.getUser());
             //Utility.writeNodeToSystemOut(entryDOM);
             entryNode.appendChild(resultsListTmpl.importNode(entryDOM, true));
             action.setAttribute("onClick", "updateParent('" + ve.getEntryId() + "', '" + ve.getSourceLanguage() + "')");

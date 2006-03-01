@@ -4,6 +4,27 @@
  * $Id$
  *------------------------
  * $Log$
+ * Revision 1.5  2006/03/01 15:12:31  mangeot
+ * Merge between maintrunk and LEXALP_1_1 branch
+ *
+ * Revision 1.4.4.3  2006/01/25 15:22:23  fbrunet
+ * Improvement of QueryRequest
+ * Add new search criteria
+ * Add modified status
+ *
+ * Revision 1.4.4.2  2006/01/24 13:39:49  fbrunet
+ * Modification view management
+ * Modification LexALP postprocessing
+ *
+ * Revision 1.4.4.1  2005/08/31 15:01:39  serasset
+ * Applied modifications done on the LEXALP_1_0 branch to updated sources of the
+ * trunk to create a new updated LEXALP_1_1 branch.
+ *
+ * Revision 1.4.2.1  2005/07/22 13:28:32  serasset
+ * Modified EditEntryInit for Lexalp. It now serves as a main page for db maintenance.
+ * Added a function to get url for QueryParameter.
+ * Modified the way xslsheets are handled in order to allow several xslsheet with the same name, different dicts.
+ *
  * Revision 1.4  2005/07/21 09:37:47  serasset
  * LexALPLinker had a pb with package since MM modification.
  * Lexalp query menu leads to AdvancedSearch.
@@ -35,6 +56,7 @@ package fr.imag.clips.papillon.business.lexalp;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Collection;
+import java.util.ArrayList;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -51,17 +73,25 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Text;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
+import fr.imag.clips.papillon.business.user.User;
 import fr.imag.clips.papillon.business.dictionary.IAnswer;
 import fr.imag.clips.papillon.business.dictionary.QueryResult;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
 import fr.imag.clips.papillon.business.dictionary.Dictionary;
 import fr.imag.clips.papillon.business.dictionary.Volume;
+import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
+import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
 import fr.imag.clips.papillon.business.xsl.XslSheet;
 import fr.imag.clips.papillon.business.xsl.XslSheetFactory;
 import fr.imag.clips.papillon.business.utility.Utility;
 import fr.imag.clips.papillon.business.transformation.ResultFormatter;
+import fr.imag.clips.papillon.business.dictionary.QueryRequest;
+import fr.imag.clips.papillon.business.dictionary.QueryResult;
+import fr.imag.clips.papillon.business.dictionary.QueryCriteria;
 
 import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
@@ -74,12 +104,12 @@ public class LexALPFormatter implements ResultFormatter {
 	// Note: I use constants extensively because the XSL transformations are a little
 	// bit slow
 	protected static Hashtable XslSheetCache = new Hashtable();
-
+    
     //outils pour les transformation
 	protected static final TransformerFactory myTransformerFactory = TransformerFactory.newInstance();
 	protected static final DocumentBuilderFactory myDocumentBuilderFactory = DocumentBuilderFactory.newInstance();
 	protected static DocumentBuilder myDocumentBuilder; 	
-
+    
     protected XslSheet dictXsl = null;
     
     protected Dictionary currentDictionary;
@@ -94,7 +124,7 @@ public class LexALPFormatter implements ResultFormatter {
             }
             // if parameter is given, it is the name of the xsl...
             if (null != parameter) {
-                dictXsl = XslSheetFactory.findXslSheetByName((String) parameter);
+                dictXsl = XslSheetFactory.getNamedXslSheet((String) parameter, dict.getName(), vol.getName());
             } else {
                 dictXsl = XslSheetFactory.getDefaultXslSheet(dict.getName(), vol.getName());
             }
@@ -103,41 +133,176 @@ public class LexALPFormatter implements ResultFormatter {
         }
         
     }
-        
-    public Node getFormattedResult(QueryResult qr) throws PapillonBusinessException {
+    
+    public Node getFormattedResult(QueryResult qr, User usr) throws PapillonBusinessException {
         try {
             Document res = myDocumentBuilder.newDocument();
             Element div = res.createElement("div");
             res.appendChild(div);
+            
             // First format the source entry
-            Document doc = qr.getSourceEntry().getDom();
+            Document docSource = qr.getSourceEntry().getDom();
             
+            //
             if (null != dictXsl && ! dictXsl.isEmpty()) {
-                doc = Transform(doc, dictXsl);
+                Node resultNode = formatResult(docSource, dictXsl, usr);
+                div.appendChild(res.importNode(resultNode, true));
             }
-            div.appendChild(res.importNode(doc.getDocumentElement(),true));
             
+            // FIXME : supress 
             if (qr.getResultKind() == QueryResult.AXIE_COLLECTION_RESULT) {
                 // Then append each translation
                 Iterator iter = qr.getLexiesCollection().iterator();
                 while (iter.hasNext()) {
                     VolumeEntry ve = (VolumeEntry) iter.next();
                     if (! ve.getHandle().equals(qr.getSourceEntry().getHandle()) ) {
-                        doc = ve.getDom();
+                        Document doc = ve.getDom();
                         if (null != dictXsl && ! dictXsl.isEmpty()) {
-                            doc = Transform(doc, dictXsl);
+                            //doc = Transform(doc, dictXsl);
+                            Node resultNode = formatResult(doc, dictXsl, usr);
+                            div.appendChild(res.importNode(resultNode, true));
                         }
-                        div.appendChild(res.importNode(doc.getDocumentElement(),true));
                     }
                 }
-            } 
+            }            
+            
+            //
             return (Node) res.getDocumentElement();
-
+            
         } catch(Exception ex) {
             throw new PapillonBusinessException("Exception in getFormattedResult()", ex);
         }	
     }
-        
+    
+    
+    /**
+        ...
+     */
+    private Node formatResult(Document docSource, XslSheet xsl, User usr) throws PapillonBusinessException {
+        try {
+            
+            //System.out.println("source " + docSource.getDocumentElement().getNodeName());
+            //System.out.println("xsl " + xsl.getName());
+            
+            // Transform
+            Document docCible = Transform(docSource, xsl);
+           
+            // Replace AUTO element
+            NodeList list = docCible.getElementsByTagName("AUTO");
+            while (list.getLength() > 0) {
+                Node node = list.item(0);
+                Node parentNode = node.getParentNode();
+                
+                //
+                Node termRefAttribut = node.getAttributes().getNamedItem("termRef");
+                String termRef = termRefAttribut.getNodeValue();
+                Node langAttribut = node.getAttributes().getNamedItem("lang");
+                String lang = langAttribut.getNodeValue();
+                Node xpathAttribut = node.getAttributes().getNamedItem("xpath");
+                String xpath = xpathAttribut.getNodeValue();
+                Node xslNameAttribut = node.getAttributes().getNamedItem("xslName");
+                XslSheet newXsl = new XslSheet();
+                if ( xslNameAttribut != null ) {
+					//FIXME: search the specified entry, then gets its dictionary and volume to correctly select the XSL
+                    newXsl = XslSheetFactory.findXslSheetByName(xslNameAttribut.getNodeValue());
+                }
+                //Node namespaceAttribut = node.getAttributes().getNamedItem("namespace");
+                
+                
+                /*
+                // Find entry
+                QueryRequest queryReq = new QueryRequest(VolumesFactory.getVolumesArrayName(null, lang, null));
+                QueryCriteria criteria = new QueryCriteria();
+                criteria.add("key", QueryCriteria.EQUAL, Volume.CDM_entryId);
+                criteria.add("value", QueryCriteria.EQUAL, termRef);     // Termref is an entryid
+                queryReq.addCriteria(criteria);
+                QueryCriteria criteriaStatus = new QueryCriteria();
+                criteriaStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);                  // FINISHED_STATUS
+                criteriaStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.FINISHED_STATUS);
+                queryReq.addCriteria(criteriaStatus);
+                
+                //
+                Collection qrset = queryReq.findLexie(usr);
+                
+                // Find not finished entry if no finished entry
+                // FIXME: guess user can view not finished status !!!
+                if ( qrset.isEmpty()) {
+                    queryReq = new QueryRequest(VolumesFactory.getVolumesArrayName(null, lang, null));
+                    queryReq.addCriteria(criteria);
+                    criteriaStatus = new QueryCriteria();
+                    criteriaStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);                  // NOT_FINISHED_STATUS
+                    criteriaStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.NOT_FINISHED_STATUS);
+                    queryReq.addCriteria(criteriaStatus);
+                    
+                    //
+                    qrset = queryReq.findLexie(usr);
+                }
+                */
+                
+                // Find entry
+                QueryRequest queryReq = new QueryRequest(VolumesFactory.getVolumesArrayName(null, lang, null));
+                QueryCriteria criteria = new QueryCriteria();
+                criteria.add("key", QueryCriteria.EQUAL, Volume.CDM_entryId);
+                criteria.add("value", QueryCriteria.EQUAL, termRef);     // Termref is an entryid
+                queryReq.addCriteria(criteria);
+                
+                ArrayList listStatus = new ArrayList();
+                QueryCriteria criteriaFinishedStatus = new QueryCriteria();
+                criteriaFinishedStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);  
+                criteriaFinishedStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.FINISHED_STATUS);
+                listStatus.add(criteriaFinishedStatus);
+                QueryCriteria criteriaModifiedStatus = new QueryCriteria();
+                criteriaModifiedStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);
+                criteriaModifiedStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.MODIFIED_STATUS);
+                listStatus.add(criteriaModifiedStatus);
+                queryReq.addOrCriteriaList(listStatus);
+                
+                //
+                Collection qrset = queryReq.findLexie(usr);
+                
+                //
+                Iterator iter = qrset.iterator();
+                while(iter.hasNext()) {
+                    QueryResult relatedQr = (QueryResult) iter.next();
+
+                    // Find nodes contingen on xpath
+                    NodeList nodeL = relatedQr.getSourceEntry().getNodes(xpath);
+                    
+                    // Insert new nodes
+                    for (int j=0; j <  nodeL.getLength(); j++) {
+                        Document docXpath = myDocumentBuilder.newDocument();
+                        Element result = docXpath.createElement("RESULT");
+                        docXpath.appendChild(result);                        
+                        Node nodeXpath = docXpath.importNode(nodeL.item(j), true);
+                        result.appendChild(nodeXpath);
+                        
+                        //
+                        if ( xslNameAttribut != null ) {
+                            result = (Element) formatResult(docXpath, newXsl, usr);
+                        }
+                        
+                        //
+                        parentNode.insertBefore(docCible.importNode(result, true), node);
+                    }
+                }
+                
+                //
+                parentNode.removeChild(node);
+                
+                // Here because Res change after removeChild and appendChild methods
+                list = docCible.getElementsByTagName("AUTO");
+                
+            }
+            
+            //
+            return docCible.getDocumentElement();
+                
+        } catch(Exception ex) {
+            throw new PapillonBusinessException("Exception in getFormattedResult()", ex);
+        }	
+    }    
+    
+    
 	/**
         Transform the xml source by processing it with an xsl sheet.
 	 */

@@ -9,6 +9,18 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.2  2006/03/01 15:12:31  mangeot
+ * Merge between maintrunk and LEXALP_1_1 branch
+ *
+ * Revision 1.1.4.1  2005/08/31 15:01:39  serasset
+ * Applied modifications done on the LEXALP_1_0 branch to updated sources of the
+ * trunk to create a new updated LEXALP_1_1 branch.
+ *
+ * Revision 1.1.2.1  2005/07/22 13:28:32  serasset
+ * Modified EditEntryInit for Lexalp. It now serves as a main page for db maintenance.
+ * Added a function to get url for QueryParameter.
+ * Modified the way xslsheets are handled in order to allow several xslsheet with the same name, different dicts.
+ *
  * Revision 1.1  2005/07/16 12:58:31  serasset
  * Added limit parameter to query functions
  * Added a parameter to Formater initializations
@@ -83,4 +95,5 @@ public class QueryParameter {
         targets = newTargets;
     }
     
+        
 }

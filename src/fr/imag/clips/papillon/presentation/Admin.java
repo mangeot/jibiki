@@ -9,6 +9,23 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.9  2006/03/01 15:12:31  mangeot
+ * Merge between maintrunk and LEXALP_1_1 branch
+ *
+ * Revision 1.8.2.3  2006/02/17 13:21:25  mangeot
+ *
+ * MM: modified AdvancedQueryForm. getAllTargetLanguages, getAllSourceLanguages and getCdmElementsWithDefaultLanguage are now static in AvailableLanguages.java in order to accelerate the execution.
+ *
+ * Revision 1.8.2.2  2006/01/25 15:22:23  fbrunet
+ * Improvement of QueryRequest
+ * Add new search criteria
+ * Add modified status
+ *
+ * Revision 1.8.2.1  2005/10/24 16:29:19  fbrunet
+ * Added fuzzy search capabilities.
+ * Added possibility to rebuild the index DB tables.
+ * Added Pre and post processors that could be defined by the user.
+ *
  * Revision 1.8  2005/07/28 14:36:56  mangeot
  * Added a News presentation page that takes a static xhtml page and displays it.
  * People can edit this static page on the server by accessing it via ftp or ssh.
@@ -86,12 +103,6 @@ import java.io.IOException;
 import java.util.Date;
 import java.text.DateFormat;
 
-
-// importing the classes where the caches are
-import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
-import fr.imag.clips.papillon.business.transformation.XslTransformation;
-import fr.imag.clips.papillon.business.locales.Languages;
-
 import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
 public class Admin extends PapillonBasePO {
@@ -147,10 +158,11 @@ public class Admin extends PapillonBasePO {
 				fr.imag.clips.papillon.business.edition.UITemplates.resetCache();
             }
 			else if (null != req.getParameter(content.NAME_ResetXslSheetTransformersCache)) {
-				XslTransformation.resetCache();
+				fr.imag.clips.papillon.business.transformation.XslTransformation.resetCache();
             }
 			else if (null != req.getParameter(content.NAME_ResetLanguagesCache)) {
-				Languages.resetCache();
+				fr.imag.clips.papillon.business.locales.Languages.resetCache();
+				fr.imag.clips.papillon.business.dictionary.AvailableLanguages.resetCache();
             }
 			else if (null != req.getParameter(content.NAME_ResetNewsCache)) {
 				fr.imag.clips.papillon.presentation.News.resetCache();
@@ -161,10 +173,12 @@ public class Admin extends PapillonBasePO {
 				fr.imag.clips.papillon.business.dictionary.VolumeEntry.setCacheHtmlDom(cacheSet);
                 this.getSessionData().writeUserMessage("HTML DOM cache is set? " + cacheSet);
             }
-			else if (null != req.getParameter(content.NAME_SetEditData)) {
-				String editDataString = myGetParameter(content.NAME_EditData);
-				EDIT_DATA = (editDataString!=null && !editDataString.equals(""));
-                this.getSessionData().writeUserMessage("Data is editable? " + EDIT_DATA);
+			else if (null != req.getParameter(content.NAME_ReConstructionIndex)) {
+				fr.imag.clips.papillon.business.dictionary.VolumesFactory.reConstructionIndex();
+                
+            // FIXME: supress    
+            } else if (null != req.getParameter(content.NAME_ModifiedStatus)) {
+				fr.imag.clips.papillon.business.dictionary.VolumesFactory.modifiedStatus(this.getUser());
             }
         }
 		

@@ -10,6 +10,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.30  2006/03/01 15:12:31  mangeot
+ *  Merge between maintrunk and LEXALP_1_1 branch
+ *
  *  Revision 1.29  2006/02/28 18:12:15  mangeot
  *  *** empty log message ***
  *
@@ -21,6 +24,14 @@
  *
  *  Revision 1.26  2005/09/08 14:13:07  mangeot
  *  Bug fix in Validated contrib deletion process
+ *
+ *  Revision 1.25.2.2  2006/02/17 13:21:25  mangeot
+ *
+ *  MM: modified AdvancedQueryForm. getAllTargetLanguages, getAllSourceLanguages and getCdmElementsWithDefaultLanguage are now static in AvailableLanguages.java in order to accelerate the execution.
+ *
+ *  Revision 1.25.2.1  2006/01/24 13:39:49  fbrunet
+ *  Modification view management
+ *  Modification LexALP postprocessing
  *
  *  Revision 1.25  2005/08/03 10:22:03  mangeot
  *  Fixed a bug in ConsultExpert for the deleteEntry button
@@ -410,10 +421,8 @@ public class ConsultExpert extends PapillonBasePO {
 		}
 
         // FIXME: Just get the first language for the moment. Architecture of this part should be revised.
-        AvailableLanguages MyAvailableLanguages = new AvailableLanguages();
-
-        String[] allSourceLanguages = MyAvailableLanguages.getSourceLanguagesArray();
-        String[] allTargetLanguages = MyAvailableLanguages.getTargetLanguagesArray();
+        String[] allSourceLanguages = AvailableLanguages.getSourceLanguagesArray();
+        String[] allTargetLanguages = AvailableLanguages.getTargetLanguagesArray();
         String[] allResources = DictionariesFactory.getDictionariesNamesArray();
 
         if (null != targetLanguages && targetLanguages.length > 0) {
@@ -1194,7 +1203,7 @@ public class ConsultExpert extends PapillonBasePO {
             // get the apropriate transformer.
             ResultFormatter rf = ResultFormatterFactory.getFormatter(qr, formatter, ResultFormatterFactory.XHTML_DIALECT,null);
             //rf.initializeFormatter(qr.getSourceEntry().getDictionary(), qr.getSourceEntry().getVolume() , null, ResultFormatterFactory.XHTML_DIALECT,null);
-			Element myHtmlElt = (Element)rf.getFormattedResult(qr);
+			Element myHtmlElt = (Element)rf.getFormattedResult(qr, this.getUser());
             
 			addElement(myHtmlElt, myEntry.getVolumeName(), myEntry.getHandle(),  myEntry.getDictionaryName(), myEntry.getVolumeName(), myEntry.getType());
 		}
@@ -1207,10 +1216,10 @@ public class ConsultExpert extends PapillonBasePO {
      * @exception  fr.imag.clips.papillon.business.PapillonBusinessException
      *      Description of the Exception
      */
-    protected String buildLanguagesScript(AvailableLanguages MyAvailableLanguages, String[] allSourceLanguages)
+    protected String buildLanguagesScript(String[] allSourceLanguages)
              throws fr.imag.clips.papillon.business.PapillonBusinessException {
 
-        String[] AllLanguages = MyAvailableLanguages.getAllLanguagesArray();
+        String[] AllLanguages = AvailableLanguages.getAllLanguagesArray();
         String script;
 
         // Heading of the script
@@ -1235,7 +1244,7 @@ public class ConsultExpert extends PapillonBasePO {
         for (int i = 0; i < allSourceLanguages.length; i++) {
             String mySource = allSourceLanguages[i];
             String ifScript = "  if (object.SOURCE.options[object.SOURCE.selectedIndex].value == \"" + mySource + "\") {";
-            String[] myTargets = MyAvailableLanguages.getTargetLanguagesArray(mySource);
+            String[] myTargets = AvailableLanguages.getTargetLanguagesArray(mySource);
             for (int j = 0; j < myTargets.length; j++) {
                 ifScript = ifScript + "\n" + "    object.TARGETS.options["
                          + j + "] = " + myTargets[j] + ";";

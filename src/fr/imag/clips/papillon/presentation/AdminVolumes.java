@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.12  2006/03/01 15:12:31  mangeot
+ * Merge between maintrunk and LEXALP_1_1 branch
+ *
  * Revision 1.11  2006/02/26 14:04:56  mangeot
  * Corrected a bug: the content was a static variable, thus there were problems when two users wanted to aces the same page at the same time
  *
@@ -22,6 +25,17 @@
  *
  * Revision 1.8  2005/11/14 21:46:26  mangeot
  * *** empty log message ***
+ *
+ * Revision 1.7.4.2  2005/12/08 13:03:37  fbrunet
+ * Add transformation interface to volume administration
+ *
+ * Revision 1.7.4.1  2005/12/02 10:04:09  fbrunet
+ * Add Pre/Post edition processing
+ * Add index reconstruction
+ * Add new query request
+ * Add fuzzy search
+ * Add new contribution administration
+ * Add xsl transformation volume
  *
  * Revision 1.7  2005/06/15 16:48:28  mangeot
  * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
@@ -146,8 +160,7 @@ public class AdminVolumes extends PapillonBasePO {
 	protected final static String Object_Schema="Schema";
 	protected final static String Object_Template="Template";
 	protected final static String Object_Interface="Interface";
-
-    
+        
     protected final static String URL_PARAMETER="url";
     protected final static String DICTIONARY_PARAMETER="DICTIONARY";
 
@@ -185,6 +198,7 @@ public class AdminVolumes extends PapillonBasePO {
         HttpPresentationRequest req = this.getComms().request;
 				String dictName = myGetParameter(AdminVolumesXHTML.NAME_Dictionary);
 				String volName = myGetParameter(AdminVolumesXHTML.NAME_Volume);
+                String volNameTransformation = myGetParameter(AdminVolumesXHTML.NAME_VolumeTransformation);
         // If the page is called with parameters, take the requested action
         if (req.getParameterNames().hasMoreElements()) {
             //TEMPORAIRE :avec l URL
@@ -201,8 +215,13 @@ public class AdminVolumes extends PapillonBasePO {
 					String object = myGetParameter(AdminVolumesXHTML.NAME_Object);
 					String url = myGetParameter(AdminVolumesXHTML.NAME_URLObject);
 					userMessage = this.uploadObject(volName, object, url);
-            } 
-             else if (null != myGetParameter(REMOVE_METADATA_PARAMETER)) {
+            
+            } else if (null != myGetParameter(content.NAME_VolumeTransformation) &&
+                       null != myGetParameter(content.NAME_URLObjectTransformation)) {
+                String url = myGetParameter(content.NAME_URLObjectTransformation);
+                userMessage = this.launchTranformation(volNameTransformation, url);
+            
+            } else if (null != myGetParameter(REMOVE_METADATA_PARAMETER)) {
                 String handle = myGetParameter(REMOVE_METADATA_PARAMETER);
                 Volume volume = VolumesFactory.findVolumeByID(handle);
                 volume.delete();
@@ -249,11 +268,10 @@ public class AdminVolumes extends PapillonBasePO {
         }
         
         //adding the consult form
-        addConsultForm(content, dictName, volName);
+        addConsultForm(content, dictName, volName, volNameTransformation);
         
         //adding the content of the volumes table
         addVolumesArray(content);
-        
         
         //On rend le contenu correct
         return content.getElementFormulaire();
@@ -405,7 +423,7 @@ public class AdminVolumes extends PapillonBasePO {
         theXmlParent.removeChild(theXml);
     }
     
-     protected void addConsultForm(AdminVolumesXHTML content, String selectedDict, String selectedVolume) 
+     protected void addConsultForm(AdminVolumesXHTML content, String selectedDict, String selectedVolume, String selectedVolumeTransformation) 
         throws fr.imag.clips.papillon.business.PapillonBusinessException, 
                 HttpPresentationException {
            // Adding the appropriate source languages to the source list
@@ -432,18 +450,24 @@ public class AdminVolumes extends PapillonBasePO {
         }
         dictionarySelect.removeChild(dictionaryOptionTemplate);
 				
-				         // Adding the appropriate source languages to the source list
+        // Adding the appropriate source languages to the source lists
         HTMLOptionElement volumeOptionTemplate = content.getElementVolumeOptionTemplate();
+        HTMLOptionElement volumeOptionTemplateTransformation = content.getElementVolumeOptionTemplateTransformation();
         Node volumeSelect = volumeOptionTemplate.getParentNode();
+        Node volumeSelectTransformation = volumeOptionTemplateTransformation.getParentNode();
         volumeOptionTemplate.removeAttribute("id");
+        volumeOptionTemplateTransformation.removeAttribute("id");
         // We assume that the option element has only one text child 
         // (it should be this way if the HTML is valid...)
-        Text volumeTextTemplate = (Text)volumeOptionTemplate.getFirstChild(); 
+        Text volumeTextTemplate = (Text)volumeOptionTemplate.getFirstChild();
+        Text volumeTextTemplateTransformation = (Text)volumeOptionTemplateTransformation.getFirstChild();
                 
         Volume[] AllVolumes = VolumesFactory.getVolumesArray();
                 
         for (int i = 0; i < AllVolumes.length; i++) {
             String volumeName = AllVolumes[i].getName();
+            
+            //
             volumeOptionTemplate.setValue(volumeName);
             volumeOptionTemplate.setLabel(volumeName);
             // Je dois ici mettre un text dans l'OPTION, car les browser PC ne sont pas conformes aux 
@@ -451,8 +475,20 @@ public class AdminVolumes extends PapillonBasePO {
             volumeTextTemplate.setData(volumeName);
             volumeOptionTemplate.setSelected(volumeName.equals(selectedVolume));
             volumeSelect.appendChild(volumeOptionTemplate.cloneNode(true));
+            
+            //
+            volumeOptionTemplateTransformation.setValue(volumeName);
+            volumeOptionTemplateTransformation.setLabel(volumeName);
+            // Je dois ici mettre un text dans l'OPTION, car les browser PC ne sont pas conformes aux 
+            // specs W3C.
+            volumeTextTemplateTransformation.setData(volumeName);
+            if ( (selectedVolumeTransformation != null) && (!selectedVolumeTransformation.equals("")) ) {
+                volumeOptionTemplateTransformation.setSelected(volumeName.equals(selectedVolumeTransformation));
+            }
+            volumeSelectTransformation.appendChild(volumeOptionTemplateTransformation.cloneNode(true));
         }
         volumeSelect.removeChild(volumeOptionTemplate);
+        volumeSelectTransformation.removeChild(volumeOptionTemplateTransformation);
     }
 
 	protected String uploadObject(String volName, String object, String url) throws PapillonBusinessException {
@@ -478,7 +514,7 @@ public class AdminVolumes extends PapillonBasePO {
 				}
 				else if (object.equals(Object_Interface)) {
 					myVolume.setTemplateInterface(objectResult);
-				}
+                }
 				else {
 						result = "Nothing uploaded";
 				}
@@ -486,6 +522,39 @@ public class AdminVolumes extends PapillonBasePO {
 				myVolume.save();
 			}
 		}
+		return result;
+	}
+    
+    //
+    protected String launchTranformation(String volName, String url) throws PapillonBusinessException {
+		String result = "Nothing uploaded";
+        String objectResult = Utility.NodeToString(Utility.buildDOMTreeFromUrl(url));
+        
+        //
+        if ( (volName != null) && volName.equals("All") ) {
+            
+            //
+            Volume[] AllVolumes = VolumesFactory.getVolumesArray();
+            for (int i = 0; i < AllVolumes.length; i++) {
+                PapillonLogger.writeDebugMsg("Transformation " + AllVolumes[i].getName() + " volume");
+                AllVolumes[i].launchTransformation(objectResult, this.getUser());
+            }
+            result = "Transform all volumes";
+        
+        } else {
+            //
+            Volume myVolume = VolumesFactory.findVolumeByName(volName);
+            
+            //
+            if (myVolume!=null && !myVolume.isEmpty()) {
+                PapillonLogger.writeDebugMsg("Transformation " + myVolume.getName() + " volume");
+                myVolume.launchTransformation(objectResult, this.getUser());
+                result = "Transform " + myVolume.getName() + " volume";
+            } else {
+                result = "Empty volume";
+            }        
+        }
+        //
 		return result;
 	}
     

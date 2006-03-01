@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.43  2006/03/01 15:12:31  mangeot
+ * Merge between maintrunk and LEXALP_1_1 branch
+ *
  * Revision 1.42  2006/02/28 15:26:22  mangeot
  * Bug fix when creating new tables
  *
@@ -52,6 +55,34 @@
  *
  * Revision 1.26  2005/09/08 15:04:25  mangeot
  * *** empty log message ***
+ * Revision 1.25.2.5  2006/02/17 10:41:48  fbrunet
+ * Change QueryCriteria parameters
+ * Add new windows when editing an entry
+ *
+ * Revision 1.25.2.4  2006/01/25 15:22:23  fbrunet
+ * Improvement of QueryRequest
+ * Add new search criteria
+ * Add modified status
+ *
+ * Revision 1.25.2.3  2005/12/02 10:04:09  fbrunet
+ * Add Pre/Post edition processing
+ * Add index reconstruction
+ * Add new query request
+ * Add fuzzy search
+ * Add new contribution administration
+ * Add xsl transformation volume
+ *
+ * Revision 1.25.2.2  2005/10/24 16:29:19  fbrunet
+ * Added fuzzy search capabilities.
+ * Added possibility to rebuild the index DB tables.
+ * Added Pre and post processors that could be defined by the user.
+ *
+ * Revision 1.25.2.1  2005/08/31 15:01:39  serasset
+ * Applied modifications done on the LEXALP_1_0 branch to updated sources of the
+ * trunk to create a new updated LEXALP_1_1 branch.
+ *
+ * Revision 1.25  2005/08/24 13:59:35  serasset
+ * Added FIXME comments.
  *
  * Revision 1.24  2005/08/17 12:58:16  mangeot
  * Fixed a bug when creating an entry from an existing one.
@@ -79,6 +110,14 @@
  * Revision 1.17  2005/07/28 13:06:47  mangeot
  * - Added the possibility to export in PDF format. The conversion into PDF is don
  * e via the fop package that has to be installed (see ToolsForPapillon)
+ *
+ * Revision 1.16.2.2  2005/07/22 13:28:32  serasset
+ * Modified EditEntryInit for Lexalp. It now serves as a main page for db maintenance.
+ * Added a function to get url for QueryParameter.
+ * Modified the way xslsheets are handled in order to allow several xslsheet with the same name, different dicts.
+ *
+ * Revision 1.16.2.1  2005/07/21 10:25:28  serasset
+ * For LEXALP, the save button in EditEntry.po means that you FINISH the entry.
  *
  * Revision 1.16  2005/07/16 13:41:52  mangeot
  * Added findEntryByContributionId
@@ -284,10 +323,10 @@ public class VolumeEntriesFactory {
 	public final static String REVIEW_DATE_SORT = "REVIEW_DATE_SORT";
 	public final static String REVIEWER_SORT = "REVIEWER_SORT";
 	public final static String STATUS_SORT = "STATUS_SORT";
-
+	
 	protected final static String MSORT_FIELD = "msort";
 	protected final static String ORDER_DESCENDING = "DESC";
-		
+	
 	protected static final String XMLFormat = Integer.toString(fr.imag.clips.papillon.business.transformation.ResultFormatterFactory.XML_DIALECT);
 	protected static final String XHTMLFormat = Integer.toString(fr.imag.clips.papillon.business.transformation.ResultFormatterFactory.XHTML_DIALECT);
 	protected static final String TEXTFormat = Integer.toString(fr.imag.clips.papillon.business.transformation.ResultFormatterFactory.PLAINTEXT_DIALECT);
@@ -319,7 +358,7 @@ public class VolumeEntriesFactory {
 		+ "  </fo:layout-master-set>\n"
 		+ "  <fo:page-sequence master-reference=\"simpleA4\">\n"
 		+ "    <fo:flow flow-name=\"xsl-region-body\">";
-		
+    
 	public static final String FoFooter = "    </fo:flow>\n"
 		+ "  </fo:page-sequence>\n"
 		+ "</fo:root>\n";
@@ -426,6 +465,7 @@ public class VolumeEntriesFactory {
 			}
 			return resultVector;
         }
+    
 	
 	protected static Vector getDbTableEntriesVector(Dictionary dict, Volume volume, Vector Keys, Vector Clauses, String any, int offset, int limit) throws PapillonBusinessException {
 		return getDbTableEntriesVector(dict, volume, Keys, Clauses, any, "", offset, limit);
@@ -454,7 +494,7 @@ public class VolumeEntriesFactory {
 				// However, if SELECT DISTINCT is specified, or if the SELECT statement contains a UNION operator,
 				// the sort columns must appear in the select list.
 				//query.getQueryBuilder().distinct();
-
+                
 				// looking for any string on the XML code, thus Sequencial request
 				if (any !=null && !any.equals("")) {
 					fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Sequencial request table: " + volumeTableName + " any: " + any);
@@ -469,7 +509,7 @@ public class VolumeEntriesFactory {
 					for (java.util.Enumeration enumKeys = Keys.elements(); enumKeys.hasMoreElements();) {
 						String[] key = (String[]) enumKeys.nextElement();
                         // debug
-                        //System.out.println(key[0] + " | " + key[1] + " | " + key[2] + " | " + key[3]);
+                        System.out.println("VolumeEntriesFactory.getDbTableEntriesVector: " + key[0] + " | " + key[1] + " | " + key[2] + " | " + key[3]);
 						if (key!=null && key[2] !=null && !key[2].equals("")) {
 							myQueryBuilder = new com.lutris.dods.builder.generator.query.QueryBuilder(Columns);
 							if (IndexFactory.databaseVendor != null) {
@@ -525,22 +565,22 @@ public class VolumeEntriesFactory {
 				}				
 				query.getQueryBuilder().addOrderByColumn("multilingual_sort('" + volume.getSourceLanguage() + "',headword)",order);
 				// debug
-				//query.getQueryBuilder().debug();
-			
+				query.getQueryBuilder().debug();
+                
 				VolumeEntryDO[] DOarray = query.getDOArray();
 				if (null != DOarray) {
 					// my implementation of the SELECT DISTINCT
 					// maybe takes too much time in computation...
 					// maybe it isn't needed with a select from where in. To be tested
 					/*
-					java.util.List myList = java.util.Arrays.asList(DOarray);
-					for (int j=0; j < DOarray.length; j++) {
-						VolumeEntryDO myTmpDO = DOarray[j];
-						if (j==0 || !myList.subList(0,j-1).contains(myTmpDO)) {
-							VolumeEntry tempEntry = new VolumeEntry(dict, volume,myTmpDO);
-							theEntries.add(tempEntry);
-						}
-					}
+                     java.util.List myList = java.util.Arrays.asList(DOarray);
+                     for (int j=0; j < DOarray.length; j++) {
+                         VolumeEntryDO myTmpDO = DOarray[j];
+                         if (j==0 || !myList.subList(0,j-1).contains(myTmpDO)) {
+                             VolumeEntry tempEntry = new VolumeEntry(dict, volume,myTmpDO);
+                             theEntries.add(tempEntry);
+                         }
+                     }
 					 */
 					for (int j=0; j < DOarray.length; j++) {
 						VolumeEntry tempEntry = new VolumeEntry(dict, volume, DOarray[j]);
@@ -558,19 +598,37 @@ public class VolumeEntriesFactory {
 	
 	public static int getVolumeEntriesCount(Volume theVolume)
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
-		return getVolumeEntriesCount(theVolume, null);
-	}
-
+			return getVolumeEntriesCount(theVolume, null);
+		}
+	
 	public static int getVolumeEntriesCount(Volume theVolume, String status)
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 			if (status == null) {
 				status = NoStatus;
 			}
-		Integer count = null;
-		java.util.Hashtable volumeTable = (java.util.Hashtable) VolumeEntriesCountHashtable.get(theVolume.getName());
-		if (volumeTable != null) {
-			 count = (Integer) volumeTable.get(status);
-			if (count == null) {
+			Integer count = null;
+			java.util.Hashtable volumeTable = (java.util.Hashtable) VolumeEntriesCountHashtable.get(theVolume.getName());
+			if (volumeTable != null) {
+				count = (Integer) volumeTable.get(status);
+				if (count == null) {
+					if (status.equals(NoStatus)) {
+						count = new Integer(getDbTableEntriesCount(theVolume, null, null, null));
+					}
+					else {
+						java.util.Vector Keys = new java.util.Vector();
+						String[] statusKey = new String[4];
+						statusKey[0] = Volume.CDM_contributionStatus;
+						statusKey[1] = Volume.DEFAULT_LANG;
+						statusKey[2] = status;
+						statusKey[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_EXACT+1];					
+						Keys.add(statusKey);					
+						count = new Integer(getDbTableEntriesCount(theVolume, Keys, null, null));
+					}
+					volumeTable.put(status, count);
+				}
+			}
+			else {
+				volumeTable = new java.util.Hashtable();
 				if (status.equals(NoStatus)) {
 					count = new Integer(getDbTableEntriesCount(theVolume, null, null, null));
 				}
@@ -585,28 +643,10 @@ public class VolumeEntriesFactory {
 					count = new Integer(getDbTableEntriesCount(theVolume, Keys, null, null));
 				}
 				volumeTable.put(status, count);
+				VolumeEntriesCountHashtable.put(theVolume.getName(),volumeTable);
 			}
+			return count.intValue();
 		}
-		else {
-			volumeTable = new java.util.Hashtable();
-			if (status.equals(NoStatus)) {
-				count = new Integer(getDbTableEntriesCount(theVolume, null, null, null));
-			}
-			else {
-				java.util.Vector Keys = new java.util.Vector();
-				String[] statusKey = new String[4];
-				statusKey[0] = Volume.CDM_contributionStatus;
-				statusKey[1] = Volume.DEFAULT_LANG;
-				statusKey[2] = status;
-				statusKey[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_EXACT+1];					
-				Keys.add(statusKey);					
-				count = new Integer(getDbTableEntriesCount(theVolume, Keys, null, null));
-			}
-			volumeTable.put(status, count);
-			VolumeEntriesCountHashtable.put(theVolume.getName(),volumeTable);
-		}
-		return count.intValue();
-	}
 	
 	public static boolean resetCountCache(String volumeName) {
 		VolumeEntriesCountHashtable.remove(volumeName);
@@ -785,8 +825,8 @@ public class VolumeEntriesFactory {
 				}
 			}
 		}
-
-
+    
+    
 	public static void exportVolume(String volumeName, Vector myKeys, Vector clauseVector, String outputFormat, java.io.OutputStream myOutStream) 
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 			
@@ -804,7 +844,7 @@ public class VolumeEntriesFactory {
 						String endTag = "</" + contribString + ">";
 						xmlFooter = tmplEntry.substring(tmplEntry.indexOf(endTag)+endTag.length()+1);
 					}
-										
+                    
 					PapillonLogger.writeDebugMsg("Start writing volume " + volumeName);
 					fr.imag.clips.papillon.business.transformation.FOProcessor myFOProcessor = null;
 					
@@ -823,10 +863,10 @@ public class VolumeEntriesFactory {
 						else {
 							myOutStream.write(xmlHeader.getBytes("UTF-8"));
 						}
-
+                        
 						fr.imag.clips.papillon.business.dictionary.IVolumeEntryProcessor myProcessor = new fr.imag.clips.papillon.business.dictionary.ExportVolumeEntryProcessor(outputFormat, myOutStream);
 						PapillonLogger.writeDebugMsg("Processor created");
-
+                        
 						fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory.processVolume(myDict, myVolume, myKeys, clauseVector, myProcessor);
 						PapillonLogger.writeDebugMsg("Volume processed");
 						
@@ -1033,8 +1073,10 @@ public class VolumeEntriesFactory {
 			return findEntryByEntryId(dict, volume, entryId);
 		}
 	
+    
 	protected static VolumeEntry findEntryByEntryId(Dictionary myDict, Volume myVolume, String entryId)
         throws PapillonBusinessException {
+			//FIXME: should use queries as used in findEntryByEntryId(User user, String entryid)
 			VolumeEntry resultEntry = null;
 			if (entryId != null && !entryId.equals("")) {
 				
@@ -1074,6 +1116,7 @@ public class VolumeEntriesFactory {
 						VolumeEntry reviewedEntry = null;
 						VolumeEntry finishedEntry = null;
 						VolumeEntry notFinishedEntry = null;
+                        VolumeEntry modifiedEntry = null;
 						for (java.util.Enumeration enumEntries = answersVector.elements(); enumEntries.hasMoreElements();) {
 							tempEntry = (VolumeEntry) enumEntries.nextElement();
 							if (tempEntry.getStatus().equals(VolumeEntry.VALIDATED_STATUS)) {
@@ -1085,9 +1128,15 @@ public class VolumeEntriesFactory {
 							if (tempEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS)) {
 								finishedEntry = tempEntry;
 							}
-							if (tempEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS)) {
-								notFinishedEntry = tempEntry;
+                            // add by Francis to use correctly expandResult !
+							if (tempEntry.getStatus().equals(VolumeEntry.MODIFIED_STATUS)) {
+								modifiedEntry = tempEntry;
 							}
+                            /*
+                             if (tempEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS)) {
+                                 notFinishedEntry = tempEntry;
+                             }
+                             */
 						}
 						if (resultEntry == null) {
 							if (reviewedEntry !=null) {
@@ -1096,9 +1145,12 @@ public class VolumeEntriesFactory {
 							else if (finishedEntry !=null) {
 								resultEntry = finishedEntry;
 							}
-							else if (notFinishedEntry !=null) {
-								resultEntry = finishedEntry;
+                            else if (modifiedEntry !=null) {
+								resultEntry = modifiedEntry;
 							}
+							//else if (notFinishedEntry !=null) {
+							//	resultEntry = finishedEntry;
+							//}
 						}
 					}
 				}
@@ -1109,143 +1161,197 @@ public class VolumeEntriesFactory {
 			}
 			return resultEntry;
         }
-	
-    /**
-		* The findEntryByContributionId method performs a database query to
-     * return a VolumeEntry
-     *
-     * @param id, the object id of the entries table.
-     * @return the corresponding VolumeEntry
-     * @exception PapillonBusinessException
-     *    if there is a problem retrieving message.
-     */
-    public static VolumeEntry findEntryByContributionId(String volumeName, String entryId)
-        throws PapillonBusinessException {
-			Volume volume;
-            Dictionary dict;
-            try {
-                volume = VolumesFactory.findVolumeByName(volumeName);
-                dict = DictionariesFactory.findDictionaryByName(volume.getDictname());
-            }
-            catch(Exception ex) {
-				return null;
-            }
-			return findEntryByContributionId(dict, volume, entryId);
-		}
 
-	protected static VolumeEntry findEntryByContributionId(Dictionary myDict, Volume myVolume, String entryId)
-        throws PapillonBusinessException {
-			return findEntryByKey(myDict, myVolume, Volume.CDM_contributionId, Volume.DEFAULT_LANG, entryId);
-        }
-	
-	public static VolumeEntry newEntryFromExisting(VolumeEntry existingEntry) 
-		throws fr.imag.clips.papillon.business.PapillonBusinessException {
-			VolumeEntry resEntry = new VolumeEntry(existingEntry.getDictionary(), existingEntry.getVolume());
-            //dom avant toute chose !
-            resEntry.setDom((org.w3c.dom.Document) existingEntry.getDom().cloneNode(true));
-            //headword
-            resEntry.setHeadword(existingEntry.getHeadword());
-
-			resEntry.setEntryIdIfNull();
-			
-			return resEntry;
-		}
-	
-	public static VolumeEntry createEmptyEntry(String volume) 
-		throws fr.imag.clips.papillon.business.PapillonBusinessException {
-		VolumeEntry myEntry = null;
-		Volume myVolume = VolumesFactory.findVolumeByName(volume);
-		if (myVolume != null && !myVolume.isEmpty()) {
-			Dictionary myDict = DictionariesFactory.findDictionaryByName(myVolume.getDictname());
-			if (myDict != null && !myDict.isEmpty()) {
-				myEntry = new VolumeEntry(myDict, myVolume);
-				String templateEntry = myVolume.getTemplateEntry();
-				myEntry.setDom(Utility.buildDOMTree(templateEntry));
-			}
-		}
-		return myEntry;
-	}
-	
-    public static void emptyVolumeEntries(String volume)
-        throws fr.imag.clips.papillon.business.PapillonBusinessException {
-            try {
-                ManageDatabase.truncateTable(volume);
-            }
-            catch (Exception e) {
-                throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in emptyVolumeEntries with volume: " + volume, e);
-            }
-        }
-	
-	public static boolean createVolumeTables(Volume volume)
-        throws fr.imag.clips.papillon.business.PapillonBusinessException {
-			boolean answer = false;
-            try {
-				java.util.Vector TableNames = ManageDatabase.getTableNames();
-				if (!TableNames.contains(volume.getDbname())) {
-					ManageDatabase.createVolumeTable(volume.getDbname());
-					ManageDatabase.createSortIndexForVolumeTable(volume.getDbname(), volume.getSourceLanguage());
-				}
-				if (!TableNames.contains(volume.getIndexDbname())) {
-					IndexFactory.createIndexTable(volume);
-				}
-				answer = true;
-			}
-            catch (Exception e) {
-   				answer = false;
-				throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in createVolumeTables with volume: " + volume.getName(), e);
-				//PapillonLogger.writeDebugMsg("createVolumeTables with volume: " + volume.getName() + ", probably the tables already exist.");
-			}
-			return answer;
-		}
-	
-	
-	
-    public static void dropVolumeTables(Volume volume)
-        throws fr.imag.clips.papillon.business.PapillonBusinessException {
-            try {
-				java.util.Vector TableNames = ManageDatabase.getTableNames();
-				if (TableNames.contains(volume.getDbname())) {
-					ManageDatabase.dropTable(volume.getDbname());
-				}
-				if (TableNames.contains(volume.getIndexDbname())) {
-					IndexFactory.dropIndexTable(volume.getIndexDbname());
-				}
-            }
-            catch (Exception e) {
-//                throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in deleteVolumeTable with volume: " + volume, e);
-				PapillonLogger.writeDebugMsg("Exception in dropVolumeTables with volume: " + volume.getName() + ", probably the tables were already deleted.");
-            }
-        }
+/**
+* Find Entry by entry Id
+ *
+ *
+ */
+public static VolumeEntry findEntryByEntryId(User user, String entryId)
+throws PapillonBusinessException {
+    
+    //FIXME: an entry id may not be unique externally to a dictionary so the dict must be specified
+    VolumeEntry resultEntry = null;
+    
+    if (entryId != null && !entryId.equals("")) {
 		
-	public static void sort (Vector EntryVector) {
-		sort (EntryVector, HEADWORD_SORT);
-	}
-	
-	public static void sort (Vector EntryVector, String sortBy) {
-		if (sortBy != null && !sortBy.equals("")) {
-			if (sortBy.equals(AUTHOR_SORT)) {
-				Collections.sort(EntryVector, new fr.imag.clips.papillon.business.utility.AuthorComparator());
-			}
-			else if (sortBy.equals(CREATION_DATE_SORT)) {
-				Collections.sort(EntryVector, new fr.imag.clips.papillon.business.utility.CreationDateComparator());
-			}
-			else if (sortBy.equals(HEADWORD_SORT)) {
-				Collections.sort(EntryVector, new fr.imag.clips.papillon.business.utility.HeadwordComparator());
-			}
-			else if (sortBy.equals(ORIGINAL_CONTRIBUTION_ID_SORT)) {
-				Collections.sort(EntryVector, new fr.imag.clips.papillon.business.utility.OriginalContributionIdComparator());
-			}
-			else if (sortBy.equals(REVIEW_DATE_SORT)) {
-				Collections.sort(EntryVector, new fr.imag.clips.papillon.business.utility.ReviewDateComparator());
-			}
-			else if (sortBy.equals(REVIEWER_SORT)) {
-				Collections.sort(EntryVector, new fr.imag.clips.papillon.business.utility.ReviewerComparator());
-			}
-			else if (sortBy.equals(STATUS_SORT)) {
-				Collections.sort(EntryVector, new fr.imag.clips.papillon.business.utility.StatusComparator());
-			}
-		}
-	}
-	
+        // FIXME ... Add dictionary in QueryRequest class
+        QueryRequest queryReq = new QueryRequest(VolumesFactory.getVolumesArrayName());
+        
+        // Entry Id
+        QueryCriteria criteriaSearch = new QueryCriteria();
+        criteriaSearch.add("key", QueryCriteria.EQUAL, Volume.CDM_entryId);  
+        criteriaSearch.add("value", QueryCriteria.EQUAL, entryId);
+        queryReq.addCriteria(criteriaSearch);
+        
+        // Status : find last contribution (finished ou not finished)
+        ArrayList listStatus = new ArrayList();
+        QueryCriteria criteriaFinishedStatus = new QueryCriteria();
+        criteriaFinishedStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);  
+        criteriaFinishedStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.FINISHED_STATUS);
+        listStatus.add(criteriaFinishedStatus);
+        QueryCriteria criteriaNFStatus = new QueryCriteria();
+        criteriaNFStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);  
+        criteriaNFStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.NOT_FINISHED_STATUS);
+        listStatus.add(criteriaNFStatus);
+        QueryCriteria criteriaDeletedStatus = new QueryCriteria();
+        criteriaDeletedStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);  
+        criteriaDeletedStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.DELETED_STATUS);
+        listStatus.add(criteriaDeletedStatus);
+        queryReq.addOrCriteriaList(listStatus);
+		
+        //
+        ArrayList qrset = queryReq.findLexie(user);
+        
+        //
+        if (qrset.size() == 1) {
+            resultEntry = ((QueryResult) qrset.get(0)).getSourceEntry();
+        } else if (qrset.size() < 1) {
+            PapillonLogger.writeDebugMsg("Error, 0 entry found");
+        } else if (qrset.size() > 1) {
+            PapillonLogger.writeDebugMsg("Error, too much entry found");
+        }       
+    }
+    
+    //
+    return resultEntry;
 }
 
+
+
+/**
+* The findEntryByContributionId method performs a database query to
+ * return a VolumeEntry
+ *
+ * @param id, the object id of the entries table.
+ * @return the corresponding VolumeEntry
+ * @exception PapillonBusinessException
+ *    if there is a problem retrieving message.
+ */
+public static VolumeEntry findEntryByContributionId(String volumeName, String entryId)
+throws PapillonBusinessException {
+    Volume volume;
+    Dictionary dict;
+    try {
+        volume = VolumesFactory.findVolumeByName(volumeName);
+        dict = DictionariesFactory.findDictionaryByName(volume.getDictname());
+    }
+    catch(Exception ex) {
+        return null;
+    }
+    return findEntryByContributionId(dict, volume, entryId);
+}
+
+protected static VolumeEntry findEntryByContributionId(Dictionary myDict, Volume myVolume, String entryId)
+throws PapillonBusinessException {
+    return findEntryByKey(myDict, myVolume, Volume.CDM_contributionId, Volume.DEFAULT_LANG, entryId);
+}
+
+public static VolumeEntry newEntryFromExisting(VolumeEntry existingEntry) 
+throws fr.imag.clips.papillon.business.PapillonBusinessException {
+    VolumeEntry resEntry = new VolumeEntry(existingEntry.getDictionary(), existingEntry.getVolume());
+    //dom avant toute chose !
+    resEntry.setDom((org.w3c.dom.Document) existingEntry.getDom().cloneNode(true));
+    //headword
+    resEntry.setHeadword(existingEntry.getHeadword());
+    
+    resEntry.setEntryIdIfNull();
+    // FIXME: add by Francis
+    resEntry.setContributionId();
+    
+    return resEntry;
+}
+
+public static VolumeEntry createEmptyEntry(String volume) 
+throws fr.imag.clips.papillon.business.PapillonBusinessException {
+    VolumeEntry myEntry = null;
+    Volume myVolume = VolumesFactory.findVolumeByName(volume);
+    if (myVolume != null && !myVolume.isEmpty()) {
+        Dictionary myDict = DictionariesFactory.findDictionaryByName(myVolume.getDictname());
+        if (myDict != null && !myDict.isEmpty()) {
+            myEntry = new VolumeEntry(myDict, myVolume);
+            String templateEntry = myVolume.getTemplateEntry();
+            myEntry.setDom(Utility.buildDOMTree(templateEntry));
+        }
+    }
+    return myEntry;
+}
+
+public static void emptyVolumeEntries(String volume)
+throws fr.imag.clips.papillon.business.PapillonBusinessException {
+    try {
+        //FIXME: no truncate index volume ???
+        ManageDatabase.truncateTable(volume);
+    }
+    catch (Exception e) {
+        throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in emptyVolumeEntries with volume: " + volume, e);
+    }
+}
+
+
+public static void createVolumeTables(Volume volume)
+throws fr.imag.clips.papillon.business.PapillonBusinessException {
+	/* Added a sorted index on headword field necessary for order by statements */
+	try {
+		java.util.Vector TableNames = ManageDatabase.getTableNames();
+		if (!TableNames.contains(volume.getDbname())) {
+			ManageDatabase.createVolumeTable(volume.getDbname());
+			ManageDatabase.createSortIndexForVolumeTable(volume.getDbname(), volume.getSourceLanguage());
+		}
+		if (!TableNames.contains(volume.getIndexDbname())) {
+			IndexFactory.createIndexTable(volume);
+		}
+	}
+	catch (Exception e) {
+		throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in createVolumeTables with volume: " + volume.getName(), e);
+		//PapillonLogger.writeDebugMsg("createVolumeTables with volume: " + volume.getName() + ", probably the tables already exist.");
+	}
+}
+
+
+
+public static void dropVolumeTables(Volume volume)
+throws fr.imag.clips.papillon.business.PapillonBusinessException {
+	try {
+		java.util.Vector TableNames = ManageDatabase.getTableNames();
+		if (TableNames.contains(volume.getDbname())) {
+			ManageDatabase.dropTable(volume.getDbname());
+		}
+		if (TableNames.contains(volume.getIndexDbname())) {
+			IndexFactory.dropIndexTable(volume.getIndexDbname());
+		}
+	}
+	catch (Exception e) {
+		throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in dropVolumeTables with volume: " + volume.getName(), e);
+		//PapillonLogger.writeDebugMsg("Exception in dropVolumeTables with volume: " + volume.getName() + ", probably the tables were already deleted.");
+	}
+}
+
+
+public static void sort (Vector EntryVector, String sortBy) {
+    if (sortBy != null && !sortBy.equals("")) {
+        if (sortBy.equals(AUTHOR_SORT)) {
+            Collections.sort(EntryVector, new fr.imag.clips.papillon.business.utility.AuthorComparator());
+        }
+        else if (sortBy.equals(CREATION_DATE_SORT)) {
+            Collections.sort(EntryVector, new fr.imag.clips.papillon.business.utility.CreationDateComparator());
+        }
+        else if (sortBy.equals(HEADWORD_SORT)) {
+            Collections.sort(EntryVector, new fr.imag.clips.papillon.business.utility.HeadwordComparator());
+        }
+        else if (sortBy.equals(ORIGINAL_CONTRIBUTION_ID_SORT)) {
+            Collections.sort(EntryVector, new fr.imag.clips.papillon.business.utility.OriginalContributionIdComparator());
+        }
+        else if (sortBy.equals(REVIEW_DATE_SORT)) {
+            Collections.sort(EntryVector, new fr.imag.clips.papillon.business.utility.ReviewDateComparator());
+        }
+        else if (sortBy.equals(REVIEWER_SORT)) {
+            Collections.sort(EntryVector, new fr.imag.clips.papillon.business.utility.ReviewerComparator());
+        }
+        else if (sortBy.equals(STATUS_SORT)) {
+            Collections.sort(EntryVector, new fr.imag.clips.papillon.business.utility.StatusComparator());
+        }
+    }
+}
+
+}

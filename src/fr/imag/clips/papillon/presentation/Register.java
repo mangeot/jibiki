@@ -83,7 +83,8 @@ public class Register extends PapillonBasePO {
         String Dest = myGetParameter(REGISTER_PAGE);
     
         // If there is no destination, just redirect the user to the login page after a succesfull log in.
-        Dest = (Dest != null) ? Dest : req.getAppFileURIPath("Home.po");
+        Dest = (Dest != null) ? Dest : req.getAppFileURIPath("");
+        //Dest = (Dest != null) ? Dest : req.getAppFileURIPath("Home.po");
         
         // If the page is called with parameters, take the requested action
         if (req.getParameterNames().hasMoreElements()) {

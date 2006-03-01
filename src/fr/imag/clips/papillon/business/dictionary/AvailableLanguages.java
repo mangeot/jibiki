@@ -9,6 +9,13 @@
  * $Id$
  *---------------------------------------------------------
  * $Log$
+ * Revision 1.4  2006/03/01 15:12:31  mangeot
+ * Merge between maintrunk and LEXALP_1_1 branch
+ *
+ * Revision 1.3.10.1  2006/02/17 13:21:25  mangeot
+ *
+ * MM: modified AdvancedQueryForm. getAllTargetLanguages, getAllSourceLanguages and getCdmElementsWithDefaultLanguage are now static in AvailableLanguages.java in order to accelerate the execution.
+ *
  * Revision 1.3  2005/01/23 17:21:16  mangeot
  * *** empty log message ***
  *
@@ -29,23 +36,22 @@ import java.util.*;
 
 public class AvailableLanguages {
 
-    protected TreeMap MapLanguages;
+    protected static TreeMap MapLanguages = null;
+    protected static String[] SourceLanguagesArray = null;
+    protected static String[] TargetLanguagesArray = null;
+    protected static String[] AllLanguagesArray = null;
+	
+	protected static Set CdmElementsWithDefaultLanguage = null;
 
 
-    
-    // constructor    
-    public AvailableLanguages()
-        throws fr.imag.clips.papillon.business.PapillonBusinessException {
-       this.MapLanguages = getAvailableLanguagesMap();
-        }
-
-    /**
+	/**
         * return the list of source languages as known by the database
      */
-    private TreeMap getAvailableLanguagesMap()
+    protected static TreeMap getAvailableLanguagesMap()
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
+			if (MapLanguages==null) {
             Dictionary[] DictsArray = DictionariesFactory.getDictionariesArray();
-            TreeMap myTreeMap = new TreeMap();
+            MapLanguages = new TreeMap();
             TreeSet targetSet;
 
              for (int i=0; i< DictsArray.length; i++) {
@@ -53,8 +59,8 @@ public class AvailableLanguages {
                 for (int j=0; j< Sources.length; j++) {
                     String source = Sources[j];
                     if (null != source && !source.equals("") && !source.equals("axi")) {
-                        if (myTreeMap.containsKey(source)) {
-                            targetSet=(TreeSet)myTreeMap.get(source);
+                        if (MapLanguages.containsKey(source)) {
+                            targetSet=(TreeSet) MapLanguages.get(source);
                         }
                         else {
                             targetSet = new TreeSet();
@@ -66,42 +72,48 @@ public class AvailableLanguages {
                                 targetSet.add(target);
                             }
                         }
-                        myTreeMap.put(source,targetSet);
+                        MapLanguages.put(source,targetSet);
                     }
                 }
             }
-            return myTreeMap;
+			}
+            return MapLanguages;
         }
 
     /**
         * return the list of source languages as known by the database
      */
-    public String[] getSourceLanguagesArray()
+    public static String[] getSourceLanguagesArray()
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
-            return (String[])(this.MapLanguages.keySet().toArray(new String[0]));
+			if (SourceLanguagesArray == null) {
+				SourceLanguagesArray = (String[])(getAvailableLanguagesMap().keySet().toArray(new String[0]));
+			}
+            return SourceLanguagesArray;
         }
 
-    public String[] getTargetLanguagesArray(String lang)
+    public static String[] getTargetLanguagesArray(String lang)
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
             String [] result = null;
             TreeSet mySet = null;
-            if (this.MapLanguages.containsKey(lang)) {
-                mySet = (TreeSet)this.MapLanguages.get(lang);
+            if (getAvailableLanguagesMap().containsKey(lang)) {
+                mySet = (TreeSet)getAvailableLanguagesMap().get(lang);
                 result =  (String[])mySet.toArray(new String[0]);
             }
             return result;
         }
 
-    public String[] getAllLanguagesArray()
+    public static String[] getAllLanguagesArray()
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
-            String[] result = null;
-            String[] SourceLanguages = getSourceLanguagesArray();
-            TreeSet mySet = new TreeSet();
-            mySet.addAll(this.MapLanguages.keySet());
-            for (int i=0;i<SourceLanguages.length;i++) {
-                mySet.addAll((TreeSet)this.MapLanguages.get(SourceLanguages[i]));
-            }
-            return (String[])mySet.toArray(new String[0]);
+			if (AllLanguagesArray == null) {
+				String[] SourceLanguages = getSourceLanguagesArray();
+				TreeSet mySet = new TreeSet();
+				mySet.addAll(getAvailableLanguagesMap().keySet());
+				for (int i=0;i<SourceLanguages.length;i++) {
+					mySet.addAll((TreeSet)getAvailableLanguagesMap().get(SourceLanguages[i]));
+				}
+				AllLanguagesArray = (String[])mySet.toArray(new String[0]);
+			}
+			return AllLanguagesArray;
         }
 
     public static String[] getSourceLanguagesArrayForDict(String dict)
@@ -111,18 +123,54 @@ public class AvailableLanguages {
             mySet.addAll(Arrays.asList(myDict.getSourceLanguagesArray()));
             mySet.remove("axi");
             mySet.remove("");
-            return (String[])mySet.toArray(new String[0]);
+			return (String[])mySet.toArray(new String[0]);
         }
+	
     public static String[] getTargetLanguagesArray()
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
-            Dictionary[] DictsArray = DictionariesFactory.getDictionariesArray();
-            TreeSet mySet = new TreeSet();
-            for (int i=0; i< DictsArray.length; i++) {
-                String[] Targets =  DictsArray[i].getTargetLanguagesArray();
-                mySet.addAll(Arrays.asList(Targets));
-            }
-            mySet.remove("axi");
-            mySet.remove("");
-            return (String[])mySet.toArray(new String[0]);
+			if (TargetLanguagesArray == null) {
+				Dictionary[] DictsArray = DictionariesFactory.getDictionariesArray();
+				TreeSet mySet = new TreeSet();
+				for (int i=0; i< DictsArray.length; i++) {
+					String[] Targets =  DictsArray[i].getTargetLanguagesArray();
+					mySet.addAll(Arrays.asList(Targets));
+				}
+				mySet.remove("axi");
+				mySet.remove("");
+				TargetLanguagesArray = (String[])mySet.toArray(new String[0]);
+			}
+			return TargetLanguagesArray;
         }
+	
+	public static Set getCdmElementsWithDefaultLanguage ()
+		throws fr.imag.clips.papillon.business.PapillonBusinessException {
+		if (CdmElementsWithDefaultLanguage == null) {
+			//
+			Volume[] volumes = VolumesFactory.getVolumesArray();
+			CdmElementsWithDefaultLanguage = new java.util.TreeSet();
+			
+			//
+			for (int i = 0; i < volumes.length; i++) {
+				// get all cdm-elements with Volume.DEFAULT_LANG language
+				Volume volume = volumes[i];
+				Hashtable CdmElementsTable = volume.getCdmElements();
+				Hashtable CdmElementsTableDefaultLang = (Hashtable) CdmElementsTable.get(Volume.DEFAULT_LANG);
+				
+				CdmElementsWithDefaultLanguage.addAll(CdmElementsTableDefaultLang.keySet());
+			}
+		}
+		return CdmElementsWithDefaultLanguage;
+	} 
+	
+	public static boolean resetCache () {
+		TreeMap MapLanguages = null;
+		SourceLanguagesArray = null;
+		TargetLanguagesArray = null;
+		AllLanguagesArray = null;
+		
+		CdmElementsWithDefaultLanguage = null;
+		
+		return true;
+	}
+	
 }

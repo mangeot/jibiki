@@ -9,6 +9,13 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.4  2006/03/01 15:12:31  mangeot
+ *  Merge between maintrunk and LEXALP_1_1 branch
+ *
+ *  Revision 1.3.4.1  2006/02/17 13:21:25  mangeot
+ *
+ *  MM: modified AdvancedQueryForm. getAllTargetLanguages, getAllSourceLanguages and getCdmElementsWithDefaultLanguage are now static in AvailableLanguages.java in order to accelerate the execution.
+ *
  *  Revision 1.3  2005/06/20 16:55:20  mangeot
  *  *** empty log message ***
  *
@@ -256,10 +263,9 @@ public class PapillonLayout implements StdLayout {
         PapillonBusinessException,
         HttpPresentationException,
         UnsupportedEncodingException {
-            AvailableLanguages MyAvailableLanguages = new AvailableLanguages();
             
-            String[] allSourceLanguages = MyAvailableLanguages.getSourceLanguagesArray();
-            String[] allTargetLanguages = MyAvailableLanguages.getTargetLanguagesArray();
+            String[] allSourceLanguages = AvailableLanguages.getSourceLanguagesArray();
+            String[] allTargetLanguages = AvailableLanguages.getTargetLanguagesArray();
             
             QueryMenuXHTML queryMenu = (QueryMenuXHTML) MultilingualXHtmlTemplateFactory.createTemplate("QueryMenuXHTML", comms, sessionData);
             XHTMLInputElement headwordInput = queryMenu.getElementHeadwordInput();

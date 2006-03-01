@@ -9,6 +9,14 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.6  2006/03/01 15:12:31  mangeot
+ * Merge between maintrunk and LEXALP_1_1 branch
+ *
+ * Revision 1.5.4.1  2005/10/24 16:29:19  fbrunet
+ * Added fuzzy search capabilities.
+ * Added possibility to rebuild the index DB tables.
+ * Added Pre and post processors that could be defined by the user.
+ *
  * Revision 1.5  2005/06/15 16:48:27  mangeot
  * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
  *
@@ -301,6 +309,23 @@ public class Dictionary {
         return classname;
     }
   
+    public String getPreProcessorClassName() throws PapillonBusinessException {
+        NodeList preProcessor = Utility.buildDOMTree(this.getXmlCode()).getElementsByTagName("result-preprocessor"); 
+        String classname = null;
+        if ((null != preProcessor) && (preProcessor.getLength() > 0)) {
+            classname = ((Element) preProcessor.item(0)).getAttribute("class-name");
+        }
+        return classname;
+	}
+    
+    public String getPostProcessorClassName() throws PapillonBusinessException {
+        NodeList postProcessor = Utility.buildDOMTree(this.getXmlCode()).getElementsByTagName("result-postprocessor"); 
+        String classname = null;
+        if ((null != postProcessor) && (postProcessor.getLength() > 0)) {
+            classname = ((Element) postProcessor.item(0)).getAttribute("class-name");
+        }
+        return classname;
+	}
    
     public void save() 
         throws PapillonBusinessException {

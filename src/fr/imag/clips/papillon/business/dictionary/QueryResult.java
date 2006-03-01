@@ -9,6 +9,17 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2006/03/01 15:12:31  mangeot
+ * Merge between maintrunk and LEXALP_1_1 branch
+ *
+ * Revision 1.2.4.1  2005/12/02 10:04:09  fbrunet
+ * Add Pre/Post edition processing
+ * Add index reconstruction
+ * Add new query request
+ * Add fuzzy search
+ * Add new contribution administration
+ * Add xsl transformation volume
+ *
  * Revision 1.2  2005/06/17 12:38:56  mangeot
  * Changed lexiesCollection into lexiesHashtable in order to implement the getDirectTranslations
  *
@@ -48,7 +59,7 @@ public class QueryResult {
     public static final int UNIQUE_RESULT = 1;
     public static final int REVERSE_UNIQUE_RESULT = 2;
     public static final int AXIE_COLLECTION_RESULT = 3;
-	public static final int DIRECT_TRANSLATIONS_RESULT = 4;
+	public static final int DIRECT_TRANSLATIONS_RESULT = 4; // FIXME: new Hashtable lexiesDirectHashtable
     
     protected int resultKind;
 	protected VolumeEntry sourceEntry = null;

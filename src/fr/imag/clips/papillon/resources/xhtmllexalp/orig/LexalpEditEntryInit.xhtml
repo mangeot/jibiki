@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+	<title>Edition of LexALP Term Bank</title>
+</head>
+<body>
+<div id="EditEntryInitContent" lang="en"> 
+    <h1><span id="UserName">Name</span> Edition interface</h1>
+    
+    <script type="text/javascript">
+        <!-- 
+            // Open a new interface window to create the new entry 
+            function create() {
+                href = 'LexalpEditEntryInit.po?CreateAnyway=action&VOLUME=' + document.getElementById('VOLUME').value + '&Headword=' +  document.getElementById('Headword').value;
+                window.open(href,'EditEntry');
+            }
+        //-->
+    </script>
+    
+        <div>Create <input type="text" name="Headword" id="Headword"/> in 
+            <select id="VOLUME" name="VOLUME">
+                <option id="VolumeOptionTemplate" value="NONE" label="NONE">NONE</option>
+            </select>
+            <input type="submit" name="CreateAnyway" value="Create" onclick="create()"/>
+        </div>
+
+<div id="QueryForm"/>
+    <hr/> 
+<div>
+    <span id="NbResults">no</span> entry(ies) retrieved.<br/>
+<table id="EntryListTable" width="100%" frame="hsides" border="1" cellspacing="0" summary="Entries" >
+<thead id="EntryListTableHead">
+     <tr>
+	  <th>Entry</th>
+	  <th>Status</th>
+	  <th colspan="3">Actions</th>
+	  <th colspan="2">View</th>
+     </tr>
+    </thead>
+    <tbody>
+  <tr id="EntryListRow" >
+    <td><span id="EntryNode">Headword</span></td>
+    <td><span class="hidden"><span id="EntryAuthorList">EntryAuthor</span></span><span id="EntryStatusList">EntryStatus</span><span id="UnderEdition">under edition</span><span id="ProceedEdition">proceed edition</span></td>
+    <td><a href="" id="EditEntryAnchor">edit</a></td>
+    <td><a href="" id="DuplicateEntryAnchor">duplicate &amp; edit</a></td>
+    <td><a href="" id="DeleteEntryAnchor">delete</a><a href="" id="UndeleteEntryAnchor">undelete</a></td>
+    <td><a href="" id="ViewHistoryEntryAnchor">view history</a></td>
+    <td><a href="" id="ViewXmlAnchor">view XML</a></td>
+  </tr>
+    </tbody>
+</table>
+</div>
+</div>
+</body>
+</html>
+

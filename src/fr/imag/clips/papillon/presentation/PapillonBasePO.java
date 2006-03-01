@@ -9,8 +9,14 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.6  2006/03/01 15:12:31  mangeot
+ *  Merge between maintrunk and LEXALP_1_1 branch
+ *
  *  Revision 1.5  2005/09/15 13:21:04  mangeot
  *  Fixed a bug when non registered users could not change their preferred language permanently
+ *
+ *  Revision 1.4.2.1  2006/01/10 12:33:26  serasset
+ *  Lexalp does not use a specific BasePO anymore. Search of adequate XHTML pages is done dynamically using lexalp specific package when necessary.
  *
  *  Revision 1.4  2005/08/02 14:41:49  mangeot
  *  Work on stylesheets and
@@ -133,6 +139,7 @@ import org.enhydra.xml.io.DOMFormatter;
  */
 public abstract class PapillonBasePO extends AbstractPO {
     
+    // FIXME: This is Papillon Layout specific stuff... The PapillonBasePO should not define this...
     /**
     *  Description of the Field
      */

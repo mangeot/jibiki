@@ -4,6 +4,16 @@
  *$Id$
  *------------------------
  *$Log$
+ *Revision 1.12  2006/03/01 15:12:31  mangeot
+ *Merge between maintrunk and LEXALP_1_1 branch
+ *
+ *Revision 1.11.2.2  2006/02/17 15:16:42  mangeot
+ *Do not display the list of all XSL on the search form any more. Displays only a list of XSL descriptions
+ *
+ *Revision 1.11.2.1  2006/01/24 13:39:49  fbrunet
+ *Modification view management
+ *Modification LexALP postprocessing
+ *
  *Revision 1.11  2005/08/05 18:44:38  mangeot
  *Bug fixes + ProcessVolume.po page creation
  *
@@ -100,6 +110,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import fr.imag.clips.papillon.business.user.User;
 import fr.imag.clips.papillon.business.dictionary.IAnswer;
 import fr.imag.clips.papillon.business.dictionary.QueryResult;
 import fr.imag.clips.papillon.business.dictionary.Dictionary;
@@ -142,13 +153,13 @@ public class XslTransformation implements ResultFormatter {
 			// Then the volume one...
 			currentXslSheetSequence.add(XslSheetFactory.findXslSheetByName(vol.getName()));
 			// Last, the defaut one
-			currentXslSheetSequence.add(XslSheetFactory.findDefaultXslSheet());
+			currentXslSheetSequence.add(XslSheetFactory.findXslSheetByName("DEFAULT"));
 		}
         // FIXME: How can the user specify a xsl if there is the choice between several...
         
     }
     
-    public Node getFormattedResult(QueryResult qr) throws PapillonBusinessException {
+    public Node getFormattedResult(QueryResult qr, User usr) throws PapillonBusinessException {
         Node doc = null;
         try {
             if ((qr.getResultKind() == QueryResult.UNIQUE_RESULT) || 

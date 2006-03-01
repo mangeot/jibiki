@@ -10,6 +10,12 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.2  2006/03/01 15:12:31  mangeot
+ *  Merge between maintrunk and LEXALP_1_1 branch
+ *
+ *  Revision 1.1.4.1  2006/01/10 12:33:26  serasset
+ *  Lexalp does not use a specific BasePO anymore. Search of adequate XHTML pages is done dynamically using lexalp specific package when necessary.
+ *
  *  Revision 1.1  2005/05/24 12:51:22  serasset
  *  Updated many aspect of the Papillon project to handle lexalp project.
  *  1. Layout is now parametrable in the application configuration file.
@@ -85,7 +91,7 @@ import fr.imag.clips.papillon.presentation.xhtmllexalp.orig.*;
  * @author     serasset
  * @created    December 8, 2004
  */
-public class LexALP extends LexALPBasePO {
+public class LexALP extends PapillonBasePO {
 
     /**
      *  Description of the Method
@@ -96,7 +102,10 @@ public class LexALP extends LexALPBasePO {
         return false;
     }
 
-
+    protected  int getCurrentSection() {
+        return NO_SECTION;
+    }
+    
     /**
      *  Description of the Method
      *
@@ -145,7 +154,7 @@ public class LexALP extends LexALPBasePO {
     PapillonBusinessException,
     UnsupportedEncodingException 
 {
-    HomeContentXHTML homeContent = (HomeContentXHTML) MultilingualXHtmlTemplateFactory.createTemplate(PACKAGE, "HomeContentXHTML", this.getComms(), this.getSessionData());
+    HomeContentXHTML homeContent = (HomeContentXHTML) MultilingualXHtmlTemplateFactory.createTemplate("HomeContentXHTML", this.getComms(), this.getSessionData());
     Element home = homeContent.getElementHomeContent();
     
     return (Node) home;

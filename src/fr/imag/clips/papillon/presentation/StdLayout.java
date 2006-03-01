@@ -9,6 +9,12 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.8  2006/03/01 15:12:31  mangeot
+ *  Merge between maintrunk and LEXALP_1_1 branch
+ *
+ *  Revision 1.7.4.1  2006/01/10 12:33:26  serasset
+ *  Lexalp does not use a specific BasePO anymore. Search of adequate XHTML pages is done dynamically using lexalp specific package when necessary.
+ *
  *  Revision 1.7  2005/06/15 16:48:28  mangeot
  *  Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
  *
@@ -123,6 +129,11 @@ public interface StdLayout {
      */
     public Document getLayout();
     
+    /**
+        *  Returns the node that will hold the main content of the page.
+     *
+     * @return    The layout value
+     */    
     public Node getContentPlaceHolder();
-
+    
 }

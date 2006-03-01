@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.30  2006/03/01 15:12:31  mangeot
+ * Merge between maintrunk and LEXALP_1_1 branch
+ *
  * Revision 1.29  2006/02/22 19:05:56  mangeot
  * MM: Added default status choice when importing entries
  *
@@ -29,6 +32,32 @@
  *
  * Revision 1.23  2005/11/09 17:38:59  mangeot
  * small bug fixes
+ *
+ * Revision 1.22.2.5  2006/02/17 10:41:48  fbrunet
+ * Change QueryCriteria parameters
+ * Add new windows when editing an entry
+ *
+ * Revision 1.22.2.4  2006/01/25 15:22:23  fbrunet
+ * Improvement of QueryRequest
+ * Add new search criteria
+ * Add modified status
+ *
+ * Revision 1.22.2.3  2006/01/24 13:39:49  fbrunet
+ * Modification view management
+ * Modification LexALP postprocessing
+ *
+ * Revision 1.22.2.2  2005/12/02 10:04:09  fbrunet
+ * Add Pre/Post edition processing
+ * Add index reconstruction
+ * Add new query request
+ * Add fuzzy search
+ * Add new contribution administration
+ * Add xsl transformation volume
+ *
+ * Revision 1.22.2.1  2005/10/24 16:29:19  fbrunet
+ * Added fuzzy search capabilities.
+ * Added possibility to rebuild the index DB tables.
+ * Added Pre and post processors that could be defined by the user.
  *
  * Revision 1.22  2005/08/01 16:52:45  mangeot
  * Fixed missing reviewer, reviewdate, validator, validator date when setReviewed and setValdiated where called
@@ -204,13 +233,17 @@ import fr.imag.clips.papillon.business.utility.Utility;
  */
 public class VolumeEntry implements IAnswer {    
 
-	public final static String ORIGINAL_STATUS = "original";
+	public final static String ORIGINAL_STATUS = "original";    // FIXME: in use ?
 	public final static String NOT_FINISHED_STATUS = "not finished";
 	public final static String FINISHED_STATUS = "finished";
-	public final static String REVIEWED_STATUS = "revised";
+	public final static String DELETED_STATUS = "deleted";
+    public final static String MODIFIED_STATUS = "modified";
+    public final static String CLASSIFIED_FINISHED_STATUS = "classified finished";
+    public final static String CLASSIFIED_NOT_FINISHED_STATUS = "classified not finished";
+    
+    public final static String REVIEWED_STATUS = "revised";
 	public final static String VALIDATED_STATUS = "validated";
 	public final static String REPLACED_STATUS = "replaced";
-	public final static String DELETED_STATUS = "deleted";
 	
 	protected static String DML_PREFIX_COLON = DmlPrefixResolver.DML_PREFIX;
 	
@@ -238,6 +271,9 @@ public class VolumeEntry implements IAnswer {
 	public final static String statusTag = DML_PREFIX_COLON + "status";
 	public final static String validationDateTag = DML_PREFIX_COLON + "validation-date";
 	public final static String validatorTag = DML_PREFIX_COLON + "validator";
+    public final static String previousClassifiedFinishedContributionTag = DML_PREFIX_COLON + "previous-classified-finished-contribution";
+    public final static String previousClassifiedNotFinishedContributionTag = DML_PREFIX_COLON + "previous-classified-not-finished-contribution";
+    public final static String nextContributionAuthorTag = DML_PREFIX_COLON + "next-contribution-author";
 	
 	public final static String ContributionHeader = "<" + contributionTag + "\n" 
 		+ "xmlns:" + DmlPrefixResolver.DML_PREFIX + "=\"" + DmlPrefixResolver.DML_URI + "\"\n"
@@ -261,6 +297,9 @@ public class VolumeEntry implements IAnswer {
         + "        <" + commentTag + "/>\n"
         + "      </" + modificationTag + ">\n"
         + "    </" + historyTag + ">\n"
+        + "    <" + previousClassifiedFinishedContributionTag + "/>\n"
+        + "    <" + previousClassifiedNotFinishedContributionTag + "/>\n"
+        + "    <" + nextContributionAuthorTag + "/>\n"
 		+ "  </" + metadataTag + ">\n"
 		+ "  <" + dataTag + ">\n";
 	
@@ -550,7 +589,7 @@ public class VolumeEntry implements IAnswer {
 	}
 
 	public void setEntryId() throws PapillonBusinessException {
-		this.setEntryId(this.createNewId() + ENTRY_ID_SUFFIX);
+        this.setEntryId(this.createNewId() + ENTRY_ID_SUFFIX);
 	}
 
 	protected void setEntryId(String newId) throws PapillonBusinessException {
@@ -615,7 +654,8 @@ public class VolumeEntry implements IAnswer {
 		}
 	}
 
-	protected void setContributionId(String newId) throws PapillonBusinessException {
+    // FIXME: public method, use to commute id whenever one save a draft contribution
+	public void setContributionId(String newId) throws PapillonBusinessException {
 		ParseVolume.setCdmElement(this, Volume.CDM_contributionId, newId);
 	}
 	
@@ -684,6 +724,7 @@ public class VolumeEntry implements IAnswer {
 	public String getAuthor() throws PapillonBusinessException {
 		return ParseVolume.getCdmString(this, Volume.CDM_contributionAuthor);
 	}
+    
 
     /**
      * setAuthor sets the entry author into the XML code of the entry.
@@ -1088,6 +1129,41 @@ public class VolumeEntry implements IAnswer {
 	public int getType() {
 		return IAnswer.LocalEntry;
 	}
+    
+    public String getClassifiedFinishedContributionId() throws PapillonBusinessException {
+		return ParseVolume.getCdmString(this, Volume.CDM_previousClassifiedFinishedContribution);
+	}
+    
+    public void setClassifiedFinishedContribution(VolumeEntry contribution) throws PapillonBusinessException {
+		ParseVolume.setCdmElement(this, Volume.CDM_previousClassifiedFinishedContributionElement, contribution.getContributionId());
+	}
+    
+    public void setClassifiedFinishedContribution() throws PapillonBusinessException {
+		ParseVolume.setCdmElement(this, Volume.CDM_previousClassifiedFinishedContributionElement, "");
+	}
+    
+    
+    public String getClassifiedNotFinishedContributionId() throws PapillonBusinessException {
+		return ParseVolume.getCdmString(this, Volume.CDM_previousClassifiedNotFinishedContribution);
+	}
+    
+    public void setClassifiedNotFinishedContribution(VolumeEntry contribution) throws PapillonBusinessException {
+		ParseVolume.setCdmElement(this, Volume.CDM_previousClassifiedNotFinishedContributionElement, contribution.getContributionId());
+	}
+    
+    public void setClassifiedNotFinishedContribution() throws PapillonBusinessException {
+		ParseVolume.setCdmElement(this, Volume.CDM_previousClassifiedNotFinishedContributionElement, "");
+	}
+    
+    public String getNextContributionAuthor() throws PapillonBusinessException {
+		return ParseVolume.getCdmString(this, Volume.CDM_nextContributionAuthor);
+	}
+    
+    public void setNextContributionAuthor(String author) throws PapillonBusinessException {
+		ParseVolume.setCdmElement(this, Volume.CDM_nextContributionAuthorElement, author);
+	}
+    
+  
 	
 	protected String createNewId (String headword) throws PapillonBusinessException {
 		if (headword != null) {
@@ -1097,6 +1173,7 @@ public class VolumeEntry implements IAnswer {
 		headword + "." + this.getHandle();
 		entryId = entryId.replace(' ', '_');
 		entryId = entryId.replace('\'', '_');
+        //System.out.println("getSourceLanguage = " + this.getSourceLanguage() + " headword = " + headword + " getHandle = " + this.getHandle());
 		return Utility.encodeXMLEntities(entryId);
 	}
 	
@@ -1104,31 +1181,83 @@ public class VolumeEntry implements IAnswer {
 		return createNewId(ParseVolume.getCdmString(this, Volume.CDM_headword, this.getSourceLanguage()));
 	}
 	
+    /**
+    * getAuthor gets the modification entry author into the XML code of the entry.
+     * 
+	 * @return the author as a String
+     * @exception PapillonBusinessException if an error occurs
+     *   getting data (usually due to an underlying data layer
+                       *   error).
+     */
+	public String getModificationAuthor() throws PapillonBusinessException {
+		return ParseVolume.getCdmString(this, Volume.CDM_modificationAuthor);
+	}
+    
+    public String getModificationDate() throws PapillonBusinessException {
+		return ParseVolume.getCdmString(this, Volume.CDM_modificationDate);
+	}
+    
+    public String getModificationComment() throws PapillonBusinessException {
+		return ParseVolume.getCdmString(this, Volume.CDM_modificationComment);
+	}
+    
+    
 	public void setModification(String author, String comment) throws PapillonBusinessException {
 		setModification(author,new java.util.Date(), comment);
 	}
-	public void setModification(String author, java.util.Date date, String comment) throws PapillonBusinessException {
+    
+	private void setModification(String author, java.util.Date date, String comment) throws PapillonBusinessException {
 
+        /*
 		Volume myVolume = this.getVolume();	
 		Document myDocument = this.getDom();	
 		org.w3c.dom.Node myEntry = ParseVolume.getCdmElement(this, Volume.CDM_entry);
-		org.w3c.dom.Node myHistory = ParseVolume.getCdmElement(this, Volume.CDM_history);
-		if (myHistory == null) {
+		*/
+        
+        ParseVolume.setCdmElement(this, Volume.CDM_modificationAuthorElement, author);
+        ParseVolume.setCdmElement(this, Volume.CDM_modificationDateElement, Utility.PapillonCDMDateFormat.format(date));
+        ParseVolume.setCdmElement(this, Volume.CDM_modificationCommentElement, comment);
+        
+        /*
+        //
+        org.w3c.dom.Node myHistory = ParseVolume.getCdmElement(this, Volume.CDM_history);
+        if (myHistory == null) {
 			fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("setModification: myHistory null");
 			myHistory = myDocument.createElement(myVolume.getCdmHistory());
 			myEntry.appendChild(myHistory);			
 		}
-		org.w3c.dom.Node myModification = myDocument.createElement(myVolume.getCdmModification());
+        
+        //
+        org.w3c.dom.Node myModification = ParseVolume.getCdmElement(this, Volume.CDM_modification);
+        if (myModification == null) {
+			fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("setModification: myModification null");
+			myModification = myDocument.createElement(myVolume.getCdmModification());
+			myHistory.appendChild(myModification);			
+		}
+        
+        //
+        org.w3c.dom.Node myAuthor = ParseVolume.getCdmElement(this, Volume.CDM_modificationAuthor);
+        if (myAuthor == null) {
+			fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("setModification: myAuthor null");
+			myAuthor = myDocument.createElement(myVolume.getCdmModificationAuthor());
+			myModification.appendChild(myAuthor);			
+		}
+        myAuthor.setNodeValue(author);
+        */
+        
+        /*  
+        myModification = myDocument.createElement(myVolume.getCdmModification());
 		org.w3c.dom.Element myAuthor = myDocument.createElement(myVolume.getCdmModificationAuthor());
 		org.w3c.dom.Element myComment = myDocument.createElement(myVolume.getCdmModificationComment());
 		org.w3c.dom.Element myDate = myDocument.createElement(myVolume.getCdmModificationDate());
 		Utility.setText(myAuthor,author);
 		Utility.setText(myDate,Utility.PapillonCDMDateFormat.format(date));
 		Utility.setText(myComment,comment);
-		myModification.appendChild(myAuthor);
+        myModification.appendChild(myAuthor);
 		myModification.appendChild(myComment);
 		myModification.appendChild(myDate);
 		myHistory.appendChild(myModification);
+        */
 	}
 
     /**
@@ -1199,19 +1328,27 @@ public class VolumeEntry implements IAnswer {
 				// reset caches
 				VolumeEntriesFactory.resetCountCache(this.getVolume().getName());
 				IndexFactory.deleteIndexForEntryId(this.getVolume().getIndexDbname(), this.getHandle());
-				this.setEntryIdIfNull();
+				
+                //
+                this.setEntryIdIfNull();
 				this.setContributionIdIfNull();
-				res = ParseVolume.parseEntry(this);
-				this.myDO.setXmlCode(Utility.NodeToString(this.dom));
+				
+                // new index
+                res = ParseVolume.parseEntry(this);
+				
+                //
+                this.myDO.setXmlCode(Utility.NodeToString(this.dom));
 				this.myDO.setDom(Utility.serializeDocument(this.dom));
 				this.myDO.setHtmldom(Utility.serializeDocument(this.htmldom));
 				this.myDO.commit();
-			} catch(Exception ex) {
+			
+            } catch(Exception ex) {
 				throw new PapillonBusinessException("Error saving volumeEntry", ex);
 			}
 			return res;
 		}
-	
+    
+     
 	public boolean saveHTML() 
 		throws PapillonBusinessException {
 			boolean res = false;
@@ -1261,4 +1398,24 @@ public class VolumeEntry implements IAnswer {
 				throw new PapillonBusinessException("Error deleting VolumeEntry", ex);
 			}
 		}
+    
+    
+    /**
+     * String element ...
+	 *
+	 * @exception PapillonBusinessException if an error occurs
+	 *   deleting data (usually due to an underlying data layer
+						*   error).
+	 */
+    public NodeList getNodes(String xpathString) throws PapillonBusinessException {
+        try	{
+            Element myRoot = getDom().getDocumentElement();
+            
+            return org.apache.xpath.XPathAPI.selectNodeList(getDom(), xpathString);
+		}
+		catch (javax.xml.transform.TransformerException e) {
+			throw new PapillonBusinessException("javax.xml.transform.TransformerException: ", e);
+		}
+    }
+    
 }

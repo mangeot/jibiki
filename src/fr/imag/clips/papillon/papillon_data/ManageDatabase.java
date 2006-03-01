@@ -1,5 +1,11 @@
 /*-----------------------------------------------------------------------------
-*-----------------------------------------------------------------------------
+ * $Id$
+ *-----------------------------------------------------------------------------
+ * $Log$
+ * Revision 1.9  2006/03/01 15:12:31  mangeot
+ * Merge between maintrunk and LEXALP_1_1 branch
+ *
+ *-----------------------------------------------------------------------------
 */
 
 package fr.imag.clips.papillon.papillon_data;
@@ -18,13 +24,6 @@ import org.enhydra.dods.DODS;
 /* For debug messages */
 //import fr.imag.clips.papillon.business.PapillonLogger;
 
-
-/**
- *
- * @version $Revision$
- * @author  mangeot
- * @since   main
- */
 public class ManageDatabase implements Query {
 
 
@@ -154,9 +153,20 @@ public class ManageDatabase implements Query {
             executeSql(query);
         }
     
+    public static void truncateIndexForTable(String table, String name) throws  PapillonBusinessException {
+        String query = truncateTableSql + table + "_" + name + "_idx";
+        executeSql(query);
+    }
+    
     public static void truncateTable(String table) throws  PapillonBusinessException {
+        try {    
             executeSql(truncateTableSql + table);
+            //((DBTransaction) CurrentDBTransaction.get()).commit();
             //fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Table: " + table + " truncated");
+            
+             } catch (Exception e) {
+                 throw new PapillonBusinessException("ManageDatabase.truncateTable: " + truncateTableSql + table);
+             }
         }
     
     public static void dropTable(String table) throws  PapillonBusinessException {
@@ -164,15 +174,9 @@ public class ManageDatabase implements Query {
         //fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Table: " + table + " dropped");
         
     }
-	
-	public static String replace(String temp) {
-		java.util.regex.Matcher m = quotePattern.matcher(temp);
-		temp = m.replaceAll("\\\\'");
-		m.reset();
-		return temp;
-	}
     
     public static String multilingual_sort(String lang, String value) throws  PapillonBusinessException {
+		//FIXME: should be called getSortKey
  		String result = lang + value;
 		
 		java.util.regex.Matcher quoteMatcher = quotePattern.matcher(value);
@@ -191,8 +195,7 @@ public class ManageDatabase implements Query {
     }
 
     private static void executeSql (String sql) throws PapillonBusinessException {
-        
-        DBTransaction transaction = CurrentDBTransaction.get();
+		DBTransaction transaction = CurrentDBTransaction.get();
         ManageDatabase req = new ManageDatabase(transaction, sql);
         
         //Flush the current transaction (?)

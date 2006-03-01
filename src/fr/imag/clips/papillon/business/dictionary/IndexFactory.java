@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.16  2006/03/01 15:12:31  mangeot
+ * Merge between maintrunk and LEXALP_1_1 branch
+ *
  * Revision 1.15  2006/02/28 15:26:22  mangeot
  * Bug fix when creating new tables
  *
@@ -19,6 +22,24 @@
  *
  * Revision 1.11  2005/09/17 11:32:51  mangeot
  * *** empty log message ***
+ *
+ * Revision 1.10.4.3  2006/01/25 15:22:23  fbrunet
+ * Improvement of QueryRequest
+ * Add new search criteria
+ * Add modified status
+ *
+ * Revision 1.10.4.2  2005/12/02 10:04:09  fbrunet
+ * Add Pre/Post edition processing
+ * Add index reconstruction
+ * Add new query request
+ * Add fuzzy search
+ * Add new contribution administration
+ * Add xsl transformation volume
+ *
+ * Revision 1.10.4.1  2005/10/24 16:29:19  fbrunet
+ * Added fuzzy search capabilities.
+ * Added possibility to rebuild the index DB tables.
+ * Added Pre and post processors that could be defined by the user.
  *
  * Revision 1.10  2005/07/16 12:58:31  serasset
  * Added limit parameter to query functions
@@ -261,8 +282,14 @@ public class IndexFactory {
                         // FIXME: this findAnswer stuff is just here to let a chance searchin g for the element in the axies tables.
                         // FIXME: soon, this will only be a findEntryByHandle...
 						IAnswer myAxie = DictionariesFactory.findAnswerByHandle(volume.getName(), myIndex.getEntryId());
-						theEntries.add(myAxie);
-					}
+						
+                        // add by Francis
+                        VolumeEntry ve = (VolumeEntry) myAxie;
+                        if (ve.getStatus().equals(VolumeEntry.FINISHED_STATUS)
+                            || ve.getStatus().equals(VolumeEntry.MODIFIED_STATUS)) {
+                            theEntries.add(myAxie);
+                        }
+                    }
 				}
 			}
 			catch(Exception ex) {
@@ -416,7 +443,9 @@ public class IndexFactory {
 					newIndex.setEntryId(handle);
 				}
 			}
-			return newIndex;
+			//fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("NEW INDEX : table=" + table + " key=" + key + " lang=" + lang + " value=" + value + " lang=" + handle);
+				return newIndex;
+            
 		}
 	
 	
@@ -430,7 +459,6 @@ public class IndexFactory {
 				throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in emptyIndex with table: " + table, e);
 			}
 		}
-	
 	
 	public static void createIndexTable(Volume volume)
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
@@ -455,6 +483,11 @@ public class IndexFactory {
 			}
 		}
 	
+	public static void dropIndexTable(Volume theVolume) 
+		throws fr.imag.clips.papillon.business.PapillonBusinessException {
+			dropIndexTable(theVolume.getIndexDbname);
+		}
+	
 	public static void dropIndexTable(String table)
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 			try {
@@ -463,6 +496,11 @@ public class IndexFactory {
 			catch (Exception e) {
 				throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in dropIndexTable: " + table, e);
 			}
+		}
+	
+	public static void truncateIndexTable(Volume volume) 
+		throws fr.imag.clips.papillon.business.PapillonBusinessException {
+			truncateIndexTable(volume.getIndexdbname);
 		}
 	
 	public static void truncateIndexTable(String table)
@@ -474,5 +512,5 @@ public class IndexFactory {
 				throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in truncateIndexTable: " + table, e);
 			}
 		}
-}
+	}
 

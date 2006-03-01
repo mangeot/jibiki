@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.19  2006/03/01 15:12:31  mangeot
+ * Merge between maintrunk and LEXALP_1_1 branch
+ *
  * Revision 1.18  2006/02/21 13:37:54  mangeot
  * *** empty log message ***
  *
@@ -21,26 +24,30 @@
  * Revision 1.15  2005/11/23 13:42:27  mangeot
  * Added cdmEntryIdElement for setting the entry id even if it is not an attribute
  *
- * Revision 1.14  2005/11/21 17:41:36  mangeot
- * *** empty log message ***
- *
- * Revision 1.13  2005/11/21 12:46:40  mangeot
- * *** empty log message ***
- *
- * Revision 1.12  2005/11/20 18:03:22  mangeot
- * *** empty log message ***
- *
- * Revision 1.11  2005/11/14 21:46:25  mangeot
- * *** empty log message ***
- *
- * Revision 1.10  2005/11/10 17:25:22  mangeot
- * *** empty log message ***
- *
- * Revision 1.9  2005/11/10 13:42:26  mangeot
- * *** empty log message ***
- *
  * Revision 1.8  2005/11/10 13:12:38  mangeot
  * *** empty log message ***
+ *
+ * Revision 1.7.4.4  2006/02/17 13:21:25  mangeot
+ *
+ * MM: modified AdvancedQueryForm. getAllTargetLanguages, getAllSourceLanguages and getCdmElementsWithDefaultLanguage are now static in AvailableLanguages.java in order to accelerate the execution.
+ *
+ * Revision 1.7.4.3  2006/01/25 15:22:23  fbrunet
+ * Improvement of QueryRequest
+ * Add new search criteria
+ * Add modified status
+ *
+ * Revision 1.7.4.2  2005/12/02 10:04:09  fbrunet
+ * Add Pre/Post edition processing
+ * Add index reconstruction
+ * Add new query request
+ * Add fuzzy search
+ * Add new contribution administration
+ * Add xsl transformation volume
+ *
+ * Revision 1.7.4.1  2005/10/24 16:29:19  fbrunet
+ * Added fuzzy search capabilities.
+ * Added possibility to rebuild the index DB tables.
+ * Added Pre and post processors that could be defined by the user.
  *
  * Revision 1.7  2005/06/17 16:49:47  mangeot
  * *** empty log message ***
@@ -147,6 +154,8 @@ package fr.imag.clips.papillon.business.dictionary;
 import fr.imag.clips.papillon.data.*;
 import fr.imag.clips.papillon.papillon_data.*;
 import fr.imag.clips.papillon.CurrentDBTransaction;
+import fr.imag.clips.papillon.business.dictionary.QueryResult;
+import fr.imag.clips.papillon.business.user.User;
 
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 
@@ -155,6 +164,8 @@ import com.lutris.appserver.server.sql.ObjectIdException;
 import com.lutris.dods.builder.generator.query.DataObjectException;
 
 import java.io.*;
+import java.util.ArrayList;
+
 //Dom objects
 import org.w3c.dom.*;
 import org.w3c.dom.Document;
@@ -213,15 +224,16 @@ public class Volume {
 	// xpaths calculated from previous ones
     public static final  String CDM_headwordElement = "cdm-headword-element";
 	public static final  String CDM_entryIdElement = "cdm-entry-id-element";
-   // public static final  String CDM_key1 = "cdm-key1";
-   // public static final  String CDM_key2 = "cdm-key2";	
-  
+      
 	// history tags
 	public static final  String CDM_history = "cdm-history";
 	public static final  String CDM_modification = "cdm-modification";
 	public static final  String CDM_modificationAuthor = "cdm-modification-author";
+    public static final  String CDM_modificationAuthorElement = "cdm-modification-author-element";
 	public static final  String CDM_modificationDate = "cdm-modification-date";
+    public static final  String CDM_modificationDateElement = "cdm-modification-date-element";
 	public static final  String CDM_modificationComment = "cdm-modification-comment";
+    public static final  String CDM_modificationCommentElement = "cdm-modification-comment-element";
 
 	// contribution tags
     public static final  String CDM_contribution = "cdm-contribution";
@@ -244,6 +256,15 @@ public class Volume {
     public static final  String CDM_contributionStatusElement = "cdm-contribution-status-element";
     public static final  String CDM_contributionDataElement = "cdm-contribution-data-element";
     public static final  String CDM_originalContributionId = "cdm-original-contribution-id";
+    // FBM: Added by francis
+    // link to previous classified finished/not-finished contribution
+    public static final  String CDM_previousClassifiedFinishedContribution = "cdm-previous-classified-finished-contribution";
+    public static final  String CDM_previousClassifiedFinishedContributionElement = "cdm-previous-classified-finished-contribution-element";
+    public static final  String CDM_previousClassifiedNotFinishedContribution = "cdm-previous-classified-not-finished-contribution";
+    public static final  String CDM_previousClassifiedNotFinishedContributionElement = "cdm-previous-classified-not-finished-contribution-element";
+    // link to next contribution author
+    public static final  String CDM_nextContributionAuthor = "cdm-next-contribution-author";
+    public static final  String CDM_nextContributionAuthorElement = "cdm-next-contribution-author-element";
 
 	
 	/* constants added to manage axies, it should be generic...*/
@@ -308,6 +329,12 @@ public class Volume {
  * table schema:
  * String lang (ISO 639-2/T) -> CDM_element -> Vector (String xpath, boolean is_index, XPath xpath_compiled) 
  */
+    /*
+     * table schema:
+     * Hastable with key [String lang (ISO 639-2/T)] 
+     * OF Hastable with key [CDM_element] 
+     * OF Vector (String xpath, boolean is_index, XPath xpath_compiled) 
+     */
 	protected java.util.Hashtable CDM_elements =  null;
 	
     /**
@@ -828,7 +855,28 @@ public class Volume {
         NodeList formatters = Utility.buildDOMTree(this.getXmlCode()).getElementsByTagName("result-formatter"); 
         String classname = null;
         if ((null != formatters) && (formatters.getLength() > 0)) {
+            // FIXME : no .getFirstChild needs
             classname = ((Element) formatters.item(0).getFirstChild()).getAttribute("class-name");
+        }
+        return classname;
+	}
+   
+    public String getPreProcessorClassName() throws PapillonBusinessException {
+        NodeList preProcessor = Utility.buildDOMTree(this.getXmlCode()).getElementsByTagName("result-preprocessor"); 
+        String classname = null;
+        if ((null != preProcessor) && (preProcessor.getLength() > 0)) {
+            // FIXME : no .getFirstChild needs
+            classname = ((Element) preProcessor.item(0).getFirstChild()).getAttribute("class-name");
+        }
+        return classname;
+	}
+    
+    public String getPostProcessorClassName() throws PapillonBusinessException {
+        NodeList postProcessor = Utility.buildDOMTree(this.getXmlCode()).getElementsByTagName("result-postprocessor"); 
+        String classname = null;
+        if ((null != postProcessor) && (postProcessor.getLength() > 0)) {
+            // FIXME : no .getFirstChild needs
+            classname = ((Element) postProcessor.item(0).getFirstChild()).getAttribute("class-name");
         }
         return classname;
 	}
@@ -1035,6 +1083,8 @@ public class Volume {
     public void save() 
         throws PapillonBusinessException {
 			try {
+				// Reset AvailableLanguages caches before saving because it will be modified
+				fr.imag.clips.papillon.business.dictionary.AvailableLanguages.resetCache();
 				this.myDO.setCdmElements(Utility.serializeHashtable(this.CDM_elements));
 				this.myDO.commit();
 			} catch(Exception ex) {
@@ -1069,4 +1119,42 @@ public class Volume {
 				throw new PapillonBusinessException("Error deleting Volume", ex);
 			}
 		}
+    
+    
+    public void launchTransformation(String xslTransformation, User user) 
+        throws PapillonBusinessException {
+			try {
+                //
+                TransformerFactory myTransformerFactory = TransformerFactory.newInstance();
+                Transformer myTransformer = myTransformerFactory.newTransformer(new StreamSource(new StringReader(xslTransformation)));
+                
+                //
+                ArrayList allEntries = QueryRequest.findAllLexies(this.getName(), user);
+                
+                //
+                for (int i = 0; i < allEntries.size(); i++) {
+                    //
+                    QueryResult qr = (QueryResult) allEntries.get(i);
+                    VolumeEntry ve = qr.getSourceEntry();
+                    
+                    //
+                    DOMSource xmlSource = new DOMSource(Utility.buildDOMTree(ve.getXmlCode()));
+                    DOMResult xmlTarget = new DOMResult();
+                    
+                    //
+                    myTransformer.transform(xmlSource, xmlTarget);
+                    
+                    //
+                    //System.out.println(ve.getXmlCode());
+                    //System.out.println(Utility.NodeToString((Document) xmlTarget.getNode()))
+                    
+                    //
+                    ve.setDom((Document) xmlTarget.getNode());
+                    ve.save();
+                }
+            } catch(Exception ex) {
+				throw new PapillonBusinessException("Error deleting Volume", ex);
+			}
+		}
+    
 }				

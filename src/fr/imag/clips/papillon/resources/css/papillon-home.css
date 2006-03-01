@@ -6,6 +6,9 @@
  * ---------------------------------------------------
  *
  * $Log$
+ * Revision 1.15  2006/03/01 15:12:31  mangeot
+ * Merge between maintrunk and LEXALP_1_1 branch
+ *
  * Revision 1.14  2006/02/21 13:37:54  mangeot
  * *** empty log message ***
  *
@@ -29,6 +32,13 @@
  *
  * Revision 1.7  2005/09/11 09:55:48  mangeot
  * Several presentation bug fixes for IExplorer compatability
+ *
+ * Revision 1.6.8.2  2006/02/17 15:16:42  mangeot
+ * Do not display the list of all XSL on the search form any more. Displays only a list of XSL descriptions
+ *
+ * Revision 1.6.8.1  2006/02/17 10:41:49  fbrunet
+ * Change QueryCriteria parameters
+ * Add new windows when editing an entry
  *
  * Revision 1.6  2005/04/11 12:29:11  mangeot
  * Merge between the XPathAndMultipleKeys and the trunk
@@ -93,6 +103,33 @@ body {
    margin-right: 0.3em;
    margin-top:0.3em;
 }
+
+
+.editEntry {
+}
+
+.editing {
+   background: white url(/media/papillon-background-fuzzy-lighter.png) 0 0 no-repeat fixed;
+   color: #000;
+/*   position: absolute;
+   left: 0; */
+   width: 70%;
+   margin-left: 170px;
+   margin-right: 170px;
+   margin-top:0.3em;
+}
+
+table.center {
+    margin-left:auto; 
+    margin-right:auto;
+}
+
+.editingResultTitle {
+}
+
+.editingResultView {
+}
+
 
 /*-------------------------*/
 /* Header part of the page */

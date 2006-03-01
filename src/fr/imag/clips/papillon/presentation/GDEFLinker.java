@@ -9,6 +9,13 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.4  2006/03/01 15:12:31  mangeot
+ *  Merge between maintrunk and LEXALP_1_1 branch
+ *
+ *  Revision 1.3.2.1  2006/01/24 13:39:49  fbrunet
+ *  Modification view management
+ *  Modification LexALP postprocessing
+ *
  *  Revision 1.3  2005/08/01 15:03:41  mangeot
  *  Corrected an important bug in the editor that forbidded to change a boolean value from true to false.
  *  Beware, you have to edit the existing interface templates by hands:
@@ -286,7 +293,7 @@ public class GDEFLinker extends LinkerBasePO {
             QueryResult qr = new QueryResult(QueryResult.UNIQUE_RESULT, ve);
             ResultFormatter rf = ResultFormatterFactory.getFormatter(qr, null, ResultFormatterFactory.XHTML_DIALECT, null);
             removeChildren(entryNode);
-            Node entryDOM = (Node)rf.getFormattedResult(qr);
+            Node entryDOM = (Node)rf.getFormattedResult(qr, this.getUser());
             //Utility.writeNodeToSystemOut(entryDOM);
             entryNode.appendChild(resultsListTmpl.importNode(entryDOM, true));
             action.setAttribute("onClick", "updateParent('" + ve.getEntryId() + "', '" + ve.getSourceLanguage() + "')");

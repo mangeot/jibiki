@@ -3,11 +3,26 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.12  2006/03/01 15:12:31  mangeot
+ * Merge between maintrunk and LEXALP_1_1 branch
+ *
  * Revision 1.11  2005/11/24 13:29:56  mangeot
  * findXslSheetByName does not throw an exception if more than one xslsheet bear the same name.
  *
+ * Revision 1.10.2.2  2006/02/17 15:16:42  mangeot
+ * Do not display the list of all XSL on the search form any more. Displays only a list of XSL descriptions
+ *
+ * Revision 1.10.2.1  2005/08/31 15:01:39  serasset
+ * Applied modifications done on the LEXALP_1_0 branch to updated sources of the
+ * trunk to create a new updated LEXALP_1_1 branch.
+ *
  * Revision 1.10  2005/08/05 18:44:38  mangeot
  * Bug fixes + ProcessVolume.po page creation
+ *
+ * Revision 1.9.2.1  2005/07/22 13:28:32  serasset
+ * Modified EditEntryInit for Lexalp. It now serves as a main page for db maintenance.
+ * Added a function to get url for QueryParameter.
+ * Modified the way xslsheets are handled in order to allow several xslsheet with the same name, different dicts.
  *
  * Revision 1.9  2005/07/21 09:37:47  serasset
  * LexALPLinker had a pb with package since MM modification.
@@ -113,6 +128,9 @@ import javax.xml.parsers.ParserConfigurationException;
  */
 public class XslSheetFactory {
     
+	
+	protected static java.util.Set descriptionSet = null;
+	
     /** 
      * The getXslSheetArray method performs a database query to
      * return an array of XslSheets
@@ -139,7 +157,38 @@ public class XslSheetFactory {
          
         return theXslArray;
     }
+	
+    /** 
+		* The getDescriptionSet method returns a set of XslSheets descriptions
+		* @return
+		*    set of XslSheet descriptions. 
+		* @exception PapillonBusinessException
+		*   If there is a problem retrieving disc information.
+		*/
+	public static java.util.Set getDescriptionSet()
+        throws PapillonBusinessException {
+		if (descriptionSet == null) {
+			descriptionSet = new java.util.TreeSet();
+			XslSheet[] theArray = getXslSheetsArray();
+			for (int i=0 ; i< theArray.length; i++) {
+				String description = theArray[i].getDescription();
+				if (description != null && !description.equals("")) {
+					descriptionSet.add(description);
+				}
+			}
+		}
+		return descriptionSet;
+	}
     
+    /** 
+	* The getDescriptionsArray method performs a database query to
+	* return an array of XslSheets
+	* @return
+	*     array of xslSheets. 
+	* @exception PapillonBusinessException
+	*   If there is a problem retrieving disc information.
+	*/
+	
     
     /** 
     * The getXslSheetArray method performs a database query to
@@ -312,6 +361,7 @@ public class XslSheetFactory {
             XslSheetQuery query = new XslSheetQuery(CurrentDBTransaction.get());
             //set query
             query.setQueryDictionaryName("");
+            query.setQueryDictionaryName("");
             query.setQueryVolumeName("");
             query.setQueryDefaultxsl("Y");
             // Throw an exception if more than one message is found
@@ -336,9 +386,28 @@ public class XslSheetFactory {
             XslSheetQuery query = new XslSheetQuery(CurrentDBTransaction.get());
             //set query
             query.setQueryName(Name);
-            // Throw an exception if more than one message is found
 			// Now several xslsheets can use the same name.
             //query.requireUniqueInstance();
+            XslSheetDO theXslSheetDO = query.getNextDO();			
+            theXsl = new XslSheet(theXslSheetDO);
+        }catch(Exception ex) {
+            throw new PapillonBusinessException("Exception in findXslSheetByID()", ex);
+        }
+        return theXsl;
+    }
+    
+    public static XslSheet findXslSheetByName(String Name, String dictionaryName, String volumeName) 
+    throws PapillonBusinessException {
+        XslSheet theXsl = null;
+        
+        try {
+            XslSheetQuery query = new XslSheetQuery(CurrentDBTransaction.get());
+            //set query
+            query.setQueryDictionaryName(dictionaryName);
+            query.setQueryVolumeName(volumeName);
+            query.setQueryName(Name);
+            // Throw an exception if more than one message is found
+            query.requireUniqueInstance();
             XslSheetDO theXslSheetDO = query.getNextDO();			
             theXsl = new XslSheet(theXslSheetDO);
         }catch(Exception ex) {
@@ -346,6 +415,53 @@ public class XslSheetFactory {
         }
         return theXsl;
     }
+    
+    
+    public static XslSheet getNamedXslSheet(String Name, String dictionaryName, String volumeName) 
+    throws PapillonBusinessException {
+        XslSheet theXsl = null;
+        
+        try {
+            XslSheetQuery query = new XslSheetQuery(CurrentDBTransaction.get());
+            //set query
+            query.setQueryDictionaryName(dictionaryName);
+            query.setQueryVolumeName(volumeName);
+            query.setQueryName(Name);
+            
+            // Throw an exception if more than one query is found
+            query.requireUniqueInstance();
+            XslSheetDO theXslSheetDO = query.getNextDO();
+            
+            if (null == theXslSheetDO) {
+                query.reset();
+                query.setQueryDictionaryName(dictionaryName);
+                query.setQueryVolumeName("");
+                query.setQueryName(Name);
+                query.requireUniqueInstance();
+                theXslSheetDO = query.getNextDO();
+            }
+            if (null == theXslSheetDO) {
+                query.reset();
+                query.setQueryDictionaryName("");
+                query.setQueryVolumeName("");
+                query.setQueryName(Name);
+                query.requireUniqueInstance();
+                theXslSheetDO = query.getNextDO();
+            }
+            if (null == theXslSheetDO) {
+                return getDefaultXslSheet(dictionaryName,volumeName);
+            }
+            theXsl = new XslSheet(theXslSheetDO);
+            if (null == theXsl) {
+                // Here we should generate an exception or display an HTML message
+                fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Exception in findDefaultxslsheet(): no default existing XSL sheet");
+            }
+        } catch(Exception ex) {
+            throw new PapillonBusinessException("Exception in findXslSheetByID()", ex);
+        }
+        return theXsl;
+    }
+    
 	
 	public static void AddXslSheet(String name, String dictionaryName, String volumeName, String description,String code,boolean defaultXsl)
     throws fr.imag.clips.papillon.business.PapillonBusinessException{
@@ -387,7 +503,7 @@ public class XslSheetFactory {
         if ((name!=null) && (code!=null)) {
             //search for an existing
             XslSheetFactory XslFactory=new XslSheetFactory();
-            XslSheet Existe=XslFactory.findXslSheetByName(name);
+            XslSheet Existe=XslFactory.findXslSheetByName(name, dictionaryName, volumeName);
             if (!Existe.isEmpty()) {
                 Existe.delete();
 				fr.imag.clips.papillon.business.transformation.XslTransformation.resetCache();
@@ -420,6 +536,11 @@ public class XslSheetFactory {
             TheXslSheets[i].delete();
         }
     }
+	
+	public static boolean resetCache() {
+		descriptionSet = null;
+		return true;
+	}
 	
 }
 

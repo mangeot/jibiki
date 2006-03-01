@@ -33,9 +33,15 @@
  * $Id$
  *--------------------------------------------------------------
  * $Log$
+ * Revision 1.3  2006/03/01 15:12:31  mangeot
+ * Merge between maintrunk and LEXALP_1_1 branch
+ *
  * Revision 1.2  2006/02/26 19:21:38  mangeot
  * Work on BrowseVolume
  *
+ * Revision 1.1.1.1  2004/12/06 16:38:24  serasset
+ * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
+ * There are still bugs in the code.
  * Revision 1.1.1.1  2004/12/06 16:38:24  serasset
  * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
  * There are still bugs in the code.

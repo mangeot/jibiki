@@ -9,6 +9,13 @@
  *$Id$
  *------------------------
  *$Log$
+ *Revision 1.3  2006/03/01 15:12:31  mangeot
+ *Merge between maintrunk and LEXALP_1_1 branch
+ *
+ *Revision 1.2.4.1  2006/01/24 13:39:49  fbrunet
+ *Modification view management
+ *Modification LexALP postprocessing
+ *
  *Revision 1.2  2005/07/16 12:58:31  serasset
  *Added limit parameter to query functions
  *Added a parameter to Formater initializations
@@ -32,6 +39,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import fr.imag.clips.papillon.business.user.User;
 import fr.imag.clips.papillon.business.dictionary.QueryResult;
 import fr.imag.clips.papillon.business.dictionary.Dictionary;
 import fr.imag.clips.papillon.business.dictionary.Volume;
@@ -52,7 +60,7 @@ public interface ResultFormatter {
     /** 
         returns the Node representing the result.
     */
-    public abstract Node getFormattedResult(QueryResult qr) throws PapillonBusinessException;
+    public abstract Node getFormattedResult(QueryResult qr, User usr) throws PapillonBusinessException;
     
     
 }

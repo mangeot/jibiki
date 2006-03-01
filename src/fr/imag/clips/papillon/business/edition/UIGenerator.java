@@ -8,8 +8,20 @@
  * $Id$
  *---------------------------------------------------------
  * $Log$
+ * Revision 1.16  2006/03/01 15:12:31  mangeot
+ * Merge between maintrunk and LEXALP_1_1 branch
+ *
  * Revision 1.15  2006/02/18 17:57:21  mangeot
- * MM: Fixed a problem when, in the editor, the last element of a list was deleted. The user still could enter data but it was not saved because the XML structure was modified. Now, I check if a list still has an element.
+ * MM: Fixed a problem when, in the editor, the last element of a list was deleted. 
+ * The user still could enter data but it was not saved because the XML structure was modified.
+ * Now, I check if a list still has an element.
+ *
+ * Revision 1.12  2005/10/04 10:21:24  mangeot
+ * Experimental implementation of moving up and down blocks
+ *
+ * Revision 1.11.2.2  2006/01/24 13:39:49  fbrunet
+ * Modification view management
+ * Modification LexALP postprocessing
  *
  * Revision 1.14  2005/11/21 14:16:29  mangeot
  * *** empty log message ***
@@ -204,8 +216,7 @@ public class UIGenerator {
 		Vector removeNodes = new Vector();
 		for (int i=0; i<elementIds.length;i++) {
 			String elementId = elementIds[i];
-			//			PapillonLogger.writeDebugMsg("deleteElement: " + elementName + " eltId: " + elementIds[0]);
-            
+			//			PapillonLogger.writeDebugMsg("deleteElement: " + elementName + " eltId: " + elementIds[0]);            
 			nodeMatcher.reset(elementId);
             if (nodeMatcher.find()) {
                 String currentName = nodeMatcher.group(1);

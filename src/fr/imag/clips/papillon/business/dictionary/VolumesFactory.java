@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.38  2006/03/01 15:12:31  mangeot
+ * Merge between maintrunk and LEXALP_1_1 branch
+ *
  * Revision 1.37  2006/03/01 08:53:14  mangeot
  * *** empty log message ***
  *
@@ -23,65 +26,30 @@
  * Revision 1.32  2005/11/22 10:47:04  mangeot
  * *** empty log message ***
  *
- * Revision 1.31  2005/11/21 17:41:36  mangeot
- * *** empty log message ***
- *
- * Revision 1.30  2005/11/21 12:46:40  mangeot
- * *** empty log message ***
- *
- * Revision 1.29  2005/11/20 18:03:22  mangeot
- * *** empty log message ***
- *
- * Revision 1.28  2005/11/16 14:36:11  mangeot
- * *** empty log message ***
- *
- * Revision 1.27  2005/11/14 21:46:26  mangeot
- * *** empty log message ***
- *
- * Revision 1.26  2005/11/10 17:25:22  mangeot
- * *** empty log message ***
- *
- * Revision 1.25  2005/11/10 14:59:38  mangeot
- * *** empty log message ***
- *
- * Revision 1.24  2005/11/10 14:52:55  mangeot
- * *** empty log message ***
- *
- * Revision 1.23  2005/11/10 14:49:16  mangeot
- * *** empty log message ***
- *
- * Revision 1.22  2005/11/10 14:45:44  mangeot
- * *** empty log message ***
- *
- * Revision 1.21  2005/11/10 14:23:27  mangeot
- * *** empty log message ***
- *
- * Revision 1.20  2005/11/10 14:11:14  mangeot
- * *** empty log message ***
- *
- * Revision 1.19  2005/11/10 14:00:38  mangeot
- * *** empty log message ***
- *
- * Revision 1.18  2005/11/10 13:28:20  mangeot
- * *** empty log message ***
- *
- * Revision 1.17  2005/11/10 13:20:01  mangeot
- * *** empty log message ***
- *
- * Revision 1.16  2005/11/10 13:12:38  mangeot
- * *** empty log message ***
- *
- * Revision 1.15  2005/11/10 12:18:12  mangeot
- * *** empty log message ***
- *
- * Revision 1.14  2005/11/10 12:14:56  mangeot
- * *** empty log message ***
- *
- * Revision 1.13  2005/11/09 15:28:44  mangeot
- * *** empty log message ***
- *
  * Revision 1.12  2005/11/09 13:30:31  mangeot
  * *** empty log message ***
+ *
+ * Revision 1.11.4.4  2006/01/25 15:22:23  fbrunet
+ * Improvement of QueryRequest
+ * Add new search criteria
+ * Add modified status
+ *
+ * Revision 1.11.4.3  2006/01/24 13:39:49  fbrunet
+ * Modification view management
+ * Modification LexALP postprocessing
+ *
+ * Revision 1.11.4.2  2005/12/02 10:04:09  fbrunet
+ * Add Pre/Post edition processing
+ * Add index reconstruction
+ * Add new query request
+ * Add fuzzy search
+ * Add new contribution administration
+ * Add xsl transformation volume
+ *
+ * Revision 1.11.4.1  2005/10/24 16:29:19  fbrunet
+ * Added fuzzy search capabilities.
+ * Added possibility to rebuild the index DB tables.
+ * Added Pre and post processors that could be defined by the user.
  *
  * Revision 1.11  2005/07/16 12:58:31  serasset
  * Added limit parameter to query functions
@@ -186,6 +154,7 @@ package fr.imag.clips.papillon.business.dictionary;
 
 import fr.imag.clips.papillon.data.*;
 import fr.imag.clips.papillon.CurrentDBTransaction;
+import com.lutris.appserver.server.sql.DBTransaction;
 
 //for URLs
 import java.net.URL;
@@ -459,14 +428,33 @@ public class VolumesFactory {
 			}
 		}
 	
+    public static String[] getVolumesArrayName()
+		throws PapillonBusinessException {
+			return getVolumesArrayName(null, null, null);
+		}
+    
 	public static Volume[] getVolumesArray()
 		throws PapillonBusinessException {
 			return getVolumesArray(null, null, null);
+		}
+    
+    public static String[] getVolumesArrayName(String dictName)
+		throws PapillonBusinessException {
+			return getVolumesArrayName(dictName, null, null);
 		}
 	
 	public static Volume[] getVolumesArray(String dictName)
 		throws PapillonBusinessException {
 			return getVolumesArray(dictName, null, null);
+		}
+    
+    public static String[] getVolumesArrayName(String dictname, String source, String target)
+		throws PapillonBusinessException {
+            Volume[] volumeList = getVolumesArray(dictname, source, target);
+            String[] nameList = new String[ volumeList.length ];
+            for ( int i = 0; i < volumeList.length; i++ )
+                nameList[i] = volumeList[i].getName();
+			return nameList;
 		}
 	
 	// FIXME: should provide the same method with a dictionary instead of a dictionary name. And use it when possible.
@@ -718,6 +706,28 @@ public class VolumesFactory {
 		if (getCdmXPathString(elementsTable, Volume.CDM_contributionStatus, Volume.DEFAULT_LANG) == null) {
 			addCdmElementInTable(elementsTable,Volume.CDM_contributionStatus,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.statusTag + "/text()", Volume.isIndexCDMElement(Volume.CDM_contributionStatus));
 		}
+        // Previous classified finished contribution
+        if (getCdmXPathString(elementsTable, Volume.CDM_previousClassifiedFinishedContributionElement, Volume.DEFAULT_LANG) == null) {
+			addCdmElementInTable(elementsTable,Volume.CDM_previousClassifiedFinishedContributionElement,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.previousClassifiedFinishedContributionTag, false);
+		}  
+        if (getCdmXPathString(elementsTable, Volume.CDM_previousClassifiedFinishedContribution, Volume.DEFAULT_LANG) == null) {
+			addCdmElementInTable(elementsTable,Volume.CDM_previousClassifiedFinishedContribution,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.previousClassifiedFinishedContributionTag + "/text()", true);
+		}  
+        // Previous classified not finished contribution
+        if (getCdmXPathString(elementsTable, Volume.CDM_previousClassifiedNotFinishedContributionElement, Volume.DEFAULT_LANG) == null) {
+			addCdmElementInTable(elementsTable,Volume.CDM_previousClassifiedNotFinishedContributionElement,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.previousClassifiedNotFinishedContributionTag, false);
+		}
+        if (getCdmXPathString(elementsTable, Volume.CDM_previousClassifiedNotFinishedContribution, Volume.DEFAULT_LANG) == null) {
+			addCdmElementInTable(elementsTable,Volume.CDM_previousClassifiedNotFinishedContribution,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.previousClassifiedNotFinishedContributionTag + "/text()", true);
+		}
+        // Next contribution author
+        if (getCdmXPathString(elementsTable, Volume.CDM_nextContributionAuthorElement, Volume.DEFAULT_LANG) == null) {
+			addCdmElementInTable(elementsTable,Volume.CDM_nextContributionAuthorElement,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.nextContributionAuthorTag, false);
+		}
+        if (getCdmXPathString(elementsTable, Volume.CDM_nextContributionAuthor, Volume.DEFAULT_LANG) == null) {
+			addCdmElementInTable(elementsTable,Volume.CDM_nextContributionAuthor,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.nextContributionAuthorTag + "/text()", true);
+		}
+        
 		
 		currentXpath += "/" + VolumeEntry.historyTag;
 		if (getCdmXPathString(elementsTable, Volume.CDM_history, Volume.DEFAULT_LANG) == null) {
@@ -728,16 +738,24 @@ public class VolumesFactory {
 		if (getCdmXPathString(elementsTable, Volume.CDM_modification, Volume.DEFAULT_LANG) == null) {
 			addCdmElementInTable(elementsTable,Volume.CDM_modification,Volume.DEFAULT_LANG,currentXpath, Volume.isIndexCDMElement(Volume.CDM_modification));
 		}
-		if (getCdmXPathString(elementsTable, Volume.CDM_modificationAuthor, Volume.DEFAULT_LANG) == null) {
-			addCdmElementInTable(elementsTable,Volume.CDM_modificationAuthor,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.authorTag + "/text()", Volume.isIndexCDMElement(Volume.CDM_modificationAuthor));
+        if (getCdmXPathString(elementsTable, Volume.CDM_modificationAuthorElement, Volume.DEFAULT_LANG) == null) {
+			addCdmElementInTable(elementsTable,Volume.CDM_modificationAuthorElement,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.authorTag, false);
 		}
-		if (getCdmXPathString(elementsTable, Volume.CDM_modificationDate, Volume.DEFAULT_LANG) == null) {
-			addCdmElementInTable(elementsTable,Volume.CDM_modificationDate,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.dateTag + "/text()", Volume.isIndexCDMElement(Volume.CDM_modificationDate));
+        if (getCdmXPathString(elementsTable, Volume.CDM_modificationAuthor, Volume.DEFAULT_LANG) == null) {
+			addCdmElementInTable(elementsTable,Volume.CDM_modificationAuthor,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.authorTag + "/text()", true);
 		}
-		if (getCdmXPathString(elementsTable, Volume.CDM_modificationComment, Volume.DEFAULT_LANG) == null) {
-			addCdmElementInTable(elementsTable,Volume.CDM_modificationComment,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.commentTag + "/text()", Volume.isIndexCDMElement(Volume.CDM_modificationComment));
+        if (getCdmXPathString(elementsTable, Volume.CDM_modificationDateElement, Volume.DEFAULT_LANG) == null) {
+			addCdmElementInTable(elementsTable,Volume.CDM_modificationDateElement,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.dateTag, false);
 		}
-		
+        if (getCdmXPathString(elementsTable, Volume.CDM_modificationDate, Volume.DEFAULT_LANG) == null) {
+			addCdmElementInTable(elementsTable,Volume.CDM_modificationDate,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.dateTag + "/text()", true);
+		}
+        if (getCdmXPathString(elementsTable, Volume.CDM_modificationCommentElement, Volume.DEFAULT_LANG) == null) {
+			addCdmElementInTable(elementsTable,Volume.CDM_modificationCommentElement,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.commentTag, false);
+		}
+        if (getCdmXPathString(elementsTable, Volume.CDM_modificationComment, Volume.DEFAULT_LANG) == null) {
+			addCdmElementInTable(elementsTable,Volume.CDM_modificationComment,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.commentTag + "/text()", true);
+		}
 		if (getCdmXPathString(elementsTable, Volume.CDM_headwordElement, sourceLanguage) == null) {
 			String headwordXpath = getCdmXPathString(elementsTable, Volume.CDM_headword, sourceLanguage);
 			if (headwordXpath != null) {
@@ -825,6 +843,100 @@ public class VolumesFactory {
 		theString = theString.replaceAll(searchedRegex, replace);
 		return theString;
 	}
+    
+    
+    //
+    public static void reConstructionIndex()
+        throws fr.imag.clips.papillon.business.PapillonBusinessException {
+            
+            // Begin transaction
+            CurrentDBTransaction.registerNewDBTransaction();
+            
+            try {
+                
+                //
+                Volume[] volumes = getVolumesArray();
+                for (int i=0; i < volumes.length; i++) {
+                    
+                    // Truncate index volumes 
+                    IndexFactory.truncateIndexTable(volumes[i]);
+                    
+                    //
+                    int count = volumes[i].getCount();
+                    int delta = 10; // buffer limit
+                    for (int z = 0; z < count; z=z+delta) {
+                                                
+                        // Buffer volumeEntries
+                        Collection bufferResults = VolumeEntriesFactory.getVolumeEntriesVector(DictionariesFactory.findDictionaryByName(volumes[i].getDictname()), volumes[i], null, null, null, z, delta);
+                        
+                        // Index volumeEntries
+                        Iterator buffer = bufferResults.iterator();
+                        while ( buffer.hasNext() ) {
+                            VolumeEntry ve = (VolumeEntry)buffer.next();
+                            ParseVolume.parseEntry(ve);
+                        }
+                        
+                    }
+                }
+                
+                // End transaction
+                // everything was correct, commit the transaction...
+                ((DBTransaction) CurrentDBTransaction.get()).commit();
+                
+            } catch (Exception e) {
+                String userMessage = "Problems while adding the specified dictionary.\n";
+                userMessage = userMessage + e.getMessage();
+                userMessage = userMessage + "\nAll changes to the database have been rolled back.";
+                PapillonLogger.writeDebugMsg(userMessage);
+                e.printStackTrace();
+                try {
+                    ((DBTransaction) CurrentDBTransaction.get()).rollback();
+                } catch (java.sql.SQLException sqle) {
+                    PapillonLogger.writeDebugMsg("AdminDictionaries: SQLException while rolling back failed transaction.");
+                    sqle.printStackTrace();
+                }
+            } finally {
+                CurrentDBTransaction.releaseCurrentDBTransaction();
+            }
+        }
 	
+    
+    // FIXME : supress
+    public static void modifiedStatus(fr.imag.clips.papillon.business.user.User user)
+        throws PapillonBusinessException {
+			try {
+                
+                String[] listName = VolumesFactory.getVolumesArrayName();
+                for (int j=0; j < listName.length; j++) {
+                    
+                    //
+                    ArrayList allEntries = QueryRequest.findAllLexies(listName[j], user);
+                    
+                    //
+                    for (int i = 0; i < allEntries.size(); i++) {
+                        //
+                        QueryResult qr = (QueryResult) allEntries.get(i);
+                        VolumeEntry ve = qr.getSourceEntry();
+                        
+                        if (ve.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS)) {
+                            
+                            if ( (ve.getClassifiedFinishedContributionId() != null) 
+                                 && !ve.getClassifiedFinishedContributionId().equals("")) {
+                                
+                                VolumeEntry finishedVe = VolumeEntriesFactory.findEntryByContributionId(ve.getVolumeName(), ve.getClassifiedFinishedContributionId());
+                                finishedVe.setStatus(VolumeEntry.MODIFIED_STATUS);
+                                finishedVe.setNextContributionAuthor(ve.getModificationAuthor());
+                                finishedVe.save();
+                            }
+                            
+                        }
+                        
+                    }
+                }
+
+            } catch(Exception ex) {
+				throw new PapillonBusinessException("Error when modify status", ex);
+			}
+		}
 }
 

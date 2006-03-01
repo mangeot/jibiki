@@ -9,6 +9,13 @@
  *$Id$
  *------------------------
  *$Log$
+ *Revision 1.6  2006/03/01 15:12:31  mangeot
+ *Merge between maintrunk and LEXALP_1_1 branch
+ *
+ *Revision 1.5.2.1  2006/01/24 13:39:49  fbrunet
+ *Modification view management
+ *Modification LexALP postprocessing
+ *
  *Revision 1.5  2005/07/28 13:06:47  mangeot
  *- Added the possibility to export in PDF format. The conversion into PDF is don
  *e via the fop package that has to be installed (see ToolsForPapillon)
@@ -93,12 +100,15 @@ public class ResultFormatterFactory {
     }
     
     
+    // FIXME: Do I have enough info to build the adequate formatter
+    // FIXME: This method should certainly be suppressed
     public static ResultFormatter getFormatter(String formatterName) {
         // returns the formatter named formatterName (should be a valid formatterName as returned by getAvailableFormatters).
         return null;
     }
     
     // Returns a list of available Formatter Names
+    // FIXME: Should be getAvailableForms to avoid confusion in Francis' poor little head...
     public static String[] getAvailableFormatters(Volume vol, int dialect, String lang) {
         return null;
     }

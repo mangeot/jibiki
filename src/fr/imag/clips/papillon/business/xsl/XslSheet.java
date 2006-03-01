@@ -9,6 +9,12 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.7  2006/03/01 15:12:31  mangeot
+ * Merge between maintrunk and LEXALP_1_1 branch
+ *
+ * Revision 1.6.2.1  2006/02/17 15:16:42  mangeot
+ * Do not display the list of all XSL on the search form any more. Displays only a list of XSL descriptions
+ *
  * Revision 1.6  2005/07/28 13:06:47  mangeot
  * - Added the possibility to export in PDF format. The conversion into PDF is don
  * e via the fop package that has to be installed (see ToolsForPapillon)
@@ -347,6 +353,8 @@ public class XslSheet {
  
        public void save() 
         throws PapillonBusinessException {
+			// reset XslSheetFactory cache
+			XslSheetFactory.resetCache();
         try {
             this.myDO.commit();
         } catch(Exception ex) {

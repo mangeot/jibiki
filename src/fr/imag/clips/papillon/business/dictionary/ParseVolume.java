@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.31  2006/03/01 15:12:31  mangeot
+ * Merge between maintrunk and LEXALP_1_1 branch
+ *
  * Revision 1.30  2006/02/26 14:08:16  mangeot
  * Added the multilingual_sort(lang,headword) index on volume tables for speeding up the lookup
  *
@@ -37,47 +40,16 @@
  * Revision 1.26  2005/12/04 15:22:39  mangeot
  * Fixed the volume parsing when the volume element is not the root element
  *
- * Revision 1.25  2005/12/01 16:13:42  mangeot
- * *** empty log message ***
- *
- * Revision 1.24  2005/11/16 14:36:11  mangeot
- * *** empty log message ***
- *
- * Revision 1.23  2005/11/14 21:52:48  mangeot
- * *** empty log message ***
- *
- * Revision 1.22  2005/11/14 21:46:25  mangeot
- * *** empty log message ***
- *
- * Revision 1.21  2005/11/10 17:31:21  mangeot
- * *** empty log message ***
- *
- * Revision 1.20  2005/11/10 17:25:22  mangeot
- * *** empty log message ***
- *
- * Revision 1.19  2005/11/10 17:17:20  mangeot
- * *** empty log message ***
- *
- * Revision 1.18  2005/11/10 17:08:53  mangeot
- * *** empty log message ***
- *
- * Revision 1.17  2005/11/10 14:59:38  mangeot
- * *** empty log message ***
- *
- * Revision 1.16  2005/11/10 13:35:09  mangeot
- * *** empty log message ***
- *
- * Revision 1.15  2005/11/10 13:12:38  mangeot
- * *** empty log message ***
- *
- * Revision 1.14  2005/11/09 17:38:59  mangeot
- * small bug fixes
- *
- * Revision 1.13  2005/09/17 11:32:51  mangeot
- * *** empty log message ***
- *
  * Revision 1.12  2005/09/17 11:15:39  mangeot
  * *** empty log message ***
+ *
+ * Revision 1.11.4.2  2006/02/24 13:59:55  fbrunet
+ * Postprocessing during update and save
+ *
+ * Revision 1.11.4.1  2005/10/24 16:29:19  fbrunet
+ * Added fuzzy search capabilities.
+ * Added possibility to rebuild the index DB tables.
+ * Added Pre and post processors that could be defined by the user.
  *
  * Revision 1.11  2005/07/16 16:25:26  mangeot
  * Adapted the linker to the GDEF project + bug fixes
@@ -452,6 +424,9 @@ public class ParseVolume {
 		return result;
 	}
 	
+    
+    // FIXME: should not be called parseEntry, but rather indexEntry...
+    // FIXME: should be defined here ?
 	public static boolean parseEntry(VolumeEntry myEntry) throws PapillonBusinessException {
 		org.w3c.dom.Document entryDoc = myEntry.getDom();
 		boolean result=false;
@@ -522,6 +497,86 @@ public class ParseVolume {
 		return result;
 	}
 	
+    // FIXME: should not be called parseEntry, but rather indexEntry...
+    // FIXME: should be defined here ?
+	public static boolean indexEntry(VolumeEntry myEntry) throws PapillonBusinessException {
+		
+        PapillonLogger.writeDebugMsg("INDEXENTRY");
+        
+        org.w3c.dom.Document entryDoc = myEntry.getDom();
+		boolean result=false;
+        
+        //
+		if (entryDoc!=null) {
+			org.w3c.dom.Element myRootElt = entryDoc.getDocumentElement();
+			org.apache.xml.utils.PrefixResolver myPrefixResolver = new org.apache.xml.utils.PrefixResolverDefault(myRootElt);
+			java.util.Hashtable CdmElementsTable = myEntry.getVolume().getCdmElements();
+			result = true;
+			
+            //
+            for (java.util.Enumeration langKeys = CdmElementsTable.keys(); langKeys.hasMoreElements();) {
+				String lang = (String) langKeys.nextElement();
+                
+                PapillonLogger.writeDebugMsg("INDEXENTRY, langKeys : " + lang);
+                
+				java.util.Hashtable tmpTable =  (java.util.Hashtable) CdmElementsTable.get(lang);
+				for (java.util.Enumeration keys = tmpTable.keys(); keys.hasMoreElements();) {
+					String CdmElement = (String) keys.nextElement();
+					
+                    PapillonLogger.writeDebugMsg("INDEXENTRY, key " + CdmElement);
+					
+                    java.util.Vector myVector = (java.util.Vector) tmpTable.get(CdmElement);
+					org.apache.xpath.XPath myXPath = null;
+					boolean isIndex = false;
+                    
+					if (myVector != null) {
+						
+                        PapillonLogger.writeDebugMsg("INDEXENTRY, myVector.size: " + myVector.size());
+						
+                        if (myVector.size()==3) {
+							isIndex = ((Boolean) myVector.elementAt(1)).booleanValue();
+							if (isIndex) {
+								myXPath =  (org.apache.xpath.XPath) myVector.elementAt(2);
+							}
+						}
+						else if (myVector.size()==2) {
+							isIndex = ((Boolean) myVector.elementAt(1)).booleanValue();
+							if (isIndex) {
+								String xpathString = (String) myVector.elementAt(0);
+								myXPath = ParseVolume.compileXPath(xpathString, myRootElt);
+								myVector.add(myXPath);
+							}
+						}
+					}
+					if (myXPath != null) {
+						org.w3c.dom.NodeList resNodeList = null;
+						try {
+							org.apache.xpath.objects.XObject myXObject = myXPath.execute(new org.apache.xpath.XPathContext(),myRootElt,myPrefixResolver);
+							resNodeList = myXObject.nodelist();
+						}
+						catch (javax.xml.transform.TransformerException e) {
+							throw new PapillonBusinessException("javax.xml.transform.TransformerException: ", e);
+						}
+						if (resNodeList !=null) { 
+							for (int i=0; i<resNodeList.getLength();i++) {
+								org.w3c.dom.Node myNode = resNodeList.item(i);
+								String value = myNode.getNodeValue();
+								if (value != null) {
+									
+                                    PapillonLogger.writeDebugMsg("INDEXENTRY, node value: " + value);
+									
+                                    Index myIndex = IndexFactory.newIndex(myEntry.getVolume().getIndexDbname(),CdmElement,lang,value, myEntry.getHandle());
+									myIndex.save();
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return result;
+	}
+    
 	public static boolean parseAxie(Axie myEntry) throws PapillonBusinessException {
 		org.w3c.dom.Document entryDoc = myEntry.getDom();
 		boolean result=false;
@@ -769,7 +824,7 @@ public class ParseVolume {
 			org.w3c.dom.Node resNode = null;
 			org.w3c.dom.NodeList myList = ParseVolume.getCdmElements(myEntry,CdmElement,lang);
 			if (myList != null && myList.getLength()>0) {
-				ResStrings = new String[myList.getLength()+1];
+				ResStrings = new String[myList.getLength()];
 				for (int i=0; i<myList.getLength();i++) {
 					org.w3c.dom.Node tmpNode = myList.item(i);
 					if (tmpNode != null) {

@@ -9,6 +9,22 @@
  *  $Id $
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.2  2006/03/01 15:12:31  mangeot
+ *  Merge between maintrunk and LEXALP_1_1 branch
+ *
+ *  Revision 1.1.4.2  2006/02/17 13:21:25  mangeot
+ *
+ *  MM: modified AdvancedQueryForm. getAllTargetLanguages, getAllSourceLanguages and getCdmElementsWithDefaultLanguage are now static in AvailableLanguages.java in order to accelerate the execution.
+ *
+ *  Revision 1.1.4.1  2005/08/31 15:01:39  serasset
+ *  Applied modifications done on the LEXALP_1_0 branch to updated sources of the
+ *  trunk to create a new updated LEXALP_1_1 branch.
+ *
+ *  Revision 1.1.2.1  2005/07/22 13:28:32  serasset
+ *  Modified EditEntryInit for Lexalp. It now serves as a main page for db maintenance.
+ *  Added a function to get url for QueryParameter.
+ *  Modified the way xslsheets are handled in order to allow several xslsheet with the same name, different dicts.
+ *
  *  Revision 1.1  2005/05/24 12:51:22  serasset
  *  Updated many aspect of the Papillon project to handle lexalp project.
  *  1. Layout is now parametrable in the application configuration file.
@@ -107,8 +123,8 @@ public class LexALPLayout implements StdLayout {
             handleLangForm(comms, sessionData, url);
             handleConsultForm(comms, sessionData);
             handleLexieMenu(comms, sessionData);
-            handleAxieMenu(comms, sessionData);
-            handleReviewerMenu(comms, sessionData);
+            //handleAxieMenu(comms, sessionData);
+            //handleReviewerMenu(comms, sessionData);
             handleAdministratorMenu(comms, sessionData);
             removeMenuBlockPlaceHolder();
         }
@@ -221,10 +237,9 @@ public class LexALPLayout implements StdLayout {
         PapillonBusinessException,
         HttpPresentationException,
         UnsupportedEncodingException {
-            AvailableLanguages MyAvailableLanguages = new AvailableLanguages();
             
-            String[] allSourceLanguages = MyAvailableLanguages.getSourceLanguagesArray();
-            String[] allTargetLanguages = MyAvailableLanguages.getTargetLanguagesArray();
+            String[] allSourceLanguages = AvailableLanguages.getSourceLanguagesArray();
+            String[] allTargetLanguages = AvailableLanguages.getTargetLanguagesArray();
             
             QueryMenuXHTML queryMenu = (QueryMenuXHTML) MultilingualXHtmlTemplateFactory.createTemplate(PACKAGE, "QueryMenuXHTML", comms, sessionData);
             XHTMLInputElement headwordInput = queryMenu.getElementHeadwordInput();

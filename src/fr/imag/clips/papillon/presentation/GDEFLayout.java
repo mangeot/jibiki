@@ -9,8 +9,15 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.6  2006/03/01 15:12:31  mangeot
+ *  Merge between maintrunk and LEXALP_1_1 branch
+ *
  *  Revision 1.5  2006/02/26 14:04:56  mangeot
  *  Corrected a bug: the content was a static variable, thus there were problems when two users wanted to aces the same page at the same time
+ *
+ *  Revision 1.4.4.1  2006/02/17 13:21:25  mangeot
+ *
+ *  MM: modified AdvancedQueryForm. getAllTargetLanguages, getAllSourceLanguages and getCdmElementsWithDefaultLanguage are now static in AvailableLanguages.java in order to accelerate the execution.
  *
  *  Revision 1.4  2005/06/23 14:05:36  mangeot
  *  Added EDIT_DATA
@@ -238,10 +245,9 @@ public class GDEFLayout implements StdLayout {
         PapillonBusinessException,
         HttpPresentationException,
         UnsupportedEncodingException {
-            AvailableLanguages MyAvailableLanguages = new AvailableLanguages();
             
-            String[] allSourceLanguages = MyAvailableLanguages.getSourceLanguagesArray();
-            String[] allTargetLanguages = MyAvailableLanguages.getTargetLanguagesArray();
+            String[] allSourceLanguages = AvailableLanguages.getSourceLanguagesArray();
+            String[] allTargetLanguages = AvailableLanguages.getTargetLanguagesArray();
             
             QueryMenuXHTML queryMenu = (QueryMenuXHTML) MultilingualXHtmlTemplateFactory.createTemplate("QueryMenuXHTML", comms, sessionData);
             XHTMLInputElement headwordInput = queryMenu.getElementHeadwordInput();

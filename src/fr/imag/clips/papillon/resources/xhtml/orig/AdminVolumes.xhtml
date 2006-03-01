@@ -36,6 +36,7 @@
 <p class="note">NB: The Volume Metadata file must be valid against the &lt;volume-metadata&gt; element of the DML schema. The latest version of the schema can be found at: <a href="http://www-clips.imag.fr/geta/services/dml/dml.xsd">www-clips.imag.fr/geta/services/dml/dml.xsd</a>.</p>
 </form>
 
+<hr/>
 <form action="AdminVolumes.po" method="get">
 <table width="600" border="0" cellspacing="0" cellpadding="10" summary="Upload XML File">
 <tr>
@@ -55,7 +56,7 @@
 				</tr>
 <tr>	
 	<td valign="top"><b>Url:&nbsp;</b></td>
-	<td colspan="3"><input name="URLObject" type="text" size="64" value=""/></td>
+	<td colspan="3"><input name="URLObject" type="text" size="80" value=""/></td>
 </tr>
 <tr>
 <td>
@@ -65,6 +66,28 @@
 </table>
 </form>
 
+<hr/>
+<form action="AdminVolumes.po" method="get">
+<table width="600" border="0" cellspacing="0" cellpadding="10" summary="Upload XML File">
+<tr>
+	<td><b>Volume:</b></td>
+    <td>
+        <select name="VolumeTransformation">
+            <option value="All" label="All">All volumes</option>
+            <option id="VolumeOptionTemplateTransformation" value="NONE" label="NONE">NONE</option>
+        </select>
+    </td>
+    <td/><td/>
+</tr>
+<tr>	
+	<td valign="top"><b>Url:&nbsp;</b></td>
+	<td colspan="3"><input name="URLObjectTransformation" type="text" size="80" value=""/></td>
+</tr>
+</table>
+<div><input name="Transformation" type="submit" value="Launch transformation"/></div>
+</form>
+
+<hr/>
 Volumes currently in the database:
 <table summary="Existing Volumes">
 <tr>
