@@ -260,8 +260,10 @@ Papillon.Users.Groups.Password.specialist = "butterfly"
 Papillon.Users.Groups.Password.validator = "farfalla"
 
 # Class name of the layout for pages of the application
+Papillon.Presentation.PriorityPackage = "fr.imag.clips.papillon.presentation.xhtmllexalp"
 Papillon.LayoutClassName = "fr.imag.clips.papillon.presentation.LexALPLayout"
 Papillon.LoginCookieName = "LexalpLoginCookie"
+Papillon.Presentation.PriorityPackage = "fr.imag.clips.papillon.presentation.xhtmllexalp"
 
 ###
 # Misc

@@ -24,7 +24,7 @@ Application.@APPLICATION@.defaultSessionTimeOut = 30
 
 Channel.CM_0.channel_0.Enabled = yes
 Channel.CM_0.channel_0.Servlet = @APPLICATION@
-Channel.CM_0.channel_0.Url = "/"
+Channel.CM_0.channel_0.Url = "/termbank"
 
 Connection.CM_0.Type = EnhydraDirector
 Connection.CM_0.ThreadTimeout = 300
@@ -42,27 +42,26 @@ Connection.CM_0.PrefixHint = "(Not Configured)"
 #    ---> In the future, we should use apache's mod_rewrite to serve static
 #    ---> content without enhydra.
 #-----------------------------------------------------------------------------
-Servlet.Static.ClassName = org.enhydra.servlet.servlets.FileServerServlet
-# this variable is now defined in the project conf file
-Servlet.Static.DocRoot = "/home/papillon/informations/main/presentation/info_media"
-Servlet.Static.Description = "Static Pages"
-Servlet.Static.InitArgs.index = index.html
-Servlet.Static.Running = yes
-
-Channel.CM_1.channel_0.Enabled = yes
-Channel.CM_1.channel_0.Servlet = Static
-Channel.CM_1.channel_0.Url = "/info_media"
-
-Connection.CM_1.Type = EnhydraDirector
-Connection.CM_1.ThreadTimeout = 300
-Connection.CM_1.ClientTimeout = 30
-Connection.CM_1.SessionAffinity = true
-Connection.CM_1.QueueSize = 400
-Connection.CM_1.Port = 8996
-Connection.CM_1.NumThreads = 200
-Connection.CM_1.BindAddress = "(All Interfaces)"
-Connection.CM_1.AuthKey = "(Unauthenticated)"
-Connection.CM_1.PrefixHint = "(Not Configured)"
+#Servlet.Static.ClassName = org.enhydra.servlet.servlets.FileServerServlet
+#Servlet.Static.DocRoot = "/home/papillon/informations/main/presentation/info_media"
+#Servlet.Static.Description = "Static Pages"
+#Servlet.Static.InitArgs.index = index.html
+#Servlet.Static.Running = yes
+#
+#Channel.CM_1.channel_0.Enabled = yes
+#Channel.CM_1.channel_0.Servlet = Static
+#Channel.CM_1.channel_0.Url = "/info_media"
+#
+#Connection.CM_1.Type = EnhydraDirector
+#Connection.CM_1.ThreadTimeout = 300
+#Connection.CM_1.ClientTimeout = 30
+#Connection.CM_1.SessionAffinity = true
+#Connection.CM_1.QueueSize = 400
+#Connection.CM_1.Port = 8996
+#Connection.CM_1.NumThreads = 200
+#Connection.CM_1.BindAddress = "(All Interfaces)"
+#Connection.CM_1.AuthKey = "(Unauthenticated)"
+#Connection.CM_1.PrefixHint = "(Not Configured)"
 
 #-----------------------------------------------------------------------------
 #            Mime types
