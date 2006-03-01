@@ -1,4 +1,7 @@
-TAG: PAPILLON_5_1_b1
+TAG: JIBIKI_BEFORE_MERGE 2006/03/01
+  Represent the trunk release in GDEF/Mathieu's version before merge with the Lexalp branch
+  
+TAG: PAPILLON_5_1_b1 2005/02/05
   Represent the trunk release of the Papillon project, with XPaths and multiple keys.
   
 CREATION OF THE VERSIONS FILE: 2005/05/20
