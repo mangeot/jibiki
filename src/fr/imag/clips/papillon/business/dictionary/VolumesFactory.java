@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.37  2006/03/01 08:53:14  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.36  2005/12/04 15:22:39  mangeot
  * Fixed the volume parsing when the volume element is not the root element
  *
@@ -228,6 +231,10 @@ public class VolumesFactory {
 	protected final static String XPATH_ATTRIBUTE="xpath";
 	protected final static String NAME_ATTRIBUTE="name";
 	protected final static String DEFAULT_ATTRIBUTE="default";
+	
+	protected final static String VOLUME_GDEF_est="GDEF_est";
+	protected final static String VOLUME_GDEF_tes="GDEF_tes";
+	protected final static String VOLUME_GDEF_fra="GDEF_fra";
 		
 	public static Volume newVolume(String dictname, Element volume, URL fileURL)
 		throws fr.imag.clips.papillon.business.PapillonBusinessException, java.io.IOException {
@@ -506,12 +513,12 @@ public class VolumesFactory {
 			}
 		}
 			*/
-		if (myVolumeName.equals(VolumeEntriesFactory.VOLUME_GDEF_est)
-			|| myVolumeName.equals(VolumeEntriesFactory.VOLUME_GDEF_tes)) {
-			resName = VolumeEntriesFactory.VOLUME_GDEF_fra;
+		if (myVolumeName.equals(VOLUME_GDEF_est)
+			|| myVolumeName.equals(VOLUME_GDEF_tes)) {
+			resName = VOLUME_GDEF_fra;
 		}
-		else if (myVolumeName.equals(VolumeEntriesFactory.VOLUME_GDEF_fra))  {
-			resName = VolumeEntriesFactory.VOLUME_GDEF_est;
+		else if (myVolumeName.equals(VOLUME_GDEF_fra))  {
+			resName = VOLUME_GDEF_est;
 		}
 		return resName;
 	}
