@@ -11,8 +11,14 @@ Id:
   
 Log:
    $Log$
+   Revision 1.16  2006/03/01 15:16:11  mangeot
+   *** empty log message ***
+
    Revision 1.15  2006/02/26 19:58:18  mangeot
    *** empty log message ***
+
+   Revision 1.12.2.1  2005/08/31 15:46:54  serasset
+   Commiting modifs for lexalp deployment on italian machines.
 
    Revision 1.12  2005/07/28 13:06:47  mangeot
    - Added the possibility to export in PDF format. The conversion into PDF is don
@@ -390,8 +396,11 @@ For Lexalp, call ant using -Dapplication.name=Lexalp
 
      <move file="${dir.output}/run.in"
          tofile="${dir.output}/run"/>
+     <move file="${dir.output}/backstart.in"
+         tofile="${dir.output}/backstart"/>
 
      <chmod file="${dir.output}/run" perm="ugo+rx"/>
+     <chmod file="${dir.output}/backstart" perm="ugo+rx"/>
 
   </target>
 
