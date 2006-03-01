@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.17  2006/03/01 15:20:39  mangeot
+ * syntax bug fix
+ *
  * Revision 1.16  2006/03/01 15:12:31  mangeot
  * Merge between maintrunk and LEXALP_1_1 branch
  *
@@ -485,7 +488,7 @@ public class IndexFactory {
 	
 	public static void dropIndexTable(Volume theVolume) 
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
-			dropIndexTable(theVolume.getIndexDbname);
+			dropIndexTable(theVolume.getIndexDbname());
 		}
 	
 	public static void dropIndexTable(String table)
@@ -500,7 +503,7 @@ public class IndexFactory {
 	
 	public static void truncateIndexTable(Volume volume) 
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
-			truncateIndexTable(volume.getIndexdbname);
+			truncateIndexTable(volume.getIndexDbname());
 		}
 	
 	public static void truncateIndexTable(String table)
