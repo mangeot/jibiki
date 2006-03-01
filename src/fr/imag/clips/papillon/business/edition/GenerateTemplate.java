@@ -8,6 +8,9 @@
  * $Id$
  *---------------------------------------------------------
  * $Log$
+ * Revision 1.17  2006/03/01 15:41:13  mangeot
+ * bug fixes
+ *
  * Revision 1.16  2006/03/01 15:12:31  mangeot
  * Merge between maintrunk and LEXALP_1_1 branch
  *
@@ -67,21 +70,9 @@ public class GenerateTemplate {
 		"<body>\n" +
 		"<form  action=\"HandleEntryModifications.po\" id=\"default\" name=\"default\" method=\"post\" accept-charset=\"utf-8\" enctype=\"application/x-www-form-urlencoded\" xml:lang=\"en\" lang=\"en\" d:lang=\"eng\">\n" +
 		"<h1 style=\"text-align:center\">Edition interface</h1>\n" +
-		"<div>\n" +
-		"<input name=\"" + EditEntry.VolumeName_PARAMETER + "\" type=\"hidden\" value=\"\" />\n" +
-		"<input name=\"" + EditEntry.EntryHandle_PARAMETER + "\" type=\"hidden\" value=\"\" />\n" +
-		"<input name=\"" + EditEntry.Referrer_PARAMETER + "\" type=\"hidden\" value=\"\" />\n" +
-		"<input name=\"" + HandleEntryModifications.MoveUpCall_PARAMETER + "\" type=\"hidden\" value=\"\" />\n" +
-		"<input name=\"" + HandleEntryModifications.MoveDownCall_PARAMETER + "\" type=\"hidden\" value=\"\" />\n" +
-		"<input name=\"" + HandleEntryModifications.AddCall_PARAMETER + "\" type=\"hidden\" value=\"\" />\n" +
-		"<input name=\"" + HandleEntryModifications.DelCall_PARAMETER + "\" type=\"hidden\" value=\"\" />\n" +
-		"<input name=\"" + HandleEntryModifications.ChooseCall_PARAMETER + "\" type=\"hidden\" value=\"\" />\n";
+		"<div id=\"EditEntryInterface\">\n";
 	
-	protected final static String xmlFooter = "<br /><br />\n" +
-		"<input name=\"Update\" type=\"submit\" value=\"Update\" />\n" +
-		"<input name=\"Save\" type=\"submit\" value=\"Save\" />\n" + 
-		"<label for=\"SaveComment\">Comment:</label> <input name=\"SaveComment\" id=\"SaveComment\" type=\"text\" />\n" +
-		"</div>\n" +
+	protected final static String xmlFooter = "</div>\n" +
 		"</form>\n" +
 		"</body>\n" +
 		"</html>\n";

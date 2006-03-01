@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.26  2006/03/01 15:41:13  mangeot
+ * bug fixes
+ *
  * Revision 1.25  2006/03/01 15:12:31  mangeot
  * Merge between maintrunk and LEXALP_1_1 branch
  *
@@ -43,10 +46,10 @@ import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
 public class EditEntry extends EditingBasePO {
     
-    public static String EntryHandle_PARAMETER = "EntryHandle";
-    public static String VolumeName_PARAMETER = "VolumeName";  
-	public static String Referrer_PARAMETER = "Referrer";
-		
+    public static String VolumeName_PARAMETER = EditEntryXHTML.NAME_VolumeName;  
+    public static String EntryHandle_PARAMETER = EditEntryXHTML.NAME_EntryHandle;
+	public static String Referrer_PARAMETER = EditEntryXHTML.NAME_Referrer; 
+	
 	protected final static String EditEntryInitURL = "EditEntryInit.po";
     protected final static String EditingErrorURL = "EditingError.po";
 		
@@ -67,9 +70,9 @@ public class EditEntry extends EditingBasePO {
 			HttpPresentationException {
 
         // Management of the parameters
-	    String volumeName = myGetParameter(VolumeName_PARAMETER);
-		String entryHandle = myGetParameter(EntryHandle_PARAMETER);
-	    String referrer = myGetParameter(Referrer_PARAMETER);
+	    String volumeName = myGetParameter(EditEntryXHTML.NAME_VolumeName);
+		String entryHandle = myGetParameter(EditEntryXHTML.NAME_EntryHandle);
+	    String referrer = myGetParameter(EditEntryXHTML.NAME_Referrer);
 				
 		// Recuperation of parameters
 		if (referrer== null || referrer.equals("")) {
@@ -122,9 +125,9 @@ public class EditEntry extends EditingBasePO {
 		UIGenerator.fillInterfaceTemplate(myVolumeEntry.getDom().getDocumentElement(),myInterface, myItfTemplate);
 		                
 		//
-		XHTMLElement editingInterfaceElement = content.getElementEditingInterface();
+		XHTMLElement editingInterfaceElement = content.getElementEditEntryContent();
 		editingInterfaceElement.appendChild(content.importNode(myInterface, true));            
 
-		return content.getElementEditEntryContent();
+		return content.getElementEditEntryForm();
         }   
 }

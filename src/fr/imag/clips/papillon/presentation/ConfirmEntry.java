@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.2  2006/03/01 15:41:13  mangeot
+ * bug fixes
+ *
  * Revision 1.1  2006/03/01 15:12:31  mangeot
  * Merge between maintrunk and LEXALP_1_1 branch
  *
@@ -44,10 +47,10 @@ import fr.imag.clips.papillon.business.PapillonLogger;
 
 public class ConfirmEntry extends EditingBasePO {
     
-    public static String EntryHandle_PARAMETER = "EntryHandle";
-    public static String VolumeName_PARAMETER = "VolumeName";  
-	public static String Referrer_PARAMETER = "Referrer"; 
-	
+    public static String EntryHandle_PARAMETER = EditEntry.EntryHandle_PARAMETER;
+    public static String VolumeName_PARAMETER = EditEntry.VolumeName_PARAMETER;  
+	public static String Referrer_PARAMETER = EditEntry.Referrer_PARAMETER; 
+	public static String EditingErrorURL = EditEntry.EditingErrorURL; 
 	
     protected boolean loggedInUserRequired() {
         return true;
@@ -98,9 +101,8 @@ public class ConfirmEntry extends EditingBasePO {
 			//
 			XHTMLTableCellElement editingResultViewElement = content.getElementEditingResultView();
 			editingResultViewElement.appendChild(content.importNode(resultElement, true));
-			Utility.removeElement(content.getElementEditingInterface());
 			
 			//
-			return content.getElementEditEntryContent();
+			return content.getElementConfirmEntryContent();
 		}
 }

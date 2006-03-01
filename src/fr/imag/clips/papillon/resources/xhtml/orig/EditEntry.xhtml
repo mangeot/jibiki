@@ -6,19 +6,48 @@
   <title></title>
 </head>
 <body>
-    <div id="EditEntryContent" class="editEntry" xml:lang="en" lang="en">
-        <div id="EditingInterface" class="editing" />
-        <div id="EditingResult" >
-            <h1 class="editingResultTitle" >Editing result</h1>
-            <table class="center">
-                <tr>
-                    <td id="EditingResultView" class="editingResultView" />
-                </tr>
-            </table>
-            <div class="editingResultTitle" >
-                <input name="Close" type="submit" value="Close windows" onclick="javascript:top.window.close();"/>
-            </div>
-        </div>
+    <div id="EditEntryForm" class="editEntry" xml:lang="en" lang="en">
+		<h1 style="text-align:center">Interface d'édition</h1> 
+        <form action="EditEntry.po" method="post" accept-charset="utf-8" enctype="application/x-www-form-urlencoded" id="default">
+		<div>
+        <script type="text/javascript">
+          <!--
+            function updateFields(idField, idFieldValue, langField, langFieldValue) {
+              if (idField != '') {
+                theIdField = document.getElementById(idField);
+                theIdField.value = idFieldValue;
+              }
+              if (langField != '') {
+                theLangField = document.getElementById(langField);
+                theLangField.value = langFieldValue;
+              }
+            }
+          
+            function openLinker(element) {
+              // Get the id of the elements to be modified
+              targetUrl='GDEFLinker.po?' + element.className +'&VOLUMES=GDEF_fra';
+              window.open(targetUrl, 'Linker','height=300,width=400,resizable');
+            }
+          
+          // -->
+        </script>
+	<input name="VolumeName" type="hidden" value="" />
+	<input name="EntryHandle" type="hidden" value="" />
+    <input name="Referrer" type="hidden" value="" />
+	<input name="AddCall" type="hidden" value="" />
+	<input name="DelCall" type="hidden" value="" />
+	<input name="MoveUpCall" type="hidden" value="" />
+	<input name="MoveDownCall" type="hidden" value="" />
+	<input name="ChooseCall" type="hidden" value="" />
+	<div id="EditEntryContent">
+	</div>
+	<br />
+	<br />
+	<input name="Update" type="submit" value="Update" />
+	<input name="Save" type="submit" value="Save" />
+	<label for="SaveComment">Comment:</label> <input id="SaveComment" name="SaveComment" type="text" /> 
+	</div>
+	</form>
     </div>
 </body>
 </html>
