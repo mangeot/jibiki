@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.31  2006/03/02 10:58:36  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.30  2006/03/01 15:12:31  mangeot
  * Merge between maintrunk and LEXALP_1_1 branch
  *
@@ -236,14 +239,14 @@ public class VolumeEntry implements IAnswer {
 	public final static String ORIGINAL_STATUS = "original";    // FIXME: in use ?
 	public final static String NOT_FINISHED_STATUS = "not finished";
 	public final static String FINISHED_STATUS = "finished";
-	public final static String DELETED_STATUS = "deleted";
-    public final static String MODIFIED_STATUS = "modified";
     public final static String CLASSIFIED_FINISHED_STATUS = "classified finished";
     public final static String CLASSIFIED_NOT_FINISHED_STATUS = "classified not finished";
     
     public final static String REVIEWED_STATUS = "revised";
 	public final static String VALIDATED_STATUS = "validated";
 	public final static String REPLACED_STATUS = "replaced";
+	public final static String DELETED_STATUS = "deleted";
+	public final static String MODIFIED_STATUS = "modified";
 	
 	protected static String DML_PREFIX_COLON = DmlPrefixResolver.DML_PREFIX;
 	

@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.11  2006/03/02 10:59:29  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.10  2006/02/26 14:04:56  mangeot
  * Corrected a bug: the content was a static variable, thus there were problems when two users wanted to aces the same page at the same time
  *
@@ -358,39 +361,19 @@ public class ChangeAuthor extends PapillonBasePO {
 			}
 			if (search1 !=null && !search1.equals("")  &&
 				search1text != null && !search1text.equals("")) {
-				if (strategy1 == IQuery.STRATEGY_GREATER_THAN ||
-					strategy1 == IQuery.STRATEGY_GREATER_THAN_OR_EQUAL ||
-					strategy1 == IQuery.STRATEGY_LESS_THAN ||
-					strategy1 == IQuery.STRATEGY_LESS_THAN_OR_EQUAL) {
-					String clause = "key='" + search1 + "'";
-					clause += " and " + source + "_sort(value)" + IQuery.QueryBuilderStrategy[strategy1+1] + " " + source + "_sort('" + search1text +"') "; 
-					clausesVector.add(clause);
-					}
-				else {
-					String[] key1 = new String[4];
-					key1[0] = search1;
-					key1[2] = search1text;
-					key1[3] = IQuery.QueryBuilderStrategy[strategy1+1];
-					myKeys1.add(key1);
-				}
+				String[] key1 = new String[4];
+				key1[0] = search1;
+				key1[2] = search1text;
+				key1[3] = IQuery.QueryBuilderStrategy[strategy1+1];
+				myKeys1.add(key1);
 			}
 			if (search2 !=null && !search2.equals("") &&
 				search2text != null && !search2text.equals("")) {
-				if (strategy2 == IQuery.STRATEGY_GREATER_THAN ||
-					strategy2 == IQuery.STRATEGY_GREATER_THAN_OR_EQUAL ||
-					strategy2 == IQuery.STRATEGY_LESS_THAN ||
-					strategy2 == IQuery.STRATEGY_LESS_THAN_OR_EQUAL) {
-					String clause = "key='" + search2 + "'";
-					clause += " and " + source + "_sort(value)" + IQuery.QueryBuilderStrategy[strategy2+1] + " " + source + "_sort('" + search2text +"') "; 
-					clausesVector.add(clause);
-				}
-				else {
 					String[] key2 = new String[4];
 					key2[0] = search2;
 					key2[2] = search2text;
 					key2[3] = IQuery.QueryBuilderStrategy[strategy2+1];
 					myKeys1.add(key2);
-				}
 			}
 			if (status !=null && !status.equals("")) {
 				String[] key2 = new String[4];
