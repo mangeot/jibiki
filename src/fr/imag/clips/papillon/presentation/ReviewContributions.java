@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.30  2006/03/02 11:55:50  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.29  2006/03/01 15:47:08  mangeot
  * syntax bug fixes
  *
@@ -960,6 +963,15 @@ public class ReviewContributions extends PapillonBasePO {
 						}
 						else {
 							content.setTextEditMessage("");
+						}
+						
+						// IsNewEntry
+						boolean isNewEntry = myContrib.getOriginalContributionId()==null || myContrib.getOriginalContributionId().equals("");
+						if (isNewEntry) {
+							entryListRow.setAttribute("class","newentry");
+						}
+						else {
+							entryListRow.setAttribute("class","");
 						}
 						
 						// remove contrib

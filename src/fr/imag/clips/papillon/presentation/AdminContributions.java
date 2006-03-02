@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.31  2006/03/02 11:56:00  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.30  2006/03/01 15:12:31  mangeot
  * Merge between maintrunk and LEXALP_1_1 branch
  *
@@ -788,7 +791,14 @@ public class AdminContributions extends PapillonBasePO {
 						}
 						
 						// IsNewEntry
-						content.setTextIsNewEntry(new Boolean(myContrib.getOriginalContributionId()==null || myContrib.getOriginalContributionId().equals("")).toString());
+						boolean isNewEntry = myContrib.getOriginalContributionId()==null || myContrib.getOriginalContributionId().equals("");
+						if (isNewEntry) {
+							content.setTextIsNewEntry(new Boolean(isNewEntry).toString());
+							entryListRow.setAttribute("class","newentry");
+						}
+						else {
+							entryListRow.setAttribute("class","");
+						}
 						
 						// Status
 						content.setTextStatus(myContrib.getStatus());
