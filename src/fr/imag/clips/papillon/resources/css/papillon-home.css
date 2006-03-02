@@ -6,6 +6,9 @@
  * ---------------------------------------------------
  *
  * $Log$
+ * Revision 1.16  2006/03/02 12:36:30  mangeot
+ * =
+ *
  * Revision 1.15  2006/03/01 15:12:31  mangeot
  * Merge between maintrunk and LEXALP_1_1 branch
  *
@@ -633,7 +636,7 @@ tr.sense {
 	
 /* Other styles */
 
-.newentry {
+.copyentry {
 	font-weight: bold;
 	background-color: yellow;
 }
