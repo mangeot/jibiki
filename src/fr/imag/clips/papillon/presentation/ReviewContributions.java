@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.31  2006/03/05 11:54:18  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.30  2006/03/02 11:55:50  mangeot
  * *** empty log message ***
  *
@@ -968,10 +971,10 @@ public class ReviewContributions extends PapillonBasePO {
 						// IsNewEntry
 						boolean isNewEntry = myContrib.getOriginalContributionId()==null || myContrib.getOriginalContributionId().equals("");
 						if (isNewEntry) {
-							entryListRow.setAttribute("class","newentry");
+							entryListRow.setAttribute("class","");
 						}
 						else {
-							entryListRow.setAttribute("class","");
+							entryListRow.setAttribute("class","copyentry");
 						}
 						
 						// remove contrib

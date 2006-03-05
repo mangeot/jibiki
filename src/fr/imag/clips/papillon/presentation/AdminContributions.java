@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.32  2006/03/05 11:54:18  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.31  2006/03/02 11:56:00  mangeot
  * *** empty log message ***
  *
@@ -792,12 +795,12 @@ public class AdminContributions extends PapillonBasePO {
 						
 						// IsNewEntry
 						boolean isNewEntry = myContrib.getOriginalContributionId()==null || myContrib.getOriginalContributionId().equals("");
+						content.setTextIsNewEntry(new Boolean(isNewEntry).toString());
 						if (isNewEntry) {
-							content.setTextIsNewEntry(new Boolean(isNewEntry).toString());
-							entryListRow.setAttribute("class","newentry");
+							entryListRow.setAttribute("class","");
 						}
 						else {
-							entryListRow.setAttribute("class","");
+							entryListRow.setAttribute("class","copyentry");
 						}
 						
 						// Status
