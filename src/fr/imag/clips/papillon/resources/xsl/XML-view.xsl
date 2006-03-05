@@ -5,6 +5,9 @@
  *
  *  $Id$
  *  $Log$
+ *  Revision 1.6  2006/03/05 17:15:11  mangeot
+ *  *** empty log message ***
+ *
  *  Revision 1.5  2006/03/05 16:55:31  mangeot
  *  *** empty log message ***
  *
@@ -87,7 +90,7 @@ I would like to find a solution in genreal for HTML entities...
 
 <xsl:variable name="newnamespaces">
 <xsl:if test="$namespaces=''"><xsl:value-of select="$actualnamespaces"/></xsl:if>
-<xsl:if test="$namespaces!=''"><xsl:value-of select="substring-after($actualnamespaces,$namespaces)"/></xsl:if>
+<xsl:if test="$namespaces!=''"><xsl:value-of select="substring($actualnamespaces,string-length($namespaces))"/></xsl:if>
 </xsl:variable>
 
 <br /><xsl:for-each select="ancestor::*">&nbsp;</xsl:for-each>
