@@ -5,6 +5,9 @@
  *
  *  $Id$
  *  $Log$
+ *  Revision 1.5  2006/03/05 16:55:31  mangeot
+ *  *** empty log message ***
+ *
  *  Revision 1.4  2005/10/14 19:02:17  mangeot
  *  *** empty log message ***
  *
@@ -47,8 +50,24 @@ I would like to find a solution in genreal for HTML entities...
 -->
 
 <!-- root element -->
-<xsl:template match="/">	
+<!--xsl:template match="/">	
 <div><xsl:apply-templates/></div>
+</xsl:template-->
+
+
+<!-- root element -->
+<xsl:template match="/">	
+<xsl:variable name="actualnamespaces"><xsl:for-each select="namespace::*"><xsl:value-of select="name()"/>,</xsl:for-each></xsl:variable>
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+</head>
+<body>
+	<xsl:apply-templates select="*"/>
+</body>
+</html>
+
 </xsl:template>
 
 
@@ -61,9 +80,17 @@ I would like to find a solution in genreal for HTML entities...
 
 
 <!-- elements -->
-<xsl:template match="*" >
-<br /><xsl:for-each select="ancestor::*">&nbsp;</xsl:for-each>
+<xsl:template name="generic" match="*">
+<xsl:param name="namespaces"></xsl:param>
 
+<xsl:variable name="actualnamespaces"><xsl:for-each select="namespace::*"><xsl:value-of select="name()"/>,</xsl:for-each></xsl:variable>
+
+<xsl:variable name="newnamespaces">
+<xsl:if test="$namespaces=''"><xsl:value-of select="$actualnamespaces"/></xsl:if>
+<xsl:if test="$namespaces!=''"><xsl:value-of select="substring-after($actualnamespaces,$namespaces)"/></xsl:if>
+</xsl:variable>
+
+<br /><xsl:for-each select="ancestor::*">&nbsp;</xsl:for-each>
 <span class="xmlcar">&lt;</span>
 
 <xsl:if test="substring-before(name(),concat(':',local-name()))!=''">
@@ -75,8 +102,12 @@ I would like to find a solution in genreal for HTML entities...
 </xsl:if>
 <span class="xmlelement"><xsl:value-of select="local-name()"/></span>
 
+<!--xsl:if test="count(ancestor::*)=0"><xsl:call-template name="print-namespaces"/></xsl:if-->
+	<xsl:call-template name="print-namespaces">
+    	<xsl:with-param name="namespaces" select="$newnamespaces"/>
+    	<xsl:with-param name="ancestors" select="ancestor::*"/>
+	</xsl:call-template>
 
-<xsl:if test="count(ancestor::*)=0"><xsl:call-template name="namespaces"/></xsl:if>
 
 <xsl:apply-templates select="@*"/>
 <xsl:if test="*|text()">
@@ -86,7 +117,10 @@ I would like to find a solution in genreal for HTML entities...
 <span class="xmlcar">/&gt;</span>
 </xsl:if>
 
-<xsl:apply-templates select="*|text()|comment()" />
+<xsl:apply-templates select="*|text()|comment()" >
+      <xsl:with-param name="namespaces" select="$actualnamespaces"/>
+</xsl:apply-templates>
+
 
 <xsl:if test="*|text()">
 <xsl:if test="*">
@@ -105,6 +139,7 @@ I would like to find a solution in genreal for HTML entities...
 <span class="xmlcar">&gt;</span>
 </xsl:if>
 </xsl:template>
+
 
 <!-- attributes -->
 <xsl:template match="@*" >
@@ -136,9 +171,13 @@ I would like to find a solution in genreal for HTML entities...
 </xsl:template>
 
 <!-- namespaces for the root element -->
-<xsl:template name="namespaces" >
+<xsl:template name="print-namespaces" >
+<xsl:param name="namespaces">xml,</xsl:param>
+<xsl:param name="ancestors"></xsl:param>
 	<xsl:for-each select="namespace::*">
-<br />&nbsp;
+		<xsl:variable name="namespace"><xsl:value-of select="name()"/>,</xsl:variable>
+	   <xsl:if test="contains($namespaces,$namespace)">
+	   <br /><xsl:for-each select="ancestor::*">&nbsp;</xsl:for-each>
 			<xsl:choose>		
 			<xsl:when test="name()=''">
 				<span class="xmlnsprefix">xmlns</span>
@@ -160,7 +199,8 @@ I would like to find a solution in genreal for HTML entities...
 				</span>
 				<span class="xmlcar">"</span>					
 			</xsl:otherwise>				
-	</xsl:choose>		
+	</xsl:choose>
+	   </xsl:if>
 	</xsl:for-each>
 </xsl:template>
 
