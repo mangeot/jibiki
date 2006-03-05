@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.28  2006/03/05 11:07:21  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.27  2006/03/01 15:12:31  mangeot
  * Merge between maintrunk and LEXALP_1_1 branch
  *
@@ -568,6 +571,10 @@ public class DictionariesFactory {
 						Volume myVolume = volumes[i];
                         // FIXME: get the limit argument
 						Vector entriesVector = VolumeEntriesFactory.getVolumeEntriesVector(dict, myVolume, Keys1, Keys2, anyContains, offset, 0);
+						//FIXME: hack for targets array. If the array is null, it means that all targets are asked
+						if (targets == null) {
+							targets = myVolume.getTargetLanguagesArray();
+						}
                         Iterator iter = entriesVector.iterator();
 						while (iter.hasNext()) {
 							VolumeEntry ve = (VolumeEntry) iter.next();
