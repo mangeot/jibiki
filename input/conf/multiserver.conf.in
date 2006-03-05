@@ -24,7 +24,7 @@ Application.@APPLICATION@.defaultSessionTimeOut = 30
 
 Channel.CM_0.channel_0.Enabled = yes
 Channel.CM_0.channel_0.Servlet = @APPLICATION@
-Channel.CM_0.channel_0.Url = "/termbank"
+Channel.CM_0.channel_0.Url = "@APPLICATION_PREFIX@"
 
 Connection.CM_0.Type = EnhydraDirector
 Connection.CM_0.ThreadTimeout = 300
