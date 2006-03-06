@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.33  2006/03/06 10:11:47  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.32  2006/03/05 11:54:18  mangeot
  * *** empty log message ***
  *
@@ -553,7 +556,7 @@ public class AdminContributions extends PapillonBasePO {
 				case STEP_REMOVE:
 					VolumeEntry myContrib = VolumeEntriesFactory.findEntryByHandle(volumeString, entryid);
 					if (null != myContrib && !myContrib.isEmpty()) {
-						myContrib.delete();
+						myContrib.setReplaced(this.getUser());
 						entryid=null;
 						userMessage = "Contribution " +  myContrib.getHandle() + " / " +
 							myContrib.getHeadword() + " removed...";

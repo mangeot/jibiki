@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.32  2006/03/06 10:11:47  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.31  2006/03/05 11:54:18  mangeot
  * *** empty log message ***
  *
@@ -602,7 +605,7 @@ public class ReviewContributions extends PapillonBasePO {
 					if (null != myContrib && !myContrib.isEmpty()) {
 						userMessage = "Contribution " +  myContrib.getHandle() + " / " +
 						myContrib.getHeadword() + " removed...";
-						myContrib.delete();
+						myContrib.setReplaced(this.getUser());
 					}
 				}
 				addContributions(content, volume, myKeys, myClauses, sortBy, queryString, offset);
