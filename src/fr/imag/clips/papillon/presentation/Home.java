@@ -10,6 +10,10 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.16  2006/03/06 10:06:23  mangeot
+ *  Horrible hack sur Home.java pour pouvoir utiliser tout de suite cette version sur le GDEF.
+ *  Another thing: the fuzzy search takes a lot of time, so I launch it only if the normal search returns no result.
+ *
  *  Revision 1.15  2006/03/01 15:12:31  mangeot
  *  Merge between maintrunk and LEXALP_1_1 branch
  *
@@ -461,9 +465,6 @@ public class Home extends PapillonBasePO {
         } else {
             // If there is no query, ie connection for the first time, adding the Home content
             return createHomeContent();
-            //Utility.removeElement(content.getElementVolumeEntriesTable());
-            //Utility.removeElement(content.getElementEntryListTable());
-            //Utility.removeElement(content.getElementSorryMessage());
         }
     }
 
@@ -535,14 +536,7 @@ public class Home extends PapillonBasePO {
         QueryRequest query = new QueryRequest(VolumesFactory.getVolumesArrayName(null, source, null));
         query.setTargets(targets);
         query.setOffset(offset);
-        
-        //
-        QueryCriteria criteria = new QueryCriteria();
-        criteria.add("key", QueryCriteria.EQUAL, Volume.CDM_headword);
-        criteria.add("value", QueryCriteria.CASE_INSENSITIVE_EQUAL, headword);               // match headword (no case sensitive)
-        criteria.add("lang", QueryCriteria.EQUAL, source);
-        query.addCriteria(criteria);
-        
+                
         /*
         //FIXME: depend on user ?
         QueryCriteria criteriaFinishedStatus = new QueryCriteria();
@@ -555,15 +549,36 @@ public class Home extends PapillonBasePO {
         //FIXME: add to QueryRequest methods and add to user groups !!!
         ArrayList listStatus = new ArrayList();
         
-        QueryCriteria criteriaFinishedStatus = new QueryCriteria();
-        criteriaFinishedStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);  
-        criteriaFinishedStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.FINISHED_STATUS);
-        listStatus.add(criteriaFinishedStatus);
-        
-        QueryCriteria criteriaValidatedStatus = new QueryCriteria();
-        criteriaValidatedStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);
-        criteriaValidatedStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.MODIFIED_STATUS);
-        listStatus.add(criteriaValidatedStatus);
+		
+		//FIXME: MM: j'ai bien conscience que c'est un hack monstrueux mais la terre doit continuer de tourner...
+		if (((fr.imag.clips.papillon.Papillon)com.lutris.appserver.server.Enhydra.getApplication()).getLoginCookieName().equals("GDEFLoginCookie")) {
+			QueryCriteria criteria = new QueryCriteria();
+			criteria.add("key", QueryCriteria.EQUAL, Volume.CDM_headword);
+			criteria.add("value", QueryCriteria.EQUAL, headword);               // match headword (no case sensitive)
+			criteria.add("lang", QueryCriteria.EQUAL, source);
+			query.addCriteria(criteria);
+			QueryCriteria criteriaValidatedStatus = new QueryCriteria();
+			criteriaValidatedStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);
+			criteriaValidatedStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.VALIDATED_STATUS);
+			listStatus.add(criteriaValidatedStatus);
+			
+		}
+		else {
+			QueryCriteria criteria = new QueryCriteria();
+			criteria.add("key", QueryCriteria.EQUAL, Volume.CDM_headword);
+			criteria.add("value", QueryCriteria.CASE_INSENSITIVE_EQUAL, headword);               // match headword (no case sensitive)
+			criteria.add("lang", QueryCriteria.EQUAL, source);
+			query.addCriteria(criteria);
+			QueryCriteria criteriaFinishedStatus = new QueryCriteria();
+			criteriaFinishedStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);  
+			criteriaFinishedStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.FINISHED_STATUS);
+			listStatus.add(criteriaFinishedStatus);
+			
+			QueryCriteria criteriaValidatedStatus = new QueryCriteria();
+			criteriaValidatedStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);
+			criteriaValidatedStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.MODIFIED_STATUS);
+			listStatus.add(criteriaValidatedStatus);
+		}
         
         query.addOrCriteriaList(listStatus);
         
@@ -621,6 +636,8 @@ public class Home extends PapillonBasePO {
         // FIXME: introduce fuzzysearch variable in dictionaries like reverse lookup to allow (or not) fuzzy entries search
         Collection FuzzyEntryCollection = null;
         
+		// added by MM. the fuzzy search takes a lot of time so I do it if no results 
+		if (EntryCollection ==null || EntryCollection.size()==0) {
         // Intialize QueryRequest
         QueryRequest fuzzyQuery = new QueryRequest(VolumesFactory.getVolumesArrayName(null, source, null));
         fuzzyQuery.setTargets(targets);
@@ -640,6 +657,7 @@ public class Home extends PapillonBasePO {
         
         // Find lexies and translation
         FuzzyEntryCollection = fuzzyQuery.findLexieAndTranslation(user);
+		}
         
         /*
         // Old version

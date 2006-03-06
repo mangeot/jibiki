@@ -3,6 +3,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.32  2006/03/06 10:06:23  mangeot
+ * Horrible hack sur Home.java pour pouvoir utiliser tout de suite cette version sur le GDEF.
+ * Another thing: the fuzzy search takes a lot of time, so I launch it only if the normal search returns no result.
+ *
  * Revision 1.31  2006/03/01 15:12:31  mangeot
  * Merge between maintrunk and LEXALP_1_1 branch
  *
@@ -364,20 +368,20 @@ public class ParseVolume {
 						case ReplaceExistingEntry_Ignore:
 							break;
 						case ReplaceExistingEntry_ReplaceAnyway:
-							existingEntry.delete();
 							result = newEntry.save();
+							existingEntry.delete();
 							break;
 						case ReplaceExistingEntry_ReplaceIfSameStatus:
 							if (newEntry.getStatus().equals(existingEntry.getStatus())) {
-								existingEntry.delete();
 								result = newEntry.save();
+								existingEntry.delete();
 							}
 							break;
 						case ReplaceExistingEntry_ReplaceIfFinished:
 							if (existingEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS) &&
 								newEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS)) {
-								existingEntry.delete();
 								result = newEntry.save();
+								existingEntry.delete();
 							}
 							break;
 						case ReplaceExistingEntry_CopyAnyway:
