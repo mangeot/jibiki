@@ -9,6 +9,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.33  2006/03/06 10:16:45  mangeot
+ * MM: I do not delete any contribution, even not finished.
+ * I tag them "deleted"
+ *
  * Revision 1.32  2006/03/06 10:11:47  mangeot
  * *** empty log message ***
  *
@@ -605,7 +609,7 @@ public class ReviewContributions extends PapillonBasePO {
 					if (null != myContrib && !myContrib.isEmpty()) {
 						userMessage = "Contribution " +  myContrib.getHandle() + " / " +
 						myContrib.getHeadword() + " removed...";
-						myContrib.setReplaced(this.getUser());
+						myContrib.setDeleted(this.getUser());
 					}
 				}
 				addContributions(content, volume, myKeys, myClauses, sortBy, queryString, offset);

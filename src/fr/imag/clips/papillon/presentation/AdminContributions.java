@@ -9,6 +9,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.34  2006/03/06 10:16:45  mangeot
+ * MM: I do not delete any contribution, even not finished.
+ * I tag them "deleted"
+ *
  * Revision 1.33  2006/03/06 10:11:47  mangeot
  * *** empty log message ***
  *
@@ -556,7 +560,7 @@ public class AdminContributions extends PapillonBasePO {
 				case STEP_REMOVE:
 					VolumeEntry myContrib = VolumeEntriesFactory.findEntryByHandle(volumeString, entryid);
 					if (null != myContrib && !myContrib.isEmpty()) {
-						myContrib.setReplaced(this.getUser());
+						myContrib.setDeleted(this.getUser());
 						entryid=null;
 						userMessage = "Contribution " +  myContrib.getHandle() + " / " +
 							myContrib.getHeadword() + " removed...";
