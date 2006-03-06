@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.32  2006/03/06 10:17:53  mangeot
+ * Added setDeleted
+ *
  * Revision 1.31  2006/03/02 10:58:36  mangeot
  * *** empty log message ***
  *
@@ -1027,25 +1030,45 @@ public class VolumeEntry implements IAnswer {
 	}
 
     /**
-     * setReplaced sets the entry status to replaced
+		* setReplaced sets the entry status to replaced
      * 
 	 * @param the validator as a User
      * @exception PapillonBusinessException if an error occurs
      *   replacing data (usually due to an underlying data layer
-	 *   error).
+						 *   error).
      */
 	public void setReplaced(fr.imag.clips.papillon.business.user.User myUser) 
 		throws PapillonBusinessException {
-		if (null != this.getStatus() && this.getStatus().equals(VolumeEntry.VALIDATED_STATUS)) {
+			if (null != this.getStatus() && this.getStatus().equals(VolumeEntry.VALIDATED_STATUS)) {
 				this.setModification(myUser.getLogin(),VolumeEntry.REPLACED_STATUS);
 				this.setStatus(VolumeEntry.REPLACED_STATUS);
 				this.save();
-//				ContributionLog myContribLog = ContributionsFactory.newContributionLog(myUser, this);
-//				myContribLog.save();
+				//				ContributionLog myContribLog = ContributionsFactory.newContributionLog(myUser, this);
+				//				myContribLog.save();
+			}
 		}
-	}
-
-   /**
+	
+	
+    /**
+		* setDeleted sets the entry status to replaced
+     * 
+	 * @param the validator as a User
+     * @exception PapillonBusinessException if an error occurs
+     *   replacing data (usually due to an underlying data layer
+						 *   error).
+     */
+	public void setDeleted(fr.imag.clips.papillon.business.user.User myUser) 
+		throws PapillonBusinessException {
+			if (null != this.getStatus()) {
+				this.setModification(myUser.getLogin(),VolumeEntry.DELETED_STATUS);
+				this.setStatus(VolumeEntry.DELETED_STATUS);
+				ContributionLog myContribLog = ContributionsFactory.newContributionLog(myUser, this);
+				myContribLog.save();
+				this.save();
+			}
+		}
+	
+	/**
      * getStatus gets the entry status into the XML code of the entry.
      * 
 	 * @return the status as a String
