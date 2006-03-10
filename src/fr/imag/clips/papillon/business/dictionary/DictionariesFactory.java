@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.30  2006/03/10 16:21:00  mangeot
+ * Hack for targets.length==0, I am not satisfied..
+ *
  * Revision 1.29  2006/03/10 15:47:25  mangeot
  * Hack when targets==null added to the findAnswerAndTranslations
  * I am not satified with that.
@@ -802,11 +805,21 @@ public class DictionariesFactory {
 		VolumeEntry myAnswer = VolumeEntriesFactory.findEntryByHandle(volumeName, handle);
 		PapillonLogger.writeDebugMsg("Found entry in: " + volumeName + ", handle: " + handle);
 		//FIXME: hack for targets array. If the array is null, it means that all targets are asked
+		String[] newTargets = null;
 		if (targets == null) {
-			targets = myAnswer.getVolume().getTargetLanguagesArray();
+			newTargets = myAnswer.getVolume().getTargetLanguagesArray();
+			PapillonLogger.writeDebugMsg("Targets null: ");
+		}
+		else {
+			if (targets.length==0) {
+				PapillonLogger.writeDebugMsg("Targets.length==0");
+			}
+			else {
+				PapillonLogger.writeDebugMsg("Targets not null: " + targets[0]);
+			}
+			newTargets = Utility.ArrayIntersection(myAnswer.getVolume().getTargetLanguagesArray(),targets);
 		}
 		
-		String[] newTargets = Utility.ArrayIntersection(myAnswer.getVolume().getTargetLanguagesArray(),targets);
         return expandResult(myAnswer, newTargets, user);
 	}
 	
@@ -844,7 +857,6 @@ public class DictionariesFactory {
     }
     
 	public static IAnswer findAnswerByHandle(String volumeName, String handle) throws PapillonBusinessException {
-		//System.out.println("TEST " + volumeName + " " + handle);
         IAnswer myAnswer = VolumeEntriesFactory.findEntryByHandle(volumeName, handle);
         // FIXME: Papillon Axies should be treated as ANY other volume entry...
 		if (myAnswer==null || myAnswer.isEmpty()) {
