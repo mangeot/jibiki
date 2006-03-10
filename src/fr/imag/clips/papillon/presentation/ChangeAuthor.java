@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.12  2006/03/10 16:55:33  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.11  2006/03/02 10:59:29  mangeot
  * *** empty log message ***
  *
@@ -353,12 +356,6 @@ public class ChangeAuthor extends PapillonBasePO {
 				status = null;
 			}
 			Vector myKeys1 = new Vector();
-			Vector clausesVector = new Vector();
-			Volume myVolume = VolumesFactory.findVolumeByName(volume);
-			String source = "eng";
-			if (myVolume !=null && !myVolume.isEmpty()) {
-				source = myVolume.getSourceLanguage();
-			}
 			if (search1 !=null && !search1.equals("")  &&
 				search1text != null && !search1text.equals("")) {
 				String[] key1 = new String[4];
@@ -430,6 +427,7 @@ public class ChangeAuthor extends PapillonBasePO {
 				myKeys1.add(creationDateKey);
 			}
 			
+		Volume myVolume = VolumesFactory.findVolumeByName(volume);
 
 		int step = STEP_DEFAULT;
 		if (null != lookup) {
@@ -445,13 +443,13 @@ public class ChangeAuthor extends PapillonBasePO {
 			case STEP_DEFAULT:
 				break;
 			case STEP_LOOKUP:
-				int count = addContributionsCount(content, myVolume, myKeys1, clausesVector);
+				int count = addContributionsCount(content, myVolume, myKeys1, null);
 				if (count <DictionariesFactory.MaxRetrievedEntries) {
-					addEntries(content, myVolume, myKeys1, clausesVector);
+					addEntries(content, myVolume, myKeys1, null);
 				} 
 				break;
 			case STEP_CHANGE_AUTHOR:
-				VolumeEntriesFactory.changeAuthor(myVolume, this.getUser(), newAuthor, myKeys1, clausesVector);
+				VolumeEntriesFactory.changeAuthor(myVolume, this.getUser(), newAuthor, myKeys1, null);
 				userMessage = "New author " + newAuthor + " for selected contributions";
 				break;
 			default:
@@ -671,6 +669,4 @@ public class ChangeAuthor extends PapillonBasePO {
         Node entryListRowParent = entryListRow.getParentNode();
         entryListRowParent.removeChild(entryListRow);
 	}    
-	
-	
-	}
+}

@@ -9,12 +9,130 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.26  2006/03/01 15:41:13  mangeot
- * bug fixes
+ * Revision 1.27  2006/03/10 16:55:33  mangeot
+ * *** empty log message ***
  *
- * Revision 1.25  2006/03/01 15:12:31  mangeot
- * Merge between maintrunk and LEXALP_1_1 branch
+ * Revision 1.24  2006/02/26 14:04:56  mangeot
+ * Corrected a bug: the content was a static variable, thus there were problems when two users wanted to aces the same page at the same time
  *
+ * Revision 1.22  2006/02/21 13:37:54  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.20  2005/10/15 08:34:24  mangeot
+ * Bug fix
+ *
+ * Revision 1.19  2005/10/04 10:21:24  mangeot
+ * Experimental implementation of moving up and down blocks
+ *
+ * Revision 1.18  2005/08/24 13:59:35  serasset
+ * Added FIXME comments.
+ *
+ * Revision 1.17  2005/08/17 12:58:16  mangeot
+ * Fixed a bug when creating an entry from an existing one.
+ * From now on, the entry id is the same.
+ * Added the links into ReviewContributions.java
+ *
+ * Revision 1.16  2005/08/01 15:03:41  mangeot
+ * Corrected an important bug in the editor that forbidded to change a boolean value from true to false.
+ * Beware, you have to edit the existing interface templates by hands:
+ * 1- duplicate all the input elements with name='boolean' and type='checkbox'.
+ * - for each input element pair,
+ *  2- change one input element name into name='booleantrue'
+ *  3- change the other input element type to type='hidden'
+ *
+ * Revision 1.15  2005/08/01 10:58:22  mangeot
+ * Suppressed the 3rd click on the linker window when only one link has been found
+ *
+ * Revision 1.14  2005/07/30 16:10:17  mangeot
+ * Bug fix when headword was edited but not changed in the db
+ *
+ * Revision 1.13  2005/07/16 16:25:26  mangeot
+ * Adapted the linker to the GDEF project + bug fixes
+ *
+ * Revision 1.12  2005/06/20 16:55:05  mangeot
+ * multiple bug fixes
+ *
+ * Revision 1.11  2005/06/18 07:20:09  mangeot
+ * Removed hard coded NewBlock redirection and replaced by a javascript on body onload attribute
+ *
+ * Revision 1.10  2005/06/15 16:48:28  mangeot
+ * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
+ *
+ * Revision 1.9  2005/05/24 12:51:22  serasset
+ * Updated many aspect of the Papillon project to handle lexalp project.
+ * 1. Layout is now parametrable in the application configuration file.
+ * 2. Notion of QueryResult has been defined to handle mono/bi and multi lingual dictionary requests
+ * 3. Result presentation may be done by way of standard xsl or with any class implementing the appropriate interface.
+ * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
+ * 5. It is now possible to give a name to the cookie key in the app conf file
+ * 6. Several bug fixes.
+ *
+ * Revision 1.8.4.5  2005/06/13 10:22:01  mangeot
+ * Bug fixed, added Referrer hidden param in generator
+ *
+ * Revision 1.8.4.4  2005/06/01 14:17:54  mangeot
+ * Bug fix in itf generator & added variant in CDM lookup1
+ *
+ * Revision 1.8.4.3  2005/05/27 15:11:42  mangeot
+ * bug fix in URL formation
+ *
+ * Revision 1.8.4.2  2005/05/27 11:53:34  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.8.4.1  2005/04/29 14:50:25  mangeot
+ * New version with contribution infos embedded in the XML of the entries
+ *
+ * Revision 1.8  2005/04/22 14:13:40  mangeot
+ * URL encoding bug fix
+ *
+ * Revision 1.7  2005/04/20 10:51:14  mangeot
+ * Correction de AddDirectTranslations
+ *
+ * Revision 1.6  2005/04/14 13:08:25  mangeot
+ * Deleted all references to findContributionByEntryHandle
+ *
+ * Revision 1.5  2005/04/14 09:21:04  mangeot
+ * Changed redirections after marked finish and save a contribution
+ *
+ * Revision 1.4  2005/04/11 12:29:59  mangeot
+ * Merge between the XPathAndMultipleKeys branch and the main trunk
+ *
+ * Revision 1.3.2.4  2005/04/08 08:23:04  mangeot
+ * Added referrer when redirection is on
+ *
+ * Revision 1.3.2.3  2005/02/25 10:22:08  mangeot
+ * Bug fixes and added the use of referrer when exiting from Reviewcontributions.po
+ *
+ * Revision 1.3.2.2  2005/01/28 19:45:55  mangeot
+ * First version that runs basically.
+ * Should compile after an ant clean.
+ * XPath loading and virtual volumes for terminological lexicons are OK.
+ * Bugs remain, needs more testings like the editor for example.
+ *
+ * Revision 1.3.2.1  2005/01/27 23:55:13  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.3  2005/01/14 21:49:59  mangeot
+ * Modified the editor: when the user adds an item, it is added before the last selected sibling or at the end if nothing is selected.
+ *
+ * Revision 1.2  2004/12/24 14:31:28  mangeot
+ * I merged the latest developments of Papillon5.0 with this version 5.1.
+ * Have to be tested more ...
+ *
+ * Revision 1.1.1.1  2004/12/06 16:38:42  serasset
+ * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
+ * There are still bugs in the code.
+ *
+ * Revision 1.3  2004/10/28 10:43:36  mangeot
+ * Fixed some bugs
+ * Implemented the xsd:choice feature
+ *
+ * Revision 1.2  2004/09/20 15:12:36  mangeot
+ * Bug corrections for the new UIGenerator
+ * plus now able to deal with booleans
+ *
+ * Revision 1.1  2004/09/18 17:27:15  mangeot
+ * It is a new version of the editor
  *
  *-----------------------------------------------
  * Papillon Login page.
@@ -23,36 +141,60 @@
 package fr.imag.clips.papillon.presentation;
 
 // Enhydra SuperServlet imports
-import com.lutris.appserver.server.httpPresentation.HttpPresentation;
 import com.lutris.appserver.server.httpPresentation.HttpPresentationException;
 import com.lutris.appserver.server.httpPresentation.ClientPageRedirectException;
 
-//import org.enhydra.xml.xmlc.XMLObject;
-import org.enhydra.xml.xhtml.dom.*;
-import org.w3c.dom.Element;
+import java.util.ArrayList;
 
 // internal imports
-import fr.imag.clips.papillon.business.PapillonBusinessException;
+import fr.imag.clips.papillon.business.dictionary.ContributionsFactory;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
+import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory;
 import fr.imag.clips.papillon.business.edition.UIGenerator;
 import fr.imag.clips.papillon.business.edition.UITemplates;
 import fr.imag.clips.papillon.business.PapillonLogger;
-import fr.imag.clips.papillon.business.user.User;
+import fr.imag.clips.papillon.business.utility.Utility;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
-import fr.imag.clips.papillon.presentation.xhtml.orig.*;
+public class EditEntry extends PapillonBasePO {
 
-
-public class EditEntry extends EditingBasePO {
+   public static String EditingErrorURL = "EditErrorUrl";
     
-    public static String VolumeName_PARAMETER = EditEntryXHTML.NAME_VolumeName;  
-    public static String EntryHandle_PARAMETER = EditEntryXHTML.NAME_EntryHandle;
-	public static String Referrer_PARAMETER = EditEntryXHTML.NAME_Referrer; 
+    public static String EntryHandle_PARAMETER = "EntryHandle";
+    public static String Headword_PARAMETER = "Headword";
+    public static String VolumeName_PARAMETER = "VolumeName";  
+	public static String Referrer_PARAMETER = "Referrer";
+	public static String HomographId_PARAMETER = "HomographId";
+    public static String AddCall_PARAMETER = "AddCall";
+    public static String DelCall_PARAMETER = "DelCall";
+    public static String MoveUpCall_PARAMETER = "MoveUpCall";
+    public static String MoveDownCall_PARAMETER = "MoveDownCall";
+    public static String ChooseCall_PARAMETER = "ChooseCall";
 	
+    protected static String Choose_PARAMETER = UIGenerator.CHOOSE_ATTR_NAME;  
+    protected static String Select_PARAMETER = UIGenerator.SELECT_ATTR_NAME;  
+    protected static String Boolean_PARAMETER = UIGenerator.BOOLEAN_ATTR_NAME;  
+    protected static String BooleanTrue_PARAMETER = UIGenerator.BOOLEAN_TRUE_ATTR_NAME;  
+    protected static String Update_PARAMETER = "Update";  
+    protected static String Save_PARAMETER = "Save";  
+    protected static String SaveComment_PARAMETER = "SaveComment";  
+	
+	protected final static String AdminContributionsURL = "AdminContributions.po";
 	protected final static String EditEntryInitURL = "EditEntryInit.po";
-    protected final static String EditingErrorURL = "EditingError.po";
-		
+	protected final static String ReviewContributionsURL = "ReviewContributions.po";
+    protected final static String ContributionsViewParameter = AdminContributions.VIEW_CONTRIB_PARAMETER;
+    protected final static String ContributionsHandleParameter = AdminContributions.HANDLE_PARAMETER;
+    protected final static String ContributionsVolumeParameter = AdminContributions.VOLUME_PARAMETER;
+	
+	
+	protected final static String newBlockRedirectionJavascript = "function loadFunction () {\n"
+		+ "   window.location.hash='NewBlock';\n"
+		+ "}\n";
+
+	
     protected boolean loggedInUserRequired() {
         return true;
     }
@@ -70,35 +212,64 @@ public class EditEntry extends EditingBasePO {
 			HttpPresentationException {
 
         // Management of the parameters
-	    String volumeName = myGetParameter(EditEntryXHTML.NAME_VolumeName);
-		String entryHandle = myGetParameter(EditEntryXHTML.NAME_EntryHandle);
-	    String referrer = myGetParameter(EditEntryXHTML.NAME_Referrer);
+	    String submitAdd = myGetParameter(AddCall_PARAMETER);
+	    String submitDelete = myGetParameter(DelCall_PARAMETER);
+	    String submitMoveUp = myGetParameter(MoveUpCall_PARAMETER);
+	    String submitMoveDown = myGetParameter(MoveDownCall_PARAMETER);
+	    String submitChoose = myGetParameter(ChooseCall_PARAMETER);
+	    String select = myGetParameter(Select_PARAMETER);
+	    String choose = myGetParameter(Choose_PARAMETER);
+	    String volumeName = myGetParameter(VolumeName_PARAMETER);
+		String entryHandle = myGetParameter(EntryHandle_PARAMETER);
+	    String submitUpdate = myGetParameter(Update_PARAMETER);
+	    String submitSave = myGetParameter(Save_PARAMETER);
+	    String saveComment = myGetParameter(SaveComment_PARAMETER);
+	    String referrer = myGetParameter(Referrer_PARAMETER);
+	    String homographId = myGetParameter(HomographId_PARAMETER);
 				
 		// Recuperation of parameters
 		if (referrer== null || referrer.equals("")) {
 			referrer = this.getReferrer();
 		}
+				
+		// buidling the queryString
+/*		String queryString = this.getUrl() + "?" 
+					+ VolumeName_PARAMETER + "=" + myUrlEncode(volumeName)
+					+ "&" + EntryHandle_PARAMETER + "=" + myUrlEncode(entryHandle);
 		
-		EditEntryXHTML content = (EditEntryXHTML) MultilingualXHtmlTemplateFactory.createTemplate("EditEntryXHTML", this.myComms, this.sessionData);
+		String selectParams = serializeParameterForUrl(Select_PARAMETER,myGetParameterValues(Select_PARAMETER));
+		if (selectParams != null && !selectParams.equals("")) {
+			queryString += "&" + selectParams;
+		}
+		if (submitAdd!=null && !submitAdd.equals("")) {
+			queryString += "&" + AddCall_PARAMETER + "=" + myUrlEncode(submitAdd);
+		}
+		if (submitDelete!=null && !submitDelete.equals("")) {
+			queryString += "&"  + DelCall_PARAMETER + "=" + myUrlEncode(submitDelete);
+		}
+		if (submitChoose!=null && !submitChoose.equals("")) {
+			queryString += ChooseCall_PARAMETER + "=" + myUrlEncode(submitChoose)
+			+ "&" + Choose_PARAMETER + "=" + myUrlEncode(choose);
+		}
+		if (submitUpdate!=null && !submitUpdate.equals("")) {
+			queryString += "&" + Update_PARAMETER + "=" + myUrlEncode(submitUpdate);
+		}
+		if (submitSave!=null && !submitSave.equals("")) {
+			queryString += "&" + Save_PARAMETER + "=" + myUrlEncode(submitSave)
+			+ "&" + SaveComment_PARAMETER + "=" + myUrlEncode(saveComment);
+		}
+		if (referrer!=null && !referrer.equals("")) {
+			queryString +=  "&" + Referrer_PARAMETER + "=" + myUrlEncode(referrer);
+		} */
+		
+		ArrayList languages = this.getSessionData().getUserAcceptLanguages();
 
-		// Manage VolumeEntry
+		Element myEntry = null;
 		VolumeEntry myVolumeEntry = null;
 		if (volumeName!=null && !volumeName.equals("")
 			&& entryHandle!=null &&!entryHandle.equals("")) {
-			
-			// VolumeEntry
-			myVolumeEntry = VolumeEntriesFactory.findEntryByHandle(volumeName, entryHandle);
-			
-			// Verification 
-			if (myVolumeEntry!=null && !myVolumeEntry.isEmpty()
-				&& !(myVolumeEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS) 
-					 && myVolumeEntry.getModificationAuthor().equals(this.getUser().getLogin())) ) {
-				throw new ClientPageRedirectException(EditingErrorURL);
-			}
-			// Verification of the DOM
-			if (myVolumeEntry.getDom() == null) {
-				throw new ClientPageRedirectException(EditingErrorURL);
-			}
+			myVolumeEntry = VolumeEntriesFactory.findEntryByHandle(volumeName,entryHandle);
+			myEntry = myVolumeEntry.getDom().getDocumentElement();
 		}
 		// TODO answer if no arguments
 		else {
@@ -106,8 +277,78 @@ public class EditEntry extends EditingBasePO {
 		}
 		Element myTemplateEntry = UITemplates.getTemplateEntry(volumeName);
 		
+		
+		// updateElement
+		if (myVolumeEntry!=null) {
+			updateEntry(myVolumeEntry, myEntry, this.getComms().request.getParameterNames());
+			myVolumeEntry.save();
+		}
+
+		// addElement
+		if (submitAdd!=null && !submitAdd.equals("")) {
+			int plus =  submitAdd.indexOf(UIGenerator.PARAMETERS_SEPARATOR);
+			if (plus > 0) {
+				String elementName = submitAdd.substring(0,plus);
+				String parentElement = submitAdd.substring(plus+1);
+				String[] siblingElements = myGetParameterValues(Select_PARAMETER);
+				UIGenerator.addElement(elementName,parentElement,myEntry, myTemplateEntry, siblingElements);
+				this.setHeaderScript(newBlockRedirectionJavascript);
+			}
+		}
+		// deleteElements MUST be after updateElement because it modifies the element ids.
+		else if (submitDelete!=null && !submitDelete.equals("")
+				 && select != null && !select.equals("")) {
+			int plus =  submitDelete.indexOf(UIGenerator.PARAMETERS_SEPARATOR);
+			if (plus > 0) {
+				String elementName = submitDelete.substring(0,plus);
+				String parentElement = submitDelete.substring(plus+1);
+				String[] selectedElements = myGetParameterValues(Select_PARAMETER);
+				UIGenerator.deleteElements(elementName,parentElement,selectedElements,myEntry, myTemplateEntry);
+				this.setHeaderScript(newBlockRedirectionJavascript);
+			}
+		}
+		// moveElementsUp
+		else if (submitMoveUp!=null && !submitMoveUp.equals("")
+				 && select != null && !select.equals("")) {
+			int plus =  submitMoveUp.indexOf(UIGenerator.PARAMETERS_SEPARATOR);
+			if (plus > 0) {
+				String elementName = submitMoveUp.substring(0,plus);
+				String parentElement = submitMoveUp.substring(plus+1);
+				String[] selectedElements = myGetParameterValues(Select_PARAMETER);
+				UIGenerator.moveElementsUp(elementName, parentElement, selectedElements, myEntry);
+				this.setHeaderScript(newBlockRedirectionJavascript);
+			}
+		}
+		// move Elements Down
+		else if (submitMoveDown!=null && !submitMoveDown.equals("")
+				 && select != null && !select.equals("")) {
+			int plus =  submitMoveDown.indexOf(UIGenerator.PARAMETERS_SEPARATOR);
+			if (plus > 0) {
+				String elementName = submitMoveDown.substring(0,plus);
+				String parentElement = submitMoveDown.substring(plus+1);
+				String[] selectedElements = myGetParameterValues(Select_PARAMETER);
+				UIGenerator.moveElementsDown(elementName, parentElement, selectedElements, myEntry);
+				this.setHeaderScript(newBlockRedirectionJavascript);
+			}
+		}
+		// Choose elements 
+		else if (submitChoose!=null && !submitChoose.equals("")
+					&& choose != null && !choose.equals("")) {
+			int plus =  submitChoose.indexOf(UIGenerator.PARAMETERS_SEPARATOR);
+			if (plus > 0) {
+				String elementId = submitChoose.substring(0,plus);
+				String parentId = submitChoose.substring(plus+1);
+				UIGenerator.chooseElement(choose,parentId,myEntry, myTemplateEntry);
+			}
+		}
+		
+	// saveModifiedEntry
+		if (submitSave!=null && !submitSave.equals("")) {
+			saveEntry(myVolumeEntry, this.getUser().getLogin(),saveComment, referrer);
+		}
+
 			// fill template
-		Element myInterface = UITemplates.getInterface(volumeName, UITemplates.DEFAULT_FORM,this.getSessionData().getUserAcceptLanguages()); 
+		Element myInterface = UITemplates.getInterface(volumeName, UITemplates.DEFAULT_FORM,languages); 
 		Element myItfTemplate = null;	
 		
 		if (myInterface!=null) {
@@ -122,12 +363,65 @@ public class EditEntry extends EditingBasePO {
 		
 				
 	// fillInterfaceTemplate
-		UIGenerator.fillInterfaceTemplate(myVolumeEntry.getDom().getDocumentElement(),myInterface, myItfTemplate);
-		                
-		//
-		XHTMLElement editingInterfaceElement = content.getElementEditEntryContent();
-		editingInterfaceElement.appendChild(content.importNode(myInterface, true));            
+		UIGenerator.fillInterfaceTemplate(myEntry,myInterface, myItfTemplate);
 
-		return content.getElementEditEntryForm();
-        }   
+	//	System.out.println(Utility.NodeToString(myEntry));
+	//	System.out.println(Utility.NodeToString(myInterface));
+	// save at the end because fillTemplate modifies the entry DOM
+	// when there is a block anchor
+        // FIXME: WHY THE HELL SHOULD THE BLOCK ANCHOR BE ADDED TO AN ENTRY ?????
+		myVolumeEntry.save();
+		
+		return myInterface;
+	}
+	
+	protected void updateBooleanElements(String[] booleanElements, String[] trueElements, Element myEntry) {
+	// FIXME: a problem here: the element ids change when one element is deleted.
+	// the second element of the same type will not be deleted
+		java.util.List myList = java.util.Arrays.asList(trueElements);
+		for (int i=0; i<booleanElements.length;i++) {
+			String elt = booleanElements[i];
+			if (elt != null && !elt.equals("")) {
+				if (myList.contains(elt)) {
+					UIGenerator.updateElement(elt, "true", myEntry);
+				}
+				else {
+					UIGenerator.updateElement(elt, "false", myEntry);
+				}
+			}
+		}
+	}
+
+	
+	protected void updateEntry(VolumeEntry myVolumeEntry, Element entryElt, java.util.Enumeration parameterNames)
+		throws java.io.UnsupportedEncodingException,
+				com.lutris.appserver.server.httpPresentation.HttpPresentationException {
+		while (parameterNames.hasMoreElements()) {
+			String parameterName = (String) parameterNames.nextElement();
+			if (parameterName.indexOf(UIGenerator.ID_SEPARATOR)>0) {
+				UIGenerator.updateElement(parameterName,myGetParameter(parameterName),entryElt);
+			}
+		}
+		updateBooleanElements(myGetParameterValues(Boolean_PARAMETER),myGetParameterValues(BooleanTrue_PARAMETER), entryElt);
+	}
+
+	protected void saveEntry(VolumeEntry myVolumeEntry, String author, String saveComment, String referrer) 
+		throws fr.imag.clips.papillon.business.PapillonBusinessException {
+		if (myVolumeEntry!=null) {
+			myVolumeEntry.setHeadword(myVolumeEntry.getCdmHeadword());
+			myVolumeEntry.setModification(author,saveComment);
+            myVolumeEntry.save();
+		}
+		if (referrer != null && referrer.indexOf(ReviewContributionsURL)>0) {
+			throw new ClientPageRedirectException(ReviewContributionsURL + "?" + ContributionsVolumeParameter + "=" + myVolumeEntry.getVolumeName()
+			+ "&" + ContributionsHandleParameter + "=" + myVolumeEntry.getHandle()
+			+ "&" + ContributionsViewParameter + "=" + ContributionsViewParameter);
+		}
+		else {
+			throw new ClientPageRedirectException(AdminContributionsURL + "?" + ContributionsVolumeParameter + "=" + myVolumeEntry.getVolumeName()
+			+ "&" + ContributionsHandleParameter + "=" + myVolumeEntry.getHandle()
+			+ "&" + ContributionsViewParameter + "=" + ContributionsViewParameter);
+		}
+	}
+       
 }
