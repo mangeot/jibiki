@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.44  2006/03/10 16:43:17  mangeot
+ * Fix for array.length==0, not satisfied
+ *
  * Revision 1.43  2006/03/01 15:12:31  mangeot
  * Merge between maintrunk and LEXALP_1_1 branch
  *
@@ -474,6 +477,7 @@ public class VolumeEntriesFactory {
     protected static Vector getDbTableEntriesVector(Dictionary dict, Volume volume, Vector Keys, Vector Clauses, String any, String order, int offset, int limit) throws PapillonBusinessException {
         Vector theEntries = theEntries = new Vector();
 		
+		String sourceLanguage = volume.getSourceLanguage();
 		String volumeTableName = volume.getDbname();
 		if (null != volumeTableName) {
 			try {
@@ -509,7 +513,7 @@ public class VolumeEntriesFactory {
 					for (java.util.Enumeration enumKeys = Keys.elements(); enumKeys.hasMoreElements();) {
 						String[] key = (String[]) enumKeys.nextElement();
                         // debug
-                        System.out.println("VolumeEntriesFactory.getDbTableEntriesVector: " + key[0] + " | " + key[1] + " | " + key[2] + " | " + key[3]);
+                        //System.out.println("VolumeEntriesFactory.getDbTableEntriesVector: " + key[0] + " | " + key[1] + " | " + key[2] + " | " + key[3]);
 						if (key!=null && key[2] !=null && !key[2].equals("")) {
 							myQueryBuilder = new com.lutris.dods.builder.generator.query.QueryBuilder(Columns);
 							if (IndexFactory.databaseVendor != null) {
@@ -518,9 +522,10 @@ public class VolumeEntriesFactory {
 								myQueryBuilder.setDatabaseVendor();
 							}
 							myQueryBuilder.addWhere(keyColumn, key[0], QueryBuilder.EQUAL);
-							if (key[1] !=null && !key[1].equals("")) {
-								myQueryBuilder.addWhere(langColumn, key[1], QueryBuilder.EQUAL);
+							if (key[1] ==null || key[1].equals("")) {
+								key[1] = sourceLanguage;
 							}
+							myQueryBuilder.addWhere(langColumn, key[1], QueryBuilder.EQUAL);
 							if ( key[3] == QueryBuilder.LESS_THAN ||
 								 key[3] == QueryBuilder.LESS_THAN_OR_EQUAL ||
 								 key[3] == QueryBuilder.GREATER_THAN ||
@@ -535,28 +540,7 @@ public class VolumeEntriesFactory {
 							query.getQueryBuilder().addWhereIn(objectidColumn, myQueryBuilder);
 						}
 					}
-				}
-				
-				if (Clauses != null) {
-					for (java.util.Enumeration enumClauses = Clauses.elements(); enumClauses.hasMoreElements();) {
-						String clause = (String) enumClauses.nextElement();
-                        // debug
-                        //System.out.println(clause);
-						if (clause!=null && !clause.equals("")) {
-							myQueryBuilder = new com.lutris.dods.builder.generator.query.QueryBuilder(Columns);
-							if (IndexFactory.databaseVendor != null) {
-								myQueryBuilder.setDatabaseVendor(IndexFactory.databaseVendor);
-							} else {
-								myQueryBuilder.setDatabaseVendor();
-							}
-							myQueryBuilder.addWhere(clause);
-							myQueryBuilder.resetSelectedFields();
-							myQueryBuilder.select(entryidColumn);
-							query.getQueryBuilder().addWhereIn(objectidColumn, myQueryBuilder);
-						}
-					}
-				}
-				
+				}				
 				query.getQueryBuilder().setMaxRows((0 == limit) ? DictionariesFactory.MaxRetrievedEntries : limit);
 				// seems to be a bug in the queryBuilder, have to put a space gefore OFFSET
 				query.getQueryBuilder().addEndClause(" OFFSET " + offset);
@@ -657,6 +641,7 @@ public class VolumeEntriesFactory {
     public static int getDbTableEntriesCount(Volume volume, Vector Keys, Vector clausesVector, String any) throws PapillonBusinessException {
         int countEntries = 0;
 		
+		String sourceLanguage = volume.getSourceLanguage();
 		String volumeTableName = volume.getDbname();
 		if (null != volumeTableName) {
 			try {
@@ -688,35 +673,27 @@ public class VolumeEntriesFactory {
 								myQueryBuilder.setDatabaseVendor();
 							}
 							myQueryBuilder.addWhere(keyColumn, key[0], QueryBuilder.EQUAL);
-							if (key[1] !=null && !key[1].equals("")) {
-								myQueryBuilder.addWhere(langColumn, key[1], QueryBuilder.EQUAL);
+							if (key[1] ==null || key[1].equals("")) {
+								key[1] = sourceLanguage;
 							}
-							myQueryBuilder.addWhere(valueColumn, key[2],  key[3]);
+							myQueryBuilder.addWhere(langColumn, key[1], QueryBuilder.EQUAL);
+							if ( key[3] == QueryBuilder.LESS_THAN ||
+								 key[3] == QueryBuilder.LESS_THAN_OR_EQUAL ||
+								 key[3] == QueryBuilder.GREATER_THAN ||
+								 key[3] == QueryBuilder.GREATER_THAN_OR_EQUAL) {
+								myQueryBuilder.addWhere(MSORT_FIELD + key[3]+ "multilingual_sort('" + key[1] + "','" + key[2] + "')");
+							}
+							else {
+								myQueryBuilder.addWhere(valueColumn, key[2],  key[3]);
+							}
 							myQueryBuilder.resetSelectedFields();
 							myQueryBuilder.select(entryidColumn);
 							query.getQueryBuilder().addWhereIn(objectidColumn, myQueryBuilder);
 						}
 					}
 				}
-				
-				if (clausesVector != null) {
-					for (java.util.Enumeration enumClauses = clausesVector.elements(); enumClauses.hasMoreElements();) {
-						String clause = (String) enumClauses.nextElement();
-						if (clause!=null && !clause.equals("")) {
-							myQueryBuilder = new com.lutris.dods.builder.generator.query.QueryBuilder(Columns);
-							if (IndexFactory.databaseVendor != null) {
-								myQueryBuilder.setDatabaseVendor(IndexFactory.databaseVendor);
-							} else {
-								myQueryBuilder.setDatabaseVendor();
-							}
-							myQueryBuilder.addWhere(clause);
-							myQueryBuilder.resetSelectedFields();
-							myQueryBuilder.select(entryidColumn);
-							query.getQueryBuilder().addWhereIn(objectidColumn, myQueryBuilder);
-						}
-					}
-				}
-				//query.getQueryBuilder().distinct();
+				// debug
+				//query.getQueryBuilder().debug();
 				countEntries += query.getCount();
 			}
 			catch(Exception ex) {
