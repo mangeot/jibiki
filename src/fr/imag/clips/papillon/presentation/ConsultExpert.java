@@ -10,11 +10,11 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.31  2006/03/10 16:23:18  mangeot
+ *  Hack for targets.length==0, I am not satisfied...
+ *
  *  Revision 1.30  2006/03/01 15:12:31  mangeot
  *  Merge between maintrunk and LEXALP_1_1 branch
- *
- *  Revision 1.29  2006/02/28 18:12:15  mangeot
- *  *** empty log message ***
  *
  *  Revision 1.28  2005/09/11 16:53:06  mangeot
  *  Bug fix
@@ -258,11 +258,6 @@ public class ConsultExpert extends PapillonBasePO {
     protected String login = null;
 
     /**
-     *  Description of the Field
-     */
-    protected ConsultExpertXHTML content;
-
-    /**
      *  Description of the Method
      *
      * @return    Description of the Return Value
@@ -329,7 +324,7 @@ public class ConsultExpert extends PapillonBasePO {
 		UnsupportedEncodingException {
 
         // Content creation
-        content = (ConsultExpertXHTML) MultilingualXHtmlTemplateFactory.createTemplate("ConsultExpertXHTML", this.getComms(), this.getSessionData());
+        ConsultExpertXHTML content = (ConsultExpertXHTML) MultilingualXHtmlTemplateFactory.createTemplate("ConsultExpertXHTML", this.getComms(), this.getSessionData());
 
         // On regarde d'abord les parametres qui nous sont demandes.
 		String submitLookup = myGetParameter(content.NAME_LOOKUP);
@@ -425,11 +420,16 @@ public class ConsultExpert extends PapillonBasePO {
         String[] allTargetLanguages = AvailableLanguages.getTargetLanguagesArray();
         String[] allResources = DictionariesFactory.getDictionariesNamesArray();
 
-        if (null != targetLanguages && targetLanguages.length > 0) {
-            if (targetLanguages[0].equals(ANY_TARGET)) {
-                //targetLanguages = allTargetLanguages;
+		if (null != targetLanguages) {
+			if (targetLanguages.length == 0) {
                 targetLanguages = null;
-            }
+			}
+			else if (targetLanguages.length > 0) {
+				if (targetLanguages[0].equals(ANY_TARGET)) {
+					//targetLanguages = allTargetLanguages;
+					targetLanguages = null;
+				}
+			}
         }
         if (null != resources && resources.length > 0) {
             if (resources[0].equals(ANY_RESOURCE)) {
@@ -466,7 +466,7 @@ public class ConsultExpert extends PapillonBasePO {
 				strategy1 == IQuery.STRATEGY_FOKS && sourceLanguage.equals("jpn")) {
                 Vector foksVector = VolumeEntriesFactory.getFoksEntriesVector(Headwords[0]);
                 if (foksVector != null && foksVector.size() > 0) {
-                    addFoksEntryTable(foksVector, sourceLanguage, originalTargets, originalResources);
+                    addFoksEntryTable(content, foksVector, sourceLanguage, originalTargets, originalResources);
                     strategy1 = IQuery.STRATEGY_EXACT;
                     Utility.removeElement(content.getElementSorryMessage());
                 } else {
@@ -503,8 +503,9 @@ public class ConsultExpert extends PapillonBasePO {
 				status[2] = VolumeEntry.VALIDATED_STATUS;
 				status[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_EXACT+1];
 				myKeys.add(status);
-
-                addEntries(resources, volume, sourceLanguage, targetLanguages, 
+				
+                addEntries(content,
+						   resources, volume, sourceLanguage, targetLanguages, 
 						   Headwords, strategy1, 
 						   search1, search1text, strategyString1,
 						   search2, search2text, strategyString2,
@@ -523,7 +524,8 @@ public class ConsultExpert extends PapillonBasePO {
 
 		if (submitReset != null) {
 			this.resetPreferences();
-			addConsultForm(null, allSourceLanguages,
+			addConsultForm(content,
+						   null, allSourceLanguages,
 						   null, allTargetLanguages,
 						   null, allResources,
 						   null, null,
@@ -531,7 +533,8 @@ public class ConsultExpert extends PapillonBasePO {
 						   IQuery.STRATEGY_EXACT, IQuery.STRATEGY_EXACT);
 		}
 		else {
-			addConsultForm(sourceLanguage, allSourceLanguages,
+			addConsultForm(content,
+						   sourceLanguage, allSourceLanguages,
 						   originalTargets, allTargetLanguages, 
 						   originalResources, allResources,
 						   search1, search1text,
@@ -550,7 +553,8 @@ public class ConsultExpert extends PapillonBasePO {
      * @exception  HttpPresentationException     Description of the Exception
      * @exception  UnsupportedEncodingException  Description of the Exception
      */
-    protected void addConsultForm(String sourceLanguage, String[] allSourceLanguages,
+    protected void addConsultForm(ConsultExpertXHTML content,
+								  String sourceLanguage, String[] allSourceLanguages,
 								  String[] originalTargets, String[] allTargetLanguages, 
 								  String[] originalResources, String[] allResources,
 								  String search1, String search1text,
@@ -589,9 +593,9 @@ public class ConsultExpert extends PapillonBasePO {
         sourceSelect.removeChild(sourceOptionTemplate);
 
         // Adding the appropriate target languages to the target list
-        if (originalTargets == null || originalTargets.length == 0) {
-            originalTargets = new String[]{ANY_TARGET};
-        }
+        //if (originalTargets == null || originalTargets.length == 0) {
+        //    originalTargets = new String[]{ANY_TARGET};
+        //}
         XHTMLOptionElement targetOptionTemplate = content.getElementTargetOptionTemplate();
         XHTMLSelectElement targetSelect = (XHTMLSelectElement) targetOptionTemplate.getParentNode();
         if (!this.IsClientWithLabelDisplayProblems()) {
@@ -728,7 +732,8 @@ public class ConsultExpert extends PapillonBasePO {
      * @exception  javax.xml.transform.TransformerException        Description
      *      of the Exception
      */
-    protected void addEntries(String[] resources, String volume, 
+    protected void addEntries(ConsultExpertXHTML content,
+							  String[] resources, String volume, 
 							  String source, String[] targets, 
 							  String[] Headwords, int strategy1, 
 							  String search1, String search1text, String strategyString1,
@@ -747,7 +752,7 @@ public class ConsultExpert extends PapillonBasePO {
             javax.xml.transform.TransformerException {
 
         Collection EntryCollection = null;
-		boolean reverseLookup = false;
+		boolean reverseLookup = false; 
 
         if (null != handle && null != volume) {
             EntryCollection = DictionariesFactory.findAnswerAndTranslations(volume, handle, targets, myUser);
@@ -785,13 +790,14 @@ public class ConsultExpert extends PapillonBasePO {
 			}
             if (EntryCollection.size() > DictionariesFactory.MaxDisplayedEntries) {
                 Utility.removeElement(content.getElementVolumeEntries());
-				addEntryTable(EntryCollection, source, resources, targets, 
+				addEntryTable(content,
+							  EntryCollection, source, resources, targets, 
 							  search1, search1text, strategyString1,
 							  search2, search2text, strategyString2,
 							  offset);
 			} else {
                 Utility.removeElement(content.getElementEntryListTable());
-                addFewEntries(EntryCollection, formatter);
+                addFewEntries(content,EntryCollection, formatter);
                 // If the entry is remote, it is already an HTML node
             }
             Utility.removeElement(content.getElementSorryMessage());
@@ -814,7 +820,8 @@ public class ConsultExpert extends PapillonBasePO {
      * @exception  java.io.UnsupportedEncodingException  Description of the
      *      Exception
      */
-    protected void addEntryTable(Collection qrset, 
+    protected void addEntryTable(ConsultExpertXHTML content,
+								 Collection qrset, 
 								 String source,
 								 String[] originalResources,
 								 String[] targets, 
@@ -959,7 +966,7 @@ public class ConsultExpert extends PapillonBasePO {
      * @exception  java.io.UnsupportedEncodingException  Description of the
      *      Exception
      */
-    protected void addFoksEntryTable(Vector EntryVector, String sourceLanguage, String[] originalTargets, String[] originalResources)
+    protected void addFoksEntryTable(ConsultExpertXHTML content, Vector EntryVector, String sourceLanguage, String[] originalTargets, String[] originalResources)
              throws PapillonBusinessException,
             java.io.UnsupportedEncodingException {
 
@@ -1025,7 +1032,7 @@ public class ConsultExpert extends PapillonBasePO {
      * @exception  HttpPresentationException  Description of the Exception
      * @exception  PapillonBusinessException  Description of the Exception
      */
-    protected Node getXslTable(String volume, String handle, int type)
+    protected Node getXslTable(ConsultExpertXHTML content, String volume, String handle, int type)
              throws HttpPresentationException,
             PapillonBusinessException {
 
@@ -1107,7 +1114,7 @@ public class ConsultExpert extends PapillonBasePO {
      *      Element attribute
      * @exception  PapillonBusinessException  Description of the Exception
      */
-    protected void addElement(Element element, String table, String handle, String resource, String volume, int type)
+    protected void addElement(ConsultExpertXHTML content, Element element, String table, String handle, String resource, String volume, int type)
              throws PapillonBusinessException {
         try {
             //for the entry content
@@ -1135,7 +1142,7 @@ public class ConsultExpert extends PapillonBasePO {
 
             if (null != table && null != handle) {
                 // If we want to put the XSL menu ...
-                entryTable.appendChild(getXslTable(table, handle, type));
+                entryTable.appendChild(getXslTable(content, table, handle, type));
                 entryCell.setColSpan(XslSheetsNumber);
             }
             XHTMLElement entryDiv = (XHTMLElement) content.getElementEntryDiv();
@@ -1173,11 +1180,11 @@ public class ConsultExpert extends PapillonBasePO {
      * @exception  fr.imag.clips.papillon.business.PapillonBusinessException
      *      Description of the Exception
      */
-    protected void addFewEntries(Collection EntryCollection, String formatter)
+    protected void addFewEntries(ConsultExpertXHTML content, Collection EntryCollection, String formatter)
              throws fr.imag.clips.papillon.business.PapillonBusinessException {
         if (EntryCollection != null && EntryCollection.size() > 0) {
             for (Iterator myIterator = EntryCollection.iterator(); myIterator.hasNext(); ) {
-				addEntry((QueryResult) myIterator.next(), formatter);
+				addEntry(content, (QueryResult) myIterator.next(), formatter);
             }
         } else {
             Utility.removeElement(content.getElementEntryListTable());
@@ -1197,7 +1204,7 @@ public class ConsultExpert extends PapillonBasePO {
      * @exception  fr.imag.clips.papillon.business.PapillonBusinessException
      *      Description of the Exception
      */
-    protected void addEntry(QueryResult qr, String formatter)
+    protected void addEntry(ConsultExpertXHTML content, QueryResult qr, String formatter)
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
             VolumeEntry myEntry = qr.getSourceEntry();
             // get the apropriate transformer.
@@ -1205,7 +1212,7 @@ public class ConsultExpert extends PapillonBasePO {
             //rf.initializeFormatter(qr.getSourceEntry().getDictionary(), qr.getSourceEntry().getVolume() , null, ResultFormatterFactory.XHTML_DIALECT,null);
 			Element myHtmlElt = (Element)rf.getFormattedResult(qr, this.getUser());
             
-			addElement(myHtmlElt, myEntry.getVolumeName(), myEntry.getHandle(),  myEntry.getDictionaryName(), myEntry.getVolumeName(), myEntry.getType());
+			addElement(content, myHtmlElt, myEntry.getVolumeName(), myEntry.getHandle(),  myEntry.getDictionaryName(), myEntry.getVolumeName(), myEntry.getType());
 		}
 	
     /**
