@@ -3,6 +3,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.29  2006/03/10 15:47:25  mangeot
+ * Hack when targets==null added to the findAnswerAndTranslations
+ * I am not satified with that.
+ *
  * Revision 1.28  2006/03/05 11:07:21  mangeot
  * *** empty log message ***
  *
@@ -797,6 +801,11 @@ public class DictionariesFactory {
         // FIXME: should be VolumeEntry...
 		VolumeEntry myAnswer = VolumeEntriesFactory.findEntryByHandle(volumeName, handle);
 		PapillonLogger.writeDebugMsg("Found entry in: " + volumeName + ", handle: " + handle);
+		//FIXME: hack for targets array. If the array is null, it means that all targets are asked
+		if (targets == null) {
+			targets = myAnswer.getVolume().getTargetLanguagesArray();
+		}
+		
 		String[] newTargets = Utility.ArrayIntersection(myAnswer.getVolume().getTargetLanguagesArray(),targets);
         return expandResult(myAnswer, newTargets, user);
 	}
