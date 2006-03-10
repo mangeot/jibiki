@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.31  2006/03/10 16:42:31  mangeot
+ * Fix for targets.length==0 not satisfied
+ *
  * Revision 1.30  2006/03/10 16:21:00  mangeot
  * Hack for targets.length==0, I am not satisfied..
  *
@@ -803,20 +806,12 @@ public class DictionariesFactory {
 	public static Collection findAnswerAndTranslations(String volumeName, String handle, String[] targets, User user) throws PapillonBusinessException {
         // FIXME: should be VolumeEntry...
 		VolumeEntry myAnswer = VolumeEntriesFactory.findEntryByHandle(volumeName, handle);
-		PapillonLogger.writeDebugMsg("Found entry in: " + volumeName + ", handle: " + handle);
 		//FIXME: hack for targets array. If the array is null, it means that all targets are asked
 		String[] newTargets = null;
-		if (targets == null) {
+		if (targets == null || targets.length==0) {
 			newTargets = myAnswer.getVolume().getTargetLanguagesArray();
-			PapillonLogger.writeDebugMsg("Targets null: ");
 		}
 		else {
-			if (targets.length==0) {
-				PapillonLogger.writeDebugMsg("Targets.length==0");
-			}
-			else {
-				PapillonLogger.writeDebugMsg("Targets not null: " + targets[0]);
-			}
 			newTargets = Utility.ArrayIntersection(myAnswer.getVolume().getTargetLanguagesArray(),targets);
 		}
 		
