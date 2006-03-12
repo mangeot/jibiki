@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.20  2006/03/12 23:19:18  mangeot
+ * Fixed a bug that forbed to retrieve entries by translation ids
+ *
  * Revision 1.19  2006/03/01 15:12:31  mangeot
  * Merge between maintrunk and LEXALP_1_1 branch
  *
@@ -319,6 +322,19 @@ public class Volume {
 		CDM_idiom,
 		CDM_translation,
 		CDM_translationReflexie,
+		CDM_gdefEstParticule,
+	};
+	
+	public final static String[] sourceLangElements = { 
+		CDM_headword,
+		CDM_homographNumber,
+		CDM_headwordVariant,
+		CDM_reading,
+		CDM_writing,
+		CDM_pronunciation,
+		CDM_pos,
+		CDM_example,
+		CDM_idiom,
 		CDM_gdefEstParticule,
 	};
 	
@@ -1007,16 +1023,29 @@ public class Volume {
 	}
 	
     /**
-	 * IsLangCDMElement tells if the CDM element needs a language 
+		* IsLangCDMElement tells if the CDM element needs a language 
 	 * if yes, we will add the source languageif no one was specified
      *
      * @return a boolean.
      * @exception PapillonBusinessException if an error occurs
      *   retrieving data (usually due to an underlying data layer
-	 *   error).
+						  *   error).
      */
     public static boolean isLangCDMElement(String eltName) {
 		return java.util.Arrays.asList(langElements).contains(eltName);
+	}
+	
+    /**
+		* IsLangCDMElement tells if the CDM element needs a language 
+	 * if yes, we will add the source languageif no one was specified
+     *
+     * @return a boolean.
+     * @exception PapillonBusinessException if an error occurs
+     *   retrieving data (usually due to an underlying data layer
+						  *   error).
+     */
+    public static boolean isSourceLangCDMElement(String eltName) {
+		return java.util.Arrays.asList(sourceLangElements).contains(eltName);
 	}
 	
     /**

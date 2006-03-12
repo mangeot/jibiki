@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.45  2006/03/12 23:19:18  mangeot
+ * Fixed a bug that forbed to retrieve entries by translation ids
+ *
  * Revision 1.44  2006/03/10 16:43:17  mangeot
  * Fix for array.length==0, not satisfied
  *
@@ -522,15 +525,18 @@ public class VolumeEntriesFactory {
 								myQueryBuilder.setDatabaseVendor();
 							}
 							myQueryBuilder.addWhere(keyColumn, key[0], QueryBuilder.EQUAL);
-							if (key[1] ==null || key[1].equals("")) {
+							if ((key[1] ==null || key[1].equals("")) &&
+								volume.isSourceLangCDMElement(key[0])) {
 								key[1] = sourceLanguage;
 							}
-							myQueryBuilder.addWhere(langColumn, key[1], QueryBuilder.EQUAL);
+							if (key[1] !=null && !key[1].equals("")) {
+								myQueryBuilder.addWhere(langColumn, key[1], QueryBuilder.EQUAL);
+							}
 							if ( key[3] == QueryBuilder.LESS_THAN ||
 								 key[3] == QueryBuilder.LESS_THAN_OR_EQUAL ||
 								 key[3] == QueryBuilder.GREATER_THAN ||
 								 key[3] == QueryBuilder.GREATER_THAN_OR_EQUAL) {
-								myQueryBuilder.addWhere(MSORT_FIELD + key[3]+ "multilingual_sort('" + key[1] + "','" + key[2] + "')");
+								myQueryBuilder.addWhere(MSORT_FIELD + key[3]+ "multilingual_sort('" + sourceLanguage + "','" + key[2] + "')");
 							}
 							else {
 								myQueryBuilder.addWhere(valueColumn, key[2],  key[3]);
@@ -547,9 +553,9 @@ public class VolumeEntriesFactory {
 				if (order==null || !order.equals(ORDER_DESCENDING)) {
 					order = "";
 				}				
-				query.getQueryBuilder().addOrderByColumn("multilingual_sort('" + volume.getSourceLanguage() + "',headword)",order);
+				query.getQueryBuilder().addOrderByColumn("multilingual_sort('" + sourceLanguage + "',headword)",order);
 				// debug
-				query.getQueryBuilder().debug();
+				 //query.getQueryBuilder().debug();
                 
 				VolumeEntryDO[] DOarray = query.getDOArray();
 				if (null != DOarray) {
@@ -673,15 +679,18 @@ public class VolumeEntriesFactory {
 								myQueryBuilder.setDatabaseVendor();
 							}
 							myQueryBuilder.addWhere(keyColumn, key[0], QueryBuilder.EQUAL);
-							if (key[1] ==null || key[1].equals("")) {
+							if ((key[1] ==null || key[1].equals("")) &&
+								volume.isSourceLangCDMElement(key[0])) {
 								key[1] = sourceLanguage;
 							}
-							myQueryBuilder.addWhere(langColumn, key[1], QueryBuilder.EQUAL);
+							if (key[1] !=null && !key[1].equals("")) {
+								myQueryBuilder.addWhere(langColumn, key[1], QueryBuilder.EQUAL);
+							}
 							if ( key[3] == QueryBuilder.LESS_THAN ||
 								 key[3] == QueryBuilder.LESS_THAN_OR_EQUAL ||
 								 key[3] == QueryBuilder.GREATER_THAN ||
 								 key[3] == QueryBuilder.GREATER_THAN_OR_EQUAL) {
-								myQueryBuilder.addWhere(MSORT_FIELD + key[3]+ "multilingual_sort('" + key[1] + "','" + key[2] + "')");
+								myQueryBuilder.addWhere(MSORT_FIELD + key[3]+ "multilingual_sort('" + sourceLanguage + "','" + key[2] + "')");
 							}
 							else {
 								myQueryBuilder.addWhere(valueColumn, key[2],  key[3]);
@@ -1134,7 +1143,7 @@ public class VolumeEntriesFactory {
 			}
 			
 			if (resultEntry != null) {
-				PapillonLogger.writeDebugMsg("Translation selected: " + resultEntry.getHeadword() + " status: " + resultEntry.getStatus());
+				PapillonLogger.writeDebugMsg("findEntryByEntryId selected entry: " + resultEntry.getHeadword() + " status: " + resultEntry.getStatus());
 			}
 			return resultEntry;
         }

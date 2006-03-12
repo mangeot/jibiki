@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.33  2006/03/12 23:19:18  mangeot
+ * Fixed a bug that forbed to retrieve entries by translation ids
+ *
  * Revision 1.32  2006/03/06 10:17:53  mangeot
  * Added setDeleted
  *
@@ -1239,6 +1242,7 @@ public class VolumeEntry implements IAnswer {
 		Document myDocument = this.getDom();	
 		org.w3c.dom.Node myEntry = ParseVolume.getCdmElement(this, Volume.CDM_entry);
 		*/
+		PapillonLogger.writeDebugMsg("VolumeEntry.setModification: " + author + " comment: " + comment);
         
         ParseVolume.setCdmElement(this, Volume.CDM_modificationAuthorElement, author);
         ParseVolume.setCdmElement(this, Volume.CDM_modificationDateElement, Utility.PapillonCDMDateFormat.format(date));
