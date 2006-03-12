@@ -3,6 +3,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.46  2006/03/12 23:31:44  mangeot
+ * Added notFinishedStatus in findEntryByEntryId
+ * ùCVS: ----------------------------------------------------------------------
+ *
  * Revision 1.45  2006/03/12 23:19:18  mangeot
  * Fixed a bug that forbed to retrieve entries by translation ids
  *
@@ -1118,11 +1122,9 @@ public class VolumeEntriesFactory {
 							if (tempEntry.getStatus().equals(VolumeEntry.MODIFIED_STATUS)) {
 								modifiedEntry = tempEntry;
 							}
-                            /*
                              if (tempEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS)) {
                                  notFinishedEntry = tempEntry;
                              }
-                             */
 						}
 						if (resultEntry == null) {
 							if (reviewedEntry !=null) {
@@ -1134,9 +1136,9 @@ public class VolumeEntriesFactory {
                             else if (modifiedEntry !=null) {
 								resultEntry = modifiedEntry;
 							}
-							//else if (notFinishedEntry !=null) {
-							//	resultEntry = finishedEntry;
-							//}
+							else if (notFinishedEntry !=null) {
+								resultEntry = notFinishedEntry;
+							}
 						}
 					}
 				}
