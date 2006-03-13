@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.39  2006/03/13 08:48:00  fbrunet
+ * bug corrections before merge
+ *
  * Revision 1.38  2006/03/01 15:12:31  mangeot
  * Merge between maintrunk and LEXALP_1_1 branch
  *
@@ -771,7 +774,7 @@ public class VolumesFactory {
 				if (entryidxpath.indexOf("/text()")>0) {
 					entryidxpath = entryidxpath.substring(0,entryidxpath.indexOf("/text()"));
 				}
-				addCdmElementInTable(elementsTable,Volume.CDM_entryIdElement,Volume.DEFAULT_LANG,entryidxpath, Volume.isIndexCDMElement(Volume.CDM_entryIdElement));
+				addCdmElementInTable(elementsTable, Volume.CDM_entryIdElement, Volume.DEFAULT_LANG, entryidxpath, Volume.isIndexCDMElement(Volume.CDM_entryIdElement));
 			}
 		}
 	}

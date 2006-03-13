@@ -8,6 +8,9 @@
  * $Id$
  *---------------------------------------------------------
  * $Log$
+ * Revision 1.19  2006/03/13 08:48:00  fbrunet
+ * bug corrections before merge
+ *
  * Revision 1.18  2006/03/01 16:11:01  mangeot
  * The edit form is now in an XHTML file
  *
@@ -71,7 +74,7 @@ public class GenerateTemplate {
 		"	<title>Interface Template</title>\n" +
 		"</head>\n" +
 		"<body>\n" +
-		"<form  action=\"HandleEntryModifications.po\" id=\"default\" name=\"default\" method=\"post\" accept-charset=\"utf-8\" enctype=\"application/x-www-form-urlencoded\" xml:lang=\"en\" lang=\"en\" d:lang=\"eng\">\n" +
+		"<form  action=\"HandleEntryModifications.po\" method=\"post\" accept-charset=\"utf-8\" enctype=\"application/x-www-form-urlencoded\" xml:lang=\"en\" lang=\"en\" d:lang=\"eng\">\n" +
 		"<h1 style=\"text-align:center\">Edition interface</h1>\n" +
 		"<div id=\"" + UITemplates.EDIT_ENTRY_INTERFACE + "\">\n";
 	

@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.34  2006/03/13 08:48:00  fbrunet
+ * bug corrections before merge
+ *
  * Revision 1.33  2006/03/12 23:19:18  mangeot
  * Fixed a bug that forbed to retrieve entries by translation ids
  *
@@ -616,7 +619,7 @@ public class VolumeEntry implements IAnswer {
      */
 	protected void setEntryIdIfNull() throws PapillonBusinessException {
 		if (this.getEntryId()==null || this.getEntryId().equals("")) {
-			this.setEntryId(this.createNewId() + ENTRY_ID_SUFFIX);
+            this.setEntryId(this.createNewId() + ENTRY_ID_SUFFIX);
 		}
 	}
 	

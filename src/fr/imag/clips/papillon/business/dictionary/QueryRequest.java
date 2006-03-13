@@ -55,11 +55,11 @@ package fr.imag.clips.papillon.business.dictionary;
             volumeNames = names;
         }
         
-        public String[] getVolumesNames() {
+        public String[] getVolumeNames() {
             return (null == volumeNames) ? (volumeNames = new String[0]) : volumeNames;
         }
         
-        //public void setVolumesNames(String[] names) {
+        //public void setVolumeNames(String[] names) {
         //    volumeNames = names;
         //}
         

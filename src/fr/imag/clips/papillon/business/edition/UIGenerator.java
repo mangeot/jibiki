@@ -8,6 +8,9 @@
  * $Id$
  *---------------------------------------------------------
  * $Log$
+ * Revision 1.17  2006/03/13 08:48:00  fbrunet
+ * bug corrections before merge
+ *
  * Revision 1.16  2006/03/01 15:12:31  mangeot
  * Merge between maintrunk and LEXALP_1_1 branch
  *
@@ -114,8 +117,8 @@ public class UIGenerator {
 	/******************************************************/
 	
 	public static void fillInterfaceTemplate(Element entryElt, Element rootItfElt,Element itfTemplate) {
-		Element correspItf = UIGenerator.findCorrespondingElement(entryElt,rootItfElt);
-		UIGenerator.fillTemplate(entryElt,correspItf, itfTemplate);
+		Element correspItf = UIGenerator.findCorrespondingElement(entryElt, rootItfElt);
+		UIGenerator.fillTemplate(entryElt, correspItf, itfTemplate);
 	}
 	
 	public static boolean addElement(String elementName, String parentId, Element entryElt, Element entryTemplate, String[] siblingIds) {

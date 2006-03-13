@@ -10,6 +10,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2006/03/13 08:48:00  fbrunet
+ * bug corrections before merge
+ *
  * Revision 1.2  2006/03/01 15:12:31  mangeot
  * Merge between maintrunk and LEXALP_1_1 branch
  *
@@ -130,7 +133,7 @@ public class LexalpEditEntryInit extends PapillonBasePO {
         java.io.UnsupportedEncodingException,
         java.io.IOException,
         fr.imag.clips.papillon.business.PapillonBusinessException {
-            
+                      
             // Content creation
             content = (LexalpEditEntryInitXHTML)MultilingualXHtmlTemplateFactory.createTemplate("fr.imag.clips.papillon.presentation.xhtmllexalp", "LexalpEditEntryInitXHTML", this.getComms(), this.getSessionData());
             // On regarde d'abord les parametres qui nous sont demandes.
@@ -141,9 +144,9 @@ public class LexalpEditEntryInit extends PapillonBasePO {
             String action = myGetParameter(ACTION_PARAMETER);		
 
             //
-            System.out.println("Action " + action);
-            System.out.println("submitCreate " + submitCreate);
-            System.out.println("headword " + headword);
+            //System.out.println("Action " + action);
+            //System.out.println("submitCreate " + submitCreate);
+            //System.out.println("headword " + headword);
             
             // ??
             if (volume!=null &&!volume.equals("")) {
@@ -167,6 +170,8 @@ public class LexalpEditEntryInit extends PapillonBasePO {
                     myEntry.setStatus(VolumeEntry.NOT_FINISHED_STATUS);
                     myEntry.save();
                     String headwordParam = myUrlEncode(headword);
+                    
+                    //
                     throw new ClientPageRedirectException(EditEntryURL + "?" + 
                                                           EditEntry.VolumeName_PARAMETER + "=" + volume + 
                                                           "&" + EditEntry.EntryHandle_PARAMETER + "=" + myEntry.getHandle());
@@ -181,7 +186,7 @@ public class LexalpEditEntryInit extends PapillonBasePO {
             if (action!=null && !action.equals("")) {
                 
                 // Search last contribution corresponding to entryId
-                VolumeEntry myEntry = VolumeEntriesFactory.findEntryByEntryId(this.getUser(), entryHandle);
+                VolumeEntry myEntry = VolumeEntriesFactory.findEntryByEntryId(this.getUser(), volume, entryHandle);
                 //VolumeEntry myEntry = VolumeEntriesFactory.findEntryByHandle(volume, entryHandle);
                 
                 

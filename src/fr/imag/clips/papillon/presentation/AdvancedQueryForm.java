@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2006/03/13 08:48:00  fbrunet
+ * bug corrections before merge
+ *
  * Revision 1.2  2006/03/01 15:12:31  mangeot
  * Merge between maintrunk and LEXALP_1_1 branch
  *
@@ -247,7 +250,7 @@ public class AdvancedQueryForm {
             // Get all the parameters
             qrequest = new QueryRequest(VolumesFactory.getVolumesArrayName());
             // FIXME: get volumes and dictionaries names to http request !
-            //qrequest.setVolumesNames(getRequestedDictionaries(comms.request.getHttpServletRequest()));
+            //qrequest.setVolumeNames(getRequestedDictionaries(comms.request.getHttpServletRequest()));
             ArrayList criteriaList = getRequestedCriteria2(comms.request.getHttpServletRequest());
             for (int i = 0; i < criteriaList.size(); i++) {
                 qrequest.addCriteria((QueryCriteria)criteriaList.get(i));

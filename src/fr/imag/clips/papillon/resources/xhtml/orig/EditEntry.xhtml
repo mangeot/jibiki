@@ -8,7 +8,7 @@
 <body>
     <div id="EditEntryForm" class="editEntry" xml:lang="en" lang="en">
 		<h1 style="text-align:center">Interface d'édition</h1> 
-        <form action="EditEntry.po" method="post" accept-charset="utf-8" enctype="application/x-www-form-urlencoded" id="default">
+        <form action="HandleEntryModifications.po" method="post" accept-charset="utf-8" enctype="application/x-www-form-urlencoded" id="default">
 		<div>
         <script type="text/javascript">
           <!--
@@ -31,9 +31,9 @@
           
           // -->
         </script>
-	<input name="VolumeName" type="hidden" value="" />
-	<input name="EntryHandle" type="hidden" value="" />
-    <input name="Referrer" type="hidden" value="" />
+	<input name="VolumeName" id="VolumeName" type="hidden" value="" />
+	<input name="EntryHandle" id="EntryHandle" type="hidden" value="" />
+    <input name="Referrer" id="Referrer" type="hidden" value="" />
 	<input name="AddCall" type="hidden" value="" />
 	<input name="DelCall" type="hidden" value="" />
 	<input name="MoveUpCall" type="hidden" value="" />

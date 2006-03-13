@@ -8,6 +8,13 @@
  *  Cette classe implémente le layout par défaut de l'ensemble des pages de papillon
  *  Les pages utilisent une instance de Layout et se contentent de remplir son contenu
  *
+ *-----------------------------------------------
+ * $Id$
+ *-----------------------------------------------
+ * $Log$
+ * Revision 1.3  2006/03/13 08:48:00  fbrunet
+ * bug corrections before merge
+ *
  */
 package fr.imag.clips.papillon.presentation;
 

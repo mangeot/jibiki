@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2006/03/13 08:48:00  fbrunet
+ * bug corrections before merge
+ *
  * Revision 1.2  2006/03/01 15:47:08  mangeot
  * syntax bug fixes
  *
@@ -76,7 +79,7 @@ public class HandleEntryModifications extends EditingBasePO {
     protected static String Save_PARAMETER = "Save";  
     protected static String SaveComment_PARAMETER = "SaveComment";  
 	
-	protected final static String EditEntryInitURL = "EditEntryInit.po";
+	protected final static String EditEntryInitURL = "LexalpEditEntryInit.po";
     protected final static String EditingErrorURL = "EditingError.po";
     protected final static String ConfirmEntryURL = "ConfirmEntry.po";
 	protected final static String EditEntryURL = "EditEntry.po";
@@ -117,12 +120,14 @@ public class HandleEntryModifications extends EditingBasePO {
 			String saveComment = myGetParameter(SaveComment_PARAMETER);
 			String referrer = myGetParameter(Referrer_PARAMETER);
 			
+            //
 			if (volumeName==null || volumeName.equals("") ||
 				entryHandle==null || entryHandle.equals("")) {
-				// FIXME: Add a user error message !!!
+				                
+                // FIXME: Add a user error message !!!
 				throw new ClientPageRedirectException(EditEntryInitURL);
 			}
-			
+		
 			// VolumeEntry
 			VolumeEntry myVolumeEntry = VolumeEntriesFactory.findEntryByHandle(volumeName, entryHandle);
 			
@@ -268,6 +273,10 @@ public class HandleEntryModifications extends EditingBasePO {
                 // Call PostProcessor
                 ResultPostProcessor postProcessor = ResultPostProcessorFactory.getPostProcessor(NFVolumeEntry);
                 postProcessor.transformation(NFVolumeEntry, user);
+                
+                //
+                System.out.println("EditEntry NFVolumeEntry.getVolumeName() : " + NFVolumeEntry.getVolumeName());
+                System.out.println("EditEntry NFVolumeEntry.getHandle() " + NFVolumeEntry.getHandle());
                 
                 // new current volume entry
                 throw new ClientPageRedirectException(

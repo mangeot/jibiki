@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.47  2006/03/13 08:48:00  fbrunet
+ * bug corrections before merge
+ *
  * Revision 1.46  2006/03/12 23:31:44  mangeot
  * Added notFinishedStatus in findEntryByEntryId
  * ùCVS: ----------------------------------------------------------------------
@@ -1150,12 +1153,35 @@ public class VolumeEntriesFactory {
 			return resultEntry;
         }
 
+
 /**
 * Find Entry by entry Id
  *
  *
  */
-public static VolumeEntry findEntryByEntryId(User user, String entryId)
+public static VolumeEntry findEntryByEntryId(User user, String entryId) 
+throws PapillonBusinessException {
+    return findEntryByEntryId(user, VolumesFactory.getVolumesArrayName(), entryId);
+}
+
+/**
+* Find Entry by entry Id
+ *
+ *
+ */
+public static VolumeEntry findEntryByEntryId(User user, String volume, String entryId) 
+throws PapillonBusinessException {
+    String[] volumeNames = new String[1];
+    volumeNames[0] = volume;
+    return findEntryByEntryId(user, volumeNames, entryId);
+}
+
+/**
+* Find Entry by entry Id
+ *
+ *
+ */
+public static VolumeEntry findEntryByEntryId(User user, String[] volumeNames, String entryId)
 throws PapillonBusinessException {
     
     //FIXME: an entry id may not be unique externally to a dictionary so the dict must be specified
@@ -1164,7 +1190,7 @@ throws PapillonBusinessException {
     if (entryId != null && !entryId.equals("")) {
 		
         // FIXME ... Add dictionary in QueryRequest class
-        QueryRequest queryReq = new QueryRequest(VolumesFactory.getVolumesArrayName());
+        QueryRequest queryReq = new QueryRequest(volumeNames);
         
         // Entry Id
         QueryCriteria criteriaSearch = new QueryCriteria();
