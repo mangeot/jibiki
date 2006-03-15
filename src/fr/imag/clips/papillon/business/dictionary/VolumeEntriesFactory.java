@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.48  2006/03/15 13:36:39  mangeot
+ * Bug fix in queries with pointers with default language
+ *
  * Revision 1.47  2006/03/13 08:48:00  fbrunet
  * bug corrections before merge
  *
@@ -532,9 +535,13 @@ public class VolumeEntriesFactory {
 								myQueryBuilder.setDatabaseVendor();
 							}
 							myQueryBuilder.addWhere(keyColumn, key[0], QueryBuilder.EQUAL);
-							if ((key[1] ==null || key[1].equals("")) &&
-								volume.isSourceLangCDMElement(key[0])) {
-								key[1] = sourceLanguage;
+							if ((key[1] ==null || key[1].equals(""))) {
+								if (volume.isSourceLangCDMElement(key[0])) {
+									key[1] = sourceLanguage;
+								}
+								if (volume.isDefaultLangCDMElement(key[0])) {
+									key[1] = Volume.DEFAULT_LANG;
+								}
 							}
 							if (key[1] !=null && !key[1].equals("")) {
 								myQueryBuilder.addWhere(langColumn, key[1], QueryBuilder.EQUAL);
@@ -543,7 +550,7 @@ public class VolumeEntriesFactory {
 								 key[3] == QueryBuilder.LESS_THAN_OR_EQUAL ||
 								 key[3] == QueryBuilder.GREATER_THAN ||
 								 key[3] == QueryBuilder.GREATER_THAN_OR_EQUAL) {
-								myQueryBuilder.addWhere(MSORT_FIELD + key[3]+ "multilingual_sort('" + sourceLanguage + "','" + key[2] + "')");
+								myQueryBuilder.addWhere(MSORT_FIELD + key[3]+ "multilingual_sort('" + key[1] + "','" + key[2] + "')");
 							}
 							else {
 								myQueryBuilder.addWhere(valueColumn, key[2],  key[3]);
@@ -562,7 +569,7 @@ public class VolumeEntriesFactory {
 				}				
 				query.getQueryBuilder().addOrderByColumn("multilingual_sort('" + sourceLanguage + "',headword)",order);
 				// debug
-				 //query.getQueryBuilder().debug();
+				// query.getQueryBuilder().debug();
                 
 				VolumeEntryDO[] DOarray = query.getDOArray();
 				if (null != DOarray) {
