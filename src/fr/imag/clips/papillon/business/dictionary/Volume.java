@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.21  2006/03/15 13:38:25  mangeot
+ * added isDefaultLangCDMElement
+ *
  * Revision 1.20  2006/03/12 23:19:18  mangeot
  * Fixed a bug that forbed to retrieve entries by translation ids
  *
@@ -302,6 +305,7 @@ public class Volume {
 		CDM_originalContributionId,
 		CDM_contributionAuthor,
 		CDM_contributionGroup,
+		CDM_contributionGroups,
 		CDM_contributionCreationDate,
 		CDM_contributionReviewDate,
 		CDM_contributionReviewer,
@@ -323,6 +327,25 @@ public class Volume {
 		CDM_translation,
 		CDM_translationReflexie,
 		CDM_gdefEstParticule,
+	};
+	
+	public final static String[] defaultLangElements = { 
+		CDM_volume, 
+		CDM_entry, 
+		CDM_entryId, 
+		CDM_contributionId,
+		CDM_originalContributionId,
+		CDM_contributionAuthor,
+		CDM_contributionGroup,
+		CDM_contributionCreationDate,
+		CDM_contributionReviewDate,
+		CDM_contributionReviewer,
+		CDM_contributionValidationDate,
+		CDM_contributionValidator,
+		CDM_contributionStatus,
+		CDM_previousClassifiedFinishedContribution,
+		CDM_previousClassifiedNotFinishedContribution,
+		CDM_nextContributionAuthor
 	};
 	
 	public final static String[] sourceLangElements = { 
@@ -1036,8 +1059,8 @@ public class Volume {
 	}
 	
     /**
-		* IsLangCDMElement tells if the CDM element needs a language 
-	 * if yes, we will add the source languageif no one was specified
+		* IsSourceLangCDMElement tells if the CDM element needs a language 
+	 * if yes, we will add the source language if no one was specified
      *
      * @return a boolean.
      * @exception PapillonBusinessException if an error occurs
@@ -1046,6 +1069,19 @@ public class Volume {
      */
     public static boolean isSourceLangCDMElement(String eltName) {
 		return java.util.Arrays.asList(sourceLangElements).contains(eltName);
+	}
+	
+    /**
+		* IsDefaultLangCDMElement tells if the CDM element needs a language 
+	 * if yes, we will add the source language if no one was specified
+     *
+     * @return a boolean.
+     * @exception PapillonBusinessException if an error occurs
+     *   retrieving data (usually due to an underlying data layer
+						  *   error).
+     */
+    public static boolean isDefaultLangCDMElement(String eltName) {
+		return java.util.Arrays.asList(defaultLangElements).contains(eltName);
 	}
 	
     /**
