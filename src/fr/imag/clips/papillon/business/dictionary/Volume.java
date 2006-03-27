@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.23  2006/03/27 10:51:42  mangeot
+ * Added getCdmXXXElement()
+ *
  * Revision 1.22  2006/03/27 10:48:03  mangeot
  * Added finition-date in contribution metadata
  *
@@ -799,7 +802,11 @@ public class Volume {
     public String getCdmModificationAuthor() {
 		return getTagNameFromXPath(getCdmXPathString(this.CDM_modificationAuthor));
 	}
-
+	
+    public String getCdmModificationAuthorElement() {
+		return getTagNameFromXPath(getCdmXPathString(this.CDM_modificationAuthorElement));
+	}
+	
     /**
 	 * Gets the CDM date of the Volume
      *
@@ -812,6 +819,10 @@ public class Volume {
 		return getTagNameFromXPath(getCdmXPathString(this.CDM_modificationDate));
 	}
 
+    public String getCdmModificationDateElement() {
+		return getTagNameFromXPath(getCdmXPathString(this.CDM_modificationDateElement));
+	}
+	
     /**
 	 * Gets the CDM comment of the Volume
      *
@@ -824,6 +835,10 @@ public class Volume {
 		return getTagNameFromXPath(getCdmXPathString(this.CDM_modificationComment));
 	}
 
+	public String getCdmModificationCommentElement() {
+		return getTagNameFromXPath(getCdmXPathString(this.CDM_modificationCommentElement));
+	}
+	
     /**
 	 * Gets the CDM groups element of the Volume
      *
