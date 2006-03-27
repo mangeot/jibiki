@@ -8,6 +8,9 @@
  * $Id$
  *---------------------------------------------------------
  * $Log$
+ * Revision 1.18  2006/03/27 09:26:44  mangeot
+ * Bug fix in moveElements
+ *
  * Revision 1.17  2006/03/13 08:48:00  fbrunet
  * bug corrections before merge
  *
@@ -269,8 +272,8 @@ public class UIGenerator {
 	
 	public static boolean moveElements(String elementName, String parentId, String[] elementIds, Element entryElt, boolean up) {
 		boolean result = false;
-		PapillonLogger.writeDebugMsg("moveElement: up" + up + " name: "  + elementName + " parentId: " + parentId + " eltid1: " + elementIds[0]);
-
+		//PapillonLogger.writeDebugMsg("moveElement: up " + up + " name: "  + elementName + " parentId: " + parentId + " eltid1: " + elementIds[0]);
+		
 		/* looking for the targeted elements */
 		NodeList myNodeList = entryElt.getElementsByTagName (elementName);
 		Vector moveNodes = new Vector();
@@ -299,7 +302,8 @@ public class UIGenerator {
 				NodeList myChildrenList = parentElt.getChildNodes();
 				Element beforeElement = null;
 				Element afterElement = null;
-				for (int i=0; i<myChildrenList.getLength();i++) {
+				int i=0;
+				while (result == false && i<myChildrenList.getLength()) {
                     Node tmpNode = myChildrenList.item(i);
 					if (tmpNode.getNodeType() == Node.ELEMENT_NODE) {
 						Element currentElt = (Element) tmpNode;
@@ -319,13 +323,14 @@ public class UIGenerator {
 								afterElement = currentElt; 
 							}
 						}
-						if (beforeElement != null && afterElement != null) {
-							PapillonLogger.writeDebugMsg("swapElements: " + afterElement.getTagName());
+						if (result == false && beforeElement != null && afterElement != null) {
+							//PapillonLogger.writeDebugMsg("swapElements: " + afterElement.getTagName());
 							parentElt.removeChild(afterElement);
 							parentElt.insertBefore(afterElement,beforeElement);
 							result = true;
 						}
 					}
+					i++;
 				}
 			}
 		}
