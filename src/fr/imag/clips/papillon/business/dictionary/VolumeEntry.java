@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.36  2006/03/27 10:56:38  mangeot
+ * Syntax fix
+ *
  * Revision 1.35  2006/03/27 10:47:34  mangeot
  * Added finition-date in contribution metadata
  *
@@ -830,29 +833,7 @@ public class VolumeEntry implements IAnswer {
 	protected void setFinitionDate(String date) throws PapillonBusinessException {
 		ParseVolume.setCdmElement(this, Volume.CDM_contributionFinitionDateElement, date);
 	}
-	
-	/**
-		* getCreationDate gets the entry date into the XML code of the entry.
-     * 
-	 * @return the creation date as a java.util.Date
-     * @exception PapillonBusinessException if an error occurs
-     *   getting data (usually due to an underlying data layer
-					   *   error).
-     */
-	public java.util.Date getCreationDate() throws PapillonBusinessException {
-		java.util.Date resDate = null;
-		String dateString = ParseVolume.getCdmString(this, Volume.CDM_contributionCreationDate);
-		if (dateString !=null && !dateString.equals("")) {
-			try {
-				resDate = Utility.PapillonCDMDateFormat.parse(dateString);
-			}
-			catch (java.text.ParseException ex) {
-				throw new PapillonBusinessException("Error parsing a date String", ex);
-			}
-		}
-		return resDate;
-	}
-	
+		
 	/**
      * getFinitionDate gets the entry finition date from the XML code of the entry.
      * 
