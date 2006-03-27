@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.38  2006/03/27 11:47:34  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.37  2006/03/27 11:46:18  mangeot
  * ReAdded getReviewDate
  *
@@ -882,7 +885,7 @@ public class VolumeEntry implements IAnswer {
 
 	
 	/**
-		* getReviewDate gets the entry finition date from the XML code of the entry.
+		* getReviewDate gets the entry review date from the XML code of the entry.
      * 
 	 * @return the review date as a String
      * @exception PapillonBusinessException if an error occurs
