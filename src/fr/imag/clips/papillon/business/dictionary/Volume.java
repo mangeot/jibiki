@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.24  2006/03/27 11:24:12  mangeot
+ * finition-date bug fix
+ *
  * Revision 1.23  2006/03/27 10:51:42  mangeot
  * Added getCdmXXXElement()
  *
@@ -256,7 +259,7 @@ public class Volume {
     public static final  String CDM_contributionGroup = "cdm-contribution-group";
     public static final  String CDM_contributionGroups = "cdm-contribution-groups";
     public static final  String CDM_contributionId = "cdm-contribution-id";
-    public static final  String CDM_contributionFinitionDate = "cdm-contribution-review-date";
+    public static final  String CDM_contributionFinitionDate = "cdm-contribution-finition-date";
     public static final  String CDM_contributionFinitionDateElement = "cdm-contribution-finition-date-element";
     public static final  String CDM_contributionReviewDate = "cdm-contribution-review-date";
     public static final  String CDM_contributionReviewDateElement = "cdm-contribution-review-date-element";
