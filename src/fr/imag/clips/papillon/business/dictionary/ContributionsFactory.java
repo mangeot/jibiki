@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.10  2006/03/27 11:47:24  mangeot
+ * Added finitionDate in contributionLog
+ *
  * Revision 1.9  2005/06/15 16:48:27  mangeot
  * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
  *
@@ -132,7 +135,10 @@ public class ContributionsFactory {
 					myContribLog.setHeadword(myEntry.getHeadword());
 					myContribLog.setEntryId(myEntry.getEntryId());
 					myContribLog.setContributionId(myEntry.getContributionId());
-					if (myEntry.getCreationDate() !=null) {
+					if (myEntry.getFinitionDate() !=null) {
+						myContribLog.setDate(myEntry.getFinitionDate());
+					}
+					else if (myEntry.getCreationDate() !=null) {
 						myContribLog.setDate(myEntry.getCreationDate());
 					}
 					else {
