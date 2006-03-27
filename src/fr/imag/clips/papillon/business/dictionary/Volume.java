@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.22  2006/03/27 10:48:03  mangeot
+ * Added finition-date in contribution metadata
+ *
  * Revision 1.21  2006/03/15 13:38:25  mangeot
  * added isDefaultLangCDMElement
  *
@@ -250,6 +253,8 @@ public class Volume {
     public static final  String CDM_contributionGroup = "cdm-contribution-group";
     public static final  String CDM_contributionGroups = "cdm-contribution-groups";
     public static final  String CDM_contributionId = "cdm-contribution-id";
+    public static final  String CDM_contributionFinitionDate = "cdm-contribution-review-date";
+    public static final  String CDM_contributionFinitionDateElement = "cdm-contribution-finition-date-element";
     public static final  String CDM_contributionReviewDate = "cdm-contribution-review-date";
     public static final  String CDM_contributionReviewDateElement = "cdm-contribution-review-date-element";
     public static final  String CDM_contributionReviewer = "cdm-contribution-reviewer";
@@ -307,6 +312,7 @@ public class Volume {
 		CDM_contributionGroup,
 		CDM_contributionGroups,
 		CDM_contributionCreationDate,
+		CDM_contributionFinitionDate,
 		CDM_contributionReviewDate,
 		CDM_contributionReviewer,
 		CDM_contributionValidationDate,
@@ -338,6 +344,7 @@ public class Volume {
 		CDM_contributionAuthor,
 		CDM_contributionGroup,
 		CDM_contributionCreationDate,
+		CDM_contributionFinitionDate,
 		CDM_contributionReviewDate,
 		CDM_contributionReviewer,
 		CDM_contributionValidationDate,

@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.35  2006/03/27 10:47:34  mangeot
+ * Added finition-date in contribution metadata
+ *
  * Revision 1.34  2006/03/13 08:48:00  fbrunet
  * bug corrections before merge
  *
@@ -278,6 +281,7 @@ public class VolumeEntry implements IAnswer {
 	public final static String historyTag = DML_PREFIX_COLON + "history";
 	public final static String metadataTag = DML_PREFIX_COLON + "metadata";
 	public final static String modificationTag = DML_PREFIX_COLON + "modification";
+	public final static String finitionDateTag = DML_PREFIX_COLON + "finition-date";
 	public final static String reviewDateTag = DML_PREFIX_COLON + "review-date";
 	public final static String reviewerTag = DML_PREFIX_COLON + "reviewer";
 	public final static String statusTag = DML_PREFIX_COLON + "status";
@@ -297,6 +301,7 @@ public class VolumeEntry implements IAnswer {
         + "    <" + authorTag + "/>\n"
         + "    <" + groupsTag + "/>\n"
         + "    <" + creationDateTag + "/>\n"
+        + "    <" + finitionDateTag + "/>\n"
         + "    <" + reviewDateTag + "/>\n"
         + "    <" + reviewerTag + "/>\n"
         + "    <" + validationDateTag + "/>\n"
@@ -802,17 +807,63 @@ public class VolumeEntry implements IAnswer {
 		ParseVolume.setCdmElement(this, Volume.CDM_contributionCreationDateElement, date);
 	}
 
-     /**
-     * getReviewDate gets the entry review date from the XML code of the entry.
+    /**
+		* setFinitionDate sets the entry finition date into the XML code of the entry.
+     * 
+     * @exception PapillonBusinessException if an error occurs
+     *   replacing data (usually due to an underlying data layer
+						 *   error).
+     */
+	public void setFinitionDate() throws PapillonBusinessException {
+		String dateString = ParseVolume.getCdmString(this, Volume.CDM_contributionFinitionDate);
+		if (dateString == null || dateString.equals("")) {
+			setFinitionDate(Utility.PapillonCDMDateFormat.format(new java.util.Date()));
+		}
+	}
+	
+	public void setFinitionDate(java.util.Date myDate) throws PapillonBusinessException {
+		if (myDate !=null) {
+			setFinitionDate(Utility.PapillonCDMDateFormat.format(myDate));
+		}
+	}
+	
+	protected void setFinitionDate(String date) throws PapillonBusinessException {
+		ParseVolume.setCdmElement(this, Volume.CDM_contributionFinitionDateElement, date);
+	}
+	
+	/**
+		* getCreationDate gets the entry date into the XML code of the entry.
+     * 
+	 * @return the creation date as a java.util.Date
+     * @exception PapillonBusinessException if an error occurs
+     *   getting data (usually due to an underlying data layer
+					   *   error).
+     */
+	public java.util.Date getCreationDate() throws PapillonBusinessException {
+		java.util.Date resDate = null;
+		String dateString = ParseVolume.getCdmString(this, Volume.CDM_contributionCreationDate);
+		if (dateString !=null && !dateString.equals("")) {
+			try {
+				resDate = Utility.PapillonCDMDateFormat.parse(dateString);
+			}
+			catch (java.text.ParseException ex) {
+				throw new PapillonBusinessException("Error parsing a date String", ex);
+			}
+		}
+		return resDate;
+	}
+	
+	/**
+     * getFinitionDate gets the entry finition date from the XML code of the entry.
      * 
 	 * @return the review date as a String
      * @exception PapillonBusinessException if an error occurs
      *   getting data (usually due to an underlying data layer
 	 *   error).
      */
-	public java.util.Date getReviewDate() throws PapillonBusinessException {
+	public java.util.Date getFinitionDate() throws PapillonBusinessException {
 		java.util.Date resDate = null;
-		String dateString = ParseVolume.getCdmString(this, Volume.CDM_contributionReviewDate);
+		String dateString = ParseVolume.getCdmString(this, Volume.CDM_contributionFinitionDate);
 		if (dateString !=null && !dateString.equals("")) {
 			try {
 				resDate = Utility.PapillonCDMDateFormat.parse(dateString);
@@ -978,6 +1029,7 @@ public class VolumeEntry implements IAnswer {
 	public void setFinished(fr.imag.clips.papillon.business.user.User myUser) 
 		throws PapillonBusinessException {
 		if (null != this.getStatus() && this.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS)) {
+			    this.setFinitionDate();
 				this.setModification(myUser.getLogin(),VolumeEntry.FINISHED_STATUS);
 				this.setStatus(VolumeEntry.FINISHED_STATUS);
 				this.save();
