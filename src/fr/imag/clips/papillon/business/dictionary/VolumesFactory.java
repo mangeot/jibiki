@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.40  2006/03/27 10:48:45  mangeot
+ * added finition-date in contribution metadata
+ *
  * Revision 1.39  2006/03/13 08:48:00  fbrunet
  * bug corrections before merge
  *
@@ -678,6 +681,12 @@ public class VolumesFactory {
 		}
 		if (getCdmXPathString(elementsTable, Volume.CDM_contributionCreationDate, Volume.DEFAULT_LANG) == null) {
 			addCdmElementInTable(elementsTable,Volume.CDM_contributionCreationDate,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.creationDateTag + "/text()", Volume.isIndexCDMElement(Volume.CDM_contributionCreationDate));
+		}
+		if (getCdmXPathString(elementsTable, Volume.CDM_contributionFinitionDateElement, Volume.DEFAULT_LANG) == null) {
+			addCdmElementInTable(elementsTable,Volume.CDM_contributionFinitionDateElement,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.finitionDateTag, Volume.isIndexCDMElement(Volume.CDM_contributionFinitionDateElement));
+		}
+		if (getCdmXPathString(elementsTable, Volume.CDM_contributionFinitionDate, Volume.DEFAULT_LANG) == null) {
+			addCdmElementInTable(elementsTable,Volume.CDM_contributionFinitionDate,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.finitionDateTag + "/text()", Volume.isIndexCDMElement(Volume.CDM_contributionFinitionDate));
 		}
 		if (getCdmXPathString(elementsTable, Volume.CDM_contributionReviewDateElement, Volume.DEFAULT_LANG) == null) {
 			addCdmElementInTable(elementsTable,Volume.CDM_contributionReviewDateElement,Volume.DEFAULT_LANG,currentXpath + "/" + VolumeEntry.reviewDateTag, Volume.isIndexCDMElement(Volume.CDM_contributionReviewDateElement));
