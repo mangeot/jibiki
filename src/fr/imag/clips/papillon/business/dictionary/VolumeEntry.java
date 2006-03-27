@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.37  2006/03/27 11:46:18  mangeot
+ * ReAdded getReviewDate
+ *
  * Revision 1.36  2006/03/27 10:56:38  mangeot
  * Syntax fix
  *
@@ -877,7 +880,30 @@ public class VolumeEntry implements IAnswer {
 		ParseVolume.setCdmElement(this, Volume.CDM_contributionReviewDateElement, date);
 	}
 
-     /**
+	
+	/**
+		* getReviewDate gets the entry finition date from the XML code of the entry.
+     * 
+	 * @return the review date as a String
+     * @exception PapillonBusinessException if an error occurs
+     *   getting data (usually due to an underlying data layer
+					   *   error).
+     */
+	public java.util.Date getReviewDate() throws PapillonBusinessException {
+		java.util.Date resDate = null;
+		String dateString = ParseVolume.getCdmString(this, Volume.CDM_contributionReviewDate);
+		if (dateString !=null && !dateString.equals("")) {
+			try {
+				resDate = Utility.PapillonCDMDateFormat.parse(dateString);
+			}
+			catch (java.text.ParseException ex) {
+				throw new PapillonBusinessException("Error parsing a date String", ex);
+			}
+		}
+		return resDate;
+	}
+	
+	/**
      * getReviewer gets the entry author into the XML code of the entry.
      * 
 	 * @return the reviewer as a String
@@ -1273,18 +1299,18 @@ public class VolumeEntry implements IAnswer {
     
 	private void setModification(String author, java.util.Date date, String comment) throws PapillonBusinessException {
 
-        /*
-		Volume myVolume = this.getVolume();	
-		Document myDocument = this.getDom();	
+        
+		Volume myVolume = this.getVolume();
+		Document myDocument = this.getDom();
 		org.w3c.dom.Node myEntry = ParseVolume.getCdmElement(this, Volume.CDM_entry);
-		*/
-		PapillonLogger.writeDebugMsg("VolumeEntry.setModification: " + author + " comment: " + comment);
+		
+		//PapillonLogger.writeDebugMsg("VolumeEntry.setModification: " + author + " comment: " + comment);
         
-        ParseVolume.setCdmElement(this, Volume.CDM_modificationAuthorElement, author);
-        ParseVolume.setCdmElement(this, Volume.CDM_modificationDateElement, Utility.PapillonCDMDateFormat.format(date));
-        ParseVolume.setCdmElement(this, Volume.CDM_modificationCommentElement, comment);
+      //  ParseVolume.setCdmElement(this, Volume.CDM_modificationAuthorElement, author);
+      //  ParseVolume.setCdmElement(this, Volume.CDM_modificationDateElement, Utility.PapillonCDMDateFormat.format(date));
+      //  ParseVolume.setCdmElement(this, Volume.CDM_modificationCommentElement, comment);
         
-        /*
+        
         //
         org.w3c.dom.Node myHistory = ParseVolume.getCdmElement(this, Volume.CDM_history);
         if (myHistory == null) {
@@ -1293,29 +1319,11 @@ public class VolumeEntry implements IAnswer {
 			myEntry.appendChild(myHistory);			
 		}
         
-        //
-        org.w3c.dom.Node myModification = ParseVolume.getCdmElement(this, Volume.CDM_modification);
-        if (myModification == null) {
-			fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("setModification: myModification null");
-			myModification = myDocument.createElement(myVolume.getCdmModification());
-			myHistory.appendChild(myModification);			
-		}
-        
-        //
-        org.w3c.dom.Node myAuthor = ParseVolume.getCdmElement(this, Volume.CDM_modificationAuthor);
-        if (myAuthor == null) {
-			fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("setModification: myAuthor null");
-			myAuthor = myDocument.createElement(myVolume.getCdmModificationAuthor());
-			myModification.appendChild(myAuthor);			
-		}
-        myAuthor.setNodeValue(author);
-        */
-        
-        /*  
-        myModification = myDocument.createElement(myVolume.getCdmModification());
-		org.w3c.dom.Element myAuthor = myDocument.createElement(myVolume.getCdmModificationAuthor());
-		org.w3c.dom.Element myComment = myDocument.createElement(myVolume.getCdmModificationComment());
-		org.w3c.dom.Element myDate = myDocument.createElement(myVolume.getCdmModificationDate());
+        //        
+        org.w3c.dom.Element myModification = myDocument.createElement(myVolume.getCdmModification());
+		org.w3c.dom.Element myAuthor = myDocument.createElement(myVolume.getCdmModificationAuthorElement());
+		org.w3c.dom.Element myComment = myDocument.createElement(myVolume.getCdmModificationCommentElement());
+		org.w3c.dom.Element myDate = myDocument.createElement(myVolume.getCdmModificationDateElement());
 		Utility.setText(myAuthor,author);
 		Utility.setText(myDate,Utility.PapillonCDMDateFormat.format(date));
 		Utility.setText(myComment,comment);
@@ -1323,7 +1331,7 @@ public class VolumeEntry implements IAnswer {
 		myModification.appendChild(myComment);
 		myModification.appendChild(myDate);
 		myHistory.appendChild(myModification);
-        */
+        
 	}
 
     /**
