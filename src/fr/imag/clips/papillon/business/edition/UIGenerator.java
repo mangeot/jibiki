@@ -8,6 +8,9 @@
  * $Id$
  *---------------------------------------------------------
  * $Log$
+ * Revision 1.19  2006/03/27 10:23:03  mangeot
+ * Fixed the moveElements method
+ *
  * Revision 1.18  2006/03/27 09:26:44  mangeot
  * Bug fix in moveElements
  *
@@ -276,7 +279,7 @@ public class UIGenerator {
 		
 		/* looking for the targeted elements */
 		NodeList myNodeList = entryElt.getElementsByTagName (elementName);
-		Vector moveNodes = new Vector();
+		Vector moveElements = new Vector();
 		for (int i=0; i<elementIds.length; i++) {
 			String elementId = elementIds[i];
 			nodeMatcher.reset(elementId);
@@ -286,7 +289,7 @@ public class UIGenerator {
 				if (elementName!=null && elementName.equals(currentName)) {
 					int itemNb = Integer.parseInt(currentNb);
 					Element resultElt = (Element) myNodeList.item(itemNb);
-					moveNodes.add(resultElt);
+					moveElements.add(resultElt);
 				}
 			}
 		}
@@ -298,39 +301,47 @@ public class UIGenerator {
 			
 			Element parentElt = findElementInEntry(parentName, parentNb, entryElt);
 			/* moving up targeted element */
-			if (parentElt!=null) {
-				NodeList myChildrenList = parentElt.getChildNodes();
-				Element beforeElement = null;
-				Element afterElement = null;
-				int i=0;
-				while (result == false && i<myChildrenList.getLength()) {
-                    Node tmpNode = myChildrenList.item(i);
-					if (tmpNode.getNodeType() == Node.ELEMENT_NODE) {
-						Element currentElt = (Element) tmpNode;
-						if (moveNodes.contains(currentElt)) {
-							if (up) {
-								afterElement = currentElt; 
-							}
-							else {
-								beforeElement = currentElt; 
+			if (parentElt!=null && moveElements !=null) {
+				for (java.util.Iterator moveIterator = moveElements.iterator(); moveIterator.hasNext();) {
+					Element moveElement = (Element) moveIterator.next();
+					NodeList myChildrenList = parentElt.getChildNodes();
+					Element beforeElement = null;
+					Element afterElement = null;
+					int i=0;
+					result = false;
+					while (result == false && myChildrenList != null && i<myChildrenList.getLength()) {
+						Node tmpNode = myChildrenList.item(i);
+						if (tmpNode.getNodeType() == Node.ELEMENT_NODE) {
+							Element currentElt = (Element) tmpNode;
+							if (currentElt.getTagName().equals(elementName)) {
+								if (currentElt.equals(moveElement)) {
+									if (up) {
+										afterElement = currentElt; 
+									}
+									else {
+										beforeElement = currentElt; 
+										afterElement = null;
+									}
+								}
+								else {
+									if (up) {
+										beforeElement = currentElt;
+										afterElement = null;
+									}
+									else {
+										afterElement = currentElt; 
+									}
+								}
+								if (result == false && beforeElement != null && afterElement != null) {
+									//PapillonLogger.writeDebugMsg("swapElements: " + afterElement.getTagName());
+									parentElt.removeChild(afterElement);
+									parentElt.insertBefore(afterElement,beforeElement);
+									result = true;
+								}
 							}
 						}
-						else {
-							if (up) {
-								beforeElement = currentElt;
-							}
-							else {
-								afterElement = currentElt; 
-							}
-						}
-						if (result == false && beforeElement != null && afterElement != null) {
-							//PapillonLogger.writeDebugMsg("swapElements: " + afterElement.getTagName());
-							parentElt.removeChild(afterElement);
-							parentElt.insertBefore(afterElement,beforeElement);
-							result = true;
-						}
+						i++;
 					}
-					i++;
 				}
 			}
 		}
