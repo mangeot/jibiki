@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.33  2006/03/27 10:59:58  mangeot
+ * Commented INDEXENTRY logs
+ *
  * Revision 1.32  2006/03/06 10:06:23  mangeot
  * Horrible hack sur Home.java pour pouvoir utiliser tout de suite cette version sur le GDEF.
  * Another thing: the fuzzy search takes a lot of time, so I launch it only if the normal search returns no result.
@@ -505,7 +508,7 @@ public class ParseVolume {
     // FIXME: should be defined here ?
 	public static boolean indexEntry(VolumeEntry myEntry) throws PapillonBusinessException {
 		
-        PapillonLogger.writeDebugMsg("INDEXENTRY");
+        //PapillonLogger.writeDebugMsg("INDEXENTRY");
         
         org.w3c.dom.Document entryDoc = myEntry.getDom();
 		boolean result=false;
@@ -521,13 +524,13 @@ public class ParseVolume {
             for (java.util.Enumeration langKeys = CdmElementsTable.keys(); langKeys.hasMoreElements();) {
 				String lang = (String) langKeys.nextElement();
                 
-                PapillonLogger.writeDebugMsg("INDEXENTRY, langKeys : " + lang);
+                //PapillonLogger.writeDebugMsg("INDEXENTRY, langKeys : " + lang);
                 
 				java.util.Hashtable tmpTable =  (java.util.Hashtable) CdmElementsTable.get(lang);
 				for (java.util.Enumeration keys = tmpTable.keys(); keys.hasMoreElements();) {
 					String CdmElement = (String) keys.nextElement();
 					
-                    PapillonLogger.writeDebugMsg("INDEXENTRY, key " + CdmElement);
+                    //PapillonLogger.writeDebugMsg("INDEXENTRY, key " + CdmElement);
 					
                     java.util.Vector myVector = (java.util.Vector) tmpTable.get(CdmElement);
 					org.apache.xpath.XPath myXPath = null;
@@ -535,7 +538,7 @@ public class ParseVolume {
                     
 					if (myVector != null) {
 						
-                        PapillonLogger.writeDebugMsg("INDEXENTRY, myVector.size: " + myVector.size());
+                        //PapillonLogger.writeDebugMsg("INDEXENTRY, myVector.size: " + myVector.size());
 						
                         if (myVector.size()==3) {
 							isIndex = ((Boolean) myVector.elementAt(1)).booleanValue();
@@ -567,7 +570,7 @@ public class ParseVolume {
 								String value = myNode.getNodeValue();
 								if (value != null) {
 									
-                                    PapillonLogger.writeDebugMsg("INDEXENTRY, node value: " + value);
+                                    //PapillonLogger.writeDebugMsg("INDEXENTRY, node value: " + value);
 									
                                     Index myIndex = IndexFactory.newIndex(myEntry.getVolume().getIndexDbname(),CdmElement,lang,value, myEntry.getHandle());
 									myIndex.save();
