@@ -5,6 +5,9 @@
  *
  *  $Id$
  *  $Log$
+ *  Revision 1.7  2006/03/29 12:40:05  mangeot
+ *  *** empty log message ***
+ *
  *  Revision 1.6  2006/03/05 17:15:11  mangeot
  *  *** empty log message ***
  *
@@ -105,7 +108,7 @@ I would like to find a solution in genreal for HTML entities...
 </xsl:if>
 <span class="xmlelement"><xsl:value-of select="local-name()"/></span>
 
-<!--xsl:if test="count(ancestor::*)=0"><xsl:call-template name="print-namespaces"/></xsl:if-->
+<xsl:if test="count(ancestor::*)=0"><xsl:call-template name="print-default-namespace"/></xsl:if>
 	<xsl:call-template name="print-namespaces">
     	<xsl:with-param name="namespaces" select="$newnamespaces"/>
     	<xsl:with-param name="ancestors" select="ancestor::*"/>
@@ -181,16 +184,7 @@ I would like to find a solution in genreal for HTML entities...
 		<xsl:variable name="namespace"><xsl:value-of select="name()"/>,</xsl:variable>
 	   <xsl:if test="contains($namespaces,$namespace)">
 	   <br /><xsl:for-each select="ancestor::*">&nbsp;</xsl:for-each>
-			<xsl:choose>		
-			<xsl:when test="name()=''">
-				<span class="xmlnsprefix">xmlns</span>
-				<span class="xmlcar">="</span>
-				<span class="xmlnsuri">
-					<xsl:value-of select="current()"/>
-				</span>
-				<span class="xmlcar">"</span>
-			</xsl:when>			
-			<xsl:otherwise>
+			<xsl:if test="name()!=''">
 				<span class="xmlnsprefix">xmlns</span>
 				<span class="xmlcar">:</span>
 				<span class="xmlnsprefix">
@@ -201,10 +195,26 @@ I would like to find a solution in genreal for HTML entities...
 					<xsl:value-of select="current()"/>
 				</span>
 				<span class="xmlcar">"</span>					
-			</xsl:otherwise>				
-	</xsl:choose>
+	        </xsl:if>
 	   </xsl:if>
 	</xsl:for-each>
 </xsl:template>
+
+<!-- namespaces for the root element -->
+<xsl:template name="print-default-namespace">
+	<xsl:for-each select="namespace::*">
+	   <br /><xsl:for-each select="ancestor::*">&nbsp;</xsl:for-each>
+			<xsl:if test="name()=''">
+				<span class="xmlnsprefix">xmlns</span>
+				<span class="xmlcar">="</span>
+				<span class="xmlnsuri">
+					<xsl:value-of select="current()"/>
+				</span>
+				<span class="xmlcar">"</span>
+			</xsl:if>			
+	   </xsl:if>
+	</xsl:for-each>
+</xsl:template>
+
 
 </xsl:stylesheet>
