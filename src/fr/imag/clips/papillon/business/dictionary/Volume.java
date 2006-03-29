@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.25  2006/03/29 10:17:36  mangeot
+ * FIXME: Added CDM_gdefEstParticule...
+ *
  * Revision 1.24  2006/03/27 11:24:12  mangeot
  * finition-date bug fix
  *
@@ -294,6 +297,7 @@ public class Volume {
 
 	// gdef tags
 	public static final  String CDM_gdefEstParticule = "gdef-est-particule";
+	public static final  String CDM_gdefEstFrequence = "gdef-est-frequence";
   
 	// other constants
 	public final static String DEFAULT_LANG = "#NA";
@@ -309,7 +313,6 @@ public class Volume {
 		CDM_idiom,
 		CDM_translation,
 		CDM_translationReflexie,
-		CDM_gdefEstParticule,
 		
 // contribution CDM elements
 		CDM_contributionId,
@@ -323,7 +326,12 @@ public class Volume {
 		CDM_contributionReviewer,
 		CDM_contributionValidationDate,
 		CDM_contributionValidator,
-		CDM_contributionStatus
+		CDM_contributionStatus,
+		
+// gdef-est elements
+		CDM_gdefEstParticule,
+		CDM_gdefEstFrequence
+		
 	};
 		
 	public final static String[] langElements = { 
@@ -338,7 +346,10 @@ public class Volume {
 		CDM_idiom,
 		CDM_translation,
 		CDM_translationReflexie,
+		// gdef-est elements
 		CDM_gdefEstParticule,
+		CDM_gdefEstFrequence
+
 	};
 	
 	public final static String[] defaultLangElements = { 
@@ -371,7 +382,9 @@ public class Volume {
 		CDM_pos,
 		CDM_example,
 		CDM_idiom,
+		// gdef-est elements
 		CDM_gdefEstParticule,
+		CDM_gdefEstFrequence
 	};
 	
 	// local variables
