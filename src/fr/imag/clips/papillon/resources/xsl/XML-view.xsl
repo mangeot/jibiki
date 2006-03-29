@@ -5,6 +5,9 @@
  *
  *  $Id$
  *  $Log$
+ *  Revision 1.8  2006/03/29 12:42:00  mangeot
+ *  *** empty log message ***
+ *
  *  Revision 1.7  2006/03/29 12:40:05  mangeot
  *  *** empty log message ***
  *
@@ -212,7 +215,6 @@ I would like to find a solution in genreal for HTML entities...
 				</span>
 				<span class="xmlcar">"</span>
 			</xsl:if>			
-	   </xsl:if>
 	</xsl:for-each>
 </xsl:template>
 
