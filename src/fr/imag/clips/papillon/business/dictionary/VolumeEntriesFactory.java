@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.49  2006/03/29 10:18:17  mangeot
+ * Fixed a bug when the source language is not defined and the request uses the msort column (> and < comparisons)
+ *
  * Revision 1.48  2006/03/15 13:36:39  mangeot
  * Bug fix in queries with pointers with default language
  *
@@ -546,10 +549,11 @@ public class VolumeEntriesFactory {
 							if (key[1] !=null && !key[1].equals("")) {
 								myQueryBuilder.addWhere(langColumn, key[1], QueryBuilder.EQUAL);
 							}
-							if ( key[3] == QueryBuilder.LESS_THAN ||
-								 key[3] == QueryBuilder.LESS_THAN_OR_EQUAL ||
-								 key[3] == QueryBuilder.GREATER_THAN ||
-								 key[3] == QueryBuilder.GREATER_THAN_OR_EQUAL) {
+							if (key[1] != null && !key[1].equals("") 
+								&& (key[3] == QueryBuilder.LESS_THAN ||
+									key[3] == QueryBuilder.LESS_THAN_OR_EQUAL ||
+									key[3] == QueryBuilder.GREATER_THAN ||
+									key[3] == QueryBuilder.GREATER_THAN_OR_EQUAL)) {
 								myQueryBuilder.addWhere(MSORT_FIELD + key[3]+ "multilingual_sort('" + key[1] + "','" + key[2] + "')");
 							}
 							else {
@@ -700,14 +704,15 @@ public class VolumeEntriesFactory {
 							if (key[1] !=null && !key[1].equals("")) {
 								myQueryBuilder.addWhere(langColumn, key[1], QueryBuilder.EQUAL);
 							}
-							if ( key[3] == QueryBuilder.LESS_THAN ||
-								 key[3] == QueryBuilder.LESS_THAN_OR_EQUAL ||
-								 key[3] == QueryBuilder.GREATER_THAN ||
-								 key[3] == QueryBuilder.GREATER_THAN_OR_EQUAL) {
-								myQueryBuilder.addWhere(MSORT_FIELD + key[3]+ "multilingual_sort('" + sourceLanguage + "','" + key[2] + "')");
+							if (key[1] != null && !key[1].equals("") 
+								&& (key[3] == QueryBuilder.LESS_THAN ||
+									key[3] == QueryBuilder.LESS_THAN_OR_EQUAL ||
+									key[3] == QueryBuilder.GREATER_THAN ||
+									key[3] == QueryBuilder.GREATER_THAN_OR_EQUAL)) {
+								myQueryBuilder.addWhere(MSORT_FIELD + key[3]+ "multilingual_sort('" + key[1] + "','" + key[2] + "')");
 							}
 							else {
-								myQueryBuilder.addWhere(valueColumn, key[2],  key[3]);
+									myQueryBuilder.addWhere(valueColumn, key[2],  key[3]);
 							}
 							myQueryBuilder.resetSelectedFields();
 							myQueryBuilder.select(entryidColumn);
