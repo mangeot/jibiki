@@ -8,6 +8,9 @@
  * $Id$
  *---------------------------------------------------------
  * $Log$
+ * Revision 1.20  2006/03/29 13:54:10  mangeot
+ * Fixed a bug when managing a list with prefixed elements
+ *
  * Revision 1.19  2006/03/13 08:48:00  fbrunet
  * bug corrections before merge
  *
@@ -188,24 +191,24 @@ public class GenerateTemplate {
 			String elementName = prefix + declaration.getName();
 			String elementNameDisplay = declaration.getName();
 			if (elementType==GenerateTemplate.LIST_ELEMENT) {
-				interfaceBuffer.write("  <tr " +  UIGenerator.ITF_ATTR_NAME  + "=\"" + elementName + "\" bgcolor='#ffebdc'>\n");
-				interfaceBuffer.write("    <td align='center' valign='top' width='25'>\n");
-				interfaceBuffer.write("		 <a name=\"" + elementName + "\"> </a>");
-				interfaceBuffer.write("<input name=\"" + UIGenerator.SELECT_ATTR_NAME + "\" type=\"checkbox\" value=\"" + elementName + "\" />");
+				interfaceBuffer.write("  <tr " +  UIGenerator.ITF_ATTR_NAME  + "='" + elementName + "' style='background-color:#ffebdc'>\n");
+				interfaceBuffer.write("    <td style='text-align:center' valign='top' width='25'>\n");
+				interfaceBuffer.write("		 <a name='" + elementName + "'> </a>");
+				interfaceBuffer.write("<input name='" + UIGenerator.SELECT_ATTR_NAME + "' type='checkbox' value='" + elementName + "' />");
 				interfaceBuffer.write("\n");
 				interfaceBuffer.write("    </td>\n");
-				interfaceBuffer.write("    <td  align='center' valign='top'  class='block'>\n");
+				interfaceBuffer.write("    <td  style='text-align:center' valign='top'  class='block'>\n");
 				interfaceBuffer.write("      <h4 class='blockTitle'>" + elementNameDisplay + "</h4>\n");
 			}
 			else if (elementType==GenerateTemplate.CHOICE_ELEMENT) {
-				interfaceBuffer.write("<" + UIGenerator.ITF_ELT_INLINE_NAME + " " + UIGenerator.ITF_ATTR_NAME  + "=\"" + elementName + "\">" + "\n");
-				interfaceBuffer.write("<label for=\"" + elementName + "\">"+ elementNameDisplay + ":</label>\n");
-				interfaceBuffer.write("<input name=\"" + UIGenerator.CHOOSE_ATTR_NAME + "\" type=\"checkbox\" value=\"" + elementName + "\" />\n");
+				interfaceBuffer.write("<" + UIGenerator.ITF_ELT_INLINE_NAME + " " + UIGenerator.ITF_ATTR_NAME  + "='" + elementName + "'>" + "\n");
+				interfaceBuffer.write("<label for='" + elementName + "'>"+ elementNameDisplay + ":</label>\n");
+				interfaceBuffer.write("<input name='" + UIGenerator.CHOOSE_ATTR_NAME + "' type='checkbox' value='" + elementName + "' />\n");
 				interfaceBuffer.write("<br />\n");
-				interfaceBuffer.write("<span title=\"" + elementName + "\" class=\"" + UIGenerator.ITF_HIDDEN_STYLE + "\">\n");
+				interfaceBuffer.write("<span title='" + elementName + "' class='" + UIGenerator.ITF_HIDDEN_STYLE + "'>\n");
 			}
 			else {
-				interfaceBuffer.write("<" + UIGenerator.ITF_ELT_INLINE_NAME + " " + UIGenerator.ITF_ATTR_NAME  + "=\"" + elementName + "\">" + "\n");
+				interfaceBuffer.write("<" + UIGenerator.ITF_ELT_INLINE_NAME + " " + UIGenerator.ITF_ATTR_NAME  + "='" + elementName + "'>" + "\n");
 			}
 			baseType = declaration.getTypeDefinition ();
 			String typeName = declaration.getName() + "Type";
@@ -288,17 +291,19 @@ public class GenerateTemplate {
 										XSParticle tempParticle = (XSParticle)myList.getItem(j);
 										term = tempParticle.getTerm();
 										int newTypeElement = DEFAULT_ELEMENT;
-										if (tempParticle.getIsMaxOccursUnbounded() && term.getName()!=null) {
+										String termNameDisplay = term.getName();
+										if (tempParticle.getIsMaxOccursUnbounded() && termNameDisplay!=null) {
+											String termName = prefix+termNameDisplay;
 											// list	
-											interfaceBuffer.write("<table border='0' cellpadding='5' cellspacing='2' summary='List of " + term.getName() + "s' width='100%'>\n");
+											interfaceBuffer.write("<table border='0' cellpadding='5' cellspacing='2' summary='List of " + termNameDisplay + "s' width='100%'>\n");
 											interfaceBuffer.write("  <tr style='background-color: #fbbe78'>\n");
 											interfaceBuffer.write("    <td style='text-align:center' width='25'>\n");
-											interfaceBuffer.write("      <input name='" + elementName + "' onclick=\"this.form.AddCall.value='" + term.getName() + UIGenerator.PARAMETERS_SEPARATOR + "\" type=\"submit\" value=\"+\" />\n");
-											interfaceBuffer.write("      <input name='" + elementName + "' onclick=\"this.form.DelCall.value='" + term.getName() + UIGenerator.PARAMETERS_SEPARATOR + "\" type=\"submit\" value=\"-\" />\n");
+											interfaceBuffer.write("      <input name='" + elementName + "' onclick=\"this.form.AddCall.value='" + termName + UIGenerator.PARAMETERS_SEPARATOR + "' type='submit' value='+' />\n");
+											interfaceBuffer.write("      <input name='" + elementName + "' onclick=\"this.form.DelCall.value='" + termName + UIGenerator.PARAMETERS_SEPARATOR + "' type='submit' value='-' />\n");
 											interfaceBuffer.write("    </td>\n");
-											interfaceBuffer.write("    <th align='center'>List of " +  term.getName() + "s:</th>\n");
+											interfaceBuffer.write("    <th align='center'>List of " +  termNameDisplay + "s:</th>\n");
 											interfaceBuffer.write("  </tr>\n");
-											PapillonLogger.writeDebugMsg(" list element: " + term.getName());
+											PapillonLogger.writeDebugMsg(" list element: " + termName);
 											newTypeElement = LIST_ELEMENT;
 										}
 										if (term instanceof XSElementDeclaration) {
@@ -313,11 +318,11 @@ public class GenerateTemplate {
 								else if (modelGroup.getCompositor()==XSModelGroup.COMPOSITOR_CHOICE) {
 									PapillonLogger.writeDebugMsg ("Compositor choice");
 									// choice
-									interfaceBuffer.write("  <span title=\"" +  
+									interfaceBuffer.write("  <span title='" +  
 														  UIGenerator.CHOICE_NODE_NAME + UIGenerator.PARAMETERS_SEPARATOR + elementName
-														  + "\">\n");
+														  + "'>\n");
 									interfaceBuffer.write("  Choice for " +  elementNameDisplay + ":\n");
-									interfaceBuffer.write("  <input name=\"" + elementName + "\" onclick=\"this.form.ChooseCall.value='" + elementName + UIGenerator.PARAMETERS_SEPARATOR + "\" type=\"submit\" value=\"||\" />\n");
+									interfaceBuffer.write("  <input name='" + elementName + "' onclick=\"this.form.ChooseCall.value='" + elementName + UIGenerator.PARAMETERS_SEPARATOR + "\" type='submit' value='||' />\n");
 									interfaceBuffer.write("  <br />\n</span>\n");
 									XSObjectList myList = modelGroup.getParticles();
 									for (int j=0;j<myList.getLength();j++) {
@@ -371,32 +376,32 @@ public class GenerateTemplate {
 			String typeName = simpleTypeDefinition.getName();
 			String elementNameDisplay = fr.imag.clips.papillon.business.utility.Utility.getLocalTagName(elementName);
 			PapillonLogger.writeDebugMsg("Simple type definition: " + elementName + " type: " + typeName);
-			interfaceBuffer.write("  <label for=\"" + elementName + "\" >" + elementNameDisplay + ":</label>\n");	
+			interfaceBuffer.write("  <label for='" + elementName + "' >" + elementNameDisplay + ":</label>\n");	
 			// we do not manage all the different types, we can only use a checkbox, a text box and a select
 			// for a closed list, we use a select with a list of options
 			if (simpleTypeDefinition.getIsDefinedFacet(XSSimpleTypeDefinition.FACET_ENUMERATION)) {
 				interfaceBuffer.write("    <select name=\"" + elementName + "\" >" + "\n");			
 				StringList stringList = simpleTypeDefinition.getLexicalEnumerations ();
 				for (int i=0; i < stringList.getLength (); i++) {
-					interfaceBuffer.write("      <option value=\"" + stringList.item(i) + "\">" + stringList.item(i) + "</option>\n");		
+					interfaceBuffer.write("      <option value='" + stringList.item(i) + "'>" + stringList.item(i) + "</option>\n");		
 				}
 				interfaceBuffer.write("    </select>" + "\n");	
 				interfaceBuffer.write("<br />\n");					
 			}
 			// for a boolean, we use a checkbox.
 			else if (typeName!= null && typeName.equals("boolean")) {
-				interfaceBuffer.write("    <input name=\"" + UIGenerator.BOOLEAN_ATTR_NAME + "\" type=\"hidden\" value='" + elementName + "' />\n");			
-				interfaceBuffer.write("    <input name=\"" + UIGenerator.BOOLEAN_TRUE_ATTR_NAME + "\" type=\"checkbox\" value='" + elementName + "' />\n");			
+				interfaceBuffer.write("    <input name='" + UIGenerator.BOOLEAN_ATTR_NAME + "' type='hidden' value='" + elementName + "' />\n");			
+				interfaceBuffer.write("    <input name='" + UIGenerator.BOOLEAN_TRUE_ATTR_NAME + "' type='checkbox' value='" + elementName + "' />\n");			
 				interfaceBuffer.write("<br />\n");					
 			}
 			else if (typeName!= null && typeName.equals("integer")) {
-				interfaceBuffer.write("    <input name=\"" + elementName + "\" type=\"text\" onkeyup=\"this.value=this.value.replace(/\\D/,'')\" onchange=\"this.value=this.value.replace(/\\D/g,'')\" value=\"\" />\n");			
+				interfaceBuffer.write("    <input name='" + elementName + "' type='text' onkeyup=\"this.value=this.value.replace(/\\D/,'')\" onchange=\"this.value=this.value.replace(/\\D/g,'')\" value=\"\" />\n");			
 				interfaceBuffer.write("<br />\n");			
 			}
 			// for all the other cases, we use a text box.
 			else {
 				//	if (typeName!= null && typeName.equals("string")) {
-				interfaceBuffer.write("    <input name=\"" + elementName + "\" type=\"text\" value=\"\" />" + "\n");			
+				interfaceBuffer.write("    <input name='" + elementName + "' type='text' value='' />" + "\n");			
 				interfaceBuffer.write("<br />\n");			
 				}
 			}
@@ -404,8 +409,8 @@ public class GenerateTemplate {
 	
 	protected static void addStringTypeDefinition(BufferedWriter interfaceBuffer, String elementName) 
 		throws java.io.IOException {
-			interfaceBuffer.write("  <label for=\"" + elementName + "\" >" + elementName + ":</label>\n");	
-			interfaceBuffer.write("    <input name=\"" + elementName + "\" type=\"text\" value=\"\" />" + "\n");			
+			interfaceBuffer.write("  <label for='" + elementName + "' >" + elementName + ":</label>\n");	
+			interfaceBuffer.write("    <input name='" + elementName + "' type='text' value='' />" + "\n");			
 			interfaceBuffer.write("<br />\n");			
 		}
 	
