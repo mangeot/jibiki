@@ -5,6 +5,9 @@
  *
  *  $Id$
  *  $Log$
+ *  Revision 1.9  2006/03/29 12:43:29  mangeot
+ *  *** empty log message ***
+ *
  *  Revision 1.8  2006/03/29 12:42:00  mangeot
  *  *** empty log message ***
  *
@@ -205,8 +208,8 @@ I would like to find a solution in genreal for HTML entities...
 
 <!-- namespaces for the root element -->
 <xsl:template name="print-default-namespace">
+	<br /><xsl:for-each select="ancestor::*">&nbsp;</xsl:for-each>
 	<xsl:for-each select="namespace::*">
-	   <br /><xsl:for-each select="ancestor::*">&nbsp;</xsl:for-each>
 			<xsl:if test="name()=''">
 				<span class="xmlnsprefix">xmlns</span>
 				<span class="xmlcar">="</span>
