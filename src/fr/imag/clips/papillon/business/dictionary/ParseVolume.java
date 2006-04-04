@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.34  2006/04/04 21:40:17  mangeot
+ * Fixed a bug when importing contributions on one single line. We must test CDM_Contribution befire CDM_Entry
+ *
  * Revision 1.33  2006/03/27 10:59:58  mangeot
  * Commented INDEXENTRY logs
  *
@@ -266,20 +269,21 @@ public class ParseVolume {
 			PapillonLogger.writeDebugMsg("parseEntries, logContribs: [" + logContribs + "]");
 			PapillonLogger.writeDebugMsg("parseEntries, CDM_Volume: [" + CDM_Volume + "]");
 			PapillonLogger.writeDebugMsg("parseEntries, CDM_Entry: [" + CDM_Entry + "]");
+			PapillonLogger.writeDebugMsg("parseEntries, CDM_Contribution: [" + CDM_Contribution + "]");
 			String bufferLine = "";
 			int firstEntryIndex = -1;
 			while (buffer.ready() && firstEntryIndex <0) {
 				bufferLine = buffer.readLine();
-				firstEntryIndex = bufferLine.indexOf("<" + CDM_Entry + " ");
+				firstEntryIndex = bufferLine.indexOf("<" + CDM_Contribution);
+				isContributionVolume = (firstEntryIndex >=0);
+				if (firstEntryIndex < 0) {
+					firstEntryIndex = bufferLine.indexOf("<" + CDM_Entry + " ");
+				}
 				if (firstEntryIndex < 0) {
 					firstEntryIndex = bufferLine.indexOf("<" + CDM_Entry + "\t");
 				}
 				if (firstEntryIndex < 0) {
 					firstEntryIndex = bufferLine.indexOf("<" + CDM_Entry + ">");
-				}
-				if (firstEntryIndex < 0) {
-					firstEntryIndex = bufferLine.indexOf("<" + CDM_Contribution);
-					isContributionVolume = (firstEntryIndex >=0);
 				}
 				if (firstEntryIndex >=0) {
 					if (firstEntryIndex>0) {
@@ -301,6 +305,7 @@ public class ParseVolume {
 				xmlHeaderBuffer.append(VolumeEntry.ContributionHeader);
 				xmlFooterBuffer.append(VolumeEntry.ContributionFooter);
 			}
+			PapillonLogger.writeDebugMsg("Will parse [" + CDM_Entry + "]");
 			xmlFooterBuffer.append(myVolume.getXmlFooter());
 			StringBuffer entryBuffer = new StringBuffer();
 			entryBuffer.append(xmlHeaderBuffer);
