@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.37  2006/04/05 18:48:12  mangeot
+ * bug fix
+ *
  * Revision 1.36  2006/04/05 18:23:34  mangeot
  * Bug fix
  *
@@ -385,7 +388,6 @@ public class ParseVolume {
 				if (isContributionVolume) {
 					VolumeEntry existingEntry = VolumeEntriesFactory.findEntryByContributionId(myDict, myVolume, entryId);
 					if (existingEntry != null && !existingEntry.isEmpty()) {
-						System.out.println("replaceExistingContributions: " + existingEntry.getEntryId());
 						switch (replaceExistingContributions) {
 							case ReplaceExistingContribution_Ignore:
 								break;
@@ -409,6 +411,9 @@ public class ParseVolume {
 							default:
 								break;
 					    }
+					}
+					else {
+						result = newEntry.save();
 					}
 				}
 				else {
@@ -455,6 +460,9 @@ public class ParseVolume {
 								break;
 						}
 					}
+					else {
+						result = newEntry.save();
+					}					
 				}
 			}
 			else {
