@@ -1,8 +1,11 @@
 /*
------------------------------
+ -----------------------------
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.35  2006/04/05 12:40:25  mangeot
+ * Fixed a confusion between the import of contribs versus entries
+ *
  * Revision 1.34  2006/04/04 21:40:17  mangeot
  * Fixed a bug when importing contributions on one single line. We must test CDM_Contribution befire CDM_Entry
  *
@@ -105,8 +108,14 @@ public class ParseVolume {
 	public static final int ReplaceExistingEntry_CopyIfSameStatus = 5;
 	public static final int ReplaceExistingEntry_CopyIfFinished = 6;
 	
+	public static final int ReplaceExistingContribution_Ignore = 50;
+	public static final int ReplaceExistingContribution_ReplaceAnyway = 51;
+	public static final int ReplaceExistingContribution_ReplaceIfSameStatus = 52;
+	public static final int ReplaceExistingContribution_ReplaceIfFinished = 53;
+	
+	
 	public static final int MAX_DISCARDED_ENTRIES_LOGGED = 500;
-
+	
 	// constants for Foks
 	protected static final int FOKS_TOKENS = 4;
 	protected static final String FOKS_DELIMITER = "\t";
@@ -119,7 +128,7 @@ public class ParseVolume {
 	protected static final String XMLHEADER = "<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>";
 	protected static final String XMLDECLSTART = "<?xml ";
 	protected static final int MAX_TRY = 5;
-
+	
 	
 	public static int parseFoksVolume (String url) throws PapillonBusinessException {
 		return parseFoksVolume(url, FOKS_ENCODING, FOKS_DELIMITER,FOKS_TOKENS);
@@ -163,13 +172,13 @@ public class ParseVolume {
 			return entry;
 		}
 	
-	public static String parseVolume (String volumeName, String URL, String defaultStatus, int replaceExisting, boolean logContribs)
+	public static String parseVolume (String volumeName, String URL, String defaultStatus, int replaceExistingEntries, int replaceExistingContributions, boolean logContribs)
         throws PapillonBusinessException {
 			String message = "";
 			Volume volume = VolumesFactory.findVolumeByName(volumeName);
 			Dictionary dict = DictionariesFactory.findDictionaryByName(volume.getDictname());
             if (!volume.isEmpty()) {
-                message = parseVolume(dict, volume,URL, defaultStatus, replaceExisting, logContribs);
+                message = parseVolume(dict, volume,URL, defaultStatus, replaceExistingEntries, replaceExistingContributions, logContribs);
             }
 			else {
 				message = "The volume does not exist!";
@@ -180,13 +189,13 @@ public class ParseVolume {
 	protected static String parseVolume (Dictionary myDict, Volume myVolume, String url, boolean logContribs) throws PapillonBusinessException {
 		String xmlHeader = getXMLHeader(url, myVolume.getCdmEntry());
 		String encoding = getEncoding(xmlHeader);
-		return parseEntries(myDict, myVolume, url, encoding, VolumeEntry.FINISHED_STATUS, ReplaceExistingEntry_Ignore, logContribs);
+		return parseEntries(myDict, myVolume, url, encoding, VolumeEntry.FINISHED_STATUS, ReplaceExistingEntry_Ignore, ReplaceExistingContribution_Ignore, logContribs);
 	}
 	
-	protected static String parseVolume (Dictionary myDict, Volume myVolume, String url, String defaultStatus, int replaceExisting, boolean logContribs) throws PapillonBusinessException {
+	protected static String parseVolume (Dictionary myDict, Volume myVolume, String url, String defaultStatus, int replaceExistingEntries, int replaceExistingContributions, boolean logContribs) throws PapillonBusinessException {
 		String xmlHeader = getXMLHeader(url, myVolume.getCdmEntry());
 		String encoding = getEncoding(xmlHeader);
-		return parseEntries(myDict, myVolume, url, encoding, defaultStatus, replaceExisting, logContribs);
+		return parseEntries(myDict, myVolume, url, encoding, defaultStatus, replaceExistingEntries, replaceExistingContributions, logContribs);
 	}
 	
 	protected static String getXMLHeader(String url, String CDM_entry) throws PapillonBusinessException {
@@ -248,7 +257,7 @@ public class ParseVolume {
 		return res;
 	}
 	
-	protected static String parseEntries(Dictionary myDict, Volume myVolume, String url, String encoding, String defaultStatus, int replaceExisting, boolean logContribs) throws PapillonBusinessException {
+	protected static String parseEntries(Dictionary myDict, Volume myVolume, String url, String encoding, String defaultStatus, int replaceExistingEntries, int replaceExistingContributions, boolean logContribs) throws PapillonBusinessException {
 		PapillonLogger.writeDebugMsg("parseEntries, encoding: [" + encoding + "]");
 		int countEntries = 0;
 		String message = "";
@@ -318,7 +327,7 @@ public class ParseVolume {
 						bufferLine = bufferLine.substring(entryIndex);
 					}
 					if (entryBuffer.length()>xmlHeaderBuffer.length()) {
-						if (parseEntry(myDict,myVolume,entryBuffer.append(xmlFooterBuffer), defaultStatus, replaceExisting, logContribs, DiscardedEntries)) {
+						if (parseEntry(myDict,myVolume,entryBuffer.append(xmlFooterBuffer), defaultStatus, isContributionVolume, replaceExistingEntries, replaceExistingContributions, logContribs, DiscardedEntries)) {
 							countEntries++;
 						}
 						entryBuffer = new StringBuffer();
@@ -332,14 +341,14 @@ public class ParseVolume {
 			}
 			buffer.close();
 			inStream.close();
-			if (parseEntry(myDict,myVolume,entryBuffer.append(xmlFooterBuffer), defaultStatus, replaceExisting, logContribs, DiscardedEntries)) {
+			if (parseEntry(myDict,myVolume,entryBuffer.append(xmlFooterBuffer), defaultStatus, isContributionVolume, replaceExistingEntries, replaceExistingContributions, logContribs, DiscardedEntries)) {
 				countEntries++;
 			}
 			message = "volume parsed, " + countEntries + " entries added.";
 			PapillonLogger.writeDebugMsg(message);
 			message += " Entries discarded: ";
 			for (java.util.Iterator iter = DiscardedEntries.iterator(); iter.hasNext();) {
-               message +=  (String) iter.next() + ", ";
+				message +=  (String) iter.next() + ", ";
 			} 
 		}
 		catch (java.io.FileNotFoundException exp) {
@@ -351,13 +360,13 @@ public class ParseVolume {
 		return message;
 	}
 	
-	protected static boolean parseEntry(Dictionary myDict, Volume myVolume, StringBuffer entryBuffer, String defaultStatus, int replaceExisting, boolean logContribs, java.util.Vector DiscardedEntries) throws PapillonBusinessException {
-		return parseEntry(myDict, myVolume, entryBuffer.toString(), defaultStatus, replaceExisting, logContribs, DiscardedEntries);
+	protected static boolean parseEntry(Dictionary myDict, Volume myVolume, StringBuffer entryBuffer, String defaultStatus, boolean isContributionVolume, int replaceExistingEntries, int replaceExistingContributions, boolean logContribs, java.util.Vector DiscardedEntries) throws PapillonBusinessException {
+		return parseEntry(myDict, myVolume, entryBuffer.toString(), defaultStatus, isContributionVolume, replaceExistingEntries, replaceExistingContributions, logContribs, DiscardedEntries);
 	}
 	
-	protected static boolean parseEntry(Dictionary myDict, Volume myVolume, String entryString, String defaultStatus, int replaceExisting, boolean logContribs, java.util.Vector DiscardedEntries) throws PapillonBusinessException {
+	protected static boolean parseEntry(Dictionary myDict, Volume myVolume, String entryString, String defaultStatus, boolean isContributionVolume, int replaceExistingEntries, int replaceExistingContributions, boolean logContribs, java.util.Vector DiscardedEntries) throws PapillonBusinessException {
 		boolean result=false;
-			// PapillonLogger.writeDebugMsg("Parse entry [" + entryString + "]");
+		// PapillonLogger.writeDebugMsg("Parse entry [" + entryString + "]");
 		org.w3c.dom.Document myDoc = Utility.buildDOMTree(entryString);
 		if (myDoc!=null) {
 			VolumeEntry newEntry = new VolumeEntry(myDict, myVolume);
@@ -370,53 +379,83 @@ public class ParseVolume {
 			// parseEntry(newEntry) is called by myEntry.save();
 			String entryId = newEntry.getEntryId();
 			if (entryId != null) {
-				VolumeEntry existingEntry = VolumeEntriesFactory.findEntryByEntryId(myDict, myVolume, entryId);
-				if (existingEntry != null && !existingEntry.isEmpty()) {
-					switch (replaceExisting) {
-						case ReplaceExistingEntry_Ignore:
-							break;
-						case ReplaceExistingEntry_ReplaceAnyway:
-							result = newEntry.save();
-							existingEntry.delete();
-							break;
-						case ReplaceExistingEntry_ReplaceIfSameStatus:
-							if (newEntry.getStatus().equals(existingEntry.getStatus())) {
+				if (isContributionVolume) {
+					VolumeEntry existingEntry = VolumeEntriesFactory.findEntryByContributionId(myDict, myVolume, entryId);
+					if (existingEntry != null && !existingEntry.isEmpty()) {
+						switch (replaceExistingContributions) {
+							case ReplaceExistingContribution_Ignore:
+								break;
+							case ReplaceExistingContribution_ReplaceAnyway:
 								result = newEntry.save();
 								existingEntry.delete();
-							}
-							break;
-						case ReplaceExistingEntry_ReplaceIfFinished:
-							if (existingEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS) &&
-								newEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS)) {
-								result = newEntry.save();
-								existingEntry.delete();
-							}
-							break;
-						case ReplaceExistingEntry_CopyAnyway:
-							newEntry.setEntryId();
-							result = newEntry.save();
-							break;
-						case ReplaceExistingEntry_CopyIfSameStatus:
-							if (newEntry.getStatus().equals(existingEntry.getStatus())) {
-								newEntry.setEntryId();
-								result = newEntry.save();
-							}
-							break;
-						case ReplaceExistingEntry_CopyIfFinished:
-							if (existingEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS) &&
-								newEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS)) {
-								newEntry.setEntryId();
-								result = newEntry.save();
-							}
-							break;
-						default:
-							break;
+								break;
+							case ReplaceExistingContribution_ReplaceIfSameStatus:
+								if (newEntry.getStatus().equals(existingEntry.getStatus())) {
+									result = newEntry.save();
+									existingEntry.delete();
+								}
+								break;
+							case ReplaceExistingContribution_ReplaceIfFinished:
+								if (existingEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS) &&
+									newEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS)) {
+									result = newEntry.save();
+									existingEntry.delete();
+								}
+								break;
+							default:
+								break;
+					    }
 					}
 				}
 				else {
-					result = newEntry.save();
+					VolumeEntry existingEntry = VolumeEntriesFactory.findEntryByEntryId(myDict, myVolume, entryId);
+					if (existingEntry != null && !existingEntry.isEmpty()) {
+						switch (replaceExistingContributions) {
+							case ReplaceExistingEntry_Ignore:
+								break;
+							case ReplaceExistingEntry_ReplaceAnyway:
+								result = newEntry.save();
+								existingEntry.delete();
+								break;
+							case ReplaceExistingEntry_ReplaceIfSameStatus:
+								if (newEntry.getStatus().equals(existingEntry.getStatus())) {
+									result = newEntry.save();
+									existingEntry.delete();
+								}
+								break;
+							case ReplaceExistingEntry_ReplaceIfFinished:
+								if (existingEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS) &&
+									newEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS)) {
+									result = newEntry.save();
+									existingEntry.delete();
+								}
+								break;
+							case ReplaceExistingEntry_CopyAnyway:
+								newEntry.setEntryId();
+								result = newEntry.save();
+								break;
+							case ReplaceExistingEntry_CopyIfSameStatus:
+								if (newEntry.getStatus().equals(existingEntry.getStatus())) {
+									newEntry.setEntryId();
+									result = newEntry.save();
+								}
+								break;
+							case ReplaceExistingEntry_CopyIfFinished:
+								if (existingEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS) &&
+									newEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS)) {
+									newEntry.setEntryId();
+									result = newEntry.save();
+								}
+								break;
+							default:
+								break;
+						}
+					}
 				}
 			}
+			else {
+				result = newEntry.save();
+			}			
 			if (result) {
 				if (logContribs) {
 					ContributionsFactory.createContributionLogsFromExistingEntry(newEntry);
@@ -490,7 +529,7 @@ public class ParseVolume {
 								if (value != null) { 
 									value = value.trim();
 									if (!value.equals("")) {
-											//PapillonLogger.writeDebugMsg("Parse entry, node value: " + value);
+										//PapillonLogger.writeDebugMsg("Parse entry, node value: " + value);
 										Index myIndex = IndexFactory.newIndex(myEntry.getVolume().getIndexDbname(),CdmElement,lang,value, myEntry.getHandle());
 										if (myIndex != null && !myIndex.isEmpty()) {
 											myIndex.save();
@@ -795,7 +834,7 @@ public class ParseVolume {
 			return resNodeList;
 		}
 	
-					public static org.w3c.dom.Node getCdmElement(IAnswer myEntry, String CdmElement)
+	public static org.w3c.dom.Node getCdmElement(IAnswer myEntry, String CdmElement)
 		throws PapillonBusinessException {
 			return getCdmElement(myEntry, CdmElement, Volume.DEFAULT_LANG);
 		}
