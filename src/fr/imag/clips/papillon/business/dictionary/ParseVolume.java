@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.36  2006/04/05 18:23:34  mangeot
+ * Bug fix
+ *
  * Revision 1.35  2006/04/05 12:40:25  mangeot
  * Fixed a confusion between the import of contribs versus entries
  *
@@ -378,10 +381,11 @@ public class ParseVolume {
 			newEntry.setStatusIfNotNull(defaultStatus);
 			// parseEntry(newEntry) is called by myEntry.save();
 			String entryId = newEntry.getEntryId();
-			if (entryId != null) {
+			if (entryId != null && !entryId.equals("")) {
 				if (isContributionVolume) {
 					VolumeEntry existingEntry = VolumeEntriesFactory.findEntryByContributionId(myDict, myVolume, entryId);
 					if (existingEntry != null && !existingEntry.isEmpty()) {
+						System.out.println("replaceExistingContributions: " + existingEntry.getEntryId());
 						switch (replaceExistingContributions) {
 							case ReplaceExistingContribution_Ignore:
 								break;
@@ -410,7 +414,7 @@ public class ParseVolume {
 				else {
 					VolumeEntry existingEntry = VolumeEntriesFactory.findEntryByEntryId(myDict, myVolume, entryId);
 					if (existingEntry != null && !existingEntry.isEmpty()) {
-						switch (replaceExistingContributions) {
+						switch (replaceExistingEntries) {
 							case ReplaceExistingEntry_Ignore:
 								break;
 							case ReplaceExistingEntry_ReplaceAnyway:
