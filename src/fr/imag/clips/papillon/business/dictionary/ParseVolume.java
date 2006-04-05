@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.38  2006/04/05 20:14:20  mangeot
+ * bug fix
+ *
  * Revision 1.37  2006/04/05 18:48:12  mangeot
  * bug fix
  *
@@ -372,7 +375,7 @@ public class ParseVolume {
 	
 	protected static boolean parseEntry(Dictionary myDict, Volume myVolume, String entryString, String defaultStatus, boolean isContributionVolume, int replaceExistingEntries, int replaceExistingContributions, boolean logContribs, java.util.Vector DiscardedEntries) throws PapillonBusinessException {
 		boolean result=false;
-		// PapillonLogger.writeDebugMsg("Parse entry [" + entryString + "]");
+		//PapillonLogger.writeDebugMsg("Parse entry [" + entryString + "]");
 		org.w3c.dom.Document myDoc = Utility.buildDOMTree(entryString);
 		if (myDoc!=null) {
 			VolumeEntry newEntry = new VolumeEntry(myDict, myVolume);
@@ -383,9 +386,10 @@ public class ParseVolume {
 			newEntry.setHeadword();
 			newEntry.setStatusIfNotNull(defaultStatus);
 			// parseEntry(newEntry) is called by myEntry.save();
-			String entryId = newEntry.getEntryId();
-			if (entryId != null && !entryId.equals("")) {
-				if (isContributionVolume) {
+			String entryId = "";
+			if (isContributionVolume) {
+				entryId = newEntry.getContributionId();
+				if (entryId != null && !entryId.equals("")) {
 					VolumeEntry existingEntry = VolumeEntriesFactory.findEntryByContributionId(myDict, myVolume, entryId);
 					if (existingEntry != null && !existingEntry.isEmpty()) {
 						switch (replaceExistingContributions) {
@@ -410,13 +414,19 @@ public class ParseVolume {
 								break;
 							default:
 								break;
-					    }
+						}
 					}
 					else {
 						result = newEntry.save();
-					}
+					}					
 				}
 				else {
+					result = newEntry.save();
+				}
+			}
+			else {
+				entryId = newEntry.getEntryId();
+				if (entryId != null && !entryId.equals("")) {
 					VolumeEntry existingEntry = VolumeEntriesFactory.findEntryByEntryId(myDict, myVolume, entryId);
 					if (existingEntry != null && !existingEntry.isEmpty()) {
 						switch (replaceExistingEntries) {
@@ -462,12 +472,12 @@ public class ParseVolume {
 					}
 					else {
 						result = newEntry.save();
-					}					
+					}										
 				}
+				else {
+					result = newEntry.save();
+				}					
 			}
-			else {
-				result = newEntry.save();
-			}			
 			if (result) {
 				if (logContribs) {
 					ContributionsFactory.createContributionLogsFromExistingEntry(newEntry);
@@ -487,9 +497,9 @@ public class ParseVolume {
 		return result;
 	}
 	
-    
-    // FIXME: should not be called parseEntry, but rather indexEntry...
-    // FIXME: should be defined here ?
+	
+	// FIXME: should not be called parseEntry, but rather indexEntry...
+	// FIXME: should be defined here ?
 	public static boolean parseEntry(VolumeEntry myEntry) throws PapillonBusinessException {
 		org.w3c.dom.Document entryDoc = myEntry.getDom();
 		boolean result=false;
@@ -560,43 +570,43 @@ public class ParseVolume {
 		return result;
 	}
 	
-    // FIXME: should not be called parseEntry, but rather indexEntry...
-    // FIXME: should be defined here ?
+	// FIXME: should not be called parseEntry, but rather indexEntry...
+	// FIXME: should be defined here ?
 	public static boolean indexEntry(VolumeEntry myEntry) throws PapillonBusinessException {
 		
-        //PapillonLogger.writeDebugMsg("INDEXENTRY");
-        
-        org.w3c.dom.Document entryDoc = myEntry.getDom();
+		//PapillonLogger.writeDebugMsg("INDEXENTRY");
+		
+		org.w3c.dom.Document entryDoc = myEntry.getDom();
 		boolean result=false;
-        
-        //
+		
+		//
 		if (entryDoc!=null) {
 			org.w3c.dom.Element myRootElt = entryDoc.getDocumentElement();
 			org.apache.xml.utils.PrefixResolver myPrefixResolver = new org.apache.xml.utils.PrefixResolverDefault(myRootElt);
 			java.util.Hashtable CdmElementsTable = myEntry.getVolume().getCdmElements();
 			result = true;
 			
-            //
-            for (java.util.Enumeration langKeys = CdmElementsTable.keys(); langKeys.hasMoreElements();) {
+			//
+			for (java.util.Enumeration langKeys = CdmElementsTable.keys(); langKeys.hasMoreElements();) {
 				String lang = (String) langKeys.nextElement();
-                
-                //PapillonLogger.writeDebugMsg("INDEXENTRY, langKeys : " + lang);
-                
+				
+				//PapillonLogger.writeDebugMsg("INDEXENTRY, langKeys : " + lang);
+				
 				java.util.Hashtable tmpTable =  (java.util.Hashtable) CdmElementsTable.get(lang);
 				for (java.util.Enumeration keys = tmpTable.keys(); keys.hasMoreElements();) {
 					String CdmElement = (String) keys.nextElement();
 					
-                    //PapillonLogger.writeDebugMsg("INDEXENTRY, key " + CdmElement);
+					//PapillonLogger.writeDebugMsg("INDEXENTRY, key " + CdmElement);
 					
-                    java.util.Vector myVector = (java.util.Vector) tmpTable.get(CdmElement);
+					java.util.Vector myVector = (java.util.Vector) tmpTable.get(CdmElement);
 					org.apache.xpath.XPath myXPath = null;
 					boolean isIndex = false;
-                    
+					
 					if (myVector != null) {
 						
-                        //PapillonLogger.writeDebugMsg("INDEXENTRY, myVector.size: " + myVector.size());
+						//PapillonLogger.writeDebugMsg("INDEXENTRY, myVector.size: " + myVector.size());
 						
-                        if (myVector.size()==3) {
+						if (myVector.size()==3) {
 							isIndex = ((Boolean) myVector.elementAt(1)).booleanValue();
 							if (isIndex) {
 								myXPath =  (org.apache.xpath.XPath) myVector.elementAt(2);
@@ -626,9 +636,9 @@ public class ParseVolume {
 								String value = myNode.getNodeValue();
 								if (value != null) {
 									
-                                    //PapillonLogger.writeDebugMsg("INDEXENTRY, node value: " + value);
+									//PapillonLogger.writeDebugMsg("INDEXENTRY, node value: " + value);
 									
-                                    Index myIndex = IndexFactory.newIndex(myEntry.getVolume().getIndexDbname(),CdmElement,lang,value, myEntry.getHandle());
+									Index myIndex = IndexFactory.newIndex(myEntry.getVolume().getIndexDbname(),CdmElement,lang,value, myEntry.getHandle());
 									myIndex.save();
 								}
 							}
@@ -639,7 +649,7 @@ public class ParseVolume {
 		}
 		return result;
 	}
-    
+	
 	public static boolean parseAxie(Axie myEntry) throws PapillonBusinessException {
 		org.w3c.dom.Document entryDoc = myEntry.getDom();
 		boolean result=false;
@@ -747,8 +757,8 @@ public class ParseVolume {
 		}
 		return myXPath;
 	}
-    
-    public static org.apache.xpath.XPath compileXPath(String xpathString, org.apache.xml.utils.PrefixResolver aPrefixResolver)  throws PapillonBusinessException {
+	
+	public static org.apache.xpath.XPath compileXPath(String xpathString, org.apache.xml.utils.PrefixResolver aPrefixResolver)  throws PapillonBusinessException {
 		javax.xml.transform.SourceLocator mySourceLocator = new org.apache.xml.utils.SAXSourceLocator();
 		org.apache.xpath.XPath myXPath = null;
 		try	{
@@ -786,16 +796,16 @@ public class ParseVolume {
 		return result;
 	}
 	
-    /**
+	/**
 		* Gets a CDM element of the VolumeEntry
-     *
-     * @param the name of the CDM element as a String.
-     * @param the language of the CDM element as a ISO 639-2/T 3 letters String.
-     * @return the CDM volume as a String.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
+	 *
+	 * @param the name of the CDM element as a String.
+	 * @param the language of the CDM element as a ISO 639-2/T 3 letters String.
+	 * @return the CDM volume as a String.
+	 * @exception PapillonBusinessException if an error occurs
+	 *   retrieving data (usually due to an underlying data layer
 						  *   error).
-     */
+	 */
 	public static org.w3c.dom.NodeList getCdmElements(IAnswer myEntry, String CdmElement) 
 		throws PapillonBusinessException {
 			return getCdmElements(myEntry, CdmElement, Volume.DEFAULT_LANG);
