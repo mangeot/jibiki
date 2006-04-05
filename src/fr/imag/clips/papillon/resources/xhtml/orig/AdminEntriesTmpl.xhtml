@@ -18,37 +18,48 @@
 <tr>
      <!-- Warning, make sure the option element contains a Text and only a Text (no other child) -->
 	<td><b>Volume:</b></td>
-        <td>
+        <td colspan="2">
             <select name="VOLUME">
             <option id="VolumeOptionTemplate" value="NONE" label="NONE">NONE</option>
         </select></td>
 </tr>
 <tr>	
 	<td><b>Url:&nbsp;</b></td>
-	<td><input name="URL" type="text" size="64" value=""/></td>
+	<td colspan="4"><input name="URL" type="text" size="64" value=""/></td>
 </tr>
 <tr>	
-	<td><b>Default status:&nbsp;</b></td>
+	<td><b>When importing contributions:</b></td>
+	<td>Replace existing</td>
 	<td>
-		<select name="DefaultStatus" id="DefaultStatus">
-            <option value="not finished" label="not finished">not finished</option>
-            <option value="finished" label="finished">finished</option>
-            <option value="revised" label="revised">revised</option>
-            <option value="validated" label="validated">validated</option>
+		<select name="ReplaceExistingContributions" id="ReplaceExistingContributions">
+            <option value="0" label="Do not import">Do not import</option>
+            <option value="1" label="Replace anyway">Replace anyway</option>
+            <option value="2" label="Replace if same status">Replace if same status</option>
+            <option value="3" label="Replace if finished">Replace if finished</option>
 		</select>
 	</td>
 </tr>
 <tr>	
-	<td><b>Replace existing entries:&nbsp;</b></td>
+	<td><b>When importing entries:</b></td>
+	<td>Replace existing</td>
 	<td>
-		<select name="ReplaceExisting" id="ReplaceExisting">
-            <option value="0" label="Ignore">Ignore</option>
+		<select name="ReplaceExistingEntries" id="ReplaceExistingEntries">
+            <option value="0" label="Do not import">Do not import</option>
             <option value="1" label="Replace anyway">Replace anyway</option>
             <option value="2" label="Replace if same status">Replace if same status</option>
             <option value="3" label="Replace if finished">Replace if finished</option>
             <option value="4" label="Copy anyway">Copy anyway</option>
             <option value="5" label="Copy if same satus">Copy if same satus</option>
             <option value="6" label="Copy if finished">Copy if finished</option>
+		</select>
+	</td>
+	<td>Default status</td>
+	<td>
+		<select name="DefaultStatus" id="DefaultStatus">
+            <option value="not finished" label="not finished">not finished</option>
+            <option value="finished" label="finished">finished</option>
+            <option value="revised" label="revised">revised</option>
+            <option value="validated" label="validated">validated</option>
 		</select>
 	</td>
 </tr>
