@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.12  2006/04/05 12:38:21  mangeot
+ * Fixed a confusion when importing entries versus contributions
+ *
  * Revision 1.11  2006/02/26 14:04:56  mangeot
  * Corrected a bug: the content was a static variable, thus there were problems when two users wanted to aces the same page at the same time
  *
@@ -167,10 +170,17 @@ public class AdminEntries extends PapillonBasePO {
         String submitAdd = myGetParameter(content.NAME_ADD);
         String logContributions = myGetParameter(content.NAME_LogContributions);
         String defaultStatus = myGetParameter(content.NAME_DefaultStatus);
-        String replaceExistingString = myGetParameter(content.NAME_ReplaceExisting);
-		int replaceExisting = ParseVolume.ReplaceExistingEntry_Ignore;
-		if (null != replaceExistingString && !replaceExistingString.equals("")) {
-			replaceExisting = Integer.parseInt(replaceExistingString);
+		
+        String replaceExistingContributionsString = myGetParameter(content.NAME_ReplaceExistingContributions);
+		int replaceExistingContributions = ParseVolume.ReplaceExistingContribution_Ignore;
+		if (null != replaceExistingContributionsString && !replaceExistingContributionsString.equals("")) {
+			replaceExistingContributions = Integer.parseInt(replaceExistingContributionsString);
+		}
+		
+        String replaceExistingEntriesString = myGetParameter(content.NAME_ReplaceExistingEntries);
+		int replaceExistingEntries = ParseVolume.ReplaceExistingEntry_Ignore;
+		if (null != replaceExistingEntriesString && !replaceExistingEntriesString.equals("")) {
+			replaceExistingEntries = Integer.parseInt(replaceExistingEntriesString);
 		}
 		
 		
@@ -179,7 +189,7 @@ public class AdminEntries extends PapillonBasePO {
         if (volumeString!=null && !volumeString.equals("") &&
 			urlString!=null && !urlString.equals("") &&
 			submitAdd!=null && !submitAdd.equals("")) {
-            String userMessage = handleVolumeAddition(volumeString, urlString, defaultStatus, replaceExisting, logContribs);
+            String userMessage = handleVolumeAddition(volumeString, urlString, defaultStatus, replaceExistingEntries, replaceExistingContributions, logContribs);
 			if (userMessage != null) {
 				this.getSessionData().writeUserMessage(userMessage);
 				PapillonLogger.writeDebugMsg(userMessage);
@@ -190,7 +200,7 @@ public class AdminEntries extends PapillonBasePO {
         return content.getElementFormulaire();
     }
 	
-	protected String handleVolumeAddition(String volumeString, String urlString, String defaultStatus, int replaceExisting, boolean logContribs) 
+	protected String handleVolumeAddition(String volumeString, String urlString, String defaultStatus, int replaceExistingEntries, int replaceExistingContributions, boolean logContribs) 
 		throws fr.imag.clips.papillon.business.PapillonBusinessException, 
 			HttpPresentationException {
         String userMessage;
@@ -200,7 +210,7 @@ public class AdminEntries extends PapillonBasePO {
         try {
 			java.net.URL myURL = new java.net.URL(urlString);
 			PapillonLogger.writeDebugMsg(myURL.toString());
-			String message = ParseVolume.parseVolume(volumeString, myURL.toString(), defaultStatus, replaceExisting, logContribs);
+			String message = ParseVolume.parseVolume(volumeString, myURL.toString(), defaultStatus, replaceExistingEntries, replaceExistingContributions, logContribs);
 			userMessage = "Volume: " + volumeString + " / URL: " + myURL + " downloaded...";
 			userMessage += message;
            // everything was correct, commit the transaction...
