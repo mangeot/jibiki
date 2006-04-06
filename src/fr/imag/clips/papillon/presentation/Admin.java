@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.10  2006/04/06 11:44:21  mangeot
+ * Fixed a pb after the merge: EditData handle was broken
+ *
  * Revision 1.9  2006/03/01 15:12:31  mangeot
  * Merge between maintrunk and LEXALP_1_1 branch
  *
@@ -172,6 +175,11 @@ public class Admin extends PapillonBasePO {
 				cacheSet = (setCacheString!=null && !setCacheString.equals(""));
 				fr.imag.clips.papillon.business.dictionary.VolumeEntry.setCacheHtmlDom(cacheSet);
                 this.getSessionData().writeUserMessage("HTML DOM cache is set? " + cacheSet);
+            }
+			else if (null != req.getParameter(content.NAME_SetEditData)) {
+				String setEditDataString = myGetParameter(content.NAME_EditData);
+				EDIT_DATA = (setEditDataString!=null && !setEditDataString.equals(""));
+                this.getSessionData().writeUserMessage("EditData is set? " + EDIT_DATA);
             }
 			else if (null != req.getParameter(content.NAME_ReConstructionIndex)) {
 				fr.imag.clips.papillon.business.dictionary.VolumesFactory.reConstructionIndex();
