@@ -9,6 +9,10 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.2  2006/04/06 15:06:39  fbrunet
+ *  New class 'creationEditInit' : create new entry
+ *  Modify LexALPEditEntry : only edit entry
+ *
  *  Revision 1.1  2005/05/24 12:51:22  serasset
  *  Updated many aspect of the Papillon project to handle lexalp project.
  *  1. Layout is now parametrable in the application configuration file.
@@ -58,10 +62,10 @@ public class StandardLayoutFactory {
 
     public static StdLayout createStandardLayout(HttpPresentationComms comms, PapillonSessionData sessionData, String url) 
     throws HttpPresentationException {
-        return createStandardLayout(comms, sessionData, url, "");
+        return createStandardLayout(comms, sessionData, url, null);
     }    
     
-    public static StdLayout createStandardLayout(HttpPresentationComms comms, PapillonSessionData sessionData, String url, String script) 
+    public static StdLayout createStandardLayout(HttpPresentationComms comms, PapillonSessionData sessionData, String url, XHTMLScriptElement script) 
     throws HttpPresentationException {
         try {
             String layoutClassName = ((Papillon)Enhydra.getApplication()).getLayoutClassName();

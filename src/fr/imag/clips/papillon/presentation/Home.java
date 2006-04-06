@@ -10,6 +10,10 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.17  2006/04/06 15:06:39  fbrunet
+ *  New class 'creationEditInit' : create new entry
+ *  Modify LexALPEditEntry : only edit entry
+ *
  *  Revision 1.16  2006/03/06 10:06:23  mangeot
  *  Horrible hack sur Home.java pour pouvoir utiliser tout de suite cette version sur le GDEF.
  *  Another thing: the fuzzy search takes a lot of time, so I launch it only if the normal search returns no result.
@@ -435,8 +439,8 @@ public class Home extends PapillonBasePO {
         if (targetLanguage == null || targetLanguage.equals("")) {
             targetLanguages = null;
         } else if (targetLanguage.equals(ALL_TARGETS)) {
-            //targetLanguages = AvailableLanguages.getTargetLanguagesArray();
-            targetLanguages = null;
+            targetLanguages = AvailableLanguages.getTargetLanguagesArray();
+            //targetLanguages = null;
         } else {
             targetLanguages = new String[]{targetLanguage};
         }

@@ -9,6 +9,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2006/04/06 15:06:39  fbrunet
+ * New class 'creationEditInit' : create new entry
+ * Modify LexALPEditEntry : only edit entry
+ *
  * Revision 1.2  2006/03/01 15:12:31  mangeot
  * Merge between maintrunk and LEXALP_1_1 branch
  *
@@ -126,7 +130,7 @@ public class AdvancedSearch extends PapillonBasePO {
         
         //
         AdvancedSearchXHTML doc = (AdvancedSearchXHTML) MultilingualXHtmlTemplateFactory.createTemplate("AdvancedSearchXHTML", this.myComms, this.sessionData);
-        AdvancedQueryForm qf = new AdvancedQueryForm(this.getComms(), this.getSessionData());
+        AdvancedQueryForm qf = new AdvancedQueryForm(this.getComms(), this.getSessionData(), true);
 
         //
         QueryRequest queryReq = qf.getQueryRequest();

@@ -9,6 +9,10 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.5  2006/04/06 15:06:39  fbrunet
+ *  New class 'creationEditInit' : create new entry
+ *  Modify LexALPEditEntry : only edit entry
+ *
  *  Revision 1.4  2006/03/01 15:12:31  mangeot
  *  Merge between maintrunk and LEXALP_1_1 branch
  *
@@ -117,7 +121,7 @@ public class PapillonLayout implements StdLayout {
      * @exception  UnsupportedEncodingException
      *      Description of the Exception
      */
-    public void initLayout(HttpPresentationComms comms, PapillonSessionData sessionData, String url, String script)
+    public void initLayout(HttpPresentationComms comms, PapillonSessionData sessionData, String url, XHTMLScriptElement script)
         throws com.lutris.appserver.server.httpPresentation.HttpPresentationException, UnsupportedEncodingException {
             
             // Création du document
@@ -125,6 +129,7 @@ public class PapillonLayout implements StdLayout {
             HeaderXHTML header = (HeaderXHTML) MultilingualXHtmlTemplateFactory.createTemplate("HeaderXHTML", comms, sessionData);
             Node menuBar = header.getElementMenuBar();
             
+            /*
             // adding a script if needed
             XHTMLScriptElement scriptElement = (XHTMLScriptElement) layout.getElementScript();
             if (null != script && !script.equals("")) {
@@ -134,6 +139,15 @@ public class PapillonLayout implements StdLayout {
 				}
 				Comment scriptContent = scriptElement.getOwnerDocument().createComment(script);
                 scriptElement.appendChild(scriptContent);
+            }
+            scriptElement.removeAttribute("id");
+            */
+            // adding a new script if needed
+            XHTMLScriptElement scriptElement = (XHTMLScriptElement) layout.getElementScript();
+            if (null != script) {
+                Node scriptParent = scriptElement.getParentNode();
+                scriptParent.removeChild(scriptElement);
+                scriptParent.appendChild(layout.importNode(script, true));
             }
             scriptElement.removeAttribute("id");
             

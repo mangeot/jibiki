@@ -9,6 +9,10 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.7  2006/04/06 15:06:39  fbrunet
+ *  New class 'creationEditInit' : create new entry
+ *  Modify LexALPEditEntry : only edit entry
+ *
  *  Revision 1.6  2006/02/26 14:04:56  mangeot
  *  Corrected a bug: the content was a static variable, thus there were problems when two users wanted to aces the same page at the same time
  *
@@ -268,7 +272,9 @@ public class ViewDictionaries extends PapillonBasePO {
                 content.setTextTargets(VolsTable[j].getTargetLanguages());
                 content.setTextDomain("");
                 content.setTextLegal("");
-                content.setTextEntries("" + VolsTable[j].getCount(VolumeEntry.VALIDATED_STATUS));
+                // FIXME: Finished entry but not-finished entry ?
+                int nb = VolsTable[j].getCount(VolumeEntry.FINISHED_STATUS) + VolsTable[j].getCount(VolumeEntry.NOT_FINISHED_STATUS);
+                content.setTextEntries("" + nb);
 
                 theSeeAnchor.setHref(this.getUrl() + "?"
                          + SEE_VOLUME_PARAMETER + "="

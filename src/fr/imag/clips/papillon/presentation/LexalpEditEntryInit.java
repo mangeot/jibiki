@@ -10,6 +10,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2006/04/06 15:06:39  fbrunet
+ * New class 'creationEditInit' : create new entry
+ * Modify LexALPEditEntry : only edit entry
+ *
  * Revision 1.3  2006/03/13 08:48:00  fbrunet
  * bug corrections before merge
  *
@@ -84,12 +88,25 @@ import fr.imag.clips.papillon.presentation.xhtmllexalp.orig.*;
 //local imports
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.PapillonLogger;
-import fr.imag.clips.papillon.business.dictionary.*;
+import fr.imag.clips.papillon.business.dictionary.Dictionary;
+import fr.imag.clips.papillon.business.dictionary.DictionariesFactory;
+import fr.imag.clips.papillon.business.dictionary.Volume;
+import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
+import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
+import fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory;
+import fr.imag.clips.papillon.business.dictionary.QueryResult;
+import fr.imag.clips.papillon.business.dictionary.QueryRequest;
+import fr.imag.clips.papillon.business.dictionary.QueryCriteria;
+import fr.imag.clips.papillon.business.dictionary.QueryParameter;
+import fr.imag.clips.papillon.business.dictionary.IQuery;
+import fr.imag.clips.papillon.business.dictionary.PapillonPivotFactory;
 import fr.imag.clips.papillon.business.user.User;
+import fr.imag.clips.papillon.business.user.Group;
 import fr.imag.clips.papillon.business.utility.Utility;
 import fr.imag.clips.papillon.business.xsl.XslSheet;
 import fr.imag.clips.papillon.business.xsl.XslSheetFactory;
-import fr.imag.clips.papillon.business.transformation.*;
+import fr.imag.clips.papillon.business.transformation.ResultFormatter;
+import fr.imag.clips.papillon.business.transformation.ResultFormatterFactory;
 
 
 
@@ -97,7 +114,7 @@ public class LexalpEditEntryInit extends PapillonBasePO {
     
     protected final static String HANDLE_PARAMETER = "handle";
     protected final static String ACTION_PARAMETER = "action";
-
+	
     protected final static String ContributionsURL = "AdminContributions.po";
     protected final static String ContributionsVolumeParameter = "VOLUME";
     
@@ -108,12 +125,6 @@ public class LexalpEditEntryInit extends PapillonBasePO {
     protected final static String EditEntryURL = "EditEntry.po";
     protected final static String EditingErrorURL = "EditingError.po";
     
-    /*
-    protected final static int STEP_INIT = 1;
-    protected final static int STEP_LOOKUP_EDIT = 2;
-    protected final static int STEP_CREATE = 3;
-    protected final static int STEP_EDIT = 4;
-    */
     protected LexalpEditEntryInitXHTML content;
     
     protected boolean loggedInUserRequired() {
@@ -137,50 +148,18 @@ public class LexalpEditEntryInit extends PapillonBasePO {
             // Content creation
             content = (LexalpEditEntryInitXHTML)MultilingualXHtmlTemplateFactory.createTemplate("fr.imag.clips.papillon.presentation.xhtmllexalp", "LexalpEditEntryInitXHTML", this.getComms(), this.getSessionData());
             // On regarde d'abord les parametres qui nous sont demandes.
-            String submitCreate = myGetParameter(content.NAME_CreateAnyway);		
             String volume = myGetParameter(content.NAME_VOLUME);
             String headword = myGetParameter(content.NAME_Headword);
             String entryHandle = myGetParameter(HANDLE_PARAMETER);
             String action = myGetParameter(ACTION_PARAMETER);		
-
-            //
-            //System.out.println("Action " + action);
-            //System.out.println("submitCreate " + submitCreate);
-            //System.out.println("headword " + headword);
             
-            // ??
+            //
             if (volume!=null &&!volume.equals("")) {
                 this.setPreference(content.NAME_VOLUME,volume);
             } else {
                 volume = this.getPreference(content.NAME_VOLUME);
             }
-            
-            // CREATE NEW ENTRY
-            if (submitCreate!=null && !submitCreate.equals("")) {
-                if (volume!=null && !volume.equals("") 
-                    && headword!=null && !headword.equals("")) {
 
-                    //
-                    VolumeEntry myEntry = VolumeEntriesFactory.createEmptyEntry(volume);
-                    myEntry.setCreationDate();
-                    myEntry.setHeadword(headword);
-                    myEntry.setAuthor(this.getUser().getLogin());
-                    myEntry.setModification(this.getUser().getLogin(), "Create entry");
-                    myEntry.setGroups(this.getUser().getGroupsArray());
-                    myEntry.setStatus(VolumeEntry.NOT_FINISHED_STATUS);
-                    myEntry.save();
-                    String headwordParam = myUrlEncode(headword);
-                    
-                    //
-                    throw new ClientPageRedirectException(EditEntryURL + "?" + 
-                                                          EditEntry.VolumeName_PARAMETER + "=" + volume + 
-                                                          "&" + EditEntry.EntryHandle_PARAMETER + "=" + myEntry.getHandle());
-                } else {
-                    
-                    // Error message
-                    this.getSessionData().writeUserMessage("Volumes and Headwords are mandatory for creation");
-                }
-            }
             
             //
             if (action!=null && !action.equals("")) {
@@ -189,119 +168,44 @@ public class LexalpEditEntryInit extends PapillonBasePO {
                 VolumeEntry myEntry = VolumeEntriesFactory.findEntryByEntryId(this.getUser(), volume, entryHandle);
                 //VolumeEntry myEntry = VolumeEntriesFactory.findEntryByHandle(volume, entryHandle);
                 
-                
-                // EDIT
-                if (action.equals("edit")) {
-                    
-                    // Edit contribution finished
-                    if ( myEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS) ) {
-                        
-                        // Create new contribution with NOT_FINISHED_STATUS
-                        VolumeEntry newEntry = VolumeEntriesFactory.newEntryFromExisting(myEntry);
-                        newEntry.setClassifiedFinishedContribution(myEntry);
-                        newEntry.setModification(this.getUser().getLogin(), "create not-finished");
-                        newEntry.setStatus(VolumeEntry.NOT_FINISHED_STATUS);
-                        newEntry.save();
-                        
-                        // Old entry modification
-                        myEntry.setStatus(VolumeEntry.MODIFIED_STATUS);
-                        myEntry.setNextContributionAuthor(this.getUser().getLogin());
-                        myEntry.save();
+                // CREATE NEW ENTRY
+                if (action.equals("createAnyway")) {
+                    if (volume!=null && !volume.equals("") 
+                        && headword!=null && !headword.equals("")) {
                         
                         //
-                        throw new ClientPageRedirectException(EditEntryURL + "?" + 
-                                                              EditEntry.VolumeName_PARAMETER + "=" + newEntry.getVolumeName() + 
-                                                              "&" + EditEntry.EntryHandle_PARAMETER + "=" + newEntry.getHandle());
+                        EditEntryInitFactory.createEntry(volume, headword, this.getUser());
                         
-                    // Edit contribtion not-finished
-                    } else if ( myEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS) 
-                                && myEntry.getModificationAuthor().equals(this.getUser().getLogin()) ) {
+                    } else {
                         
-                        // Nothing to do
-                        throw new ClientPageRedirectException(EditEntryURL + "?" + 
-                                                              EditEntry.VolumeName_PARAMETER + "=" + myEntry.getVolumeName() + 
-                                                              "&" + EditEntry.EntryHandle_PARAMETER + "=" + myEntry.getHandle());
-                        
-                    }  else {
-                        
-                        // Error page
-                        throw new ClientPageRedirectException(EditingErrorURL);
+                        // Error message
+                        this.getSessionData().writeUserMessage("Volumes and Headwords are mandatory for creation");
                     }
+                
+                // EDIT
+                } else if (action.equals("edit")) {
                     
+                    //
+                     EditEntryInitFactory.editEntry(myEntry, this.getUser());
                 
                 // DUPLICATE
                 } else if (action.equals("duplicate")) {
                     
-                    //
-                    if ( myEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS) ) {
-                        
-                        //
-                        VolumeEntry newEntry = VolumeEntriesFactory.newEntryFromExisting(myEntry);
-                        newEntry.setEntryId();
-                        newEntry.setAuthor(this.getUser().getLogin());
-                        newEntry.setGroups(this.getUser().getGroupsArray());
-                        newEntry.setContributionId();
-                        newEntry.setOriginalContributionId(myEntry.getContributionId());
-                        newEntry.setStatus(VolumeEntry.NOT_FINISHED_STATUS);
-                        newEntry.setModification(this.getUser().getLogin(), "duplicate");
-                        newEntry.setClassifiedFinishedContribution();
-                        newEntry.setClassifiedNotFinishedContribution();
-                        newEntry.setNextContributionAuthor("");
-                        newEntry.save();
-                        
-                        //
-                        throw new ClientPageRedirectException(EditEntryURL + "?" + 
-                                                              EditEntry.VolumeName_PARAMETER + "=" + newEntry.getVolumeName() + 
-                                                              "&" + EditEntry.EntryHandle_PARAMETER + "=" + newEntry.getHandle());
-                    }  else {
-                        
-                        // Error page
-                        throw new ClientPageRedirectException(EditingErrorURL);
-                    }
-                    
+                   //
+                   EditEntryInitFactory.duplicateEntry(myEntry, this.getUser());                    
                     
                 // DELETE
                 } else if (action.equals("delete")) {
                    
                     //
-                    if ( myEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS) ) {
-                        
-                        //
-                        VolumeEntry newEntry = VolumeEntriesFactory.newEntryFromExisting(myEntry);
-                        newEntry.setClassifiedFinishedContribution(myEntry);
-                        newEntry.setModification(this.getUser().getLogin(), VolumeEntry.DELETED_STATUS);
-                        newEntry.setStatus(VolumeEntry.DELETED_STATUS);
-                        myEntry.setStatus(VolumeEntry.CLASSIFIED_FINISHED_STATUS);
-                        myEntry.save();
-                        newEntry.save();
-                        
-                    }  else {
-                        
-                        // Error message
-                        this.getSessionData().writeUserMessage("Error deleting " + myEntry.getId());
-                    }
+                    EditEntryInitFactory.deleteEntry(myEntry, this.getUser()); 
                     
                 
                 // UNDELETE
                 } else if (action.equals("undelete")) {
                    
                     //
-                    if ( myEntry.getStatus().equals(VolumeEntry.DELETED_STATUS) ) {
-                        
-                        //
-                        VolumeEntry newEntry = VolumeEntriesFactory.newEntryFromExisting(myEntry);
-                        newEntry.setClassifiedFinishedContribution(myEntry);
-                        newEntry.setModification(this.getUser().getLogin(), "undeleted");
-                        newEntry.setStatus(VolumeEntry.FINISHED_STATUS);
-                        myEntry.setStatus(VolumeEntry.CLASSIFIED_FINISHED_STATUS);
-                        myEntry.save();
-                        newEntry.save();
-                        
-                    }  else {
-                        
-                        // Error message
-                        this.getSessionData().writeUserMessage("Error undeleting " + myEntry.getId());
-                    }
+                    EditEntryInitFactory.undeleteEntry(myEntry, this.getUser());
                 }      
             }
             
@@ -313,7 +217,7 @@ public class LexalpEditEntryInit extends PapillonBasePO {
             }
             
             // Do query !
-            AdvancedQueryForm qf = new AdvancedQueryForm(this.getComms(), this.getSessionData());
+            AdvancedQueryForm qf = new AdvancedQueryForm(this.getComms(), this.getSessionData(), false);
             
             /*
             //
@@ -447,7 +351,7 @@ public class LexalpEditEntryInit extends PapillonBasePO {
                 //
                 XHTMLElement formHolder = content.getElementQueryForm();
                 formHolder.appendChild(content.importNode(qf.getQueryFormNode("LexalpEditEntryInit.po"), true));
-           
+                
                 //
                 return content.getElementEditEntryInitContent();
         }
@@ -728,44 +632,52 @@ public class LexalpEditEntryInit extends PapillonBasePO {
                //     ViewHistoryEntryAnchor.setAttribute("style","display: none;");
                //}
                 
-                // The view XML anchor
-                // FIXME : create new page.po like history
-                QueryParameter qpxml = new QueryParameter();
-                qpxml.setXsl("XML");
-                String[] dictNames = new String[1];
-                dictNames[0] = myEntry.getDictionaryName();
-                qpxml.setDictionaryNames(dictNames);
-                Vector crit = new Vector();
-                String[] idc = new String[4];
-                idc[0] = Volume.CDM_contributionId;
-                idc[1] = null;
-                //if (myEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS)
-                //    && myEntry.getModificationAuthor().equals(this.getUser().getLogin())) {
-                //        idc[2] = myEntry.getClassifiedFinishedContributionId(); 
-                //} else {
-                        idc[2] = myEntry.getContributionId(); 
-                //}
-                //idc[3] = QueryBuilder.EQUAL;
-                idc[3] = QueryCriteria.EQUAL;
-                crit.add(idc);
-                /*
-                 String[] idc = new String[4];
-                 idc[0] = Volume.CDM_entryId;
-                 idc[1] = null;
-                 idc[2] = myEntry.getEntryId();
-                 //idc[3] = QueryBuilder.EQUAL;
-                 idc[3] = QueryCriteria.EQUAL;
-                 crit.add(idc);
-                 */
-                qpxml.setCriteria(crit);
+                if (this.getUser().isInGroup(Group.ADMIN_GROUP)) {
+                    // The view XML anchor
+                    // FIXME : create new page.po like history
+                    QueryParameter qpxml = new QueryParameter();
+                    qpxml.setXsl("XML");
+                    String[] dictNames = new String[1];
+                    dictNames[0] = myEntry.getDictionaryName();
+                    qpxml.setDictionaryNames(dictNames);
+                    Vector crit = new Vector();
+                    String[] idc = new String[4];
+                    idc[0] = Volume.CDM_entryId;
+                    idc[1] = null;
+                    //if (myEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS)
+                    //    && myEntry.getModificationAuthor().equals(this.getUser().getLogin())) {
+                    //        idc[2] = myEntry.getClassifiedFinishedContributionId(); 
+                    //} else {
+                            idc[2] = myEntry.getEntryId(); 
+                    //}
+                    //idc[3] = QueryBuilder.EQUAL;
+                    idc[3] = QueryCriteria.EQUAL;
+                    crit.add(idc);
+                    /*
+                     String[] idc = new String[4];
+                     idc[0] = Volume.CDM_entryId;
+                     idc[1] = null;
+                     idc[2] = myEntry.getEntryId();
+                     //idc[3] = QueryBuilder.EQUAL;
+                     idc[3] = QueryCriteria.EQUAL;
+                     crit.add(idc);
+                     */
+                    qpxml.setCriteria(crit);
+                    
+                    href = "LexalpEditEntryInit.po?"
+                        + AdvancedQueryForm.getEncodedUrlForParameter(qpxml); 
+                    
+                    viewXmlAnchor.setHref(href);
                 
-                href = "LexalpEditEntryInit.po?"
-                    + AdvancedQueryForm.getEncodedUrlForParameter(qpxml); 
-                
-                viewXmlAnchor.setHref(href);
-                
+                } else {
+                    
+                    //
+                    HTMLElement viewXMLElement = content.getElementViewXML();
+                    viewXMLElement.setAttribute("style","display: none;");
+                }
+                    
+                //
                 HTMLElement cloneEntry = (HTMLElement)entryListRow.cloneNode(true);
-                
                 //      we have to take off the id attribute because we did not take it off the original
                 cloneEntry.removeAttribute("id");
                 entryTable.appendChild(cloneEntry);

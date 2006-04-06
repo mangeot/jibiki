@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+	<title>Edition of Papillon Lexical Database</title>
+</head>
+<body>
+    <div id="EditEntryInitContent" xml:lang="en" lang="en"> 
+        <h1><span id="UserName">Name</span> creation interface</h1>
+         <script id="InitJavascript" type="text/javascript">
+            <!-- 
+                // Open a new interface window to create the new entry 
+                function init() {
+                    if (document.getElementById('GO').value == 'go') {
+                        href = 'CreateEntryInit.po?action=createAnyway&VOLUME_ANYWAY=' + document.getElementById('VOLUME_ANYWAY').value + '&HEADWORD_ANYWAY=' +  document.getElementById('HEADWORD_ANYWAY').value;
+                        window.open(href,'EditEntry');
+                    }
+                }
+                
+                 // Open a new interface window to create the new entry 
+                function createAnyway() {
+                    href = 'CreateEntryInit.po?action=showAndCreate&VOLUME_ANYWAY=' + document.getElementById('VOLUME_ANYWAY').value + '&HEADWORD_ANYWAY=' +  document.getElementById('HEADWORD_ANYWAY').value;
+                    location.replace(href,'CreateEntry');
+                }
+            //-->
+        </script>
+        <div>
+            <span id="NbResultsSpan"><span id="NbResults">no</span> entry(ies) retrieved.<br/></span>
+            <table id="EntryListTable" width="100%" frame="hsides" border="1" cellspacing="0" summary="Entries" >
+                <thead id="EntryListTableHead">
+                    <tr>
+                        <th>Entry</th>
+                        <th>Status</th>
+                        <th colspan="3">Actions</th>
+                        <th colspan="2">View</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr id="EntryListRow" >
+                        <td><span id="EntryNode">Headword</span></td>
+                        <td><span class="hidden"><span id="EntryAuthorList">EntryAuthor</span></span><span id="EntryStatusList">EntryStatus</span><span id="UnderEdition">under edition</span><span id="ProceedEdition">proceed edition</span></td>
+                        <td><a href="" id="EditEntryAnchor">edit</a></td>
+                        <td><a href="" id="DuplicateEntryAnchor">duplicate &amp; edit</a></td>
+                        <td><a href="" id="DeleteEntryAnchor">delete</a><a href="" id="UndeleteEntryAnchor">undelete</a></td>
+                        <td>
+                            <a href="" id="ViewHistoryEntryAnchor">view history</a>
+                            <span id="ViewXML"><a href="" id="ViewXmlAnchor">view XML</a></span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+         <div class="hidden">
+            <input id="VOLUME_ANYWAY" name="VOLUME_ANYWAY" type="hidden" value="" />
+            <input id="HEADWORD_ANYWAY" name="HEADWORD_ANYWAY" type="hidden" value="" />
+            <input id="GO" name="GO" type="hidden" value="" />
+        </div>
+         <div id="ShowCreation" style="text-align:center; width:100%; padding: 10px 0px;">
+            <h2>New entry "<span id="HEADWORD_FINAL">HeadwordFinal</span>" create in <span id="VOLUME_FINAL">VolumeFinal</span> volume.</h2>
+        </div>
+        <div id="CreateAnywayForm" style="text-align:center; width:100%; padding: 10px 0px;">
+            <b><label for="VOLUME">Volume:</label></b> 
+            <input id="VOLUME_DISABLED" name="VOLUME_DISABLED" style="width:99px" type="text" disabled="disabled" value="" />
+            <b><label for="ValueField">Headword:</label></b> 
+            <input id="HEADWORD_DISABLED" name="HEADWORD_DISABLED" type="text" disabled="disabled" style="width:30%" value="" />
+            <input name="action" id="CreateAnywayButton" type="submit" style="width:110px" value="create anyway" onclick="createAnyway()"/>
+        </div>
+        <form  id="LookupForm" action="CreateEntryInit.po">
+            <div style="text-align:center; width:100%; padding: 10px 0px;">
+                <b><label for="VOLUME">Volume:</label></b>           
+                <select id="VOLUME" name="VOLUME" style="width:100px" >
+                    <option id="VolumeOptionTemplate" value="NONE" label="NONE">NONE</option>
+                </select>
+                <b><label for="ValueField">Headword:</label></b> 
+                <input type="hidden" id="Facet" name="FACET.0" value="cdm-headword"/>
+                <input type="hidden" id="Operator" name="OPERATOR.0" value="2"/>
+                <input id="ValueField" name="FACETVALUE.0" type="text" style="width:30%" value=""/>
+                <input type="hidden" id="SourceLang" name="SOURCE.0" value="All"/>
+                <input type="hidden" id="Targets" name="TARGETS" value="*All*"/>
+                <input type="hidden" id="Xsl" name="XSL" value="Default"/>
+                <input type="hidden" id="Offset" name="OFFSET"/>
+                <input name="action" id="CreateButton" type="submit" style="width:110px" value="create"/>
+            </div>
+        </form>
+        <div id="EntryDiv" />
+    </div>
+</body>
+</html>
+

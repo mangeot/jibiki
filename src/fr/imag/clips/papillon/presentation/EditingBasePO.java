@@ -10,6 +10,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2006/04/06 15:06:39  fbrunet
+ * New class 'creationEditInit' : create new entry
+ * Modify LexALPEditEntry : only edit entry
+ *
  * Revision 1.3  2006/03/13 08:48:00  fbrunet
  * bug corrections before merge
  *
@@ -90,7 +94,7 @@ public abstract class EditingBasePO extends AbstractPO {
     /**
     *  Description of the Field  JavaScript to add in the header
     */
-    protected String headerScript = "";
+    protected XHTMLScriptElement headerScript = null;
     
     
     /**
@@ -125,7 +129,7 @@ public abstract class EditingBasePO extends AbstractPO {
      * @param  newScript                          The new headerScript value
      * @exception  PapillonPresentationException  Description of the Exception
      */
-    public void setHeaderScript(String newScript)
+    public void setHeaderScript(XHTMLScriptElement newScript)
         throws PapillonPresentationException {
             this.headerScript = newScript;
         }

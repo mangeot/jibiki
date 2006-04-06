@@ -9,6 +9,10 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.9  2006/04/06 15:06:39  fbrunet
+ *  New class 'creationEditInit' : create new entry
+ *  Modify LexALPEditEntry : only edit entry
+ *
  *  Revision 1.8  2006/03/01 15:12:31  mangeot
  *  Merge between maintrunk and LEXALP_1_1 branch
  *
@@ -119,7 +123,7 @@ public interface StdLayout {
      * @exception  UnsupportedEncodingException
      *      Description of the Exception
      */
-    public void initLayout(HttpPresentationComms comms, PapillonSessionData sessionData, String url, String script)
+    public void initLayout(HttpPresentationComms comms, PapillonSessionData sessionData, String url, XHTMLScriptElement script)
         throws com.lutris.appserver.server.httpPresentation.HttpPresentationException, UnsupportedEncodingException;
 
     /**

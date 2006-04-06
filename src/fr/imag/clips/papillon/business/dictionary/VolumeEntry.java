@@ -9,6 +9,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.39  2006/04/06 15:06:39  fbrunet
+ * New class 'creationEditInit' : create new entry
+ * Modify LexALPEditEntry : only edit entry
+ *
  * Revision 1.38  2006/03/27 11:47:34  mangeot
  * *** empty log message ***
  *
@@ -1302,18 +1306,19 @@ public class VolumeEntry implements IAnswer {
     
 	private void setModification(String author, java.util.Date date, String comment) throws PapillonBusinessException {
 
-        
+        /*
 		Volume myVolume = this.getVolume();
 		Document myDocument = this.getDom();
 		org.w3c.dom.Node myEntry = ParseVolume.getCdmElement(this, Volume.CDM_entry);
-		
+		*/
 		//PapillonLogger.writeDebugMsg("VolumeEntry.setModification: " + author + " comment: " + comment);
+       
+     // ps pour Mathieu : TU TOUCHES PAS A CA :)
+      ParseVolume.setCdmElement(this, Volume.CDM_modificationAuthorElement, author);
+      ParseVolume.setCdmElement(this, Volume.CDM_modificationDateElement, Utility.PapillonCDMDateFormat.format(date));
+      ParseVolume.setCdmElement(this, Volume.CDM_modificationCommentElement, comment);
         
-      //  ParseVolume.setCdmElement(this, Volume.CDM_modificationAuthorElement, author);
-      //  ParseVolume.setCdmElement(this, Volume.CDM_modificationDateElement, Utility.PapillonCDMDateFormat.format(date));
-      //  ParseVolume.setCdmElement(this, Volume.CDM_modificationCommentElement, comment);
-        
-        
+      /*  
         //
         org.w3c.dom.Node myHistory = ParseVolume.getCdmElement(this, Volume.CDM_history);
         if (myHistory == null) {
@@ -1334,6 +1339,7 @@ public class VolumeEntry implements IAnswer {
 		myModification.appendChild(myComment);
 		myModification.appendChild(myDate);
 		myHistory.appendChild(myModification);
+      */
         
 	}
 

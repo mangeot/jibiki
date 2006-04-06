@@ -9,6 +9,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2006/04/06 15:06:39  fbrunet
+ * New class 'creationEditInit' : create new entry
+ * Modify LexALPEditEntry : only edit entry
+ *
  * Revision 1.3  2006/03/13 08:48:00  fbrunet
  * bug corrections before merge
  *
@@ -243,10 +247,10 @@ public class AdvancedQueryForm {
     {
         return AbstractPO.myGetParameter(req, AdvancedQueryFormXHTML.NAME_ACTION);
     }
-    
-    public AdvancedQueryForm(HttpPresentationComms comms, PapillonSessionData sessionData) throws PapillonPresentationException {
+        
+    public AdvancedQueryForm(HttpPresentationComms comms, PapillonSessionData sessionData, boolean showTargets) throws PapillonPresentationException {
         try {
-                      
+            
             // Get all the parameters
             qrequest = new QueryRequest(VolumesFactory.getVolumesArrayName());
             // FIXME: get volumes and dictionaries names to http request !
@@ -294,7 +298,7 @@ public class AdvancedQueryForm {
             }
             
             // Apply those parameters to the form
-            buildFormFromParameters(comms, sessionData, qparams);
+            buildFormFromParameters(comms, sessionData, qparams, showTargets);
             
         } catch (Exception e) {
             throw new PapillonPresentationException("Exception in queryForm", e);
@@ -306,7 +310,7 @@ public class AdvancedQueryForm {
         If a user wants to modify the parameters and rebuild the form accordingly,
         he will have to call this method again.
         */
-    public void buildFormFromParameters(HttpPresentationComms comms, PapillonSessionData sessionData, QueryParameter qp) 
+    public void buildFormFromParameters(HttpPresentationComms comms, PapillonSessionData sessionData, QueryParameter qp, boolean showTargets) 
         throws com.lutris.appserver.server.httpPresentation.HttpPresentationException
     {
         // Create the advanced query form and fill it with current requested values
@@ -384,6 +388,7 @@ public class AdvancedQueryForm {
         //XHTMLLabelElement sourceLangLabel = queryDoc.getElementSourceLangLabel();
         XHTMLSelectElement sourceLang = queryDoc.getElementSourceLang();
         XHTMLOptionElement sourceOption = queryDoc.getElementSourceOptionTemplate();
+        Element targetLanguagesSelectionElement = queryDoc.getElementTargetLanguagesSelection();
         
         nbcrit.removeAttribute("id");
         criterion.removeAttribute("id");
@@ -396,6 +401,11 @@ public class AdvancedQueryForm {
         //sourceLangLabel.removeAttribute("id");
         sourceLang.removeAttribute("id");
         sourceOption.removeAttribute("id");
+        targetLanguagesSelectionElement.removeAttribute("id");
+        
+        //
+        if (!showTargets) targetLanguagesSelectionElement.setAttribute("class","hidden");
+        
         
         // add all source languages in the lang selector
         String[] sourceLanguageNames = fr.imag.clips.papillon.business.dictionary.AvailableLanguages.getSourceLanguagesArray();

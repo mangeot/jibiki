@@ -9,6 +9,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.29  2006/04/06 15:06:39  fbrunet
+ * New class 'creationEditInit' : create new entry
+ * Modify LexALPEditEntry : only edit entry
+ *
  * Revision 1.28  2006/03/13 08:48:00  fbrunet
  * bug corrections before merge
  *
@@ -100,6 +104,7 @@ public class EditEntry extends EditingBasePO {
 			if (myVolumeEntry!=null && !myVolumeEntry.isEmpty()
 				&& !(myVolumeEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS) 
 					 && myVolumeEntry.getModificationAuthor().equals(this.getUser().getLogin())) ) {
+                System.out.println("ici pb !!! " + myVolumeEntry.getStatus() + " " + myVolumeEntry.getModificationAuthor());
 				throw new ClientPageRedirectException(EditingErrorURL);
 			}
 			// Verification of the DOM

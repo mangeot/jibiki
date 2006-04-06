@@ -9,6 +9,10 @@
  *  $Id $
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.3  2006/04/06 15:06:39  fbrunet
+ *  New class 'creationEditInit' : create new entry
+ *  Modify LexALPEditEntry : only edit entry
+ *
  *  Revision 1.2  2006/03/01 15:12:31  mangeot
  *  Merge between maintrunk and LEXALP_1_1 branch
  *
@@ -103,16 +107,18 @@ public class LexALPLayout implements StdLayout {
      * @exception  UnsupportedEncodingException
      *      Description of the Exception
      */
-    public void initLayout(HttpPresentationComms comms, PapillonSessionData sessionData, String url, String script)
+    public void initLayout(HttpPresentationComms comms, PapillonSessionData sessionData, String url, XHTMLScriptElement script)
         throws com.lutris.appserver.server.httpPresentation.HttpPresentationException, UnsupportedEncodingException {
             
             // Création du document
             layout = (LayoutXHTML) MultilingualXHtmlTemplateFactory.createTemplate(PACKAGE, "LayoutXHTML", comms, sessionData);
             
-            // adding a script if needed
+            // adding a new script if needed
             XHTMLScriptElement scriptElement = (XHTMLScriptElement) layout.getElementScript();
-            if (null != script && !script.equals("")) {
-                scriptElement.setText(scriptElement.getText() + script);
+            if (null != script) {
+                Node scriptParent = scriptElement.getParentNode();
+                scriptParent.removeChild(scriptElement);
+                scriptParent.appendChild(layout.importNode(script, true));
             }
             scriptElement.removeAttribute("id");
             

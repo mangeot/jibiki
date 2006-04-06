@@ -3,6 +3,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.50  2006/04/06 15:06:39  fbrunet
+ * New class 'creationEditInit' : create new entry
+ * Modify LexALPEditEntry : only edit entry
+ *
  * Revision 1.49  2006/03/29 10:18:17  mangeot
  * Fixed a bug when the source language is not defined and the request uses the msort column (> and < comparisons)
  *
@@ -1238,6 +1242,8 @@ throws PapillonBusinessException {
             PapillonLogger.writeDebugMsg("Error, too much entry found");
         }       
     }
+    
+    //FIXME: exception when Qrest < 1 or > 1
     
     //
     return resultEntry;

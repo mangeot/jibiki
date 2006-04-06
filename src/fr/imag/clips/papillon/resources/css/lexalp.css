@@ -4,6 +4,10 @@
  * $Id$
  *------
  * $Log$
+ * Revision 1.5  2006/04/06 15:06:39  fbrunet
+ * New class 'creationEditInit' : create new entry
+ * Modify LexALPEditEntry : only edit entry
+ *
  * Revision 1.4  2006/03/01 15:12:31  mangeot
  * Merge between maintrunk and LEXALP_1_1 branch
  *
@@ -302,6 +306,7 @@ A:hover {
 
 .copyright {
 	font-size: xx-small;
+    margin-top: 20px;
 	margin-left: 170px;
 }
 	

@@ -8,6 +8,10 @@
  * $Id$
  *---------------------------------------------------------
  * $Log$
+ * Revision 1.20  2006/04/06 15:06:39  fbrunet
+ * New class 'creationEditInit' : create new entry
+ * Modify LexALPEditEntry : only edit entry
+ *
  * Revision 1.19  2006/03/27 10:23:03  mangeot
  * Fixed the moveElements method
  *
@@ -385,7 +389,7 @@ public class UIGenerator {
 			if (entryNode.getNodeType()==Node.ATTRIBUTE_NODE) {
 				entryNodeName = ((Attr) entryNode).getOwnerElement().getNodeName() + ATTR_SEPARATOR + entryNodeName;
 			}
-		//	PapillonLogger.writeDebugMsg("fillTemplate Node: " + entryNodeName + " ID: " + newId);
+            //PapillonLogger.writeDebugMsg("fillTemplate Node: " + entryNodeName + " ID: " + newId);
 			setNameCorrespondingAnchor(entryNode, itfElt, newId);
 			setIdCorrespondingSubmitInputs(entryNodeName, itfElt, newId);
 			setIdCorrespondingLabel(entryNodeName, itfElt, newId);
@@ -670,7 +674,7 @@ public class UIGenerator {
     
 	
 	protected static boolean setIdValueCorrespondingTextInput(String correspName, Element itfElt, String newId, String value) {
-		//		PapillonLogger.writeDebugMsg("findCorrespondingTextInput: " + correspName);
+		PapillonLogger.writeDebugMsg("findCorrespondingTextInput: " + correspName);
 		boolean found = false;
 		NodeList myNodeList = itfElt.getElementsByTagName ("input");
 		int i=0;
@@ -692,15 +696,15 @@ public class UIGenerator {
 			myNodeList = itfElt.getElementsByTagName ("textarea");
 			i=0;
 			while (i<myNodeList.getLength() && !found) {
-				Element currentElt = (Element) myNodeList.item(i);
+                Element currentElt = (Element) myNodeList.item(i);
 				String name = currentElt.getAttribute("name");
 				if (name !=null && name.equals(correspName)) {
-					currentElt.setAttribute("name", newId);
+                    currentElt.setAttribute("name", newId);
 					currentElt.setAttribute("id", newId);
 					NodeList children = currentElt.getChildNodes();
 					int j=0;
 					while (j<children.getLength()) {
-						currentElt.removeChild(children.item(j));
+                        currentElt.removeChild(children.item(j));
 						j++;
 					}
 					org.w3c.dom.Text textElt = currentElt.getOwnerDocument().createTextNode(value);

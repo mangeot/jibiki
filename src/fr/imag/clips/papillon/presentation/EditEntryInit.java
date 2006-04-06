@@ -10,6 +10,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.24  2006/04/06 15:06:39  fbrunet
+ * New class 'creationEditInit' : create new entry
+ * Modify LexALPEditEntry : only edit entry
+ *
  * Revision 1.23  2006/03/13 08:48:00  fbrunet
  * bug corrections before merge
  *
@@ -172,14 +176,13 @@ public class EditEntryInit extends PapillonBasePO {
     protected final static String EditEntryURL = "EditEntry.po";
 	protected final static String XML_FORMATTER = fr.imag.clips.papillon.business.transformation.XslTransformation.XML_FORMATTER; 
 
-
     protected final static int STEP_INIT = 1;
     protected final static int STEP_LOOKUP_EDIT = 2;
     protected final static int STEP_CREATE = 3;
     protected final static int STEP_EDIT = 4;
     protected final static int STEP_VIEW = 5;
     protected final static int STEP_CREATE_ANYWAY = 6;
-
+    
     protected EditEntryInitXHTML content;
 
     protected boolean loggedInUserRequired() {

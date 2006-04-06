@@ -212,7 +212,13 @@ public class LexALPPostProcessor implements ResultPostProcessor {
                         } else if ( code.equals("FVG")) {       // Regione Friuli Venezia Giulia -> IT
                             legalSystem = "IT";
                          
-                        } else if ( code.equals("BAY")) {         // Bavaria -> AT
+                        } else if ( code.equals("BAY")) {         // Bayern -> DE
+                            legalSystem = "DE";
+                            
+                        } else if ( code.equals("N")) {         // Niederösterreich -> AT
+                            legalSystem = "AT";
+                            
+                        } else if ( code.equals("O")) {         // Oberösterreich -> AT
                             legalSystem = "AT";
                             
                         } else if ( code.equals("T")) {         // TIROL -> AT

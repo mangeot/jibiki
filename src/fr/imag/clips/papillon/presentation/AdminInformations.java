@@ -9,6 +9,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.6  2006/04/06 15:06:39  fbrunet
+ * New class 'creationEditInit' : create new entry
+ * Modify LexALPEditEntry : only edit entry
+ *
  * Revision 1.5  2005/06/15 16:48:28  mangeot
  * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
  *
@@ -50,6 +54,7 @@ import com.lutris.appserver.server.httpPresentation.ClientPageRedirectException;
 import com.lutris.mime.*;
 
 //import org.enhydra.xml.xmlc.XMLObject;
+import org.enhydra.xml.xhtml.dom.*;
 import org.w3c.dom.html.*;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -429,8 +434,9 @@ public class AdminInformations extends PapillonBasePO {
             /*********************************/
             // Adding the javascript for the date
             /*********************************/
-            HTMLScriptElement scriptElement = (HTMLScriptElement)content.getElementScript();
-            this.setHeaderScript(scriptElement.getText());
+            XHTMLScriptElement scriptElement = (XHTMLScriptElement)content.getElementScript();
+            //this.setHeaderScript(scriptElement.getText());
+            this.setHeaderScript(scriptElement);
 
             /*********************************/
             // Adding the appropriate options to the sections list

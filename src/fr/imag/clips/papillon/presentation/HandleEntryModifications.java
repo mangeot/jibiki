@@ -9,6 +9,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2006/04/06 15:06:39  fbrunet
+ * New class 'creationEditInit' : create new entry
+ * Modify LexALPEditEntry : only edit entry
+ *
  * Revision 1.3  2006/03/13 08:48:00  fbrunet
  * bug corrections before merge
  *
@@ -77,7 +81,7 @@ public class HandleEntryModifications extends EditingBasePO {
     protected static String BooleanTrue_PARAMETER = UIGenerator.BOOLEAN_TRUE_ATTR_NAME;  
     protected static String Update_PARAMETER = "Update";  
     protected static String Save_PARAMETER = "Save";  
-    protected static String SaveComment_PARAMETER = "SaveComment";  
+    //protected static String SaveComment_PARAMETER = "SaveComment";  
 	
 	protected final static String EditEntryInitURL = "LexalpEditEntryInit.po";
     protected final static String EditingErrorURL = "EditingError.po";
@@ -117,9 +121,11 @@ public class HandleEntryModifications extends EditingBasePO {
 			String choose = myGetParameter(Choose_PARAMETER);
 			String volumeName = myGetParameter(VolumeName_PARAMETER);
 			String entryHandle = myGetParameter(EntryHandle_PARAMETER);
-			String saveComment = myGetParameter(SaveComment_PARAMETER);
+			//String saveComment = myGetParameter(SaveComment_PARAMETER);
 			String referrer = myGetParameter(Referrer_PARAMETER);
 			
+            System.out.println("HandleEntryModifications submitAdd :" + submitAdd);
+            
             //
 			if (volumeName==null || volumeName.equals("") ||
 				entryHandle==null || entryHandle.equals("")) {
@@ -211,10 +217,10 @@ public class HandleEntryModifications extends EditingBasePO {
 			
 			// saveModifiedEntry
 			if (submitSave!=null && !submitSave.equals("")) {
-				saveEntry(myVolumeEntry, this.getUser(), saveComment, referrer);
+				saveEntry(myVolumeEntry, this.getUser(), referrer);
 			} else {
 				// Save draft and continue edition
-				saveDraftEntry(myVolumeEntry, this.getUser().getLogin(), saveComment, this.getUser(), referrer);
+				saveDraftEntry(myVolumeEntry, this.getUser().getLogin(), this.getUser(), referrer);
 			}
 			return null;
 		}
@@ -253,7 +259,7 @@ public class HandleEntryModifications extends EditingBasePO {
     
 	
 	
-	protected void saveDraftEntry(VolumeEntry myVolumeEntry, String author, String saveComment, User user, String referrer)
+	protected void saveDraftEntry(VolumeEntry myVolumeEntry, String author, User user, String referrer)
 		throws java.io.UnsupportedEncodingException,
         com.lutris.appserver.server.httpPresentation.HttpPresentationException {
 			
@@ -265,18 +271,15 @@ public class HandleEntryModifications extends EditingBasePO {
                 
                 // Create Not_Finished
                 VolumeEntry NFVolumeEntry = VolumeEntriesFactory.newEntryFromExisting(myVolumeEntry);
+                NFVolumeEntry.setHeadword(myVolumeEntry.getCdmHeadword());
                 NFVolumeEntry.setClassifiedNotFinishedContribution(myVolumeEntry);
-                NFVolumeEntry.setModification(author, saveComment);
+                NFVolumeEntry.setModification(author, "update");
                 NFVolumeEntry.setStatus(VolumeEntry.NOT_FINISHED_STATUS);
                 NFVolumeEntry.save();
                 
                 // Call PostProcessor
                 ResultPostProcessor postProcessor = ResultPostProcessorFactory.getPostProcessor(NFVolumeEntry);
                 postProcessor.transformation(NFVolumeEntry, user);
-                
-                //
-                System.out.println("EditEntry NFVolumeEntry.getVolumeName() : " + NFVolumeEntry.getVolumeName());
-                System.out.println("EditEntry NFVolumeEntry.getHandle() " + NFVolumeEntry.getHandle());
                 
                 // new current volume entry
                 throw new ClientPageRedirectException(
@@ -291,13 +294,13 @@ public class HandleEntryModifications extends EditingBasePO {
         }
 	
     // referrer is not use !
-	protected void saveEntry(VolumeEntry myVolumeEntry, User user, String saveComment, String referrer) 
+	protected void saveEntry(VolumeEntry myVolumeEntry, User user, String referrer) 
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 			String author = user.getLogin();
 			
 			// Save not finished contribution
 			myVolumeEntry.setHeadword(myVolumeEntry.getCdmHeadword());
-			myVolumeEntry.setModification(author,saveComment);
+			myVolumeEntry.setModification(author, "finish");
 			myVolumeEntry.setStatus(VolumeEntry.FINISHED_STATUS);
 			myVolumeEntry.save();
 			//System.out.println("Save : myVolume = " + myVolumeEntry.getContributionId());
