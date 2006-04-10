@@ -4,6 +4,9 @@
 *$Id$
 *------------------------------------------
 *$Log$
+*Revision 1.11  2006/04/10 12:22:19  mangeot
+*Added XMl indeted or not when doing serialization in Node2String
+*
 *Revision 1.10  2006/02/26 14:08:16  mangeot
 *Added the multilingual_sort(lang,headword) index on volume tables for speeding up the lookup
 *
@@ -130,24 +133,24 @@ public class Utility {
      */
 	/* prints XML declaration */
 	public static String NodeToString(Document doc) {
-		return NodeToString(doc.getDocumentElement(), true);
+		return NodeToString(doc.getDocumentElement(), true, true);
 	}
 	
-	public static String NodeToString(Document doc, boolean printXmlDeclaration) {
-		return NodeToString(doc.getDocumentElement(), printXmlDeclaration);
+	public static String NodeToString(Document doc, boolean printXmlDeclaration, boolean setIndenting) {
+		return NodeToString(doc.getDocumentElement(), printXmlDeclaration, setIndenting);
 	}
 	
 	public static String NodeToString(Element elt) {
-		return NodeToString(elt, true);
+		return NodeToString(elt, true, true);
 	}
 	
-	public static String NodeToString(Element elt, boolean printXmlDeclaration) {
+	public static String NodeToString(Element elt, boolean printXmlDeclaration, boolean setIndenting) {
 		String res = "";
         if (elt!=null) {
 			try {
 				StringWriter myStringWriter = new StringWriter();
 				myOutputFormat.setMethod("text");
-				myOutputFormat.setIndenting(true);
+				myOutputFormat.setIndenting(setIndenting);
 				myOutputFormat.setOmitDocumentType(true);
 				myOutputFormat.setOmitXMLDeclaration(!printXmlDeclaration);
 				XMLSerializer myXMLSerializer = new XMLSerializer(myStringWriter, myOutputFormat);
