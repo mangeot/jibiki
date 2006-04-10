@@ -9,6 +9,9 @@
  *$Id$
  *------------------------
  *$Log$
+ *Revision 1.7  2006/04/10 12:23:31  mangeot
+ *Added a new dialect for XMl indented
+ *
  *Revision 1.6  2006/03/01 15:12:31  mangeot
  *Merge between maintrunk and LEXALP_1_1 branch
  *
@@ -52,13 +55,14 @@ import fr.imag.clips.papillon.business.dictionary.QueryResult;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 
 public class ResultFormatterFactory {
-    
+ 
     public static final int XHTML_DIALECT = 1;
     public static final int HTML_DIALECT = 2;
     public static final int WML_DIALECT = 3;
     public static final int XML_DIALECT = 4;
     public static final int PLAINTEXT_DIALECT = 5;
     public static final int PDF_DIALECT = 6;
+    public static final int XMLIndent_DIALECT = 7;
 
     // parameter is a string that is passed to the formatter. 
     public static ResultFormatter getFormatter(QueryResult qr, Object parameter, int dialect, String lang)
