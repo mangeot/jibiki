@@ -5,6 +5,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2006/04/10 12:19:17  mangeot
+ * XML indented or not
+ *
  * Revision 1.3  2005/07/28 13:06:47  mangeot
  * - Added the possibility to export in PDF format. The conversion into PDF is don
  * e via the fop package that has to be installed (see ToolsForPapillon)
@@ -31,6 +34,7 @@ import fr.imag.clips.papillon.business.PapillonLogger;
 public class ExportVolumeEntryProcessor implements IVolumeEntryProcessor {
 
 	protected static final String XMLFormat = Integer.toString(fr.imag.clips.papillon.business.transformation.ResultFormatterFactory.XML_DIALECT);
+	protected static final String XMLIndentFormat = Integer.toString(fr.imag.clips.papillon.business.transformation.ResultFormatterFactory.XMLIndent_DIALECT);
 	protected static final String XHTMLFormat = Integer.toString(fr.imag.clips.papillon.business.transformation.ResultFormatterFactory.XHTML_DIALECT);
 	protected static final String TEXTFormat = Integer.toString(fr.imag.clips.papillon.business.transformation.ResultFormatterFactory.PLAINTEXT_DIALECT);
 	protected static final String PDFFormat = Integer.toString(fr.imag.clips.papillon.business.transformation.ResultFormatterFactory.PDF_DIALECT);
@@ -58,11 +62,17 @@ public class ExportVolumeEntryProcessor implements IVolumeEntryProcessor {
 		}
 		else if (outputFormat != null && outputFormat.equals(PDFFormat)) {
 			org.w3c.dom.Element myElement = fr.imag.clips.papillon.business.transformation.XslTransformation.applyXslSheetsForFo((IAnswer) myEntry);
-			resultString = Utility.NodeToString(myElement);
+			resultString = Utility.NodeToString(myElement, false, false);
 		}
 		else { // (outputFormat == null || outputFormat.equals("") || outputFormat.equals(XMLFormat))
 			String contribString = myVolume.getCdmContribution();
-			String xmlCode = myEntry.getXmlCode();
+			String xmlCode;
+			if (outputFormat.equals(XMLIndentFormat)) {
+				 xmlCode = Utility.NodeToString(myEntry.getDom(), false, true);
+			}
+			else {
+				xmlCode = Utility.NodeToString(myEntry.getDom(), false, false);
+			}
 			if (xmlCode.indexOf("<" + contribString)>0) {
 				xmlCode= xmlCode.substring(xmlCode.indexOf("<" + contribString)); 
 				String endTag = "</" + contribString + ">";
