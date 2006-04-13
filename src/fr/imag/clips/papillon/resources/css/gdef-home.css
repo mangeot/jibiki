@@ -35,7 +35,7 @@ body {
 /*--------------------------------------*/
 /* For the editor */
 /*--------------------------------------*/
-TD.block {
+td.block {
   /*  display: block; */
     text-align: center;
     border-style: solid;
@@ -44,7 +44,7 @@ TD.block {
     border-color: black;
 }
 
-H4.blockTitle {
+.blockTitle {
 	text-align: center; 
 	color:blue;
 }
