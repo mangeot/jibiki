@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.2  2006/04/18 14:30:24  fbrunet
+ * Authorize admin to edit all entries
+ *
  * Revision 1.1  2006/04/06 15:06:39  fbrunet
  * New class 'creationEditInit' : create new entry
  * Modify LexALPEditEntry : only edit entry
@@ -164,6 +167,7 @@ public class CreateEntryInit extends PapillonBasePO {
                     // fill anyway parameter
                     volumeAnyway = volume;
                     headwordAnyway = headword;
+                    headword = "";
                     
                     // SHOW AND CREATE
                 } else if (action.equals("showAndCreate")

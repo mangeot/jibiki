@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.5  2006/04/18 14:30:24  fbrunet
+ * Authorize admin to edit all entries
+ *
  * Revision 1.4  2006/04/06 15:06:39  fbrunet
  * New class 'creationEditInit' : create new entry
  * Modify LexALPEditEntry : only edit entry
@@ -158,6 +161,9 @@ public class AdvancedQueryForm {
         com.lutris.appserver.server.httpPresentation.HttpPresentationException
     {
         String nbr = AbstractPO.myGetParameter(req, AdvancedQueryFormXHTML.NAME_NB_RESULT_PER_PAGE);
+        // limit ... 10
+        //return (null == nbr || nbr.equals("")) ? 10 : Integer.valueOf(nbr).intValue();
+        // limit ... all (0)
         return (null == nbr || nbr.equals("")) ? 0 : Integer.valueOf(nbr).intValue();
     }
 
@@ -362,7 +368,7 @@ public class AdvancedQueryForm {
         // put parameters back into form
         queryDoc.getElementOffset().setValue(Integer.toString(qp.getOffset()));
         
-        AbstractPO.setSelected(queryDoc.getElementNumberOfResultPerPage(),Integer.toString(qp.getLimit()));
+        AbstractPO.setSelected(queryDoc.getElementNumberOfResultPerPage(), Integer.toString(qp.getLimit()));
         
         String[] dics = qp.getDictionaryNames();
         for (int i=0; i < dics.length; i++) {

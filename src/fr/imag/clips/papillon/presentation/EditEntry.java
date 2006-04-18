@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.30  2006/04/18 14:30:24  fbrunet
+ * Authorize admin to edit all entries
+ *
  * Revision 1.29  2006/04/06 15:06:39  fbrunet
  * New class 'creationEditInit' : create new entry
  * Modify LexALPEditEntry : only edit entry
@@ -46,7 +49,7 @@ import fr.imag.clips.papillon.business.edition.UIGenerator;
 import fr.imag.clips.papillon.business.edition.UITemplates;
 import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.user.User;
-
+import fr.imag.clips.papillon.business.user.Group;
 
 import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
@@ -80,10 +83,6 @@ public class EditEntry extends EditingBasePO {
 	    String volumeName = myGetParameter(EditEntryXHTML.NAME_VolumeName);
 		String entryHandle = myGetParameter(EditEntryXHTML.NAME_EntryHandle);
 	    String referrer = myGetParameter(EditEntryXHTML.NAME_Referrer);
-				
-        //
-        System.out.println("EditEntry volumeName : " + volumeName);
-        System.out.println("EditEntry entryHandle " + entryHandle);
         
 		// Recuperation of parameters
 		if (referrer== null || referrer.equals("")) {
@@ -103,8 +102,8 @@ public class EditEntry extends EditingBasePO {
 			// Verification 
 			if (myVolumeEntry!=null && !myVolumeEntry.isEmpty()
 				&& !(myVolumeEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS) 
-					 && myVolumeEntry.getModificationAuthor().equals(this.getUser().getLogin())) ) {
-                System.out.println("ici pb !!! " + myVolumeEntry.getStatus() + " " + myVolumeEntry.getModificationAuthor());
+					 && (myVolumeEntry.getModificationAuthor().equals(this.getUser().getLogin())
+                        || this.getUser().isInGroup(Group.ADMIN_GROUP)) )) {
 				throw new ClientPageRedirectException(EditingErrorURL);
 			}
 			// Verification of the DOM

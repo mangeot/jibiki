@@ -10,6 +10,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.5  2006/04/18 14:30:24  fbrunet
+ * Authorize admin to edit all entries
+ *
  * Revision 1.4  2006/04/06 15:06:39  fbrunet
  * New class 'creationEditInit' : create new entry
  * Modify LexALPEditEntry : only edit entry
@@ -540,8 +543,9 @@ public class LexalpEditEntryInit extends PapillonBasePO {
                 if ( (   (!myEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS)) 
                          && (!myEntry.getStatus().equals(VolumeEntry.MODIFIED_STATUS)) )
                      ||  ( myEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS)
-                         && myEntry.getModificationAuthor().equals(this.getUser().getLogin())
-                    )) {
+                         && (myEntry.getModificationAuthor().equals(this.getUser().getLogin())
+                             || this.getUser().isInGroup(Group.ADMIN_GROUP)))
+                    ) {
                     
                     // the edit button
                     if ( !myEntry.getStatus().equals(VolumeEntry.DELETED_STATUS) ) {

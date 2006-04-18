@@ -10,6 +10,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.18  2006/04/18 14:30:24  fbrunet
+ *  Authorize admin to edit all entries
+ *
  *  Revision 1.17  2006/04/06 15:06:39  fbrunet
  *  New class 'creationEditInit' : create new entry
  *  Modify LexALPEditEntry : only edit entry
@@ -641,7 +644,8 @@ public class Home extends PapillonBasePO {
         Collection FuzzyEntryCollection = null;
         
 		// added by MM. the fuzzy search takes a lot of time so I do it if no results 
-		if (EntryCollection ==null || EntryCollection.size()==0) {
+        // supress by FBM because "ca prend pas bcp de temps !"
+		//if (EntryCollection ==null || EntryCollection.size()==0) {
         // Intialize QueryRequest
         QueryRequest fuzzyQuery = new QueryRequest(VolumesFactory.getVolumesArrayName(null, source, null));
         fuzzyQuery.setTargets(targets);
@@ -661,7 +665,7 @@ public class Home extends PapillonBasePO {
         
         // Find lexies and translation
         FuzzyEntryCollection = fuzzyQuery.findLexieAndTranslation(user);
-		}
+		//}
         
         /*
         // Old version

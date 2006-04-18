@@ -10,6 +10,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.2  2006/04/18 14:30:24  fbrunet
+ * Authorize admin to edit all entries
+ *
  * Revision 1.1  2006/04/06 15:06:39  fbrunet
  * New class 'creationEditInit' : create new entry
  * Modify LexALPEditEntry : only edit entry
@@ -29,6 +32,7 @@ import com.lutris.appserver.server.httpPresentation.ClientPageRedirectException;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory;
 import fr.imag.clips.papillon.business.user.User;
+import fr.imag.clips.papillon.business.user.Group;
 import fr.imag.clips.papillon.presentation.EditEntry;
 
 
@@ -101,7 +105,9 @@ public class EditEntryInitFactory {
             
         // Edit contribtion not-finished
         } else if ( myEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS) 
-                    && myEntry.getModificationAuthor().equals(user.getLogin()) ) {
+                    && 
+                       (myEntry.getModificationAuthor().equals(user.getLogin()) 
+                        || user.isInGroup(Group.ADMIN_GROUP))) {
             
             // Nothing to do
             throw new ClientPageRedirectException(EditEntryURL + "?" + 

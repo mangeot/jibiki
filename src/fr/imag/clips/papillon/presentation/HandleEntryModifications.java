@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.5  2006/04/18 14:30:24  fbrunet
+ * Authorize admin to edit all entries
+ *
  * Revision 1.4  2006/04/06 15:06:39  fbrunet
  * New class 'creationEditInit' : create new entry
  * Modify LexALPEditEntry : only edit entry
@@ -57,6 +60,7 @@ import fr.imag.clips.papillon.business.transformation.ResultFormatter;
 import fr.imag.clips.papillon.business.transformation.ResultFormatterFactory;
 import fr.imag.clips.papillon.business.dictionary.QueryResult;
 import fr.imag.clips.papillon.business.user.User;
+import fr.imag.clips.papillon.business.user.Group;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -124,8 +128,6 @@ public class HandleEntryModifications extends EditingBasePO {
 			//String saveComment = myGetParameter(SaveComment_PARAMETER);
 			String referrer = myGetParameter(Referrer_PARAMETER);
 			
-            System.out.println("HandleEntryModifications submitAdd :" + submitAdd);
-            
             //
 			if (volumeName==null || volumeName.equals("") ||
 				entryHandle==null || entryHandle.equals("")) {
@@ -140,7 +142,8 @@ public class HandleEntryModifications extends EditingBasePO {
 			// Verification 
 			if (myVolumeEntry!=null && !myVolumeEntry.isEmpty()
 				&& !(myVolumeEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS) 
-					 && myVolumeEntry.getModificationAuthor().equals(this.getUser().getLogin())) ) {
+					 && (myVolumeEntry.getModificationAuthor().equals(this.getUser().getLogin())
+                         || this.getUser().isInGroup(Group.ADMIN_GROUP))) ) {
 				// Error page
 				throw new ClientPageRedirectException(EditingErrorURL);
 			}

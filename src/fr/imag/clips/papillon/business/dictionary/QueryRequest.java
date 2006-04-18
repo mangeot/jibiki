@@ -211,6 +211,10 @@ package fr.imag.clips.papillon.business.dictionary;
                         }
                         
                         //
+                        //if (limit != 0) query.addEndClause("LIMIT " + Integer.toString(limit));
+                        //query.addEndClause("OFFSET 10");
+                        
+                        //
                         query.addWhereCloseParen();
                     }
                     
@@ -246,6 +250,11 @@ package fr.imag.clips.papillon.business.dictionary;
                         }
                         
                         //
+                        //String limitString = "LIMIT " + Integer.toString(limit);
+                        //System.out.println(limitString);
+                        //query.addEndClause("LIMIT 10 OFFSET 10");
+                        
+                        //
                         query.addWhereCloseParen();
                         query.addWhereOr();
                     }                    
@@ -279,6 +288,9 @@ package fr.imag.clips.papillon.business.dictionary;
                     RDBColumn[] tableIndexRDBList = new RDBColumn[1];
                     tableIndexRDBList[0] = entryIdRDB;
                     QueryBuilder querySearch = new QueryBuilder(tableIndexRDBList);
+                    querySearch.distinct();
+                    
+                    //
                     find(querySearch, volumeIndexDbName);
                     
                     //
@@ -334,12 +346,14 @@ package fr.imag.clips.papillon.business.dictionary;
                 //
                 for (int i=0; i< volumeNames.length; i++) {
                     
-                    // FIXME: limit 500 ...
                     Volume volume = VolumesFactory.findVolumeByName((String)volumeNames[i]);
                     VolumeEntryQuery veQuery = new VolumeEntryQuery(volume.getDbname(), CurrentDBTransaction.get());
                     findLexie(veQuery.getQueryBuilder(), volume.getDbname(), volume.getIndexDbname());
                      
                     // sort
+                    // FIXME: if limit 500, pb with findAllLexie for reconstruction index !
+                    //veQuery.getQueryBuilder().addEndClause("LIMIT 10 OFFSET 10");
+                    //veQuery.getQueryBuilder().addEndClause("LIMIT 40");
                     veQuery.getQueryBuilder().addOrderByColumn("multilingual_sort('" + volume.getSourceLanguage() + "',headword)","");
                     
                     // debug
@@ -453,6 +467,8 @@ package fr.imag.clips.papillon.business.dictionary;
                     findLexie(veQuery.getQueryBuilder(), volume.getDbname(), volume.getIndexDbname());
                     
                     // sort
+                    //veQuery.getQueryBuilder().addEndClause("LIMIT 2");
+					//veQuery.getQueryBuilder().addEndClause("OFFSET " + offset);
                     veQuery.getQueryBuilder().addOrderByColumn("multilingual_sort('" + volume.getSourceLanguage() + "',headword)","");
                     
                     // debug
