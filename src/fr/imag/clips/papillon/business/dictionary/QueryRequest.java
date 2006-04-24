@@ -36,8 +36,8 @@ package fr.imag.clips.papillon.business.dictionary;
         protected String[] volumeNames;
         protected ArrayList criteriaTree;   // AND(OR) tree or OR(AND) tree
         protected boolean isAndTree = true; // AND(OR) tree -> default
-        protected int offset; 
-        protected int limit; 
+        protected String offset; 
+        protected String limit; 
         protected String xsl;
         protected String[] targets;
         
@@ -47,6 +47,8 @@ package fr.imag.clips.papillon.business.dictionary;
             String[] names = new String[1];
             names[0] = name;
             volumeNames = names;
+            limit = "0";
+            offset = "0";
         }
         
         //
@@ -109,19 +111,19 @@ package fr.imag.clips.papillon.business.dictionary;
             isAndTree = false;  // OR(AND)
         }
         
-        public int getOffset() {
+        public String getOffset() {
             return offset;
         }
         
-        public void setOffset(int newOffset) {
+        public void setOffset(String newOffset) {
             offset = newOffset;
         }
         
-        public int getLimit() {
+        public String getLimit() {
             return limit;
         }
         
-        public void setLimit(int newLimit) {
+        public void setLimit(String newLimit) {
             limit = newLimit;
         }
         
@@ -352,8 +354,7 @@ package fr.imag.clips.papillon.business.dictionary;
                      
                     // sort
                     // FIXME: if limit 500, pb with findAllLexie for reconstruction index !
-                    //veQuery.getQueryBuilder().addEndClause("LIMIT 10 OFFSET 10");
-                    //veQuery.getQueryBuilder().addEndClause("LIMIT 40");
+                    veQuery.getQueryBuilder().addEndClause(" LIMIT " + limit + " OFFSET " + offset);
                     veQuery.getQueryBuilder().addOrderByColumn("multilingual_sort('" + volume.getSourceLanguage() + "',headword)","");
                     
                     // debug

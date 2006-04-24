@@ -10,6 +10,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2006/04/24 13:43:29  fbrunet
+ * Add new class ViewQueryResult : allow to use one class to create result display in advancedSearch and EditEntryInit (like advancedQueryForm)
+ * Improve result display : view n results per page
+ *
  * Revision 1.2  2006/04/18 14:30:24  fbrunet
  * Authorize admin to edit all entries
  *
@@ -22,6 +26,22 @@
 
 package fr.imag.clips.papillon.presentation;
 
+//General java imports
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Vector;
+import java.util.ArrayList;
+import java.util.Hashtable;
+
+// DOM imports
+import org.w3c.dom.html.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
+import org.enhydra.xml.xhtml.dom.*;
+
 // Enhydra SuperServlet imports
 import com.lutris.appserver.server.httpPresentation.HttpPresentation;
 import com.lutris.appserver.server.httpPresentation.HttpPresentationRequest;
@@ -31,9 +51,14 @@ import com.lutris.appserver.server.httpPresentation.ClientPageRedirectException;
 //local imports
 import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory;
+import fr.imag.clips.papillon.business.dictionary.QueryResult;
+import fr.imag.clips.papillon.business.dictionary.QueryRequest;
+import fr.imag.clips.papillon.business.dictionary.QueryCriteria;
+import fr.imag.clips.papillon.presentation.QueryParameter;
 import fr.imag.clips.papillon.business.user.User;
 import fr.imag.clips.papillon.business.user.Group;
 import fr.imag.clips.papillon.presentation.EditEntry;
+
 
 
 public class EditEntryInitFactory {
@@ -42,6 +67,28 @@ public class EditEntryInitFactory {
     protected final static String EditEntryURL = "EditEntry.po";
     protected final static String EditingErrorURL = "EditingError.po";
     
+    // URL parameters
+    protected final static String HANDLE_PARAMETER = "handle";
+    protected final static String FORMATTER_PARAMETER = "formatter";
+    protected final static String ACTION_PARAMETER = "action";
+    protected final static String VOLUME_PARAMETER = "volume";
+    protected final static String VOLUME_ANYWAY_PARAMETER = "volumeanyway";
+    protected final static String HEADWORD_ANYWAY_PARAMETER = "headwordanyway";
+    
+    /*
+    // Key for contentParameters hastable (addEntriesTable method)
+    protected final static String entryNode = "entryNode";
+    protected final static String entryListRow = "entryListRow";
+    protected final static String authorElement = "authorElement";
+    protected final static String editAnchor = "editAnchor";
+    protected final static String duplicateAnchor = "duplicateAnchor";
+    protected final static String deleteAnchor = "deleteAnchor";
+    protected final static String undeleteAnchor = "undeleteAnchor";
+    protected final static String ViewHistoryEntryAnchor = "ViewHistoryEntryAnchor";
+    protected final static String viewXmlAnchor = "viewXmlAnchor";
+    protected final static String underEdition = "underEdition";
+    protected final static String proceedEdition = "proceedEdition";
+    */
     
     /**
     * The createEntry method create a not finished entry and redirect to edition interface
@@ -51,7 +98,7 @@ public class EditEntryInitFactory {
      * @param User user
      *
      */    
-    public static void createEntry(String volumeName, String headword, User user)
+    protected static void createEntry(String volumeName, String headword, User user)
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
         
         //
@@ -80,7 +127,7 @@ public class EditEntryInitFactory {
      * @param User
      *
      */    
-    public static void editEntry(VolumeEntry myEntry, User user)
+    protected static void editEntry(VolumeEntry myEntry, User user)
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
         
         // Edit contribution finished
@@ -129,7 +176,7 @@ public class EditEntryInitFactory {
      * @param User
      *
      */    
-    public static void duplicateEntry(VolumeEntry myEntry, User user)
+    protected static void duplicateEntry(VolumeEntry myEntry, User user)
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
         
         //
@@ -169,7 +216,7 @@ public class EditEntryInitFactory {
      * @param User
      *
      */    
-    public static void deleteEntry(VolumeEntry myEntry, User user)
+    protected static void deleteEntry(VolumeEntry myEntry, User user)
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
         
         //
@@ -203,7 +250,7 @@ public class EditEntryInitFactory {
      * @param User
      *
      */    
-    public static void undeleteEntry(VolumeEntry myEntry, User user)
+    protected static void undeleteEntry(VolumeEntry myEntry, User user)
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
         
         //
@@ -226,5 +273,5 @@ public class EditEntryInitFactory {
             // Error page
             throw new ClientPageRedirectException(EditingErrorURL);
         }
-    }        
+    }
 }

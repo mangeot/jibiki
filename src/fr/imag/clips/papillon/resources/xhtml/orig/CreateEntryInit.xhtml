@@ -12,14 +12,14 @@
                 // Open a new interface window to create the new entry 
                 function init() {
                     if (document.getElementById('GO').value == 'go') {
-                        href = 'CreateEntryInit.po?action=createAnyway&VOLUME_ANYWAY=' + document.getElementById('VOLUME_ANYWAY').value + '&HEADWORD_ANYWAY=' +  document.getElementById('HEADWORD_ANYWAY').value;
+                        href = 'CreateEntryInit.po?action=createAnyway&volumeanyway=' + document.getElementById('VOLUME_ANYWAY').value + '&headwordanyway=' +  document.getElementById('HEADWORD_ANYWAY').value;
                         window.open(href,'EditEntry');
                     }
                 }
                 
                  // Open a new interface window to create the new entry 
                 function createAnyway() {
-                    href = 'CreateEntryInit.po?action=showAndCreate&VOLUME_ANYWAY=' + document.getElementById('VOLUME_ANYWAY').value + '&HEADWORD_ANYWAY=' +  document.getElementById('HEADWORD_ANYWAY').value;
+                    href = 'CreateEntryInit.po?action=showAndCreate&volumeanyway=' + document.getElementById('VOLUME_ANYWAY').value + '&headwordanyway=' +  document.getElementById('HEADWORD_ANYWAY').value;
                     location.replace(href,'CreateEntry');
                 }
             //-->
@@ -27,32 +27,7 @@
         <div style="text-align:center;">
             <span>ATTENTION: To create an entry, your browser must allow popup windows.</span>
         </div>
-        <div>
-            <span id="NbResultsSpan"><span id="NbResults">no</span> entry(ies) retrieved.<br/></span>
-            <table id="EntryListTable" width="100%" frame="hsides" border="1" cellspacing="0" summary="Entries" >
-                <thead id="EntryListTableHead">
-                    <tr>
-                        <th>Entry</th>
-                        <th>Status</th>
-                        <th colspan="3">Actions</th>
-                        <th colspan="2">View</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr id="EntryListRow" >
-                        <td><span id="EntryNode">Headword</span></td>
-                        <td><span class="hidden"><span id="EntryAuthorList">EntryAuthor</span></span><span id="EntryStatusList">EntryStatus</span><span id="UnderEdition">under edition</span><span id="ProceedEdition">proceed edition</span></td>
-                        <td><a href="" id="EditEntryAnchor">edit</a></td>
-                        <td><a href="" id="DuplicateEntryAnchor">duplicate &amp; edit</a></td>
-                        <td><a href="" id="DeleteEntryAnchor">delete</a><a href="" id="UndeleteEntryAnchor">undelete</a></td>
-                        <td>
-                            <a href="" id="ViewHistoryEntryAnchor">view history</a>
-                            <span id="ViewXML"><a href="" id="ViewXmlAnchor">view XML</a></span>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+        <div id="QueryResultForm"/>
          <div class="hidden">
             <input id="VOLUME_ANYWAY" name="VOLUME_ANYWAY" type="hidden" value="" />
             <input id="HEADWORD_ANYWAY" name="HEADWORD_ANYWAY" type="hidden" value="" />

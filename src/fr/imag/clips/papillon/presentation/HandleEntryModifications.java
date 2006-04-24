@@ -9,6 +9,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.6  2006/04/24 13:43:29  fbrunet
+ * Add new class ViewQueryResult : allow to use one class to create result display in advancedSearch and EditEntryInit (like advancedQueryForm)
+ * Improve result display : view n results per page
+ *
  * Revision 1.5  2006/04/18 14:30:24  fbrunet
  * Authorize admin to edit all entries
  *
@@ -281,6 +285,7 @@ public class HandleEntryModifications extends EditingBasePO {
                 NFVolumeEntry.save();
                 
                 // Call PostProcessor
+                // FIXME: call specific update PostProcessor !
                 ResultPostProcessor postProcessor = ResultPostProcessorFactory.getPostProcessor(NFVolumeEntry);
                 postProcessor.transformation(NFVolumeEntry, user);
                 

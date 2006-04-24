@@ -10,6 +10,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.6  2006/04/24 13:43:29  fbrunet
+ * Add new class ViewQueryResult : allow to use one class to create result display in advancedSearch and EditEntryInit (like advancedQueryForm)
+ * Improve result display : view n results per page
+ *
  * Revision 1.5  2006/04/18 14:30:24  fbrunet
  * Authorize admin to edit all entries
  *
@@ -125,6 +129,7 @@ public class LexalpEditEntryInit extends PapillonBasePO {
     protected final static String ConsultExpertVolumeParameter = "VOLUME";
     protected final static String ConsultExpertHandleParameter = "handle";
     protected final static String ConsultExpertFormatterParameter = "xslid";
+    
     protected final static String EditEntryURL = "EditEntry.po";
     protected final static String EditingErrorURL = "EditingError.po";
     
@@ -162,7 +167,6 @@ public class LexalpEditEntryInit extends PapillonBasePO {
             } else {
                 volume = this.getPreference(content.NAME_VOLUME);
             }
-
             
             //
             if (action!=null && !action.equals("")) {
@@ -307,6 +311,8 @@ public class LexalpEditEntryInit extends PapillonBasePO {
                     
                     // Perform the request
                     //Collection qrset = queryReq.findLexieForEdition(this.getUser());
+                    queryReq.setLimit(qp.getLimitString());
+                    queryReq.setOffset(qp.getOffsetString());
                     Collection qrset = queryReq.findLexie(this.getUser());
                     //Collection qrset = DictionariesFactory.doQuery(qp, this.getUser());
                     
@@ -341,14 +347,21 @@ public class LexalpEditEntryInit extends PapillonBasePO {
                      */
                     
                     //
-                    addEntriesTable(qrset, qp);
+                    //addEntriesTable(qrset, qp);
+                    XHTMLElement queryResultForm = content.getElementQueryResultForm();
+                    Node viewQueryResultNode = ViewQueryResult.createNodeResult(this.getComms(), this.getSessionData(), this.getUrl(), this.getUser(), qrset, qp);
+                    queryResultForm.appendChild(content.importNode(viewQueryResultNode, true));
                     
                     } else {
+                        
                         //
-                        addEntriesTable(new Vector(), qp);
+                        //addEntriesTable(new Vector(), qp);
+                        XHTMLElement queryResultForm = content.getElementQueryResultForm();
+                        Node viewQueryResultNode = ViewQueryResult.createNodeResult(this.getComms(), this.getSessionData(), this.getUrl(), this.getUser(), new Vector(), qp);
+                        queryResultForm.appendChild(content.importNode(viewQueryResultNode, true));
                     }
                 } else {
-                    removeEntryListTemplate();
+                    //removeEntryListTemplate();
                 }
                     
                 //
@@ -424,6 +437,8 @@ public class LexalpEditEntryInit extends PapillonBasePO {
 //            }
 //        }
     
+    
+    /*
     protected void addEntriesTable (Collection qrset, QueryParameter qp) throws
         fr.imag.clips.papillon.business.PapillonBusinessException {
             
@@ -657,15 +672,15 @@ public class LexalpEditEntryInit extends PapillonBasePO {
                     //idc[3] = QueryBuilder.EQUAL;
                     idc[3] = QueryCriteria.EQUAL;
                     crit.add(idc);
-                    /*
-                     String[] idc = new String[4];
-                     idc[0] = Volume.CDM_entryId;
-                     idc[1] = null;
-                     idc[2] = myEntry.getEntryId();
-                     //idc[3] = QueryBuilder.EQUAL;
-                     idc[3] = QueryCriteria.EQUAL;
-                     crit.add(idc);
-                     */
+                    
+                     //String[] idc = new String[4];
+                     //idc[0] = Volume.CDM_entryId;
+                     //idc[1] = null;
+                     //idc[2] = myEntry.getEntryId();
+                     ////idc[3] = QueryBuilder.EQUAL;
+                     //idc[3] = QueryCriteria.EQUAL;
+                     //crit.add(idc);
+                     
                     qpxml.setCriteria(crit);
                     
                     href = "LexalpEditEntryInit.po?"
@@ -708,6 +723,6 @@ public class LexalpEditEntryInit extends PapillonBasePO {
 		Node myParent = myElement.getParentNode();
 		myParent.removeChild(myElement);
     }
-    
+    */
 }
 

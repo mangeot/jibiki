@@ -9,6 +9,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.6  2006/04/24 13:43:29  fbrunet
+ * Add new class ViewQueryResult : allow to use one class to create result display in advancedSearch and EditEntryInit (like advancedQueryForm)
+ * Improve result display : view n results per page
+ *
  * Revision 1.5  2006/04/18 14:30:24  fbrunet
  * Authorize admin to edit all entries
  *
@@ -156,17 +160,37 @@ public class AdvancedQueryForm {
         return AbstractPO.myGetParameter(req, AdvancedQueryFormXHTML.NAME_XSL);
     }
 
+    public String getRequestedNumberOfResultsPerPageString(HttpServletRequest req) 
+        throws java.io.UnsupportedEncodingException,
+        com.lutris.appserver.server.httpPresentation.HttpPresentationException
+    {
+        String nbr = AbstractPO.myGetParameter(req, AdvancedQueryFormXHTML.NAME_NB_RESULT_PER_PAGE);
+        // limit ... 10
+        return (null == nbr || nbr.equals("")) ? "10" : nbr;
+        // limit ... all (0)
+        //return (null == nbr || nbr.equals("")) ? "0" : nbr;
+    }
+
+    
     public int getRequestedNumberOfResultsPerPage(HttpServletRequest req) 
         throws java.io.UnsupportedEncodingException,
         com.lutris.appserver.server.httpPresentation.HttpPresentationException
     {
         String nbr = AbstractPO.myGetParameter(req, AdvancedQueryFormXHTML.NAME_NB_RESULT_PER_PAGE);
         // limit ... 10
-        //return (null == nbr || nbr.equals("")) ? 10 : Integer.valueOf(nbr).intValue();
+        return (null == nbr || nbr.equals("")) ? 10 : Integer.valueOf(nbr).intValue();
         // limit ... all (0)
-        return (null == nbr || nbr.equals("")) ? 0 : Integer.valueOf(nbr).intValue();
+        //return (null == nbr || nbr.equals("")) ? 0 : Integer.valueOf(nbr).intValue();
     }
 
+    public String getRequestedOffsetString(HttpServletRequest req) 
+        throws java.io.UnsupportedEncodingException,
+        com.lutris.appserver.server.httpPresentation.HttpPresentationException
+    {
+        String ofs = AbstractPO.myGetParameter(req, AdvancedQueryFormXHTML.NAME_OFFSET);
+        return (null == ofs || ofs.equals("")) ? "0" : ofs;
+    }
+    
     public int getRequestedOffset(HttpServletRequest req) 
         throws java.io.UnsupportedEncodingException,
         com.lutris.appserver.server.httpPresentation.HttpPresentationException
@@ -265,8 +289,8 @@ public class AdvancedQueryForm {
             for (int i = 0; i < criteriaList.size(); i++) {
                 qrequest.addCriteria((QueryCriteria)criteriaList.get(i));
             }
-            qrequest.setLimit(getRequestedNumberOfResultsPerPage(comms.request.getHttpServletRequest()));
-            qrequest.setOffset(getRequestedOffset(comms.request.getHttpServletRequest()));
+            qrequest.setLimit(getRequestedNumberOfResultsPerPageString(comms.request.getHttpServletRequest()));
+            qrequest.setOffset(getRequestedOffsetString(comms.request.getHttpServletRequest()));
             qrequest.setXsl(getRequestedXsl(comms.request.getHttpServletRequest()));
             qrequest.setTargets(getRequestedTargetLanguages(comms.request.getHttpServletRequest()));
             
@@ -366,7 +390,7 @@ public class AdvancedQueryForm {
         xslOption.getParentNode().removeChild(xslOption);
         
         // put parameters back into form
-        queryDoc.getElementOffset().setValue(Integer.toString(qp.getOffset()));
+        //queryDoc.getElementOffset().setValue(Integer.toString(qp.getOffset()));
         
         AbstractPO.setSelected(queryDoc.getElementNumberOfResultPerPage(), Integer.toString(qp.getLimit()));
         

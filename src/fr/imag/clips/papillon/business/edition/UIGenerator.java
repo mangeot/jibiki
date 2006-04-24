@@ -8,6 +8,10 @@
  * $Id$
  *---------------------------------------------------------
  * $Log$
+ * Revision 1.21  2006/04/24 13:43:29  fbrunet
+ * Add new class ViewQueryResult : allow to use one class to create result display in advancedSearch and EditEntryInit (like advancedQueryForm)
+ * Improve result display : view n results per page
+ *
  * Revision 1.20  2006/04/06 15:06:39  fbrunet
  * New class 'creationEditInit' : create new entry
  * Modify LexALPEditEntry : only edit entry
@@ -674,7 +678,7 @@ public class UIGenerator {
     
 	
 	protected static boolean setIdValueCorrespondingTextInput(String correspName, Element itfElt, String newId, String value) {
-		PapillonLogger.writeDebugMsg("findCorrespondingTextInput: " + correspName);
+		//PapillonLogger.writeDebugMsg("findCorrespondingTextInput: " + correspName);
 		boolean found = false;
 		NodeList myNodeList = itfElt.getElementsByTagName ("input");
 		int i=0;

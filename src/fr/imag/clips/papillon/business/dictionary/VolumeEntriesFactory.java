@@ -3,6 +3,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.51  2006/04/24 13:43:29  fbrunet
+ * Add new class ViewQueryResult : allow to use one class to create result display in advancedSearch and EditEntryInit (like advancedQueryForm)
+ * Improve result display : view n results per page
+ *
  * Revision 1.50  2006/04/06 15:06:39  fbrunet
  * New class 'creationEditInit' : create new entry
  * Modify LexALPEditEntry : only edit entry
@@ -526,7 +530,7 @@ public class VolumeEntriesFactory {
 					query.getQueryBuilder().addWhere(xmlcodeColumn, any, QueryBuilder.CASE_SENSITIVE_CONTAINS);
 				}
 				else {
-					fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Index request table: " + volumeTableName);
+					//fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Index request table: " + volumeTableName);
 				}
 				
 				if (Keys != null) {
@@ -1163,9 +1167,9 @@ public class VolumeEntriesFactory {
 				}
 			}
 			
-			if (resultEntry != null) {
-				PapillonLogger.writeDebugMsg("findEntryByEntryId selected entry: " + resultEntry.getHeadword() + " status: " + resultEntry.getStatus());
-			}
+			//if (resultEntry != null) {
+			//	PapillonLogger.writeDebugMsg("findEntryByEntryId selected entry: " + resultEntry.getHeadword() + " status: " + resultEntry.getStatus());
+			//}
 			return resultEntry;
         }
 

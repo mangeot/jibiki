@@ -9,6 +9,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2006/04/24 13:43:29  fbrunet
+ * Add new class ViewQueryResult : allow to use one class to create result display in advancedSearch and EditEntryInit (like advancedQueryForm)
+ * Improve result display : view n results per page
+ *
  * Revision 1.2  2006/03/01 15:12:31  mangeot
  * Merge between maintrunk and LEXALP_1_1 branch
  *
@@ -34,6 +38,9 @@ package fr.imag.clips.papillon.business.dictionary;
 /* standards imports */
 import java.util.Hashtable;
 import java.util.Vector;
+import java.lang.Integer;
+import java.lang.Object;
+
 
 /**
 * A QueryParameter is a business object passed when querying dictionaries.
@@ -46,6 +53,12 @@ public class QueryParameter {
     protected int limit; 
     protected String xsl;
     protected String [] targets;
+    
+    public QueryParameter() {
+        criteria = new Vector();
+        offset = 0; 
+        limit = 0; 
+    }
     
     public String[] getDictionaryNames() {
         return (null == dictionaryNames) ? (dictionaryNames = new String[0]) : dictionaryNames;
@@ -67,12 +80,20 @@ public class QueryParameter {
         return offset;
     }
     
+    public String getOffsetString() {
+        return Integer.toString(offset);
+    }
+    
     public void setOffset(int newOffset) {
         offset = newOffset;
     }
 
     public int getLimit() {
         return limit;
+    }
+    
+    public String getLimitString() {
+        return Integer.toString(limit);
     }
     
     public void setLimit(int newLimit) {
@@ -94,6 +115,21 @@ public class QueryParameter {
     public void setTargets(String [] newTargets) {
         targets = newTargets;
     }
-    
         
+    public QueryParameter duplicate() {
+            
+        //
+        QueryParameter duplicate = new QueryParameter();
+        
+        // NOT clone() ATTENTION NO DEEP COPY
+        // JUST Create the SAME queryParamater. It use to create next and previous query request !
+        duplicate.setDictionaryNames(dictionaryNames);
+        duplicate.setCriteria(criteria);
+        duplicate.setOffset(offset);
+        duplicate.setLimit(limit);
+        duplicate.setXsl(xsl);
+        duplicate.setTargets(targets);
+        
+        return duplicate;
+    }
 }
