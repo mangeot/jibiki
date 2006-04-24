@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2006/04/24 13:50:37  fbrunet
+ * *** empty log message ***
+ *
  * Revision 1.3  2006/04/24 13:43:29  fbrunet
  * Add new class ViewQueryResult : allow to use one class to create result display in advancedSearch and EditEntryInit (like advancedQueryForm)
  * Improve result display : view n results per page
@@ -63,7 +66,7 @@ import fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory;
 import fr.imag.clips.papillon.business.dictionary.QueryResult;
 import fr.imag.clips.papillon.business.dictionary.QueryRequest;
 import fr.imag.clips.papillon.business.dictionary.QueryCriteria;
-import fr.imag.clips.papillon.presentation.QueryParameter;
+import fr.imag.clips.papillon.business.dictionary.QueryParameter;
 import fr.imag.clips.papillon.business.dictionary.IQuery;
 import fr.imag.clips.papillon.business.user.User;
 import fr.imag.clips.papillon.business.user.Group;

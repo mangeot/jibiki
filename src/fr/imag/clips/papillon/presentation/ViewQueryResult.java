@@ -9,11 +9,12 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.2  2006/04/24 13:50:37  fbrunet
+ * *** empty log message ***
+ *
  * Revision 1.1  2006/04/24 13:43:29  fbrunet
  * Add new class ViewQueryResult : allow to use one class to create result display in advancedSearch and EditEntryInit (like advancedQueryForm)
  * Improve result display : view n results per page
- *//
- *
  */
 
 package fr.imag.clips.papillon.presentation;
