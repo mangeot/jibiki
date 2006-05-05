@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.40  2006/05/05 02:08:23  fbrunet
+ * bug correction : url utf8 transfert (in createEntryInit)
+ *
  * Revision 1.39  2006/04/06 15:06:39  fbrunet
  * New class 'creationEditInit' : create new entry
  * Modify LexALPEditEntry : only edit entry
@@ -726,7 +729,7 @@ public class VolumeEntry implements IAnswer {
 	}
 
 /* methods for axi-reflinks */
-	
+    
     /**
         * returns ids of the lexies that are pointed by this by an axi-reflink, for lang
      */

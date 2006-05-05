@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.7  2006/05/05 02:08:23  fbrunet
+ * bug correction : url utf8 transfert (in createEntryInit)
+ *
  * Revision 1.6  2006/03/01 15:12:31  mangeot
  * Merge between maintrunk and LEXALP_1_1 branch
  *
@@ -318,8 +321,17 @@ public class Dictionary {
         return classname;
 	}
     
-    public String getPostProcessorClassName() throws PapillonBusinessException {
-        NodeList postProcessor = Utility.buildDOMTree(this.getXmlCode()).getElementsByTagName("result-postprocessor"); 
+    public String getPostUpdateProcessorClassName() throws PapillonBusinessException {
+        NodeList postProcessor = Utility.buildDOMTree(this.getXmlCode()).getElementsByTagName("result-postupdateprocessor"); 
+        String classname = null;
+        if ((null != postProcessor) && (postProcessor.getLength() > 0)) {
+            classname = ((Element) postProcessor.item(0)).getAttribute("class-name");
+        }
+        return classname;
+	}
+    
+    public String getPostSaveProcessorClassName() throws PapillonBusinessException {
+        NodeList postProcessor = Utility.buildDOMTree(this.getXmlCode()).getElementsByTagName("result-postsaveprocessor"); 
         String classname = null;
         if ((null != postProcessor) && (postProcessor.getLength() > 0)) {
             classname = ((Element) postProcessor.item(0)).getAttribute("class-name");

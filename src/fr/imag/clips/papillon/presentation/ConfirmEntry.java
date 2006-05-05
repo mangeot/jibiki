@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2006/05/05 02:08:23  fbrunet
+ * bug correction : url utf8 transfert (in createEntryInit)
+ *
  * Revision 1.2  2006/03/01 15:41:13  mangeot
  * bug fixes
  *
@@ -49,8 +52,10 @@ public class ConfirmEntry extends EditingBasePO {
     
     public static String EntryHandle_PARAMETER = EditEntry.EntryHandle_PARAMETER;
     public static String VolumeName_PARAMETER = EditEntry.VolumeName_PARAMETER;  
-	public static String Referrer_PARAMETER = EditEntry.Referrer_PARAMETER; 
-	public static String EditingErrorURL = EditEntry.EditingErrorURL; 
+    public static String Message_PARAMETER = "message";
+    public static String Button_PARAMETER = "button";
+	
+    public static String EditingErrorURL = EditEntry.EditingErrorURL; 
 	
     protected boolean loggedInUserRequired() {
         return true;
@@ -71,7 +76,8 @@ public class ConfirmEntry extends EditingBasePO {
 			// Management of the parameters
 			String volumeName = myGetParameter(VolumeName_PARAMETER);
 			String entryHandle = myGetParameter(EntryHandle_PARAMETER);
-			String referrer = myGetParameter(Referrer_PARAMETER);
+            String message = myGetParameter(Message_PARAMETER);
+            String button = myGetParameter(Button_PARAMETER);
 			
 			// Manage VolumeEntry
 			VolumeEntry myVolumeEntry = null;
@@ -101,7 +107,15 @@ public class ConfirmEntry extends EditingBasePO {
 			//
 			XHTMLTableCellElement editingResultViewElement = content.getElementEditingResultView();
 			editingResultViewElement.appendChild(content.importNode(resultElement, true));
+            
+            //
+            if (message!=null) {
+                content.setTextMessage(message);
+            }
 			
+            // Button
+            //...
+            
 			//
 			return content.getElementConfirmEntryContent();
 		}

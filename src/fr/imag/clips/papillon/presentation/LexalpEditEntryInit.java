@@ -10,6 +10,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.7  2006/05/05 02:08:23  fbrunet
+ * bug correction : url utf8 transfert (in createEntryInit)
+ *
  * Revision 1.6  2006/04/24 13:43:29  fbrunet
  * Add new class ViewQueryResult : allow to use one class to create result display in advancedSearch and EditEntryInit (like advancedQueryForm)
  * Improve result display : view n results per page
@@ -156,13 +159,13 @@ public class LexalpEditEntryInit extends PapillonBasePO {
             // Content creation
             content = (LexalpEditEntryInitXHTML)MultilingualXHtmlTemplateFactory.createTemplate("fr.imag.clips.papillon.presentation.xhtmllexalp", "LexalpEditEntryInitXHTML", this.getComms(), this.getSessionData());
             // On regarde d'abord les parametres qui nous sont demandes.
-            String volume = myGetParameter(content.NAME_VOLUME);
+            String volume = myGetParameter(EditEntryInitFactory.VOLUME_PARAMETER);
             String headword = myGetParameter(content.NAME_Headword);
-            String entryHandle = myGetParameter(HANDLE_PARAMETER);
-            String action = myGetParameter(ACTION_PARAMETER);		
+            String entryHandle = myGetParameter(EditEntryInitFactory.HANDLE_PARAMETER);
+            String action = myGetParameter(EditEntryInitFactory.ACTION_PARAMETER);		
             
             //
-            if (volume!=null &&!volume.equals("")) {
+            if (volume != null && !volume.equals("")) {
                 this.setPreference(content.NAME_VOLUME,volume);
             } else {
                 volume = this.getPreference(content.NAME_VOLUME);

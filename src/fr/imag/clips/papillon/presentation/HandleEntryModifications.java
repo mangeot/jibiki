@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.7  2006/05/05 02:08:23  fbrunet
+ * bug correction : url utf8 transfert (in createEntryInit)
+ *
  * Revision 1.6  2006/04/24 13:43:29  fbrunet
  * Add new class ViewQueryResult : allow to use one class to create result display in advancedSearch and EditEntryInit (like advancedQueryForm)
  * Improve result display : view n results per page
@@ -52,17 +55,20 @@ import fr.imag.clips.papillon.business.dictionary.ContributionsFactory;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
 import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory;
+import fr.imag.clips.papillon.business.dictionary.QueryResult;
 import fr.imag.clips.papillon.business.edition.UIGenerator;
 import fr.imag.clips.papillon.business.edition.UITemplates;
 import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.utility.Utility;
 import fr.imag.clips.papillon.business.transformation.ResultPreProcessor;
 import fr.imag.clips.papillon.business.transformation.ResultPreProcessorFactory;
-import fr.imag.clips.papillon.business.transformation.ResultPostProcessor;
-import fr.imag.clips.papillon.business.transformation.ResultPostProcessorFactory;
+import fr.imag.clips.papillon.business.transformation.ResultPostSaveProcessor;
+import fr.imag.clips.papillon.business.transformation.ResultPostSaveProcessorFactory;
+import fr.imag.clips.papillon.business.transformation.ResultPostUpdateProcessor;
+import fr.imag.clips.papillon.business.transformation.ResultPostUpdateProcessorFactory;
 import fr.imag.clips.papillon.business.transformation.ResultFormatter;
 import fr.imag.clips.papillon.business.transformation.ResultFormatterFactory;
-import fr.imag.clips.papillon.business.dictionary.QueryResult;
+import fr.imag.clips.papillon.presentation.ConfirmEntry;
 import fr.imag.clips.papillon.business.user.User;
 import fr.imag.clips.papillon.business.user.Group;
 
@@ -157,7 +163,7 @@ public class HandleEntryModifications extends EditingBasePO {
 			
 			// Call PreProcessor
 			// FIXME: Here ?
-			// TO BO ADDED TO ENDITENTRYINIT
+			// TO BE ADDED TO ENDITENTRYINIT
 			//ResultPreProcessor preProcessor = ResultPreProcessorFactory.getPreProcessor(myVolumeEntry);
 			//preProcessor.transformation(myVolumeEntry, this.getUser());
 			
@@ -286,8 +292,8 @@ public class HandleEntryModifications extends EditingBasePO {
                 
                 // Call PostProcessor
                 // FIXME: call specific update PostProcessor !
-                ResultPostProcessor postProcessor = ResultPostProcessorFactory.getPostProcessor(NFVolumeEntry);
-                postProcessor.transformation(NFVolumeEntry, user);
+                ResultPostUpdateProcessor postUpdateProcessor = ResultPostUpdateProcessorFactory.getPostUpdateProcessor(NFVolumeEntry);
+                postUpdateProcessor.transformation(NFVolumeEntry, user);
                 
                 // new current volume entry
                 throw new ClientPageRedirectException(
@@ -321,7 +327,6 @@ public class HandleEntryModifications extends EditingBasePO {
 				
 				classifiedVolumeEntry.setStatus(VolumeEntry.CLASSIFIED_FINISHED_STATUS);
 				classifiedVolumeEntry.save();
-				//System.out.println("Save : classifiedVolumeE = " + classifiedVolumeEntry.getContributionId());
 			}
 			
 			// FIXME: This shoudl be handled by a post processing class or something like this, still to be defined...
@@ -331,14 +336,14 @@ public class HandleEntryModifications extends EditingBasePO {
 			//myVolumeEntry.setValidated(this.getUser());
 			
 			// Call PostProcessor
-			ResultPostProcessor postProcessor = ResultPostProcessorFactory.getPostProcessor(myVolumeEntry);
-			postProcessor.transformation(myVolumeEntry, user);
+			ResultPostSaveProcessor postSaveProcessor = ResultPostSaveProcessorFactory.getPostSaveProcessor(myVolumeEntry);
+			postSaveProcessor.transformation(myVolumeEntry, user);
 			
+            //
 			throw new ClientPageRedirectException(
 												  ConfirmEntryURL + "?" + 
-												  EditEntry.VolumeName_PARAMETER + "=" + myVolumeEntry.getVolumeName() + "&" + 
-												  EditEntry.EntryHandle_PARAMETER + "=" + myVolumeEntry.getHandle() + "&" +
-												  EditEntry.Referrer_PARAMETER + "=" + myUrlEncode(referrer));
+												  ConfirmEntry.VolumeName_PARAMETER + "=" + myVolumeEntry.getVolumeName() + "&" + 
+												  ConfirmEntry.EntryHandle_PARAMETER + "=" + myVolumeEntry.getHandle());
         }
 	
 }

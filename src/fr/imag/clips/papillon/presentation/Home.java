@@ -10,6 +10,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.20  2006/05/05 02:08:23  fbrunet
+ *  bug correction : url utf8 transfert (in createEntryInit)
+ *
  *  Revision 1.19  2006/04/24 13:43:29  fbrunet
  *  Add new class ViewQueryResult : allow to use one class to create result display in advancedSearch and EditEntryInit (like advancedQueryForm)
  *  Improve result display : view n results per page
@@ -560,8 +563,7 @@ public class Home extends PapillonBasePO {
         //FIXME: add to QueryRequest methods and add to user groups !!!
         ArrayList listStatus = new ArrayList();
         
-		
-		//FIXME: MM: j'ai bien conscience que c'est un hack monstrueux mais la terre doit continuer de tourner...
+        //FIXME: MM: j'ai bien conscience que c'est un hack monstrueux mais la terre doit continuer de tourner...
 		if (((fr.imag.clips.papillon.Papillon)com.lutris.appserver.server.Enhydra.getApplication()).getLoginCookieName().equals("GDEFLoginCookie")) {
 			QueryCriteria criteria = new QueryCriteria();
 			criteria.add("key", QueryCriteria.EQUAL, Volume.CDM_headword);

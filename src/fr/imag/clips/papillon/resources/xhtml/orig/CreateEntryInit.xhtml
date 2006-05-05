@@ -12,14 +12,18 @@
                 // Open a new interface window to create the new entry 
                 function init() {
                     if (document.getElementById('GO').value == 'go') {
-                        href = 'CreateEntryInit.po?action=createAnyway&volumeanyway=' + document.getElementById('VOLUME_ANYWAY').value + '&headwordanyway=' +  document.getElementById('HEADWORD_ANYWAY').value;
+                        var volumeanyway = document.getElementById('VOLUME_ANYWAY');
+                        var headwordanyway = document.getElementById('HEADWORD_ANYWAY');
+                        var href = 'CreateEntryInit.po?action=createAnyway&volumeanyway=' + encodeURI(volumeanyway.value) + '&headwordanyway=' +  encodeURI(headwordanyway.value);
                         window.open(href,'EditEntry');
                     }
                 }
                 
                  // Open a new interface window to create the new entry 
                 function createAnyway() {
-                    href = 'CreateEntryInit.po?action=showAndCreate&volumeanyway=' + document.getElementById('VOLUME_ANYWAY').value + '&headwordanyway=' +  document.getElementById('HEADWORD_ANYWAY').value;
+                    var volumeanyway = document.getElementById('VOLUME_ANYWAY');
+                    var headwordanyway = document.getElementById('HEADWORD_ANYWAY');
+                    var href = 'CreateEntryInit.po?action=showAndCreate&volumeanyway=' + encodeURI(volumeanyway.value) + '&headwordanyway=' +  encodeURI(headwordanyway.value);
                     location.replace(href,'CreateEntry');
                 }
             //-->
@@ -44,7 +48,7 @@
             <input id="HEADWORD_DISABLED" name="HEADWORD_DISABLED" type="text" disabled="disabled" style="width:30%" value="" />
             <input name="action" id="CreateAnywayButton" type="submit" style="width:110px" value="create anyway" onclick="createAnyway()"/>
         </div>
-        <form  id="LookupForm" action="CreateEntryInit.po">
+        <form  id="LookupForm" method="get" action="CreateEntryInit.po" >
             <div style="text-align:center; width:100%; padding: 10px 0px;">
                 <b><label for="VOLUME">Volume:</label></b>           
                 <select id="VOLUME" name="VOLUME" style="width:100px" >

@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.41  2006/05/05 02:08:23  fbrunet
+ * bug correction : url utf8 transfert (in createEntryInit)
+ *
  * Revision 1.40  2006/03/27 10:48:45  mangeot
  * added finition-date in contribution metadata
  *
@@ -861,14 +864,16 @@ public class VolumesFactory {
     public static void reConstructionIndex()
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
             
-            // Begin transaction
-            CurrentDBTransaction.registerNewDBTransaction();
+           
             
             try {
                 
                 //
                 Volume[] volumes = getVolumesArray();
                 for (int i=0; i < volumes.length; i++) {
+                    
+                    // Begin transaction
+                    CurrentDBTransaction.registerNewDBTransaction();
                     
                     // Truncate index volumes 
                     IndexFactory.truncateIndexTable(volumes[i]);
@@ -877,7 +882,10 @@ public class VolumesFactory {
                     int count = volumes[i].getCount();
                     int delta = 10; // buffer limit
                     for (int z = 0; z < count; z=z+delta) {
-                                                
+                         
+                        //
+                        System.out.println("Z + delta : " + Integer.toString(z));
+                        
                         // Buffer volumeEntries
                         Collection bufferResults = VolumeEntriesFactory.getVolumeEntriesVector(DictionariesFactory.findDictionaryByName(volumes[i].getDictname()), volumes[i], null, null, null, z, delta);
                         
@@ -887,13 +895,15 @@ public class VolumesFactory {
                             VolumeEntry ve = (VolumeEntry)buffer.next();
                             ParseVolume.parseEntry(ve);
                         }
-                        
                     }
+                    
+                    // End transaction
+                    // a part was correct, commit the transaction ...
+                    ((DBTransaction) CurrentDBTransaction.get()).commit();
+                    CurrentDBTransaction.releaseCurrentDBTransaction();
                 }
                 
-                // End transaction
-                // everything was correct, commit the transaction...
-                ((DBTransaction) CurrentDBTransaction.get()).commit();
+                
                 
             } catch (Exception e) {
                 String userMessage = "Problems while adding the specified dictionary.\n";

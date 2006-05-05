@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.26  2006/05/05 02:08:23  fbrunet
+ * bug correction : url utf8 transfert (in createEntryInit)
+ *
  * Revision 1.25  2006/03/29 10:17:36  mangeot
  * FIXME: Added CDM_gdefEstParticule...
  *
@@ -170,12 +173,27 @@
 package fr.imag.clips.papillon.business.dictionary;
 
 import fr.imag.clips.papillon.data.*;
+import fr.imag.clips.papillon.CurrentDBTransaction;
+import com.lutris.appserver.server.sql.DBTransaction;
+
+//for URLs
+import java.net.URL;
+import java.net.MalformedURLException;
+
+
+//pour parser le document avec le DOM
+import org.w3c.dom.*;
+
+import com.lutris.dods.builder.generator.query.QueryBuilder;
+
+
+
+
+import fr.imag.clips.papillon.data.*;
 import fr.imag.clips.papillon.papillon_data.*;
 import fr.imag.clips.papillon.CurrentDBTransaction;
-import fr.imag.clips.papillon.business.dictionary.QueryResult;
 import fr.imag.clips.papillon.business.user.User;
 
-import fr.imag.clips.papillon.business.PapillonBusinessException;
 
 import com.lutris.appserver.server.sql.DatabaseManagerException;
 import com.lutris.appserver.server.sql.ObjectIdException;
@@ -183,6 +201,8 @@ import com.lutris.dods.builder.generator.query.DataObjectException;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 
 //Dom objects
 import org.w3c.dom.*;
@@ -210,7 +230,8 @@ import javax.xml.parsers.ParserConfigurationException;
 
 //pour le debugage
 import fr.imag.clips.papillon.business.utility.Utility;
-
+import fr.imag.clips.papillon.business.PapillonBusinessException;
+import fr.imag.clips.papillon.business.PapillonLogger;
 
 /**
  * Represents a Volume. 
@@ -948,8 +969,18 @@ public class Volume {
         return classname;
 	}
     
-    public String getPostProcessorClassName() throws PapillonBusinessException {
-        NodeList postProcessor = Utility.buildDOMTree(this.getXmlCode()).getElementsByTagName("result-postprocessor"); 
+    public String getPostUpdateProcessorClassName() throws PapillonBusinessException {
+        NodeList postProcessor = Utility.buildDOMTree(this.getXmlCode()).getElementsByTagName("result-postupdateprocessor"); 
+        String classname = null;
+        if ((null != postProcessor) && (postProcessor.getLength() > 0)) {
+            // FIXME : no .getFirstChild needs
+            classname = ((Element) postProcessor.item(0).getFirstChild()).getAttribute("class-name");
+        }
+        return classname;
+	}
+    
+    public String getPostSaveProcessorClassName() throws PapillonBusinessException {
+        NodeList postProcessor = Utility.buildDOMTree(this.getXmlCode()).getElementsByTagName("result-postsaveprocessor"); 
         String classname = null;
         if ((null != postProcessor) && (postProcessor.getLength() > 0)) {
             // FIXME : no .getFirstChild needs
@@ -1226,7 +1257,8 @@ public class Volume {
     
     public void launchTransformation(String xslTransformation, User user) 
         throws PapillonBusinessException {
-			try {
+			/*
+            try {
                 //
                 TransformerFactory myTransformerFactory = TransformerFactory.newInstance();
                 Transformer myTransformer = myTransformerFactory.newTransformer(new StreamSource(new StringReader(xslTransformation)));
@@ -1258,6 +1290,72 @@ public class Volume {
             } catch(Exception ex) {
 				throw new PapillonBusinessException("Error deleting Volume", ex);
 			}
+            */
+            
+            try {
+                //
+                TransformerFactory myTransformerFactory = TransformerFactory.newInstance();
+                Transformer myTransformer = myTransformerFactory.newTransformer(new StreamSource(new StringReader(xslTransformation)));
+                
+                    // Begin transaction
+                    CurrentDBTransaction.registerNewDBTransaction();
+                    
+                    // Truncate index volumes 
+                    IndexFactory.truncateIndexTable(this);
+                    
+                    //
+                    int count = this.getCount();
+                    int delta = 10; // buffer limit
+                    for (int z = 0; z < count; z=z+delta) {
+                        
+                        //
+                        System.out.println("Z + delta : " + Integer.toString(z));
+                        
+                        // Buffer volumeEntries
+                        Collection bufferResults = VolumeEntriesFactory.getVolumeEntriesVector(DictionariesFactory.findDictionaryByName(this.getDictname()), this, null, null, null, z, delta);
+                        
+                        // Index volumeEntries
+                        Iterator buffer = bufferResults.iterator();
+                        while ( buffer.hasNext() ) {
+                            VolumeEntry ve = (VolumeEntry)buffer.next();
+                            
+                            //
+                            DOMSource xmlSource = new DOMSource(Utility.buildDOMTree(ve.getXmlCode()));
+                            DOMResult xmlTarget = new DOMResult();
+                            
+                            //
+                            myTransformer.transform(xmlSource, xmlTarget);
+                            
+                            //
+                            //System.out.println(ve.getXmlCode());
+                            //System.out.println(Utility.NodeToString((Document) xmlTarget.getNode()))
+                            
+                            //
+                            ve.setDom((Document) xmlTarget.getNode());
+                            ve.save();
+                        }
+                    }
+                    
+                    // End transaction
+                    // a part was correct, commit the transaction ...
+                    ((DBTransaction) CurrentDBTransaction.get()).commit();
+                    CurrentDBTransaction.releaseCurrentDBTransaction();
+                
+            } catch (Exception e) {
+                String userMessage = "Problems when transform entries.";
+                PapillonLogger.writeDebugMsg(userMessage);
+                e.printStackTrace();
+                try {
+                    ((DBTransaction) CurrentDBTransaction.get()).rollback();
+                } catch (java.sql.SQLException sqle) {
+                    PapillonLogger.writeDebugMsg("launchTransformation: SQLException while rolling back failed transaction.");
+                    sqle.printStackTrace();
+                }
+            } finally {
+                CurrentDBTransaction.releaseCurrentDBTransaction();
+            }
+            
+            
 		}
     
 }				

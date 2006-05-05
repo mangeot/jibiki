@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2006/05/05 02:08:23  fbrunet
+ * bug correction : url utf8 transfert (in createEntryInit)
+ *
  * Revision 1.2  2006/04/24 13:50:37  fbrunet
  * *** empty log message ***
  *
@@ -88,8 +91,10 @@ public class ViewQueryResult {
         HTMLAnchorElement undeleteAnchor = content.getElementUndeleteEntryAnchor();
         HTMLAnchorElement ViewHistoryEntryAnchor = content.getElementViewHistoryEntryAnchor();
         HTMLAnchorElement viewXmlAnchor = content.getElementViewXmlAnchor();
-        HTMLAnchorElement previousAnchor = content.getElementPreviousAnchor();
-        HTMLAnchorElement nextAnchor = content.getElementNextAnchor();
+        HTMLAnchorElement previousAnchorTop = content.getElementPreviousAnchorTop();
+        HTMLAnchorElement nextAnchorTop = content.getElementNextAnchorTop();
+        HTMLAnchorElement previousAnchorBottom = content.getElementPreviousAnchorBottom();
+        HTMLAnchorElement nextAnchorBottom = content.getElementNextAnchorBottom();
         HTMLElement underEdition = content.getElementUnderEdition();
         HTMLElement proceedEdition = content.getElementProceedEdition();
         //HTMLAnchorElement entryIdAnchor = content.getElementViewEntryAnchor();
@@ -362,38 +367,49 @@ public class ViewQueryResult {
             //entryNode.getParentNode().insertBefore(entryNode.cloneNode(true), entryNode);
                 }
 
-// the previous button
-if ( qp.getOffset() != 0 ) {
-    
-    //
-    QueryParameter previousQp = (QueryParameter) qp.duplicate();
-    previousQp.setOffset(qp.getOffset() - qp.getLimit());
-    previousAnchor.setHref(url + "?" + AdvancedQueryForm.getEncodedUrlForParameter(previousQp));
-    previousAnchor.setAttribute("style","display: inline;");
-    
-} else {
-    
-    //
-    previousAnchor.setHref("");
-    previousAnchor.setAttribute("style","display: none;");
-}
+        // the previous button
+        if ( qp.getOffset() != 0 ) {
+            
+            QueryParameter previousQp = (QueryParameter) qp.duplicate();
+            previousQp.setOffset(qp.getOffset() - qp.getLimit());
+            // Top
+            previousAnchorTop.setHref(url + "?" + AdvancedQueryForm.getEncodedUrlForParameter(previousQp));
+            previousAnchorTop.setAttribute("style","font-style: italic; display: inline;");
+            // Bottom
+            previousAnchorBottom.setHref(url + "?" + AdvancedQueryForm.getEncodedUrlForParameter(previousQp));
+            previousAnchorBottom.setAttribute("style","font-style: italic; display: inline;");
+            
+        } else {
+            
+            // Top
+            previousAnchorTop.setHref("");
+            previousAnchorTop.setAttribute("style","display: none;");
+            // Bottom
+            previousAnchorBottom.setHref("");
+            previousAnchorBottom.setAttribute("style","display: none;");
+        }
 
-// the next button
-// FIXME : verify limit and qrest results ... but qrest of multiple volumes
-if ( true ) {
-    
-    //
-    QueryParameter nextQp = (QueryParameter) qp.duplicate();
-    nextQp.setOffset(qp.getOffset() + qp.getLimit());
-    nextAnchor.setHref(url + "?" + AdvancedQueryForm.getEncodedUrlForParameter(nextQp));
-    nextAnchor.setAttribute("style","display: inline;");
+        // the next button
+        if ( qrset.size() >= qp.getLimit() ) {
+            
+            QueryParameter nextQp = (QueryParameter) qp.duplicate();
+            nextQp.setOffset(qp.getOffset() + qp.getLimit());
+            // Top
+            nextAnchorTop.setHref(url + "?" + AdvancedQueryForm.getEncodedUrlForParameter(nextQp));
+            nextAnchorTop.setAttribute("style","font-style: italic; display: inline;");
+            // Bottom
+            nextAnchorBottom.setHref(url + "?" + AdvancedQueryForm.getEncodedUrlForParameter(nextQp));
+            nextAnchorBottom.setAttribute("style","font-style: italic; display: inline;");
 
-} else {
-    
-    //
-    nextAnchor.setHref("");
-    nextAnchor.setAttribute("style","display: none;");
-}
+        } else {
+            
+            // Top
+            nextAnchorTop.setHref("");
+            nextAnchorTop.setAttribute("style","display: none;");
+            // Bottom
+            nextAnchorBottom.setHref("");
+            nextAnchorBottom.setAttribute("style","display: none;");
+        }
 
 
 //

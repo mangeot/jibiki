@@ -252,8 +252,6 @@ package fr.imag.clips.papillon.business.dictionary;
                         }
                         
                         //
-                        //String limitString = "LIMIT " + Integer.toString(limit);
-                        //System.out.println(limitString);
                         //query.addEndClause("LIMIT 10 OFFSET 10");
                         
                         //
@@ -352,9 +350,10 @@ package fr.imag.clips.papillon.business.dictionary;
                     VolumeEntryQuery veQuery = new VolumeEntryQuery(volume.getDbname(), CurrentDBTransaction.get());
                     findLexie(veQuery.getQueryBuilder(), volume.getDbname(), volume.getIndexDbname());
                      
-                    // sort
-                    // FIXME: if limit 500, pb with findAllLexie for reconstruction index !
-                    veQuery.getQueryBuilder().addEndClause(" LIMIT " + limit + " OFFSET " + offset);
+                    // limit/offset and sort
+                    if ((limit != null) && (offset != null) && ((!limit.equals("0")) || (!offset.equals("0")))) {
+                        veQuery.getQueryBuilder().addEndClause(" LIMIT " + limit + " OFFSET " + offset);
+                    }
                     veQuery.getQueryBuilder().addOrderByColumn("multilingual_sort('" + volume.getSourceLanguage() + "',headword)","");
                     
                     // debug

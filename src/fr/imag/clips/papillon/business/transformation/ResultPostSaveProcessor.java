@@ -7,7 +7,7 @@
  * $Id$
  *------------------------
  * $Log$
- * Revision 1.3  2006/05/05 02:08:23  fbrunet
+ * Revision 1.1  2006/05/05 02:08:23  fbrunet
  * bug correction : url utf8 transfert (in createEntryInit)
  *
  *
@@ -24,14 +24,14 @@ import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 
 
-/** Interface PreProcessor.
-* PreProcessor Modifies the volume entry before the entry editing
+/** Interface PostSaveProcessor.
+* PostSaveProcessor Modifies the volume entry after the entry editing
 *
 */
-public interface ResultPreProcessor {
-        
+public interface ResultPostSaveProcessor {
+    
     /** 
-    transform the volume entry in pre-preocessing.
+    transform the volume entry in post-save-preocessing.
     */
     public abstract void transformation(VolumeEntry ve, User user) throws PapillonBusinessException;
     

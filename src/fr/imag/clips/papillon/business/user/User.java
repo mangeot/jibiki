@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.9  2006/05/05 02:08:23  fbrunet
+ * bug correction : url utf8 transfert (in createEntryInit)
+ *
  * Revision 1.8  2006/03/01 15:12:31  mangeot
  * Merge between maintrunk and LEXALP_1_1 branch
  *
@@ -231,7 +234,9 @@ public class User implements com.lutris.appserver.server.user.User {
 	public byte[] getPassword()
 		throws PapillonBusinessException {
 			try {
-				return myDO.getPassword();
+                byte pwd[] = myDO.getPassword();
+                for (int i=0; i < pwd.length; i++) System.out.print(Integer.toHexString(pwd[i] & 0xFF));
+ 				return myDO.getPassword();
 				
 			} catch(DataObjectException ex) {
 				throw new PapillonBusinessException("Error getting users's password", ex);

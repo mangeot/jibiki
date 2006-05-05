@@ -8,6 +8,9 @@
  * $Id$
  *---------------------------------------------------------
  * $Log$
+ * Revision 1.22  2006/05/05 02:08:23  fbrunet
+ * bug correction : url utf8 transfert (in createEntryInit)
+ *
  * Revision 1.21  2006/04/24 13:43:29  fbrunet
  * Add new class ViewQueryResult : allow to use one class to create result display in advancedSearch and EditEntryInit (like advancedQueryForm)
  * Improve result display : view n results per page
@@ -136,7 +139,10 @@ public class UIGenerator {
 	}
 	
 	public static boolean addElement(String elementName, String parentId, Element entryElt, Element entryTemplate, String[] siblingIds) {
-		//PapillonLogger.writeDebugMsg("addElement: " + elementName + " parent: " + parentId);
+		PapillonLogger.writeDebugMsg("addElement: " + elementName + " parent: " + parentId + " entry: " + entryElt + " entryTemplate: " + entryTemplate);
+        for (int i=0; i < siblingIds.length; i++) {
+            PapillonLogger.writeDebugMsg("siblingIds: " + siblingIds[i]);
+        }
         
 		Element siblingElement = null;
 		if (siblingIds != null && siblingIds.length>0) {

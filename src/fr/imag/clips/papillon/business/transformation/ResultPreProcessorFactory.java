@@ -3,6 +3,16 @@
  * 
  * (c) Francis Brunet-Manquat - GETA CLIPS IMAG
  * Projet Papillon
+ *-----------------------
+ * $Id$
+ *------------------------
+ * $Log$
+ * Revision 1.3  2006/05/05 02:08:23  fbrunet
+ * bug correction : url utf8 transfert (in createEntryInit)
+ *
+ *
+ *
+ *------------------------
  */
 
 package fr.imag.clips.papillon.business.transformation;

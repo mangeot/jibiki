@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.5  2006/05/05 02:08:23  fbrunet
+ * bug correction : url utf8 transfert (in createEntryInit)
+ *
  * Revision 1.4  2006/04/24 13:50:37  fbrunet
  * *** empty log message ***
  *
@@ -139,7 +142,7 @@ public class CreateEntryInit extends PapillonBasePO {
             }
             
             //
-            if (volume!=null &&!volume.equals("")) {
+            if (volume!=null && !volume.equals("")) {
                 this.setPreference(content.NAME_VOLUME, volume);
             }
             else {
@@ -173,8 +176,10 @@ public class CreateEntryInit extends PapillonBasePO {
                     displayLookupResultsAndCreate(volume, headword);
                     
                     // fill anyway parameter
-                    volumeAnyway = volume;
-                    headwordAnyway = headword;
+                    volumeAnyway = new String(volume);
+                    headwordAnyway = new String(headword);
+                    
+                    // fill headword parameter (if results !)
                     headword = "";
                     
                     // SHOW AND CREATE
@@ -319,9 +324,6 @@ public class CreateEntryInit extends PapillonBasePO {
                 
                 //
                 //addEntriesTable(qrset, qp);
-                //EditEntryInitFactory.addEntriesTable(qrset, qp, contentParameters);
-            
-                //
                 XHTMLElement queryResultForm = content.getElementQueryResultForm();
                 Node viewQueryResultNode = ViewQueryResult.createNodeResult(this.getComms(), this.getSessionData(), this.getUrl(), this.getUser(), qrset, qp);
                 queryResultForm.appendChild(content.importNode(viewQueryResultNode, true));
@@ -349,16 +351,13 @@ public class CreateEntryInit extends PapillonBasePO {
 
 			//
 			if (qrset != null && qrset.size()!=0) {
-                
+
                 //
                 QueryParameter qp = qf.getQueryParameter();
                 qp.setTargets(new String[0]);
                 
                 //
                 //addEntriesTable(qrset, qp);
-                //EditEntryInitFactory.addEntriesTable(qrset, qp, contentParameters);
-			
-                //
                 XHTMLElement queryResultForm = content.getElementQueryResultForm();
                 Node viewQueryResultNode = ViewQueryResult.createNodeResult(this.getComms(), this.getSessionData(), this.getUrl(), this.getUser(), qrset, qp);
                 queryResultForm.appendChild(content.importNode(viewQueryResultNode, true));
@@ -367,11 +366,12 @@ public class CreateEntryInit extends PapillonBasePO {
                 removeShowCreation();
                 
             } else {
+                 System.out.println("throw new ClientPageRedirectException ");
                 //
                 throw new ClientPageRedirectException(CreateEntryInitURL + "?" + 
                                                       EditEntryInitFactory.ACTION_PARAMETER + "=showAndCreate" + 
                                                       "&" + EditEntryInitFactory.VOLUME_ANYWAY_PARAMETER + "=" + volumeName + 
-                                                      "&" + EditEntryInitFactory.HEADWORD_ANYWAY_PARAMETER + "=" + headword);
+                                                      "&" + EditEntryInitFactory.HEADWORD_ANYWAY_PARAMETER + "=" + myUrlEncode(headword));
 			}
 		}
 

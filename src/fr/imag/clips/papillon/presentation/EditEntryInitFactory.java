@@ -10,6 +10,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.5  2006/05/05 02:08:23  fbrunet
+ * bug correction : url utf8 transfert (in createEntryInit)
+ *
  * Revision 1.4  2006/04/24 13:50:37  fbrunet
  * *** empty log message ***
  *
@@ -74,7 +77,7 @@ public class EditEntryInitFactory {
     protected final static String HANDLE_PARAMETER = "handle";
     protected final static String FORMATTER_PARAMETER = "formatter";
     protected final static String ACTION_PARAMETER = "action";
-    protected final static String VOLUME_PARAMETER = "volume";
+    protected final static String VOLUME_PARAMETER = "VOLUME";
     protected final static String VOLUME_ANYWAY_PARAMETER = "volumeanyway";
     protected final static String HEADWORD_ANYWAY_PARAMETER = "headwordanyway";
     

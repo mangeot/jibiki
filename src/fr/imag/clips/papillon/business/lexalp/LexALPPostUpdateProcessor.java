@@ -1,13 +1,13 @@
 /*
  *  papillon
- * 
+ *
  * (c) Francis Brunet-Manquat - GETA CLIPS IMAG
  * Projet Papillon
  *-----------------------
  * $Id$
  *------------------------
  * $Log$
- * Revision 1.3  2006/05/05 02:08:23  fbrunet
+ * Revision 1.1  2006/05/05 02:08:23  fbrunet
  * bug correction : url utf8 transfert (in createEntryInit)
  *
  *
@@ -20,6 +20,7 @@ package fr.imag.clips.papillon.business.lexalp;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.util.ArrayList;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -28,23 +29,32 @@ import org.w3c.dom.NodeList;
 
 import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
 import fr.imag.clips.papillon.business.dictionary.Dictionary;
+import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
 import fr.imag.clips.papillon.business.dictionary.Volume;
+import fr.imag.clips.papillon.business.dictionary.QueryRequest;
+import fr.imag.clips.papillon.business.dictionary.QueryCriteria;
+import fr.imag.clips.papillon.business.dictionary.QueryResult;
 import fr.imag.clips.papillon.business.user.User;
 
-import fr.imag.clips.papillon.business.transformation.ResultPreProcessor;
+import fr.imag.clips.papillon.business.transformation.ResultPostUpdateProcessor;
 
 import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 
 
-public class LexALPPreProcessor implements ResultPreProcessor {
-        
+public class LexALPPostUpdateProcessor implements ResultPostUpdateProcessor {
+    
     
     public void transformation(VolumeEntry volumeEntry, User user) throws PapillonBusinessException {
         try {
-            if (volumeEntry!=null) {
+            
+            //
+            if (volumeEntry != null) {
+                
+                //
                 Document dom = volumeEntry.getDom();
                 
+                // FIXME: use another method !!!!!!!!!!!!!
                 // d:metadata and admin
                 NodeList dMetadataList = dom.getElementsByTagName("d:metadata");
                 NodeList adminList = dom.getElementsByTagName("admin");
@@ -166,16 +176,156 @@ public class LexALPPreProcessor implements ResultPreProcessor {
                             }
                         }
                     }
-                    
-                    
-                    volumeEntry.save();
-                    
                 }
-            }
                 
+                // Legal system post-process
+                if (!volumeEntry.getVolumeName().equals("LexALP_axi")) {
+                    NodeList entryList = dom.getElementsByTagName("entry");
+                    NodeList usageList = dom.getElementsByTagName("usage");
+                    if ((null != entryList) && (entryList.getLength() > 0)
+                        && (null != usageList) && (usageList.getLength() > 0)) {
+                        
+                        Element usage = (Element) usageList.item(0);
+                        Node codeAttribut = usage.getAttributes().getNamedItem("geographical-code");
+                        String code = codeAttribut.getNodeValue();
+                        Element entry = (Element) entryList.item(0);
+                        Node legalAttribut = entry.getAttributes().getNamedItem("legalSystem");
+                        String legalSystem = "UNKNOWN";
+                        
+                        if ( code.equals("AC")) {               // Alpine Convention
+                            legalSystem = "AC";
+                            
+                        } else if ( code.equals("AT")) {               // AUSTRIA
+                            legalSystem = "AT";
+                            
+                        } else if ( code.equals("DE")) {        // GERMANY
+                            legalSystem = "DE";
+                            
+                        } else if ( code.equals("IT")) {        // ITALY
+                            legalSystem = "IT";
+                            
+                        } else if ( code.equals("CH")) {        // SWITZERLAND
+                            legalSystem = "CH";
+                            
+                        } else if ( code.equals("FR")) {        // FRANCE
+                            legalSystem = "FR";
+                            
+                        } else if ( code.equals("SL")) {        // SLOVENIA
+                            legalSystem = "SL";
+                            
+                        } else if ( code.equals("EU")) {         // EUROPE
+                            legalSystem = "EU";
+                            
+                        } else if ( code.equals("INT")) {       // INTERNATIONAL
+                            legalSystem = "INT";
+                            
+                        } else if ( code.equals("FVG")) {       // Regione Friuli Venezia Giulia -> IT
+                            legalSystem = "IT";
+                            
+                        } else if ( code.equals("BAY")) {         // Bayern -> DE
+                            legalSystem = "DE";
+                            
+                        } else if ( code.equals("N")) {         // Niederösterreich -> AT
+                            legalSystem = "AT";
+                            
+                        } else if ( code.equals("O")) {         // Oberösterreich -> AT
+                            legalSystem = "AT";
+                            
+                        } else if ( code.equals("T")) {         // TIROL -> AT
+                            legalSystem = "AT";
+                            
+                        } else if ( code.equals("St")) {        // Steiermark -> AT
+                            legalSystem = "AT";
+                            
+                        } else if ( code.equals("S")) {         // Salzburg -> AT
+                            legalSystem = "AT";
+                            
+                        } else if ( code.equals("V")) {         // Vorarlberg -> AT
+                            legalSystem = "AT";
+                            
+                        } else if ( code.equals("K")) {         // Kärnten -> AT
+                            legalSystem = "AT";
+                            
+                        } else if ( code.equals("UNKNOWN")) {
+                            legalSystem = "UNKNOWN";
+                        }
+                        
+                        // Set legal system
+                        if (legalAttribut == null) {
+                            entry.setAttribute("legalSystem", legalSystem);
+                        } else {
+                            legalAttribut.setNodeValue(legalSystem);
+                        }
+                    }
+                }
+                
+                //
+                volumeEntry.save();
+                /*
+                 // FIXME: create method !
+                 // AXIES FUSION
+                 //System.out.println("AXIVOLUME " + volumeEntry.getVolumeName());
+                 if (volumeEntry.getVolumeName().equals("LexALP_axi")) {
+                     
+                     // Search referenced lexies
+                     ArrayList referencedLexieList = new ArrayList();
+                     Volume[] volumeList = VolumesFactory.getVolumesArray();
+                     for (int i = 0; i < volumeList.length; i++) {
+                         String[] referencedLexieListTmp = volumeEntry.getReferencedLexieIds(((Volume)volumeList[i]).getSourceLanguage());
+                         System.out.println("lang " + ((Volume)volumeList[i]).getSourceLanguage());
+                         
+                         //
+                         if ( referencedLexieListTmp != null ) {
+                             for (int j = 0; j < referencedLexieListTmp.length; j++) {
+                                 System.out.println("ref lexie " + referencedLexieListTmp[j]);
+                                 referencedLexieList.add(referencedLexieListTmp[j]);
+                             }
+                         }
+                     }
+                     
+                     //
+                     if (referencedLexieList.size() != 0) {
+                         
+                         // Search axies
+                         QueryRequest qr = new QueryRequest(volumeEntry.getVolumeName());
+                         qr.setOrTree();
+                         
+                         //
+                         for (int i=0; i < referencedLexieList.size(); i++) {
+                             
+                             //
+                             QueryCriteria criteriaRefLexie = new QueryCriteria();
+                             criteriaRefLexie.add("key", QueryCriteria.EQUAL, Volume.CDM_axiReflexie);  
+                             criteriaRefLexie.add("value", QueryCriteria.EQUAL, (String)referencedLexieList.get(i));
+                             qr.addCriteria(criteriaRefLexie);
+                         }
+                         
+                         //
+                         ArrayList lexieList = qr.findLexie(user);
+                         
+                         System.out.println("Axi à fusionner " + volumeEntry.getId());
+                         for ( int i=0; i < lexieList.size(); i++) {
+                             // ATTENTION AU DOUBLONS, au status (dans findLexie ?), et meme axie
+                             VolumeEntry entry = ((QueryResult)lexieList.get(i)).getSourceEntry();
+                             System.out.println("Axi ID " + entry.getId());
+                         }
+                         
+                         // Fusion
+                         // attention a pas retrouver la même axie !
+                         
+                         // Proposal
+                         // go to EntryEdit ... action Fusion !
+                     }
+                 }
+                 */
+            }    
+            
         } catch(Exception ex) {
-            throw new PapillonBusinessException("Exception in LexALPPreProcessor.transformation()", ex);
+            
+            //
+            throw new PapillonBusinessException("Exception in LexALPPostProcessor.transformation()", ex);
         }	
+        
         
     }
     
