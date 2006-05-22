@@ -4,6 +4,9 @@
  * $Id$
  *------
  * $Log$
+ * Revision 1.6  2006/05/22 22:45:54  fbrunet
+ * LexALP: add merge method in post-save processing (merge axies with same referenced lexies)
+ *
  * Revision 1.5  2006/04/06 15:06:39  fbrunet
  * New class 'creationEditInit' : create new entry
  * Modify LexALPEditEntry : only edit entry
@@ -216,7 +219,8 @@ body {
 }
 
 .editEntry {
-   background: white url(/media/lexalp/logo2-small.jpg) top right no-repeat scroll;
+   /*background: white url(/media/lexalp/logo2-small.jpg) top right no-repeat scroll;*/
+   background-color: white;
 }
 
 .editing {
@@ -397,16 +401,26 @@ A:hover {
 .kwic {
     float: right;
     font-size: xx-small;
+    margin-right:10px;
 }
 
 .legal {
 float: right;
 //background-color: #bbbbbb;
 margin-right:10px;
-padding-right:10px;
-margin-left:10px;
-padding-left:10px;
+/*padding-right:10px;*/
+/*margin-left:10px;*/
+/*padding-left:10px;*/
 }
+
+.lang {
+    float: right;
+    font-size: xx-small;
+    text-transform: uppercase;
+    margin-right:10px;
+    margin-left:10px;
+}
+
 
 .relatedTermView {
     margin-left:10px;

@@ -9,6 +9,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.5  2006/05/22 22:45:54  fbrunet
+ *  LexALP: add merge method in post-save processing (merge axies with same referenced lexies)
+ *
  *  Revision 1.4  2006/03/01 15:12:31  mangeot
  *  Merge between maintrunk and LEXALP_1_1 branch
  *
@@ -291,7 +294,7 @@ public class GDEFLinker extends LinkerBasePO {
         while(iter.hasNext()) {
             VolumeEntry ve = (VolumeEntry) iter.next();
             QueryResult qr = new QueryResult(QueryResult.UNIQUE_RESULT, ve);
-            ResultFormatter rf = ResultFormatterFactory.getFormatter(qr, null, ResultFormatterFactory.XHTML_DIALECT, null);
+            ResultFormatter rf = ResultFormatterFactory.getFormatter(qr, parameters.xsl, ResultFormatterFactory.XHTML_DIALECT, null);
             removeChildren(entryNode);
             Node entryDOM = (Node)rf.getFormattedResult(qr, this.getUser());
             //Utility.writeNodeToSystemOut(entryDOM);

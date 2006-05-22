@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.41  2006/05/22 22:45:54  fbrunet
+ * LexALP: add merge method in post-save processing (merge axies with same referenced lexies)
+ *
  * Revision 1.40  2006/05/05 02:08:23  fbrunet
  * bug correction : url utf8 transfert (in createEntryInit)
  *
@@ -742,6 +745,13 @@ public class VolumeEntry implements IAnswer {
      */
     public String[] getTranslationsLexieIds(String lang) throws PapillonBusinessException {
         return ParseVolume.getCdmStrings(this, Volume.CDM_translationReflexie, lang);
+    }
+    
+    /**
+        * returns ids of the axies that are pointed by this by an axi-reflink
+     */
+    public String[] getReferencedAxieIds() throws PapillonBusinessException {
+        return ParseVolume.getCdmStrings(this, Volume.CDM_axiRefaxie);
     }
 
 	/* other methods */
@@ -1504,4 +1514,5 @@ public class VolumeEntry implements IAnswer {
 		}
     }
     
+
 }

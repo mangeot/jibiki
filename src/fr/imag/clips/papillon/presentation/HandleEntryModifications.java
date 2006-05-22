@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.8  2006/05/22 22:45:54  fbrunet
+ * LexALP: add merge method in post-save processing (merge axies with same referenced lexies)
+ *
  * Revision 1.7  2006/05/05 02:08:23  fbrunet
  * bug correction : url utf8 transfert (in createEntryInit)
  *
@@ -157,6 +160,9 @@ public class HandleEntryModifications extends EditingBasePO {
 				// Error page
 				throw new ClientPageRedirectException(EditingErrorURL);
 			}
+            
+            // Create new contribution ...
+            
 			
 			// Get Element
 			Element myEntry = myVolumeEntry.getDom().getDocumentElement();
@@ -317,8 +323,8 @@ public class HandleEntryModifications extends EditingBasePO {
 			myVolumeEntry.setModification(author, "finish");
 			myVolumeEntry.setStatus(VolumeEntry.FINISHED_STATUS);
 			myVolumeEntry.save();
-			//System.out.println("Save : myVolume = " + myVolumeEntry.getContributionId());
 			
+            //
 			String cfcid = myVolumeEntry.getClassifiedFinishedContributionId();
 			if ( cfcid != null 
 				 && !cfcid.equals("") ) {
@@ -328,8 +334,7 @@ public class HandleEntryModifications extends EditingBasePO {
 				classifiedVolumeEntry.setStatus(VolumeEntry.CLASSIFIED_FINISHED_STATUS);
 				classifiedVolumeEntry.save();
 			}
-			
-			// FIXME: This shoudl be handled by a post processing class or something like this, still to be defined...
+            // FIXME: This shoudl be handled by a post processing class or something like this, still to be defined...
 			// !!!!!!!!!!!! A DEPLACER EN POST PROCESS !!!!!!!!!!!!
 			//myVolumeEntry.setFinished(this.getUser());
 			//myVolumeEntry.setReviewed(this.getUser());
@@ -337,8 +342,8 @@ public class HandleEntryModifications extends EditingBasePO {
 			
 			// Call PostProcessor
 			ResultPostSaveProcessor postSaveProcessor = ResultPostSaveProcessorFactory.getPostSaveProcessor(myVolumeEntry);
-			postSaveProcessor.transformation(myVolumeEntry, user);
-			
+			postSaveProcessor.transformation(myVolumeEntry, this.getUser());
+            
             //
 			throw new ClientPageRedirectException(
 												  ConfirmEntryURL + "?" + 

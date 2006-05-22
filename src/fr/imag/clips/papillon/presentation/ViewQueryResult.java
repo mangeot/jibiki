@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2006/05/22 22:45:54  fbrunet
+ * LexALP: add merge method in post-save processing (merge axies with same referenced lexies)
+ *
  * Revision 1.3  2006/05/05 02:08:23  fbrunet
  * bug correction : url utf8 transfert (in createEntryInit)
  *
@@ -319,6 +322,8 @@ public class ViewQueryResult {
                 // FIXME : create new page.po like history
                 QueryParameter qpxml = new QueryParameter();
                 qpxml.setXsl("XML");
+                qpxml.setLimit(qp.getLimit());
+                qpxml.setOffset(qp.getOffset());
                 String[] dictNames = new String[1];
                 dictNames[0] = myEntry.getDictionaryName();
                 qpxml.setDictionaryNames(dictNames);

@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2006/05/22 22:45:54  fbrunet
+ * LexALP: add merge method in post-save processing (merge axies with same referenced lexies)
+ *
  * Revision 1.3  2006/05/05 02:08:23  fbrunet
  * bug correction : url utf8 transfert (in createEntryInit)
  *
@@ -98,7 +101,7 @@ public class ConfirmEntry extends EditingBasePO {
 			
 			//
 			ConfirmEntryXHTML content = (ConfirmEntryXHTML) MultilingualXHtmlTemplateFactory.createTemplate("ConfirmEntryXHTML", this.myComms, this.sessionData);
-			
+            
 			//
 			QueryResult qr = new QueryResult(1, myVolumeEntry);
 			ResultFormatter rf = ResultFormatterFactory.getFormatter(qr, null, ResultFormatterFactory.XHTML_DIALECT,null);

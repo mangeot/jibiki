@@ -357,7 +357,7 @@ package fr.imag.clips.papillon.business.dictionary;
                     veQuery.getQueryBuilder().addOrderByColumn("multilingual_sort('" + volume.getSourceLanguage() + "',headword)","");
                     
                     // debug
-                    veQuery.getQueryBuilder().debug();
+                    //veQuery.getQueryBuilder().debug();
                     
                     //
                     VolumeEntryDO[] DOarray = veQuery.getDOArray();
@@ -426,7 +426,7 @@ package fr.imag.clips.papillon.business.dictionary;
                     veQuery.getQueryBuilder().addOrderByColumn("multilingual_sort('" + volume.getSourceLanguage() + "',headword)","");
                     
                     // debug
-                    veQuery.getQueryBuilder().debug();
+                    //veQuery.getQueryBuilder().debug();
                     
                     //
                     VolumeEntryDO[] DOarray = veQuery.getDOArray();
@@ -466,13 +466,15 @@ package fr.imag.clips.papillon.business.dictionary;
                     VolumeEntryQuery veQuery = new VolumeEntryQuery(volume.getDbname(), CurrentDBTransaction.get());
                     findLexie(veQuery.getQueryBuilder(), volume.getDbname(), volume.getIndexDbname());
                     
-                    // sort
-                    //veQuery.getQueryBuilder().addEndClause("LIMIT 2");
-					//veQuery.getQueryBuilder().addEndClause("OFFSET " + offset);
+                    // limit/offset and sort
+                    if ((limit != null) && (offset != null) && ((!limit.equals("0")) || (!offset.equals("0")))) {
+                        veQuery.getQueryBuilder().addEndClause(" LIMIT " + limit + " OFFSET " + offset);
+                    }
+                    
                     veQuery.getQueryBuilder().addOrderByColumn("multilingual_sort('" + volume.getSourceLanguage() + "',headword)","");
                     
                     // debug
-                    veQuery.getQueryBuilder().debug();
+                    //veQuery.getQueryBuilder().debug();
                     
                     //
                     VolumeEntryDO[] DOarray = veQuery.getDOArray();

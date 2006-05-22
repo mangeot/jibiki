@@ -7,6 +7,9 @@
  * $Id$
  *------------------------
  * $Log$
+ * Revision 1.2  2006/05/22 22:45:54  fbrunet
+ * LexALP: add merge method in post-save processing (merge axies with same referenced lexies)
+ *
  * Revision 1.1  2006/05/05 02:08:23  fbrunet
  * bug correction : url utf8 transfert (in createEntryInit)
  *
@@ -24,6 +27,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.lang.Integer;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -271,153 +275,127 @@ public class LexALPPostSaveProcessor implements ResultPostSaveProcessor {
                 volumeEntry.save();
                 
                 
-                /*
-                ///////////////////////////////////////////////////
-                // FUSION AXI !
                 
-                //
-                if (volumeEntry.getVolumeName().equals("LexALP_axi")) {
+                ///////////////////////////////////////////////////
+                // FUSION AXI
+                // only axi with referenced lexies !
+                if (volumeEntry.getVolumeName().equals("LexALP_axi") && getReferencedLexieIds(volumeEntry).size()!=0) {
                     
-                                       
-                    // Search referenced lexies
-                    ArrayList referencedLexieList = getReferencedLexieIds(volumeEntry);
+                    //// - Search referenced lexies link with axi
+                    //// - Search referenced axies link with axi
+                    //// - Search axies to merge
+                    ArrayList referencedLexieList = new ArrayList();
+                    ArrayList referencedAxieList = new ArrayList();
+                    ArrayList AxieList = new ArrayList();
+                    mergeReferencedLexie(volumeEntry, referencedLexieList, referencedAxieList, AxieList, user);
                     
                     //
-                    if ( referencedLexieList.size() != 0 ) {
+                    if (AxieList.size() != 0) {
                         
-                        // Search axies
-                        QueryRequest qr = new QueryRequest(volumeEntry.getVolumeName());
-                        
-                        //
-                        ArrayList listLexies = new ArrayList();
-                        for (int i=0; i < referencedLexieList.size(); i++) {
-                            
-                            //
-                            QueryCriteria criteriaRefLexie = new QueryCriteria();
-                            criteriaRefLexie.add("key", QueryCriteria.EQUAL, Volume.CDM_axiReflexie);  
-                            criteriaRefLexie.add("value", QueryCriteria.EQUAL, (String)referencedLexieList.get(i));
-                            listLexies.add(criteriaRefLexie);
-                        }
-                        qr.addOrCriteriaList(listLexies);
-                        
-                        // ID
-                        QueryCriteria criteriaID = new QueryCriteria();
-                        criteriaID.add("key", QueryCriteria.EQUAL, Volume.CDM_entryId);  
-                        criteriaID.add("value", QueryCriteria.NOT_EQUAL, volumeEntry.getId());
-                        qr.addCriteria(criteriaID);
-                        
-                        // Status
-                        //ArrayList listStatus = new ArrayList();
-                        
-                        QueryCriteria criteriaFinishedStatus = new QueryCriteria();
-                        criteriaFinishedStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);  
-                        criteriaFinishedStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.FINISHED_STATUS);
-                        qr.addCriteria(criteriaFinishedStatus);
-                        
-                        //listStatus.add(criteriaFinishedStatus);
-                        
-                        
-                        //QueryCriteria criteriaValidatedStatus = new QueryCriteria();
-                        //criteriaValidatedStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);
-                        //criteriaValidatedStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.MODIFIED_STATUS);
-                        //listStatus.add(criteriaValidatedStatus);
-                        
-                        //qr.addOrCriteriaList(listStatus);
-                        
-                        
-                        // find axies
-                        ArrayList axieList = qr.findLexie(user);
-                        
-                        // Fusion : New axi
+                        // Create new contribution with NOT_FINISHED_STATUS
+                        // FIXME: create methods in VolumeEntriesFactory class to manage contributions !
                         VolumeEntry newAxi = VolumeEntriesFactory.newEntryFromExisting(volumeEntry);
-                        newAxi.setAuthor();
-                        newAxi.setModification(newAxi.getAuthor(), "merge");
+                        newAxi.setClassifiedFinishedContribution(volumeEntry);
+                        String modifMessage = "merge with ";
+                        for ( int i=0; i < AxieList.size(); i++) {
+                            if ( i==0 ) {
+                                modifMessage = modifMessage + (String)AxieList.get(i);
+                            } else {
+                                modifMessage = modifMessage + " and " + (String)AxieList.get(i);   
+                            }
+                        }
+                        //System.out.println("Message : " + modifMessage);
+                        newAxi.setModification(user.getLogin(), modifMessage);
                         newAxi.setStatus(VolumeEntry.NOT_FINISHED_STATUS);
                         newAxi.save();
                         
-                        
-                        // Create new contribution with NOT_FINISHED_STATUS
-                        //VolumeEntry newEntry = VolumeEntriesFactory.newEntryFromExisting(myEntry);
-                        //newEntry.setClassifiedFinishedContribution(myEntry);
-                        //newEntry.setModification(user.getLogin(), "edit");
-                        //newEntry.setStatus(VolumeEntry.NOT_FINISHED_STATUS);
-                        //newEntry.save();
-                        
                         // Old entry modification
-                        //myEntry.setStatus(VolumeEntry.MODIFIED_STATUS);
-                        //myEntry.setNextContributionAuthor(user.getLogin());
-                        //myEntry.save();
+                        volumeEntry.setStatus(VolumeEntry.MODIFIED_STATUS);
+                        volumeEntry.setNextContributionAuthor(user.getLogin());
+                        volumeEntry.save();
                         
+                        
+                        //// Add new referenced lexies
+                        Document domNewAxi = newAxi.getDom();
+                        NodeList termRefNodeList = domNewAxi.getElementsByTagName("termref");
                         
                         //
-                        if ( axieList.size()!=0 ) {
+                        if ( (null != termRefNodeList) && (termRefNodeList.getLength() > 0) ) {
                             
-                            //
-                            String message = "Merge with axies : ";
-                            System.out.println(message);
+                            // first term reference
+                            Node termRefNode = (Node)termRefNodeList.item(0);
+                            Node ParentNode = termRefNode.getParentNode();
                             
+                            // create template
+                            Node templateTermRefNode = (Node)termRefNode.cloneNode(true);
+                            
+                            // Remove 
+                            ArrayList newReferencedLexieList = notContainLexies(getReferencedLexieIds(newAxi), referencedLexieList);
+                                                                                   
                             //
-                            for ( int i=0; i < axieList.size(); i++) {
+                            for ( int i=0; i < newReferencedLexieList.size(); i++) {
                                 
-                                //
-                                VolumeEntry axie = ((QueryResult)axieList.get(i)).getSourceEntry();
+                                // Add to template
+                                ArrayList couple = (ArrayList)newReferencedLexieList.get(i);
+                                String refLang = (String)couple.get(0);
+                                String refLexie = (String)couple.get(1);
+                                Node idrefAttribut = templateTermRefNode.getAttributes().getNamedItem("idref");
+                                idrefAttribut.setNodeValue(refLexie);
+                                Node idlangAttribut = templateTermRefNode.getAttributes().getNamedItem("lang");
+                                idlangAttribut.setNodeValue(refLang);
                                 
-                                //
-                                if (i!=0) message = message + " and ";
-                                message = message + axie.getId() + " (";
-                                
-                                // Search referenced lexies
-                                ArrayList refLexies = getReferencedLexieIds(axie);
-                                
-                                //
-                                for (int j=0; j < refLexies.size(); j++) {
-                                    String refAdd = (String)refLexies.get(j);
-                                    
-                                    //
-                                    if (j!=0) message = message + ", ";
-                                    message = message + refAdd;
-                                    
-                                    //
-                                    int z=0;
-                                    while ( (z < referencedLexieList.size()) && !((String)referencedLexieList.get(z)).equals(refAdd)) {
-                                        z++;
-                                    }
-                                    
-                                    
-                                    //
-                                    if ( z == referencedLexieList.size() ) {
-                                        //newAxi.addReferencedLexieIds(refAdd);
-                                    }
-                                }
-                                
-                                //
-                                message = message + ")";
+                                // Add to dom
+                                ParentNode.insertBefore(domNewAxi.importNode(templateTermRefNode, true), termRefNode);
                             }
+                        }
+                        
+                        
+                        //// Add new referenced axies
+                        NodeList axieRefNodeList = domNewAxi.getElementsByTagName("axieref");
+                        
+                        //
+                        if ( (null != axieRefNodeList) && (axieRefNodeList.getLength() > 0) ) {
                             
-                            //........
+                            // first term reference
+                            Node axieRefNode = (Node)axieRefNodeList.item(0);
+                            Node ParentNode = axieRefNode.getParentNode();
                             
-                            // Fusion
-                            // attention a pas retrouver la même axie !
+                            // create template
+                            Node templateAxieRefNode = (Node)axieRefNode.cloneNode(true);
                             
-                            // que faire des axies apres ?
-                            
-                            // attention aux references entre axi !!!!!
-                            
-                            // Proposal
-                            // go to EntryEdit ... action Fusion !
-                            
+                            // Remove 
+                            ArrayList newReferencedAxieList = notContainAxies(getReferencedAxieIds(newAxi), referencedAxieList);
                             
                             //
-                            throw new ClientPageRedirectException(
-                                                                  ConfirmEntryURL + "?" + 
-                                                                  ConfirmEntry.VolumeName_PARAMETER + "=" + newAxi.getVolumeName() + "&" + 
-                                                                  ConfirmEntry.EntryHandle_PARAMETER + "=" + newAxi.getHandle() + "&" +
-                                                                  ConfirmEntry.Message_PARAMETER + "=" + message);
-                            
+                            for ( int i=0; i < newReferencedAxieList.size(); i++) {
+                                
+                                // Add to template
+                                Node idrefAttribut = templateAxieRefNode.getAttributes().getNamedItem("idref");
+                                idrefAttribut.setNodeValue((String)newReferencedAxieList.get(i));
+                                
+                                // Add to dom
+                                ParentNode.insertBefore(domNewAxi.importNode(templateAxieRefNode, true), axieRefNode);
+                            }
                         }
+                        
+                        // Save Axis
+                        newAxi.setStatus(VolumeEntry.FINISHED_STATUS);
+                        newAxi.save();
+                        volumeEntry.setStatus(VolumeEntry.CLASSIFIED_FINISHED_STATUS);
+                        volumeEntry.save();
+                        
+                        //
+                        String message = "Some axies were merged to your edited axie. Result is:";
+                        
+                        //
+                        throw new ClientPageRedirectException(
+                                                              ConfirmEntryURL + "?" + 
+                                                              ConfirmEntry.VolumeName_PARAMETER + "=" + newAxi.getVolumeName() + "&" + 
+                                                              ConfirmEntry.EntryHandle_PARAMETER + "=" + newAxi.getHandle() + "&" +
+                                                              ConfirmEntry.Message_PARAMETER + "=" + message);
+                        
                     }
                 }
-                */
             }  
             
                 
@@ -431,29 +409,224 @@ public class LexALPPostSaveProcessor implements ResultPostSaveProcessor {
     }
     
 
-    //
+    // get referenced lexies to an axi
     private ArrayList getReferencedLexieIds(VolumeEntry axi) throws PapillonBusinessException {
         
         // Search referenced lexies
         ArrayList referencedLexieList = new ArrayList();
         
-        // 
+        // Get lang
         Volume[] volumeList = VolumesFactory.getVolumesArray();
         
-        //
+        // Search by lang
         for (int i = 0; i < volumeList.length; i++) {
-            String[] referencedLexieListTmp = axi.getReferencedLexieIds(((Volume)volumeList[i]).getSourceLanguage());
-           
-            //
+            String lang = ((Volume)volumeList[i]).getSourceLanguage();
+            
+            // get referenced lexies
+            String[] referencedLexieListTmp = axi.getReferencedLexieIds(lang);
+            
+            // add referenced lexies and their lang
             if ( referencedLexieListTmp != null ) {
                 for (int j = 0; j < referencedLexieListTmp.length; j++) {
-                    referencedLexieList.add(referencedLexieListTmp[j]);
+                    
+                    ArrayList couple= new ArrayList(2);
+                    couple.add(lang);
+                    couple.add(referencedLexieListTmp[j]);
+                    referencedLexieList.add(couple);
+                    
+                    //
+                    //System.out.println("get referencedLexieList ... " + referencedLexieListTmp[j]);
                 }
             }
         }
         
         //
         return referencedLexieList;
+    }
+    
+    // get referenced axies to an axi
+    private ArrayList getReferencedAxieIds(VolumeEntry axi) throws PapillonBusinessException {
+        
+        // Search referenced Axies
+        ArrayList referencedAxieList = new ArrayList();
+        
+        // get referenced lexies
+        String[] referencedAxieListTmp = axi.getReferencedAxieIds();
+        
+        // add referenced axies
+        if ( referencedAxieListTmp != null ) {
+            for (int j = 0; j < referencedAxieListTmp.length; j++) {
+                referencedAxieList.add(referencedAxieListTmp[j]);
+            }
+        }
+        
+        //
+        return referencedAxieList;
+    }
+    
+    
+
+    // find lexies in newList not contain in list
+    private ArrayList notContainLexies(ArrayList list, ArrayList newList) {
+        
+        //
+        ArrayList notContainList = new ArrayList();
+        
+        //
+        for (int i=0; i < newList.size(); i++) {
+            ArrayList couple = (ArrayList)newList.get(i);
+            String refLang = (String)couple.get(0);
+            String refLexie = (String)couple.get(1);
+            
+            //
+            int j=0;
+            while ( (j < list.size()) 
+                    && !(   ((String)((ArrayList)list.get(j)).get(0)).equals(refLang)
+                            && ((String)((ArrayList)list.get(j)).get(1)).equals(refLexie)) ) {
+                j++;
+            }
+            
+            //
+            if ( j == list.size() ) {
+                
+                // add lexie
+                //System.out.println("add lexie : " + refLexie + " " + refLang);
+                notContainList.add(couple);      
+            }
+        }
+        
+        //
+        return notContainList;
+    }
+
+    // find axies in newList not contain in list
+    private ArrayList notContainAxies(ArrayList list, ArrayList newList) {
+        
+        //
+        ArrayList notContainList = new ArrayList();
+        
+        //
+        for (int i=0; i < newList.size(); i++) {
+            String axieId = (String)newList.get(i);
+            
+            //
+            if ( !isContained(list, axieId) ) {
+                
+                // add lexie
+                //System.out.println("add axieId : " + axieId);
+                notContainList.add(axieId);      
+            }
+        }
+        
+        //
+        return notContainList;
+    }
+    
+    
+    // true if string id is in list
+    private boolean isContained(ArrayList list, String id) {
+        
+        //
+        int j=0;
+        while ( (j < list.size()) 
+                && !((String)list.get(j)).equals(id) ) {
+            j++;
+        }
+        
+        //
+        return ( j != list.size() );
+    }
+    
+
+
+
+    // find axies link with axi by their referenced lexies 
+    // deleted them and add the new referenced lexies to list referencedLexieList
+    private void mergeReferencedLexie(VolumeEntry axi, ArrayList referencedLexieList, ArrayList referencedAxieList, ArrayList axieList, User user) throws PapillonBusinessException {
+            
+        //
+        //System.out.println("find in axi : " + axi.getId());
+        
+        //// Search new referenced axies
+        ArrayList newReferencedAxieList = notContainAxies(referencedAxieList, getReferencedAxieIds(axi));
+        referencedAxieList.addAll(newReferencedAxieList);
+        
+        //// Search new referenced lexies
+        for (int i=0; i<referencedLexieList.size(); i++) {
+            ArrayList couple = (ArrayList)referencedLexieList.get(i);
+            //System.out.println("referencedLexieList ... " + (String)couple.get(1));
+        }
+        ArrayList newReferencedLexieList = notContainLexies(referencedLexieList, getReferencedLexieIds(axi));
+        referencedLexieList.addAll(newReferencedLexieList);
+        
+        //// Find axies containing the new referenced lexies
+        if ( newReferencedLexieList.size()!=0 ) {
+                
+            //
+            QueryRequest qr = new QueryRequest(axi.getVolumeName());
+            
+            // ReferencedLexie
+            ArrayList listLexies = new ArrayList();
+            for (int i=0; i < newReferencedLexieList.size(); i++) {
+                
+                //
+                QueryCriteria criteriaRefLexie = new QueryCriteria();
+                criteriaRefLexie.add("key", QueryCriteria.EQUAL, Volume.CDM_axiReflexie);  
+                ArrayList couple = (ArrayList)newReferencedLexieList.get(i);
+                String refLang = (String)couple.get(0);
+                String refLexie = (String)couple.get(1);
+                criteriaRefLexie.add("value", QueryCriteria.EQUAL, refLexie);
+                criteriaRefLexie.add("lang", QueryCriteria.EQUAL, refLang);
+                listLexies.add(criteriaRefLexie);
+            }
+            qr.addOrCriteriaList(listLexies);
+            
+            // ID
+            QueryCriteria criteriaId = new QueryCriteria();
+            criteriaId.add("key", QueryCriteria.EQUAL, Volume.CDM_entryId);  
+            criteriaId.add("value", QueryCriteria.NOT_EQUAL, axi.getId());
+            qr.addCriteria(criteriaId);
+            
+            // Status
+            QueryCriteria criteriaFinishedStatus = new QueryCriteria();
+            criteriaFinishedStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);  
+            criteriaFinishedStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.FINISHED_STATUS);
+            qr.addCriteria(criteriaFinishedStatus);
+            
+            // Find axies
+            ArrayList axieResult = qr.findLexie(user);
+
+            
+            //// 
+            //System.out.println("result axies : " + Integer.toString(axieResult.size()));
+            for (int i=0; i < axieResult.size(); i++) {
+                QueryResult result = (QueryResult)axieResult.get(i);
+                VolumeEntry axiTmp = result.getSourceEntry();
+                
+                //
+                if ( !isContained(axieList, axiTmp.getId()) ) {
+                    
+                    // Delete axi
+                    // FIXME: create methods in VolumeEntriesFactory class to manage contributions !
+                    VolumeEntry newAxi = VolumeEntriesFactory.newEntryFromExisting(axiTmp);
+                    newAxi.setClassifiedFinishedContribution(axiTmp);
+                    newAxi.setModification(user.getLogin(), "deleted");
+                    newAxi.setStatus(VolumeEntry.DELETED_STATUS);
+                    newAxi.save();
+                    
+                    // Old entry modification
+                    axiTmp.setStatus(VolumeEntry.CLASSIFIED_FINISHED_STATUS);
+                    axiTmp.setNextContributionAuthor(user.getLogin());
+                    axiTmp.save();
+                    
+                    // Add axi
+                    axieList.add(newAxi.getId());
+                    
+                    //
+                    mergeReferencedLexie(newAxi, referencedLexieList, newReferencedAxieList, axieList, user);
+                }
+            }
+        }
     }
     
 }
