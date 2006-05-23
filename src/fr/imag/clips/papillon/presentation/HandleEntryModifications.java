@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.9  2006/05/23 07:57:51  fbrunet
+ * Modify edit management : When an user edit a lexie, this lexie doesn't change until an upgrade/finish action (then a new contibution is created link to lexie with a not-finished status).
+ *
  * Revision 1.8  2006/05/22 22:45:54  fbrunet
  * LexALP: add merge method in post-save processing (merge axies with same referenced lexies)
  *
@@ -152,12 +155,31 @@ public class HandleEntryModifications extends EditingBasePO {
 			// VolumeEntry
 			VolumeEntry myVolumeEntry = VolumeEntriesFactory.findEntryByHandle(volumeName, entryHandle);
 			
-			// Verification 
-			if (myVolumeEntry!=null && !myVolumeEntry.isEmpty()
+			// Verification
+            if ( myVolumeEntry!=null && !myVolumeEntry.isEmpty()
+                 && myVolumeEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS) ) {
+                
+                // Create new contribution with NOT_FINISHED_STATUS
+                VolumeEntry newEntry = VolumeEntriesFactory.newEntryFromExisting(myVolumeEntry);
+                newEntry.setClassifiedFinishedContribution(myVolumeEntry);
+                newEntry.setModification(this.getUser().getLogin(), "edit");
+                newEntry.setStatus(VolumeEntry.NOT_FINISHED_STATUS);
+                newEntry.save();
+                
+                // Old entry modification
+                myVolumeEntry.setStatus(VolumeEntry.MODIFIED_STATUS);
+                myVolumeEntry.setNextContributionAuthor(this.getUser().getLogin());
+                myVolumeEntry.save();
+                
+                //
+                myVolumeEntry = newEntry;
+            
+            } else if (myVolumeEntry!=null && !myVolumeEntry.isEmpty()
 				&& !(myVolumeEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS) 
 					 && (myVolumeEntry.getModificationAuthor().equals(this.getUser().getLogin())
                          || this.getUser().isInGroup(Group.ADMIN_GROUP))) ) {
-				// Error page
+				
+                // Error page
 				throw new ClientPageRedirectException(EditingErrorURL);
 			}
             

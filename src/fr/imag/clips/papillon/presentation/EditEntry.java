@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.31  2006/05/23 07:57:51  fbrunet
+ * Modify edit management : When an user edit a lexie, this lexie doesn't change until an upgrade/finish action (then a new contibution is created link to lexie with a not-finished status).
+ *
  * Revision 1.30  2006/04/18 14:30:24  fbrunet
  * Authorize admin to edit all entries
  *
@@ -99,6 +102,7 @@ public class EditEntry extends EditingBasePO {
 			// VolumeEntry
 			myVolumeEntry = VolumeEntriesFactory.findEntryByHandle(volumeName, entryHandle);
 			
+            /*
 			// Verification 
 			if (myVolumeEntry!=null && !myVolumeEntry.isEmpty()
 				&& !(myVolumeEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS) 
@@ -106,6 +110,8 @@ public class EditEntry extends EditingBasePO {
                         || this.getUser().isInGroup(Group.ADMIN_GROUP)) )) {
 				throw new ClientPageRedirectException(EditingErrorURL);
 			}
+            */ 
+             
 			// Verification of the DOM
 			if (myVolumeEntry.getDom() == null) {
 				throw new ClientPageRedirectException(EditingErrorURL);

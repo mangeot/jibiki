@@ -10,6 +10,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.6  2006/05/23 07:57:51  fbrunet
+ * Modify edit management : When an user edit a lexie, this lexie doesn't change until an upgrade/finish action (then a new contibution is created link to lexie with a not-finished status).
+ *
  * Revision 1.5  2006/05/05 02:08:23  fbrunet
  * bug correction : url utf8 transfert (in createEntryInit)
  *
@@ -136,6 +139,11 @@ public class EditEntryInitFactory {
     protected static void editEntry(VolumeEntry myEntry, User user)
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
         
+        // Nothing to do
+        throw new ClientPageRedirectException(EditEntryURL + "?" + 
+                                              EditEntry.VolumeName_PARAMETER + "=" + myEntry.getVolumeName() + 
+                                              "&" + EditEntry.EntryHandle_PARAMETER + "=" + myEntry.getHandle());
+         /*   
         // Edit contribution finished
         if ( myEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS) ) {
             
@@ -172,6 +180,7 @@ public class EditEntryInitFactory {
             // Error page
             throw new ClientPageRedirectException(EditingErrorURL);
         }
+            */
     }
     
     
