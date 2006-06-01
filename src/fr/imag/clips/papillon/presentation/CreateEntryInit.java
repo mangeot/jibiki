@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.6  2006/06/01 22:05:05  fbrunet
+ * New interface, quick search, new contribution management (the first edition not create new contribution. New contribution is created after add, remove element, update, save, etc. in the interface window)
+ *
  * Revision 1.5  2006/05/05 02:08:23  fbrunet
  * bug correction : url utf8 transfert (in createEntryInit)
  *
@@ -312,7 +315,7 @@ public class CreateEntryInit extends PapillonBasePO {
             System.out.println("displayLookupResults");
             
             //
-            AdvancedQueryForm qf = new AdvancedQueryForm(this.getComms(), this.getSessionData(), true);
+            AdvancedQueryForm qf = new AdvancedQueryForm(this.getComms(), this.getSessionData(), true, false);
             Collection qrset = searchEntry(volumeName, qf.getCriteriaList());
             
             //
@@ -324,10 +327,11 @@ public class CreateEntryInit extends PapillonBasePO {
                 
                 //
                 //addEntriesTable(qrset, qp);
-                XHTMLElement queryResultForm = content.getElementQueryResultForm();
-                Node viewQueryResultNode = ViewQueryResult.createNodeResult(this.getComms(), this.getSessionData(), this.getUrl(), this.getUser(), qrset, qp);
+                XHTMLElement queryResultForm = content.getElementQueryCreateForm();
+                Node viewQueryResultNode = ViewQueryResult.createNodeResult(this.getComms(), this.getSessionData(), this.getUrl(), this.getUser(), qrset, qp, true);
                 queryResultForm.appendChild(content.importNode(viewQueryResultNode, true));
-                                
+                queryResultForm.removeAttribute("id");     
+                
                 //
                 removeShowCreation();
                 
@@ -346,7 +350,7 @@ public class CreateEntryInit extends PapillonBasePO {
 		HttpPresentationException {
 			
             //
-            AdvancedQueryForm qf = new AdvancedQueryForm(this.getComms(), this.getSessionData(), true);
+            AdvancedQueryForm qf = new AdvancedQueryForm(this.getComms(), this.getSessionData(), true, false);
             Collection qrset = searchEntry(volumeName, qf.getCriteriaList());
 
 			//
@@ -358,8 +362,8 @@ public class CreateEntryInit extends PapillonBasePO {
                 
                 //
                 //addEntriesTable(qrset, qp);
-                XHTMLElement queryResultForm = content.getElementQueryResultForm();
-                Node viewQueryResultNode = ViewQueryResult.createNodeResult(this.getComms(), this.getSessionData(), this.getUrl(), this.getUser(), qrset, qp);
+                XHTMLElement queryResultForm = content.getElementQueryCreateForm();
+                Node viewQueryResultNode = ViewQueryResult.createNodeResult(this.getComms(), this.getSessionData(), this.getUrl(), this.getUser(), qrset, qp, true);
                 queryResultForm.appendChild(content.importNode(viewQueryResultNode, true));
                 
                 //

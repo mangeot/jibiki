@@ -4,6 +4,9 @@
  * $Id$
  *------------------------
  * $Log$
+ * Revision 1.6  2006/06/01 22:05:05  fbrunet
+ * New interface, quick search, new contribution management (the first edition not create new contribution. New contribution is created after add, remove element, update, save, etc. in the interface window)
+ *
  * Revision 1.5  2006/03/01 15:12:31  mangeot
  * Merge between maintrunk and LEXALP_1_1 branch
  *
@@ -159,7 +162,8 @@ public class LexALPFormatter implements ResultFormatter {
                         Document doc = ve.getDom();
                         if (null != dictXsl && ! dictXsl.isEmpty()) {
                             //doc = Transform(doc, dictXsl);
-                            Node resultNode = formatResult(doc, dictXsl, usr);
+                            Element resultNode = (Element)formatResult(doc, dictXsl, usr);
+                            resultNode.setAttribute("class", "translation");
                             div.appendChild(res.importNode(resultNode, true));
                         }
                     }
@@ -260,30 +264,38 @@ public class LexALPFormatter implements ResultFormatter {
                 //
                 Collection qrset = queryReq.findLexie(usr);
                 
-                //
-                Iterator iter = qrset.iterator();
-                while(iter.hasNext()) {
-                    QueryResult relatedQr = (QueryResult) iter.next();
-
-                    // Find nodes contingen on xpath
-                    NodeList nodeL = relatedQr.getSourceEntry().getNodes(xpath);
+                //if (qrset.size() == 0) {
                     
-                    // Insert new nodes
-                    for (int j=0; j <  nodeL.getLength(); j++) {
-                        Document docXpath = myDocumentBuilder.newDocument();
-                        Element result = docXpath.createElement("RESULT");
-                        docXpath.appendChild(result);                        
-                        Node nodeXpath = docXpath.importNode(nodeL.item(j), true);
-                        result.appendChild(nodeXpath);
+                    //
+                    //parentNode.insertBefore(docCible.createElement("NORESULT"), node);
+                    
+                //} else {
+                    
+                    //
+                    Iterator iter = qrset.iterator();
+                    while(iter.hasNext()) {
+                        QueryResult relatedQr = (QueryResult) iter.next();
                         
-                        //
-                        if ( xslNameAttribut != null ) {
-                            result = (Element) formatResult(docXpath, newXsl, usr);
+                        // Find nodes contingen on xpath
+                        NodeList nodeL = relatedQr.getSourceEntry().getNodes(xpath);
+                        
+                        // Insert new nodes
+                        for (int j=0; j <  nodeL.getLength(); j++) {
+                            Document docXpath = myDocumentBuilder.newDocument();
+                            Element result = docXpath.createElement("RESULT");
+                            docXpath.appendChild(result);                        
+                            Node nodeXpath = docXpath.importNode(nodeL.item(j), true);
+                            result.appendChild(nodeXpath);
+                            
+                            //
+                            if ( xslNameAttribut != null ) {
+                                result = (Element) formatResult(docXpath, newXsl, usr);
+                            }
+                            
+                            //
+                            parentNode.insertBefore(docCible.importNode(result, true), node);
                         }
-                        
-                        //
-                        parentNode.insertBefore(docCible.importNode(result, true), node);
-                    }
+                    //}
                 }
                 
                 //
@@ -323,10 +335,10 @@ public class LexALPFormatter implements ResultFormatter {
 			if (myDocumentBuilder==null) {
 				myDocumentBuilder = myDocumentBuilderFactory.newDocumentBuilder();
 			}
-			Document newDocument=myDocumentBuilder.newDocument();
+			Document newDocument= myDocumentBuilder.newDocument();
 			//the transformation
 			// is there a way to obtain a dom result which is a text string?
-			myTransformer.transform (new DOMSource(xmlSource),new DOMResult(newDocument));
+			myTransformer.transform (new DOMSource(xmlSource), new DOMResult(newDocument));
 			return newDocument;
 		}
 }

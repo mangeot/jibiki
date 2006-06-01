@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.5  2006/06/01 22:05:05  fbrunet
+ * New interface, quick search, new contribution management (the first edition not create new contribution. New contribution is created after add, remove element, update, save, etc. in the interface window)
+ *
  * Revision 1.4  2006/05/22 22:45:54  fbrunet
  * LexALP: add merge method in post-save processing (merge axies with same referenced lexies)
  *
@@ -57,7 +60,8 @@ public class ConfirmEntry extends EditingBasePO {
     public static String VolumeName_PARAMETER = EditEntry.VolumeName_PARAMETER;  
     public static String Message_PARAMETER = "message";
     public static String Button_PARAMETER = "button";
-	
+    
+    protected final static String EditEntryURL = "EditEntry.po";
     public static String EditingErrorURL = EditEntry.EditingErrorURL; 
 	
     protected boolean loggedInUserRequired() {
@@ -108,16 +112,26 @@ public class ConfirmEntry extends EditingBasePO {
 			Element resultElement = (Element)rf.getFormattedResult(qr, this.getUser());
 			
 			//
-			XHTMLTableCellElement editingResultViewElement = content.getElementEditingResultView();
+			XHTMLDivElement editingResultViewElement = content.getElementEditingResultView();
 			editingResultViewElement.appendChild(content.importNode(resultElement, true));
             
-            //
+            // Message
             if (message!=null) {
                 content.setTextMessage(message);
             }
 			
-            // Button
-            //...
+            // Re-edit button 
+            XHTMLElement reEditForm = content.getElementReEditForm();
+            reEditForm.setAttribute("action", EditEntryURL);
+            reEditForm.removeAttribute("id");
+            XHTMLElement value1 = content.getElementValue1();
+            value1.setAttribute("name", EditEntry.VolumeName_PARAMETER);
+            value1.setAttribute("value", myVolumeEntry.getVolumeName());
+            value1.removeAttribute("id");
+            XHTMLElement value2 = content.getElementValue2();
+            value2.setAttribute("name", EditEntry.EntryHandle_PARAMETER);
+            value2.setAttribute("value", myVolumeEntry.getHandle());
+            value2.removeAttribute("id");
             
 			//
 			return content.getElementConfirmEntryContent();

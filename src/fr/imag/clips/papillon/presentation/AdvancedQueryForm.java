@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.7  2006/06/01 22:05:05  fbrunet
+ * New interface, quick search, new contribution management (the first edition not create new contribution. New contribution is created after add, remove element, update, save, etc. in the interface window)
+ *
  * Revision 1.6  2006/04/24 13:43:29  fbrunet
  * Add new class ViewQueryResult : allow to use one class to create result display in advancedSearch and EditEntryInit (like advancedQueryForm)
  * Improve result display : view n results per page
@@ -109,6 +112,7 @@ import org.w3c.dom.Element;
 import fr.imag.clips.papillon.presentation.xhtml.orig.AdvancedQueryFormXHTML;
 import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
 import fr.imag.clips.papillon.business.dictionary.Volume;
+import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
 import fr.imag.clips.papillon.business.dictionary.QueryRequest;
 import fr.imag.clips.papillon.business.dictionary.QueryCriteria;
 import fr.imag.clips.papillon.business.dictionary.IQuery;
@@ -278,7 +282,7 @@ public class AdvancedQueryForm {
         return AbstractPO.myGetParameter(req, AdvancedQueryFormXHTML.NAME_ACTION);
     }
         
-    public AdvancedQueryForm(HttpPresentationComms comms, PapillonSessionData sessionData, boolean showTargets) throws PapillonPresentationException {
+    public AdvancedQueryForm(HttpPresentationComms comms, PapillonSessionData sessionData, boolean showTargets, boolean showQuickSearch) throws PapillonPresentationException {
         try {
             
             // Get all the parameters
@@ -328,7 +332,7 @@ public class AdvancedQueryForm {
             }
             
             // Apply those parameters to the form
-            buildFormFromParameters(comms, sessionData, qparams, showTargets);
+            buildFormFromParameters(comms, sessionData, qparams, showTargets, showQuickSearch);
             
         } catch (Exception e) {
             throw new PapillonPresentationException("Exception in queryForm", e);
@@ -340,7 +344,7 @@ public class AdvancedQueryForm {
         If a user wants to modify the parameters and rebuild the form accordingly,
         he will have to call this method again.
         */
-    public void buildFormFromParameters(HttpPresentationComms comms, PapillonSessionData sessionData, QueryParameter qp, boolean showTargets) 
+    public void buildFormFromParameters(HttpPresentationComms comms, PapillonSessionData sessionData, QueryParameter qp, boolean showTargets, boolean showQuickSearch) 
         throws com.lutris.appserver.server.httpPresentation.HttpPresentationException
     {
         // Create the advanced query form and fill it with current requested values
@@ -378,6 +382,7 @@ public class AdvancedQueryForm {
         // Populate form with available xsls
         java.util.Set descriptionSet = XslSheetFactory.getDescriptionSet();
         XHTMLOptionElement xslOption = queryDoc.getElementXslTmpl();
+        xslOption.removeAttribute("id");
 		
         for (Iterator iter = descriptionSet.iterator(); iter.hasNext();) {
             String xsn = (String) iter.next();
@@ -419,6 +424,7 @@ public class AdvancedQueryForm {
         XHTMLSelectElement sourceLang = queryDoc.getElementSourceLang();
         XHTMLOptionElement sourceOption = queryDoc.getElementSourceOptionTemplate();
         Element targetLanguagesSelectionElement = queryDoc.getElementTargetLanguagesSelection();
+        Element QuickLinkElement = queryDoc.getElementQuickLink();
         
         nbcrit.removeAttribute("id");
         criterion.removeAttribute("id");
@@ -432,10 +438,24 @@ public class AdvancedQueryForm {
         sourceLang.removeAttribute("id");
         sourceOption.removeAttribute("id");
         targetLanguagesSelectionElement.removeAttribute("id");
+        QuickLinkElement.removeAttribute("id");
         
         //
         if (!showTargets) targetLanguagesSelectionElement.setAttribute("class","hidden");
         
+        if (!showQuickSearch) {
+            QuickLinkElement.setAttribute("class","hidden");
+        
+        } else {
+            // Quick links
+            XHTMLElement MyFinishedContributionsElement = queryDoc.getElementMyFinishedContributions();
+            String href = "LexalpEditEntryInit.po?DICTIONARIES=LexALP&ACTION=&CRITERIA_NB=2&FACET.0=cdm-modification-author&OPERATOR.0=2&FACETVALUE.0=" + sessionData.getUser().getLogin() + "&SOURCE.0=All&FACET.1=cdm-contribution-status&OPERATOR.1=2&FACETVALUE.1=" + VolumeEntry.FINISHED_STATUS + "&SOURCE.1=All&NB_RESULT_PER_PAGE=10&XSL=&OFFSET=&lookup=Go";
+            MyFinishedContributionsElement.setAttribute("href", href);
+            
+            XHTMLElement MyNotFinishedContributionsElement = queryDoc.getElementMyNotFinishedContributions();
+            href = "LexalpEditEntryInit.po?DICTIONARIES=LexALP&ACTION=&CRITERIA_NB=2&FACET.0=cdm-modification-author&OPERATOR.0=2&FACETVALUE.0=" + sessionData.getUser().getLogin() + "&SOURCE.0=All&FACET.1=cdm-contribution-status&OPERATOR.1=2&FACETVALUE.1=" + VolumeEntry.NOT_FINISHED_STATUS + "&SOURCE.1=All&NB_RESULT_PER_PAGE=10&XSL=&OFFSET=&lookup=Go";
+            MyNotFinishedContributionsElement.setAttribute("href", href);
+        }
         
         // add all source languages in the lang selector
         String[] sourceLanguageNames = fr.imag.clips.papillon.business.dictionary.AvailableLanguages.getSourceLanguagesArray();
@@ -444,7 +464,7 @@ public class AdvancedQueryForm {
             sourceOption.setValue(lg);
             sourceOption.setLabel(Languages.localizeLabel(sessionData.getUserPreferredLanguage(),lg));
             Text txt = (Text) sourceOption.getFirstChild();
-            txt.setData("in " + Languages.localizeName(sessionData.getUserPreferredLanguage(),lg));
+            txt.setData(Languages.localizeName(sessionData.getUserPreferredLanguage(),lg));
             sourceOption.getParentNode().appendChild(sourceOption.cloneNode(true));
         }
         sourceOption.getParentNode().removeChild(sourceOption);

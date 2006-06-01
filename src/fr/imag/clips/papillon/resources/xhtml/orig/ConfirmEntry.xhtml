@@ -8,15 +8,16 @@
 <body>
     <div id="ConfirmEntryContent" class="editEntry" xml:lang="en" lang="en">
             <h1 class="editingResultTitle" >Editing result</h1>
-            <span id="Message" class="center"></span>
-            <table class="center">
-                <tr>
-                    <td id="EditingResultView" class="editingResultView" />
-                </tr>
-            </table>
-            <div class="editingResultTitle" >
-                <input name="Close" type="submit" value="Close windows" onclick="javascript:top.window.close();"/>
-            </div>
+            <div id="Message" class="messageConfirm" />
+            <div id="EditingResultView" class="editingResultView" />
+            <form id="ReEditForm" method="get" action="" class="editingResultTitle" >
+                <div>
+                    <input id="Value1" name="" type="hidden" value="" />
+                    <input id="Value2" name="" type="hidden" value="" />
+                    <input type="submit" value="Re-edit" />
+                    <input type="reset" value="Close windows" onclick="javascript:top.window.close();"/>
+                </div>
+            </form>
     </div>
 </body>
 </html>

@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.5  2006/06/01 22:05:05  fbrunet
+ * New interface, quick search, new contribution management (the first edition not create new contribution. New contribution is created after add, remove element, update, save, etc. in the interface window)
+ *
  * Revision 1.4  2006/05/22 22:45:54  fbrunet
  * LexALP: add merge method in post-save processing (merge axies with same referenced lexies)
  *
@@ -75,360 +78,337 @@ public class ViewQueryResult {
     protected final static String EditEntryInitURL = "LexalpEditEntryInit.po";
     protected final static String HistoryURL = "History.po";
    
-    protected static Node createNodeResult (HttpPresentationComms comms, PapillonSessionData sessionData, String url, User user, Collection qrset, QueryParameter qp)  
+    protected static Node createNodeResult (HttpPresentationComms comms, PapillonSessionData sessionData, String url, User user, Collection qrset, QueryParameter qp, boolean viewActions)  
     throws  HttpPresentationException,
             java.io.UnsupportedEncodingException,
             java.io.IOException,
-            fr.imag.clips.papillon.business.PapillonBusinessException {
-        
-        //
-        ViewQueryResultXHTML content = (ViewQueryResultXHTML) MultilingualXHtmlTemplateFactory.createTemplate("ViewQueryResultXHTML", comms, sessionData);
-        
-        //
-        XHTMLElement entryNode = content.getElementEntryNode();
-        HTMLTableRowElement entryListRow = content.getElementEntryListRow();
-        HTMLElement authorElement = content.getElementEntryAuthorList();
-        HTMLAnchorElement editAnchor = content.getElementEditEntryAnchor();
-        HTMLAnchorElement duplicateAnchor = content.getElementDuplicateEntryAnchor();
-        HTMLAnchorElement deleteAnchor = content.getElementDeleteEntryAnchor();
-        HTMLAnchorElement undeleteAnchor = content.getElementUndeleteEntryAnchor();
-        HTMLAnchorElement ViewHistoryEntryAnchor = content.getElementViewHistoryEntryAnchor();
-        HTMLAnchorElement viewXmlAnchor = content.getElementViewXmlAnchor();
-        HTMLAnchorElement previousAnchorTop = content.getElementPreviousAnchorTop();
-        HTMLAnchorElement nextAnchorTop = content.getElementNextAnchorTop();
-        HTMLAnchorElement previousAnchorBottom = content.getElementPreviousAnchorBottom();
-        HTMLAnchorElement nextAnchorBottom = content.getElementNextAnchorBottom();
-        HTMLElement underEdition = content.getElementUnderEdition();
-        HTMLElement proceedEdition = content.getElementProceedEdition();
-        //HTMLAnchorElement entryIdAnchor = content.getElementViewEntryAnchor();
-        //HTMLElement headwordElement = content.getElementHeadwordList();
-        //HTMLElement posElement = content.getElementPosList();
-        //HTMLElement editElement = content.getElementEditMessage();
-        //HTMLElement copyElement = content.getElementCopyMessage();
-        
-        /*
-        XHTMLElement entryNode = (XHTMLElement) contentParameters.get(EditEntryInitFactory.entryNode);
-        HTMLTableRowElement entryListRow = (HTMLTableRowElement) contentParameters.get(EditEntryInitFactory.entryListRow);
-        HTMLElement authorElement = (HTMLElement) contentParameters.get(EditEntryInitFactory.authorElement);
-        HTMLAnchorElement editAnchor = (HTMLAnchorElement) contentParameters.get(EditEntryInitFactory.editAnchor);
-        HTMLAnchorElement duplicateAnchor = (HTMLAnchorElement) contentParameters.get(EditEntryInitFactory.duplicateAnchor);
-        HTMLAnchorElement deleteAnchor = (HTMLAnchorElement) contentParameters.get(EditEntryInitFactory.deleteAnchor);
-        HTMLAnchorElement undeleteAnchor = (HTMLAnchorElement) contentParameters.get(EditEntryInitFactory.undeleteAnchor);
-        HTMLAnchorElement ViewHistoryEntryAnchor = (HTMLAnchorElement) contentParameters.get(EditEntryInitFactory.ViewHistoryEntryAnchor);
-        HTMLAnchorElement viewXmlAnchor = (HTMLAnchorElement) contentParameters.get(EditEntryInitFactory.viewXmlAnchor);
-        HTMLElement underEdition = (HTMLElement) contentParameters.get(EditEntryInitFactory.underEdition);
-        HTMLElement proceedEdition = (HTMLElement) contentParameters.get(EditEntryInitFactory.proceedEdition);
-        //HTMLAnchorElement entryIdAnchor = content.getElementViewEntryAnchor();
-        //HTMLElement headwordElement = content.getElementHeadwordList();
-        //HTMLElement posElement = content.getElementPosList();            
-        //HTMLElement editElement = content.getElementEditMessage();
-        //HTMLElement copyElement = content.getElementCopyMessage();
-        */
-        
-        entryNode.removeAttribute("id");
-        //entryIdAnchor.removeAttribute("id");
-        //headwordElement.removeAttribute("id");
-        //posElement.removeAttribute("id");
-        editAnchor.removeAttribute("id");
-        duplicateAnchor.removeAttribute("id");
-        deleteAnchor.removeAttribute("id");
-        undeleteAnchor.removeAttribute("id");
-        viewXmlAnchor.removeAttribute("id");
-        underEdition.removeAttribute("id");
-        proceedEdition.removeAttribute("id");
-        //editElement.removeAttribute("id");
-        //copyElement.removeAttribute("id");
-        authorElement.removeAttribute("id");
-        
-        content.setTextNbResults(Integer.toString(qrset.size()));
-        
-        Node entryTable = entryListRow.getParentNode();
-        
-        Iterator iter = qrset.iterator();
-        while(iter.hasNext()) {
-            QueryResult qr = (QueryResult) iter.next();
-            VolumeEntry myEntry = qr.getSourceEntry();             
-            ResultFormatter rf = ResultFormatterFactory.getFormatter(qr, qp.getXsl(), ResultFormatterFactory.XHTML_DIALECT, null);
-            Utility.removeChildNodes(entryNode);
-            Node entryDOM = (Node)rf.getFormattedResult(qr, user);
-            entryNode.appendChild(content.importNode(entryDOM, true));
-            
-            // Edit actions...
-            // The entry id
-            //String href = ConsultExpertURL + "?"
-            // + ConsultExpert.VOLUME_PARAMETER + "="
-            // + myEntry.getVolumeName() + "&"
-            // + ConsultExpert.HANDLE_PARAMETER + "="
-            // + myEntry.getHandle();
-            
-            //entryIdAnchor.setHref(href);
-            
-            // the entry id
-            //content.setTextEntryIdList(myEntry.getId());
-            
-            // The pos
-            //content.setTextPosList(myEntry.getPos());
-            
-            // The author
-            //content.setTextEntryAuthorList(myEntry.getAuthor());
-            content.setTextEntryAuthorList(myEntry.getModificationAuthor());
-            
-            // The status
-            if ( !myEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS) 
-                 && !myEntry.getStatus().equals(VolumeEntry.MODIFIED_STATUS) ) {
-                // view status : finished, deleted
-                content.setTextEntryStatusList(myEntry.getStatus());
-                underEdition.setAttribute("style","display: none;");
-                proceedEdition.setAttribute("style","display: none;");
-                if ( myEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS)
-                     && myEntry.getModificationAuthor().equals(user.getLogin()) ) {
-                    entryListRow.setAttribute("class", "myContributionTR");
-                } else {
-                    entryListRow.setAttribute("class", "contributionTR");
-                }
-                
-            } else if ( myEntry.getStatus().equals(VolumeEntry.MODIFIED_STATUS) ) {
-                // view modified status like under edition
-                content.setTextEntryStatusList("");
-                underEdition.setAttribute("style","display: block;");
-                proceedEdition.setAttribute("style","display: none;");
-                entryListRow.setAttribute("class", "contributionTR");
-                
-            } else if ( myEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS) ) {
-                // view not-finished status
-                // like proceed edition if my contribution
-                // like under edition if not
-                if ( myEntry.getModificationAuthor().equals(user.getLogin()) ) {
-                    content.setTextEntryStatusList("");
-                    underEdition.setAttribute("style","display: none;");
-                    proceedEdition.setAttribute("style","display: block;");
-                    entryListRow.setAttribute("class", "myProceedContributionTR");
-                } else {
-                    content.setTextEntryStatusList("");
-                    underEdition.setAttribute("style","display: block;");
-                    proceedEdition.setAttribute("style","display: none;");
-                    entryListRow.setAttribute("class", "contributionTR");
-                }
-            }
-            
-            // The edit anchor
-            String href = url + "?"
-                + EditEntryInitFactory.VOLUME_PARAMETER + "="
-                + myEntry.getVolumeName() + "&"
-                + EditEntryInitFactory.HANDLE_PARAMETER + "="
-                + myEntry.getEntryId() + "&"
-                + EditEntryInitFactory.ACTION_PARAMETER + "=";
+        fr.imag.clips.papillon.business.PapillonBusinessException {
             
             //
-            if ( (   (!myEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS)) 
-                     && (!myEntry.getStatus().equals(VolumeEntry.MODIFIED_STATUS)) )
-                 ||  ( myEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS)
-                       && (myEntry.getModificationAuthor().equals(user.getLogin())
-                           || user.isInGroup(Group.ADMIN_GROUP)))
-                 ) {
+            ViewQueryResultXHTML content = (ViewQueryResultXHTML) MultilingualXHtmlTemplateFactory.createTemplate("ViewQueryResultXHTML", comms, sessionData);
+            
+            // Entry
+            XHTMLElement entryNode = content.getElementEntryNode();
+            XHTMLElement contributionNode = content.getElementContributionNode();
+            XHTMLElement actionsNode = content.getElementActionsNode();
+            
+            // Actions
+            XHTMLAnchorElement editAnchor = content.getElementEditEntryAnchor();
+            XHTMLAnchorElement duplicateAnchor = content.getElementDuplicateEntryAnchor();
+            XHTMLAnchorElement deleteAnchor = content.getElementDeleteEntryAnchor();
+            XHTMLAnchorElement undeleteAnchor = content.getElementUndeleteEntryAnchor();
+            XHTMLAnchorElement ViewHistoryEntryAnchor = content.getElementViewHistoryEntryAnchor();
+            XHTMLAnchorElement viewXmlAnchor = content.getElementViewXmlAnchor();
+
+            //
+            XHTMLAnchorElement previousAnchorTop = content.getElementPreviousAnchorTop();
+            XHTMLAnchorElement nextAnchorTop = content.getElementNextAnchorTop();
+            XHTMLAnchorElement previousAnchorBottom = content.getElementPreviousAnchorBottom();
+            XHTMLAnchorElement nextAnchorBottom = content.getElementNextAnchorBottom();
+            XHTMLSpanElement entryAuthor = content.getElementEntryAuthor();
+            XHTMLSpanElement entryStatus = content.getElementEntryStatus();
+            
+            // remove ID
+            entryNode.removeAttribute("id");
+            contributionNode.removeAttribute("id");
+            actionsNode.removeAttribute("id");
+            editAnchor.removeAttribute("id");
+            duplicateAnchor.removeAttribute("id");
+            deleteAnchor.removeAttribute("id");
+            undeleteAnchor.removeAttribute("id");
+            ViewHistoryEntryAnchor.removeAttribute("id");
+            viewXmlAnchor.removeAttribute("id");
+            previousAnchorTop.removeAttribute("id");
+            nextAnchorTop.removeAttribute("id");
+            previousAnchorBottom.removeAttribute("id");
+            nextAnchorBottom.removeAttribute("id");
+            entryAuthor.removeAttribute("id");
+            entryStatus.removeAttribute("id");
+            
+            // init
+            Text textAuthor = content.createTextNode("unknown");
+            entryAuthor.appendChild(textAuthor);
+            Text textStatus = content.createTextNode("unknown");
+            entryStatus.appendChild(textStatus);
+             
+            // remove action list
+            if (!viewActions) {
+                actionsNode.getParentNode().removeChild(actionsNode);
+            }
+            
+            // Set result number
+            content.setTextNbResults(Integer.toString(qrset.size()));
+            
+            // Create display
+            Node parentNode = contributionNode.getParentNode();
+            Iterator iter = qrset.iterator();
+            while(iter.hasNext()) {
                 
-                // the edit button
-                if ( !myEntry.getStatus().equals(VolumeEntry.DELETED_STATUS) ) {
-                    //if ((myEntry.getAuthor().equals(user.getLogin())
-                    //     || user.isInGroup("validator"))
-                    //    && !myEntry.getStatus().equals(VolumeEntry.DELETED_STATUS)) {    
-                    editAnchor.setHref(href+"edit");
-                    editAnchor.setAttribute("class","");
-                    editAnchor.setAttribute("target","_blank");
+                //
+                QueryResult qr = (QueryResult) iter.next();
+                VolumeEntry myEntry = qr.getSourceEntry();             
+                ResultFormatter rf = ResultFormatterFactory.getFormatter(qr, qp.getXsl(), ResultFormatterFactory.XHTML_DIALECT, null);
+                Utility.removeChildNodes(entryNode);
+                Node entryDOM = (Node)rf.getFormattedResult(qr, user);
+                entryNode.appendChild(content.importNode(entryDOM, true));
+                entryNode.setAttribute("class", "entry");
+                textAuthor.setNodeValue(user.getLogin());
+                
+                //
+                if (viewActions) {
+                    // Status
+                    if ( myEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS) ) {
+                        textStatus.setNodeValue(VolumeEntry.FINISHED_STATUS);
+                        
+                        if ( myEntry.getModificationAuthor().equals(user.getLogin())) {
+                            entryNode.setAttribute("class", "myFinishedEntry");
+                        } else {
+                            entryNode.setAttribute("class", "finishedEntry");
+                        }
+                        
+                    } else if ( myEntry.getStatus().equals(VolumeEntry.MODIFIED_STATUS) ) {
+                        textStatus.setNodeValue("under edition");
+                        entryNode.setAttribute("class", "modifiedEntry");
+                    
+                    } else if ( myEntry.getStatus().equals(VolumeEntry.DELETED_STATUS) ) {
+                        textStatus.setNodeValue(VolumeEntry.DELETED_STATUS);
+                        entryNode.setAttribute("class", "modifiedEntry");
+                        
+                    } else if ( myEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS) ) {
+                        
+                        if ( myEntry.getModificationAuthor().equals(user.getLogin()) ) {
+                            textStatus.setNodeValue("proceed edition");
+                            entryNode.setAttribute("class", "myNotFinishedEntry");
+                        } else {
+                            textStatus.setNodeValue("under edition");
+                            entryNode.setAttribute("class", "notFinishedEntry");
+                        }
+                        
+                    }
+                    
+                    
+                    /*
+                     // The status
+                     if ( !myEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS) 
+                          && !myEntry.getStatus().equals(VolumeEntry.MODIFIED_STATUS) ) {
+                         // view status : finished, deleted
+                         content.setTextEntryStatusList(myEntry.getStatus());
+                         underEdition.setAttribute("style","display: none;");
+                         proceedEdition.setAttribute("style","display: none;");
+                         if ( myEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS)
+                              && myEntry.getModificationAuthor().equals(user.getLogin()) ) {
+                             entryListRow.setAttribute("class", "myContributionTR");
+                         } else {
+                             entryListRow.setAttribute("class", "contributionTR");
+                         }
+                         
+                     } else if ( myEntry.getStatus().equals(VolumeEntry.MODIFIED_STATUS) ) {
+                         // view modified status like under edition
+                         content.setTextEntryStatusList("");
+                         underEdition.setAttribute("style","display: block;");
+                         proceedEdition.setAttribute("style","display: none;");
+                         entryListRow.setAttribute("class", "contributionTR");
+                         
+                     } else if ( myEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS) ) {
+                         // view not-finished status
+                         // like proceed edition if my contribution
+                         // like under edition if not
+                         if ( myEntry.getModificationAuthor().equals(user.getLogin()) ) {
+                             content.setTextEntryStatusList("");
+                             underEdition.setAttribute("style","display: none;");
+                             proceedEdition.setAttribute("style","display: block;");
+                             entryListRow.setAttribute("class", "myProceedContributionTR");
+                         } else {
+                             content.setTextEntryStatusList("");
+                             underEdition.setAttribute("style","display: block;");
+                             proceedEdition.setAttribute("style","display: none;");
+                             entryListRow.setAttribute("class", "contributionTR");
+                         }
+                     }*/
+                    
+                    //
+                    String href = url + "?"
+                    + EditEntryInitFactory.VOLUME_PARAMETER + "="
+                    + myEntry.getVolumeName() + "&"
+                    + EditEntryInitFactory.HANDLE_PARAMETER + "="
+                    + myEntry.getEntryId() + "&"
+                    + EditEntryInitFactory.ACTION_PARAMETER + "=";
+                    
+                    // Actions
+                    if ( (   (!myEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS)) 
+                             && (!myEntry.getStatus().equals(VolumeEntry.MODIFIED_STATUS)) )
+                         ||  ( myEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS)
+                               && (myEntry.getModificationAuthor().equals(user.getLogin())
+                                   || user.isInGroup(Group.ADMIN_GROUP)))
+                         ) {
+                        
+                        // Edit button
+                        if ( !myEntry.getStatus().equals(VolumeEntry.DELETED_STATUS) ) {
+                            editAnchor.setHref(href + "edit");
+                            editAnchor.setAttribute("target","_blank");
+                            editAnchor.setAttribute("class","action");
+                        } else {
+                            editAnchor.setHref("");
+                            editAnchor.setAttribute("class","hidden");
+                        }
+                        
+                        // Duplicate button
+                        if ( !myEntry.getStatus().equals(VolumeEntry.DELETED_STATUS)
+                             && !myEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS)) {
+                            duplicateAnchor.setHref(href + "duplicate");
+                            duplicateAnchor.setAttribute("target","_blank");
+                            duplicateAnchor.setAttribute("class","action");
+                        } else {
+                            duplicateAnchor.setHref("");
+                            duplicateAnchor.setAttribute("class","hidden");
+                        }
+                        
+                        // Delete button
+                        if (    !myEntry.getStatus().equals(VolumeEntry.DELETED_STATUS) ) {
+                                //&& !myEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS)) {
+                            
+                            // action delete and refresh query with last parameters
+                            deleteAnchor.setHref(href + "delete" + "&" + AdvancedQueryForm.getEncodedUrlForParameter(qp));
+                            deleteAnchor.setAttribute("class","action");
+                        } else {
+                            deleteAnchor.setHref("");
+                            deleteAnchor.setAttribute("class","hidden");
+                        }
+                        
+                        // Undelete button
+                        if ( myEntry.getStatus().equals(VolumeEntry.DELETED_STATUS) ) {
+                            
+                            // action undelete and refresh query with last parameters
+                            undeleteAnchor.setHref(href + "undelete" + "&" + AdvancedQueryForm.getEncodedUrlForParameter(qp));
+                            undeleteAnchor.setAttribute("class","action");
+                        } else {
+                            undeleteAnchor.setHref("");
+                            undeleteAnchor.setAttribute("class","hidden");
+                        }
+                        
                     } else {
+                        // Edit button
                         editAnchor.setHref("");
                         editAnchor.setAttribute("class","hidden");
-                    }
-                
-                // the duplicate button
-                if ( !myEntry.getStatus().equals(VolumeEntry.DELETED_STATUS)
-                     && !myEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS)) {
-                    duplicateAnchor.setHref(href+"duplicate");
-                    duplicateAnchor.setAttribute("class","");
-                    duplicateAnchor.setAttribute("target","_blank");
-                } else {
-                    duplicateAnchor.setHref("");
-                    duplicateAnchor.setAttribute("class","hidden");
-                }
-                
-                // the delete button
-                if (    !myEntry.getStatus().equals(VolumeEntry.DELETED_STATUS)
-                        && !myEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS)) {
-                    //if ((myEntry.getAuthor().equals(user.getLogin())
-                    //     || user.isInGroup("validator"))
-                    //    && !myEntry.getStatus().equals(VolumeEntry.DELETED_STATUS)
-                    //    && !myEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS)) {
-                    
-                    // action delete and refresh query with last parameters
-                    deleteAnchor.setHref(href + "delete" + "&" + AdvancedQueryForm.getEncodedUrlForParameter(qp));
-                    //deleteAnchor.setAttribute("class","");
-                    deleteAnchor.setAttribute("style","display: block;");
-                    } else {
+                        
+                        // Duplicate button
+                        duplicateAnchor.setHref("");
+                        duplicateAnchor.setAttribute("class","hidden");
+                        
+                        // Delete button
                         deleteAnchor.setHref("");
-                        //deleteAnchor.setAttribute("class","hidden");
-                        deleteAnchor.setAttribute("style","display: none;");
-                    }
-                
-                // the undelete button
-                if ( myEntry.getStatus().equals(VolumeEntry.DELETED_STATUS) ) {
-                    //if ( myEntry.getStatus().equals(VolumeEntry.DELETED_STATUS)
-                    //    && (myEntry.getAuthor().equals(user.getLogin())
-                    //        || user.isInGroup("validator"))) {
-                    
-                    // action undelete and refresh query with last parameters
-                    undeleteAnchor.setHref(href + "undelete" + "&" + AdvancedQueryForm.getEncodedUrlForParameter(qp));
-                    //undeleteAnchor.setAttribute("class","");
-                    undeleteAnchor.setAttribute("style","display: block;");
-                    } else {
+                        deleteAnchor.setAttribute("class","hidden");
+                        
+                        // Undelete button
                         undeleteAnchor.setHref("");
-                        //undeleteAnchor.setAttribute("class","hidden");
-                        undeleteAnchor.setAttribute("style","display: none;");
+                        undeleteAnchor.setAttribute("class","hidden");
                     }
-                
-                } else {
-                    // the edit button
-                    editAnchor.setHref("");
-                    editAnchor.setAttribute("class","hidden");
                     
-                    // the duplicate button
-                    duplicateAnchor.setHref("");
-                    duplicateAnchor.setAttribute("class","hidden");
                     
-                    // the delete button
-                    deleteAnchor.setHref("");
-                    deleteAnchor.setAttribute("style","display: none;");
+                    // History view
+                    // FIXME: Create static variable ... VolumeName and EntryHandle ... 
+                    href = HistoryURL + "?" + "VolumeName" + "=" + myEntry.getVolumeName() + "&" + "EntryHandle" + "=" + myEntry.getHandle();
+                    ViewHistoryEntryAnchor.setHref(href);
+                    ViewHistoryEntryAnchor.setAttribute("class","action");
                     
-                    // the undelete button
-                    undeleteAnchor.setHref("");
-                    undeleteAnchor.setAttribute("style","display: none;");
+                    // XML view
+                    if (user.isInGroup(Group.ADMIN_GROUP)) {
+                        
+                        // FIXME : create new page.po like history
+                        QueryParameter qpxml = new QueryParameter();
+                        qpxml.setXsl("XML");
+                        qpxml.setLimit(qp.getLimit());
+                        qpxml.setOffset(qp.getOffset());
+                        String[] dictNames = new String[1];
+                        dictNames[0] = myEntry.getDictionaryName();
+                        qpxml.setDictionaryNames(dictNames);
+                        Vector crit = new Vector();
+                        String[] idc = new String[4];
+                        idc[0] = Volume.CDM_entryId;
+                        idc[1] = null;
+                        idc[2] = myEntry.getEntryId(); 
+                        idc[3] = QueryCriteria.EQUAL;
+                        crit.add(idc);
+                        qpxml.setCriteria(crit);
+                        
+                        //
+                        href = url + "?" + AdvancedQueryForm.getEncodedUrlForParameter(qpxml); 
+                        viewXmlAnchor.setHref(href);
+                        viewXmlAnchor.setAttribute("class","action");
+                        
+                    } else {
+                        viewXmlAnchor.setAttribute("class","hidden");
+                    }
                 }
+                    
+                //
+                XHTMLElement cloneContribution = (XHTMLElement)contributionNode.cloneNode(true);
+                // we have to take off the id attribute because we did not take it off the original
+                cloneContribution.removeAttribute("id");
+                parentNode.appendChild(cloneContribution);
+                //entryNode.getParentNode().insertBefore(entryNode.cloneNode(true), entryNode);
+            }
             
-            
-            // view history
-            //if (!myEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS)
-            //    && (myEntry.getAuthor().equals(user.getLogin())
-            //        || user.isInGroup("validator"))) {
-            // FIXME: Create static variable ... VolumeName and EntryHandle ... 
-            href = HistoryURL + "?" + "VolumeName" + "=" + myEntry.getVolumeName() + "&" + "EntryHandle" + "=" + myEntry.getHandle();
-            ViewHistoryEntryAnchor.setHref(href);
-            ViewHistoryEntryAnchor.setAttribute("style","display: block;");
-            //} else {
-            //    ViewHistoryEntryAnchor.setHref("");
-            //     ViewHistoryEntryAnchor.setAttribute("style","display: none;");
-            //}
-            
-            if (user.isInGroup(Group.ADMIN_GROUP)) {
-                // The view XML anchor
-                // FIXME : create new page.po like history
-                QueryParameter qpxml = new QueryParameter();
-                qpxml.setXsl("XML");
-                qpxml.setLimit(qp.getLimit());
-                qpxml.setOffset(qp.getOffset());
-                String[] dictNames = new String[1];
-                dictNames[0] = myEntry.getDictionaryName();
-                qpxml.setDictionaryNames(dictNames);
-                Vector crit = new Vector();
-                String[] idc = new String[4];
-                idc[0] = Volume.CDM_entryId;
-                idc[1] = null;
-                //if (myEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS)
-                //    && myEntry.getModificationAuthor().equals(user.getLogin())) {
-                //        idc[2] = myEntry.getClassifiedFinishedContributionId(); 
-                //} else {
-                idc[2] = myEntry.getEntryId(); 
-                //}
-                //idc[3] = QueryBuilder.EQUAL;
-                idc[3] = QueryCriteria.EQUAL;
-                crit.add(idc);
-                /*
-                 String[] idc = new String[4];
-                 idc[0] = Volume.CDM_entryId;
-                 idc[1] = null;
-                 idc[2] = myEntry.getEntryId();
-                 //idc[3] = QueryBuilder.EQUAL;
-                 idc[3] = QueryCriteria.EQUAL;
-                 crit.add(idc);
-                 */
-                qpxml.setCriteria(crit);
+            // the previous button
+            if ( qp.getOffset() != 0 ) {
                 
-                href = url + "?"
-                    + AdvancedQueryForm.getEncodedUrlForParameter(qpxml); 
-                
-                viewXmlAnchor.setHref(href);
+                QueryParameter previousQp = (QueryParameter) qp.duplicate();
+                previousQp.setOffset(qp.getOffset() - qp.getLimit());
+                // Top
+                previousAnchorTop.setHref(url + "?" + AdvancedQueryForm.getEncodedUrlForParameter(previousQp));
+                previousAnchorTop.setAttribute("class","pagination");
+                // Bottom
+                previousAnchorBottom.setHref(url + "?" + AdvancedQueryForm.getEncodedUrlForParameter(previousQp));
+                previousAnchorBottom.setAttribute("class","pagination");
                 
             } else {
                 
-                //
-                HTMLElement viewXMLElement = content.getElementViewXML();
-                viewXMLElement.setAttribute("style","display: none;");
+                // Top
+                previousAnchorTop.setHref("");
+                previousAnchorTop.setAttribute("class","hidden");
+                // Bottom
+                previousAnchorBottom.setHref("");
+                previousAnchorBottom.setAttribute("class","hidden");
             }
             
+            // the next button
+            if ( qrset.size() >= qp.getLimit() ) {
+                
+                QueryParameter nextQp = (QueryParameter) qp.duplicate();
+                nextQp.setOffset(qp.getOffset() + qp.getLimit());
+                // Top
+                nextAnchorTop.setHref(url + "?" + AdvancedQueryForm.getEncodedUrlForParameter(nextQp));
+                nextAnchorTop.setAttribute("class","pagination");
+                // Bottom
+                nextAnchorBottom.setHref(url + "?" + AdvancedQueryForm.getEncodedUrlForParameter(nextQp));
+                nextAnchorBottom.setAttribute("class","pagination");
+                
+            } else {
+                
+                // Top
+                nextAnchorTop.setHref("");
+                nextAnchorTop.setAttribute("class","hidden");
+                // Bottom
+                nextAnchorBottom.setHref("");
+                nextAnchorBottom.setAttribute("class","hidden");
+            }
+            
+            
             //
-            HTMLElement cloneEntry = (HTMLElement)entryListRow.cloneNode(true);
-            // we have to take off the id attribute because we did not take it off the original
-            cloneEntry.removeAttribute("id");
-            entryTable.appendChild(cloneEntry);
+            parentNode.removeChild(contributionNode);
+            //removeEntryListTemplate(content);
             
-            //entryNode.getParentNode().insertBefore(entryNode.cloneNode(true), entryNode);
-                }
-
-        // the previous button
-        if ( qp.getOffset() != 0 ) {
-            
-            QueryParameter previousQp = (QueryParameter) qp.duplicate();
-            previousQp.setOffset(qp.getOffset() - qp.getLimit());
-            // Top
-            previousAnchorTop.setHref(url + "?" + AdvancedQueryForm.getEncodedUrlForParameter(previousQp));
-            previousAnchorTop.setAttribute("style","font-style: italic; display: inline;");
-            // Bottom
-            previousAnchorBottom.setHref(url + "?" + AdvancedQueryForm.getEncodedUrlForParameter(previousQp));
-            previousAnchorBottom.setAttribute("style","font-style: italic; display: inline;");
-            
-        } else {
-            
-            // Top
-            previousAnchorTop.setHref("");
-            previousAnchorTop.setAttribute("style","display: none;");
-            // Bottom
-            previousAnchorBottom.setHref("");
-            previousAnchorBottom.setAttribute("style","display: none;");
+            //
+            XHTMLElement queryResultForm = content.getElementQueryResultForm();
+            queryResultForm.removeAttribute("id");
+            return queryResultForm;
         }
-
-        // the next button
-        if ( qrset.size() >= qp.getLimit() ) {
-            
-            QueryParameter nextQp = (QueryParameter) qp.duplicate();
-            nextQp.setOffset(qp.getOffset() + qp.getLimit());
-            // Top
-            nextAnchorTop.setHref(url + "?" + AdvancedQueryForm.getEncodedUrlForParameter(nextQp));
-            nextAnchorTop.setAttribute("style","font-style: italic; display: inline;");
-            // Bottom
-            nextAnchorBottom.setHref(url + "?" + AdvancedQueryForm.getEncodedUrlForParameter(nextQp));
-            nextAnchorBottom.setAttribute("style","font-style: italic; display: inline;");
-
-        } else {
-            
-            // Top
-            nextAnchorTop.setHref("");
-            nextAnchorTop.setAttribute("style","display: none;");
-            // Bottom
-            nextAnchorBottom.setHref("");
-            nextAnchorBottom.setAttribute("style","display: none;");
-        }
-
-
-//
-entryNode.getParentNode().removeChild(entryNode);
-removeEntryListTemplate(content);
-
-return content.getElementQueryResultForm();
-                }
-
+/*
 private static void removeEntryListTemplate(ViewQueryResultXHTML content) {
     Element myElement = content.getElementEntryListRow();
     Node myParent = myElement.getParentNode();
     if (myParent != null)
         myParent.removeChild(myElement);
 }
-
+*/
 }

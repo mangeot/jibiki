@@ -7,6 +7,9 @@
  * $Id$
  *------------------------
  * $Log$
+ * Revision 1.2  2006/06/01 22:05:05  fbrunet
+ * New interface, quick search, new contribution management (the first edition not create new contribution. New contribution is created after add, remove element, update, save, etc. in the interface window)
+ *
  * Revision 1.1  2006/05/05 02:08:23  fbrunet
  * bug correction : url utf8 transfert (in createEntryInit)
  *
@@ -178,6 +181,27 @@ public class LexALPPostUpdateProcessor implements ResultPostUpdateProcessor {
                     }
                 }
                 
+                // Source:  add http:// if no http:// or ftp:// in url source
+                NodeList sourceList = dom.getElementsByTagName("source");
+                if ((null != sourceList) && (sourceList.getLength() > 0)) {
+                    for (int i=0; i < sourceList.getLength(); i++) {
+                        
+                        //
+                        Node source = (Node)sourceList.item(i);
+                        Node sourceTypeAttribut = source.getAttributes().getNamedItem("sourceType");
+                        String type = sourceTypeAttribut.getNodeValue();
+                        
+                        //
+                        if ( type.equals("Url") ) {
+                            String text = source.getFirstChild().getNodeValue();
+                            if (!text.startsWith("http://") && !text.startsWith("ftp://")) {
+                                source.getFirstChild().setNodeValue("http://" + text);
+                            }
+                        }
+                    }
+                }
+                    
+                    
                 // Legal system post-process
                 if (!volumeEntry.getVolumeName().equals("LexALP_axi")) {
                     NodeList entryList = dom.getElementsByTagName("entry");
@@ -261,63 +285,6 @@ public class LexALPPostUpdateProcessor implements ResultPostUpdateProcessor {
                 
                 //
                 volumeEntry.save();
-                /*
-                 // FIXME: create method !
-                 // AXIES FUSION
-                 //System.out.println("AXIVOLUME " + volumeEntry.getVolumeName());
-                 if (volumeEntry.getVolumeName().equals("LexALP_axi")) {
-                     
-                     // Search referenced lexies
-                     ArrayList referencedLexieList = new ArrayList();
-                     Volume[] volumeList = VolumesFactory.getVolumesArray();
-                     for (int i = 0; i < volumeList.length; i++) {
-                         String[] referencedLexieListTmp = volumeEntry.getReferencedLexieIds(((Volume)volumeList[i]).getSourceLanguage());
-                         System.out.println("lang " + ((Volume)volumeList[i]).getSourceLanguage());
-                         
-                         //
-                         if ( referencedLexieListTmp != null ) {
-                             for (int j = 0; j < referencedLexieListTmp.length; j++) {
-                                 System.out.println("ref lexie " + referencedLexieListTmp[j]);
-                                 referencedLexieList.add(referencedLexieListTmp[j]);
-                             }
-                         }
-                     }
-                     
-                     //
-                     if (referencedLexieList.size() != 0) {
-                         
-                         // Search axies
-                         QueryRequest qr = new QueryRequest(volumeEntry.getVolumeName());
-                         qr.setOrTree();
-                         
-                         //
-                         for (int i=0; i < referencedLexieList.size(); i++) {
-                             
-                             //
-                             QueryCriteria criteriaRefLexie = new QueryCriteria();
-                             criteriaRefLexie.add("key", QueryCriteria.EQUAL, Volume.CDM_axiReflexie);  
-                             criteriaRefLexie.add("value", QueryCriteria.EQUAL, (String)referencedLexieList.get(i));
-                             qr.addCriteria(criteriaRefLexie);
-                         }
-                         
-                         //
-                         ArrayList lexieList = qr.findLexie(user);
-                         
-                         System.out.println("Axi à fusionner " + volumeEntry.getId());
-                         for ( int i=0; i < lexieList.size(); i++) {
-                             // ATTENTION AU DOUBLONS, au status (dans findLexie ?), et meme axie
-                             VolumeEntry entry = ((QueryResult)lexieList.get(i)).getSourceEntry();
-                             System.out.println("Axi ID " + entry.getId());
-                         }
-                         
-                         // Fusion
-                         // attention a pas retrouver la même axie !
-                         
-                         // Proposal
-                         // go to EntryEdit ... action Fusion !
-                     }
-                 }
-                 */
             }    
             
         } catch(Exception ex) {

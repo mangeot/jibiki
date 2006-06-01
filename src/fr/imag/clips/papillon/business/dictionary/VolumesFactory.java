@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.42  2006/06/01 22:05:05  fbrunet
+ * New interface, quick search, new contribution management (the first edition not create new contribution. New contribution is created after add, remove element, update, save, etc. in the interface window)
+ *
  * Revision 1.41  2006/05/05 02:08:23  fbrunet
  * bug correction : url utf8 transfert (in createEntryInit)
  *
@@ -864,16 +867,15 @@ public class VolumesFactory {
     public static void reConstructionIndex()
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
             
-           
+            // Begin transaction
+            CurrentDBTransaction.registerNewDBTransaction();
             
             try {
                 
                 //
                 Volume[] volumes = getVolumesArray();
                 for (int i=0; i < volumes.length; i++) {
-                    
-                    // Begin transaction
-                    CurrentDBTransaction.registerNewDBTransaction();
+                   
                     
                     // Truncate index volumes 
                     IndexFactory.truncateIndexTable(volumes[i]);
@@ -900,7 +902,9 @@ public class VolumesFactory {
                     // End transaction
                     // a part was correct, commit the transaction ...
                     ((DBTransaction) CurrentDBTransaction.get()).commit();
-                    CurrentDBTransaction.releaseCurrentDBTransaction();
+                    
+                    //
+                    System.out.println(volumes[i].getName() + " index re-construction succeed !");
                 }
                 
                 
@@ -917,9 +921,12 @@ public class VolumesFactory {
                     PapillonLogger.writeDebugMsg("AdminDictionaries: SQLException while rolling back failed transaction.");
                     sqle.printStackTrace();
                 }
+                
             } finally {
                 CurrentDBTransaction.releaseCurrentDBTransaction();
+                System.out.println("Index re-construction succeed !");
             }
+
         }
 	
     

@@ -4,6 +4,9 @@
  * $Id$
  *------
  * $Log$
+ * Revision 1.7  2006/06/01 22:05:05  fbrunet
+ * New interface, quick search, new contribution management (the first edition not create new contribution. New contribution is created after add, remove element, update, save, etc. in the interface window)
+ *
  * Revision 1.6  2006/05/22 22:45:54  fbrunet
  * LexALP: add merge method in post-save processing (merge axies with same referenced lexies)
  *
@@ -119,16 +122,18 @@ body {
 .menuColumn {
 	float: left;
 	width: 150px;
-	margin-top: 0.3em;
+	/*margin-top: 0.3em;*/
 	font-size: 8pt;
 	background: transparent;
 }
 
 .menuBlock {
     padding-bottom: 0.2em;
-    border: 1px solid #3b63b5;
+    /*border: 1px solid #3b63b5;*/
+    border: 1px solid #898989;
     margin-bottom: .5em;
-	background: #fffcd3;
+	/*background: #fffcd3;*/
+	background: #F0F0F0;
 }
 
 .menuBlock h2.menuTitle {
@@ -147,17 +152,19 @@ body {
 
 .menuBlock a:link {
     text-decoration: none; 
-    color: blue;
+    /*color: blue;*/
 }
 
 .menuBlock a:visited {
     text-decoration: none; 
-    color: blue;
+    /*color: blue;*/
+    color: #000394;
 }
 
 .menuBlock a:active {
     text-decoration: none; 
-    color: blue;
+    /*color: blue;*/
+    color: #000394;
 }
 
 .menuBlock a:hover {
@@ -189,7 +196,8 @@ body {
 }
 
 .menuBlock h2.menuTitle a {
-   color: #fff;
+   /*color: #fff;*/
+   color: #F0F0F0;
 }
 
 .europaLogos {
@@ -214,7 +222,7 @@ body {
 .mainColumn {
 	margin-left: 170px;
 	margin-top: 0.3em;
-	background: #f2f2f2;
+	/*background: #f2f2f2;*/
 	color: #000394;
 }
 
@@ -230,7 +238,7 @@ body {
    margin-top:0.3em;
 }
 
-table.center {
+.center {
     margin-left:auto; 
     margin-right:auto;
 }
@@ -243,13 +251,22 @@ table.center {
 }
 
 .editingResultView {
+    text-align: left; 
     color: #000;
     background-color:#66CCFF;
-    border-width: 1px;
-    border-style: solid;
-    padding-bottom: 10px;
-    padding-left: 15px;
-    padding-right: 15px;
+    border: 1pt solid #898989;
+    width: 70%;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+    margin-top: 20px;
+    margin-left: auto; 
+    margin-right: auto;
+}
+
+.messageConfirm {
+    text-align: center;
 }
 	
 /*</group>*/
@@ -376,10 +393,7 @@ A:hover {
 	padding: 5px 5px 5px 5px;
 }
 
-/*lexie[lang="fra"]*/
-.lexie {
-	margin-top: 10px;
-}
+/*  */
 
 .term {
 	font-weight: bold;
@@ -406,7 +420,7 @@ A:hover {
 
 .legal {
 float: right;
-//background-color: #bbbbbb;
+/*background-color: #bbbbbb*/;
 margin-right:10px;
 /*padding-right:10px;*/
 /*margin-left:10px;*/
@@ -424,34 +438,40 @@ margin-right:10px;
 
 .relatedTermView {
     margin-left:10px;
-	display: block;
+	//display: block;
 }
 
 .relatedFormView {
     margin-left:10px;
-	display: block;
+	//display: block;
+}
+
+.frequencyView {
+    text-align: justify;
+	margin-left: 10px;
+	//display: block;
+	//font-size: smaller;
 }
 
 .domainView {
     text-align: justify;
 	margin-left: 10px;
-	display: block;
+	//display: block;
 	//font-size: smaller;
 }
 
 .sourceView {
     text-align: justify;
     //font-size:xx-small;
-    margin-left:20px;
+    margin-left: 5px;
     //font-style: italic;
-	display: block;
-
+	//display: block;
 }
 
 .definitionView {
     text-align: justify;
 	margin-left: 10px;
-	display: block;
+	//display: block;
 	//font-size: smaller;
 }
 
@@ -459,14 +479,14 @@ margin-right:10px;
 .contextView {
     text-align: justify;
 	margin-left: 10px;
-	display: block;
+	//display: block;
 	//font-size: smaller;
 }
 
 .noteView {
     text-align: justify;
 	margin-left: 10px;
-	display: block;
+	//display: block;
 	//font-size: smaller;
 }
 
@@ -477,14 +497,81 @@ margin-right:10px;
     vertical-align: bottom;
 }
 
-.myProceedContributionTR {
-    background-color:#99CCCC;
+.quick_search {
+	border: 1px dashed #898989;
+    padding: 5px 5px 5px 5px;
 }
 
-.myContributionTR {
-    background-color:#66CCFF;
+.quick_link {
+	font-style: italic;
+	margin-left: 10px;
 }
-.contributionTR {
+
+/* lexie status */
+
+.entry {
+	border: 1px solid #898989;
+	padding: 5px 5px 5px 5px;
+	background: #F0F0F0;
+}
+
+.finishedEntry {
+	border: 1px solid #898989;
+	padding: 5px 5px 5px 5px;
+	background: #F0F0F0;
+}
+
+.myFinishedEntry {
+	border: 1px solid #898989;
+	padding: 5px 5px 5px 5px;
+	background: #66CCFF;
+}
+
+.modifiedEntry {
+	border: 1px solid #898989;
+	padding: 5px 5px 5px 5px;
+	background: #F0F0F0;
+}
+
+.myNotFinishedEntry {
+	border: 1px solid #898989;
+	padding: 5px 5px 5px 5px;
+	background: #99CCCC;
+}
+
+.notFinishedEntry {
+    border: 1px solid #898989;
+	padding: 5px 5px 5px 5px;
+	background: #F0F0F0;
+}
+
+.translation {
+	border: 1px dashed #898989;
+    margin-left:20px;
+    margin-right:20px;
+    margin-top:20px;
+    padding: 5px 5px 5px 5px;
+}
+
+/* container contribution */
+
+.jibiki_status {
+	text-transform: uppercase;
+	font-weight: bold;
+	margin-left: 5px;
+}
+.jibiki_byAuthor {
+}
+
+.jibiki_author {
+	text-transform: uppercase;
+	font-weight: bold;
+	margin-right: 5px;
+}
+
+
+.contribution {
+	margin-bottom: 10px;
 }
 
 .option1 {
@@ -495,5 +582,75 @@ margin-right:10px;
 	margin-left: 5px;
 }
 
-/*</group>*/
 
+.entry_information {
+	float: right;
+	font-size:xx-small;
+	text-transform: uppercase;
+    margin-left:5px;
+    margin-top:15px;
+}
+
+.entry_information_flag {
+	float: right;
+	//font-size:xx-small;
+	//text-transform: uppercase;
+    margin-left:5px;
+    margin-top:12px;
+    //border: 1px solid #898989;
+}
+
+.action_list {
+    text-align: right;
+}
+
+.entry_actions {
+	border-top: 1px solid #898989;
+	border-right: 1px solid #898989;
+	border-left: 1px solid #898989;
+	font-size:x-small;
+}
+
+.action {
+    border-left: 1px solid #898989;
+    padding-right:5px;
+	padding-left:5px;
+}
+
+.action:hover {
+	/*font-style: italic;
+    font-weight: bold;*/
+    color: red;
+}
+
+
+.QueryForm {
+border: 1px solid #898989;
+	padding: 5px 5px 5px 5px;
+	background: #F0F0F0;
+}
+
+h1.title {
+   background: #3a66a7;
+   /*color: #fff;*/
+   color: #F0F0F0;
+   border: none;
+   border-bottom : 1px solid grey;
+   width: 100%;
+   padding-top: 5px;
+   padding-bottom: 5px;
+}
+
+.pagination {
+	font-style: italic; 
+	display: inline;
+}
+
+.interface {
+    margin-left: auto; 
+    margin-right: auto;
+	background: #eeeeee; 
+	padding: 5px 5px 5px 5px; 
+	width: 80%; 
+	text-align: center;
+}

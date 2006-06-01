@@ -10,6 +10,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.8  2006/06/01 22:05:05  fbrunet
+ * New interface, quick search, new contribution management (the first edition not create new contribution. New contribution is created after add, remove element, update, save, etc. in the interface window)
+ *
  * Revision 1.7  2006/05/05 02:08:23  fbrunet
  * bug correction : url utf8 transfert (in createEntryInit)
  *
@@ -227,7 +230,7 @@ public class LexalpEditEntryInit extends PapillonBasePO {
             }
             
             // Do query !
-            AdvancedQueryForm qf = new AdvancedQueryForm(this.getComms(), this.getSessionData(), false);
+            AdvancedQueryForm qf = new AdvancedQueryForm(this.getComms(), this.getSessionData(), false, true);
             
             /*
             //
@@ -352,15 +355,16 @@ public class LexalpEditEntryInit extends PapillonBasePO {
                     //
                     //addEntriesTable(qrset, qp);
                     XHTMLElement queryResultForm = content.getElementQueryResultForm();
-                    Node viewQueryResultNode = ViewQueryResult.createNodeResult(this.getComms(), this.getSessionData(), this.getUrl(), this.getUser(), qrset, qp);
+                    Node viewQueryResultNode = ViewQueryResult.createNodeResult(this.getComms(), this.getSessionData(), this.getUrl(), this.getUser(), qrset, qp, true);
                     queryResultForm.appendChild(content.importNode(viewQueryResultNode, true));
+                    queryResultForm.removeAttribute("id");
                     
                     } else {
                         
                         //
                         //addEntriesTable(new Vector(), qp);
                         XHTMLElement queryResultForm = content.getElementQueryResultForm();
-                        Node viewQueryResultNode = ViewQueryResult.createNodeResult(this.getComms(), this.getSessionData(), this.getUrl(), this.getUser(), new Vector(), qp);
+                        Node viewQueryResultNode = ViewQueryResult.createNodeResult(this.getComms(), this.getSessionData(), this.getUrl(), this.getUser(), new Vector(), qp, true);
                         queryResultForm.appendChild(content.importNode(viewQueryResultNode, true));
                     }
                 } else {

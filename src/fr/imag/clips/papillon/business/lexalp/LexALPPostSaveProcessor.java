@@ -7,6 +7,9 @@
  * $Id$
  *------------------------
  * $Log$
+ * Revision 1.3  2006/06/01 22:05:05  fbrunet
+ * New interface, quick search, new contribution management (the first edition not create new contribution. New contribution is created after add, remove element, update, save, etc. in the interface window)
+ *
  * Revision 1.2  2006/05/22 22:45:54  fbrunet
  * LexALP: add merge method in post-save processing (merge axies with same referenced lexies)
  *
@@ -189,6 +192,27 @@ public class LexALPPostSaveProcessor implements ResultPostSaveProcessor {
                         }
                     }
                 }
+                
+                // Source:  add http:// if no http:// or ftp:// in url source
+                NodeList sourceList = dom.getElementsByTagName("source");
+                if ((null != sourceList) && (sourceList.getLength() > 0)) {
+                    for (int i=0; i < sourceList.getLength(); i++) {
+                        
+                        //
+                        Node source = (Node)sourceList.item(i);
+                        Node sourceTypeAttribut = source.getAttributes().getNamedItem("sourceType");
+                        String type = sourceTypeAttribut.getNodeValue();
+                        
+                        //
+                        if ( type.equals("Url") ) {
+                            String text = source.getFirstChild().getNodeValue();
+                            if (!text.startsWith("http://") && !text.startsWith("ftp://")) {
+                                source.getFirstChild().setNodeValue("http://" + text);
+                            }
+                        }
+                    }
+                }
+                
                 
                 // Legal system post-process
                 if (!volumeEntry.getVolumeName().equals("LexALP_axi")) {

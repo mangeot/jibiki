@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.6  2006/06/01 22:05:05  fbrunet
+ * New interface, quick search, new contribution management (the first edition not create new contribution. New contribution is created after add, remove element, update, save, etc. in the interface window)
+ *
  * Revision 1.5  2006/04/24 13:50:37  fbrunet
  * *** empty log message ***
  *
@@ -137,7 +140,7 @@ public class AdvancedSearch extends PapillonBasePO {
         
         //
         AdvancedSearchXHTML doc = (AdvancedSearchXHTML) MultilingualXHtmlTemplateFactory.createTemplate("AdvancedSearchXHTML", this.myComms, this.sessionData);
-        AdvancedQueryForm qf = new AdvancedQueryForm(this.getComms(), this.getSessionData(), true);
+        AdvancedQueryForm qf = new AdvancedQueryForm(this.getComms(), this.getSessionData(), true, false);
 
         //
         QueryRequest queryReq = qf.getQueryRequest();
@@ -186,6 +189,12 @@ public class AdvancedSearch extends PapillonBasePO {
                 //Collection qrset = DictionariesFactory.doQuery(qp, this.getUser());
                 
                 // Display result
+                XHTMLElement queryResultForm = doc.getElementQueryResultForm();
+                Node viewQueryResultNode = ViewQueryResult.createNodeResult(this.getComms(), this.getSessionData(), this.getUrl(), this.getUser(), qrset, qf.getQueryParameter(), false);
+                queryResultForm.appendChild(doc.importNode(viewQueryResultNode, true));
+                queryResultForm.removeAttribute("id");
+                
+                /*
                 XHTMLElement entryNode = doc.getElementResultEntry();
                 entryNode.removeAttribute("id");
                 doc.setTextNbResults(Integer.toString(qrset.size()));
@@ -199,6 +208,7 @@ public class AdvancedSearch extends PapillonBasePO {
                     entryNode.getParentNode().insertBefore(entryNode.cloneNode(true), entryNode);
                 } 
                 entryNode.getParentNode().removeChild(entryNode);  
+                 */
                 }
             }
         

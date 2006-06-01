@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.27  2006/06/01 22:05:05  fbrunet
+ * New interface, quick search, new contribution management (the first edition not create new contribution. New contribution is created after add, remove element, update, save, etc. in the interface window)
+ *
  * Revision 1.26  2006/05/05 02:08:23  fbrunet
  * bug correction : url utf8 transfert (in createEntryInit)
  *
@@ -1292,13 +1295,14 @@ public class Volume {
 			}
             */
             
+            
+            // Begin transaction
+            CurrentDBTransaction.registerNewDBTransaction();
+            
             try {
-                //
-                TransformerFactory myTransformerFactory = TransformerFactory.newInstance();
-                Transformer myTransformer = myTransformerFactory.newTransformer(new StreamSource(new StringReader(xslTransformation)));
-                
-                    // Begin transaction
-                    CurrentDBTransaction.registerNewDBTransaction();
+                    // Get transformer
+                    TransformerFactory myTransformerFactory = TransformerFactory.newInstance();
+                    Transformer myTransformer = myTransformerFactory.newTransformer(new StreamSource(new StringReader(xslTransformation)));
                     
                     // Truncate index volumes 
                     IndexFactory.truncateIndexTable(this);
@@ -1339,7 +1343,6 @@ public class Volume {
                     // End transaction
                     // a part was correct, commit the transaction ...
                     ((DBTransaction) CurrentDBTransaction.get()).commit();
-                    CurrentDBTransaction.releaseCurrentDBTransaction();
                 
             } catch (Exception e) {
                 String userMessage = "Problems when transform entries.";
@@ -1354,8 +1357,6 @@ public class Volume {
             } finally {
                 CurrentDBTransaction.releaseCurrentDBTransaction();
             }
-            
-            
 		}
     
 }				
