@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.6  2006/06/06 09:15:10  fbrunet
+ * Bug correction : view action in advanced search page if user is registered.
+ *
  * Revision 1.5  2006/06/01 22:05:05  fbrunet
  * New interface, quick search, new contribution management (the first edition not create new contribution. New contribution is created after add, remove element, update, save, etc. in the interface window)
  *
@@ -152,10 +155,11 @@ public class ViewQueryResult {
                 Node entryDOM = (Node)rf.getFormattedResult(qr, user);
                 entryNode.appendChild(content.importNode(entryDOM, true));
                 entryNode.setAttribute("class", "entry");
-                textAuthor.setNodeValue(user.getLogin());
                 
                 //
                 if (viewActions) {
+                    textAuthor.setNodeValue(user.getLogin());
+                    
                     // Status
                     if ( myEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS) ) {
                         textStatus.setNodeValue(VolumeEntry.FINISHED_STATUS);

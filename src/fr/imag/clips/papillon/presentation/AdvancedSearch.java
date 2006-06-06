@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.7  2006/06/06 09:15:10  fbrunet
+ * Bug correction : view action in advanced search page if user is registered.
+ *
  * Revision 1.6  2006/06/01 22:05:05  fbrunet
  * New interface, quick search, new contribution management (the first edition not create new contribution. New contribution is created after add, remove element, update, save, etc. in the interface window)
  *
@@ -190,7 +193,9 @@ public class AdvancedSearch extends PapillonBasePO {
                 
                 // Display result
                 XHTMLElement queryResultForm = doc.getElementQueryResultForm();
-                Node viewQueryResultNode = ViewQueryResult.createNodeResult(this.getComms(), this.getSessionData(), this.getUrl(), this.getUser(), qrset, qf.getQueryParameter(), false);
+                //FIXME: user is identified -> (this.getUser()!=null && !this.getUser().isEmpty())
+                // - create a method isIdentify ? create a guest user ? introduce in createNodeResult ?
+                Node viewQueryResultNode = ViewQueryResult.createNodeResult(this.getComms(), this.getSessionData(), this.getUrl(), this.getUser(), qrset, qf.getQueryParameter(), (this.getUser()!=null && !this.getUser().isEmpty()));
                 queryResultForm.appendChild(doc.importNode(viewQueryResultNode, true));
                 queryResultForm.removeAttribute("id");
                 

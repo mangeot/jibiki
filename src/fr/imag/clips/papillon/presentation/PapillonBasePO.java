@@ -9,6 +9,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.8  2006/06/06 09:15:10  fbrunet
+ *  Bug correction : view action in advanced search page if user is registered.
+ *
  *  Revision 1.7  2006/04/06 15:06:39  fbrunet
  *  New class 'creationEditInit' : create new entry
  *  Modify LexALPEditEntry : only edit entry
@@ -180,6 +183,10 @@ public abstract class PapillonBasePO extends AbstractPO {
         *  Description of the Field
      */
     public static int HELP_SECTION = 5;
+    /**
+        *  Not register user !
+     */
+    protected static String notRegisterLogin = "Not registered";
     
     
     /**
@@ -361,7 +368,7 @@ public abstract class PapillonBasePO extends AbstractPO {
 					cookieUser = new User();
 					cookieUser.setLang((String) browserAcceptLanguages.get(0));
 					cookieUser.setName(getComms().request.getRemoteHost());
-					cookieUser.setLogin("Not registered");
+					cookieUser.setLogin(notRegisterLogin);
 					cookieUser.setEmail(getComms().request.getRemoteUser() + "@" + getComms().request.getRemoteAddr());
 					getSessionData().setUserAcceptLanguages(userAcceptLanguage);
 					getSessionData().setClientWithLabelDisplayProblems(getComms().request.getHeader("User-Agent"));
