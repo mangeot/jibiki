@@ -9,6 +9,9 @@
  *  $Id $
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.4  2006/06/09 10:10:43  fbrunet
+ *  Add generic components (AdvancedQueryForm, QueryRequest and ViewQueryResult) in Home.java
+ *
  *  Revision 1.3  2006/04/06 15:06:39  fbrunet
  *  New class 'creationEditInit' : create new entry
  *  Modify LexALPEditEntry : only edit entry
@@ -248,7 +251,8 @@ public class LexALPLayout implements StdLayout {
             String[] allTargetLanguages = AvailableLanguages.getTargetLanguagesArray();
             
             QueryMenuXHTML queryMenu = (QueryMenuXHTML) MultilingualXHtmlTemplateFactory.createTemplate(PACKAGE, "QueryMenuXHTML", comms, sessionData);
-            XHTMLInputElement headwordInput = queryMenu.getElementHeadwordInput();
+            //XHTMLInputElement headwordInput = queryMenu.getElementHeadwordInput();
+            XHTMLInputElement headwordInput = queryMenu.getElementValueField();
             String headtmp = sessionData.getPreference("Home.po", headwordInput.getName());
             if (headtmp != null) {
                 headwordInput.setValue(headtmp);
@@ -288,7 +292,8 @@ public class LexALPLayout implements StdLayout {
             sourceSelect.removeChild(sourceOptionTemplate);
             
             // Adding the appropriate target languages to the target list
-            XHTMLOptionElement targetOptionTemplate = queryMenu.getElementTargetOptionTemplate();
+            //XHTMLOptionElement targetOptionTemplate = queryMenu.getElementTargetOptionTemplate();
+            XHTMLOptionElement targetOptionTemplate = queryMenu.getElementTargetTmpl();
             XHTMLSelectElement targetSelect = (XHTMLSelectElement) targetOptionTemplate.getParentNode();
             if (!sessionData.getClientWithLabelDisplayProblems()) {
                 PapillonBasePO.setUnicodeLabels(targetSelect);
@@ -316,7 +321,8 @@ public class LexALPLayout implements StdLayout {
                 targetSelect.appendChild(targetOptionTemplate.cloneNode(true));
             }
             targetSelect.removeChild(targetOptionTemplate);
-            PapillonBasePO.setSelected(queryMenu.getElementTarget(), prefTrgLang);
+            //PapillonBasePO.setSelected(queryMenu.getElementTarget(), prefTrgLang);
+            PapillonBasePO.setSelected(queryMenu.getElementTargets(), prefTrgLang);
             
             // Add the menu to the Page
             Node placeHolder = layout.getElementMenuBlockPlaceHolder();

@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.8  2006/06/09 10:10:43  fbrunet
+ * Add generic components (AdvancedQueryForm, QueryRequest and ViewQueryResult) in Home.java
+ *
  * Revision 1.7  2006/06/01 22:05:05  fbrunet
  * New interface, quick search, new contribution management (the first edition not create new contribution. New contribution is created after add, remove element, update, save, etc. in the interface window)
  *
@@ -119,6 +122,7 @@ import fr.imag.clips.papillon.business.dictionary.IQuery;
 import fr.imag.clips.papillon.business.dictionary.QueryParameter;
 import fr.imag.clips.papillon.business.dictionary.Dictionary;
 import fr.imag.clips.papillon.business.dictionary.DictionariesFactory;
+import fr.imag.clips.papillon.business.dictionary.AvailableLanguages;
 import fr.imag.clips.papillon.business.utility.Utility;
 import fr.imag.clips.papillon.business.locales.Languages;
 import fr.imag.clips.papillon.business.xsl.XslSheet;
@@ -131,7 +135,9 @@ import fr.imag.clips.papillon.business.xsl.XslSheetFactory;
 public class AdvancedQueryForm {
     
     protected Node queryForm;
-        
+    
+    public final static String ALL_TARGETS = "*ALL*";
+    
     protected static final String actionPatternString = "^(\\+|\\-)([^\\.]+)\\.(\\d+)$";
     protected static Pattern actionPattern = Pattern.compile(actionPatternString);
     protected static Matcher actionMatcher = actionPattern.matcher("");
@@ -207,9 +213,13 @@ public class AdvancedQueryForm {
         throws java.io.UnsupportedEncodingException,
         com.lutris.appserver.server.httpPresentation.HttpPresentationException
     {
+        
         String[] t = AbstractPO.myGetParameterValues(req, AdvancedQueryFormXHTML.NAME_TARGETS);
+        
         if (null == t) {
             t = new String[0];
+        } else if (t[0].equals(ALL_TARGETS)) {
+            t = AvailableLanguages.getTargetLanguagesArray();
         }
         return t;
     }

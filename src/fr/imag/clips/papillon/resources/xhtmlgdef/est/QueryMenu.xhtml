@@ -10,7 +10,7 @@
       <h2 class="menuTitle">
         <a title="M&auml;rksõna lihtotsing" href="javascript:void(0)">Lihtotsing:</a>
       </h2>
-      <form id="ConsultForm" action="Home.po">
+      <!--<form id="ConsultForm" action="Home.po">
         <div>
         <input type="hidden" name="RESOURCES" value="*ANY*" />
         <label for="HeadwordInput" accesskey="s">
@@ -28,7 +28,51 @@
        <br/>
         <input type="submit" name="lookup" value="Otsi" />
         </div>
-      </form>
+      </form>-->
+            <form  id="ConsultForm" method="get" action="Home.po" >
+        <div>
+                <div>
+                    <div class="menuColumnSize">
+                        <div class="menuVariableName">
+                            <label for="ValueField" accesskey="s" ><span class="accesskey">S</span>õna:</label>
+                        </div>
+                        <div class="menuVariableValue" >
+                            <input type="hidden" id="Facet" name="FACET.0" value="cdm-headword"/>
+                            <input type="hidden" id="Operator" name="OPERATOR.0" value="2"/>
+                            <input id="ValueField" name="FACETVALUE.0" type="text" class="menuVariableValueWidth" />
+                        </div>
+                    </div>
+                    <div class="hidden">
+                        <div class="menuVariableName">
+                            <label for="SourceLang" accesskey="s"><span class="accesskey">S</span>ource:</label>
+                        </div>
+                        <div class="menuVariableValue" >
+                            <select id="SourceLang" name="SOURCE.0" class="menuVariableValueWidth" >
+                                <option id="SourceOptionTemplate" value="NONE" label="NONE">NONE</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="hidden">
+                        <div class="menuVariableName">
+                            <label for="Targets" accesskey="t"><span class="accesskey">T</span>arget:</label>
+                         </div>
+                        <div class="menuVariableValue" >
+                            <select id="Targets" name="TARGETS" class="menuVariableValueWidth">
+                                <option id="TargetTmpl" label="NONE" value="NONE">NONE</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                	<input type="hidden" name="SOURCE" value="est" />
+         			<input type="hidden" name="TARGETS" value="fra" />
+                    <input type="hidden" id="Xsl" name="XSL" value="Default"/>
+                    <input type="hidden" id="Offset" name="OFFSET"/>
+                    <input type="submit" name="lookup" value="Go" class="menuGo" />
+                </div>
+                </div>
+            </form>
+
       <a title="Otsing mitme erineva kriteeriumi alusel" href="ConsultExpert.po">Täppisotsing</a>
       <br/>
       <a title="Sõnastike nimekiri" href="ViewDictionaries.po">Sõnastike nimekiri</a>

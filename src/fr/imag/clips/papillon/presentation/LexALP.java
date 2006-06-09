@@ -10,6 +10,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.3  2006/06/09 10:10:43  fbrunet
+ *  Add generic components (AdvancedQueryForm, QueryRequest and ViewQueryResult) in Home.java
+ *
  *  Revision 1.2  2006/03/01 15:12:31  mangeot
  *  Merge between maintrunk and LEXALP_1_1 branch
  *
@@ -157,7 +160,27 @@ public class LexALP extends PapillonBasePO {
     HomeContentXHTML homeContent = (HomeContentXHTML) MultilingualXHtmlTemplateFactory.createTemplate("HomeContentXHTML", this.getComms(), this.getSessionData());
     Element home = homeContent.getElementHomeContent();
     
+    //
+    removeQueryResult(homeContent);
+    removeQueryFuzzyResult(homeContent);
+    
     return (Node) home;
 }
+
+private void removeQueryResult(HomeContentXHTML homeContent) {
+    Element myElement = homeContent.getElementQueryResult();
+    Node myParent = myElement.getParentNode();
+    if (myParent != null)
+        myParent.removeChild(myElement);
+}
+
+
+private void removeQueryFuzzyResult(HomeContentXHTML homeContent) {
+    Element myElement = homeContent.getElementQueryFuzzyResult();
+    Node myParent = myElement.getParentNode();
+    if (myParent != null)
+        myParent.removeChild(myElement);
+}
+
 }
 

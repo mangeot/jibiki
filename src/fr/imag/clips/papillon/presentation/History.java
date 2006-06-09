@@ -53,7 +53,7 @@ public class History extends PapillonBasePO {
     
     
     protected boolean loggedInUserRequired() {
-        return false;
+        return true;
     }
     
     protected boolean userMayUseThisPO() {

@@ -10,6 +10,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.21  2006/06/09 10:10:43  fbrunet
+ *  Add generic components (AdvancedQueryForm, QueryRequest and ViewQueryResult) in Home.java
+ *
  *  Revision 1.20  2006/05/05 02:08:23  fbrunet
  *  bug correction : url utf8 transfert (in createEntryInit)
  *
@@ -224,6 +227,8 @@ import fr.imag.clips.papillon.presentation.xhtml.orig.*;
  */
 public class Home extends PapillonBasePO {
 
+    private HomeContentXHTML content;
+    
     /**
      *  Description of the Field
      */
@@ -264,7 +269,8 @@ public class Home extends PapillonBasePO {
     /**
      *  Description of the Field
      */
-    protected final static String HEADWORD_PARAMETER = "HEADWORD";
+    //protected final static String HEADWORD_PARAMETER = "HEADWORD";
+    protected final static String HEADWORD_PARAMETER = "FACETVALUE.0";
     /**
      *  Description of the Field
      */
@@ -276,7 +282,8 @@ public class Home extends PapillonBasePO {
     /**
      *  Description of the Field
      */
-    protected final static String SOURCE_PARAMETER = "SOURCE";
+    //protected final static String SOURCE_PARAMETER = "SOURCE";
+    protected final static String SOURCE_PARAMETER = "SOURCE.0";
 
     /**
      *  Description of the Field
@@ -412,76 +419,214 @@ public class Home extends PapillonBasePO {
             javax.xml.transform.TransformerException,
             ClassNotFoundException,
             PapillonBusinessException,
-            UnsupportedEncodingException {
+        UnsupportedEncodingException {
+            
+            // Content creation
+            content = (HomeContentXHTML) MultilingualXHtmlTemplateFactory.createTemplate("HomeContentXHTML", this.getComms(), this.getSessionData());
 
-        // On regarde d'abord les parametres qui nous sont demandes.
-        String submit = myGetParameter(LOOKUP_PARAMETER);
+            //
+            String submit = myGetParameter(LOOKUP_PARAMETER);
+            
+            //
+            if ((submit != null) && (!submit.equals(""))) {
+            
+                // Query Form
+                AdvancedQueryForm qf = new AdvancedQueryForm(this.getComms(), this.getSessionData(), true, false);
+            
+                // Query Request
+                QueryRequest queryReq = qf.getQueryRequest();
+                    
+                //
+               if (!queryReq.isEmpty()) {
+                    
+                   ArrayList listStatus = new ArrayList();
+                   
+                   QueryCriteria criteriaFinishedStatus = new QueryCriteria();
+                   criteriaFinishedStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);  
+                   criteriaFinishedStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.FINISHED_STATUS);
+                   listStatus.add(criteriaFinishedStatus);
+                   
+                   QueryCriteria criteriaModifiedStatus = new QueryCriteria();
+                   criteriaModifiedStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);
+                   criteriaModifiedStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.MODIFIED_STATUS);
+                   listStatus.add(criteriaModifiedStatus);
+                   
+                   queryReq.addOrCriteriaList(listStatus);
 
-        String sourceLanguage = myGetParameter(SOURCE_PARAMETER);
-        String targetLanguage = myGetParameter(TARGETS_PARAMETER);
-		String originalTargetLanguage = targetLanguage;
-        String volume = myGetParameter(VOLUME_PARAMETER);
-        resources = myGetParameterValues(RESOURCES_PARAMETER);
+                   //==================== CLASSIC ENTRY SEARCH====================
+                   
+                   // Perform the request
+                   Collection qrset = queryReq.findLexieAndTranslation(this.getUser());
 
-        headword = myGetParameter(HEADWORD_PARAMETER);
-
-        partialMatchString = myGetParameter(PartialMatch_PARAMETER);
-        boolean partialMatch = (null != partialMatchString && !partialMatchString.equals(""));
-        int strategy = IQuery.STRATEGY_EXACT;
-        if (partialMatch) {
-            strategy = IQuery.STRATEGY_SUBSTRING;
-        }
-		
-        int offset = 0;
-        String offsetString = myGetParameter(OFFSET_PARAMETER);
-        if (offsetString != null && !offsetString.equals("")) {
-            offset = Integer.parseInt(offsetString);
-		}
-
-        String formname = myGetParameter(FORMNAME);
-        String handle = myGetParameter(HANDLE);
-        String xslid = myGetParameter(XSLID);
-
-        String login = null;
-
-        String[] targetLanguages = null;
-
-        if (targetLanguage == null || targetLanguage.equals("")) {
-            targetLanguages = null;
-        } else if (targetLanguage.equals(ALL_TARGETS)) {
-            targetLanguages = AvailableLanguages.getTargetLanguagesArray();
-            //targetLanguages = null;
-        } else {
-            targetLanguages = new String[]{targetLanguage};
-        }
-
-        allResources = DictionariesFactory.getDictionariesNamesArray();
-
-        if (null != resources && resources.length > 0) {
-            if (resources[0].equals(ANY_RESOURCE)) {
-                resources = allResources;
+                   if (!qrset.isEmpty()) {
+                       
+                       // Display result
+                       XHTMLElement queryResultForm = content.getElementQueryResultForm();
+                       Node viewQueryResultNode = ViewQueryResult.createNodeResult(this.getComms(), this.getSessionData(), this.getUrl(), this.getUser(), qrset, qf.getQueryParameter(), (this.getUser()!=null && !this.getUser().isEmpty()));
+                       queryResultForm.appendChild(content.importNode(viewQueryResultNode, true));
+                       queryResultForm.removeAttribute("id");     
+                   
+                   } else {
+                       //removeQueryResult();
+                   }
+                    
+                    //==================== FUZZY ENTRY SEARCH====================
+                    
+                    // Find first criteria
+                    ArrayList criteriaTree = queryReq.getCriteriaTree();
+                    ArrayList criteriaOR = (ArrayList)criteriaTree.get(0);
+                    QueryCriteria criteria = (QueryCriteria)criteriaOR.get(0);
+                    
+                    int i = criteria.getCriteriaByColumn("value");
+                    //System.out.println("Column : " + criteria.getColumn(i) + ", Strategie : " + criteria.getStrategie(i) + ", Value : " + criteria.getValue(i));
+                    criteria.addAdvancedValue("value", QueryCriteria.CASE_INSENSITIVE_CONTAINS, criteria.getValue(i));   // like headword (no case sensitive)
+                    criteria.add("value", QueryCriteria.CASE_INSENSITIVE_NOT_EQUAL, criteria.getValue(i));      // not match headword (no case sensitive)
+                    criteria.remove(i);
+                    
+                    // Perform the request
+                    qrset = queryReq.findLexieAndTranslation(this.getUser());
+                    
+                    if (!qrset.isEmpty()) {
+                        
+                        // Display result
+                        XHTMLElement queryFuzzyResultForm = content.getElementQueryFuzzyResultForm();
+                        Node viewQueryResultNode = ViewQueryResult.createNodeResult(this.getComms(), this.getSessionData(), this.getUrl(), this.getUser(), qrset, qf.getQueryParameter(), (this.getUser()!=null && !this.getUser().isEmpty()));
+                        queryFuzzyResultForm.appendChild(content.importNode(viewQueryResultNode, true));
+                        queryFuzzyResultForm.removeAttribute("id");     
+                        
+                    } else {
+                        //removeQueryFuzzyResult();
+                    }
+                    
+                    
+                    // initializing cache values for next query
+                    String sourceLanguage = myGetParameter(SOURCE_PARAMETER);
+                    if (null != sourceLanguage && !sourceLanguage.equals("")) {
+                        this.setPreference(SOURCE_PARAMETER, sourceLanguage);
+                    }
+                    String targetLanguage = myGetParameter(TARGETS_PARAMETER);
+                    if (null != targetLanguage && !targetLanguage.equals("")) {
+                        this.setPreference(TARGETS_PARAMETER, targetLanguage);
+                    }
+                    String headword = myGetParameter(HEADWORD_PARAMETER);
+                    if (null != headword && !headword.equals("")) {
+                        this.setPreference(HEADWORD_PARAMETER, headword, false);
+                    }
+                                        
+                } else {
+                    
+                    //
+                    this.getSessionData().writeUserMessage("Sorry, entry not found !");
+                } 
+                
+                //
+                removeProjectDescription();
+                
+            } else {
+                
+                //
+                removeQueryResult();
+                removeQueryFuzzyResult();
             }
+                
+            // 
+            return content;
+            
+            /*
+            // On regarde d'abord les parametres qui nous sont demandes.
+            String submit = myGetParameter(LOOKUP_PARAMETER);
+            
+            String sourceLanguage = myGetParameter(SOURCE_PARAMETER);
+            String targetLanguage = myGetParameter(TARGETS_PARAMETER);
+            String originalTargetLanguage = targetLanguage;
+            String volume = myGetParameter(VOLUME_PARAMETER);
+            resources = myGetParameterValues(RESOURCES_PARAMETER);
+            
+            headword = myGetParameter(HEADWORD_PARAMETER);
+            
+            partialMatchString = myGetParameter(PartialMatch_PARAMETER);
+            boolean partialMatch = (null != partialMatchString && !partialMatchString.equals(""));
+            int strategy = IQuery.STRATEGY_EXACT;
+            if (partialMatch) {
+                strategy = IQuery.STRATEGY_SUBSTRING;
+            }
+            
+            int offset = 0;
+            String offsetString = myGetParameter(OFFSET_PARAMETER);
+            if (offsetString != null && !offsetString.equals("")) {
+                offset = Integer.parseInt(offsetString);
+            }
+            
+            String formname = myGetParameter(FORMNAME);
+            String handle = myGetParameter(HANDLE);
+            String xslid = myGetParameter(XSLID);
+            
+            String login = null;
+            
+            String[] targetLanguages = null;
+            
+            if (targetLanguage == null || targetLanguage.equals("")) {
+                targetLanguages = null;
+            } else if (targetLanguage.equals(ALL_TARGETS)) {
+                targetLanguages = AvailableLanguages.getTargetLanguagesArray();
+                //targetLanguages = null;
+            } else {
+                targetLanguages = new String[]{targetLanguage};
+            }
+            
+            allResources = DictionariesFactory.getDictionariesNamesArray();
+            
+            if (null != resources && resources.length > 0) {
+                if (resources[0].equals(ANY_RESOURCE)) {
+                    resources = allResources;
+                }
+            }
+            
+            if (null != submit && !submit.equals("")) {
+                // initializing cache values for next query
+                if (null != sourceLanguage && !sourceLanguage.equals("")) {
+                    this.setPreference(SOURCE_PARAMETER, sourceLanguage);
+                }
+                if (null != targetLanguage && !targetLanguage.equals("")) {
+                    this.setPreference(TARGETS_PARAMETER, targetLanguage);
+                }
+                if (null != headword && !headword.equals("")) {
+                    this.setPreference(HEADWORD_PARAMETER, headword, false);
+                }
+                // If there is a query, executing it
+                return performAndDisplayQuery(resources, volume, sourceLanguage, originalTargetLanguage, targetLanguages, headword, strategy, handle, xslid, formname, this.getUser(), offset);
+            } else {
+                // If there is no query, ie connection for the first time, adding the Home content
+                return createHomeContent();
+            }
+             */
         }
 
-        if (null != submit && !submit.equals("")) {
-            // initializing cache values for next query
-            if (null != sourceLanguage && !sourceLanguage.equals("")) {
-                this.setPreference(SOURCE_PARAMETER, sourceLanguage);
-            }
-            if (null != targetLanguage && !targetLanguage.equals("")) {
-                this.setPreference(TARGETS_PARAMETER, targetLanguage);
-            }
-            if (null != headword && !headword.equals("")) {
-                this.setPreference(HEADWORD_PARAMETER, headword, false);
-            }
-            // If there is a query, executing it
-            return performAndDisplayQuery(resources, volume, sourceLanguage, originalTargetLanguage, targetLanguages, headword, strategy, handle, xslid, formname, this.getUser(), offset);
-        } else {
-            // If there is no query, ie connection for the first time, adding the Home content
-            return createHomeContent();
-        }
+    
+    private void removeProjectDescription() {
+        Element myElement = content.getElementProjectDescription();
+        Node myParent = myElement.getParentNode();
+        if (myParent != null)
+            myParent.removeChild(myElement);
+    }
+    
+    private void removeQueryResult() {
+        Element myElement = content.getElementQueryResult();
+        Node myParent = myElement.getParentNode();
+        if (myParent != null)
+            myParent.removeChild(myElement);
+    }
+    
+    
+    private void removeQueryFuzzyResult() {
+        Element myElement = content.getElementQueryFuzzyResult();
+        Node myParent = myElement.getParentNode();
+        if (myParent != null)
+            myParent.removeChild(myElement);
     }
 
+    
+    
 
     /**
      *  Adds a feature to the Entries attribute of the Home object
@@ -526,7 +671,7 @@ public class Home extends PapillonBasePO {
      *      of the Exception
      * @exception  javax.xml.transform.TransformerException        Description
      *      of the Exception
-     */
+     +/
     protected Node performAndDisplayQuery(String[] resources, String volume, String source, String originalTarget, String[] targets, String headword, int strategy, String handle, String xslid, String formname, User user, int offset)
              throws PapillonBusinessException,
             ClassNotFoundException,
@@ -557,7 +702,7 @@ public class Home extends PapillonBasePO {
         criteriaFinishedStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);  
         criteriaFinishedStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.FINISHED_STATUS);
         query.addCriteria(criteriaFinishedStatus);
-        */
+        +/
         
         
         //FIXME: add to QueryRequest methods and add to user groups !!!
@@ -642,7 +787,7 @@ public class Home extends PapillonBasePO {
 			}
             QueryLogging = true;
         }
-        */
+        +/
         
                
         //==================== FUZZY ENTRY SEARCH====================
@@ -719,7 +864,8 @@ public class Home extends PapillonBasePO {
         
         // Add Fuzzy entry in entry collection
         //EntryCollection.addAll(FuzzyEntryCollection);
-       */
+       
+         +/
         
         // Logging the query into the database !
         if (QueryLogging && QueryLogsFactory.StoreQueryLogs()) {
@@ -802,7 +948,7 @@ public class Home extends PapillonBasePO {
                  Utility.removeElement(content.getElementEntryListTable());
                  addFewEntries(content, EntryCollection, xslid);
              }
-             */
+             +/
             
             Utility.removeElement(content.getElementSorryMessage());
         
@@ -830,7 +976,7 @@ public class Home extends PapillonBasePO {
      *      Exception
      * @exception  java.io.UnsupportedEncodingException  Description of the
      *      Exception
-     */
+     +/
     protected void addEntryTable(ConsultXHTML content, Collection qrset, String source, String target, int strategy, int offset)
              throws PapillonBusinessException,
             java.io.UnsupportedEncodingException {
@@ -980,7 +1126,7 @@ public class Home extends PapillonBasePO {
      * @param  resourceName                   The feature to be added to the
      *      Element attribute
      * @exception  PapillonBusinessException  Description of the Exception
-     */
+     +/
     protected void addElement(ConsultXHTML content, Element element, String resourceName)
              throws PapillonBusinessException {
 
@@ -1054,7 +1200,7 @@ public class Home extends PapillonBasePO {
      *      The feature to be added to the FewEntries attribute
      * @exception  fr.imag.clips.papillon.business.PapillonBusinessException
      *      Description of the Exception
-     */
+     +/
     protected void addFewEntries(ConsultXHTML content, Collection qrset, String xslid)
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
         if (qrset != null && qrset.size() > 0) {
@@ -1088,7 +1234,7 @@ public class Home extends PapillonBasePO {
      *      The feature to be added to the FewEntries attribute
      * @exception  fr.imag.clips.papillon.business.PapillonBusinessException
      *      Description of the Exception
-     */
+     +/
     protected void addEntry(ConsultXHTML content, QueryResult qr, String xslid)
 		throws fr.imag.clips.papillon.business.PapillonBusinessException
     {
@@ -1129,7 +1275,7 @@ public class Home extends PapillonBasePO {
      *
      * @exception  HttpPresentationException  Description of the Exception
      * @exception  java.io.IOException        Description of the Exception
-     */
+     +/
     public Node createHomeContent()
              throws HttpPresentationException,
             java.io.IOException {
@@ -1141,7 +1287,7 @@ public class Home extends PapillonBasePO {
          *  In order to avoid a preference in the languages displayed on the home page,
          *  the order of the languages is changed randomly
          *  Beware, this code is tightly boud to the HMTL code of HomeContent.html
-         */
+         +/
         Vector h1Nodes = new Vector();
         Vector pNodes = new Vector();
         NodeList childNodes = projectDescription.getChildNodes();
@@ -1197,5 +1343,9 @@ public class Home extends PapillonBasePO {
         //homeParent.removeAttribute("id");
         return (Node) home;
     }
+*/
+
+
+
 }
 

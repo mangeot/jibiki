@@ -4,6 +4,9 @@
  * $Id$
  *------
  * $Log$
+ * Revision 1.8  2006/06/09 10:10:43  fbrunet
+ * Add generic components (AdvancedQueryForm, QueryRequest and ViewQueryResult) in Home.java
+ *
  * Revision 1.7  2006/06/01 22:05:05  fbrunet
  * New interface, quick search, new contribution management (the first edition not create new contribution. New contribution is created after add, remove element, update, save, etc. in the interface window)
  *
@@ -126,6 +129,31 @@ body {
 	font-size: 8pt;
 	background: transparent;
 }
+
+.menuColumnSize {
+	width: 150px;
+}
+
+.menuVariableName {
+    float: left; 
+    width: 40px;
+    }
+    
+.menuVariableValue {
+    float: left; 
+    width: 100px;
+    }
+    
+.menuVariableValueWidth {
+    width: 100%;
+    }
+
+.menuGo {
+    width: 50px;
+    margin-left:auto; 
+    margin-right:auto;
+    margin-top: 5px;
+    }
 
 .menuBlock {
     padding-bottom: 0.2em;

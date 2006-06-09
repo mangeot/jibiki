@@ -152,4 +152,21 @@ public class QueryCriteria {
     public String getValue(int i) {
         return ((String[])criteriaList.get(i))[2];
     }
+    
+    // 
+    public int getCriteriaByColumn(String column) {
+        
+        int i = 0;
+        while ( !((String[])criteriaList.get(i))[0].equals(column) && (i < criteriaList.size()) ) {
+            i++;
+        }
+        
+        return i;
+    }
+    
+    
+    // 
+    public void remove(int i) {
+        criteriaList.remove(i);
+    }
 }
