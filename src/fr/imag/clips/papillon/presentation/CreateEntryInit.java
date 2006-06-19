@@ -9,6 +9,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.7  2006/06/19 15:27:01  fbrunet
+ * Jibiki : improvement of the search result display
+ * Lexalp : add help menu (link to wiki and bug tracker)
+ *
  * Revision 1.6  2006/06/01 22:05:05  fbrunet
  * New interface, quick search, new contribution management (the first edition not create new contribution. New contribution is created after add, remove element, update, save, etc. in the interface window)
  *
@@ -164,14 +168,16 @@ public class CreateEntryInit extends PapillonBasePO {
                 System.out.println("action " + action);
                
                     // LOOKUP
-                if (action.equals("lookup")
-                    && volume!=null && !volume.equals("")) {
+                //if (action.equals("lookup")
+                //    && volume!=null && !volume.equals("")) {
                     
                     //
-                    displayLookupResults(volume);
+                //    displayLookupResults(volume);
                     
                     // LOOKUP or CREATE
-                } else if (action.equals("create")
+                //} else 
+                    
+                if ( (action.equals("create") || action.equals("lookup"))
                            && volume!=null && !volume.equals("") 
                            && headword!=null && !headword.equals("")) {
                     
@@ -305,26 +311,24 @@ public class CreateEntryInit extends PapillonBasePO {
             volumeSelect.removeChild(volumeOptionTemplate);
         }
     
-
+/*
     protected void displayLookupResults (String volumeName)
         throws PapillonBusinessException,
         java.io.UnsupportedEncodingException,
         java.io.IOException, 
         HttpPresentationException {
             
-            System.out.println("displayLookupResults");
+            //System.out.println("displayLookupResults");
             
             //
             AdvancedQueryForm qf = new AdvancedQueryForm(this.getComms(), this.getSessionData(), true, false);
-            Collection qrset = searchEntry(volumeName, qf.getCriteriaList());
+            QueryParameter qp = qf.getQueryParameter();
+            qp.setTargets(new String[0]);
+            Collection qrset = searchEntry(volumeName, qf, qp);
             
             //
             if (qrset != null) {
             
-                //
-                QueryParameter qp = qf.getQueryParameter();
-                qp.setTargets(new String[0]);
-                
                 //
                 //addEntriesTable(qrset, qp);
                 XHTMLElement queryResultForm = content.getElementQueryCreateForm();
@@ -342,7 +346,8 @@ public class CreateEntryInit extends PapillonBasePO {
                 removeShowCreation();
             }
         }
-	
+	*/
+    
     protected void displayLookupResultsAndCreate (String volumeName, String headword)
 		throws PapillonBusinessException,
 		java.io.UnsupportedEncodingException,
@@ -351,15 +356,13 @@ public class CreateEntryInit extends PapillonBasePO {
 			
             //
             AdvancedQueryForm qf = new AdvancedQueryForm(this.getComms(), this.getSessionData(), true, false);
-            Collection qrset = searchEntry(volumeName, qf.getCriteriaList());
+            QueryParameter qp = qf.getQueryParameter();
+            qp.setTargets(new String[0]);
+            Collection qrset = searchEntry(volumeName, qf, qp);
 
 			//
 			if (qrset != null && qrset.size()!=0) {
 
-                //
-                QueryParameter qp = qf.getQueryParameter();
-                qp.setTargets(new String[0]);
-                
                 //
                 //addEntriesTable(qrset, qp);
                 XHTMLElement queryResultForm = content.getElementQueryCreateForm();
@@ -370,7 +373,6 @@ public class CreateEntryInit extends PapillonBasePO {
                 removeShowCreation();
                 
             } else {
-                 System.out.println("throw new ClientPageRedirectException ");
                 //
                 throw new ClientPageRedirectException(CreateEntryInitURL + "?" + 
                                                       EditEntryInitFactory.ACTION_PARAMETER + "=showAndCreate" + 
@@ -402,7 +404,7 @@ protected void removeInitJavascript () {
 
 	
 
-protected Collection searchEntry(String volumeName, ArrayList criteriaSearchList)
+protected Collection searchEntry(String volumeName, AdvancedQueryForm qf, QueryParameter qp)
       throws PapillonBusinessException,
       java.io.UnsupportedEncodingException,
       HttpPresentationException {
@@ -410,6 +412,7 @@ protected Collection searchEntry(String volumeName, ArrayList criteriaSearchList
           //
           QueryRequest queryReq = new QueryRequest(volumeName);
           queryReq.setOrTree();   // OR(AND)
+          ArrayList criteriaSearchList = qf.getCriteriaList();
           
           //
           ArrayList listFinished = new ArrayList();
@@ -466,6 +469,10 @@ protected Collection searchEntry(String volumeName, ArrayList criteriaSearchList
               listNotFinished.addAll(criteriaSearchList);
               queryReq.addAndCriteriaList(listNotFinished);
           }
+          
+          //
+          queryReq.setLimit(qp.getLimitString());
+          queryReq.setOffset(qp.getOffsetString());
           
           //
           return queryReq.findLexie(this.getUser());          

@@ -9,6 +9,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.7  2006/06/19 15:27:01  fbrunet
+ * Jibiki : improvement of the search result display
+ * Lexalp : add help menu (link to wiki and bug tracker)
+ *
  * Revision 1.6  2006/06/06 09:15:10  fbrunet
  * Bug correction : view action in advanced search page if user is registered.
  *
@@ -80,6 +84,7 @@ public class ViewQueryResult {
 
     protected final static String EditEntryInitURL = "LexalpEditEntryInit.po";
     protected final static String HistoryURL = "History.po";
+    protected final static String Action = "action";
    
     protected static Node createNodeResult (HttpPresentationComms comms, PapillonSessionData sessionData, String url, User user, Collection qrset, QueryParameter qp, boolean viewActions)  
     throws  HttpPresentationException,
@@ -158,7 +163,7 @@ public class ViewQueryResult {
                 
                 //
                 if (viewActions) {
-                    textAuthor.setNodeValue(user.getLogin());
+                    textAuthor.setNodeValue(myEntry.getModificationAuthor());
                     
                     // Status
                     if ( myEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS) ) {
@@ -285,6 +290,7 @@ public class ViewQueryResult {
                             // action undelete and refresh query with last parameters
                             undeleteAnchor.setHref(href + "undelete" + "&" + AdvancedQueryForm.getEncodedUrlForParameter(qp));
                             undeleteAnchor.setAttribute("class","action");
+                            undeleteAnchor.setAttribute("target","_blank");
                         } else {
                             undeleteAnchor.setHref("");
                             undeleteAnchor.setAttribute("class","hidden");
@@ -311,8 +317,7 @@ public class ViewQueryResult {
                     
                     // History view
                     // FIXME: Create static variable ... VolumeName and EntryHandle ... 
-                    href = HistoryURL + "?" + "VolumeName" + "=" + myEntry.getVolumeName() + "&" + "EntryHandle" + "=" + myEntry.getHandle();
-                    ViewHistoryEntryAnchor.setHref(href);
+                    ViewHistoryEntryAnchor.setHref(HistoryURL + "?" + "VolumeName" + "=" + myEntry.getVolumeName() + "&" + "EntryHandle" + "=" + myEntry.getHandle());
                     ViewHistoryEntryAnchor.setAttribute("class","action");
                     
                     // XML view
@@ -336,8 +341,7 @@ public class ViewQueryResult {
                         qpxml.setCriteria(crit);
                         
                         //
-                        href = url + "?" + AdvancedQueryForm.getEncodedUrlForParameter(qpxml); 
-                        viewXmlAnchor.setHref(href);
+                        viewXmlAnchor.setHref(url + "?" + EditEntryInitFactory.ACTION_PARAMETER + "=lookup&" + AdvancedQueryForm.getEncodedUrlForParameter(qpxml));
                         viewXmlAnchor.setAttribute("class","action");
                         
                     } else {
@@ -355,14 +359,14 @@ public class ViewQueryResult {
             
             // the previous button
             if ( qp.getOffset() != 0 ) {
-                
+
                 QueryParameter previousQp = (QueryParameter) qp.duplicate();
                 previousQp.setOffset(qp.getOffset() - qp.getLimit());
                 // Top
-                previousAnchorTop.setHref(url + "?" + AdvancedQueryForm.getEncodedUrlForParameter(previousQp));
+                previousAnchorTop.setHref(url + "?" + EditEntryInitFactory.ACTION_PARAMETER + "=lookup&" + AdvancedQueryForm.getEncodedUrlForParameter(previousQp));
                 previousAnchorTop.setAttribute("class","pagination");
                 // Bottom
-                previousAnchorBottom.setHref(url + "?" + AdvancedQueryForm.getEncodedUrlForParameter(previousQp));
+                previousAnchorBottom.setHref(url + "?" + EditEntryInitFactory.ACTION_PARAMETER + "=lookup&" + AdvancedQueryForm.getEncodedUrlForParameter(previousQp));
                 previousAnchorBottom.setAttribute("class","pagination");
                 
             } else {
@@ -381,10 +385,10 @@ public class ViewQueryResult {
                 QueryParameter nextQp = (QueryParameter) qp.duplicate();
                 nextQp.setOffset(qp.getOffset() + qp.getLimit());
                 // Top
-                nextAnchorTop.setHref(url + "?" + AdvancedQueryForm.getEncodedUrlForParameter(nextQp));
+                nextAnchorTop.setHref(url + "?" + EditEntryInitFactory.ACTION_PARAMETER + "=lookup&" + AdvancedQueryForm.getEncodedUrlForParameter(nextQp));
                 nextAnchorTop.setAttribute("class","pagination");
                 // Bottom
-                nextAnchorBottom.setHref(url + "?" + AdvancedQueryForm.getEncodedUrlForParameter(nextQp));
+                nextAnchorBottom.setHref(url + "?" + EditEntryInitFactory.ACTION_PARAMETER + "=lookup&" + AdvancedQueryForm.getEncodedUrlForParameter(nextQp));
                 nextAnchorBottom.setAttribute("class","pagination");
                 
             } else {

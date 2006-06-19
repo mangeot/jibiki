@@ -9,6 +9,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.9  2006/06/19 15:27:00  fbrunet
+ * Jibiki : improvement of the search result display
+ * Lexalp : add help menu (link to wiki and bug tracker)
+ *
  * Revision 1.8  2006/06/09 10:10:43  fbrunet
  * Add generic components (AdvancedQueryForm, QueryRequest and ViewQueryResult) in Home.java
  *
@@ -175,10 +179,11 @@ public class AdvancedQueryForm {
         com.lutris.appserver.server.httpPresentation.HttpPresentationException
     {
         String nbr = AbstractPO.myGetParameter(req, AdvancedQueryFormXHTML.NAME_NB_RESULT_PER_PAGE);
-        // limit ... 10
-        return (null == nbr || nbr.equals("")) ? "10" : nbr;
-        // limit ... all (0)
-        //return (null == nbr || nbr.equals("")) ? "0" : nbr;
+        if (null == nbr || nbr.equals("")) {
+            nbr = "10";         // all (0)
+        }
+        //System.out.println("getRequestedNumberOfResultsPerPageString  limit = " + nbr);
+        return nbr;
     }
 
     
@@ -187,10 +192,11 @@ public class AdvancedQueryForm {
         com.lutris.appserver.server.httpPresentation.HttpPresentationException
     {
         String nbr = AbstractPO.myGetParameter(req, AdvancedQueryFormXHTML.NAME_NB_RESULT_PER_PAGE);
-        // limit ... 10
-        return (null == nbr || nbr.equals("")) ? 10 : Integer.valueOf(nbr).intValue();
-        // limit ... all (0)
-        //return (null == nbr || nbr.equals("")) ? 0 : Integer.valueOf(nbr).intValue();
+        if (null == nbr || nbr.equals("")) {
+            nbr = "10";         // all (0)
+        }
+        //System.out.println("getRequestedNumberOfResultsPerPage  limit = " + nbr);
+        return Integer.valueOf(nbr).intValue();
     }
 
     public String getRequestedOffsetString(HttpServletRequest req) 

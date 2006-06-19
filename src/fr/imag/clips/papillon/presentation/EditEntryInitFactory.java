@@ -10,6 +10,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.7  2006/06/19 15:27:01  fbrunet
+ * Jibiki : improvement of the search result display
+ * Lexalp : add help menu (link to wiki and bug tracker)
+ *
  * Revision 1.6  2006/05/23 07:57:51  fbrunet
  * Modify edit management : When an user edit a lexie, this lexie doesn't change until an upgrade/finish action (then a new contibution is created link to lexie with a not-finished status).
  *
@@ -235,7 +239,8 @@ public class EditEntryInitFactory {
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
         
         //
-        if ( myEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS) ) {
+        if ( myEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS) ||
+             (myEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS) && myEntry.getModificationAuthor().equals(user.getLogin())) ) {
             
             //
             VolumeEntry newEntry = VolumeEntriesFactory.newEntryFromExisting(myEntry);
@@ -275,10 +280,15 @@ public class EditEntryInitFactory {
             VolumeEntry newEntry = VolumeEntriesFactory.newEntryFromExisting(myEntry);
             newEntry.setClassifiedFinishedContribution(myEntry);
             newEntry.setModification(user.getLogin(), "undelete");
-            newEntry.setStatus(VolumeEntry.FINISHED_STATUS);
+            newEntry.setStatus(VolumeEntry.NOT_FINISHED_STATUS);
             myEntry.setStatus(VolumeEntry.CLASSIFIED_FINISHED_STATUS);
             myEntry.save();
             newEntry.save();
+            
+            //
+            throw new ClientPageRedirectException(EditEntryURL + "?" + 
+                                                  EditEntry.VolumeName_PARAMETER + "=" + newEntry.getVolumeName() + 
+                                                  "&" + EditEntry.EntryHandle_PARAMETER + "=" + newEntry.getHandle());
             
         }  else {
             

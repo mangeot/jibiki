@@ -9,6 +9,10 @@
  *  $Id $
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.5  2006/06/19 15:27:01  fbrunet
+ *  Jibiki : improvement of the search result display
+ *  Lexalp : add help menu (link to wiki and bug tracker)
+ *
  *  Revision 1.4  2006/06/09 10:10:43  fbrunet
  *  Add generic components (AdvancedQueryForm, QueryRequest and ViewQueryResult) in Home.java
  *
@@ -132,6 +136,7 @@ public class LexALPLayout implements StdLayout {
             handleLangForm(comms, sessionData, url);
             handleConsultForm(comms, sessionData);
             handleLexieMenu(comms, sessionData);
+            handleHelpMenu(comms, sessionData);
             //handleAxieMenu(comms, sessionData);
             //handleReviewerMenu(comms, sessionData);
             handleAdministratorMenu(comms, sessionData);
@@ -352,6 +357,32 @@ public class LexALPLayout implements StdLayout {
                 Node placeHolder = layout.getElementMenuBlockPlaceHolder();
                 Node placeHolderMother = placeHolder.getParentNode();
                 placeHolderMother.insertBefore(layout.importNode(lexiesMenu.getElementLexiesManagement(), true), placeHolder);
+                
+                //layout.getElementMenuColumn().appendChild(layout.importNode(lexiesMenu.getElementLexiesManagement(), true));
+            }
+        }
+    
+    
+    /**
+        *  Description of the Method
+     *
+     * @param  comms
+     *      Description of the Parameter
+     * @param  sessionData
+     *      Description of the Parameter
+     * @exception  com.lutris.appserver.server.httpPresentation.HttpPresentationException
+     *      Description of the Exception
+     */
+    protected void handleHelpMenu(HttpPresentationComms comms, PapillonSessionData sessionData)
+        throws com.lutris.appserver.server.httpPresentation.HttpPresentationException {
+            // If the user is logged in add the help menu
+            User myUser = sessionData.getUser();
+            if (null != myUser && !myUser.isEmpty()) {
+                HelpMenuXHTML helpMenu = (HelpMenuXHTML) MultilingualXHtmlTemplateFactory.createTemplate(PACKAGE, "HelpMenuXHTML", comms, sessionData);
+                
+                Node placeHolder = layout.getElementMenuBlockPlaceHolder();
+                Node placeHolderMother = placeHolder.getParentNode();
+                placeHolderMother.insertBefore(layout.importNode(helpMenu.getElementHelpMenu(), true), placeHolder);
                 
                 //layout.getElementMenuColumn().appendChild(layout.importNode(lexiesMenu.getElementLexiesManagement(), true));
             }

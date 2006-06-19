@@ -38,30 +38,36 @@
         <div>
                 <div>
                     <div class="menuColumnSize">
-                        <div class="menuVariableName">
+                        <!--div class="menuVariableName"-->
+                        <div style="float: left; width: 60px;">
                             <label for="ValueField" accesskey="t" ><span class="accesskey">T</span>erminus:</label>
                         </div>
-                        <div class="menuVariableValue" >
+                        <!--div class="menuVariableValue" -->
+                        <div style="float: left; width: 80px;" >
                             <input type="hidden" id="Facet" name="FACET.0" value="cdm-headword"/>
                             <input type="hidden" id="Operator" name="OPERATOR.0" value="2"/>
                             <input id="ValueField" name="FACETVALUE.0" type="text" class="menuVariableValueWidth" />
                         </div>
                     </div>
                     <div class="menuColumnSize">
-                        <div class="menuVariableName">
+                        <!--div class="menuVariableName"-->
+                        <div style="float: left; width: 90px;">
                             <label for="SourceLang" accesskey="a"><span class="accesskey">A</span>usgangssprache:</label>
                         </div>
-                        <div class="menuVariableValue" >
+                        <!--div class="menuVariableValue" -->
+                        <div style="float: left; width: 50px;" >
                             <select id="SourceLang" name="SOURCE.0" class="menuVariableValueWidth" >
                                 <option id="SourceOptionTemplate" value="NONE" label="NONE">NONE</option>
                             </select>
                         </div>
                     </div>
                     <div class="menuColumnSize">
-                        <div class="menuVariableName">
+                        <!--div class="menuVariableName"-->
+                        <div style="float: left; width: 70px;">
                             <label for="Targets" accesskey="z"><span class="accesskey">Z</span>ielsprache:</label>
                          </div>
-                        <div class="menuVariableValue" >
+                         <!--div class="menuVariableValue" -->
+                        <div style="float: left; width: 70px;" >
                             <select id="Targets" name="TARGETS" class="menuVariableValueWidth">
                                 <option label="All languages" value="*ALL*">alles</option>
                                 <option id="TargetTmpl" label="NONE" value="NONE">NONE</option>
@@ -71,8 +77,10 @@
                 </div>
                 <div>
                     <input type="hidden" id="Xsl" name="XSL" value="Default"/>
+                    <input type="hidden" id="Limit" name="NB_RESULT_PER_PAGE" value="5" />
                     <input type="hidden" id="Offset" name="OFFSET"/>
-                    <input type="submit" name="lookup" value="Go" class="menuGo" />
+                    <input type="hidden" id="Action" name="action" value="lookup" />
+                    <input type="submit" value="Go" class="menuGo" />
                 </div>
                 </div>
             </form>

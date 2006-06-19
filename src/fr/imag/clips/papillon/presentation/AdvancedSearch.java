@@ -9,6 +9,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.8  2006/06/19 15:27:01  fbrunet
+ * Jibiki : improvement of the search result display
+ * Lexalp : add help menu (link to wiki and bug tracker)
+ *
  * Revision 1.7  2006/06/06 09:15:10  fbrunet
  * Bug correction : view action in advanced search page if user is registered.
  *
@@ -105,6 +109,7 @@ import fr.imag.clips.papillon.business.dictionary.QueryParameter;
 import fr.imag.clips.papillon.business.dictionary.QueryCriteria;
 import fr.imag.clips.papillon.business.dictionary.QueryRequest;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
+import fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory;
 import fr.imag.clips.papillon.business.dictionary.Volume;
 import fr.imag.clips.papillon.business.utility.Utility;
 import fr.imag.clips.papillon.business.transformation.ResultFormatter;
@@ -125,11 +130,11 @@ import java.util.ArrayList;
 import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
 public class AdvancedSearch extends PapillonBasePO {
-
+    
     protected boolean loggedInUserRequired() {
         return false;
     }
-
+    
     protected boolean userMayUseThisPO() {
         return true;
     }
@@ -137,27 +142,64 @@ public class AdvancedSearch extends PapillonBasePO {
     protected  int getCurrentSection() {
         return NO_SECTION;
     }
-
+    
     public Node getContent()
     throws HttpPresentationException, IOException, SessionException {
         
-        //
-        AdvancedSearchXHTML doc = (AdvancedSearchXHTML) MultilingualXHtmlTemplateFactory.createTemplate("AdvancedSearchXHTML", this.myComms, this.sessionData);
+        
+        ////// Handle action events (edit, duplicate, delete, undete)
+        // Retrieve parameters 
+        String action = myGetParameter(EditEntryInitFactory.ACTION_PARAMETER);
+        String volume = myGetParameter(EditEntryInitFactory.VOLUME_PARAMETER);
+        String entryHandle = myGetParameter(EditEntryInitFactory.HANDLE_PARAMETER);
+        
+        // 
+        if (action!=null && !action.equals("") &&
+            volume!=null && !volume.equals("") &&
+            entryHandle!=null && !entryHandle.equals("")) {
+            
+            // Search last contribution corresponding to entryId
+            VolumeEntry myEntry = VolumeEntriesFactory.findEntryByEntryId(this.getUser(), volume, entryHandle);
+            
+            // EDIT
+            if (action.equals("edit")) {
+                EditEntryInitFactory.editEntry(myEntry, this.getUser());
+                
+                // DUPLICATE
+            } else if (action.equals("duplicate")) {
+                EditEntryInitFactory.duplicateEntry(myEntry, this.getUser());                    
+                
+                // DELETE
+            } else if (action.equals("delete")) {
+                EditEntryInitFactory.deleteEntry(myEntry, this.getUser()); 
+                
+                // UNDELETE
+            } else if (action.equals("undelete")) {
+                EditEntryInitFactory.undeleteEntry(myEntry, this.getUser());
+            }      
+        }
+        
+        
+        ////// Create Advanced search page
+        AdvancedSearchXHTML content = (AdvancedSearchXHTML) MultilingualXHtmlTemplateFactory.createTemplate("AdvancedSearchXHTML", this.myComms, this.sessionData);
+        
+        // Retrieve parameters like AdvancedQueryForm object
         AdvancedQueryForm qf = new AdvancedQueryForm(this.getComms(), this.getSessionData(), true, false);
-
-        //
+        
+        // Import query form node in advanced search page
+        XHTMLElement formHolder = content.getElementQueryForm();
+        formHolder.appendChild(content.importNode(qf.getQueryFormNode("AdvancedSearch.po"), true));
+        
+        
+        ////// Display query result
+        // Create query request
         QueryRequest queryReq = qf.getQueryRequest();
         
-        // no search criteria
-        if (!queryReq.isEmpty()) {
-            /*
-             QueryCriteria criteriaStatus = new QueryCriteria();
-             criteriaStatus.add("key", "=", Volume.CDM_contributionStatus);
-             // FIXME: depend on user ?
-             criteriaStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.FINISHED_STATUS);
-             queryReq.addCriteria(criteriaStatus);
-             */
+        // Display query result if query request have criteria
+        // Display query result if no action on form (add ou remove criteria)
+        if (!queryReq.isEmpty() && !qf.actionOnFormRequested()) {
             
+            // Add status criteria
             ArrayList listStatus = new ArrayList();
             
             QueryCriteria criteriaFinishedStatus = new QueryCriteria();
@@ -172,57 +214,23 @@ public class AdvancedSearch extends PapillonBasePO {
             
             queryReq.addOrCriteriaList(listStatus);
             
-            /*
-             QueryParameter qp = qf.getQueryParameter();
-             // Restrict query to not deleted entries
-             String[] validatedCriteria = new String[4];
-             validatedCriteria[0] = Volume.CDM_contributionStatus;
-             validatedCriteria[1] = null;
-             validatedCriteria[2] = VolumeEntry.DELETED_STATUS;
-             validatedCriteria[3] = QueryBuilder.NOT_EQUAL;
-             qp.getCriteria().add(validatedCriteria);
-             */
+            // Perform the request
+            Collection qrset = queryReq.findLexieAndTranslation(this.getUser());
             
-            // Display query result if no action on form (add ou remove criteria)
-            if ( !qf.actionOnFormRequested() ) { 
-                //if (!qf.actionOnFormRequested() || qp.getCriteria().size() != 0) {
-                
-                // Perform the request
-                Collection qrset = queryReq.findLexieAndTranslation(this.getUser());
-                //Collection qrset = DictionariesFactory.doQuery(qp, this.getUser());
-                
-                // Display result
-                XHTMLElement queryResultForm = doc.getElementQueryResultForm();
-                //FIXME: user is identified -> (this.getUser()!=null && !this.getUser().isEmpty())
-                // - create a method isIdentify ? create a guest user ? introduce in createNodeResult ?
-                Node viewQueryResultNode = ViewQueryResult.createNodeResult(this.getComms(), this.getSessionData(), this.getUrl(), this.getUser(), qrset, qf.getQueryParameter(), (this.getUser()!=null && !this.getUser().isEmpty()));
-                queryResultForm.appendChild(doc.importNode(viewQueryResultNode, true));
-                queryResultForm.removeAttribute("id");
-                
-                /*
-                XHTMLElement entryNode = doc.getElementResultEntry();
-                entryNode.removeAttribute("id");
-                doc.setTextNbResults(Integer.toString(qrset.size()));
-                Iterator iter = qrset.iterator();
-                while(iter.hasNext()) {
-                    QueryResult qr = (QueryResult) iter.next();
-                    ResultFormatter rf = ResultFormatterFactory.getFormatter(qr, queryReq.getXsl(), ResultFormatterFactory.XHTML_DIALECT, null);
-                    Utility.removeChildNodes(entryNode);
-                    Node entryDOM = (Node)rf.getFormattedResult(qr, this.getUser());
-                    entryNode.appendChild(doc.importNode(entryDOM, true));
-                    entryNode.getParentNode().insertBefore(entryNode.cloneNode(true), entryNode);
-                } 
-                entryNode.getParentNode().removeChild(entryNode);  
-                 */
-                }
-            }
+            // Display result
+            XHTMLElement queryResultForm = content.getElementQueryResultForm();
+            //FIXME: user is identified -> (this.getUser()!=null && !this.getUser().isEmpty())
+            // - create a method isIdentify ? create a guest user ? introduce in createNodeResult ?
+            Node viewQueryResultNode = ViewQueryResult.createNodeResult(this.getComms(), this.getSessionData(), this.getUrl(), this.getUser(), qrset, qf.getQueryParameter(), (this.getUser()!=null && !this.getUser().isEmpty()));
+            queryResultForm.appendChild(content.importNode(viewQueryResultNode, true));
+            queryResultForm.removeAttribute("id");
+        }
+        
         
         //
-        XHTMLElement formHolder = doc.getElementQueryForm();
-        formHolder.appendChild(doc.importNode(qf.getQueryFormNode("AdvancedSearch.po"), true));
-        
-        return doc.getElementAdvancedSearchPage();
+        return content;
+        //return content.getElementAdvancedSearchPage();
     }
-
+    
 }
 

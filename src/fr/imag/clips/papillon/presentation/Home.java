@@ -10,6 +10,10 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.22  2006/06/19 15:27:01  fbrunet
+ *  Jibiki : improvement of the search result display
+ *  Lexalp : add help menu (link to wiki and bug tracker)
+ *
  *  Revision 1.21  2006/06/09 10:10:43  fbrunet
  *  Add generic components (AdvancedQueryForm, QueryRequest and ViewQueryResult) in Home.java
  *
@@ -261,6 +265,10 @@ public class Home extends PapillonBasePO {
     /**
      *  Description of the Field
      */
+    protected final static String ACTION_PARAMETER = "action";
+    /**
+        *  Description of the Field
+     */
     protected final static String LOOKUP_PARAMETER = "lookup";
     /**
      *  Description of the Field
@@ -421,102 +429,127 @@ public class Home extends PapillonBasePO {
             PapillonBusinessException,
         UnsupportedEncodingException {
             
-            // Content creation
+            
+            ////// Handle action events (edit, duplicate, delete, undete)
+            // Retrieve parameters 
+            String action = myGetParameter(EditEntryInitFactory.ACTION_PARAMETER);
+            String volume = myGetParameter(EditEntryInitFactory.VOLUME_PARAMETER);
+            String entryHandle = myGetParameter(EditEntryInitFactory.HANDLE_PARAMETER);
+            
+            // 
+            if (action!=null && !action.equals("") &&
+                volume!=null && !volume.equals("") &&
+                entryHandle!=null && !entryHandle.equals("")) {
+                
+                // Search last contribution corresponding to entryId
+                VolumeEntry myEntry = VolumeEntriesFactory.findEntryByEntryId(this.getUser(), volume, entryHandle);
+                
+                // EDIT
+                if (action.equals("edit")) {
+                    EditEntryInitFactory.editEntry(myEntry, this.getUser());
+                    
+                    // DUPLICATE
+                } else if (action.equals("duplicate")) {
+                    EditEntryInitFactory.duplicateEntry(myEntry, this.getUser());                    
+                    
+                    // DELETE
+                } else if (action.equals("delete")) {
+                    EditEntryInitFactory.deleteEntry(myEntry, this.getUser()); 
+                    
+                    // UNDELETE
+                } else if (action.equals("undelete")) {
+                    EditEntryInitFactory.undeleteEntry(myEntry, this.getUser());
+                }      
+            }
+            
+            
+            ////// Create Home page
             content = (HomeContentXHTML) MultilingualXHtmlTemplateFactory.createTemplate("HomeContentXHTML", this.getComms(), this.getSessionData());
-
-            //
-            String submit = myGetParameter(LOOKUP_PARAMETER);
             
-            //
-            if ((submit != null) && (!submit.equals(""))) {
             
-                // Query Form
+            //// Display query result, if action (QueryMenu search)
+            if ( (action != null) && !action.equals("")) {
+                
+                //  Retrieve parameters like AdvancedQueryForm object
                 AdvancedQueryForm qf = new AdvancedQueryForm(this.getComms(), this.getSessionData(), true, false);
-            
-                // Query Request
+                
+                // Create query request
                 QueryRequest queryReq = qf.getQueryRequest();
+                
+                // Display query result if query request have criteria
+                if (!queryReq.isEmpty()) {
                     
-                //
-               if (!queryReq.isEmpty()) {
+                    // Add status criteria
+                    ArrayList listStatus = new ArrayList();
                     
-                   ArrayList listStatus = new ArrayList();
-                   
-                   QueryCriteria criteriaFinishedStatus = new QueryCriteria();
-                   criteriaFinishedStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);  
-                   criteriaFinishedStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.FINISHED_STATUS);
-                   listStatus.add(criteriaFinishedStatus);
-                   
-                   QueryCriteria criteriaModifiedStatus = new QueryCriteria();
-                   criteriaModifiedStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);
-                   criteriaModifiedStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.MODIFIED_STATUS);
-                   listStatus.add(criteriaModifiedStatus);
-                   
-                   queryReq.addOrCriteriaList(listStatus);
-
-                   //==================== CLASSIC ENTRY SEARCH====================
-                   
-                   // Perform the request
-                   Collection qrset = queryReq.findLexieAndTranslation(this.getUser());
-
-                   if (!qrset.isEmpty()) {
-                       
-                       // Display result
-                       XHTMLElement queryResultForm = content.getElementQueryResultForm();
-                       Node viewQueryResultNode = ViewQueryResult.createNodeResult(this.getComms(), this.getSessionData(), this.getUrl(), this.getUser(), qrset, qf.getQueryParameter(), (this.getUser()!=null && !this.getUser().isEmpty()));
-                       queryResultForm.appendChild(content.importNode(viewQueryResultNode, true));
-                       queryResultForm.removeAttribute("id");     
-                   
-                   } else {
-                       //removeQueryResult();
-                   }
+                    QueryCriteria criteriaFinishedStatus = new QueryCriteria();
+                    criteriaFinishedStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);  
+                    criteriaFinishedStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.FINISHED_STATUS);
+                    listStatus.add(criteriaFinishedStatus);
                     
-                    //==================== FUZZY ENTRY SEARCH====================
+                    QueryCriteria criteriaModifiedStatus = new QueryCriteria();
+                    criteriaModifiedStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);
+                    criteriaModifiedStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.MODIFIED_STATUS);
+                    listStatus.add(criteriaModifiedStatus);
                     
-                    // Find first criteria
+                    queryReq.addOrCriteriaList(listStatus);
+                    
+                    //// CLASSIC SEARCH
+                    // Perform the request
+                    Collection qrset = queryReq.findLexieAndTranslation(this.getUser());
+                    
+                    // Display classic search result
+                    XHTMLElement queryResultForm = content.getElementQueryResultForm();
+                    Node viewQueryResultNode = ViewQueryResult.createNodeResult(this.getComms(), this.getSessionData(), this.getUrl(), this.getUser(), qrset, qf.getQueryParameter(), (this.getUser()!=null && !this.getUser().isEmpty()));
+                    queryResultForm.appendChild(content.importNode(viewQueryResultNode, true));
+                    queryResultForm.removeAttribute("id");     
+                    
+                    
+                    //// FUZZY SEARCH
+                    
+                    // Modify criteria classic -> fuzzy
+                    // 1/ find headword value
                     ArrayList criteriaTree = queryReq.getCriteriaTree();
                     ArrayList criteriaOR = (ArrayList)criteriaTree.get(0);
                     QueryCriteria criteria = (QueryCriteria)criteriaOR.get(0);
-                    
                     int i = criteria.getCriteriaByColumn("value");
-                    //System.out.println("Column : " + criteria.getColumn(i) + ", Strategie : " + criteria.getStrategie(i) + ", Value : " + criteria.getValue(i));
+                    // 2/ partial match headword (or words containing in the headword)
                     criteria.addAdvancedValue("value", QueryCriteria.CASE_INSENSITIVE_CONTAINS, criteria.getValue(i));   // like headword (no case sensitive)
-                    criteria.add("value", QueryCriteria.CASE_INSENSITIVE_NOT_EQUAL, criteria.getValue(i));      // not match headword (no case sensitive)
+                    // 3/ not match headword (no case sensitive)
+                    criteria.add("value", QueryCriteria.CASE_INSENSITIVE_NOT_EQUAL, criteria.getValue(i));
+                    // 4/ remove headword value
                     criteria.remove(i);
                     
                     // Perform the request
                     qrset = queryReq.findLexieAndTranslation(this.getUser());
                     
-                    if (!qrset.isEmpty()) {
-                        
-                        // Display result
-                        XHTMLElement queryFuzzyResultForm = content.getElementQueryFuzzyResultForm();
-                        Node viewQueryResultNode = ViewQueryResult.createNodeResult(this.getComms(), this.getSessionData(), this.getUrl(), this.getUser(), qrset, qf.getQueryParameter(), (this.getUser()!=null && !this.getUser().isEmpty()));
-                        queryFuzzyResultForm.appendChild(content.importNode(viewQueryResultNode, true));
-                        queryFuzzyResultForm.removeAttribute("id");     
-                        
-                    } else {
-                        //removeQueryFuzzyResult();
-                    }
+                    // Display fuzzy search result
+                    XHTMLElement queryFuzzyResultForm = content.getElementQueryFuzzyResultForm();
+                    Node viewQueryFuzzyResultNode = ViewQueryResult.createNodeResult(this.getComms(), this.getSessionData(), this.getUrl(), this.getUser(), qrset, qf.getQueryParameter(), (this.getUser()!=null && !this.getUser().isEmpty()));
+                    queryFuzzyResultForm.appendChild(content.importNode(viewQueryFuzzyResultNode, true));
+                    queryFuzzyResultForm.removeAttribute("id");     
                     
                     
-                    // initializing cache values for next query
+                    //// Initializing cache values for next query
                     String sourceLanguage = myGetParameter(SOURCE_PARAMETER);
                     if (null != sourceLanguage && !sourceLanguage.equals("")) {
                         this.setPreference(SOURCE_PARAMETER, sourceLanguage);
                     }
-                    String targetLanguage = myGetParameter(TARGETS_PARAMETER);
-                    if (null != targetLanguage && !targetLanguage.equals("")) {
-                        this.setPreference(TARGETS_PARAMETER, targetLanguage);
+                    String[] targetsLanguage = myGetParameterValues(TARGETS_PARAMETER);
+                    if ( (targetsLanguage != null) && (targetsLanguage.length == 1) ) {
+                        this.setPreference(TARGETS_PARAMETER, targetsLanguage[0]);
+                    } else if ( (targetsLanguage != null) && (targetsLanguage.length > 1) ) {
+                        this.setPreference(TARGETS_PARAMETER, ALL_TARGETS);
                     }
                     String headword = myGetParameter(HEADWORD_PARAMETER);
                     if (null != headword && !headword.equals("")) {
                         this.setPreference(HEADWORD_PARAMETER, headword, false);
                     }
-                                        
+                    
                 } else {
                     
                     //
-                    this.getSessionData().writeUserMessage("Sorry, entry not found !");
+                    this.getSessionData().writeUserMessage("Sorry, parameter errors !");
                 } 
                 
                 //
@@ -524,82 +557,14 @@ public class Home extends PapillonBasePO {
                 
             } else {
                 
-                //
+                // Display project description
                 removeQueryResult();
                 removeQueryFuzzyResult();
             }
-                
+            
+            
             // 
             return content;
-            
-            /*
-            // On regarde d'abord les parametres qui nous sont demandes.
-            String submit = myGetParameter(LOOKUP_PARAMETER);
-            
-            String sourceLanguage = myGetParameter(SOURCE_PARAMETER);
-            String targetLanguage = myGetParameter(TARGETS_PARAMETER);
-            String originalTargetLanguage = targetLanguage;
-            String volume = myGetParameter(VOLUME_PARAMETER);
-            resources = myGetParameterValues(RESOURCES_PARAMETER);
-            
-            headword = myGetParameter(HEADWORD_PARAMETER);
-            
-            partialMatchString = myGetParameter(PartialMatch_PARAMETER);
-            boolean partialMatch = (null != partialMatchString && !partialMatchString.equals(""));
-            int strategy = IQuery.STRATEGY_EXACT;
-            if (partialMatch) {
-                strategy = IQuery.STRATEGY_SUBSTRING;
-            }
-            
-            int offset = 0;
-            String offsetString = myGetParameter(OFFSET_PARAMETER);
-            if (offsetString != null && !offsetString.equals("")) {
-                offset = Integer.parseInt(offsetString);
-            }
-            
-            String formname = myGetParameter(FORMNAME);
-            String handle = myGetParameter(HANDLE);
-            String xslid = myGetParameter(XSLID);
-            
-            String login = null;
-            
-            String[] targetLanguages = null;
-            
-            if (targetLanguage == null || targetLanguage.equals("")) {
-                targetLanguages = null;
-            } else if (targetLanguage.equals(ALL_TARGETS)) {
-                targetLanguages = AvailableLanguages.getTargetLanguagesArray();
-                //targetLanguages = null;
-            } else {
-                targetLanguages = new String[]{targetLanguage};
-            }
-            
-            allResources = DictionariesFactory.getDictionariesNamesArray();
-            
-            if (null != resources && resources.length > 0) {
-                if (resources[0].equals(ANY_RESOURCE)) {
-                    resources = allResources;
-                }
-            }
-            
-            if (null != submit && !submit.equals("")) {
-                // initializing cache values for next query
-                if (null != sourceLanguage && !sourceLanguage.equals("")) {
-                    this.setPreference(SOURCE_PARAMETER, sourceLanguage);
-                }
-                if (null != targetLanguage && !targetLanguage.equals("")) {
-                    this.setPreference(TARGETS_PARAMETER, targetLanguage);
-                }
-                if (null != headword && !headword.equals("")) {
-                    this.setPreference(HEADWORD_PARAMETER, headword, false);
-                }
-                // If there is a query, executing it
-                return performAndDisplayQuery(resources, volume, sourceLanguage, originalTargetLanguage, targetLanguages, headword, strategy, handle, xslid, formname, this.getUser(), offset);
-            } else {
-                // If there is no query, ie connection for the first time, adding the Home content
-                return createHomeContent();
-            }
-             */
         }
 
     
@@ -624,727 +589,6 @@ public class Home extends PapillonBasePO {
         if (myParent != null)
             myParent.removeChild(myElement);
     }
-
-    
-    
-
-    /**
-     *  Adds a feature to the Entries attribute of the Home object
-     *
-     * @param  resources                                           The feature
-     *      to be added to the Entries attribute
-     * @param  volume                                              The feature
-     *      to be added to the Entries attribute
-     * @param  source                                              The feature
-     *      to be added to the Entries attribute
-     * @param  originalTarget                                      The feature
-     *      to be added to the Entries attribute
-     * @param  targets                                             The feature
-     *      to be added to the Entries attribute
-     * @param  Headwords                                           The feature
-     *      to be added to the Entries attribute
-     * @param  strategy                                            The feature
-     *      to be added to the Entries attribute
-     * @param  handle                                              The feature
-     *      to be added to the Entries attribute
-     * @param  xslid                                               The feature
-     *      to be added to the Entries attribute
-     * @param  formname                                            The feature
-     *      to be added to the Entries attribute
-     * @param  user                                                The feature
-     *      to be added to the Entries attribute
-     * @return                                                     Description
-     *      of the Return Value
-     * @exception  PapillonBusinessException                       Description
-     *      of the Exception
-     * @exception  ClassNotFoundException                          Description
-     *      of the Exception
-     * @exception  HttpPresentationException                       Description
-     *      of the Exception
-     * @exception  IOException                                     Description
-     *      of the Exception
-     * @exception  TransformerConfigurationException               Description
-     *      of the Exception
-     * @exception  org.xml.sax.SAXException                        Description
-     *      of the Exception
-     * @exception  javax.xml.parsers.ParserConfigurationException  Description
-     *      of the Exception
-     * @exception  javax.xml.transform.TransformerException        Description
-     *      of the Exception
-     +/
-    protected Node performAndDisplayQuery(String[] resources, String volume, String source, String originalTarget, String[] targets, String headword, int strategy, String handle, String xslid, String formname, User user, int offset)
-             throws PapillonBusinessException,
-            ClassNotFoundException,
-            HttpPresentationException,
-            IOException,
-            TransformerConfigurationException,
-            org.xml.sax.SAXException,
-            javax.xml.parsers.ParserConfigurationException,
-            javax.xml.transform.TransformerException {
-                
-        
-		boolean reverseLookup = false;
-        boolean QueryLogging = false;
-		
-
-        // FIXME: Search should be define in business layer
-        //==================== CLASSIC ENTRY SEARCH====================
-        Collection EntryCollection = null;
-        
-        // Intialize QueryRequest
-        QueryRequest query = new QueryRequest(VolumesFactory.getVolumesArrayName(null, source, null));
-        query.setTargets(targets);
-        //query.setOffset(offset);
-                
-        /*
-        //FIXME: depend on user ?
-        QueryCriteria criteriaFinishedStatus = new QueryCriteria();
-        criteriaFinishedStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);  
-        criteriaFinishedStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.FINISHED_STATUS);
-        query.addCriteria(criteriaFinishedStatus);
-        +/
-        
-        
-        //FIXME: add to QueryRequest methods and add to user groups !!!
-        ArrayList listStatus = new ArrayList();
-        
-        //FIXME: MM: j'ai bien conscience que c'est un hack monstrueux mais la terre doit continuer de tourner...
-		if (((fr.imag.clips.papillon.Papillon)com.lutris.appserver.server.Enhydra.getApplication()).getLoginCookieName().equals("GDEFLoginCookie")) {
-			QueryCriteria criteria = new QueryCriteria();
-			criteria.add("key", QueryCriteria.EQUAL, Volume.CDM_headword);
-			criteria.add("value", QueryCriteria.EQUAL, headword);               // match headword (no case sensitive)
-			criteria.add("lang", QueryCriteria.EQUAL, source);
-			query.addCriteria(criteria);
-			QueryCriteria criteriaValidatedStatus = new QueryCriteria();
-			criteriaValidatedStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);
-			criteriaValidatedStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.VALIDATED_STATUS);
-			listStatus.add(criteriaValidatedStatus);
-			
-		}
-		else {
-			QueryCriteria criteria = new QueryCriteria();
-			criteria.add("key", QueryCriteria.EQUAL, Volume.CDM_headword);
-			criteria.add("value", QueryCriteria.CASE_INSENSITIVE_EQUAL, headword);               // match headword (no case sensitive)
-			criteria.add("lang", QueryCriteria.EQUAL, source);
-			query.addCriteria(criteria);
-			QueryCriteria criteriaFinishedStatus = new QueryCriteria();
-			criteriaFinishedStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);  
-			criteriaFinishedStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.FINISHED_STATUS);
-			listStatus.add(criteriaFinishedStatus);
-			
-			QueryCriteria criteriaValidatedStatus = new QueryCriteria();
-			criteriaValidatedStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);
-			criteriaValidatedStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.MODIFIED_STATUS);
-			listStatus.add(criteriaValidatedStatus);
-		}
-        
-        query.addOrCriteriaList(listStatus);
-        
-        
-        // FIXME: add different searches
-        //if (null != handle && null != volume) {
-        //    EntryCollection = DictionariesFactory.findAnswerAndTranslations(volume, handle, targets, user);
-        //}
-        // Find lexies and translation
-        EntryCollection = query.findLexieAndTranslation(user);
-            
-        /*
-        // Old version
-		Vector myKey = new Vector();
-        Collection EntryCollection = null;
-
-		//Headword[0] = key
-		//Headword[1] = lang
-		//Headword[2] = value
-		//Headword[3] = strategy
-
-		String[] Headword = new String[4];
-		Headword[0] = Volume.CDM_headword;
-		Headword[1] = source;
-		Headword[2] = headword;
-		Headword[3] = "ilike";                      // match headword (no case sensitive)
-        // Headword[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_EXACT+1];
-        myKey.add(Headword);                                                  
-        
-		String[] status = new String[4];
-		status[0] = Volume.CDM_contributionStatus;
-		status[1] = Volume.DEFAULT_LANG;
-		status[2] = VolumeEntry.VALIDATED_STATUS;                     
-		status[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_EXACT+1];
-		myKey.add(status);
-
-
-        if (null != handle && null != volume) {
-            EntryCollection = DictionariesFactory.findAnswerAndTranslations(volume, handle, targets, user);
-        } else if (null != volume) {
-            EntryCollection =  (Collection) VolumeEntriesFactory.getVolumeNameEntriesVector(volume, myKey, null, null);
-        } else {
-            EntryCollection = DictionariesFactory.getDictionariesEntriesCollection(resources, source, targets, myKey, null, null, user,offset);
-			if (EntryCollection==null || EntryCollection.size()==0) {
-				PapillonLogger.writeDebugMsg("EntryCollection null, getDictionariesReverseEntriesCollection");
-				EntryCollection = DictionariesFactory.getDictionariesReverseEntriesCollection(resources, source, targets, myKey, null, null, user,offset);
-				reverseLookup = (EntryCollection!=null && EntryCollection.size()>0);
-			}
-            QueryLogging = true;
-        }
-        +/
-        
-               
-        //==================== FUZZY ENTRY SEARCH====================
-        // FIXME: introduce fuzzysearch variable in dictionaries like reverse lookup to allow (or not) fuzzy entries search
-        Collection FuzzyEntryCollection = null;
-        
-		// added by MM. the fuzzy search takes a lot of time so I do it if no results 
-        // supress by FBM because "ca prend pas bcp de temps !"
-		//if (EntryCollection ==null || EntryCollection.size()==0) {
-        // Intialize QueryRequest
-        QueryRequest fuzzyQuery = new QueryRequest(VolumesFactory.getVolumesArrayName(null, source, null));
-        fuzzyQuery.setTargets(targets);
-        
-        //
-        QueryCriteria criteriaFuzzyMatch = new QueryCriteria();
-        criteriaFuzzyMatch.add("key", QueryCriteria.EQUAL, Volume.CDM_headword);
-        criteriaFuzzyMatch.addAdvancedValue("value", QueryCriteria.CASE_INSENSITIVE_CONTAINS, headword);    // parse headword to adapt criteria
-        //replace criteriaFuzzyMatch.add("value", QueryCriteria.CASE_INSENSITIVE_CONTAINS, headword);       // like headword (no case sensitive)
-        criteriaFuzzyMatch.add("value", QueryCriteria.CASE_INSENSITIVE_NOT_EQUAL, headword);                // not match headword (no case sensitive)
-        criteriaFuzzyMatch.add("lang", QueryCriteria.EQUAL, source);
-        
-        fuzzyQuery.addCriteria(criteriaFuzzyMatch);
-        //FIXME: depend on user ?
-        //fuzzyQuery.addCriteria(criteriaFinishedStatus);
-        fuzzyQuery.addOrCriteriaList(listStatus);
-        
-        // Find lexies and translation
-        FuzzyEntryCollection = fuzzyQuery.findLexieAndTranslation(user);
-		//}
-        
-        /*
-        // Old version
-         
-        myKey = new Vector();
-		//Headword[0] = key
-		//Headword[1] = lang
-		//Headword[2] = value
-		//Headword[3] = strategy
-        
-		Headword = new String[4];
-		Headword[0] = Volume.CDM_headword;
-		Headword[1] = source;
-		Headword[2] = "%" + headword + "%";            // like headword (no case sensitive)
-		Headword[3] = "ilike";
-        myKey.add(Headword);
-		
-		String[] NoHead = new String[4];
-		NoHead[0] = Volume.CDM_headword;
-		NoHead[1] = source;
-		NoHead[2] = headword;
-		NoHead[3] =  "not ilike";                       // not match headword (no case sensitive)
-		myKey.add(NoHead);
-        
-		status = new String[4];
-		status[0] = Volume.CDM_contributionStatus;
-		status[1] = Volume.DEFAULT_LANG;
-		status[2] = VolumeEntry.FINISHED_STATUS;
-		status[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_EXACT+1];
-		myKey.add(status);
-        
-        if (null != handle && null != volume) {
-            FuzzyEntryCollection = DictionariesFactory.findAnswerAndTranslations(volume, handle, targets, user);
-        } else if (null != volume) {
-            FuzzyEntryCollection =  (Collection) VolumeEntriesFactory.getVolumeNameEntriesVector(volume, myKey, null, null);
-        } else {
-            FuzzyEntryCollection = DictionariesFactory.getDictionariesEntriesCollection(resources, source, targets, myKey, null, null, user,offset);
-			if (FuzzyEntryCollection==null || FuzzyEntryCollection.size()==0) {
-				PapillonLogger.writeDebugMsg("FuzzyEntryCollection null, getDictionariesReverseEntriesCollection");
-				FuzzyEntryCollection = DictionariesFactory.getDictionariesReverseEntriesCollection(resources, source, targets, myKey, null, null, user,offset);
-				reverseLookup = reverseLookup || (FuzzyEntryCollection!=null && FuzzyEntryCollection.size()>0);
-			}
-            QueryLogging = true;
-        }
-        
-        // Add Fuzzy entry in entry collection
-        //EntryCollection.addAll(FuzzyEntryCollection);
-       
-         +/
-        
-        // Logging the query into the database !
-        if (QueryLogging && QueryLogsFactory.StoreQueryLogs()) {
-            String[][] results = null;
-            
-            if (EntryCollection != null && EntryCollection.size() > 0) {
-                results = new String[QueryLog.MAX_LOGGED_RESULTS][2];
-                Iterator myIterator = EntryCollection.iterator();
-                int i = 0;
-                while ((myIterator.hasNext()) && (i < QueryLog.MAX_LOGGED_RESULTS)) {
-                    Object myAnswer = myIterator.next();
-                    if (myAnswer instanceof Collection) {
-                        results[i][0] = "PivotDict";
-                        results[i][1] = "Some Collection...";
-                    } else if (myAnswer instanceof IAnswer) {
-                        IAnswer myEntry = (IAnswer) myAnswer;
-                        results[i][0] = myEntry.getDictionaryName();
-                        results[i][1] = myEntry.getHeadword();
-                    }
-                    i++;
-                }
-            }
-            String login = "";
-            if (user != null && !user.isEmpty()) {
-                login = user.getLogin();
-            }
-            QueryLog myQueryLog = QueryLogsFactory.newQueryLog(login,
-                                                               this.getUrl(),
-                                                               this.getUserPreferredLanguage(),
-                                                               headword,
-                                                               results,
-                                                               source,
-                                                               targets,
-                                                               new String[]{ANY_RESOURCE},
-                                                               Integer.toString(strategy),
-                                                               "");
-            myQueryLog.save();
-        }
-        
-        
-        // Content creation
-        ConsultXHTML content = (ConsultXHTML) MultilingualXHtmlTemplateFactory.createTemplate("ConsultXHTML", this.getComms(), this.getSessionData());
-
-        // Display entries
-        if (    ((EntryCollection != null) || (FuzzyEntryCollection != null)) 
-                && ((EntryCollection.size() > 0) || (FuzzyEntryCollection.size() > 0))) {
-			
-            // Display classic search entries 
-            if ((EntryCollection != null) && (EntryCollection.size() > 0)) {
-                Utility.removeElement(content.getElementEntryListTable());
-                addFewEntries(content, EntryCollection, xslid);
-            } else {
-                Utility.removeElement(content.getElementEntryListTable());
-                Utility.removeElement(content.getElementVolumeEntriesTable());
-            }
-
-            // Display fuzzy search entries
-            if ((FuzzyEntryCollection != null) && (FuzzyEntryCollection.size() > 0)) {
-                // FIxME: merge fuzzy and classic display methods
-                addFewFuzzyEntries(content, FuzzyEntryCollection, xslid); 
-            } else {
-                Utility.removeElement(content.getElementFuzzyTitle());
-                Utility.removeElement(content.getElementVolumeFuzzyEntriesTable());
-            }
-            
-            /*
-             // FIXME: add reverse lookup method in queryRequest
-             //if (reverseLookup) {
-             //	XHTMLElement reverseLookupMsg = content.getElementReverseLookupMessage();
-             //	reverseLookupMsg.setAttribute("class","");
-             //}
-             
-             // FIXME: Integrate fuzzy entries in addEntryTable method !
-             // If there are too much entries ie > MaxDisplayedEntries,
-             // we display a table of entries instead of the entries
-             if ( (EntryCollection.size() + FuzzyEntryCollection.size()) > DictionariesFactory.MaxDisplayedEntries) {
-                 Utility.removeElement(content.getElementVolumeEntriesTable());
-                 addEntryTable(content, EntryCollection, source, originalTarget, strategy, offset);
-             } else {
-                 Utility.removeElement(content.getElementEntryListTable());
-                 addFewEntries(content, EntryCollection, xslid);
-             }
-             +/
-            
-            Utility.removeElement(content.getElementSorryMessage());
-        
-        } else {
-            Utility.removeElement(content.getElementEntryListTable());
-            Utility.removeElement(content.getElementVolumeEntriesTable());
-            Utility.removeElement(content.getElementFuzzyTitle());
-            Utility.removeElement(content.getElementVolumeFuzzyEntriesTable());
-        }
-        
-        return (Node) content.getElementConsultContent();
-    }
-
-
-    /**
-     *  Adds a feature to the EntryTable attribute of the Home object
-     *
-     * @param  EntryCollection                           The feature to be added
-     *      to the EntryTable attribute
-     * @param  target                                    The feature to be added
-     *      to the EntryTable attribute
-     * @param  strategy                                  The feature to be added
-     *      to the EntryTable attribute
-     * @exception  PapillonBusinessException             Description of the
-     *      Exception
-     * @exception  java.io.UnsupportedEncodingException  Description of the
-     *      Exception
-     +/
-    protected void addEntryTable(ConsultXHTML content, Collection qrset, String source, String target, int strategy, int offset)
-             throws PapillonBusinessException,
-            java.io.UnsupportedEncodingException {
-
-        PapillonLogger.writeDebugMsg("addEntryTable, size: " + qrset.size());
-        // init of PartialMatch
-        String partialMatch = "";
-        if (strategy == IQuery.STRATEGY_SUBSTRING) {
-            partialMatch = "on";
-        }
-
-        // On récupère les éléments du layout
-        XHTMLTableRowElement entryListRow = content.getElementEntryListRow();
-        XHTMLElement vocable = content.getElementVocable();
-        XHTMLAnchorElement entryAnchor = content.getElementEntryAnchor();
-        XHTMLElement entryIdList = content.getElementEntryIdList();
-        XHTMLAnchorElement contribAnchor = content.getElementContribAnchor();
-        XHTMLElement pos = content.getElementPosEntry();
-        XHTMLElement dictname = content.getElementDictionaryName();
-
-        // Recuperating the elements for the formula
-        XHTMLTableRowElement formulaRow = content.getElementFormulaRow();
-        XHTMLElement formulaElement = content.getElementFormula();
-
-		XHTMLElement entryNumberElement = content.getElementEntryNumber();
-		XHTMLAnchorElement previousEntriesAnchor = content.getElementPreviousEntriesAnchor();
-		XHTMLAnchorElement nextEntriesAnchor = content.getElementNextEntriesAnchor();
-        //      we don't take off the id attribute because we will take the element off later...
-        //      entryListRow.removeAttribute("id");
-        vocable.removeAttribute("id");
-        entryAnchor.removeAttribute("id");
-        entryIdList.removeAttribute("id");
-        pos.removeAttribute("id");
-        contribAnchor.removeAttribute("id");
-        dictname.removeAttribute("id");
-        formulaElement.removeAttribute("id");
-        entryNumberElement.removeAttribute("id");
-        previousEntriesAnchor.removeAttribute("id");
-        nextEntriesAnchor.removeAttribute("id");
-		
-		content.setTextEntryNumber(""+qrset.size());
-		
-		
-        String href = this.getUrl() + "?"
-			+ HEADWORD_PARAMETER + "=" + headword + "&"
-			+ serializeParameterForUrl(RESOURCES_PARAMETER, resources) + "&"
-			+ SOURCE_PARAMETER + "=" + source + "&"
-            + TARGETS_PARAMETER + "=" + target + "&"
-            + PartialMatch_PARAMETER + "=" + partialMatch + "&"
-            + LOOKUP_PARAMETER + "=" + LOOKUP_PARAMETER + "&"
-			+ OFFSET_PARAMETER + "=";
-		if (offset >= DictionariesFactory.MaxRetrievedEntries) {
-			int prevOffset = offset-DictionariesFactory.MaxRetrievedEntries;
-			previousEntriesAnchor.setHref(href+prevOffset);
-		}
-		else {
-			previousEntriesAnchor.setHref("");
-			content.setTextPreviousEntriesAnchor("");			
-		}
-		int nextOffset = offset+DictionariesFactory.MaxRetrievedEntries;
-		nextEntriesAnchor.setHref(href+nextOffset);
-
-        // On récupère le noeud contenant la table...
-        Node lexieTable = entryListRow.getParentNode();
-        if (null != qrset) {
-            for (Iterator myIterator = qrset.iterator(); myIterator.hasNext(); ) {
-                QueryResult myQueryResult = (QueryResult) myIterator.next();
-                VolumeEntry myEntry = myQueryResult.getSourceEntry();
-                
-                // Le vocable
-                //            String vocable = theDicArray[i].getKey1();
-                content.setTextVocable(myEntry.getCompleteHeadword());
-                
-                // l'entry id
-                href = this.getUrl() + "?"
-                    + VOLUME_PARAMETER + "=" + myEntry.getVolumeName() + "&"
-                    + HANDLE + "=" + myEntry.getHandle() + "&"
-                    + SOURCE_PARAMETER + "=" + myEntry.getSourceLanguage() + "&"
-                    + TARGETS_PARAMETER + "=" + target + "&"
-                    + PartialMatch_PARAMETER + "=" + partialMatch + "&"
-                    + LOOKUP_PARAMETER + "=" + LOOKUP_PARAMETER;
-                entryAnchor.setHref(href);
-                
-                String id = myEntry.getId();
-                if (id == null) {
-                    id = "";
-                }
-                content.setTextEntryIdList(id);
-                
-                // The contribution
-                // FIXME: seems to be incompatible with current contrib stuff...
-//                if (myEntry.getType() == IAnswer.Contribution) {
-//                    Contribution myContrib = (Contribution) myEntry;
-//                    
-//                    String contribHref = ContributionsURL + "?"
-//                        + ContributionsVolumeParameter + "="
-//                        + myEntry.getVolumeName();
-//                    contribAnchor.setHref(contribHref);
-//                    
-//                    content.setTextContribution(myContrib.getCreationDate() + " " + myContrib.getHandle());
-//                } else {
-//                    content.setTextContribution("");
-//                }
-                
-                // Le pos
-                String posstr = null;
-                // FIXME: Apparently, volumeEntries ALWAYS return LocalEntry.... can we have remote entries here ?
-                if (myEntry.getType() == IAnswer.LocalEntry) {
-                    posstr = ((VolumeEntry) myEntry).getPos();
-                }
-                if (null == posstr || posstr.equals("")) {
-                    posstr = "+";
-                }
-                content.setTextPosEntry(posstr);
-                
-                // The volume
-                content.setTextDictionaryName(myEntry.getDictionaryName());
-                
-                // The formula
-                // FIXME: Apparently, volumeEntries ALWAYS return LocalEntry.... can we have remote entries here ?
-                if (myEntry.getType() == IAnswer.LocalEntry) {
-                    content.setTextFormula(((VolumeEntry) myEntry).getDefinition());
-                }
-                
-                
-                XHTMLElement cloneEntry = (XHTMLElement) entryListRow.cloneNode(true);
-                XHTMLElement cloneFormula = (XHTMLElement) formulaRow.cloneNode(true);
-                //      we have to take off the id attribute because we did not take it off the original
-                // FIXME: why did we not tae it off in the original ?
-                cloneEntry.removeAttribute("id");
-                cloneFormula.removeAttribute("id");
-                lexieTable.appendChild(cloneEntry);
-                lexieTable.appendChild(cloneFormula);
-            }
-            
-        }
-        Utility.removeElement(content.getElementEntryListRow());
-        Utility.removeElement(content.getElementFormulaRow());
-    }
-
-
-    /**
-     *  Adds a feature to the Element attribute of the Home object
-     *
-     * @param  element                        The feature to be added to the
-     *      Element attribute
-     * @param  resourceName                   The feature to be added to the
-     *      Element attribute
-     * @exception  PapillonBusinessException  Description of the Exception
-     +/
-    protected void addElement(ConsultXHTML content, Element element, String resourceName)
-             throws PapillonBusinessException {
-
-        try {
-            //for the entry content
-            XHTMLTableRowElement originalEntryRow = content.getElementEntryRow();
-            Node entryTable = originalEntryRow.getParentNode();
-            //for the entry content
-
-            content.getElementResourceName().removeAttribute("id");
-            content.setTextResourceName(resourceName);
-
-            //for the lexie content
-            XHTMLElement entryCell = (XHTMLElement) content.getElementEntryDiv();
-            entryCell.removeAttribute("id");
-
-            if (entryCell.getChildNodes().getLength() > 0) {
-                entryCell.removeChild(entryCell.getFirstChild());
-            }
-            entryCell.appendChild(content.importNode(element, true));
-
-            XHTMLTableRowElement entryRow = (XHTMLTableRowElement) originalEntryRow.cloneNode(true);
-            entryRow.removeAttribute("id");
-            entryTable.appendChild(entryRow);
-            // Don't remove the original node in order to add more entries ...
-            // entryTable.removeChild(entryRow);
-        } catch (Exception ex) {
-            throw new PapillonBusinessException("Exception in addEntries: ", ex);
-        }
-    }
-    
-    protected void addFuzzyElement(ConsultXHTML content, Element element, String resourceName)
-        throws PapillonBusinessException {
-            
-            try {
-                //for the entry content
-                XHTMLTableRowElement originalEntryRow = content.getElementFuzzyEntryRow();
-                Node entryTable = originalEntryRow.getParentNode();
-                //for the entry content
-                
-                content.getElementFuzzyResourceName().removeAttribute("id");
-                content.setTextFuzzyResourceName(resourceName);
-                
-                //for the lexie content
-                XHTMLElement entryCell = (XHTMLElement) content.getElementFuzzyEntryDiv();
-                entryCell.removeAttribute("id");
-                
-                if (entryCell.getChildNodes().getLength() > 0) {
-                    entryCell.removeChild(entryCell.getFirstChild());
-                }
-                entryCell.appendChild(content.importNode(element, true));
-                
-                XHTMLTableRowElement entryRow = (XHTMLTableRowElement) originalEntryRow.cloneNode(true);
-                entryRow.removeAttribute("id");
-                entryTable.appendChild(entryRow);
-                // Don't remove the original node in order to add more entries ...
-                // entryTable.removeChild(entryRow);
-            } catch (Exception ex) {
-                throw new PapillonBusinessException("Exception in addEntries: ", ex);
-            }
-        }
-    
-
-
-    /**
-     *  Adds a feature to the FewEntries attribute of the Home object
-     *
-     * @param  EntryCollection
-     *      The feature to be added to the FewEntries attribute
-     * @param  xslid
-     *      The feature to be added to the FewEntries attribute
-     * @exception  fr.imag.clips.papillon.business.PapillonBusinessException
-     *      Description of the Exception
-     +/
-    protected void addFewEntries(ConsultXHTML content, Collection qrset, String xslid)
-		throws fr.imag.clips.papillon.business.PapillonBusinessException {
-        if (qrset != null && qrset.size() > 0) {
-            for (Iterator myIterator = qrset.iterator(); myIterator.hasNext(); ) {
-				addEntry(content, (QueryResult) myIterator.next(), xslid);
-             }
-        } else {
-            Utility.removeElement(content.getElementEntryListTable());
-        }
-        Utility.removeElement(content.getElementEntryRow());
-    }
-    
-    protected void addFewFuzzyEntries(ConsultXHTML content, Collection qrset, String xslid)
-		throws fr.imag.clips.papillon.business.PapillonBusinessException {
-            if (qrset != null && qrset.size() > 0) {
-                for (Iterator myIterator = qrset.iterator(); myIterator.hasNext(); ) {
-                    addFuzzyEntry(content, (QueryResult) myIterator.next(), xslid);
-                }
-            } else {
-                Utility.removeElement(content.getElementVolumeFuzzyEntriesTable());
-            }
-            Utility.removeElement(content.getElementFuzzyEntryRow());
-        }
-
-    /**
-     *  Adds an Entry to the Home object
-     *
-     * @param  EntryCollection
-     *      The feature to be added to the FewEntries attribute
-     * @param  xslid
-     *      The feature to be added to the FewEntries attribute
-     * @exception  fr.imag.clips.papillon.business.PapillonBusinessException
-     *      Description of the Exception
-     +/
-    protected void addEntry(ConsultXHTML content, QueryResult qr, String xslid)
-		throws fr.imag.clips.papillon.business.PapillonBusinessException
-    {
-        // get the apropriate transformer.
-        ResultFormatter rf = ResultFormatterFactory.getFormatter(qr, null, ResultFormatterFactory.XHTML_DIALECT,null);
-        //rf.initializeFormatter(qr.getSourceEntry().getDictionary(), qr.getSourceEntry().getVolume() , null, ResultFormatterFactory.XHTML_DIALECT,null);
-        
-        addElement(content, (Element)rf.getFormattedResult(qr, this.getUser()), qr.getSourceEntry().getDictionaryName());
-                   
-        //VolumeEntry myEntry = qr.getSourceEntry();
-//        org.w3c.dom.Element myHtmlElt = null;
-//        org.w3c.dom.Document myHtmlDoc = myEntry.getHtmlDom();
-//        if (xslid != null || myHtmlDoc == null) {
-//            myHtmlElt = XslTransformation.applyXslSheets(myEntry, xslid);
-//            myHtmlDoc = myHtmlElt.getOwnerDocument();
-//            if (xslid == null) {
-//                myEntry.setHtmlDom(myHtmlDoc);
-//                ((VolumeEntry)myEntry).saveHTML();
-//            }
-//        }
-//        else {
-//            myHtmlElt = myHtmlDoc.getDocumentElement();
-//        }
-//        addElement(content, myHtmlElt, myEntry.getDictionaryName());
-        
-    }
-	
-    protected void addFuzzyEntry(ConsultXHTML content, QueryResult qr, String xslid)
-		throws fr.imag.clips.papillon.business.PapillonBusinessException
-    {
-        // get the apropriate transformer.
-        ResultFormatter rf = ResultFormatterFactory.getFormatter(qr, null, ResultFormatterFactory.XHTML_DIALECT,null);        
-        addFuzzyElement(content, (Element)rf.getFormattedResult(qr, this.getUser()), qr.getSourceEntry().getDictionaryName());
-    }        
-	
-    /**
-     *  Adds a feature to the HomeContent attribute of the Home object
-     *
-     * @exception  HttpPresentationException  Description of the Exception
-     * @exception  java.io.IOException        Description of the Exception
-     +/
-    public Node createHomeContent()
-             throws HttpPresentationException,
-            java.io.IOException {
-        HomeContentXHTML homeContent = (HomeContentXHTML) MultilingualXHtmlTemplateFactory.createTemplate("HomeContentXHTML", this.getComms(), this.getSessionData());
-        Element home = homeContent.getElementHomeContent();
-        Element projectDescription = homeContent.getElementProjectDescription();
-
-        /*
-         *  In order to avoid a preference in the languages displayed on the home page,
-         *  the order of the languages is changed randomly
-         *  Beware, this code is tightly boud to the HMTL code of HomeContent.html
-         +/
-        Vector h1Nodes = new Vector();
-        Vector pNodes = new Vector();
-        NodeList childNodes = projectDescription.getChildNodes();
-        if (childNodes != null && childNodes.getLength() > 0) {
-            while (childNodes.getLength() > 0) {
-                Node myNode = childNodes.item(0);
-                if (myNode.getNodeName().equalsIgnoreCase("p")) {
-                    pNodes.add(myNode);
-                } else if (myNode.getNodeName().equalsIgnoreCase("h1")) {
-                    h1Nodes.add(myNode);
-                }
-                projectDescription.removeChild(myNode);
-            }
-            int index = 0;
-            while (h1Nodes.size() > 0 && pNodes.size() > 0 && h1Nodes.size() == pNodes.size()) {
-                index = (int) Math.round(Math.random() * (double) h1Nodes.size());
-                if (index >= h1Nodes.size()) {
-                    index -= 1;
-                }
-                Node temph1Node = (Node) h1Nodes.elementAt(index);
-                projectDescription.appendChild(temph1Node);
-                h1Nodes.remove(temph1Node);
-
-                Node temppNode = (Node) pNodes.elementAt(index);
-                projectDescription.appendChild(temppNode);
-                pNodes.remove(temppNode);
-            }
-        }
-		// code spécifique pour le GDEF
-		Element GDEFValidatedEntryCountFra = home.getOwnerDocument().getElementById("GDEFValidatedEntryCountFra");
-		Element GDEFValidatedEntryCountEst = home.getOwnerDocument().getElementById("GDEFValidatedEntryCountEst");
-		Element GDEFReviewedEntryCountFra = home.getOwnerDocument().getElementById("GDEFReviewedEntryCountFra");
-		Element GDEFReviewedEntryCountEst = home.getOwnerDocument().getElementById("GDEFReviewedEntryCountEst");
-		if (GDEFValidatedEntryCountFra != null && GDEFValidatedEntryCountEst != null 
-			&& GDEFReviewedEntryCountFra != null && GDEFReviewedEntryCountEst != null) {
-			Volume GDEFVolume = VolumesFactory.findVolumeByName("GDEF_est");
-			if (GDEFVolume!=null) {
-				myCalendar = new java.util.GregorianCalendar();
-				if (myCalendar.get(myCalendar.DAY_OF_MONTH) != DAY_OF_MONTH) {
-					GDEF_estValidatedEntriesCount = GDEFVolume.getCount(VolumeEntry.VALIDATED_STATUS);
-					GDEF_estReviewedEntriesCount = GDEFVolume.getCount(VolumeEntry.REVIEWED_STATUS);
-					DAY_OF_MONTH = myCalendar.get(myCalendar.DAY_OF_MONTH);
-				}
-				Utility.setText(GDEFValidatedEntryCountFra,"" + GDEF_estValidatedEntriesCount);
-				Utility.setText(GDEFValidatedEntryCountEst,"" + GDEF_estValidatedEntriesCount);
-				Utility.setText(GDEFReviewedEntryCountFra,"" + GDEF_estReviewedEntriesCount);
-				Utility.setText(GDEFReviewedEntryCountEst,"" + GDEF_estReviewedEntriesCount);
-			}
-		}
-		
-        //Element homeParent = content.getElementHomeContent();
-        //homeParent.appendChild(content.importNode(home, true));
-        //homeParent.removeAttribute("id");
-        return (Node) home;
-    }
-*/
-
 
 
 }
