@@ -11,6 +11,9 @@ Id:
   
 Log:
    $Log$
+   Revision 1.18  2006/07/04 08:47:32  serasset
+   Added an xsltc target to the build process in order to use compiled translets in the project.
+
    Revision 1.17  2006/03/05 11:51:33  mangeot
    Added a property called application.prefix in papillon.properties for indicating the application prefix
    in the multiserver.conf
@@ -118,6 +121,7 @@ Most useful targets:
   <property name="dir.xmlc"      location="${dir.temp}/Generated_Source/"/>
   <property name="dodsbuild.dir" location="${dir.temp}/Dods_Generated_Sources"/>
   <property name="dir.sql"       location="${dir.src}/dods_sql/"/>
+   
   <!-- Local path to properties -->
   <property name="path.properties" value="${dir.package}/properties"/>
 
@@ -137,6 +141,14 @@ Most useful targets:
 		 	<path location="${enhydra.dir}/dods/lib/dods.jar"/>	 
 	     </classpath>
 	</taskdef>
+  
+  <taskdef name="foreach" classname="net.sf.antcontrib.logic.ForEach">
+    <classpath>
+      <fileset dir="${enhydra.dir}/build">
+        <include name="antcontrib.jar"/>
+      </fileset>
+    </classpath>
+  </taskdef>
   
   <property name="xmlcbuild.dir" value="${dir.src}/fr/imag/clips/papillon/presentation"/>
   <property name="xmlcresources.dir" value="${dir.src}/fr/imag/clips/papillon/resources/"/>
@@ -163,13 +175,14 @@ Most useful targets:
     <pathelement path="${papillon.xalan.jar}"/>
     <pathelement path="${papillon.xerces.jar}"/>
     <pathelement path="${papillon.xmlapi.jar}"/>
+    <pathelement path="${papillon.xsltc.jar}"/>
     <!--pathelement path="${papillon.regexp.jar}"/-->
     <pathelement path="${papillon.pgsql.jar}"/>
     <pathelement path="${papillon.fop.jar}"/>
     <pathelement path="${papillon.observateur.jar}"/>
   </path>
 
-    <path id="enhydra.classpath">
+  <path id="enhydra.classpath">
     <fileset dir="${enhydra.liboutput}" >
           <include name="*.jar" />
      </fileset>
@@ -183,7 +196,7 @@ Most useful targets:
           <include name="*.jar" />
      </fileset> 
   </path>
-  
+    
   <!-- =================================================================== -->
   <!-- Set up javac class path                                             -->
   <!-- =================================================================== -->
@@ -315,11 +328,36 @@ For Lexalp, call ant using -Dapplication.name=Lexalp
           debug="${debug}">
      </javac>
   </target>
+
+  <!-- =================================================================== -->
+  <!-- Compile xsl documents with XSLTC                                    -->
+  <!-- =================================================================== -->
+  <!-- FIXME: Can we call a target on a file set when the tool only allows a unique file (i.e. map a treatment on all xsl files) -->
+  <target name="xsltc" depends="prepare">
+    <foreach param="fname" target="xsltc.path" >
+      <fileset dir="${dir.src}/${dir.package}/resources">
+          <include name="**/*.xsl"/>
+      </fileset>
+    </foreach>
+  </target>
   
+  <target name="xsltc.path" depends="prepare">
+    <java classname="org.apache.xalan.xsltc.cmdline.Compile" fork="yes">
+      <classpath>
+        <path refid="javac.classpath" />
+        <!-- FIXME: Do I need the whole javac classpath when only xsltc path elements are needed ? -->
+      </classpath>
+      <arg line="-p fr.imag.clips.papillon.ressources.xsl" />
+      <arg line="-d ${dir.classes}" />
+      <arg value="${fname}" />
+      <!--jvmarg value="-Djavax.jdo.option.DriverName=${datasource.classname}" /-->
+    </java>
+  </target>
+
   <!-- =================================================================== -->
   <!-- Compile the java source                                             -->
   <!-- =================================================================== -->
-  <target name="compile" depends="dods, xmlc, compile_sources" />
+  <!-- target name="compile" depends="dods, xmlc, xsltc, compile_sources" /-->
   <target name="compile_sources" depends=""> 
 
 <!--  <property name="compile_classpath" refid="javac.classpath"/>
@@ -415,9 +453,9 @@ For Lexalp, call ant using -Dapplication.name=Lexalp
   <!-- =================================================================== -->
   <!-- Create archive                                                      -->
   <!-- =================================================================== -->
-  <target name="archive" depends="prepare, compile, quick_archive"/>
+  <target name="archive" depends="prepare, dods, quick_archive"/>
   
-  <target name="quick_archive" depends="prepare,xmlc,compile_sources">
+  <target name="quick_archive" depends="prepare, xmlc, xsltc, compile_sources">
  		<mkdir dir="${dir.lib}/tmp" />
  		<copy todir="${dir.lib}/tmp" includeEmptyDirs="false">
  					<fileset dir="${dir.classes}" 
