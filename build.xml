@@ -11,6 +11,9 @@ Id:
   
 Log:
    $Log$
+   Revision 1.19  2006/07/06 12:03:07  serasset
+   Added a condition in order to avoid unnecessary xsltc compilation that are quite long...
+
    Revision 1.18  2006/07/04 08:47:32  serasset
    Added an xsltc target to the build process in order to use compiled translets in the project.
 
@@ -143,6 +146,14 @@ Most useful targets:
 	</taskdef>
   
   <taskdef name="foreach" classname="net.sf.antcontrib.logic.ForEach">
+    <classpath>
+      <fileset dir="${enhydra.dir}/build">
+        <include name="antcontrib.jar"/>
+      </fileset>
+    </classpath>
+  </taskdef>
+  
+    <taskdef name="outofdate" classname="net.sf.antcontrib.logic.OutOfDate">
     <classpath>
       <fileset dir="${enhydra.dir}/build">
         <include name="antcontrib.jar"/>
@@ -335,23 +346,31 @@ For Lexalp, call ant using -Dapplication.name=Lexalp
   <!-- FIXME: Can we call a target on a file set when the tool only allows a unique file (i.e. map a treatment on all xsl files) -->
   <target name="xsltc" depends="prepare">
     <foreach param="fname" target="xsltc.path" >
-      <fileset dir="${dir.src}/${dir.package}/resources">
+      <path>
+        <fileset dir="${dir.src}/${dir.package}/resources">
           <include name="**/*.xsl"/>
-      </fileset>
+        </fileset>
+      </path>
     </foreach>
   </target>
   
-  <target name="xsltc.path" depends="prepare">
-    <java classname="org.apache.xalan.xsltc.cmdline.Compile" fork="yes">
-      <classpath>
-        <path refid="javac.classpath" />
-        <!-- FIXME: Do I need the whole javac classpath when only xsltc path elements are needed ? -->
-      </classpath>
-      <arg line="-p fr.imag.clips.papillon.ressources.xsl" />
-      <arg line="-d ${dir.classes}" />
-      <arg value="${fname}" />
-      <!--jvmarg value="-Djavax.jdo.option.DriverName=${datasource.classname}" /-->
-    </java>
+  <target name="chkIfCompileIsRequired">
+      <uptodate property="xltc.notrequired" srcfile="${fname}" targetfile="${fname}.stamp"/>
+  </target>
+  
+  <target name="xsltc.path" depends="prepare, chkIfCompileIsRequired" unless="xltc.notrequired">
+    <echo message="Compiling XSL to translet : ${fname}"/>
+      <java classname="org.apache.xalan.xsltc.cmdline.Compile" fork="yes">
+        <classpath>
+          <path refid="javac.classpath" />
+          <!-- FIXME: Do I need the whole javac classpath when only xsltc path elements are needed ? -->
+        </classpath>
+        <arg line="-p fr.imag.clips.papillon.resources.xsl" />
+        <arg line="-d ${dir.classes}" />
+        <arg value="${fname}" />
+        <!--jvmarg value="-Djavax.jdo.option.DriverName=${datasource.classname}" /-->
+      </java>
+      <touch file="${fname}.stamp" />
   </target>
 
   <!-- =================================================================== -->
