@@ -11,6 +11,10 @@ Id:
   
 Log:
    $Log$
+   Revision 1.20  2006/07/10 10:44:40  serasset
+   Compilation of xsl translets is done only if xsl changed. Morover, celanup now cleans the stamp files.
+   Added a new property to be added to point to saxon 8b xsl transformer
+
    Revision 1.19  2006/07/06 12:03:07  serasset
    Added a condition in order to avoid unnecessary xsltc compilation that are quite long...
 
@@ -355,7 +359,7 @@ For Lexalp, call ant using -Dapplication.name=Lexalp
   </target>
   
   <target name="chkIfCompileIsRequired">
-      <uptodate property="xltc.notrequired" srcfile="${fname}" targetfile="${fname}.stamp"/>
+      <uptodate property="xltc.notrequired" srcfile="${fname}" targetfile="${fname}.uptodate"/>
   </target>
   
   <target name="xsltc.path" depends="prepare, chkIfCompileIsRequired" unless="xltc.notrequired">
@@ -370,7 +374,7 @@ For Lexalp, call ant using -Dapplication.name=Lexalp
         <arg value="${fname}" />
         <!--jvmarg value="-Djavax.jdo.option.DriverName=${datasource.classname}" /-->
       </java>
-      <touch file="${fname}.stamp" />
+      <touch file="${fname}.uptodate" />
   </target>
 
   <!-- =================================================================== -->
@@ -430,6 +434,7 @@ For Lexalp, call ant using -Dapplication.name=Lexalp
      <filter token="XERCES_LIB"  value="${papillon.xerces.jar}" />
      <filter token="XMLAPI_LIB"  value="${papillon.xmlapi.jar}" />
      <filter token="PGSQL_JDBC_DRIVER" value="${papillon.pgsql.jar}" />
+     <filter token="SAXON8_LIB" value="${papillon.saxon8.jar}" />
      <filter token="FOP_LIB" value="${papillon.fop.jar}" />
      <filter token="AVALON_LIB" value="${papillon.avalon.jar}" />
      <filter token="BATIK_LIB" value="${papillon.batik.jar}" />

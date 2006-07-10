@@ -269,6 +269,11 @@ Papillon.LoginCookieName = "GDEFLoginCookie"
 # Misc
 Papillon.Logging.StoreQueryLogs = true
 
+#+++++++++++++++++++++++++++++++++
+# SAXON TRANSFORMATION HANDLER
+#+++++++++++++++++++++++++++++++++
+Papillon.Saxon.Classpath = "@SAXON8_LIB@"
+
 #-----------------------------------------------------------------------------
 #                   JDictd server Configuration (RFC 2229)
 #-----------------------------------------------------------------------------

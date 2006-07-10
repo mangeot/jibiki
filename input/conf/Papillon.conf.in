@@ -264,6 +264,11 @@ Papillon.Users.Groups.Password.validator = "farfalla"
 # Misc
 Papillon.Logging.StoreQueryLogs = true
 
+#+++++++++++++++++++++++++++++++++
+# SAXON TRANSFORMATION HANDLER
+#+++++++++++++++++++++++++++++++++
+Papillon.Saxon.Classpath = "@SAXON8_LIB@"
+
 #-----------------------------------------------------------------------------
 #                   JDictd server Configuration (RFC 2229)
 #-----------------------------------------------------------------------------

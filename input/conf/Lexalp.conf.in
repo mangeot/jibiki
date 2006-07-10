@@ -133,7 +133,10 @@ PresentationManager.CacheFiles = true
 #-----------------------------------------------------------------------------
 #                    Private Papillon Configuration
 #-----------------------------------------------------------------------------
+
+#+++++++++++++++++++++++++++++++++
 # INFORMATION FILES Admin section
+#+++++++++++++++++++++++++++++++++
 # The actions to be taken when a specific Content-Type is encountered during a file upload.
 # WARNING: content types should be noted with _ (underscore) instead of - (minus).
 # The value should be the name of a class deriving from InformationFileAction
@@ -268,6 +271,11 @@ Papillon.Presentation.PriorityPackage = "fr.imag.clips.papillon.presentation.xht
 ###
 # Misc
 Papillon.Logging.StoreQueryLogs = true
+
+#+++++++++++++++++++++++++++++++++
+# SAXON TRANSFORMATION HANDLER
+#+++++++++++++++++++++++++++++++++
+Papillon.Saxon.Classpath = "@SAXON8_LIB@"
 
 #-----------------------------------------------------------------------------
 #                   JDictd server Configuration (RFC 2229)
