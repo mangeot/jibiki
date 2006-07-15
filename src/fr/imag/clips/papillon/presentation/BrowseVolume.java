@@ -9,6 +9,10 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.7  2006/07/15 08:55:14  mangeot
+ *  The BrowseVolumePage opens an HTML form that is used to lookup a volume in alphabetical order.
+ *  The BrowseVolume is the server side of the AJAX script for retrieving the entries in alphabetical order
+ *
  *  Revision 1.6  2006/02/27 00:04:01  mangeot
  *  *** empty log message ***
  *
@@ -94,6 +98,19 @@ public class BrowseVolume extends AbstractPO {
 			String volumeName = myGetParameter("VOLUME");
 			String headword = myGetParameter("HEADWORD");
 			String status = myGetParameter("STATUS");
+			if (status==null || status.equals("")) {
+				status="validated";
+			}
+			//MM: I commented this for efficiency
+			// If we want to check if there is a danger to show unfinished entries
+			//  the following lines have to be uncommented
+			/*
+			else if (status != "validated") {
+				fr.imag.clips.papillon.business.user.User myUser = this.getUser();
+				if (myUser ==null || !myUser.isSpecialist()) {
+					status="validated";
+				}
+			}*/
 			String limitString = myGetParameter("LIMIT");
 			
 			int limit = 40;
