@@ -9,6 +9,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.6  2006/07/25 14:58:36  mangeot
+ *  Entries must not be deleted
+ *
  *  Revision 1.5  2006/05/22 22:45:54  fbrunet
  *  LexALP: add merge method in post-save processing (merge axies with same referenced lexies)
  *
@@ -232,12 +235,18 @@ public class GDEFLinker extends LinkerBasePO {
 		 */
 		
 		String[] key2 = new String[4];
-		 key2[0] = Volume.CDM_contributionStatus;
-		 key2[1] = Volume.DEFAULT_LANG;
-		 key2[2] = VolumeEntry.REPLACED_STATUS;
-		 key2[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_NOT_EQUAL+1];			
-		 keys.add(key2);		
-		 
+		key2[0] = Volume.CDM_contributionStatus;
+		key2[1] = Volume.DEFAULT_LANG;
+		key2[2] = VolumeEntry.REPLACED_STATUS;
+		key2[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_NOT_EQUAL+1];			
+		keys.add(key2);		
+		
+		key2[0] = Volume.CDM_contributionStatus;
+		key2[1] = Volume.DEFAULT_LANG;
+		key2[2] = VolumeEntry.DELETED_STATUS;
+		key2[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_NOT_EQUAL+1];			
+		keys.add(key2);		
+		
         
         
         Collection results = new Vector();
