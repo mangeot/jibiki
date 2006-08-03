@@ -7,7 +7,23 @@
 </head>
 <body>
 <div id="Formulaire" lang="en">
-
+	<script type="text/javascript">
+    <!--
+            function updateField(idField, idFieldValue) {
+              if (idField != '') {
+                theIdField = document.getElementById(idField);
+                theIdField.value = idFieldValue;
+              }
+            }
+          
+            function openUploader(parentId) {
+              // Get the id of the elements to be modified
+              var targetUrl='UploadFile.po';
+              window.open(targetUrl, parentId,'height=200,width=300,resizable');
+            }
+          
+          // -->
+      </script>
    <h1 style="text-align:center">Manage the XSLSheets</h1>
 
 
@@ -32,8 +48,9 @@
 	<td><input name="description" type="text" size="64" value=""/></td>
 </tr>
 <tr>
-	<td><b>URL: &nbsp;</b></td>
-	<td><input name="url" type="text" size="64" value=""/></td>
+	<td><b>File or URL: &nbsp;</b></td>
+	<td><input type="button" name="upload" onclick="javascript:openUploader('url')" value="upload"/> or 
+	<input name="url" id="url" type="text" size="64" value=""/></td>
 </tr>
 <tr>
     <td><b>Is Default: &nbsp;</b></td>     
