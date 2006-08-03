@@ -9,14 +9,30 @@
 <div id="Formulaire" lang="en">
 
     <h1 style="text-align:center">Manage the XML Dictionaries</h1>
-
-
+	<script type="text/javascript">
+    <!--
+            function updateField(idField, idFieldValue) {
+              if (idField != '') {
+                theIdField = document.getElementById(idField);
+                theIdField.value = idFieldValue;
+              }
+            }
+          
+            function openUploader(parentId) {
+              // Get the id of the elements to be modified
+              var targetUrl='UploadFile.po';
+              window.open(targetUrl, parentId,'height=200,width=300,resizable');
+            }
+          
+          // -->
+      </script>
 <!-- formulaire de voir mot-->
 
 <form action="AdminDictionaries.po" method="get">
 <table width="600" border="0" cellspacing="0" cellpadding="10" summary="Formulaire">
 <tr>	
-	<td colspan="3"><b>Url:&nbsp;</b><input name="url" type="text" size="64" value=""/>
+	<td colspan="3"><b>File or URL: &nbsp;</b><input type="button" name="upload" onclick="javascript:openUploader('url')" value="upload"/> 
+	or <input name="url" id="url" type="text" size="64" value=""/>
 <p class="note">NB: The Dictionary Metadata file must be valid against the &lt;dictionary-metadata&gt; element of the DML schema. The latest version of the schema can be found at: <a href="http://www-clips.imag.fr/geta/services/dml/dml.xsd">www-clips.imag.fr/geta/services/dml/dml.xsd</a>.</p>
 </td>
 </tr>
