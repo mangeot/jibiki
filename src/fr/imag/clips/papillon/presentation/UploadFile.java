@@ -9,6 +9,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.2  2006/08/07 09:32:21  mangeot
+ *  Bug fix: when the method was finished, the file was deleted. I make a copy of the file before exiting.
+ *
  *  Revision 1.1  2006/08/03 15:22:47  mangeot
  *  This page is used in order to upload a unique file on the server. The file can be zipped or gzipped. This page must be called via a javascript with window.open.
  *  See the AdminXsl.po for an example.
@@ -95,7 +98,7 @@ public class UploadFile extends AbstractPO {
 			// On a affaire à un multipart request, on construit donc la requête appropriée.
 			// ATTENTION: Pour simplifier la gestion du fichier chargé plus tard, je choisis le constructeur
 			// qui force la sauvegarde des données dans un fichier temporaire.
-			// PapillonLogger.writeDebugMsg("Multipart request");
+			PapillonLogger.writeDebugMsg("Multipart request");
 			String tmpDir="/tmp/";      // Dangereux ???
 			try {
 				tmpDir = Enhydra.getApplication().getConfig().getString(TMP_DIR_CONFIG);
@@ -106,7 +109,7 @@ public class UploadFile extends AbstractPO {
 				PapillonLogger.writeDebugMsg("Unexpected Error: Incorrect configuration file for group: "
 											 + TMP_DIR_CONFIG);
 			}
-			req = new de.opus5.servlet.MultipartRequest(comms.request.getHttpServletRequest(), 30000000, tmpDir,"papillon-tmp", true);
+			req = new de.opus5.servlet.MultipartRequest(comms.request.getHttpServletRequest(), 30000000, tmpDir,"jibiki-tmp", true);
 		}
 		else {
 			// PapillonLogger.writeDebugMsg("Normal request");
@@ -169,7 +172,7 @@ public class UploadFile extends AbstractPO {
 				String fileName = theFile.getName();
 				String contentType = theFile.getContentType();
 				String type = "";
-				String filePath = theFile.getFile().getCanonicalPath();
+				java.io.File newFile = null;
 				if (null != contentType) {
 					try {
 						int i = contentType.indexOf("/");
@@ -188,28 +191,33 @@ public class UploadFile extends AbstractPO {
 					}
 				}				
 				if (type.equals("gzip") || type.equals("x_gzip") || type.equals("gz")) {
-					filePath = ungzipFile(theFile);
+					newFile = ungzipFile(theFile);
 				}
 				else if (type.equals("zip")) {
-					filePath = unzipFile(theFile);
+					newFile = unzipFile(theFile);
 				}
-				
-				theURL = "file://" + filePath;
+				else {
+					// The pb was the following: when exiting the method, the file was deleted
+					// So I copy it.
+					newFile = new java.io.File(theFile.getFile().getCanonicalPath()+".file");
+					copyFile(theFile.getFile(), newFile);
+					theFile.getFile().deleteOnExit();
+				}
+				theURL = newFile.toURL().toExternalForm();
 			}
 			
 		}
 		return theURL;
 	}	
 	
-	protected String ungzipFile (de.opus5.servlet.UploadedFile file) throws 
+	protected java.io.File ungzipFile (de.opus5.servlet.UploadedFile file) throws 
 		java.io.IOException,
 		fr.imag.clips.papillon.business.PapillonBusinessException,
 			fr.imag.clips.papillon.business.PapillonImportException{
-		// WARNING: we assume that the imported file is a DiskFile...
-		// We should not. The location of the tmp folder should be known...
 		// First, computing the output name
 		String source = file.getFile().getCanonicalPath();
 		String dest = source + ".ungz";		
+		java.io.File newFile = null;
 		java.io.InputStream is = file.getInputStream();
 		
 		if (is.available() == 0) {
@@ -223,6 +231,7 @@ public class UploadFile extends AbstractPO {
             java.io.FileOutputStream out = null;
             java.util.zip.GZIPInputStream zIn = null;
             try {
+				newFile = new java.io.File(dest);
                 out = new java.io.FileOutputStream(dest);
                 zIn = new java.util.zip.GZIPInputStream(is);
                 byte[] buffer = new byte[8 * 1024];
@@ -249,18 +258,17 @@ public class UploadFile extends AbstractPO {
             }
 			file.getFile().deleteOnExit();
 		}
-		return dest;
+		return newFile;
 	}
 	
-	protected String unzipFile (de.opus5.servlet.UploadedFile file) throws 
+	protected java.io.File unzipFile (de.opus5.servlet.UploadedFile file) throws 
 		java.io.IOException,
 		fr.imag.clips.papillon.business.PapillonBusinessException,
 		fr.imag.clips.papillon.business.PapillonImportException{
-			// WARNING: we assume that the imported file is a DiskFile...
-			// We should not. The location of the tmp folder should be known...
 			// First, computing the output name
 			String source = file.getFile().getCanonicalPath();
-			String dest = source + ".unzip";		
+			String dest = source + ".unzip";	
+			java.io.File newFile = null;
 			java.io.InputStream is = file.getInputStream();
 			
 			if (is.available() == 0) {
@@ -274,10 +282,10 @@ public class UploadFile extends AbstractPO {
 				java.util.zip.ZipInputStream zis = new java.util.zip.ZipInputStream(is);
 				java.util.zip.ZipEntry ze = zis.getNextEntry();
 				if (ze != null &&   !ze.isDirectory()) {
-					java.io.File f = new java.io.File(dest);            
+					newFile = new java.io.File(dest);            
 					byte[] buffer = new byte[1024];
                     int length = 0;
-                    java.io.FileOutputStream fos = new java.io.FileOutputStream(f);
+                    java.io.FileOutputStream fos = new java.io.FileOutputStream(newFile);
                     while ((length = zis.read(buffer)) >= 0) {
                         fos.write(buffer, 0, length);
                     }
@@ -286,7 +294,22 @@ public class UploadFile extends AbstractPO {
 				}
 				file.getFile().deleteOnExit();
 			}
-			return dest;
+			return newFile;
 		}	
 	
+	   // Copies src file to dst file.
+	   // If the dst file does not exist, it is created
+    void copyFile(java.io.File src, java.io.File dst) throws java.io.IOException {
+        java.io.InputStream in = new java.io.FileInputStream(src);
+        java.io.OutputStream out = new java.io.FileOutputStream(dst);
+		
+        // Transfer bytes from in to out
+        byte[] buf = new byte[1024];
+        int len;
+        while ((len = in.read(buf)) > 0) {
+            out.write(buf, 0, len);
+        }
+        in.close();
+        out.close();
+    }
 }
