@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.2  2006/08/10 17:18:34  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.1  2006/08/10 09:27:59  mangeot
  * Importing a bzipped .bz2 file
  *
@@ -74,7 +77,7 @@ public class ImportBZippedFile extends InformationFileAction {
             PapillonLogger.writeDebugMsg("IOException encountered while importing GZipped file.");
         }
         
-        PapillonLogger.writeDebugMsg("File \""+ file.getName() + "\"Imported !");
+        PapillonLogger.writeDebugMsg("File \""+ file.getName() + "\" Imported !");
     }
            
     public void addFile( java.io.File file,
@@ -104,7 +107,7 @@ public class ImportBZippedFile extends InformationFileAction {
             PapillonLogger.writeDebugMsg("IOException encountered while importing GZipped file.");
         } 
         
-        PapillonLogger.writeDebugMsg("File \""+ file.getName() + "\"Imported !");
+        PapillonLogger.writeDebugMsg("File \""+ file.getName() + "\" Imported !");
     }
 
     public void addFile( InputStream is,
@@ -166,7 +169,7 @@ public class ImportBZippedFile extends InformationFileAction {
         int dot = filename.lastIndexOf(".");
         String ext = filename.substring(dot+1);
         
-        return prefs.getMediaDirName() + oid + "." + ext;
+        return prefs.getRelativeMediaDirName() + oid + "." + ext;
     }
  
 }

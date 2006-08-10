@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2006/08/10 17:18:34  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.3  2006/08/10 16:34:03  mangeot
  * *** empty log message ***
  *
@@ -164,7 +167,7 @@ public class ImportZipFile extends ImportArchive {
         int dot = filename.lastIndexOf(".");
         String ext = filename.substring(dot+1);
         
-        return prefs.getMediaDirName() + oid + "." + ext;
+        return prefs.getRelativeMediaDirName() + oid + "." + ext;
     }
     
 }

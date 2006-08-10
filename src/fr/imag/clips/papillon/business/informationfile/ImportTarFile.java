@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2006/08/10 17:18:34  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.2  2005/01/15 12:51:24  mangeot
  * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
  *
@@ -64,7 +67,7 @@ public class ImportTarFile extends ImportArchive {
             PapillonLogger.writeDebugMsg("IOException encountered while importing Tar file.");
         }
         
-        PapillonLogger.writeDebugMsg("File \""+ file.getName() + "\"Imported !");
+        PapillonLogger.writeDebugMsg("File \""+ file.getName() + "\" Imported !");
     }
            
            
@@ -83,7 +86,7 @@ public class ImportTarFile extends ImportArchive {
             PapillonLogger.writeDebugMsg("IOException encountered while importing Tar file.");
         }
         
-        PapillonLogger.writeDebugMsg("File \""+ file.getName() + "\"Imported !");
+        PapillonLogger.writeDebugMsg("File \""+ file.getName() + "\" Imported !");
     }
 
     public void addFile( InputStream is,
@@ -158,7 +161,7 @@ public class ImportTarFile extends ImportArchive {
         int dot = filename.lastIndexOf(".");
         String ext = filename.substring(dot+1);
         
-        return prefs.getMediaDirName() + oid + "." + ext;
+        return prefs.getRelativeMediaDirName() + oid + "." + ext;
     }
 
 }
