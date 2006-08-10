@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.8  2006/08/10 19:03:15  mangeot
+ * default charsetCVS: ----------------------------------------------------------------------
+ *
  * Revision 1.7  2006/08/10 18:44:49  mangeot
  * Added local default file encoding log
  *
@@ -90,7 +93,11 @@ public class Papillon extends StandardApplication {
         Enhydra.getLogChannel().write(Logger.INFO, org.apache.xerces.impl.Version.getVersion());
 		
         // Look at the local file encoding
-        Enhydra.getLogChannel().write(Logger.INFO, "local system encoding: "+System.getProperty ("file.encoding"));
+        Enhydra.getLogChannel().write(Logger.INFO, "Local system file encoding: "+System.getProperty ("file.encoding"));
+		// Available only in java 1.5
+		//java.nio.charset.Charset defaultCharset = java.nio.charset.Charset.defaultCharset();
+		java.io.InputStreamReader myInputStreamReader = new java.io.InputStreamReader(System.in);
+        Enhydra.getLogChannel().write(Logger.INFO, "Local system default charset: "+myInputStreamReader.getEncoding());
         
 		//tests
         //	ParseVolume.parseVolume("essai.xml");
