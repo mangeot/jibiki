@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.7  2006/08/10 16:43:06  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.6  2006/04/06 15:06:39  fbrunet
  * New class 'creationEditInit' : create new entry
  * Modify LexALPEditEntry : only edit entry
@@ -109,19 +112,17 @@ public class AdminInformations extends PapillonBasePO {
     //the parameters
     //protected final static String SEE_URL="ConsultInformations.po?fileid=";
     protected final static String REMOVE_PARAM = "remove";
-    protected final static String ADD="Add";
-    protected final static String REPLACE="Replace";
+    protected final static String ADD=AdminInformationsTmplXHTML.NAME_Add;
+    protected final static String REPLACE=AdminInformationsTmplXHTML.NAME_Replace;
     protected final static String FLUSH="Flush";
 
-    protected final static String FILE_TITLE="title";
-    protected final static String FILE_FIELD="file";
-    protected final static String FILE_SECTION="section";
-    protected final static String FILE_AUTHOR="author";
-    protected final static String FILE_LANGUAGE="language";
-    protected final static String FILE_YEAR="year";
-    protected final static String FILE_MONTH="month";
-    protected final static String FILE_DAY="day";
-    protected final static String FILE_REFERENCE="Reference";
+    protected final static String FILE_URL=AdminInformationsTmplXHTML.NAME_url;
+    protected final static String FILE_TITLE=AdminInformationsTmplXHTML.NAME_title;
+    protected final static String FILE_SECTION=AdminInformationsTmplXHTML.NAME_section;
+    protected final static String FILE_AUTHOR=AdminInformationsTmplXHTML.NAME_author;
+    protected final static String FILE_LANGUAGE=AdminInformationsTmplXHTML.NAME_language;
+    protected final static String FILE_DATE=AdminInformationsTmplXHTML.NAME_date;
+    protected final static String FILE_REFERENCE=AdminInformationsTmplXHTML.NAME_Reference;
 
     //protected final static String UPLOAD_DIRECTORY="/Users/enhydra/papillon/classes/upload/";
     protected final static String TMP_DIR_CONFIG="Papillon.Informations.tmpDir";
@@ -216,8 +217,7 @@ public class AdminInformations extends PapillonBasePO {
             // writeDebugMsg("database erased...");
         } else if (req.getParameter(REMOVE_PARAM) != null) {
             removeInformationDocument(req.getParameter(REMOVE_PARAM));
-        } else {
-            // Requête par défaut !
+        } else if (req.getParameter(FILE_URL) != null && !req.getParameter(FILE_URL).equals("")) {
             // On a une demande d'ajout de document. On la traite...
             addInformationDocument(req);
         }
@@ -351,36 +351,26 @@ public class AdminInformations extends PapillonBasePO {
         javax.xml.transform.TransformerException,
         org.xml.sax.SAXException  {
 
+			
+			String docUrl = mReq.getParameter(FILE_URL);
+
             // Perhaps we should give default values (problem: in what language ?)
 
             String docTitle=mReq.getParameter(FILE_TITLE);
-            PapillonLogger.writeDebugMsg("FILE_TITLE :"+docTitle);
             //file author
             String docAuthor=mReq.getParameter(FILE_AUTHOR);
-            PapillonLogger.writeDebugMsg("FILE_AUTHOR :"+docAuthor);
             //file section
             String docSection=mReq.getParameter(FILE_SECTION);
-            PapillonLogger.writeDebugMsg("FILE_SECTION :"+docSection);
             //file language
             String docLanguage=mReq.getParameter(FILE_LANGUAGE);
-            PapillonLogger.writeDebugMsg("FILE_LANGUAGE :"+docLanguage);
             //file date
-            String docYear=mReq.getParameter(FILE_YEAR);
-            String docMonth=mReq.getParameter(FILE_MONTH);
-            String docDay=mReq.getParameter(FILE_DAY);
-            String docDate = "";
-            if (null != docDay && !docDay.trim().equals("")) {
-                docDate = docDay + "/" + docMonth + "/" + docYear;
-            }
-            PapillonLogger.writeDebugMsg("FILE_DATE :"+docDate);
+            String docDate =  mReq.getParameter(FILE_DATE);
             //file reference
             String docReference=mReq.getParameter(FILE_REFERENCE);
-            PapillonLogger.writeDebugMsg("FILE_REFERENCE :"+docReference);
 
 
             // In case of Replace, existing doc id
             String docId=mReq.getParameter(REPLACE);
-            PapillonLogger.writeDebugMsg("Existing Doc Id: "+docId);
 
             String docOwner = this.getUser().getLogin();
 			String userMessage = "";
@@ -393,8 +383,8 @@ public class AdminInformations extends PapillonBasePO {
             if (null == docLanguage) { docLanguage = ""; }
             if (null == docDate) { docDate = ""; }
             if (null == docReference) { docReference = ""; }
-						PapillonLogger.writeDebugMsg("Multipart Request Class Name: " + mReq.getClass().getName());
 
+			/*
             if (mReq.getClass().getName().equals("de.opus5.servlet.MultipartRequest")) {
 
                 de.opus5.servlet.UploadedFile f = ((MultipartRequest)mReq).getUploadedFile(FILE_FIELD);
@@ -410,11 +400,11 @@ public class AdminInformations extends PapillonBasePO {
                                                                                  docTitle, docAuthor, docOwner, docSection, docLanguage, docDate, docReference);
                         }
                     } catch(PapillonImportException pie) {
-                        this.getSessionData().writeUserMessage("ERROR IMPORTING DOCUMENT: "+pie.getMessage());
+                        this.getSessionData().writeUserMessage("PapillonImportException ERROR IMPORTING DOCUMENT: "+pie.getMessage());
                         // redirect the user to import help page
                         throw new ClientPageRedirectException(IMPORT_HELP_PAGE);
                     } catch(Exception e) {
-						 userMessage = "ERROR IMPORTING DOCUMENT: "+e.getMessage();
+						 userMessage = "Exception ERROR IMPORTING DOCUMENT: "+e.getMessage();
                     }
 					if (userMessage==null || userMessage.equals("")) {
 					 userMessage = "Document imported";
@@ -422,7 +412,30 @@ public class AdminInformations extends PapillonBasePO {
 					 this.getSessionData().writeUserMessage(userMessage);
                 }
 
-            }
+            } */
+			if (docUrl != null && !docUrl.equals("")) {
+				try {
+					if (null != docId && !docId.equals("")){
+						InformationDocumentFactory.replaceInformationDocument(docId,
+																			  docUrl,
+																			  docTitle, docAuthor, docLanguage, docDate, docReference);
+					}
+					else {
+						InformationDocumentFactory.addNewInformationDocument(docUrl,
+																			 docTitle, docAuthor, docOwner, docSection, docLanguage, docDate, docReference);
+					}
+				} catch(PapillonImportException pie) {
+					this.getSessionData().writeUserMessage("PapillonImportException ERROR IMPORTING DOCUMENT: "+pie.getMessage());
+					// redirect the user to import help page
+					throw new ClientPageRedirectException(IMPORT_HELP_PAGE);
+				} catch(java.lang.Exception e) {
+					userMessage = "java.lang.Exception ERROR IMPORTING DOCUMENT: "+e.getMessage();
+				}
+				if (userMessage==null || userMessage.equals("")) {
+					userMessage = "Document imported";
+				}
+				this.getSessionData().writeUserMessage(userMessage);				
+			} 
         }
 
     protected void addConsultForm()
@@ -430,15 +443,6 @@ public class AdminInformations extends PapillonBasePO {
         HttpPresentationException,
         java.io.UnsupportedEncodingException {
 
-
-            /*********************************/
-            // Adding the javascript for the date
-            /*********************************/
-            XHTMLScriptElement scriptElement = (XHTMLScriptElement)content.getElementScript();
-            //this.setHeaderScript(scriptElement.getText());
-            this.setHeaderScript(scriptElement);
-
-            /*********************************/
             // Adding the appropriate options to the sections list
             /*********************************/
             HTMLInputElement theAuthorInputTemplate = content.getElementAuthor();
