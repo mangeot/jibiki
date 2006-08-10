@@ -144,6 +144,8 @@ Papillon.Informations.contentTypeHandler.multipart.x_tar_gz   = "fr.imag.clips.p
 # not using the zip handler to avoid uncompression of embedded zip files into a bigger archive
 # eg, I upload a file .ppt.zip and I don't want to uncompress it
 Papillon.Informations.contentTypeHandler.application.zip = "fr.imag.clips.papillon.business.informationfile.ImportZipFile"
+Papillon.Informations.contentTypeHandler.encoding.bzip   = "fr.imag.clips.papillon.business.informationfile.ImportBZippedFile"
+Papillon.Informations.contentTypeHandler.application.x_bzip   = "fr.imag.clips.papillon.business.informationfile.ImportBZippedFile"
 Papillon.Informations.contentTypeHandler.application.pdf   = "fr.imag.clips.papillon.business.informationfile.ImportMediaFile"
 Papillon.Informations.contentTypeHandler.application.tar = "fr.imag.clips.papillon.business.informationfile.ImportTarFile"
 Papillon.Informations.contentTypeHandler.image.gif       = "fr.imag.clips.papillon.business.informationfile.ImportMediaFile"
@@ -153,12 +155,14 @@ Papillon.Informations.contentTypeHandler.image.gif       = "fr.imag.clips.papill
 # For HTML documents
 Papillon.Informations.fileExtensionHandler.html   = "fr.imag.clips.papillon.business.informationfile.ImportHTMLFile"
 Papillon.Informations.fileExtensionHandler.htm    = "fr.imag.clips.papillon.business.informationfile.ImportHTMLFile"
-# For tar & gzip documents
+# For tar, gzip & bzip2 documents
 Papillon.Informations.fileExtensionHandler.gzip   = "fr.imag.clips.papillon.business.informationfile.ImportGZippedFile"
 # tgz does not work !
 # Papillon.Informations.fileExtensionHandler.tgz   =  "fr.imag.clips.papillon.business.informationfile.ImportGZippedFile"
 Papillon.Informations.fileExtensionHandler.tar 	  = "fr.imag.clips.papillon.business.informationfile.ImportTarFile"
 Papillon.Informations.fileExtensionHandler.gz     = "fr.imag.clips.papillon.business.informationfile.ImportGZippedFile"
+Papillon.Informations.fileExtensionHandler.bz2     = "fr.imag.clips.papillon.business.informationfile.ImportBZippedFile"
+Papillon.Informations.fileExtensionHandler.bz     = "fr.imag.clips.papillon.business.informationfile.ImportBZippedFile"
 # For other documents
 Papillon.Informations.fileExtensionHandler.gif    = "fr.imag.clips.papillon.business.informationfile.ImportMediaFile"
 Papillon.Informations.fileExtensionHandler.jpg    = "fr.imag.clips.papillon.business.informationfile.ImportMediaFile"
