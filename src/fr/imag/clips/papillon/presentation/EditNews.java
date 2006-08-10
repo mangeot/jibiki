@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.2  2006/08/10 22:53:45  mangeot
+ * Fixed an encoding bug when writing to a file
+ *
  * Revision 1.1  2006/08/10 21:28:29  mangeot
  * *** empty log message ***
  *
@@ -55,7 +58,7 @@ public class EditNews extends PapillonBasePO {
 
     public org.w3c.dom.Node getContent()
     throws HttpPresentationException, java.io.IOException {
-		org.w3c.dom.Node NewsDOMCache = null;
+		org.w3c.dom.Node newsDOMDocument = null;
 		String submit = myGetParameter(EditNewsTmplXHTML.NAME_submit);
 		String textarea = myGetParameter(EditNewsTmplXHTML.NAME_Textarea);
 		
@@ -72,16 +75,12 @@ public class EditNews extends PapillonBasePO {
 			if (newsInputSource != null) {
 				org.w3c.dom.Document myNewsDocument = fr.imag.clips.papillon.business.utility.Utility.buildDOMTree(newsInputSource);
 				if (myNewsDocument != null) {
-					NewsDOMCache = myNewsDocument.getElementById(NewsContentIdString);
-					org.w3c.dom.Node newParentNode = NewsDOMCache.getParentNode();
+					newsDOMDocument = myNewsDocument.getElementById(NewsContentIdString);
+					org.w3c.dom.Node newParentNode = newsDOMDocument.getParentNode();
 					org.w3c.dom.Node importedNode = myNewsDocument.importNode((org.w3c.dom.Node)newElement, true);
-					newParentNode.replaceChild(importedNode,(org.w3c.dom.Node)NewsDOMCache);
+					newParentNode.replaceChild(importedNode,(org.w3c.dom.Node)newsDOMDocument);
+					Utility.printToFile(myNewsDocument,getNewsFileAbsolutePath());
 				}
-				java.io.OutputStream outStream = new java.io.FileOutputStream(getNewsFileAbsolutePath());
-				java.io.PrintStream myPrintStream = new java.io.PrintStream(outStream);
-				myPrintStream.print(Utility.NodeToString(myNewsDocument,true,true,true));
-				myPrintStream.close();
-				outStream.close();
 			}
 		}
 		
@@ -91,14 +90,14 @@ public class EditNews extends PapillonBasePO {
 			if (newsInputSource != null) {
 				org.w3c.dom.Document myNewsDocument = fr.imag.clips.papillon.business.utility.Utility.buildDOMTree(newsInputSource);
 				if (myNewsDocument != null) {
-					NewsDOMCache = myNewsDocument.getElementById(NewsContentIdString);
+					newsDOMDocument = myNewsDocument.getElementById(NewsContentIdString);
 				}
 			}
 			
-		org.w3c.dom.Text textareaTextNode = new org.apache.xerces.dom.TextImpl((org.apache.xerces.dom.DocumentImpl)content.getOwnerDocument(), Utility.NodeToString((org.w3c.dom.Element) NewsDOMCache));
+		org.w3c.dom.Text textareaTextNode = new org.apache.xerces.dom.TextImpl((org.apache.xerces.dom.DocumentImpl)content.getOwnerDocument(), Utility.NodeToString((org.w3c.dom.Element) newsDOMDocument));
 
         //On rend le contenu correct
-		content.getElementPreview().appendChild(content.importNode(NewsDOMCache, true));
+		content.getElementPreview().appendChild(content.importNode(newsDOMDocument, true));
 		content.getElementTextarea().appendChild(content.importNode(textareaTextNode, true));
 		
 		return content.getElementInfoContent();
@@ -138,21 +137,4 @@ public class EditNews extends PapillonBasePO {
 			}
 			return myInputSource;
 		}
-	
-	// Copies src file to dst file.
-	   // If the dst file does not exist, it is created
-    protected static void copyFile(java.io.File src, java.io.File dst) throws java.io.IOException {
-        java.io.InputStream in = new java.io.FileInputStream(src);
-        java.io.OutputStream out = new java.io.FileOutputStream(dst);
-		
-        // Transfer bytes from in to out
-        byte[] buf = new byte[1024];
-        int len;
-        while ((len = in.read(buf)) > 0) {
-            out.write(buf, 0, len);
-        }
-        in.close();
-        out.close();
-    }
-	
 }
