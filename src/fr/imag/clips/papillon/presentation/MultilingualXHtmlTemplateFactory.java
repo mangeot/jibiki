@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.5  2006/08/10 21:28:57  mangeot
+ * error treatment
+ *
  * Revision 1.4  2005/06/16 10:42:15  mangeot
  * Added and modified files for the GDEF project
  *
@@ -54,12 +57,12 @@ import com.lutris.appserver.server.httpPresentation.HttpPresentationRequest;
 public class MultilingualXHtmlTemplateFactory {
     private final static String PACKAGE = "fr.imag.clips.papillon.presentation.xhtml";
     private final static String ORIG_PACKAGE = PACKAGE + "orig.";
-
+	
     private final static String DEFAULT_LANGUAGE = "eng";
 	private static java.lang.ClassNotFoundException myClassNotFoundException = null;
     
     /**
-     * Return an HTML Template object that is a localized instance of the
+		* Return an HTML Template object that is a localized instance of the
      * requested class. The language of the returned object depends on
      * the HTTPRequest (which contains the user's preferred languages).
      *
@@ -71,19 +74,19 @@ public class MultilingualXHtmlTemplateFactory {
                                                   PapillonSessionData sessiondata)
         throws HttpPresentationException {
 			java.lang.Object resObject = null;
-		String priorityPackage = ((Papillon)Enhydra.getApplication()).getPriorityPackage();
-		if (priorityPackage != null && !priorityPackage.equals("")) {
-			resObject = createTemplate(priorityPackage,xhtmlClass,comms,sessiondata);
+			String priorityPackage = ((Papillon)Enhydra.getApplication()).getPriorityPackage();
+			if (priorityPackage != null && !priorityPackage.equals("")) {
+				resObject = createTemplate(priorityPackage,xhtmlClass,comms,sessiondata);
+			}
+			if (resObject==null) {
+				resObject = createTemplate(PACKAGE,xhtmlClass,comms,sessiondata);
+			}
+			if (resObject==null) {
+				throw new HttpPresentationException("ERREUR:", myClassNotFoundException);
+			}
+			
+			return resObject;
 		}
-		if (resObject==null) {
-			resObject = createTemplate(PACKAGE,xhtmlClass,comms,sessiondata);
-		}
-		if (resObject==null) {
-			throw new HttpPresentationException("ERREUR:", myClassNotFoundException);
-		}
-
-		return resObject;
-    }
     
     /**
         * Return an HTML Template object that is an localized instance of the
@@ -93,57 +96,56 @@ public class MultilingualXHtmlTemplateFactory {
      * @return The localized HTML Template Object
      */
     protected static java.lang.Object createTemplate(String xhtmlPackage,
-                                                  String xhtmlClass,
-                                                  HttpPresentationComms comms,
-                                                  PapillonSessionData sessiondata)
+													 String xhtmlClass,
+													 HttpPresentationComms comms,
+													 PapillonSessionData sessiondata)
         throws HttpPresentationException
     {
         
+		int i = 0;
+		java.lang.Object template = null;
         ArrayList languages = sessiondata.getUserAcceptLanguages();
-        
-        int i = 0;
-        java.lang.Object template = null;
-        
-        while (i != languages.size() &&
-               (template = getTemplateForLanguage(xhtmlPackage, xhtmlClass, (String)languages.get(i), comms)) == null) {
-            i++;
-        }
-        if (i == languages.size()) {
-            try {
-                template = comms.xmlcFactory.create(Class.forName(xhtmlPackage + ".orig." + xhtmlClass));
-            } catch (java.lang.ClassNotFoundException e) {
+		if (languages!=null &&languages.size()>0) {
+			while (i != languages.size() &&
+				   (template = getTemplateForLanguage(xhtmlPackage, xhtmlClass, (String)languages.get(i), comms)) == null) {
+				i++;
+			}
+		}
+		if (languages == null || languages.size()==0 || i == languages.size()) {
+			try {
+				template = comms.xmlcFactory.create(Class.forName(xhtmlPackage + ".orig." + xhtmlClass));
+			} catch (java.lang.ClassNotFoundException e) {
 				myClassNotFoundException = e;
-            }
-        }
-        return template;
-        
-    }
-    
-    public static java.lang.Object getTemplateForLanguage(String xhtmlPackage, String htmlClass, String lang, HttpPresentationComms comms) {
-        String className = xhtmlPackage + "." + lang + "." + htmlClass;
-        java.lang.Object template = null;
+			}
+		}
+		return template;
+	}
+	
+	public static java.lang.Object getTemplateForLanguage(String xhtmlPackage, String htmlClass, String lang, HttpPresentationComms comms) {
+		String className = xhtmlPackage + "." + lang + "." + htmlClass;
+		java.lang.Object template = null;
 		
-        try {
-            template = comms.xmlcFactory.create(Class.forName(className));
-        } catch (java.lang.ClassNotFoundException e) {
-        }
-        return template;
-    }
-
-    public static ArrayList getAcceptLanguages (HttpPresentationRequest req)  {
-        ArrayList defaultAccept = new ArrayList();
-        defaultAccept.add(new String(DEFAULT_LANGUAGE));
-
-        ArrayList res = null;
-
-        try {
-            String languages = null;
-            languages = req.getHeader("Accept-Language");
-            res = LanguageFactory.decodeAcceptLanguages(languages);
-        } catch (com.lutris.appserver.server.httpPresentation.HttpPresentationException e) {
-            res = defaultAccept;
-        }
-        return (null == res || 0 == res.size()) ? defaultAccept : res;
-    }
-    
+		try {
+			template = comms.xmlcFactory.create(Class.forName(className));
+		} catch (java.lang.ClassNotFoundException e) {
+		}
+		return template;
+	}
+	
+	public static ArrayList getAcceptLanguages (HttpPresentationRequest req)  {
+		ArrayList defaultAccept = new ArrayList();
+		defaultAccept.add(new String(DEFAULT_LANGUAGE));
+		
+		ArrayList res = null;
+		
+		try {
+			String languages = null;
+			languages = req.getHeader("Accept-Language");
+			res = LanguageFactory.decodeAcceptLanguages(languages);
+		} catch (com.lutris.appserver.server.httpPresentation.HttpPresentationException e) {
+			res = defaultAccept;
+		}
+		return (null == res || 0 == res.size()) ? defaultAccept : res;
+	}
+	
 }
