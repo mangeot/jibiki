@@ -7,6 +7,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2006/08/10 16:32:34  mangeot
+ * Added methods in order to add a file from an URL.
+ * In is used in conjunction with UploadSimpleFile.java in order to upload correctly documents
+ *
  * Revision 1.3  2005/05/24 12:51:21  serasset
  * Updated many aspect of the Papillon project to handle lexalp project.
  * 1. Layout is now parametrable in the application configuration file.
@@ -309,7 +313,6 @@ public class InformationDocumentFactory {
 
     public static InformationDocument newInformationDocument(String title, String author, String owner, String section, String lang, String date, String reference) 
 	throws PapillonImportException, PapillonBusinessException {
-		PapillonLogger.writeDebugMsg("Import doc title: [" + title + "]");
         InformationDocument d = new InformationDocument();
 	d.setSection(section);	
         if (null == date || date.equals("")) {
@@ -331,41 +334,195 @@ public class InformationDocumentFactory {
                                                  String docAuthor,
                                                  String owner,
                                                  String section,
-						 String lang,
+												 String lang,
                                                  String date,
                                                  String reference)
-
-	throws PapillonImportException, Exception {
-	// We should keep a copy of the added document in order to survive a database crash...                                
-	// Should we ?
-    
-	// Create a new information document. Then, create a file name -> objectId mapper that will be used
-	// when adding files to the database (eg. correct relative URLs of HTML docs, etc...)
-	InformationDocument doc = null;	
-	RelativeURLMapper mapper = new RelativeURLMapper();       	    
-	// Then, process the file (with the corresponding file action...)
-	InformationFileAction handlerObject = InformationFileActionFactory.getAction(file);
 	
-	try {
-	    doc  = newInformationDocument(docTitle, docAuthor, owner, section, lang, date, reference);
-	    handlerObject.addFile(file, doc, mapper, lang);
-	} catch (PapillonImportException pie) {
-	    PapillonLogger.writeDebugMsg("Error importing document: "+pie.getMessage());	 
-	    if (doc != null) {
-		deleteInformationDocument(doc.getHandle());
-	    }
-	    throw pie;
-	} catch (Exception e) {
-	    PapillonLogger.writeDebugMsg("Error importing document: "+e.getMessage());	 
-	    if (doc != null) {
-		deleteInformationDocument(doc.getHandle());
-	    }
-	    throw e;
+	throws PapillonImportException, Exception {
+		// We should keep a copy of the added document in order to survive a database crash...                                
+		// Should we ?
+		
+		// Create a new information document. Then, create a file name -> objectId mapper that will be used
+		// when adding files to the database (eg. correct relative URLs of HTML docs, etc...)
+		InformationDocument doc = null;	
+		RelativeURLMapper mapper = new RelativeURLMapper();       	    
+		// Then, process the file (with the corresponding file action...)
+		InformationFileAction handlerObject = InformationFileActionFactory.getAction(file);
+		
+		try {
+			doc  = newInformationDocument(docTitle, docAuthor, owner, section, lang, date, reference);
+			handlerObject.addFile(file, doc, mapper, lang);
+		} catch (PapillonImportException pie) {
+			PapillonLogger.writeDebugMsg("PapillonImportException Error importing document: "+pie.getMessage());	 
+			if (doc != null) {
+				deleteInformationDocument(doc.getHandle());
+			}
+			throw pie;
+		}
+			catch (PapillonBusinessException pbe) {
+				PapillonLogger.writeDebugMsg("PapillonBusinessException Error importing document: "+pbe.getMessage());	 
+				if (doc != null) {
+					deleteInformationDocument(doc.getHandle());
+				}
+				throw pbe;
+			} 
+		}
+	
+    public static void addNewInformationDocument(String url, 
+                                                 String docTitle,
+                                                 String docAuthor,
+                                                 String owner,
+                                                 String section,
+												 String lang,
+                                                 String date,
+                                                 String reference)
+	
+	throws PapillonImportException, Exception {
+		java.net.URI newURI = new java.net.URI(url);
+		java.io.File newFile = new java.io.File(newURI);
+		addNewInformationDocument(newFile, 
+								   docTitle,
+								   docAuthor,
+								   owner,
+								   section,
+								   lang,
+								   date,
+								   reference);
+		
 	}
-
-
+	
+	public static void addNewInformationDocument(java.io.File file, 
+                                                 String docTitle,
+                                                 String docAuthor,
+                                                 String owner,
+                                                 String section,
+												 String lang,
+                                                 String date,
+                                                 String reference)
+	
+	throws PapillonImportException, PapillonBusinessException, javax.xml.parsers.ParserConfigurationException, org.xml.sax.SAXException {
+		InformationDocument doc = null;	
+		RelativeURLMapper mapper = new RelativeURLMapper();       	    
+		// Then, process the file (with the corresponding file action...)
+		InformationFileAction handlerObject = InformationFileActionFactory.getAction(file);
+		
+		try {
+			doc  = newInformationDocument(docTitle, docAuthor, owner, section, lang, date, reference);
+			handlerObject.addFile(file, doc, mapper, lang);
+		} catch (PapillonImportException pie) {
+			PapillonLogger.writeDebugMsg("PapillonImportException Error importing document: "+pie.getMessage());	 
+			if (doc != null) {
+				deleteInformationDocument(doc.getHandle());
+			}
+			throw pie;
+		} 
+		catch (PapillonBusinessException pbe) {
+			PapillonLogger.writeDebugMsg("PapillonBusinessException Error importing document: "+pbe.getMessage());	 
+			if (doc != null) {
+				deleteInformationDocument(doc.getHandle());
+			}
+			throw pbe;
+		} 
+		catch (javax.xml.parsers.ParserConfigurationException pce) {
+			PapillonLogger.writeDebugMsg("ParserConfigurationException Error importing document: "+pce.getMessage());	 
+			if (doc != null) {
+				deleteInformationDocument(doc.getHandle());
+			}
+			throw pce;
+		} 
+		catch (org.xml.sax.SAXException saxe) {
+			PapillonLogger.writeDebugMsg("ParserConfigurationException Error importing document: "+saxe.getMessage());	 
+			if (doc != null) {
+				deleteInformationDocument(doc.getHandle());
+			}
+			throw saxe;
+		} 
     }
 
+	public static void replaceInformationDocument(String id,
+                                                  String url,
+                                                  String title,
+                                                  String author,
+												  String lang,
+                                                  String date,
+                                                  String reference)
+	throws Exception, PapillonImportException {
+		java.net.URI newURI = new java.net.URI(url);
+		java.io.File newFile = new java.io.File(newURI);
+		replaceInformationDocument( id,
+								    newFile,
+								    title,
+								    author,
+								    lang,
+								    date,
+									reference);
+	}
+
+	public static void replaceInformationDocument(String id,
+                                                  java.io.File file,
+                                                  String title,
+                                                  String author,
+												  String lang,
+                                                  String date,
+                                                  String reference)
+	throws Exception, PapillonImportException {
+        InformationDocument doc = findInformationDocumentByID(id);
+		
+        if (null != doc && !doc.isEmpty()) {
+			
+            // remove files that belong to this document...
+            InformationFile[] files = InformationFileFactory.getInformationFilesArrayForDocument(doc);
+            String origLang = "";
+            for (int i=0; i<files.length; i++) {
+                // Here I backup the language of the original file for
+                // replacement
+                if (i==0) {
+                    origLang = files[i].getLanguage();
+                }
+                files[i].delete();
+            }
+            // add new files for this document
+            RelativeURLMapper mapper = new RelativeURLMapper();
+			
+            // Then, process the file (with the corresponding file action...)
+            InformationFileAction handlerObject = InformationFileActionFactory.getAction(file);
+			
+            if ((lang == null) || lang.equals("")) {
+                lang=origLang;
+            }
+            if (null != date && !date.equals("")) {
+                doc.setCreationDate(date);
+            }
+            if (null != reference && !reference.equals("")) {
+                doc.setReference(reference);
+            }           
+			try {
+                if (title != null && !title.equals("")) {
+                    if ((author == null) || author.equals("")) {
+                        author=doc.getAuthor();
+                    }                    
+                    setTitleAndAuthorForDoc(doc, title, lang, author);
+                }
+                if (file != null) {
+                    handlerObject.addFile(file, doc, mapper, lang);
+                }
+                doc.save();
+			} catch (PapillonImportException pie) {
+				PapillonLogger.writeDebugMsg("PapillonImportException Error importing document: "+pie.getMessage());
+				throw pie;
+			}
+			catch (PapillonBusinessException pbe) {
+				PapillonLogger.writeDebugMsg("PapillonBusinessException Error importing document: "+pbe.getMessage());	 
+				if (doc != null) {
+					deleteInformationDocument(doc.getHandle());
+				}
+				throw pbe;
+			}
+		}
+    }
+	
+		
+	
     public static void replaceInformationDocument(String id,
                                                   de.opus5.servlet.UploadedFile file,
                                                   String title,
@@ -416,13 +573,17 @@ public class InformationDocumentFactory {
                 }
                 doc.save();
 	    } catch (PapillonImportException pie) {
-		PapillonLogger.writeDebugMsg("Error importing document: "+pie.getMessage());
+		PapillonLogger.writeDebugMsg("PapillonImportException Error importing document: "+pie.getMessage());
 		throw pie;
-	    } catch (Exception e) {
-		PapillonLogger.writeDebugMsg("Error importing document: "+e.getMessage());	 
-		throw e;
-	    }
-           
+		}
+		catch (PapillonBusinessException pbe) {
+			PapillonLogger.writeDebugMsg("PapillonBusinessException Error importing document: "+pbe.getMessage());	 
+			if (doc != null) {
+				deleteInformationDocument(doc.getHandle());
+			}
+			throw pbe;
+		} 
+		
             // Modify and save the document itself
 	    /* if (null != title && !title.equals("")) {
                 doc.setTitle(title);
