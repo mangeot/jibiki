@@ -9,8 +9,12 @@
  * $Id$
  *---------------------------------------------------------
  * $Log$
- * Revision 1.1  2004/12/06 16:38:31  serasset
- * Initial revision
+ * Revision 1.2  2006/08/10 18:30:26  mangeot
+ * *** empty log message ***
+ *
+ * Revision 1.1.1.1  2004/12/06 16:38:31  serasset
+ * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
+ * There are still bugs in the code.
  *
  * Revision 1.2  2003/09/03 10:15:45  mangeot
  * reorganizing imports and using eclipse
@@ -43,6 +47,9 @@ import fr.imag.clips.papillon.business.PapillonLogger;
 import com.lutris.appserver.server.Enhydra;
 import com.lutris.util.ConfigException;
  
+
+/* Beware: the strings retrieved from the enhydra config files are encoded in local encoding, 
+they must be converted before use */
 public class InformationSections {
     public static String SECTION_GROUP = "Papillon.Informations.sections";
     public static String DEFAULT_GROUP = ".default";
