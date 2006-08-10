@@ -197,9 +197,10 @@ Papillon.Informations.relativeDir = "/"
 Papillon.Informations.mediaDir = "info_media/"
 
 # EXPORT
-Papillon.Export.baseDir = "/home/lexalp/termbank-static/"
+Papillon.Export.baseDir = "/home/lexalp/static-termbank/"
 Papillon.Export.relativeDir = "/"
 Papillon.Export.mediaDir = "info_media/"
+Papillon.Export.baseurl = "/static-termbank/"
 
 # The list of categories that are to be used for the informationn file section
 # The main list is to be used to identify sections in the database (this should not be changed in

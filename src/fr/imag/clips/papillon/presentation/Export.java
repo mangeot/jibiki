@@ -62,6 +62,7 @@ public class Export extends PapillonBasePO {
     protected final static String BASE_DIR_CONFIG = "Papillon.Export.baseDir";
     protected final static String RELATIVE_DIR_CONFIG = "Papillon.Export.relativeDir";
     protected final static String MEDIA_DIR_CONFIG = "Papillon.Export.mediaDir";
+    protected final static String BASE_URL_CONFIG = "Papillon.Export.baseurl";
 	protected final static String EXPORT_VOLUME_DIR="export";
     protected final static String FORMAT_XML="4";
 	
@@ -366,7 +367,7 @@ public class Export extends PapillonBasePO {
 		String baseDir = "";
 		String mediaDir = "";
 		try {
-			baseDir = com.lutris.appserver.server.Enhydra.getApplication().getConfig().getString(RELATIVE_DIR_CONFIG);
+			baseDir = com.lutris.appserver.server.Enhydra.getApplication().getConfig().getString(BASE_URL_CONFIG);
 			mediaDir = com.lutris.appserver.server.Enhydra.getApplication().getConfig().getString(MEDIA_DIR_CONFIG);
 			if (! baseDir.endsWith(File.separator)) {
 				baseDir = baseDir + File.separator;
