@@ -9,6 +9,9 @@
  * $Id$
  *---------------------------------------------------------
  * $Log$
+ * Revision 1.4  2006/08/10 19:12:37  mangeot
+ * Added getDefaultEncoding
+ *
  * Revision 1.3  2005/01/23 17:21:16  mangeot
  * *** empty log message ***
  *
@@ -50,9 +53,11 @@ public class Languages {
 	protected static Hashtable LanguagesResbundles = new Hashtable();
 	protected static Hashtable LanguagesASCIIResbundles = new Hashtable();
 	protected final static Locale defaultLocale = Locale.getDefault();
+	protected final static java.io.InputStreamReader myInputStreamReader = new java.io.InputStreamReader(System.in);
+
 
 	protected static final String[] LanguagesArray = {
-		"deu","eng","esp","fra","hun","ita",
+		"deu","eng","esp","est","fra","hun","ita",
 		"jpn","kor","lao","msa","tha","vie",
 		"zho"};
 
@@ -114,5 +119,13 @@ public class Languages {
 		LanguagesResbundles = new Hashtable();
 		LanguagesASCIIResbundles = new Hashtable();
 		return true;
+	}
+	
+	public static String getDefaultEncoding () {
+		String systemEncoding = myInputStreamReader.getEncoding();
+		if (systemEncoding.equals("UTF-8") || systemEncoding.equals("ASCII")) {
+			systemEncoding = "ISO-8859-1";
+		}
+		return systemEncoding;
 	}
 }
