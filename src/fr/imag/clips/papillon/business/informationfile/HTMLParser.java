@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2006/08/10 16:33:43  mangeot
+ * Bug fixes...
+ *
  * Revision 1.3  2005/01/15 12:51:24  mangeot
  * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
  *
@@ -43,7 +46,7 @@ public class HTMLParser {
 
     public final static String FILE_VIEWER_URL="ConsultInformations.po?fileid="; 
 
-	protected final static Pattern encodingHeaderRegex = Pattern.compile("content=\\\"text/html;\\s*charset=([^\\\"]*)\\\"");
+	protected final static Pattern encodingHeaderRegex = Pattern.compile(".*content=\\\"text/html;\\s*charset=([^\\\"]*)\\\".*",Pattern.CASE_INSENSITIVE);
 
     // Constructor...
     public HTMLParser() {
@@ -102,11 +105,14 @@ public class HTMLParser {
 			boolean eof = false;
 			CharSequence line = (CharSequence) inBuff.readLine();
 			Matcher encodingMatcher = encodingHeaderRegex.matcher((CharSequence) inBuff.readLine());
-			while (!encodingMatcher.matches() && line!=null) {
+
+			while (!encodingMatcher.find() && line!=null) {
 				line = (CharSequence) inBuff.readLine();
-				encodingMatcher = encodingHeaderRegex.matcher(line);
+				if (line !=null && !line.equals("")) {
+					encodingMatcher = encodingHeaderRegex.matcher(line);
+				}
 			}
-			if (line!=null) {
+			if (encodingMatcher.find()) {
                 String enc = encodingMatcher.group();
                 if (enc.equalsIgnoreCase("UTF-8")) {
                     res = Configuration.UTF8;
