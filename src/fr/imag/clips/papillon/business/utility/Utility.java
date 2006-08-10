@@ -4,6 +4,9 @@
 *$Id$
 *------------------------------------------
 *$Log$
+*Revision 1.13  2006/08/10 21:27:49  mangeot
+*Added a boolean for printing the doctype when bulding a DOM tree
+*
 *Revision 1.12  2006/08/10 19:21:58  mangeot
 **** empty log message ***
 *
@@ -140,8 +143,28 @@ public class Utility {
 	}
 	
 	public static String NodeToString(Document doc, boolean printXmlDeclaration, boolean setIndenting) {
-		return NodeToString(doc.getDocumentElement(), printXmlDeclaration, setIndenting);
+		return NodeToString(doc,printXmlDeclaration,setIndenting,false);
 	}
+	
+	public static String NodeToString(Document doc, boolean printXmlDeclaration, boolean setIndenting, boolean printDoctype) {
+			String res = "";
+			if (doc!=null) {
+				try {
+					StringWriter myStringWriter = new StringWriter();
+					myOutputFormat.setMethod("text");
+					myOutputFormat.setIndenting(setIndenting);
+					myOutputFormat.setOmitDocumentType(!printDoctype);
+					myOutputFormat.setOmitXMLDeclaration(!printXmlDeclaration);
+					XMLSerializer myXMLSerializer = new XMLSerializer(myStringWriter, myOutputFormat);
+					myXMLSerializer.serialize(doc);
+					res= myStringWriter.toString();
+				}
+				catch (java.io.IOException ioe) {
+					PapillonLogger.writeDebugMsg ("NodeToString: java.io.IOException: " + ioe);
+				}
+			}
+			return res;
+		}
 	
 	public static String NodeToString(Element elt) {
 		return NodeToString(elt, true, true);
