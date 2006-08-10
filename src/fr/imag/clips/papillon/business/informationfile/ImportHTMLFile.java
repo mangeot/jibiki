@@ -9,7 +9,7 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.3  2006/08/10 16:34:03  mangeot
+ * Revision 1.4  2006/08/10 17:32:27  mangeot
  * *** empty log message ***
  *
  * Revision 1.2  2005/01/15 12:51:24  mangeot
@@ -77,7 +77,7 @@ public class ImportHTMLFile extends InformationFileAction {
             PapillonLogger.writeDebugMsg("IOException encountered while importing HTML file.");
         }
         
-        PapillonLogger.writeDebugMsg("File \""+ file.getName() + "\"Imported !");
+        PapillonLogger.writeDebugMsg("File \""+ file.getName() + "\" Imported !");
     }
     
     public void addFile( java.io.File file,

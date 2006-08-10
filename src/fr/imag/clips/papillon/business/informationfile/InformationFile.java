@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.7  2006/08/10 17:32:27  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.6  2006/08/10 17:18:34  mangeot
  * *** empty log message ***
  *
@@ -357,7 +360,7 @@ public class InformationFile {
             MediaPreferences prefs = new MediaPreferences();
             
             String fileName = this.getFilename();
-            if (fileName.startsWith(prefs.getRelativeMediaDirName())) {
+            if (fileName.startsWith(prefs.getMediaDirName())) {
                 File mediaFile = new File(prefs.getBaseDirName() + fileName);
                 mediaFile.delete();
             }

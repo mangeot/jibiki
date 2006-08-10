@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2006/08/10 17:32:27  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.3  2006/08/10 17:18:34  mangeot
  * *** empty log message ***
  *
@@ -152,7 +155,7 @@ public class ImportMediaFile extends InformationFileAction {
         int dot = filename.lastIndexOf(".");
         String ext = filename.substring(dot+1);
         
-        return prefs.getRelativeMediaDirName() + oid + "." + ext;
+        return prefs.getMediaDirName() + oid + "." + ext;
     }
  
 }
