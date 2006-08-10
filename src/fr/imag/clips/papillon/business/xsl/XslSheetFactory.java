@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.14  2006/08/10 22:56:01  fbrunet
+ * *** empty log message ***
+ *
  * Revision 1.13  2006/08/10 22:17:13  fbrunet
  * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
  * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
@@ -120,7 +123,7 @@ import java.lang.Boolean;
 //pour les nouvelles entrees
 import org.w3c.dom.*;
 import java.util.Properties;
-import org.apache.xalan.xsltc.runtime.AbstractTranslet;
+//import org.apache.xalan.xsltc.runtime.AbstractTranslet;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.Templates;
