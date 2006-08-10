@@ -7,6 +7,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2006/08/10 16:34:03  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.2  2005/04/11 12:29:59  mangeot
  * Merge between the XPathAndMultipleKeys branch and the main trunk
  *
@@ -204,10 +207,11 @@ public class InformationFileFactory {
         
         f.setFilename(filename);
         f.setFiletype(filetype);
-	f.setLanguage(lang);
+		f.setLanguage(lang);
         f.setDocument(doc.myDO);
         f.setFilecode("");
-        f.save();
+		f.setIsIndexFile(true);
+       // f.save();
         
         return f;
     }

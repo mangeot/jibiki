@@ -38,15 +38,18 @@
     <!--
       function updateParent() {
 	    var resultUrlValue = document.getElementById("resultUrl").value;
-        opener.updateField(window.name, resultUrlValue);
+        opener.updateURL(window.name,resultUrlValue);
+	    var fileNameValue = document.getElementById("fileName").value;
+        opener.updateFileName(fileNameValue);
         window.close();
       }
 		//-->
     </script>
-	<form  enctype="multipart/form-data" action="UploadFile.po">
+	<form  id="form" enctype="multipart/form-data" action="UploadFile.po">
 	<div>
 	<p><label>File: <input type="file" name="file" id="file" onchange="this.form.submit()"/></label><br />
 	It can also be gzipped or zipped.</p>
+	<input type="hidden" name="fileName"  id="fileName" value=""/>
 	<input type="hidden" name="resultUrl" id="resultUrl" value=""/>
 	<p><input type="submit" value="Upload"/> &nbsp; <input type="button" value="Close window" onclick="updateParent()"/></p>
 	</div>

@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.5  2006/08/10 16:34:03  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.4  2005/05/24 12:51:21  serasset
  * Updated many aspect of the Papillon project to handle lexalp project.
  * 1. Layout is now parametrable in the application configuration file.
@@ -319,7 +322,7 @@ public class InformationFile {
     */
     public void setIsIndexFile ( boolean isIndexFile ) throws PapillonBusinessException {
         try {
-            myDO.setIsIndexFile(isIndexFile ? "Y" : "N");   
+            myDO.setIsIndexFile(isIndexFile ? "Y" : "N"); 
         } catch(DataObjectException ex) {
             throw new PapillonBusinessException("Error setting InformationFile's isIndexFile", ex);
         }

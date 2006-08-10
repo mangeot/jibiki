@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2006/08/10 16:34:03  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.2  2005/01/15 12:51:24  mangeot
  * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
  *
@@ -56,8 +59,8 @@ public class InformationFileActionFactory {
             // According to the file type and/or name, determine the actions to perform
 
         String handler = null;
-        PapillonLogger.writeDebugMsg("MIME type:" + contentType);
-        PapillonLogger.writeDebugMsg("file name:" + name);
+       // PapillonLogger.writeDebugMsg("MIME type:" + contentType);
+       // PapillonLogger.writeDebugMsg("file name:" + name);
 
         if (null != contentType) {
             try {
@@ -88,7 +91,6 @@ public class InformationFileActionFactory {
                 try {
                     int i = name.lastIndexOf(".");
                     String ext = name.substring(i+1).toLowerCase();
-                    PapillonLogger.writeDebugMsg("File extension:" + ext);
                     try {
                         KeywordValueTable handlers = 
                             Enhydra.getApplication().getConfig().getSection(FILE_EXTENSION_ACTION_CONFIG_GROUP);

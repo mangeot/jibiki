@@ -9,6 +9,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.2  2006/08/10 16:26:13  mangeot
+ *  *** empty log message ***
+ *
  *  Revision 1.1  2006/08/10 09:55:21  mangeot
  *  Added a bunzipper for .bz2 compressed files
  *
@@ -50,7 +53,7 @@ import fr.imag.clips.papillon.business.PapillonLogger;
  */
 public class UploadSimpleFile extends UploadFile {
 	
-	protected String getFileUrl(javax.servlet.http.HttpServletRequest mReq)
+	protected String[] getFileNameAndURL(javax.servlet.http.HttpServletRequest mReq)
 	throws 	javax.xml.parsers.ParserConfigurationException,
 	HttpPresentationException,
 	java.io.IOException,
@@ -59,15 +62,27 @@ public class UploadSimpleFile extends UploadFile {
 	javax.xml.transform.TransformerConfigurationException,
 	javax.xml.transform.TransformerException,
 	org.xml.sax.SAXException  {
+		String fileName = "";
 		String theURL = "";
-		
 		if (mReq.getClass().getName().equals("de.opus5.servlet.MultipartRequest")) {
 			
 			de.opus5.servlet.UploadedFile theFile = ((de.opus5.servlet.MultipartRequest)mReq).getUploadedFile(UploadFileXHTML.NAME_file);
 			if (null != theFile && !theFile.getName().equals("")) {
-				String fileName = theFile.getName();
+				fileName = theFile.getName();				
+				String prefix = TMP_NAME_PREFIX+fileName;
+				String newFilePath = theFile.getFile().getCanonicalPath();
+				String number = "0";
+				if (newFilePath.lastIndexOf(prefix)>0) {
+					number = newFilePath.substring(newFilePath.lastIndexOf(prefix) + prefix.length());
+					newFilePath = newFilePath.substring(0,newFilePath.lastIndexOf(prefix));
+				}
+				if (number.lastIndexOf(".tmp")>0) {
+					number = number.substring(0,number.lastIndexOf(".tmp"));				
+				}
+				newFilePath += TMP_NAME_PREFIX + number + "-"; 
 				String contentType = theFile.getContentType();
 				String type = "";
+				String extension = "";
 				java.io.File newFile = null;
 				if (null != contentType) {
 					try {
@@ -78,28 +93,42 @@ public class UploadSimpleFile extends UploadFile {
 						PapillonLogger.writeDebugMsg("Unexpected Error: malformed content type: " + contentType);
 					}
 				} 
-				if (!type.equals("") && !type.equals("gzip") && !type.equals("x_gzip") && !type.equals("bzip2") && !type.equals("x_bzip2") && !type.equals("zip") && fileName!= null) {
-					try {
-						int i = fileName.lastIndexOf(".");
-						type = fileName.substring(i+1).toLowerCase();
-					} catch (IndexOutOfBoundsException e) {
-						PapillonLogger.writeDebugMsg("Unexpected Error: Can't determine file extension for file: " + fileName);
+				try {
+					int i = fileName.lastIndexOf(".");
+					if (i>0) {
+						extension = fileName.substring(i+1).toLowerCase();
 					}
-				}				
-				if (type.equals("gzip") || type.equals("x_gzip") || type.equals("gz")) {
-					newFile = ungzipFile(theFile);
+				} catch (IndexOutOfBoundsException e) {
+					PapillonLogger.writeDebugMsg("Unexpected Error: Can't determine file extension for file: " + fileName);
 				}
-				else if (type.equals("bzip") || type.equals("x_bzip") || type.equals("bz2")  || type.equals("bz")) {
-					newFile = unbzipFile(theFile);
+				if (type.equals("gzip") || type.equals("x_gzip") ||  extension.equals("gz")) {
+					if (extension.equals("gz")) {
+						fileName = fileName.substring(0,fileName.indexOf("."+extension));
+					}
+					newFilePath += fileName;
+					newFile = ungzipFile(theFile, newFilePath);
 				}
-				// Do not unzip the file. It will be done later
-				//else if (type.equals("zip")) {
-				//	newFile = unzipFile(theFile);
-				//}
+				// It does not work, it abruptly crashes when creating the CBZip2InputStream without any error message
+				/*else if (type.equals("bzip") || type.equals("x_bzip") || extension.equals("bz2")) {
+					if (extension.equals("bz2")) {
+						fileName = fileName.substring(0,fileName.indexOf("."+extension));
+					}
+				newFilePath += fileName;
+				newFile = unbzipFile(theFile, newFilePath);
+				} */
+				// do not unzip zip archives, it will be done later
+				/*else if (type.equals("zip") || extension.equals("zip")) {
+					if (extension.equals("zip")) {
+						fileName = fileName.substring(0,fileName.indexOf("."+extension));
+					}
+					newFilePath += fileName;
+					newFile = unzipFile(theFile, newFilePath);
+				} */
 				else {
 					// The pb was the following: when exiting the method, the file was deleted
 					// So I copy it.
-					newFile = new java.io.File(theFile.getFile().getCanonicalPath()+".file");
+					newFilePath += fileName;
+					newFile = new java.io.File(newFilePath);
 					copyFile(theFile.getFile(), newFile);
 					theFile.getFile().deleteOnExit();
 				}
@@ -107,6 +136,9 @@ public class UploadSimpleFile extends UploadFile {
 			}
 			
 		}
-		return theURL;
+		String[] resArray = new String[2];
+		resArray[0] = fileName;
+		resArray[1] = theURL;
+		return resArray;
 	}	
 }

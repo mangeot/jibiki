@@ -5,43 +5,6 @@
    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
        <title>Papillon</title>   
 <script id="Script" type="text/javascript">
-<!-- Original:  Ben McFarlin (mcfarlin@netscape.net) -->
-<!-- Web Site:  http://sites.netscape.net/mcfarlin -->
-
-<!-- This script and many more are available free online at -->
-<!-- The JavaScript Source!! http://javascript.internet.com -->
-
-<!-- Begin
-function populate(objForm,selectIndex) {
-timeA = new Date(objForm.year.options[objForm.year.selectedIndex].text, objForm.month.options[objForm.month.selectedIndex].value,1);
-timeDifference = timeA - 86400000;
-timeB = new Date(timeDifference);
-var daysInMonth = timeB.getDate();
-for (var i = 0; i < objForm.day.length; i++) {
-objForm.day.options[0] = null;
-}
-for (var i = 0; i < daysInMonth; i++) {
-objForm.day.options[i] = new Option(i+1);
-}
-document.DocumentForm.day.options[0].selected = true;
-}
-function getYears() {
-
-// You can easily customize what years can be used
-var years = new Array(1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005)
-
-for (var i = 0; i < document.f1.year.length; i++) {
-document.DocumentForm.year.options[0] = null;
-}
-timeC = new Date();
-currYear = timeC.getFullYear();
-for (var i = 0; i < years.length; i++) {
-document.DocumentForm.year.options[i] = new Option(years[i]);
-}
-document.DocumentForm.year.options[2].selected=true;
-}
-window.onLoad = getYears;
-//  End -->
 </script>
 </head>
 <body>
@@ -51,23 +14,42 @@ window.onLoad = getYears;
 <div id="Formulaire" lang="en">
         <h1 style="text-align:center">Administration of InformationFiles</h1>
 
+	<script type="text/javascript">
+    <!--
+            function updateURL (theID, theURL) {
+				document.getElementById(theID).value = theURL;
+			}
+            function updateFileName (theFileName) {
+				if (theFileName.lastIndexOf('.')>0) {
+					theFileName = theFileName.substring(0,theFileName.lastIndexOf('.'));
+				}
+				document.getElementById('title').value = theFileName;
+			}
+          
+            function openUploader(parentId) {
+              // Get the id of the elements to be modified
+              var targetUrl='UploadSimpleFile.po';
+              window.open(targetUrl, parentId,'height=200,width=300,resizable');
+            }
+          
+          // -->
+      </script>
 
 
 <div>&nbsp;<a href="ImportHelp.po">Help</a></div>
 
-<form enctype="multipart/form-data" action="AdminInformations.po" method="post" accept-charset="UTF-8">
+<!--form enctype="multipart/form-data" action="AdminInformations.po" method="post" accept-charset="UTF-8"-->
+<form action="AdminInformations.po">
 <table width="100%" border="0" cellspacing="5" cellpadding="0" summary="File attributes">
 <tr>	
-	<td><b>File:&nbsp;</b></td>
-	<td><input name="file" type="file" size="30" value=""/>
-        <input name="dummy" type="hidden" size="-1" value="Dummy"/>
-          <!-- Here I added a dummy parameter because there is a bug in the multipart request servlet :
-        When you download some PDF file, the first parameter following the file parameter is dropped
-        so the dummy parameter is dropped but the title parameter is kept ! -->
+	<td><b>File or URL:</b></td>
+	<td>
+	<input type="button" name="upload" onclick="javascript:openUploader('url')" value="upload"/> or <br />
+	<input id="url" name="url" type="text" size="60" value=""/>
         </td>
 </tr>
 <tr>
-	<td><b>Author:&nbsp; </b></td>
+	<td><b>Author:</b></td>
         
 	<td><input name="author" id="author" type="text" size="30" value=""/></td>
 </tr>
@@ -80,7 +62,7 @@ window.onLoad = getYears;
 </tr>
 <tr>
 	<td><b>Title:&nbsp;* </b></td>
-	<td><input name="title" type="text" size="30" value=""/></td>
+	<td><input name="title" id="title" type="text" size="30" value=""/></td>
 </tr>
 <tr>
         <td><b>Language:&nbsp;* </b></td>
@@ -91,42 +73,8 @@ window.onLoad = getYears;
 
 </tr>
 <tr>
-        <td><b>Creation&nbsp;Date:&nbsp;</b></td>
-	<td><select name="year" onchange="populate(this.DocumentForm,this.form.month.selectedIndex);">
-<option value="1993">1993</option>
-<option value="1994">1994</option>
-<option value="1995">1995</option>
-<option value="1996">1996</option>
-<option value="1997">1997</option>
-<option value="1998">1998</option>
-<option value="1999">1999</option>
-<option value="2000">2000</option>
-<option value="2001">2001</option>
-<option value="2002">2002</option>
-	        <option value="2003">2003</option>
-	        <option value="2004">2004</option>
-<option value="2005" selected="selected">2005</option>
-</select>
-<select name="month" onchange="populate(this.form,this.selectedIndex);">
-<option value="01">January</option>
-<option value="02">February</option>
-<option value="03">March</option>
-<option value="04">April</option>
-<option value="05">May</option>
-<option value="06">June</option>
-<option value="07">July</option>
-<option value="08">August</option>
-<option value="09">September</option>
-<option value="10">October</option>
-<option value="11">November</option>
-<option value="12">December</option>
-</select>
-<select name="day">
-<option value="">&nbsp;</option>
-</select>
-</td>
-
-
+        <td><b>Creation&nbsp;Date (dd/mm/yyyy):&nbsp;</b></td>
+			<td><input name="date" type="text" size="15" value=""/></td>
 </tr>
 <tr>
         <td><b>Reference:&nbsp;</b></td>
@@ -142,7 +90,6 @@ window.onLoad = getYears;
     </td>
 </tr>
 </table>
-
 <!-- <INPUT NAME="Remove" TYPE="submit" VALUE="Remove"> -->
 <!-- <FORM ACTION="AdminInformations.po" METHOD="GET">
 	Flush all Files in the database: <INPUT NAME="Flush" TYPE="submit" VALUE="Flush">

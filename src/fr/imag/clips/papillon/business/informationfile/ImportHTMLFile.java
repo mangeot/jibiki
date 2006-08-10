@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2006/08/10 16:34:03  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.2  2005/01/15 12:51:24  mangeot
  * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
  *
@@ -56,7 +59,7 @@ public class ImportHTMLFile extends InformationFileAction {
 			 String lang)
             throws PapillonBusinessException ,PapillonImportException{
 
-        PapillonLogger.writeDebugMsg("Importing File \"" + file.getName() + "\"");
+        PapillonLogger.writeDebugMsg("Importing HTML File \"" + file.getName() + "\"");
         try {
             // Get the data
             InputStream is = file.getInputStream();
@@ -83,7 +86,7 @@ public class ImportHTMLFile extends InformationFileAction {
 			 String lang)
             throws PapillonBusinessException ,PapillonImportException {
 
-	PapillonLogger.writeDebugMsg("Importing File \""+ file.getName());
+	PapillonLogger.writeDebugMsg("Importing HTML File "+ file.getName());
 
 	try {
             // Get the data
@@ -102,7 +105,7 @@ public class ImportHTMLFile extends InformationFileAction {
             PapillonLogger.writeDebugMsg("IOException encountered while importing HTML file.");
         }
         
-        PapillonLogger.writeDebugMsg("File \""+ file.getName() + "\"Imported !");
+        PapillonLogger.writeDebugMsg("File \""+ file.getName() + "\" Imported !");
     } 
     
     /**
@@ -130,18 +133,19 @@ public class ImportHTMLFile extends InformationFileAction {
             String oid = env.getFileIDForURL(currentFile.getCanonicalPath());
             PapillonLogger.writeDebugMsg(currentFile.getCanonicalPath() + " --> " + oid);
             InformationFile theFileObject;
-            if (null != oid) {
+            if (null != oid && !oid.equals("")) {
                 theFileObject=InformationFileFactory.findInformationFileByID(oid);
-            } else {
+            } 
+			else {
                 // check that the document has a title
-		if (doc.getTitle().equals("")) {
-		    throw new PapillonImportException("please, enter a title for this document");
-		}
+				if (doc.getTitle().equals("")) {
+					throw new PapillonImportException("please, enter a title for this document");
+				}
                 theFileObject=InformationFileFactory.RegisterNewInformationFile("", "", "", doc);
-                oid = theFileObject.getHandle();
+               oid = theFileObject.getHandle();
                 theFileObject.setFilename(this.getNameOnServer(pathname, oid));
                 theFileObject.setIsIndexFile(true);
-		theFileObject.setLanguage(lang);
+				theFileObject.setLanguage(lang);
                 theFileObject.save();
             }
             // Parse it with tidyHtml to accept/correct ill formed documents            

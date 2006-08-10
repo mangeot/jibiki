@@ -9,6 +9,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.4  2006/08/10 16:26:13  mangeot
+ *  *** empty log message ***
+ *
  *  Revision 1.3  2006/08/10 09:55:21  mangeot
  *  Added a bunzipper for .bz2 compressed files
  *
@@ -34,6 +37,7 @@ import com.lutris.appserver.server.httpPresentation.HttpPresentationComms;
 import com.lutris.appserver.server.httpPresentation.HttpPresentationException;
 import com.lutris.appserver.server.httpPresentation.HttpPresentationRequest;
 
+import org.enhydra.xml.xhtml.dom.XHTMLFormElement;
 import org.enhydra.xml.xhtml.dom.XHTMLInputElement;
 import com.lutris.appserver.server.Enhydra;
 
@@ -51,6 +55,7 @@ import fr.imag.clips.papillon.business.PapillonLogger;
 public class UploadFile extends AbstractPO {
 	
     protected final static String TMP_DIR_CONFIG="Papillon.Informations.tmpDir";
+    protected final static String TMP_NAME_PREFIX="jibiki-tmp-"; 
 
 	/**
     *  This method should be implemented in the subclass so that it returns
@@ -114,7 +119,7 @@ public class UploadFile extends AbstractPO {
 				PapillonLogger.writeDebugMsg("Unexpected Error: Incorrect configuration file for group: "
 											 + TMP_DIR_CONFIG);
 			}
-			req = new de.opus5.servlet.MultipartRequest(comms.request.getHttpServletRequest(), 30000000, tmpDir,"jibiki-tmp", true);
+			req = new de.opus5.servlet.MultipartRequest(comms.request.getHttpServletRequest(), 30000000, tmpDir,TMP_NAME_PREFIX, true);
 		}
 		else {
 			// PapillonLogger.writeDebugMsg("Normal request");
@@ -124,13 +129,14 @@ public class UploadFile extends AbstractPO {
 		/*********************************/
 		// Managing the request
 		/*********************************/
-		String resultUrlValue = getFileUrl(req);
-		
+		String[] result = getFileNameAndURL(req);
+		String fileNameValue = result[0];
+		String resultUrlValue = result[1];
 		
 		/*********************************/
 		// Creating the document Layout
 		/*********************************/		
-		return getForm(resultUrlValue);
+		return getForm(resultUrlValue, fileNameValue);
 		
 	}
 	
@@ -142,7 +148,7 @@ public class UploadFile extends AbstractPO {
      * @exception  HttpPresentationException  Description of the Exception
      * @exception  IOException                Description of the Exception
      */
-    protected  org.w3c.dom.Node getForm(String resultURLValue)
+    protected org.w3c.dom.Node getForm(String resultURLValue, String fileName)
 	throws HttpPresentationException, java.io.IOException {
 		
 		UploadFileXHTML uploaderLayout;
@@ -150,16 +156,22 @@ public class UploadFile extends AbstractPO {
 		// Création du document
 		uploaderLayout = (UploadFileXHTML) MultilingualXHtmlTemplateFactory.createTemplate("UploadFileXHTML", this.myComms, this.sessionData);
 		
+		// Add the form address
+		XHTMLFormElement formElement = (XHTMLFormElement) uploaderLayout.getElementForm();
+		formElement.setAttribute("action",this.getUrl());
+		
 		// Add the resultURL as a value of an input
-		// adding a script if needed
 		XHTMLInputElement urlInputElement = (XHTMLInputElement) uploaderLayout.getElementResultUrl();
 		urlInputElement.setValue(resultURLValue);
+		// Add the original file name as a value of an input
+		XHTMLInputElement fileNameInputElement = (XHTMLInputElement) uploaderLayout.getElementFileName();
+		fileNameInputElement.setValue(fileName);
 		
 		return (org.w3c.dom.Node) uploaderLayout;
 	}
 	
 	
-	protected String getFileUrl(javax.servlet.http.HttpServletRequest mReq)
+	protected String[] getFileNameAndURL(javax.servlet.http.HttpServletRequest mReq)
 	throws 	javax.xml.parsers.ParserConfigurationException,
 	HttpPresentationException,
 	java.io.IOException,
@@ -168,15 +180,28 @@ public class UploadFile extends AbstractPO {
 	javax.xml.transform.TransformerConfigurationException,
 	javax.xml.transform.TransformerException,
 	org.xml.sax.SAXException  {
+		String fileName = "";
 		String theURL = "";
 		
 		if (mReq.getClass().getName().equals("de.opus5.servlet.MultipartRequest")) {
 			
 			de.opus5.servlet.UploadedFile theFile = ((de.opus5.servlet.MultipartRequest)mReq).getUploadedFile(UploadFileXHTML.NAME_file);
 			if (null != theFile && !theFile.getName().equals("")) {
-				String fileName = theFile.getName();
+				fileName = theFile.getName();				
+				String prefix = TMP_NAME_PREFIX+fileName;
+				String newFilePath = theFile.getFile().getCanonicalPath();
+				String number = "0";
+				if (newFilePath.lastIndexOf(prefix)>0) {
+					number = newFilePath.substring(newFilePath.lastIndexOf(prefix) + prefix.length());
+					newFilePath = newFilePath.substring(0,newFilePath.lastIndexOf(prefix));
+				}
+				if (number.lastIndexOf(".tmp")>0) {
+					number = number.substring(0,number.lastIndexOf(".tmp"));				
+				}
+				newFilePath += TMP_NAME_PREFIX + number + "-"; 
 				String contentType = theFile.getContentType();
 				String type = "";
+				String extension = "";
 				java.io.File newFile = null;
 				if (null != contentType) {
 					try {
@@ -187,27 +212,41 @@ public class UploadFile extends AbstractPO {
 						PapillonLogger.writeDebugMsg("Unexpected Error: malformed content type: " + contentType);
 					}
 				} 
-				if (!type.equals("") && !type.equals("gzip") && !type.equals("x_gzip") && !type.equals("bzip2") && !type.equals("x_bzip2") && !type.equals("zip") && fileName!= null) {
-					try {
-						int i = fileName.lastIndexOf(".");
-						type = fileName.substring(i+1).toLowerCase();
-					} catch (IndexOutOfBoundsException e) {
-						PapillonLogger.writeDebugMsg("Unexpected Error: Can't determine file extension for file: " + fileName);
+				try {
+					int i = fileName.lastIndexOf(".");
+					if (i>0) {
+						extension = fileName.substring(i+1).toLowerCase();
 					}
-				}				
-				if (type.equals("gzip") || type.equals("x_gzip") || type.equals("gz")) {
-					newFile = ungzipFile(theFile);
+				} catch (IndexOutOfBoundsException e) {
+					PapillonLogger.writeDebugMsg("Unexpected Error: Can't determine file extension for file: " + fileName);
 				}
-				else if (type.equals("bzip") || type.equals("x_bzip") || type.equals("bz2")  || type.equals("bz")) {
-					newFile = unbzipFile(theFile);
+				if (type.equals("gzip") || type.equals("x_gzip") ||  extension.equals("gz")) {
+					if (extension.equals("gz")) {
+						fileName = fileName.substring(0,fileName.indexOf("."+extension));
+					}
+					newFilePath += fileName;
+					newFile = ungzipFile(theFile, newFilePath);
 				}
-				else if (type.equals("zip")) {
-					newFile = unzipFile(theFile);
+				// It does not work, it abruptly crashes when creating the CBZip2InputStream without any error message
+				/*else if (type.equals("bzip") || type.equals("x_bzip") || extension.equals("bz2")) {
+					if (extension.equals("bz2")) {
+						fileName = fileName.substring(0,fileName.indexOf("."+extension));
+					}
+					newFilePath += fileName;
+					newFile = unbzipFile(theFile, newFilePath);
+				} */
+				else if (type.equals("zip") || extension.equals("zip")) {
+					if (extension.equals("zip")) {
+						fileName = fileName.substring(0,fileName.indexOf("."+extension));
+					}
+					newFilePath += fileName;
+					newFile = unzipFile(theFile, newFilePath);
 				}
 				else {
 					// The pb was the following: when exiting the method, the file was deleted
 					// So I copy it.
-					newFile = new java.io.File(theFile.getFile().getCanonicalPath()+".file");
+					newFilePath += fileName;
+					newFile = new java.io.File(newFilePath);
 					copyFile(theFile.getFile(), newFile);
 					theFile.getFile().deleteOnExit();
 				}
@@ -215,16 +254,19 @@ public class UploadFile extends AbstractPO {
 			}
 			
 		}
-		return theURL;
+		String[] resArray = new String[2];
+		resArray[0] = fileName;
+		resArray[1] = theURL;
+		return resArray;
 	}	
 	
-	protected java.io.File ungzipFile (de.opus5.servlet.UploadedFile file) throws 
+	protected static java.io.File ungzipFile (de.opus5.servlet.UploadedFile file, String newPath) throws 
 		java.io.IOException,
 		fr.imag.clips.papillon.business.PapillonBusinessException,
 		fr.imag.clips.papillon.business.PapillonImportException{
 			// First, computing the output name
 			String source = file.getFile().getCanonicalPath();
-			String dest = source + ".ungz";		
+			String dest = newPath;		
 			java.io.File newFile = null;
 			java.io.InputStream is = file.getInputStream();
 			
@@ -269,13 +311,14 @@ public class UploadFile extends AbstractPO {
 			return newFile;
 		}
 	
-	protected java.io.File unbzipFile (de.opus5.servlet.UploadedFile file) throws 
+	// It does not work, it abruptly crashes when creating the CBZip2InputStream without any error message
+	protected static java.io.File unbzipFile (de.opus5.servlet.UploadedFile file, String newFilePath) throws 
 		java.io.IOException,
 		fr.imag.clips.papillon.business.PapillonBusinessException,
 		fr.imag.clips.papillon.business.PapillonImportException{
 			// First, computing the output name
 			String source = file.getFile().getCanonicalPath();
-			String dest = source + ".unbz2";		
+			String dest = newFilePath;		
 			java.io.File newFile = null;
 			java.io.InputStream is = file.getInputStream();
 			
@@ -285,48 +328,76 @@ public class UploadFile extends AbstractPO {
 				throw new fr.imag.clips.papillon.business.PapillonImportException("the BZipped file is empty.");
 			} 
 			else {
-				// gunzip the file, then apply the appropriate action, based on gunzipped file type.
+				// bunzip the file, then apply the appropriate action, based onbgunzipped file type.
 				
 				java.io.FileOutputStream out = null;
 				org.apache.tools.bzip2.CBZip2InputStream zIn = null;
 				try {
+					PapillonLogger.writeDebugMsg("bunzipping the file...");
 					newFile = new java.io.File(dest);
+					PapillonLogger.writeDebugMsg("file created: " + dest);
 					out = new java.io.FileOutputStream(dest);
+					PapillonLogger.writeDebugMsg("out created ");
+					//crashes here
 					zIn = new org.apache.tools.bzip2.CBZip2InputStream(is);
+					PapillonLogger.writeDebugMsg("zIn created ");
+
 					byte[] buffer = new byte[8 * 1024];
+					PapillonLogger.writeDebugMsg("buffer created ");
 					int count = 0;
 					do {
 						out.write(buffer, 0, count);
 						count = zIn.read(buffer, 0, buffer.length);
+						PapillonLogger.writeDebugMsg("Count: " + count);
 					} while (count != -1);
+					PapillonLogger.writeDebugMsg("Stream end");
+					zIn.close();
+					//out.close();
 				} catch (java.io.IOException ioe) {
-					String msg = "Problem expanding gzip " + ioe.getMessage();
+					String msg = "Problem expanding bzip2 " + ioe.getMessage();
 					PapillonLogger.writeDebugMsg(msg);
 					throw new fr.imag.clips.papillon.business.PapillonBusinessException(msg, ioe);
-				} finally {
-					if (out != null) {
-						try {
-							out.close();
-						} catch (java.io.IOException ioex) {}
-					}
-					if (zIn != null) {
-						try {
-							zIn.close();
-						} catch (java.io.IOException ioex) {}
-					}
-				}
+				} 
+				catch (Exception e) {
+					String msg = "Problem expanding bzip2 " + e.getMessage();
+					PapillonLogger.writeDebugMsg(msg);
+					throw new fr.imag.clips.papillon.business.PapillonBusinessException(msg, e);
+				} 
+				//finally {
+				//	PapillonLogger.writeDebugMsg("finalizing the bunzipping");
+					
+					//if (zIn != null) {
+					//	try {
+					//		PapillonLogger.writeDebugMsg("in != null");
+					//		zIn.close();
+					//	} catch (java.io.IOException ioex) {
+					//		String msg = "Problem expanding bzip2 " + ioex.getMessage();
+					//		PapillonLogger.writeDebugMsg(msg);
+					//	}
+					//}
+					//if (out != null) {
+					//	PapillonLogger.writeDebugMsg("out != null");
+					//	try {
+					//		out.close();
+					//	} catch (java.io.IOException ioex) {
+					//		String msg = "Problem expanding bzip2 " + ioex.getMessage();
+					//		PapillonLogger.writeDebugMsg(msg);
+					//	}
+					//}
+				//}
+				PapillonLogger.writeDebugMsg("file bunzipped");
 				file.getFile().deleteOnExit();
 			}
 			return newFile;
-		}
+		} 
 	
-	protected java.io.File unzipFile (de.opus5.servlet.UploadedFile file) throws 
+	protected static java.io.File unzipFile (de.opus5.servlet.UploadedFile file, String newFilePath) throws 
 		java.io.IOException,
 		fr.imag.clips.papillon.business.PapillonBusinessException,
 		fr.imag.clips.papillon.business.PapillonImportException{
 			// First, computing the output name
 			String source = file.getFile().getCanonicalPath();
-			String dest = source + ".unzip";	
+			String dest = newFilePath;	
 			java.io.File newFile = null;
 			java.io.InputStream is = file.getInputStream();
 			
@@ -356,9 +427,21 @@ public class UploadFile extends AbstractPO {
 			return newFile;
 		}	
 	
+	protected static void copyStream(java.io.InputStream input,
+							java.io.OutputStream output )
+		throws java.io.IOException
+	{
+		final byte[] buffer = new byte[ 8024 ];
+		int n = 0;
+		while( -1 != ( n = input.read( buffer ) ) )
+		{
+			output.write( buffer, 0, n );
+		}
+	}
+	
 	   // Copies src file to dst file.
 	   // If the dst file does not exist, it is created
-    void copyFile(java.io.File src, java.io.File dst) throws java.io.IOException {
+    protected static void copyFile(java.io.File src, java.io.File dst) throws java.io.IOException {
         java.io.InputStream in = new java.io.FileInputStream(src);
         java.io.OutputStream out = new java.io.FileOutputStream(dst);
 		
