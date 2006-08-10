@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.7  2006/08/10 18:44:49  mangeot
+ * Added local default file encoding log
+ *
  * Revision 1.6  2005/07/28 13:06:47  mangeot
  * - Added the possibility to export in PDF format. The conversion into PDF is don
  * e via the fop package that has to be installed (see ToolsForPapillon)
@@ -85,6 +88,9 @@ public class Papillon extends StandardApplication {
         
         // Look at the Xerces version that is currently loaded and display it...
         Enhydra.getLogChannel().write(Logger.INFO, org.apache.xerces.impl.Version.getVersion());
+		
+        // Look at the local file encoding
+        Enhydra.getLogChannel().write(Logger.INFO, "local system encoding: "+System.getProperty ("file.encoding"));
         
 		//tests
         //	ParseVolume.parseVolume("essai.xml");
