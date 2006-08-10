@@ -4,6 +4,9 @@
 *$Id$
 *------------------------------------------
 *$Log$
+*Revision 1.15  2006/08/10 22:55:09  mangeot
+*Added a method for printong a DOM tree into a file
+*
 *Revision 1.14  2006/08/10 22:17:13  fbrunet
 *- Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
 *- Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
@@ -306,6 +309,30 @@ public class Utility {
 		return myStringWriter.toString();
 	}
 	 */
+	/**
+		* serialize a DOM document into a file
+     *
+     * @return void
+     * @exception PapillonBusinessException if an error occurs
+     *   retrieving data (usually due to an underlying data layer
+						  *   error).
+     */
+	public static void printToFile(org.w3c.dom.Document theDoc, String filePath) 
+		throws fr.imag.clips.papillon.business.PapillonBusinessException {
+			try {
+				java.io.OutputStream outStream = new java.io.FileOutputStream(filePath);
+				java.io.PrintStream myPrintStream = new java.io.PrintStream(outStream,true,"UTF-8");
+				myPrintStream.print(Utility.NodeToString(theDoc,true,true,true));
+				myPrintStream.close();
+				outStream.close();
+			}
+			catch (java.io.UnsupportedEncodingException ueex)  {
+				throw new fr.imag.clips.papillon.business.PapillonBusinessException("Exception in printToFile()", ueex);
+			}
+			catch(java.io.IOException ioex) {
+				throw new fr.imag.clips.papillon.business.PapillonBusinessException("Exception in printToFile()", ioex);
+			}		
+		}
 	
 	/**
 		* Builds an empty DOM document from scratch
