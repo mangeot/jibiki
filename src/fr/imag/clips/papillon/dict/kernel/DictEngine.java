@@ -1,6 +1,7 @@
 package fr.imag.clips.papillon.dict.kernel;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Vector;
 
 import fr.imag.clips.papillon.business.dictionary.AvailableLanguages;
@@ -86,10 +87,13 @@ public class DictEngine implements IDictEngine {
     public String[] getDictionariesInfo() {
         String[] Infos = null;
         try {
-            Dictionary[] Dicts = DictionariesFactory.getDictionariesArray();
-            Infos = new String[Dicts.length];
-            for (int i=0; i<Dicts.length;i++) {
-                Infos[i] = Dicts[i].getName() + " \"" + Dicts[i].getFullName() + "\"";
+            Collection Dicts = DictionariesFactory.getDictionariesArray();
+            Infos = new String[Dicts.size()];
+            int i = 0;
+            for (Iterator iter = Dicts.iterator(); iter.hasNext();) {
+                Dictionary dict = (Dictionary)iter.next();
+                Infos[i] = dict.getName() + " \"" + dict.getFullName() + "\"";
+                i++;
             }
         }
         catch (Exception e) {
@@ -101,19 +105,21 @@ public class DictEngine implements IDictEngine {
     public String[] getDatabaseInfo() {
         String[] Infos = null;
         try {
-            Dictionary[] Dicts = DictionariesFactory.getDictionariesArray();
-            Infos = new String[Dicts.length];
-            for (int i=0; i<Dicts.length;i++) {
-                Dictionary dict = Dicts[i];
+            Collection Dicts = DictionariesFactory.getDictionariesArray();
+            Infos = new String[Dicts.size()];
+            int i = 0;
+            for (Iterator iter = Dicts.iterator(); iter.hasNext();) {
+                Dictionary dict = (Dictionary)iter.next();
+                
+                //
                 int count = 0;
-                Volume[] Volumes = VolumesFactory.getVolumesArray(dict.getName());
-                if (Volumes != null && Volumes.length > 0) {
-                    for (int j=0 ; j< Volumes.length; j++) {
-                        count += Volumes[j].getCount();
-                    }
+                for (Iterator iter2 = VolumesFactory.getVolumesArray(dict.getName()).iterator(); iter2.hasNext();) {
+                    count += ((Volume)iter2.next()).getCount();
                 }
                 
+                //
                 Infos[i] = dict.getName() + " has " + count + " entries";
+                i++;
             }
         }
         catch (Exception e) {
@@ -125,30 +131,30 @@ public class DictEngine implements IDictEngine {
     public String getDictionaryInfo(String dictName) {
         String info = null;
         try {
-            Dictionary dict = DictionariesFactory.findDictionaryByName(dictName);
+            Dictionary dict = DictionariesFactory.getDictionaryByName(dictName);
 			if (dict != null && !dict.isEmpty()) {
 				info = dict.getName() + " \"" + dict.getFullName() + "\"\n";
-				String[] Sources = AvailableLanguages.getSourceLanguagesArrayForDict(dict.getName());
+				
 				String languages = "";
-				if (Sources != null && Sources.length > 0) {
-					for (int i=0 ; i< Sources.length; i++) {
-						languages = languages + " " + Sources[i];
-					}
-				}
+                for (Iterator iter = AvailableLanguages.getSourceLanguagesArrayForDict(dict.getName()).iterator(); iter.hasNext();) {
+                    languages = languages + " " + (String)iter.next();
+                }
+				
 				info = info + "Available source languages: " + languages + "\n";
-				int count = 0;
-				Volume[] Volumes = VolumesFactory.getVolumesArray(dict.getName());
-				if (Volumes != null && Volumes.length > 0) {
-					for (int j=0 ; j< Volumes.length; j++) {
-						count = count + Volumes[j].getCount();
-					}
-				}            
+				
+                //
+                int count = 0;
+                for (Iterator iter =  VolumesFactory.getVolumesArray(dict.getName()).iterator(); iter.hasNext();) {
+                    count = count + ((Volume)iter.next()).getCount();
+                }
+				
+                //
 				info = info + dict.getName() + " has " + count + " entries";
 			}
 			else {
 				info = null;
 			}
-
+            
         }
         catch (Exception e) {
             throw new RuntimeException("Error in getDictionaryInfo with dict: "+dictName);
@@ -164,7 +170,7 @@ public class DictEngine implements IDictEngine {
         try {
             if (dictName.equals("*")) return lookupAll(lang, word, strategy);
             if (dictName.equals("!")) return lookupAny(lang, word, strategy);
-            Dictionary dict = DictionariesFactory.findDictionaryByName(dictName);
+            Dictionary dict = DictionariesFactory.getDictionaryByName(dictName);
             if (dict != null && !dict.isEmpty()) {
                 Answers = lookupDict(dict, lang, word, strategy);
             }
@@ -216,21 +222,18 @@ public class DictEngine implements IDictEngine {
     public IAnswer[] lookupAny(String lang, String word, int strategy) {
         Vector Answers = new Vector();
         try {
-            Dictionary[] Dictionaries = DictionariesFactory.getDictionariesArray();
-            if (null != Dictionaries && Dictionaries.length > 0) {
-                int i=0;
-                while (i < Dictionaries.length) {
-                    Answers.addAll(lookupDict(Dictionaries[i], lang, word, strategy));
-                    if (Answers.size()>0) {
-                        i=Dictionaries.length;
-                    }
-                    else {
-                        i++;
-                    }
-                }
+            Collection Dictionaries = DictionariesFactory.getDictionariesArray();
+            Iterator iter = Dictionaries.iterator();
+            
+            boolean answersIsEmpty = true;
+            while ( answersIsEmpty && iter.hasNext() ) {
+                Dictionary dict = (Dictionary)iter.next();
+                
+                Answers.addAll(lookupDict(dict, lang, word, strategy));
+                answersIsEmpty = !(Answers.size()>0);
             }
-        }
-        catch (Exception e) {
+            
+        } catch (Exception e) {
 //            throw new RuntimeException("Error in Lookup Any");
 			System.out.println("Error in Lookup Any: " + e.toString());
 			e.printStackTrace();

@@ -11,6 +11,11 @@ Id:
   
 Log:
    $Log$
+   Revision 1.21  2006/08/10 22:17:12  fbrunet
+   - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
+   - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+   - Bug correction : +/- in advanced search
+
    Revision 1.20  2006/07/10 10:44:40  serasset
    Compilation of xsl translets is done only if xsl changed. Morover, celanup now cleans the stamp files.
    Added a new property to be added to point to saxon 8b xsl transformer
@@ -407,6 +412,7 @@ For Lexalp, call ant using -Dapplication.name=Lexalp
           <include name="**/*.ico"/>
           <include name="**/*.png"/>
           <include name="**/*.properties"/>
+          <include name="**/*.xsl"/>
         </fileset>
      </copy>
      
@@ -439,6 +445,7 @@ For Lexalp, call ant using -Dapplication.name=Lexalp
      <filter token="AVALON_LIB" value="${papillon.avalon.jar}" />
      <filter token="BATIK_LIB" value="${papillon.batik.jar}" />
      <filter token="OBSERVATEUR_LIB" value="${papillon.observateur.jar}" />
+     <filter token="FO_PATH" value="${papillon.fo.xsl}" />
      <!-- /Papillon-specific filters -->
 
      <copy todir="${dir.output}"

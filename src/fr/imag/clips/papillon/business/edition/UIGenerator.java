@@ -8,6 +8,11 @@
  * $Id$
  *---------------------------------------------------------
  * $Log$
+ * Revision 1.23  2006/08/10 22:17:12  fbrunet
+ * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
+ * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+ * - Bug correction : +/- in advanced search
+ *
  * Revision 1.22  2006/05/05 02:08:23  fbrunet
  * bug correction : url utf8 transfert (in createEntryInit)
  *
@@ -140,10 +145,15 @@ public class UIGenerator {
 	
 	public static boolean addElement(String elementName, String parentId, Element entryElt, Element entryTemplate, String[] siblingIds) {
 		PapillonLogger.writeDebugMsg("addElement: " + elementName + " parent: " + parentId + " entry: " + entryElt + " entryTemplate: " + entryTemplate);
-        for (int i=0; i < siblingIds.length; i++) {
-            PapillonLogger.writeDebugMsg("siblingIds: " + siblingIds[i]);
+        
+        //
+        if (siblingIds != null) {
+            for (int i=0; i < siblingIds.length; i++) {
+                PapillonLogger.writeDebugMsg("siblingIds: " + siblingIds[i]);
+            }
         }
         
+        //
 		Element siblingElement = null;
 		if (siblingIds != null && siblingIds.length>0) {
 			String siblingId = siblingIds[siblingIds.length-1]; 

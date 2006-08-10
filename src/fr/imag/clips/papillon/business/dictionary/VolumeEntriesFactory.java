@@ -3,6 +3,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.52  2006/08/10 22:17:12  fbrunet
+ * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
+ * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+ * - Bug correction : +/- in advanced search
+ *
  * Revision 1.51  2006/04/24 13:43:29  fbrunet
  * Add new class ViewQueryResult : allow to use one class to create result display in advancedSearch and EditEntryInit (like advancedQueryForm)
  * Improve result display : view n results per page
@@ -478,9 +483,9 @@ public class VolumeEntriesFactory {
 				Volume volume;
 				Dictionary dict;
 				try {
-					volume = VolumesFactory.findVolumeByName(volumeName);
+					volume = VolumesFactory.getVolumeByName(volumeName);
 					if (volume != null && !volume.isEmpty()) {
-						dict = DictionariesFactory.findDictionaryByName(volume.getDictname());
+						dict = DictionariesFactory.getDictionaryByName(volume.getDictname());
 						if (dict != null && !dict.isEmpty()) {
 							resultVector = getDbTableEntriesVector(dict, volume, Keys, Clauses, any, order, offset, limit);
 						}
@@ -826,7 +831,7 @@ public class VolumeEntriesFactory {
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 			
 			if (myVolume !=null && !myVolume.isEmpty()) {
-				Dictionary myDict = DictionariesFactory.findDictionaryByName(myVolume.getDictname());
+				Dictionary myDict = DictionariesFactory.getDictionaryByName(myVolume.getDictname());
 				if (myDict !=null && !myDict.isEmpty()) {
 					User authorUser = UsersFactory.findUserByLogin(newAuthorLogin);
 					if (authorUser == null || authorUser.isEmpty()) {
@@ -843,9 +848,9 @@ public class VolumeEntriesFactory {
 	public static void exportVolume(String volumeName, Vector myKeys, Vector clauseVector, String outputFormat, java.io.OutputStream myOutStream) 
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 			
-			Volume myVolume = VolumesFactory.findVolumeByName(volumeName);
+			Volume myVolume = VolumesFactory.getVolumeByName(volumeName);
 			if (myVolume !=null && !myVolume.isEmpty()) {
-				Dictionary myDict = DictionariesFactory.findDictionaryByName(myVolume.getDictname());
+				Dictionary myDict = DictionariesFactory.getDictionaryByName(myVolume.getDictname());
 				if (myDict !=null && !myDict.isEmpty()) {
 					
 					String tmplEntry = myVolume.getTemplateEntry();
@@ -908,11 +913,23 @@ public class VolumeEntriesFactory {
 	
 	public static void convertVolume(String volumeName, Vector myKeys, Vector clauseVector, String stylesheetHandle) throws PapillonBusinessException {
 		
-		Volume myVolume = VolumesFactory.findVolumeByName(volumeName);
+        /*
+		Volume myVolume = VolumesFactory.getVolumeByName(volumeName);
 		if (myVolume !=null && !myVolume.isEmpty()) {
-			Dictionary myDict = DictionariesFactory.findDictionaryByName(myVolume.getDictname());
+			Dictionary myDict = DictionariesFactory.getDictionaryByName(myVolume.getDictname());
 			if (myDict !=null && !myDict.isEmpty()) {
 				fr.imag.clips.papillon.business.dictionary.IVolumeEntryProcessor myProcessor = new fr.imag.clips.papillon.business.dictionary.ConvertVolumeEntryProcessor(stylesheetHandle);
+				PapillonLogger.writeDebugMsg("Processor created");
+				fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory.processVolume(myDict, myVolume, myKeys, clauseVector, myProcessor);
+				PapillonLogger.writeDebugMsg("Volume processed");
+			}
+		}
+         */
+        Volume myVolume = VolumesFactory.getVolumeByName(volumeName);
+		if (myVolume !=null && !myVolume.isEmpty()) {
+			Dictionary myDict = DictionariesFactory.getDictionaryByName(myVolume.getDictname());
+			if (myDict !=null && !myDict.isEmpty()) {
+				fr.imag.clips.papillon.business.dictionary.IVolumeEntryProcessor myProcessor = new fr.imag.clips.papillon.business.dictionary.ConvertVolumeEntryProcessor(stylesheetHandle, myVolume.getDictname(), volumeName);
 				PapillonLogger.writeDebugMsg("Processor created");
 				fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory.processVolume(myDict, myVolume, myKeys, clauseVector, myProcessor);
 				PapillonLogger.writeDebugMsg("Volume processed");
@@ -961,9 +978,9 @@ public class VolumeEntriesFactory {
 		Vector myVector = new Vector();
 		myVector.add(Headword);
         try {
-			Volume volume = VolumesFactory.findVolumeByName("JMDict_jpn_eng");
+			Volume volume = VolumesFactory.getVolumeByName("JMDict_jpn_eng");
 			if (volume != null && !volume.isEmpty()) {
-				Dictionary myDict = DictionariesFactory.findDictionaryByName(volume.getDictname());
+				Dictionary myDict = DictionariesFactory.getDictionaryByName(volume.getDictname());
 				theEntries = IndexFactory.getEntriesVector(myDict, volume, myVector, null,0);
 			}
 		}
@@ -992,8 +1009,8 @@ public class VolumeEntriesFactory {
 			Volume volume;
             Dictionary dict;
             try {
-                volume = VolumesFactory.findVolumeByName(volumeName);
-                dict = DictionariesFactory.findDictionaryByName(volume.getDictname());
+                volume = VolumesFactory.getVolumeByName(volumeName);
+                dict = DictionariesFactory.getDictionaryByName(volume.getDictname());
             }
             catch(Exception ex) {
 				return null;
@@ -1077,8 +1094,8 @@ public class VolumeEntriesFactory {
 			Volume volume;
             Dictionary dict;
             try {
-                volume = VolumesFactory.findVolumeByName(volumeName);
-                dict = DictionariesFactory.findDictionaryByName(volume.getDictname());
+                volume = VolumesFactory.getVolumeByName(volumeName);
+                dict = DictionariesFactory.getDictionaryByName(volume.getDictname());
             }
             catch(Exception ex) {
 				return null;
@@ -1087,6 +1104,7 @@ public class VolumeEntriesFactory {
 		}
 	
     
+    //
 	protected static VolumeEntry findEntryByEntryId(Dictionary myDict, Volume myVolume, String entryId)
         throws PapillonBusinessException {
 			//FIXME: should use queries as used in findEntryByEntryId(User user, String entryid)
@@ -1181,7 +1199,7 @@ public class VolumeEntriesFactory {
  */
 public static VolumeEntry findEntryByEntryId(User user, String entryId) 
 throws PapillonBusinessException {
-    return findEntryByEntryId(user, VolumesFactory.getVolumesArrayName(), entryId);
+    return findEntryByEntryId(user, VolumesFactory.getVolumesArray(), entryId);
 }
 
 /**
@@ -1189,11 +1207,11 @@ throws PapillonBusinessException {
  *
  *
  */
-public static VolumeEntry findEntryByEntryId(User user, String volume, String entryId) 
+public static VolumeEntry findEntryByEntryId(User user, Volume volume, String entryId) 
 throws PapillonBusinessException {
-    String[] volumeNames = new String[1];
-    volumeNames[0] = volume;
-    return findEntryByEntryId(user, volumeNames, entryId);
+    ArrayList volumes = new ArrayList();
+    volumes.add(volume);
+    return findEntryByEntryId(user, volumes, entryId);
 }
 
 /**
@@ -1201,7 +1219,7 @@ throws PapillonBusinessException {
  *
  *
  */
-public static VolumeEntry findEntryByEntryId(User user, String[] volumeNames, String entryId)
+public static VolumeEntry findEntryByEntryId(User user, Collection volumes, String entryId)
 throws PapillonBusinessException {
     
     //FIXME: an entry id may not be unique externally to a dictionary so the dict must be specified
@@ -1210,7 +1228,7 @@ throws PapillonBusinessException {
     if (entryId != null && !entryId.equals("")) {
 		
         // FIXME ... Add dictionary in QueryRequest class
-        QueryRequest queryReq = new QueryRequest(volumeNames);
+        QueryRequest queryReq = new QueryRequest(volumes);
         
         // Entry Id
         QueryCriteria criteriaSearch = new QueryCriteria();
@@ -1269,8 +1287,8 @@ throws PapillonBusinessException {
     Volume volume;
     Dictionary dict;
     try {
-        volume = VolumesFactory.findVolumeByName(volumeName);
-        dict = DictionariesFactory.findDictionaryByName(volume.getDictname());
+        volume = VolumesFactory.getVolumeByName(volumeName);
+        dict = DictionariesFactory.getDictionaryByName(volume.getDictname());
     }
     catch(Exception ex) {
         return null;
@@ -1301,9 +1319,9 @@ throws fr.imag.clips.papillon.business.PapillonBusinessException {
 public static VolumeEntry createEmptyEntry(String volume) 
 throws fr.imag.clips.papillon.business.PapillonBusinessException {
     VolumeEntry myEntry = null;
-    Volume myVolume = VolumesFactory.findVolumeByName(volume);
+    Volume myVolume = VolumesFactory.getVolumeByName(volume);
     if (myVolume != null && !myVolume.isEmpty()) {
-        Dictionary myDict = DictionariesFactory.findDictionaryByName(myVolume.getDictname());
+        Dictionary myDict = DictionariesFactory.getDictionaryByName(myVolume.getDictname());
         if (myDict != null && !myDict.isEmpty()) {
             myEntry = new VolumeEntry(myDict, myVolume);
             String templateEntry = myVolume.getTemplateEntry();

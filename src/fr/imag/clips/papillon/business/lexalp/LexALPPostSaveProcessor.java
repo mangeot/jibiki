@@ -7,6 +7,11 @@
  * $Id$
  *------------------------
  * $Log$
+ * Revision 1.4  2006/08/10 22:17:13  fbrunet
+ * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
+ * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+ * - Bug correction : +/- in advanced search
+ *
  * Revision 1.3  2006/06/01 22:05:05  fbrunet
  * New interface, quick search, new contribution management (the first edition not create new contribution. New contribution is created after add, remove element, update, save, etc. in the interface window)
  *
@@ -30,6 +35,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.lang.Integer;
 
 import org.w3c.dom.Document;
@@ -437,14 +443,11 @@ public class LexALPPostSaveProcessor implements ResultPostSaveProcessor {
     private ArrayList getReferencedLexieIds(VolumeEntry axi) throws PapillonBusinessException {
         
         // Search referenced lexies
-        ArrayList referencedLexieList = new ArrayList();
-        
-        // Get lang
-        Volume[] volumeList = VolumesFactory.getVolumesArray();
+        ArrayList referencedLexieList = new ArrayList(); 
         
         // Search by lang
-        for (int i = 0; i < volumeList.length; i++) {
-            String lang = ((Volume)volumeList[i]).getSourceLanguage();
+        for (Enumeration iter = VolumesFactory.getSourceLanguages(); iter.hasMoreElements ();) {
+            String lang = (String)iter.nextElement();
             
             // get referenced lexies
             String[] referencedLexieListTmp = axi.getReferencedLexieIds(lang);
@@ -587,7 +590,7 @@ public class LexALPPostSaveProcessor implements ResultPostSaveProcessor {
         if ( newReferencedLexieList.size()!=0 ) {
                 
             //
-            QueryRequest qr = new QueryRequest(axi.getVolumeName());
+            QueryRequest qr = new QueryRequest(axi.getVolume());
             
             // ReferencedLexie
             ArrayList listLexies = new ArrayList();

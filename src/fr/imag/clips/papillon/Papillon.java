@@ -9,6 +9,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.9  2006/08/10 22:17:12  fbrunet
+ * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
+ * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+ * - Bug correction : +/- in advanced search
+ *
  * Revision 1.8  2006/08/10 19:03:15  mangeot
  * default charsetCVS: ----------------------------------------------------------------------
  *
@@ -57,13 +62,20 @@ import com.lutris.appserver.server.httpPresentation.*;
 import com.lutris.util.*;
 import com.lutris.logging.Logger;
 
+import java.util.Hashtable;
+
+import fr.imag.clips.papillon.business.dictionary.DictionariesFactory;
+import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
+import fr.imag.clips.papillon.business.xsl.XslSheetFactory;
+import fr.imag.clips.papillon.business.PapillonBusinessException;
+
 /* For JDictd */
 import fr.imag.clips.papillon.dict.server.JDictd;
 
 /*for tests*/
 import fr.imag.clips.papillon.business.PapillonLogger;
-//import fr.imag.clips.papillon.business.dictionary.ParseVolume;
 import fr.imag.clips.papillon.business.locales.*;
+
 
 /**
  * The application object.
@@ -80,6 +92,7 @@ public class Papillon extends StandardApplication {
     protected String layoutClassName = "fr.imag.clips.papillon.presentation.PapillonLayout";
     protected String loginCookieName = "PapillonLoginCookie";
 
+        
     /*
      *  A few methods you might want to add to.
      *  See StandardApplication for more details.
@@ -98,9 +111,6 @@ public class Papillon extends StandardApplication {
 		//java.nio.charset.Charset defaultCharset = java.nio.charset.Charset.defaultCharset();
 		java.io.InputStreamReader myInputStreamReader = new java.io.InputStreamReader(System.in);
         Enhydra.getLogChannel().write(Logger.INFO, "Local system default charset: "+myInputStreamReader.getEncoding());
-        
-		//tests
-        //	ParseVolume.parseVolume("essai.xml");
         
         //  Dictd specific settings.
         boolean listen = false; 
@@ -141,6 +151,7 @@ public class Papillon extends StandardApplication {
         } catch (ConfigException e) {
             // nothing... failing to default...
         }
+        
         // Get Login Cookie Name.
         String configLoginCookieName = null; 
         try {
@@ -150,6 +161,44 @@ public class Papillon extends StandardApplication {
             // nothing... failing to default...
         }
         
+        // Initialize dictionarie cache
+        try {
+            DictionariesFactory.initializeDictionaryCache();
+        } catch (PapillonBusinessException e) {
+            throw new ApplicationException("Initialize dictionaries error", e);
+        }
+        
+        // Initialize volume cache
+        try {
+           VolumesFactory.initializeVolumeCache();
+        } catch (PapillonBusinessException e) {
+            throw new ApplicationException("Initialize volumes error", e);
+        }
+        
+        // Initialize transformer factory
+        // FIXME : For Xalan 2_7_0
+        //try {
+        //    XslSheetFactory.initializeTransformerFactory();
+        //} catch (PapillonBusinessException e) {
+        //    throw new ApplicationException("Initialize transformer factory error", e);
+        //}
+        
+        // Initialize xsl sheet cache
+        try {
+            XslSheetFactory.initializeXslSheetCache();
+        } catch (PapillonBusinessException e) {
+            throw new ApplicationException("Initialize xsl sheet error", e);
+        }
+        
+        
+        // Initialize jibiki xsl sheets
+        try {
+            XslSheetFactory.initializeJibikiXslSheet();
+        } catch (PapillonBusinessException e) {
+            throw new ApplicationException("Initialize jibiki xsl sheet error", e);
+        }
+        
+       
     }
     
     public String getPriorityPackage() {

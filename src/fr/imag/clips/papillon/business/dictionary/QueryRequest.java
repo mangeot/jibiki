@@ -33,44 +33,35 @@ package fr.imag.clips.papillon.business.dictionary;
     public class QueryRequest {
         
         //
-        protected String[] volumeNames;
+        protected ArrayList volumes;
         protected ArrayList criteriaTree;   // AND(OR) tree or OR(AND) tree
         protected boolean isAndTree = true; // AND(OR) tree -> default
         protected String offset; 
         protected String limit; 
         protected String xsl;
-        protected String[] targets;
+        protected ArrayList targets;
         
         //
-        public QueryRequest(String name) {
+        public QueryRequest(Volume volume) {
             criteriaTree = new ArrayList();
-            String[] names = new String[1];
-            names[0] = name;
-            volumeNames = names;
+            volumes = new ArrayList();
+            volumes.add(volume);
             limit = "0";
             offset = "0";
         }
         
         //
-        public QueryRequest(String[] names) {
+        public QueryRequest(Collection volumesCollection) {
             criteriaTree = new ArrayList();
-            volumeNames = names;
+            volumes = new ArrayList(volumesCollection);
         }
         
-        public String[] getVolumeNames() {
-            return (null == volumeNames) ? (volumeNames = new String[0]) : volumeNames;
+        //
+        public Collection getVolumes() {
+            return volumes;
         }
         
-        //public void setVolumeNames(String[] names) {
-        //    volumeNames = names;
-        //}
-        
-        //public void setVolumeName(String name) {
-        //    String[] names = new String[1];
-        //    names[0] = name;
-        //    volumeNames = names;
-        //}
-        
+        //
         public ArrayList getCriteriaTree() {
             return criteriaTree;
         }
@@ -135,13 +126,14 @@ package fr.imag.clips.papillon.business.dictionary;
             xsl = newXsl;
         }
         
-        public String[] getTargets() {
-            return (null == targets) ? (targets = new String[0]) : targets;
+        public Collection getTargets() {
+            return targets;
         }
         
-        public void setTargets(String[] newTargets) {
-            targets = newTargets;
+        public void setTargets(Collection targetsCollection) {
+            targets = new ArrayList(targetsCollection);
         }
+
 
         public boolean isEmpty() {
             return (criteriaTree.size() == 0);
@@ -344,9 +336,10 @@ package fr.imag.clips.papillon.business.dictionary;
                 ArrayList result = new ArrayList();
                 
                 //
-                for (int i=0; i< volumeNames.length; i++) {
+                for (Iterator iter = volumes.iterator(); iter.hasNext();) {
+                    Volume volume = (Volume)iter.next();
                     
-                    Volume volume = VolumesFactory.findVolumeByName((String)volumeNames[i]);
+                    //
                     VolumeEntryQuery veQuery = new VolumeEntryQuery(volume.getDbname(), CurrentDBTransaction.get());
                     findLexie(veQuery.getQueryBuilder(), volume.getDbname(), volume.getIndexDbname());
                      
@@ -363,7 +356,7 @@ package fr.imag.clips.papillon.business.dictionary;
                     VolumeEntryDO[] DOarray = veQuery.getDOArray();
                     if (null != DOarray) {
                         for (int j=0; j < DOarray.length; j++) {
-                            VolumeEntry tempEntry = new VolumeEntry(DictionariesFactory.findDictionaryByName(volume.getDictname()), volume, DOarray[j]);
+                            VolumeEntry tempEntry = new VolumeEntry(DictionariesFactory.getDictionaryByName(volume.getDictname()), volume, DOarray[j]);
                             QueryResult queryResult = new QueryResult(QueryResult.UNIQUE_RESULT, tempEntry);
                             result.add(queryResult);
                         }
@@ -394,7 +387,7 @@ package fr.imag.clips.papillon.business.dictionary;
                 for (int i=0; i< volumeNames.length; i++) {
                     
                     // init
-                    Volume volume = VolumesFactory.findVolumeByName((String)volumeNames[i]);
+                    Volume volume = VolumesFactory.getVolumeByName((String)volumeNames[i]);
                     VolumeEntryQuery veQuery = new VolumeEntryQuery(volume.getDbname(), CurrentDBTransaction.get());
                     RDBTable table = new RDBTable(volume.getDbname());
                     RDBColumn objectidRDB = new RDBColumn( table, "objectid", false );
@@ -432,7 +425,7 @@ package fr.imag.clips.papillon.business.dictionary;
                     VolumeEntryDO[] DOarray = veQuery.getDOArray();
                     if (null != DOarray) {
                         for (int j=0; j < DOarray.length; j++) {
-                            VolumeEntry tempEntry = new VolumeEntry(DictionariesFactory.findDictionaryByName(volume.getDictname()), volume, DOarray[j]);
+                            VolumeEntry tempEntry = new VolumeEntry(DictionariesFactory.getDictionaryByName(volume.getDictname()), volume, DOarray[j]);
                             QueryResult queryResult = new QueryResult(QueryResult.UNIQUE_RESULT, tempEntry);
                             result.add(queryResult);
                         }
@@ -459,15 +452,16 @@ package fr.imag.clips.papillon.business.dictionary;
                 ArrayList result = new ArrayList();
                 
                 //
-                for (int i=0; i< volumeNames.length; i++) {
+                for (Iterator iter = volumes.iterator(); iter.hasNext();) {
+                    Volume volume = (Volume)iter.next();
                     
                     //
-                    Volume volume = VolumesFactory.findVolumeByName((String)volumeNames[i]);
                     VolumeEntryQuery veQuery = new VolumeEntryQuery(volume.getDbname(), CurrentDBTransaction.get());
                     findLexie(veQuery.getQueryBuilder(), volume.getDbname(), volume.getIndexDbname());
                     
                     // limit/offset and sort
-                    if ((limit != null) && (offset != null) && ((!limit.equals("0")) || (!offset.equals("0")))) {
+                    if ( (limit != null) && (offset != null) 
+                         && ((!limit.equals("0")) || (!offset.equals("0")))) {
                         veQuery.getQueryBuilder().addEndClause(" LIMIT " + limit + " OFFSET " + offset);
                     }
                     
@@ -480,8 +474,10 @@ package fr.imag.clips.papillon.business.dictionary;
                     VolumeEntryDO[] DOarray = veQuery.getDOArray();
                     if (null != DOarray) {
                         for (int j=0; j < DOarray.length; j++) {
-                            VolumeEntry tempEntry = new VolumeEntry(DictionariesFactory.findDictionaryByName(volume.getDictname()), volume, DOarray[j]);
-            
+                            
+                            //
+                            VolumeEntry tempEntry = new VolumeEntry(DictionariesFactory.getDictionaryByName(volume.getDictname()), volume, DOarray[j]);
+                            
                             // FIXME : replace expandResult by QueryRequest MethodS !
                             result.addAll(DictionariesFactory.expandResult(tempEntry, targets, user));
                             //QueryResult queryResult = new QueryResult(QueryResult.AXIE_COLLECTION_RESULT, tempEntry, axie, transEntries);
@@ -506,11 +502,11 @@ package fr.imag.clips.papillon.business.dictionary;
          * @exception PapillonBusinessException if database error
          */
         // FIXME: create QueryRequestFactory !
-        static public ArrayList findAllLexies(String volumeName, User user)  throws PapillonBusinessException {
+        static public ArrayList findAllLexies(Volume volume, User user)  throws PapillonBusinessException {
             try {
                 ArrayList result = new ArrayList();
                 
-                QueryRequest query = new QueryRequest(volumeName);
+                QueryRequest query = new QueryRequest(volume);
                 //query.setTargets(targets);
                 //query.setOffset(offset);
                 
@@ -535,11 +531,11 @@ package fr.imag.clips.papillon.business.dictionary;
          * @exception PapillonBusinessException if database error
          */
         // FIXME: create QueryRequestFactory !
-        static public ArrayList findLexieHistory(String handle, String volumeName, User user)  throws PapillonBusinessException {
+        static public ArrayList findLexieHistory(String handle, Volume volume, User user)  throws PapillonBusinessException {
             try {
                 ArrayList result = new ArrayList();
                 
-                QueryRequest query = new QueryRequest(volumeName);
+                QueryRequest query = new QueryRequest(volume);
                 //query.setTargets(targets);
                 //query.setOffset(offset);
                 
@@ -559,7 +555,7 @@ package fr.imag.clips.papillon.business.dictionary;
                         String newEntryId = qr.getSourceEntry().getClassifiedFinishedContributionId();
                         //String newEntryId = qr.getSourceEntry().getClassifiedNotFinishedContributionId();
                         
-                        QueryRequest newQuery = new QueryRequest(volumeName);
+                        QueryRequest newQuery = new QueryRequest(volume);
                                                 
                         QueryCriteria newCriteria = new QueryCriteria();
                         newCriteria.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionId);  

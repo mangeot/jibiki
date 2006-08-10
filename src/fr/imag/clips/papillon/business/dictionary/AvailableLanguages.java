@@ -9,6 +9,11 @@
  * $Id$
  *---------------------------------------------------------
  * $Log$
+ * Revision 1.5  2006/08/10 22:17:12  fbrunet
+ * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
+ * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+ * - Bug correction : +/- in advanced search
+ *
  * Revision 1.4  2006/03/01 15:12:31  mangeot
  * Merge between maintrunk and LEXALP_1_1 branch
  *
@@ -37,9 +42,9 @@ import java.util.*;
 public class AvailableLanguages {
 
     protected static TreeMap MapLanguages = null;
-    protected static String[] SourceLanguagesArray = null;
-    protected static String[] TargetLanguagesArray = null;
-    protected static String[] AllLanguagesArray = null;
+    protected static Collection SourceLanguagesArray = null;
+    protected static Collection TargetLanguagesArray = null;
+    protected static Collection AllLanguagesArray = null;
 	
 	protected static Set CdmElementsWithDefaultLanguage = null;
 
@@ -50,94 +55,102 @@ public class AvailableLanguages {
     protected static TreeMap getAvailableLanguagesMap()
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
 			if (MapLanguages==null) {
-            Dictionary[] DictsArray = DictionariesFactory.getDictionariesArray();
-            MapLanguages = new TreeMap();
-            TreeSet targetSet;
-
-             for (int i=0; i< DictsArray.length; i++) {
-                String[] Sources =  DictsArray[i].getSourceLanguagesArray();
-                for (int j=0; j< Sources.length; j++) {
-                    String source = Sources[j];
-                    if (null != source && !source.equals("") && !source.equals("axi")) {
-                        if (MapLanguages.containsKey(source)) {
-                            targetSet=(TreeSet) MapLanguages.get(source);
-                        }
-                        else {
-                            targetSet = new TreeSet();
-                        }
-                        String[] Targets =  DictsArray[i].getTargetLanguagesArray();
-                        for (int k=0; k<Targets.length; k++) {
-                            String target = Targets[k];
-                            if (null != target && !target.equals("") && !target.equals("axi") && !target.equals(source)) {
-                                targetSet.add(target);
+                Collection DictsArray = DictionariesFactory.getDictionariesArray();
+                MapLanguages = new TreeMap();
+                TreeSet targetSet;
+                
+                //
+                for (Iterator iter = DictsArray.iterator(); iter.hasNext();) {
+                    Dictionary dict = (Dictionary)iter.next();
+                    
+                    //
+                    for (Iterator iter2 = dict.getSourceLanguagesArray().iterator(); iter2.hasNext();) {
+                        String source = (String)iter2.next();
+                        
+                        if (null != source && !source.equals("") && !source.equals("axi")) {
+                            if (MapLanguages.containsKey(source)) {
+                                targetSet=(TreeSet) MapLanguages.get(source);
+                            } else {
+                                targetSet = new TreeSet();
                             }
+                            
+                            //
+                            for (Iterator iter3 = dict.getTargetLanguagesArray().iterator(); iter3.hasNext();) {
+                                String target = (String)iter3.next();
+                                
+                                if (null != target && !target.equals("") && !target.equals("axi") && !target.equals(source)) {
+                                    targetSet.add(target);
+                                }
+                            }
+                            MapLanguages.put(source,targetSet);
                         }
-                        MapLanguages.put(source,targetSet);
                     }
                 }
-            }
 			}
+            
+            //
             return MapLanguages;
         }
 
     /**
         * return the list of source languages as known by the database
      */
-    public static String[] getSourceLanguagesArray()
+    public static Collection getSourceLanguagesArray()
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
 			if (SourceLanguagesArray == null) {
-				SourceLanguagesArray = (String[])(getAvailableLanguagesMap().keySet().toArray(new String[0]));
+				SourceLanguagesArray = getAvailableLanguagesMap().keySet();
 			}
             return SourceLanguagesArray;
         }
 
-    public static String[] getTargetLanguagesArray(String lang)
+
+    public static Collection getTargetLanguagesArray(String lang)
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
-            String [] result = null;
+            Collection result = null;
             TreeSet mySet = null;
             if (getAvailableLanguagesMap().containsKey(lang)) {
                 mySet = (TreeSet)getAvailableLanguagesMap().get(lang);
-                result =  (String[])mySet.toArray(new String[0]);
+                result =  mySet;
             }
             return result;
         }
 
-    public static String[] getAllLanguagesArray()
+
+    public static Collection getAllLanguagesArray()
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
 			if (AllLanguagesArray == null) {
-				String[] SourceLanguages = getSourceLanguagesArray();
 				TreeSet mySet = new TreeSet();
 				mySet.addAll(getAvailableLanguagesMap().keySet());
-				for (int i=0;i<SourceLanguages.length;i++) {
-					mySet.addAll((TreeSet)getAvailableLanguagesMap().get(SourceLanguages[i]));
+				for (Iterator iter = getSourceLanguagesArray().iterator(); iter.hasNext();) {
+					mySet.addAll((TreeSet)getAvailableLanguagesMap().get((String)iter.next()));
 				}
-				AllLanguagesArray = (String[])mySet.toArray(new String[0]);
+				AllLanguagesArray = mySet;
 			}
 			return AllLanguagesArray;
         }
 
-    public static String[] getSourceLanguagesArrayForDict(String dict)
+    public static Collection getSourceLanguagesArrayForDict(String dict)
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
-            Dictionary myDict = DictionariesFactory.findDictionaryByName(dict);
+            Dictionary myDict = DictionariesFactory.getDictionaryByName(dict);
             TreeSet mySet = new TreeSet();
-            mySet.addAll(Arrays.asList(myDict.getSourceLanguagesArray()));
+            mySet.addAll(myDict.getSourceLanguagesArray());
             mySet.remove("axi");
             mySet.remove("");
-			return (String[])mySet.toArray(new String[0]);
+			return mySet;
         }
 	
-    public static String[] getTargetLanguagesArray()
+    public static Collection getTargetLanguagesArray()
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
 			if (TargetLanguagesArray == null) {
-				Dictionary[] DictsArray = DictionariesFactory.getDictionariesArray();
+				Collection DictsArray = DictionariesFactory.getDictionariesArray();
 				TreeSet mySet = new TreeSet();
-				for (int i=0; i< DictsArray.length; i++) {
-					String[] Targets =  DictsArray[i].getTargetLanguagesArray();
-					mySet.addAll(Arrays.asList(Targets));
+                for (Iterator iter = DictsArray.iterator(); iter.hasNext();) {
+                    Dictionary dict = (Dictionary)iter.next();
+					mySet.addAll(dict.getTargetLanguagesArray());
 				}
 				mySet.remove("axi");
 				mySet.remove("");
-				TargetLanguagesArray = (String[])mySet.toArray(new String[0]);
+				TargetLanguagesArray = mySet;
 			}
 			return TargetLanguagesArray;
         }
@@ -145,14 +158,14 @@ public class AvailableLanguages {
 	public static Set getCdmElementsWithDefaultLanguage ()
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 		if (CdmElementsWithDefaultLanguage == null) {
-			//
-			Volume[] volumes = VolumesFactory.getVolumesArray();
-			CdmElementsWithDefaultLanguage = new java.util.TreeSet();
+			
+            //
+            CdmElementsWithDefaultLanguage = new java.util.TreeSet();
 			
 			//
-			for (int i = 0; i < volumes.length; i++) {
+			for (Iterator iter =  VolumesFactory.getVolumesArray().iterator(); iter.hasNext();) {
 				// get all cdm-elements with Volume.DEFAULT_LANG language
-				Volume volume = volumes[i];
+				Volume volume = (Volume)iter.next();
 				Hashtable CdmElementsTable = volume.getCdmElements();
 				Hashtable CdmElementsTableDefaultLang = (Hashtable) CdmElementsTable.get(Volume.DEFAULT_LANG);
 				

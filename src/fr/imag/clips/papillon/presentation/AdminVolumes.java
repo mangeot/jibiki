@@ -9,6 +9,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.13  2006/08/10 22:17:13  fbrunet
+ * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
+ * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+ * - Bug correction : +/- in advanced search
+ *
  * Revision 1.12  2006/03/01 15:12:31  mangeot
  * Merge between maintrunk and LEXALP_1_1 branch
  *
@@ -121,6 +126,8 @@ import fr.imag.clips.papillon.business.message.MessageDBLoader;
 
 // Standard imports
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Date;
 import java.text.DateFormat;
 import java.io.*;
@@ -141,6 +148,7 @@ import fr.imag.clips.papillon.business.utility.Utility;
 import fr.imag.clips.papillon.business.transformation.*;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.PapillonLogger;
+import fr.imag.clips.papillon.business.xsl.XslSheetFactory;
 
 import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
@@ -221,46 +229,61 @@ public class AdminVolumes extends PapillonBasePO {
                 String url = myGetParameter(content.NAME_URLObjectTransformation);
                 userMessage = this.launchTranformation(volNameTransformation, url);
             
+            //
             } else if (null != myGetParameter(REMOVE_METADATA_PARAMETER)) {
                 String handle = myGetParameter(REMOVE_METADATA_PARAMETER);
-                Volume volume = VolumesFactory.findVolumeByID(handle);
+                Volume volume = VolumesFactory.getVolumeByHandle(handle);
                 volume.delete();
+                VolumesFactory.initializeVolumeCache();
                 userMessage = "Volume " + volume.getName() + " metadata  erased...";	
+            
+            //
             } else if (null != myGetParameter(REMOVE_ALL_PARAMETER)) {
                 String handle = myGetParameter(REMOVE_ALL_PARAMETER);
-                Volume volume = VolumesFactory.findVolumeByID(handle);
+                Volume volume = VolumesFactory.getVolumeByHandle(handle);
                 if (null != volume && !volume.isEmpty()) {
                     volume.deleteAll();
+                    VolumesFactory.initializeVolumeCache();
                     userMessage = "Volume " + volume.getName() + " entries and metadata  erased...";                    
                 }
-            }
-            else if (null != myGetParameter(SEE_METADATA_PARAMETER)) {
+            
+            //
+            } else if (null != myGetParameter(SEE_METADATA_PARAMETER)) {
                 String handle = myGetParameter(SEE_METADATA_PARAMETER);
-                Volume volume = VolumesFactory.findVolumeByID(handle);
+                Volume volume = VolumesFactory.getVolumeByHandle(handle);
                 //adding an XML file
                 addXml(content, volume.getXmlCode());
-            }
-            else if (null != myGetParameter(SEE_SCHEMA_PARAMETER)) {
+            
+            //
+            } else if (null != myGetParameter(SEE_SCHEMA_PARAMETER)) {
                 String handle = myGetParameter(SEE_SCHEMA_PARAMETER);
-                Volume volume = VolumesFactory.findVolumeByID(handle);
+                Volume volume = VolumesFactory.getVolumeByHandle(handle);
                 //adding an XML file
                 addXml(content, volume.getXmlSchema());
+                
+            //
             } else if (null != myGetParameter(SEE_TEMPLATE_PARAMETER)) {
                 String handle = myGetParameter(SEE_TEMPLATE_PARAMETER);
-                Volume volume = VolumesFactory.findVolumeByID(handle);
+                Volume volume = VolumesFactory.getVolumeByHandle(handle);
                 //adding an XML file
                 addXml(content, volume.getTemplateEntry());
+                
+            //    
             } else if (null != myGetParameter(SEE_INTERFACE_PARAMETER)) {
                 String handle = myGetParameter(SEE_INTERFACE_PARAMETER);
-                Volume volume = VolumesFactory.findVolumeByID(handle);
+                Volume volume = VolumesFactory.getVolumeByHandle(handle);
                 //adding an XML file
                 addXml(content, volume.getTemplateInterface());
+                
+            //
             } else if (null != myGetParameter(GENERATE_INTERFACE_PARAMETER)) {
                 String handle = myGetParameter(GENERATE_INTERFACE_PARAMETER);
-                Volume volume = VolumesFactory.findVolumeByID(handle);
+                Volume volume = VolumesFactory.getVolumeByHandle(handle);
                 // generating an XNF interface description
 				GenerateTemplate.generateInterfaceTemplate(volume);
             }
+            
+            //
 			if (userMessage != null) {
 				this.getSessionData().writeUserMessage(userMessage);
 				PapillonLogger.writeDebugMsg(userMessage);
@@ -291,7 +314,7 @@ public class AdminVolumes extends PapillonBasePO {
         CurrentDBTransaction.registerNewDBTransaction();
 		Volume myVolume = null;
         try {
-			Dictionary dict = DictionariesFactory.findDictionaryByName(req.getParameter(AdminVolumesXHTML.NAME_Dictionary));
+			Dictionary dict = DictionariesFactory.getDictionaryByName(req.getParameter(AdminVolumesXHTML.NAME_Dictionary));
 			myVolume = VolumesFactory.parseVolumeMetadata(dict, myURL, parseEntries, logContribs);
 
             if (null != myVolume && !myVolume.isEmpty()) {
@@ -324,7 +347,6 @@ public class AdminVolumes extends PapillonBasePO {
     protected void addVolumesArray(AdminVolumesXHTML content) 
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
             
-        Volume[] VolumesTable=VolumesFactory.getVolumesArray();
         //where we must insert the form
         HTMLTableRowElement theRow = content.getElementTemplateRow();
         HTMLElement theDictname = content.getElementDictname();
@@ -363,31 +385,36 @@ public class AdminVolumes extends PapillonBasePO {
         theRemoveAllAnchor.removeAttribute("id");
 
         //adding the volumes description
-	for ( int i = 0; i < VolumesTable.length; i++ ) {
-        content.setTextDictname(VolumesTable[i].getDictname());
-        content.setTextName(VolumesTable[i].getName());
-        content.setTextDbname(VolumesTable[i].getDbname());
-        content.setTextSource(VolumesTable[i].getSourceLanguage());
-        content.setTextEntries("" + VolumesTable[i].getCount());
+        for (Iterator iter = VolumesFactory.getVolumesArray().iterator(); iter.hasNext();) {
+            Volume volume = (Volume)iter.next();
             
-				String handle =  VolumesTable[i].getHandle();
+        content.setTextDictname(volume.getDictname());
+        content.setTextName(volume.getName());
+        content.setTextDbname(volume.getDbname());
+        content.setTextSource(volume.getSourceLanguage());
+        content.setTextEntries("" + volume.getCount());
+        
+        // Get handle
+        String handle =  volume.getHandle();
+
+        //
         theSeeMetadataAnchor.setHref(this.getUrl() + "?" + SEE_METADATA_PARAMETER + "=" + handle);
 				
-				String schema = VolumesTable[i].getXmlSchema();
+				String schema = volume.getXmlSchema();
 				content.setTextSeeSchema("");
 				if (schema !=null && !schema.equals("")) {
 					content.setTextSeeSchema("See");
 					theSeeSchemaAnchor.setHref(this.getUrl() + "?" + SEE_SCHEMA_PARAMETER + "=" + handle);
 				}
 
-				String object = VolumesTable[i].getTemplateEntry();
+				String object = volume.getTemplateEntry();
 				content.setTextSeeTemplate("");
 				if (object !=null && !object.equals("")) {
 					content.setTextSeeTemplate("See");
 					theSeeTemplateAnchor.setHref(this.getUrl() + "?" + SEE_TEMPLATE_PARAMETER + "=" + handle);
 				}
 				
-				object = VolumesTable[i].getTemplateInterface();
+				object = volume.getTemplateInterface();
 				content.setTextSeeInterface("");
 				if (object !=null && !object.equals("")) {
 					content.setTextSeeInterface("See");
@@ -412,7 +439,7 @@ public class AdminVolumes extends PapillonBasePO {
     protected void addXml(AdminVolumesXHTML content, String xmlString) 
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
             
-        Node xmlNode = XslTransformation.applyXslSheetForXml(xmlString);    
+        Node xmlNode = XslSheetFactory.applyXslSheetForXml(xmlString);    
             
         //where we must insert the xml
         HTMLElement theXml = content.getElementXml();
@@ -434,11 +461,9 @@ public class AdminVolumes extends PapillonBasePO {
         // (it should be this way if the HTML is valid...)
         Text dictionaryTextTemplate = (Text)dictionaryOptionTemplate.getFirstChild(); 
                 
-                
-        Dictionary[] AllDictionaries = DictionariesFactory.getDictionariesArray();
-                
-        for (int i = 0; i < AllDictionaries.length; i++) {   
-	    String dictName = AllDictionaries[i].getName();
+        //
+        for (Iterator iter = DictionariesFactory.getDictionariesArray().iterator(); iter.hasNext();) {   
+	    String dictName =((Dictionary)iter.next()).getName();
             dictionaryOptionTemplate.setValue(dictName);
             dictionaryOptionTemplate.setLabel(dictName);
             // Je dois ici mettre un text dans l'OPTION, car les browser PC ne sont pas conformes aux 
@@ -462,10 +487,9 @@ public class AdminVolumes extends PapillonBasePO {
         Text volumeTextTemplate = (Text)volumeOptionTemplate.getFirstChild();
         Text volumeTextTemplateTransformation = (Text)volumeOptionTemplateTransformation.getFirstChild();
                 
-        Volume[] AllVolumes = VolumesFactory.getVolumesArray();
-                
-        for (int i = 0; i < AllVolumes.length; i++) {
-            String volumeName = AllVolumes[i].getName();
+       //     
+        for (Iterator iter = VolumesFactory.getVolumesArray().iterator(); iter.hasNext();) {
+            String volumeName = ((Volume)iter.next()).getName();
             
             //
             volumeOptionTemplate.setValue(volumeName);
@@ -493,7 +517,7 @@ public class AdminVolumes extends PapillonBasePO {
 
 	protected String uploadObject(String volName, String object, String url) throws PapillonBusinessException {
 		PapillonLogger.writeDebugMsg("uploadObject volName: " + volName);
-		Volume myVolume = VolumesFactory.findVolumeByName(volName);
+		Volume myVolume = VolumesFactory.getVolumeByName(volName);
 		String result = "Nothing uploaded";
 		if (myVolume!=null && !myVolume.isEmpty()) {
 			if (object !=null && !object.equals("")) {
@@ -534,16 +558,16 @@ public class AdminVolumes extends PapillonBasePO {
         if ( (volName != null) && volName.equals("All") ) {
             
             //
-            Volume[] AllVolumes = VolumesFactory.getVolumesArray();
-            for (int i = 0; i < AllVolumes.length; i++) {
-                PapillonLogger.writeDebugMsg("Transformation " + AllVolumes[i].getName() + " volume");
-                AllVolumes[i].launchTransformation(objectResult, this.getUser());
+            for (Iterator iter = VolumesFactory.getVolumesArray().iterator(); iter.hasNext();) { 
+                Volume volume = (Volume)iter.next();
+                PapillonLogger.writeDebugMsg("Transformation " + volume.getName() + " volume");
+                volume.launchTransformation(objectResult, this.getUser());
             }
             result = "Transform all volumes";
         
         } else {
             //
-            Volume myVolume = VolumesFactory.findVolumeByName(volName);
+            Volume myVolume = VolumesFactory.getVolumeByName(volName);
             
             //
             if (myVolume!=null && !myVolume.isEmpty()) {

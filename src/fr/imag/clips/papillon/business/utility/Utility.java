@@ -4,6 +4,11 @@
 *$Id$
 *------------------------------------------
 *$Log$
+*Revision 1.14  2006/08/10 22:17:13  fbrunet
+*- Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
+*- Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+*- Bug correction : +/- in advanced search
+*
 *Revision 1.13  2006/08/10 21:27:49  mangeot
 *Added a boolean for printing the doctype when bulding a DOM tree
 *
@@ -72,6 +77,9 @@
 package fr.imag.clips.papillon.business.utility;
 
 import java.io.*;
+import java.util.Collection;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 //pour parser le document avec le DOM
 import org.w3c.dom.*;
@@ -1072,8 +1080,8 @@ public class Utility {
      *   retrieving data (usually due to an underlying data layer
      *   error).
      */
-		public static boolean IsInArray(String myString, String[] myArray) {
-			boolean found = false;
+		public static boolean IsInArray(String myString, Collection myArray) {
+			/*boolean found = false;
 			if (myString == null) {
 				found = true;
 			}
@@ -1084,7 +1092,10 @@ public class Utility {
 					i++;
 				}
 			}
-			return found;
+			return found;*/
+            
+            //
+            return myArray.contains(myString);
 		}
 
    /**
@@ -1095,20 +1106,29 @@ public class Utility {
 	*   retrieving data (usually due to an underlying data layer
 						 *   error).
 	*/
-   public static boolean IsInArray(String[] myStrings, String[] myArray) {
-	   boolean found = false;
-	   if (myStrings != null && myStrings.length>0) {
-		   int i=0;
-		   while (i<myStrings.length && !found) {
-			   found = IsInArray(myStrings[i],myArray);
-			   i++;
-		   }
-	   }
-	   else {
-		   found = true;
-	   }
-	   return found;
-   }
+    public static boolean IsInArray(Collection myStrings, Collection myArray) {
+        /*boolean found = false;
+        if (myStrings != null && myStrings.length>0) {
+            int i=0;
+            while (i<myStrings.length && !found) {
+                found = IsInArray(myStrings[i],myArray);
+                i++;
+            }
+        }
+        else {
+            found = true;
+        }
+        return found;*/
+        
+        boolean found = false;
+        Iterator iter = myArray.iterator();
+        while (iter.hasNext() && !found) {
+            found = myArray.contains((String)iter.next());
+        }
+        
+        //
+        return found;
+    }
    
    /**
 	   * Intersection of 2 String arrays 
@@ -1118,18 +1138,25 @@ public class Utility {
 	*   retrieving data (usually due to an underlying data layer
 						 *   error).
 	*/
-   public static String[] ArrayIntersection(String[] myArray1, String[] myArray2) {
-	   java.util.Vector myRes = new java.util.Vector();
-	   if (myArray1 != null && myArray1.length>0) {
-		   for (int i=0; i<myArray1.length;i++) {
-			   String tempString = myArray1[i];
-			   if (IsInArray(tempString,myArray2)) {
-				   myRes.add(tempString);
-			   }
-		   }
-	   }
-	   return (String[]) myRes.toArray(new String[0]);
-   }
+    public static Collection ArrayIntersection(Collection myArray1, Collection myArray2) {
+        /*java.util.Vector myRes = new java.util.Vector();
+        if (myArray1 != null && myArray1.length>0) {
+            for (int i=0; i<myArray1.length;i++) {
+                String tempString = myArray1[i];
+                if (IsInArray(tempString,myArray2)) {
+                    myRes.add(tempString);
+                }
+            }
+        }
+        return (String[]) myRes.toArray(new String[0]);*/
+        
+        //
+        ArrayList newArray = new ArrayList(myArray1);
+        newArray.retainAll(myArray2);
+        
+        //
+        return newArray;
+    }
    
    public static void removeElement(Element elem) {
 		if (elem != null) {

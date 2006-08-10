@@ -9,6 +9,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.42  2006/08/10 22:17:12  fbrunet
+ * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
+ * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+ * - Bug correction : +/- in advanced search
+ *
  * Revision 1.41  2006/05/22 22:45:54  fbrunet
  * LexALP: add merge method in post-save processing (merge axies with same referenced lexies)
  *
@@ -1468,8 +1473,9 @@ public class VolumeEntry implements IAnswer {
 		throws PapillonBusinessException {
 			Volume myVolume = this.getVolume();
 			if (myVolume == null || myVolume.isEmpty()) {
-				myVolume = VolumesFactory.findVolumeByDbname(this.getTableName());
-			}
+				//myVolume = VolumesFactory.findVolumeByDbname(this.getTableName());
+                myVolume = VolumesFactory.getVolumeByName(this.getVolumeName());
+            }
 			if (myVolume!=null && ! myVolume.isEmpty()) {
 				// reset caches
 				VolumeEntriesFactory.resetCountCache(myVolume.getName());

@@ -9,6 +9,11 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.8  2006/08/10 22:17:13  fbrunet
+ *  - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
+ *  - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+ *  - Bug correction : +/- in advanced search
+ *
  *  Revision 1.7  2006/04/06 15:06:39  fbrunet
  *  New class 'creationEditInit' : create new entry
  *  Modify LexALPEditEntry : only edit entry
@@ -66,6 +71,8 @@ import fr.imag.clips.papillon.business.message.MessageDBLoader;
 
 // Standard imports
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Date;
 import java.text.DateFormat;
 import java.io.*;
@@ -77,6 +84,7 @@ import fr.imag.clips.papillon.data.*;
 import fr.imag.clips.papillon.business.utility.Utility;
 import fr.imag.clips.papillon.business.transformation.*;
 import fr.imag.clips.papillon.business.PapillonLogger;
+import fr.imag.clips.papillon.business.xsl.XslSheetFactory;
 
 import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
@@ -159,15 +167,19 @@ public class ViewDictionaries extends PapillonBasePO {
         HttpPresentationRequest req = this.getComms().request;
         // If the page is called with parameters, take the requested action
         if (req.getParameterNames().hasMoreElements()) {
+            
+            //
             if (null != req.getParameter(SEE_DICTIONARY_PARAMETER)) {
                 String handle = req.getParameter(SEE_DICTIONARY_PARAMETER);
-                Dictionary dict = DictionariesFactory.findDictionaryByID(handle);
+                Dictionary dict = DictionariesFactory.getDictionaryByHandle(handle);
                 //adding an XML file
                 addXml(dict.getXmlCode());
             }
+            
+            //
             if (null != req.getParameter(SEE_VOLUME_PARAMETER)) {
                 String handle = req.getParameter(SEE_VOLUME_PARAMETER);
-                Volume vol = VolumesFactory.findVolumeByID(handle);
+                Volume vol = VolumesFactory.getVolumeByHandle(handle);
                 //adding an XML file
                 addXml(vol.getXmlCode());
             }
@@ -192,7 +204,7 @@ public class ViewDictionaries extends PapillonBasePO {
     protected void addXml(String xmlString)
              throws fr.imag.clips.papillon.business.PapillonBusinessException {
 
-        Node xmlNode = XslTransformation.applyXslSheetForXml(xmlString);
+        Node xmlNode = XslSheetFactory.applyXslSheetForXml(xmlString);
 
         //where we must insert the xml
         HTMLElement theXml = content.getElementXml();
@@ -215,7 +227,7 @@ public class ViewDictionaries extends PapillonBasePO {
     protected void addDictionariesArray()
              throws fr.imag.clips.papillon.business.PapillonBusinessException {
 
-        Dictionary[] DictsTable = DictionariesFactory.getDictionariesArray();
+        Collection DictsTable = DictionariesFactory.getDictionariesArray();
         //where we must insert the form
         HTMLTableRowElement theRow = content.getElementTemplateRow();
         HTMLElement theDictionary = content.getElementDictionary();
@@ -244,41 +256,44 @@ public class ViewDictionaries extends PapillonBasePO {
         theSeeAnchor.removeAttribute("id");
 
         //adding the volumes description
-        for (int i = 0; i < DictsTable.length; i++) {
+        for (Iterator iter = DictsTable.iterator(); iter.hasNext();) {
             Utility.removeElement(theVolume);
-            content.setTextName(DictsTable[i].getName());
-            content.setTextCategory(DictsTable[i].getCategory());
-            content.setTextType(DictsTable[i].getType());
-            content.setTextSources(DictsTable[i].getSourceLanguages());
-            content.setTextTargets(DictsTable[i].getTargetLanguages());
-            content.setTextDomain(DictsTable[i].getDomain());
-            content.setTextLegal(DictsTable[i].getLegal());
+            Dictionary dict = (Dictionary)iter.next();
+            content.setTextName(dict.getName());
+            content.setTextCategory(dict.getCategory());
+            content.setTextType(dict.getType());
+            content.setTextSources(dict.getSourceLanguages());
+            content.setTextTargets(dict.getTargetLanguages());
+            content.setTextDomain(dict.getDomain());
+            content.setTextLegal(dict.getLegal());
             content.setTextEntries("Entries");
 
             theSeeAnchor.setHref(this.getUrl() + "?"
                      + SEE_DICTIONARY_PARAMETER + "="
-                     + DictsTable[i].getHandle());
+                     + dict.getHandle());
 
             theRowParent.appendChild(theRow.cloneNode(true));
             theDictionary.getParentNode().appendChild(theVolume);
 
-            Volume[] VolsTable = VolumesFactory.getVolumesArray(DictsTable[i].getName());
-            for (int j = 0; j < VolsTable.length; j++) {
+            //
+            for (Iterator iter2 = VolumesFactory.getVolumesArray(dict.getName()).iterator(); iter2.hasNext();) {
+                Volume volume = (Volume)iter2.next();
+                
                 Utility.removeElement(theDictionary);
-                content.setTextName(VolsTable[j].getName());
+                content.setTextName(volume.getName());
                 content.setTextCategory("");
                 content.setTextType("");
-                content.setTextSources(VolsTable[j].getSourceLanguage());
-                content.setTextTargets(VolsTable[j].getTargetLanguages());
+                content.setTextSources(volume.getSourceLanguage());
+                content.setTextTargets(volume.getTargetLanguages());
                 content.setTextDomain("");
                 content.setTextLegal("");
                 // FIXME: Finished entry but not-finished entry ?
-                int nb = VolsTable[j].getCount(VolumeEntry.FINISHED_STATUS) + VolsTable[j].getCount(VolumeEntry.NOT_FINISHED_STATUS);
+                int nb = volume.getCount(VolumeEntry.FINISHED_STATUS) + volume.getCount(VolumeEntry.NOT_FINISHED_STATUS);
                 content.setTextEntries("" + nb);
 
                 theSeeAnchor.setHref(this.getUrl() + "?"
-                         + SEE_VOLUME_PARAMETER + "="
-                         + VolsTable[j].getHandle());
+                                     + SEE_VOLUME_PARAMETER + "="
+                                     + volume.getHandle());
                 theRowParent.appendChild(theRow.cloneNode(true));
                 theVolume.getParentNode().appendChild(theDictionary);
             }

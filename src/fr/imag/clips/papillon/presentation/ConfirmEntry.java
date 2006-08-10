@@ -9,6 +9,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.6  2006/08/10 22:17:13  fbrunet
+ * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
+ * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+ * - Bug correction : +/- in advanced search
+ *
  * Revision 1.5  2006/06/01 22:05:05  fbrunet
  * New interface, quick search, new contribution management (the first edition not create new contribution. New contribution is created after add, remove element, update, save, etc. in the interface window)
  *
@@ -108,7 +113,7 @@ public class ConfirmEntry extends EditingBasePO {
             
 			//
 			QueryResult qr = new QueryResult(1, myVolumeEntry);
-			ResultFormatter rf = ResultFormatterFactory.getFormatter(qr, null, ResultFormatterFactory.XHTML_DIALECT,null);
+			ResultFormatter rf = ResultFormatterFactory.getFormatter(qr, null, ResultFormatterFactory.XHTML_DIALECT, null);
 			Element resultElement = (Element)rf.getFormattedResult(qr, this.getUser());
 			
 			//

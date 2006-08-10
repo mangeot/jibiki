@@ -9,6 +9,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.34  2006/08/10 22:17:13  fbrunet
+ * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
+ * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+ * - Bug correction : +/- in advanced search
+ *
  * Revision 1.33  2006/03/06 10:16:45  mangeot
  * MM: I do not delete any contribution, even not finished.
  * I tag them "deleted"
@@ -716,11 +721,11 @@ public class ReviewContributions extends PapillonBasePO {
         // (it should be this way if the HTML is valid...)
         Text volumeTextTemplate = (Text)volumeOptionTemplate.getFirstChild(); 
                 
-                
-        Volume[] AllVolumes = VolumesFactory.getVolumesArray();
-        
-        for (int i = 0; i < AllVolumes.length; i++) {
-			Volume myVolume = AllVolumes[i];
+        //
+        for (Iterator iter = VolumesFactory.getVolumesArray().iterator(); iter.hasNext();) {
+			Volume myVolume = (Volume)iter.next();
+            
+            //
 			String schema = myVolume.getXmlSchema();
 			if (schema != null && !schema.equals("")) {
 
@@ -851,9 +856,9 @@ public class ReviewContributions extends PapillonBasePO {
 		HttpPresentationException,
 		java.io.IOException {
 			
-			Volume myVolume = VolumesFactory.findVolumeByName(volumeName);
+			Volume myVolume = VolumesFactory.getVolumeByName(volumeName);
 			java.util.Vector myVector = new Vector();
-			String[] targets = null;
+			Collection targets = null;
 			if (myVolume != null && !myVolume.isEmpty()) {
 				targets = myVolume.getTargetLanguagesArray();
 			}

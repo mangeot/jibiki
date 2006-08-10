@@ -9,6 +9,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.9  2006/08/10 22:17:13  fbrunet
+ * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
+ * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+ * - Bug correction : +/- in advanced search
+ *
  * Revision 1.8  2006/02/26 14:04:56  mangeot
  * Corrected a bug: the content was a static variable, thus there were problems when two users wanted to aces the same page at the same time
  *
@@ -83,6 +88,8 @@ import fr.imag.clips.papillon.business.message.MessageDBLoader;
 
 // Standard imports
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Date;
 import java.text.DateFormat;
 import java.io.*;
@@ -106,15 +113,15 @@ public class AdminXsl extends PapillonBasePO {
     
     protected final static String SEE_PARAMETER="See";
     protected final static String ADD_PARAMETER="Add";
-    protected final static String FLUSH_PARAMETER="Flush";
-    
+    //protected final static String FLUSH_PARAMETER="Flush";
     protected final static String REMOVE_PARAMETER="Remove";
 
     protected final static String NAME_PARAMETER="name";
     protected final static String DESC_PARAMETER="description";
     protected final static String URL_PARAMETER="url";
-    protected final static String DEFAULT_XSL="defaultxsl";
-    protected final static String TYPE_XSL="type";    
+    protected final static String DEFAULT_XSL_PARAMETER="defaultxsl";
+    protected final static String EXTERNAL_XSL_PARAMETER="externalxsl";
+    protected final static String NO_EXTERNAL_XSL_PARAMETER="noexternalxsl";
 
     protected boolean loggedInUserRequired() {
         return true;
@@ -141,15 +148,24 @@ public class AdminXsl extends PapillonBasePO {
         AdminXslTmplXHTML content = (AdminXslTmplXHTML)MultilingualXHtmlTemplateFactory.createTemplate("AdminXslTmplXHTML", this.getComms(), this.getSessionData());
 		  
         HttpPresentationRequest req = this.getComms().request;
+        
         // If the page is called with parameters, take the requested action
         if (req.getParameterNames().hasMoreElements()) {
             String userMessage = null;
+            
+            /* Remove all xsl sheets
             if (null != req.getParameter(FLUSH_PARAMETER)) {
-                XslSheetFactory.emptyDatabase();
+                XslSheetFactory.removeAllXslSheets();
                 userMessage = "All XslSheets removed...";
-            } 
-            else if ((null != req.getParameter(AdminXslTmplXHTML.NAME_name)) && 
+            } else
+            */
+            
+             
+            
+            // Add xsl sheet
+            if ((null != req.getParameter(AdminXslTmplXHTML.NAME_name)) && 
                     (null != req.getParameter(AdminXslTmplXHTML.NAME_url))) {
+                
                 // Get the main parameters
                 String Nom = req.getParameter(AdminXslTmplXHTML.NAME_name);
                 String dictionaryName = req.getParameter(AdminXslTmplXHTML.NAME_dictionaryName);
@@ -157,103 +173,190 @@ public class AdminXsl extends PapillonBasePO {
                 String Description= req.getParameter(AdminXslTmplXHTML.NAME_description);
                 URL theURL= new URL(req.getParameter(AdminXslTmplXHTML.NAME_url));
                 String leCode = fr.imag.clips.papillon.business.xsl.XslSheetFactory.parseXslSheet(theURL);
-
-                //recuperation du parametre default xsl
+                boolean defaultXsl = (null!=req.getParameter(AdminXslTmplXHTML.NAME_defaultxsl));
+                boolean externalXsl = (null!=req.getParameter(AdminXslTmplXHTML.NAME_externalxsl));
+                
+                /*
+                // Get default xsl parameter
                 boolean defaultXsl;
                 if (null!=req.getParameter(AdminXslTmplXHTML.NAME_type)) {
                     defaultXsl=true;
+                    
                     XslSheet theOldDefaultSheet=XslSheetFactory.findDefaultXslSheet();
                     if ( !(theOldDefaultSheet.isEmpty()) ) {
                         theOldDefaultSheet.setDefaultxsl(false);
                         theOldDefaultSheet.save();
-                    }                    
+                    }   
                 } else {
                     defaultXsl=false;
                 }
+                */
+                
                 if (leCode !=null && !leCode.equals("")) {
-                    XslSheetFactory.AddAndReplaceXslSheet(Nom, dictionaryName, volumeName, Description,leCode,defaultXsl);
+                    XslSheetFactory.AddXslSheet(Nom, dictionaryName, volumeName, Description,leCode, defaultXsl, externalXsl);
                     userMessage = "XslSheet " + Nom + " added...";
                 }
                 else {
                     userMessage = "XslSheet " + Nom + " not uploaded, please check the URL...";
                 }
                 
+                
+            // Remove xsl sheet    
             } else if ( (null != req.getParameter(REMOVE_PARAMETER))) {
                 String handle = req.getParameter(REMOVE_PARAMETER);
-                XslSheet theSheet = XslSheetFactory.findXslSheetByHandle(handle);
+                //XslSheet theSheet = XslSheetFactory.findXslSheetByHandle(handle);
+                XslSheet theSheet = XslSheetFactory.getXslSheetByHandle(handle);
                 theSheet.delete();
+                XslSheetFactory.initializeXslSheetCache();
                 userMessage = "XslSheet " + theSheet.getName() + " removed...";
-            } else if ((null != req.getParameter(DEFAULT_XSL))) {
-                String handle= req.getParameter(DEFAULT_XSL);
-                XslSheet theOldDefaultSheet=XslSheetFactory.findDefaultXslSheet();
-                if ( !(theOldDefaultSheet.isEmpty()) )
-                    {theOldDefaultSheet.setDefaultxsl(false);
-                     theOldDefaultSheet.save();}                     
-                XslSheet theSheet = XslSheetFactory.findXslSheetByHandle(handle);
+            
+            // set default xsl sheet
+            } else if ((null != req.getParameter(DEFAULT_XSL_PARAMETER))) {
+                String handle= req.getParameter(DEFAULT_XSL_PARAMETER);
+                
+                //
+                //XslSheet theSheet = XslSheetFactory.findXslSheetByHandle(handle);
+                XslSheet theSheet = XslSheetFactory.getXslSheetByHandle(handle);
+                
+                //
+                XslSheet theOldDefaultSheet = XslSheetFactory.findDefaultXslSheet(theSheet.getDictionaryName(), theSheet.getVolumeName());
+                
+                //
+                if ( (theOldDefaultSheet != null) && !(theOldDefaultSheet.isEmpty()) ) {
+                    theOldDefaultSheet.setDefaultxsl(false);
+                     theOldDefaultSheet.save();
+                }                     
+                
+                //
                 theSheet.setDefaultxsl(true);
                 theSheet.save();
-                userMessage = "XslSheet " + theSheet.getName() + " set default...";
-            }
-            else if ( (null != req.getParameter(SEE_PARAMETER))) {
+                
+                //
+                XslSheetFactory.initializeXslSheetCache();
+                
+                //
+                userMessage = "XslSheet " + theSheet.getName() + " set default ...";
+            
+            // set external xsl sheet
+            } else if ((null != req.getParameter(EXTERNAL_XSL_PARAMETER))) {
+                String handle= req.getParameter(EXTERNAL_XSL_PARAMETER);
+                
+                //
+                //XslSheet theSheet = XslSheetFactory.findXslSheetByHandle(handle);
+                XslSheet theSheet = XslSheetFactory.getXslSheetByHandle(handle);
+                
+                //
+                theSheet.setExternalxsl(true);
+                theSheet.save();
+                
+                //
+                XslSheetFactory.initializeXslSheetCache();
+                
+                //
+                userMessage = "XslSheet " + theSheet.getName() + " set external xsl ...";
+                
+                // set external xsl sheet
+            } else if ((null != req.getParameter(NO_EXTERNAL_XSL_PARAMETER))) {
+                String handle= req.getParameter(NO_EXTERNAL_XSL_PARAMETER);
+                
+                //
+                //XslSheet theSheet = XslSheetFactory.findXslSheetByHandle(handle);
+                XslSheet theSheet = XslSheetFactory.getXslSheetByHandle(handle);
+                
+                //
+                theSheet.setExternalxsl(false);
+                theSheet.save();
+                
+                //
+                XslSheetFactory.initializeXslSheetCache();
+                
+                //
+                userMessage = "XslSheet " + theSheet.getName() + " set internal xsl ...";
+                
+            // see xsl sheet
+            } else if ( (null != req.getParameter(SEE_PARAMETER))) {
                 String handle = req.getParameter(SEE_PARAMETER);
-                XslSheet theSheet = XslSheetFactory.findXslSheetByHandle(handle);
+                //XslSheet theSheet = XslSheetFactory.findXslSheetByHandle(handle);
+                XslSheet theSheet = XslSheetFactory.getXslSheetByHandle(handle);
                 //adding an XML file
                 addXml(content, theSheet.getXmlCode());
             }
+            
+            
             this.getSessionData().writeUserMessage(userMessage);
             PapillonLogger.writeDebugMsg(userMessage);
         }
         
-        XslSheet[] XslSheetsTable=XslSheetFactory.getXslSheetsArray();
-        //where we must insert the form
-        HTMLTableRowElement theRow = content.getElementTemplateRow();
-	    HTMLElement theXslName = content.getElementXslName();
-	    HTMLElement theXslDictionaryName = content.getElementXslDictionaryName();
-	    HTMLElement theXslVolumeName = content.getElementXslVolumeName();
-        HTMLElement theXslDesc = content.getElementXslDesc();
+        
+        //
+        HTMLTableRowElement theOriginalRow = content.getElementTemplateRow();
         HTMLElement theXslDefault = content.getElementXslDefault();
+        HTMLElement theXslExternal = content.getElementXslExternal();
         HTMLAnchorElement theSeeAnchor = content.getElementSeeAnchor();
         HTMLAnchorElement theRemoveAnchor = content.getElementRemoveAnchor();
         HTMLAnchorElement theDefaultAnchor = content.getElementDefaultAnchor();
-
-        Node theRowParent = theRow.getParentNode();
-
-        theRow.removeAttribute("id");
-        theXslName.removeAttribute("id");
-        theXslDictionaryName.removeAttribute("id");
-        theXslVolumeName.removeAttribute("id");
-        theXslDesc.removeAttribute("id");
+        HTMLAnchorElement theExternalAnchor = content.getElementExternalAnchor();
+        HTMLAnchorElement theNoExternalAnchor = content.getElementNoExternalAnchor();
+        
+        Node theOriginalRowParent = theOriginalRow.getParentNode();
+        
+        theOriginalRow.removeAttribute("id");
         theXslDefault.removeAttribute("id");
+        theXslExternal.removeAttribute("id");
         theSeeAnchor.removeAttribute("id");	
         theRemoveAnchor.removeAttribute("id");
         theDefaultAnchor.removeAttribute("id");
+        theExternalAnchor.removeAttribute("id");
 
-        //adding the sheet choice
-        for ( int i = 0; i < XslSheetsTable.length; i++ ) {
-            content.setTextXslName(XslSheetsTable[i].getName());
-            content.setTextXslDictionaryName((null == XslSheetsTable[i].getDictionaryName()) ? "" : XslSheetsTable[i].getDictionaryName());
-            content.setTextXslVolumeName((null == XslSheetsTable[i].getVolumeName()) ? "" :  XslSheetsTable[i].getVolumeName());
-            content.setTextXslDesc(XslSheetsTable[i].getDescription());
-            if (XslSheetsTable[i].getDefaultxsl()) {
-                content.setTextXslDefault("Default StyleSheet");
+        // FIXME: create a original template AND tempory template 
+        // -> don't set attribute class here (setAttribute("class","action")), only if jibiki hidden anchor (setAttribute("class","hidden"))
+        // use NAME (like AdminXslTmplXHTML.NAME_defaultxsl) and duplicate node !
+        
+        //
+        Collection XslSheetsTable = XslSheetFactory.getXslSheetsArray();
+        for ( Iterator iter = XslSheetsTable.iterator(); iter.hasNext(); ) {
+            
+            //
+            XslSheet xsl = (XslSheet)iter.next();
+            content.setTextXslName(xsl.getName());
+            content.setTextXslDictionaryName((null == xsl.getDictionaryName()) ? "" : xsl.getDictionaryName());
+            content.setTextXslVolumeName((null == xsl.getVolumeName()) ? "" :  xsl.getVolumeName());
+            content.setTextXslDesc(xsl.getDescription());
+            
+            //
+            theSeeAnchor.setHref(this.getUrl() + "?" + SEE_PARAMETER + "=" + xsl.getHandle());
+            theRemoveAnchor.setHref(this.getUrl()  + "?" + REMOVE_PARAMETER + "=" + xsl.getHandle());
+            
+            //
+            if (xsl.isDefaultxsl()) {
+                theXslDefault.setAttribute("class","");
+                theDefaultAnchor. setHref("");
+                theDefaultAnchor.setAttribute("class","hidden");
             } else {
-                content.setTextXslDefault("");
+                theXslDefault.setAttribute("class","hidden");
+                theDefaultAnchor.setHref(this.getUrl() + "?" + DEFAULT_XSL_PARAMETER + "=" + xsl.getHandle());
+                theDefaultAnchor.setAttribute("class","");
             }
             
-            theSeeAnchor.setHref(this.getUrl() + "?See=" + XslSheetsTable[i].getHandle());
-            theRemoveAnchor.setHref(this.getUrl() + "?Remove=" + XslSheetsTable[i].getHandle());
-            if (XslSheetsTable[i].getDefaultxsl()) {
-                theDefaultAnchor.setHref("");
-                theDefaultAnchor.getFirstChild().setNodeValue("");
+            //
+            if (xsl.isExternalxsl()) {
+                theXslExternal.setAttribute("class","");
+                theExternalAnchor.setHref("");
+                theExternalAnchor.setAttribute("class","hidden");
+                theNoExternalAnchor.setHref(this.getUrl() + "?" + NO_EXTERNAL_XSL_PARAMETER + "=" + xsl.getHandle());
+                theNoExternalAnchor.setAttribute("class","");
             } else {
-                theDefaultAnchor.setHref(this.getUrl() + "?defaultxsl=" + XslSheetsTable[i].getHandle());
-                theDefaultAnchor.getFirstChild().setNodeValue("Make Default");
+                theXslExternal.setAttribute("class","hidden");
+                theNoExternalAnchor.setHref("");
+                theNoExternalAnchor.setAttribute("class","hidden");
+                theExternalAnchor.setHref(this.getUrl() + "?" + EXTERNAL_XSL_PARAMETER + "=" + xsl.getHandle());
+                theExternalAnchor.setAttribute("class","");
             }
             
-            theRowParent.appendChild(theRow.cloneNode(true));
+            theOriginalRowParent.appendChild(theOriginalRow.cloneNode(true));
         }
         
-        theRowParent.removeChild(theRow);
+        theOriginalRowParent.removeChild(theOriginalRow);
         
 
         //On rends le contenu correst
@@ -262,7 +365,7 @@ public class AdminXsl extends PapillonBasePO {
     protected void addXml(AdminXslTmplXHTML content, String xmlString) 
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
             
-        Node xmlNode = XslTransformation.applyXslSheetForXml(xmlString);    
+        Node xmlNode = XslSheetFactory.applyXslSheetForXml(xmlString);    
             
         //where we must insert the xml
         HTMLElement theXml = content.getElementXml();

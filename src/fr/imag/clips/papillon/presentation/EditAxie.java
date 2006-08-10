@@ -10,6 +10,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.9  2006/08/10 22:17:13  fbrunet
+ * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
+ * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+ * - Bug correction : +/- in advanced search
+ *
  * Revision 1.8  2005/06/15 16:48:28  mangeot
  * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
  *
@@ -306,23 +311,21 @@ public class EditAxie extends PapillonBasePO {
 	    // We assume that the option element has only one text child
      // (it should be this way if the HTML is valid...)
 	    Text volumeTextTemplate = (Text)volumeOptionTemplate.getFirstChild();
-
-
-	    Volume[] AllVolumes = VolumesFactory.getVolumesArray(PAPILLON_DICT);
-
-	    for (int i = 0; i < AllVolumes.length; i++) {
-		Volume myVolume = AllVolumes[i];
-		String schema = myVolume.getXmlSchema();
-		// FIXME: trick to avoid displaying Papillon axies...
-		if (schema != null && !schema.equals("") && !myVolume.getName().equals("Papillon_axi")) {
-		    volumeOptionTemplate.setValue(myVolume.getName());
-		    volumeOptionTemplate.setLabel(myVolume.getName());
-		    // Je dois ici mettre un text dans l'OPTION, car les browser PC ne sont pas conformes aux
-      // specs W3C.
-		    volumeOptionTemplate.setSelected(myVolume.getName().equals(selectedVolume));
-		    volumeTextTemplate.setData(myVolume.getName());
-		    volumeSelect.appendChild(volumeOptionTemplate.cloneNode(true));
-		}
+        
+        //
+	    for (Iterator iter = VolumesFactory.getVolumesArray(PAPILLON_DICT).iterator(); iter.hasNext();) {
+            Volume myVolume = (Volume)iter.next();
+            String schema = myVolume.getXmlSchema();
+            // FIXME: trick to avoid displaying Papillon axies...
+            if (schema != null && !schema.equals("") && !myVolume.getName().equals("Papillon_axi")) {
+                volumeOptionTemplate.setValue(myVolume.getName());
+                volumeOptionTemplate.setLabel(myVolume.getName());
+                // Je dois ici mettre un text dans l'OPTION, car les browser PC ne sont pas conformes aux
+                // specs W3C.
+                volumeOptionTemplate.setSelected(myVolume.getName().equals(selectedVolume));
+                volumeTextTemplate.setData(myVolume.getName());
+                volumeSelect.appendChild(volumeOptionTemplate.cloneNode(true));
+            }
 	    }
 	    volumeSelect.removeChild(volumeOptionTemplate);
 	}

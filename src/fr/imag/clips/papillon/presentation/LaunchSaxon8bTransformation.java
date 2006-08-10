@@ -9,6 +9,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.2  2006/08/10 22:17:13  fbrunet
+ * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
+ * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+ * - Bug correction : +/- in advanced search
+ *
  * Revision 1.1  2006/07/10 11:07:15  serasset
  * Added a way to call system commands.
  * Added a call to a saxon 8b transformer.
@@ -16,6 +21,7 @@
  *
  *
  */
+
 package fr.imag.clips.papillon.presentation;
 
 // Enhydra SuperServlet imports
@@ -30,7 +36,7 @@ import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.system.Saxon8bTransformer;
 
 public class LaunchSaxon8bTransformation extends FacelessBasePO {
-    
+   
     final static String XSL_PARAMETER = "xsl";
     final static String XML_PARAMETER = "xml";
     
@@ -59,4 +65,6 @@ public class LaunchSaxon8bTransformation extends FacelessBasePO {
         
         throw new ClientPageRedirectException("Home.po");
     }
+    
 }
+

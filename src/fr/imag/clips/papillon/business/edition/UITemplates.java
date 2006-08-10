@@ -8,6 +8,11 @@
  * $Id$
  *---------------------------------------------------------
  * $Log$
+ * Revision 1.7  2006/08/10 22:17:13  fbrunet
+ * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
+ * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+ * - Bug correction : +/- in advanced search
+ *
  * Revision 1.6  2006/03/01 16:11:01  mangeot
  * The edit form is now in an XHTML file
  *
@@ -59,7 +64,7 @@ public class UITemplates {
 		if (volumeName!=null && !volumeName.equals("")) {
 			Hashtable typeTable = (Hashtable) interfaceTable.get(volumeName);
 			if (typeTable == null) {
-				Volume myVolume = fr.imag.clips.papillon.business.dictionary.VolumesFactory.findVolumeByName(volumeName);
+				Volume myVolume = fr.imag.clips.papillon.business.dictionary.VolumesFactory.getVolumeByName(volumeName);
 			//	initElt = Utility.buildDOMTreeFromUrl("file:///Projects/NewUIGenerator/interface.xhtml").getDocumentElement();
 				initElt = Utility.buildDOMTree(myVolume.getTemplateInterface()).getDocumentElement();
 				if (initElt!=null) {
@@ -116,7 +121,7 @@ public class UITemplates {
 		if (volumeName!=null) {
 			resEntry = (Element) entryTemplateTable.get(volumeName);
 			if (resEntry==null) {
-				Volume myVolume = fr.imag.clips.papillon.business.dictionary.VolumesFactory.findVolumeByName(volumeName);
+				Volume myVolume = fr.imag.clips.papillon.business.dictionary.VolumesFactory.getVolumeByName(volumeName);
 			//	resEntry = Utility.buildDOMTreeFromUrl("file:///Projects/NewUIGenerator/entry-template.xml").getDocumentElement();
 				resEntry = Utility.buildDOMTree(myVolume.getTemplateEntry()).getDocumentElement();
 				entryTemplateTable.put(volumeName, resEntry);

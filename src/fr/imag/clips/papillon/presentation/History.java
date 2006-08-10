@@ -27,6 +27,7 @@ import fr.imag.clips.papillon.business.dictionary.QueryResult;
 import fr.imag.clips.papillon.business.dictionary.QueryCriteria;
 import fr.imag.clips.papillon.business.dictionary.QueryRequest;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
+import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
 import fr.imag.clips.papillon.business.dictionary.Volume;
 import fr.imag.clips.papillon.business.utility.Utility;
 import fr.imag.clips.papillon.business.transformation.ResultFormatter;
@@ -76,7 +77,7 @@ public class History extends PapillonBasePO {
                 
         // Perform the request
         // FIXME: put findLexieHistory in QueryRequestFactory !!
-        Collection EntryHistoryCollection = QueryRequest.findLexieHistory(entryHandle, volumeName, this.getUser());
+        Collection EntryHistoryCollection = QueryRequest.findLexieHistory(entryHandle, VolumesFactory.getVolumeByName(volumeName), this.getUser());
         
         // Display entries
         if ( (EntryHistoryCollection != null) && (EntryHistoryCollection.size() > 0) ) {

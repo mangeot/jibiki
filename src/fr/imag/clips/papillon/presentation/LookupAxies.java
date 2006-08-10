@@ -9,6 +9,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.6  2006/08/10 22:17:13  fbrunet
+ * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
+ * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+ * - Bug correction : +/- in advanced search
+ *
  * Revision 1.5  2006/02/26 14:04:56  mangeot
  * Corrected a bug: the content was a static variable, thus there were problems when two users wanted to aces the same page at the same time
  *
@@ -148,8 +153,8 @@ public class LookupAxies extends PapillonBasePO {
             Collection myAxies = null;
             String userMessage = null;
 
-						Volume papillonAxiVolume = VolumesFactory.findVolumeByName(PapillonPivotFactory.VOLUMENAME);
-						Dictionary papillonDictionary = DictionariesFactory.findDictionaryByName(PapillonPivotFactory.DICTNAME);
+						Volume papillonAxiVolume = VolumesFactory.getVolumeByName(PapillonPivotFactory.VOLUMENAME);
+						Dictionary papillonDictionary = DictionariesFactory.getDictionaryByName(PapillonPivotFactory.DICTNAME);
 
 
             // looking for an axie with a lexie id linked to the axie
@@ -204,23 +209,27 @@ public class LookupAxies extends PapillonBasePO {
             
             String sourceLanguage = myGetParameter(content.NAME_SOURCE);
             // FIXME: Just get the first language for the moment. Architecture of this part should be revised.
-            String[] SourceLanguages = AvailableLanguages.getSourceLanguagesArrayForDict(PapillonPivotFactory.DICTNAME);
-						String langLoc = this.getUserPreferredLanguage();
-            for (int i = 0; i < SourceLanguages.length; i++) {
-							if (!SourceLanguages[i].equals("axi")) {
-							sourceOptionTemplate.setValue(SourceLanguages[i]);
-							if (this.IsClientWithLabelDisplayProblems()) {
-                    sourceOptionTemplate.setLabel(Languages.localizeLabel(langLoc,SourceLanguages[i]));
+            String langLoc = this.getUserPreferredLanguage();
+            
+            //
+            for (Iterator iter = AvailableLanguages.getSourceLanguagesArrayForDict(PapillonPivotFactory.DICTNAME).iterator(); iter.hasNext();) {
+                String lang = (String)iter.next();
+                
+                //
+                if (!lang.equals("axi")) {
+                    sourceOptionTemplate.setValue(lang);
+                    if (this.IsClientWithLabelDisplayProblems()) {
+                        sourceOptionTemplate.setLabel(Languages.localizeLabel(langLoc, lang));
+                    }
+                    else {
+                        sourceOptionTemplate.setLabel(Languages.localizeName(langLoc, lang));
+                    }
+                    sourceOptionTemplate.setSelected(lang.equals(sourceLanguage));
+                    // Je dois ici mettre un text dans l'OPTION, car les browser PC ne sont pas conformes aux
+                    // specs W3C.
+                    sourceTextTemplate.setData(Languages.localizeName(langLoc, lang));
+                    sourceSelect.appendChild(sourceOptionTemplate.cloneNode(true));
                 }
-                else {
-                    sourceOptionTemplate.setLabel(Languages.localizeName(langLoc,SourceLanguages[i]));
-                }
-                sourceOptionTemplate.setSelected(SourceLanguages[i].equals(sourceLanguage));
-                // Je dois ici mettre un text dans l'OPTION, car les browser PC ne sont pas conformes aux
-                // specs W3C.
-                sourceTextTemplate.setData(Languages.localizeName(langLoc,SourceLanguages[i]));
-                sourceSelect.appendChild(sourceOptionTemplate.cloneNode(true));
-							}
             }
             sourceSelect.removeChild(sourceOptionTemplate);            
         }
@@ -251,7 +260,8 @@ public class LookupAxies extends PapillonBasePO {
                     content.setTextSemCat(myAxie.getSemanticCat().toString());
                     content.setTextLexies(myAxie.getLexies().toString());
 					
-                    XslSheet xmlSheet = XslSheetFactory.findXslSheetByName("XML");
+                    //XslSheet xmlSheet = XslSheetFactory.findXslSheetByName("XML");
+                    XslSheet xmlSheet = XslSheetFactory.getXslSheet(myAxie.getDictionaryName(), myAxie.getVolumeName(), "XML");
                     String xslid = "";
                     if (null != xmlSheet && !xmlSheet.isEmpty()) {
                         xslid = xmlSheet.getHandle();
@@ -275,7 +285,7 @@ public class LookupAxies extends PapillonBasePO {
     protected void addXml(String xmlString)
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
 
-            Node xmlNode = XslTransformation.applyXslSheetForXml(xmlString);
+            Node xmlNode = XslSheetFactory.applyXslSheetForXml(xmlString);
 
             //where we must insert the xml
             HTMLElement theXml = content.getElementXml();

@@ -4,6 +4,11 @@
  * $Id$
  *------------------------
  * $Log$
+ * Revision 1.7  2006/08/10 22:17:13  fbrunet
+ * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
+ * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+ * - Bug correction : +/- in advanced search
+ *
  * Revision 1.6  2006/06/01 22:05:05  fbrunet
  * New interface, quick search, new contribution management (the first edition not create new contribution. New contribution is created after add, remove element, update, save, etc. in the interface window)
  *
@@ -118,19 +123,22 @@ public class LexALPFormatter implements ResultFormatter {
     protected Dictionary currentDictionary;
     protected Volume sourceVolume;
     
-    public void initializeFormatter(Dictionary dict, Volume vol, Object parameter, int dialect, String lang) throws PapillonBusinessException {
-        currentDictionary = dict;
-        sourceVolume = vol;
+    public void initializeFormatter(Dictionary dictionary, Volume volume, Object parameter, int dialect, String lang) throws PapillonBusinessException {
+        
         try {
+            
+            //
+            String dictionaryName = dictionary.getName();
+            String volumeName = volume.getName();
+            
+            //
             if (myDocumentBuilder==null) {
                 myDocumentBuilder = myDocumentBuilderFactory.newDocumentBuilder();
             }
-            // if parameter is given, it is the name of the xsl...
-            if (null != parameter) {
-                dictXsl = XslSheetFactory.getNamedXslSheet((String) parameter, dict.getName(), vol.getName());
-            } else {
-                dictXsl = XslSheetFactory.getDefaultXslSheet(dict.getName(), vol.getName());
-            }
+            
+            //
+            dictXsl = getXslSheet(dictionaryName, volumeName, (String) parameter);
+                            
         } catch (javax.xml.parsers.ParserConfigurationException e) {
             throw new PapillonBusinessException("CRITICAL: error initializing document builder !", e);
         }
@@ -139,6 +147,7 @@ public class LexALPFormatter implements ResultFormatter {
     
     public Node getFormattedResult(QueryResult qr, User usr) throws PapillonBusinessException {
         try {
+    
             Document res = myDocumentBuilder.newDocument();
             Element div = res.createElement("div");
             res.appendChild(div);
@@ -205,13 +214,27 @@ public class LexALPFormatter implements ResultFormatter {
                 Node xpathAttribut = node.getAttributes().getNamedItem("xpath");
                 String xpath = xpathAttribut.getNodeValue();
                 Node xslNameAttribut = node.getAttributes().getNamedItem("xslName");
-                XslSheet newXsl = new XslSheet();
-                if ( xslNameAttribut != null ) {
-					//FIXME: search the specified entry, then gets its dictionary and volume to correctly select the XSL
-                    newXsl = XslSheetFactory.findXslSheetByName(xslNameAttribut.getNodeValue());
-                }
+                Node dictionaryNameAttribut = node.getAttributes().getNamedItem("dictionaryName");
+                Node volumeNameAttribut = node.getAttributes().getNamedItem("volumeName");
                 //Node namespaceAttribut = node.getAttributes().getNamedItem("namespace");
                 
+                //
+                String xslName = "";
+                if ( xslNameAttribut != null ) { xslName = xslNameAttribut.getNodeValue(); }
+                
+                //
+                String dictionaryName = "";
+                if ( dictionaryNameAttribut != null ) { dictionaryName = dictionaryNameAttribut.getNodeValue(); }
+                
+                //
+                String volumeName = "";
+                if ( volumeNameAttribut != null ) { volumeName = volumeNameAttribut.getNodeValue(); }
+                
+                //FIXME: search the specified entry, then gets its dictionary and volume to correctly select the XSL
+                //newXsl = XslSheetFactory.findXslSheetByName(xslNameAttribut.getNodeValue());
+                XslSheet newXsl = XslSheetFactory.getXslSheet(dictionaryName, volumeName, xslName);
+                //System.out.println("XslSheetFactory.getXslSheet(" + dictionaryName + ", " + volumeName + ", " + xslName + ") -> " + xpath);
+
                 
                 /*
                 // Find entry
@@ -244,7 +267,8 @@ public class LexALPFormatter implements ResultFormatter {
                 */
                 
                 // Find entry
-                QueryRequest queryReq = new QueryRequest(VolumesFactory.getVolumesArrayName(null, lang, null));
+                // FIXME : Change DB to do quick entry id search !
+                QueryRequest queryReq = new QueryRequest(VolumesFactory.getVolumesArray(null, lang, null));
                 QueryCriteria criteria = new QueryCriteria();
                 criteria.add("key", QueryCriteria.EQUAL, Volume.CDM_entryId);
                 criteria.add("value", QueryCriteria.EQUAL, termRef);     // Termref is an entryid
@@ -276,7 +300,7 @@ public class LexALPFormatter implements ResultFormatter {
                     while(iter.hasNext()) {
                         QueryResult relatedQr = (QueryResult) iter.next();
                         
-                        // Find nodes contingen on xpath
+                        // Find nodes with xpath
                         NodeList nodeL = relatedQr.getSourceEntry().getNodes(xpath);
                         
                         // Insert new nodes
@@ -288,7 +312,7 @@ public class LexALPFormatter implements ResultFormatter {
                             result.appendChild(nodeXpath);
                             
                             //
-                            if ( xslNameAttribut != null ) {
+                            if ( newXsl != null ) {
                                 result = (Element) formatResult(docXpath, newXsl, usr);
                             }
                             
@@ -303,7 +327,6 @@ public class LexALPFormatter implements ResultFormatter {
                 
                 // Here because Res change after removeChild and appendChild methods
                 list = docCible.getElementsByTagName("AUTO");
-                
             }
             
             //
@@ -326,22 +349,76 @@ public class LexALPFormatter implements ResultFormatter {
 		java.io.UnsupportedEncodingException,
 		java.io.IOException {
             
-			Transformer myTransformer = (Transformer)XslSheetCache.get(xslSheet.getHandle());
-			if (myTransformer==null) {
-				myTransformer = myTransformerFactory.newTransformer(new StreamSource(new StringReader (xslSheet.getCode())));
-				XslSheetCache.put(xslSheet.getHandle(),myTransformer);
-			}
-			//the result
+            // Find transformer
+            // FIXME: if transformer is null ? 
+			Transformer myTransformer = xslSheet.getTransformer();
+            
+			// The source
 			if (myDocumentBuilder==null) {
 				myDocumentBuilder = myDocumentBuilderFactory.newDocumentBuilder();
 			}
 			Document newDocument= myDocumentBuilder.newDocument();
-			//the transformation
-			// is there a way to obtain a dom result which is a text string?
+			
+            //
 			myTransformer.transform (new DOMSource(xmlSource), new DOMResult(newDocument));
-			return newDocument;
+			
+            //
+            return newDocument;
 		}
+
+
+/** 
+* Return the xsl sheet corresponding to the name, dictionary name and volumename
+*
+* @param String
+* @param String
+* @param String
+*
+* @return XslSheet
+*     
+* @exception PapillonBusinessException
+*/    
+public static XslSheet getXslSheet(String dictionaryName, String volumeName, String Name) 
+throws PapillonBusinessException {
+    
+    XslSheet theXsl = null;
+    
+    // find specific xsl
+    theXsl = XslSheetFactory.getXslSheet(dictionaryName, volumeName, Name);
+    
+    // find specific xsl
+    if (theXsl == null) {
+        theXsl =  XslSheetFactory.getXslSheet(dictionaryName, "", Name);
+    }
+    
+    // find specific xsl
+    if (theXsl == null) {
+        theXsl =  XslSheetFactory.getXslSheet("", "", Name);
+    }    
+    
+    // find defaut
+    if (theXsl == null) {
+        theXsl =  XslSheetFactory.getXslSheet(dictionaryName, volumeName, "");
+    }
+    
+    // find defaut
+    if (theXsl == null) {
+        theXsl =  XslSheetFactory.getXslSheet(dictionaryName, "", "");
+    }
+    
+    
+    // find defaut
+    if (theXsl == null) {
+        theXsl =  XslSheetFactory.getXslSheet("", "", "");
+    }
+    
+    //
+    return theXsl;
 }
+
+
+}
+
 
 
 

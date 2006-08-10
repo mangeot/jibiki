@@ -10,6 +10,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.10  2006/08/10 22:17:13  fbrunet
+ * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
+ * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+ * - Bug correction : +/- in advanced search
+ *
  * Revision 1.9  2006/06/19 15:27:01  fbrunet
  * Jibiki : improvement of the search result display
  * Lexalp : add help menu (link to wiki and bug tracker)
@@ -166,37 +171,39 @@ public class LexalpEditEntryInit extends PapillonBasePO {
             // Content creation
             content = (LexalpEditEntryInitXHTML)MultilingualXHtmlTemplateFactory.createTemplate("fr.imag.clips.papillon.presentation.xhtmllexalp", "LexalpEditEntryInitXHTML", this.getComms(), this.getSessionData());
             // On regarde d'abord les parametres qui nous sont demandes.
-            String volume = myGetParameter(EditEntryInitFactory.VOLUME_PARAMETER);
+            String volumeName = myGetParameter(EditEntryInitFactory.VOLUME_PARAMETER);
             String headword = myGetParameter(content.NAME_Headword);
             String entryHandle = myGetParameter(EditEntryInitFactory.HANDLE_PARAMETER);
             String action = myGetParameter(EditEntryInitFactory.ACTION_PARAMETER);		
             
             //
-            if (volume != null && !volume.equals("")) {
-                this.setPreference(content.NAME_VOLUME,volume);
+            if (volumeName != null && !volumeName.equals("")) {
+                this.setPreference(content.NAME_VOLUME, volumeName);
             } else {
-                volume = this.getPreference(content.NAME_VOLUME);
+                volumeName = this.getPreference(content.NAME_VOLUME);
             }
             
+            
             //
-            if (action!=null && !action.equals("")) {
+            if (action!=null && !action.equals("") && !action.equals("lookup") &&
+                volumeName!=null && !volumeName.equals("")) {
                 
                 // Search last contribution corresponding to entryId
+                Volume volume = VolumesFactory.getVolumeByName(volumeName);
                 VolumeEntry myEntry = VolumeEntriesFactory.findEntryByEntryId(this.getUser(), volume, entryHandle);
                 //VolumeEntry myEntry = VolumeEntriesFactory.findEntryByHandle(volume, entryHandle);
                 
                 // CREATE NEW ENTRY
                 if (action.equals("createAnyway")) {
-                    if (volume!=null && !volume.equals("") 
-                        && headword!=null && !headword.equals("")) {
+                    if (headword!=null && !headword.equals("")) {
                         
                         //
-                        EditEntryInitFactory.createEntry(volume, headword, this.getUser());
+                        EditEntryInitFactory.createEntry(volume.getName(), headword, this.getUser());
                         
                     } else {
                         
                         // Error message
-                        this.getSessionData().writeUserMessage("Volumes and Headwords are mandatory for creation");
+                        this.getSessionData().writeUserMessage("Headwords are mandatory for creation");
                     }
                 
                 // EDIT
@@ -227,7 +234,7 @@ public class LexalpEditEntryInit extends PapillonBasePO {
             }
             
             //
-            updateCreationInterface(volume, headword);
+            updateCreationInterface(volumeName, headword);
             User myUser = getUser();
             if (null != myUser) {
                 content.setTextUserName(myUser.getName());
@@ -249,7 +256,7 @@ public class LexalpEditEntryInit extends PapillonBasePO {
             */
             
             //
-            QueryRequest queryReq = new QueryRequest(VolumesFactory.getVolumesArrayName());
+            QueryRequest queryReq = new QueryRequest(VolumesFactory.getVolumesArray());
             queryReq.setOrTree();   // OR(AND)
             ArrayList criteriaSearchList = qf.getCriteriaList();
                 
@@ -313,7 +320,7 @@ public class LexalpEditEntryInit extends PapillonBasePO {
                 
                 // FIXME : replace by QueryRequest
                 QueryParameter qp = qf.getQueryParameter();
-                qp.setTargets(new String[0]);
+                //qp.setTargets(new ArrayList());
                 
                 // Display query result if no action on form (add ou remove criteria)
                 if ( !qf.actionOnFormRequested() ) { 
@@ -383,7 +390,7 @@ public class LexalpEditEntryInit extends PapillonBasePO {
                 return content.getElementEditEntryInitContent();
         }
     
-    protected void updateCreationInterface(String volume, String headword)
+    protected void updateCreationInterface(String volumeName, String headword)
         throws fr.imag.clips.papillon.business.PapillonBusinessException,
         HttpPresentationException,
         java.io.UnsupportedEncodingException {
@@ -400,10 +407,11 @@ public class LexalpEditEntryInit extends PapillonBasePO {
             // (it should be this way if the HTML is valid...)
             Text volumeTextTemplate = (Text)volumeOptionTemplate.getFirstChild();
             
-            Volume[] AllVolumes = VolumesFactory.getVolumesArray();
-            
-            for (int i = 0; i < AllVolumes.length; i++) {
-                Volume myVolume = AllVolumes[i];
+            //
+            for (Iterator iter = VolumesFactory.getVolumesArray().iterator(); iter.hasNext();) {
+                Volume myVolume = (Volume)iter.next();
+                
+                //
                 String itf = myVolume.getTemplateInterface();
                 // FIXME: trick to avoid displaying Papillon axies...
                 if (itf != null && !itf.equals("") && !myVolume.getName().equals(PapillonPivotFactory.VOLUMENAME)) {
@@ -411,7 +419,7 @@ public class LexalpEditEntryInit extends PapillonBasePO {
                     volumeOptionTemplate.setLabel(myVolume.getName());
                     // Je dois ici mettre un text dans l'OPTION, car les browser PC ne sont pas conformes aux
                     // specs W3C.
-                    volumeOptionTemplate.setSelected(myVolume.getName().equals(volume));
+                    volumeOptionTemplate.setSelected(myVolume.getName().equals(volumeName));
                     volumeTextTemplate.setData(myVolume.getName());
                     volumeSelect.appendChild(volumeOptionTemplate.cloneNode(true));
                 }

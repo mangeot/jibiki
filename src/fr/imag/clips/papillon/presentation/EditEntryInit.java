@@ -10,6 +10,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.25  2006/08/10 22:17:13  fbrunet
+ * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
+ * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+ * - Bug correction : +/- in advanced search
+ *
  * Revision 1.24  2006/04/06 15:06:39  fbrunet
  * New class 'creationEditInit' : create new entry
  * Modify LexALPEditEntry : only edit entry
@@ -339,18 +344,19 @@ public class EditEntryInit extends PapillonBasePO {
      // (it should be this way if the HTML is valid...)
 	    Text volumeTextTemplate = (Text)volumeOptionTemplate.getFirstChild();
 
-	    Volume[] AllVolumes = VolumesFactory.getVolumesArray();
-
-	    for (int i = 0; i < AllVolumes.length; i++) {
-		Volume myVolume = AllVolumes[i];
-		String itf = myVolume.getTemplateInterface();
-		volumeOptionTemplate.setValue(myVolume.getName());
-		volumeOptionTemplate.setLabel(myVolume.getName());
-		// Je dois ici mettre un text dans l'OPTION, car les browser PC ne sont pas conformes aux
-        // specs W3C.
-		volumeOptionTemplate.setSelected(myVolume.getName().equals(volume));
-		volumeTextTemplate.setData(myVolume.getName());
-		volumeSelect.appendChild(volumeOptionTemplate.cloneNode(true));
+	    //
+	    for (Iterator iter = VolumesFactory.getVolumesArray().iterator(); iter.hasNext(); ) {
+            Volume myVolume =(Volume)iter.next();
+            
+            //
+            String itf = myVolume.getTemplateInterface();
+            volumeOptionTemplate.setValue(myVolume.getName());
+            volumeOptionTemplate.setLabel(myVolume.getName());
+            // Je dois ici mettre un text dans l'OPTION, car les browser PC ne sont pas conformes aux
+            // specs W3C.
+            volumeOptionTemplate.setSelected(myVolume.getName().equals(volume));
+            volumeTextTemplate.setData(myVolume.getName());
+            volumeSelect.appendChild(volumeOptionTemplate.cloneNode(true));
 	    }
 	    volumeSelect.removeChild(volumeOptionTemplate);
 	}
@@ -362,8 +368,8 @@ public class EditEntryInit extends PapillonBasePO {
 			
 			removeEntryListTable();
 			
-			Volume myVolume = VolumesFactory.findVolumeByName(volumeName);
-			String[] targets = null;
+			Volume myVolume = VolumesFactory.getVolumeByName(volumeName);
+			Collection targets = null;
 			if (myVolume != null && !myVolume.isEmpty()) {
 				targets = myVolume.getTargetLanguagesArray();
 			}

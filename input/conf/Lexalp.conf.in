@@ -196,6 +196,11 @@ Papillon.Informations.relativeDir = "/"
 # while importing a file). This directory is relative to the server's information section base Dir. 
 Papillon.Informations.mediaDir = "info_media/"
 
+# EXPORT
+Papillon.Export.baseDir = "/home/lexalp/termbank-static/"
+Papillon.Export.relativeDir = "/"
+Papillon.Export.mediaDir = "info_media/"
+
 # The list of categories that are to be used for the informationn file section
 # The main list is to be used to identify sections in the database (this should not be changed in
 # production stage, You may add sections, but you'll lose some information if you remove some...). 
@@ -280,6 +285,17 @@ Papillon.Logging.StoreQueryLogs = true
 # SAXON TRANSFORMATION HANDLER
 #+++++++++++++++++++++++++++++++++
 Papillon.Saxon.Classpath = "@SAXON8_LIB@"
+
+#+++++++++++++++++++++++++++++++++
+# FOP TRANSFORMATION HANDLER
+#+++++++++++++++++++++++++++++++++
+Papillon.Fop.Classpath = "@FOP_LIB@"
+Papillon.Batik.Classpath = "@BATIK_LIB@"
+Papillon.Xalan.Classpath = "@XALAN_LIB@"
+Papillon.Xerces.Classpath = "@XERCES_LIB@"
+Papillon.Avalon.Classpath = "@AVALON_LIB@"
+Papillon.XmlApi.Classpath = "@XMLAPI_LIB@"
+Papillon.Fo.Xsl = "@FO_PATH@"
 
 #-----------------------------------------------------------------------------
 #                   JDictd server Configuration (RFC 2229)

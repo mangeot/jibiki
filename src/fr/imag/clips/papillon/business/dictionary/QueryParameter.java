@@ -9,6 +9,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2006/08/10 22:17:12  fbrunet
+ * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
+ * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+ * - Bug correction : +/- in advanced search
+ *
  * Revision 1.3  2006/04/24 13:43:29  fbrunet
  * Add new class ViewQueryResult : allow to use one class to create result display in advancedSearch and EditEntryInit (like advancedQueryForm)
  * Improve result display : view n results per page
@@ -37,7 +42,9 @@ package fr.imag.clips.papillon.business.dictionary;
 
 /* standards imports */
 import java.util.Hashtable;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Collection;
 import java.lang.Integer;
 import java.lang.Object;
 
@@ -46,34 +53,47 @@ import java.lang.Object;
 * A QueryParameter is a business object passed when querying dictionaries.
 */
 public class QueryParameter {
+    
     // Parameters
-    protected String [] dictionaryNames;
-    protected Vector criteria;
+    protected ArrayList dictionaries; // Collection of Dictionary
+    protected ArrayList targets;   // Collection of String
+    protected ArrayList criteria;
     protected int offset; 
     protected int limit; 
     protected String xsl;
-    protected String [] targets;
     
     public QueryParameter() {
-        criteria = new Vector();
+        
+        // Initialize
+        dictionaries = new ArrayList();
+        targets = new ArrayList();
+        criteria = new ArrayList();
         offset = 0; 
         limit = 0; 
     }
     
-    public String[] getDictionaryNames() {
-        return (null == dictionaryNames) ? (dictionaryNames = new String[0]) : dictionaryNames;
+    public Collection getDictionaries() {
+        return dictionaries;
     }
     
-    public void setDictionaryNames(String [] names) {
-        dictionaryNames = names;
+    public void setDictionaries(Collection dicts) {
+        if (dicts != null) {
+            dictionaries = new ArrayList(dicts);
+        } else {
+            dictionaries = new ArrayList();
+        }
     }
     
-    public Vector getCriteria() {
-        return (null == criteria) ? (criteria = new Vector()) : criteria;
+    public List getCriteria() {
+        return criteria;
     }
     
-    public void setCriteria(Vector newCriteria) {
-        criteria = newCriteria;
+    public void setCriteria(List newCriteria) {
+        if (newCriteria != null) {
+            criteria = new ArrayList(newCriteria);
+        } else {
+            criteria = new ArrayList();
+        }
     }
 
     public int getOffset() {
@@ -108,12 +128,16 @@ public class QueryParameter {
         xsl = newXsl;
     }
 
-    public String[] getTargets() {
-        return (null == targets) ? (targets = new String[0]) : targets;
+    public Collection getTargets() {
+        return targets;
     }
     
-    public void setTargets(String [] newTargets) {
-        targets = newTargets;
+    public void setTargets(Collection newTargets) {
+        if (newTargets != null) {
+            targets = new ArrayList(newTargets);
+        } else {
+            targets = new ArrayList();
+        }
     }
         
     public QueryParameter duplicate() {
@@ -123,7 +147,7 @@ public class QueryParameter {
         
         // NOT clone() ATTENTION NO DEEP COPY
         // JUST Create the SAME queryParamater. It use to create next and previous query request !
-        duplicate.setDictionaryNames(dictionaryNames);
+        duplicate.setDictionaries(dictionaries);
         duplicate.setCriteria(criteria);
         duplicate.setOffset(offset);
         duplicate.setLimit(limit);

@@ -9,6 +9,11 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.7  2006/08/10 22:17:13  fbrunet
+ *  - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
+ *  - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+ *  - Bug correction : +/- in advanced search
+ *
  *  Revision 1.6  2006/07/25 14:58:36  mangeot
  *  Entries must not be deleted
  *
@@ -253,9 +258,9 @@ public class GDEFLinker extends LinkerBasePO {
         for (int i=0; i < parameters.volumes.length; i++) {
             String volName = parameters.volumes[i];
             if (volName != null && volName != "") {
-                Volume vol = VolumesFactory.findVolumeByName(volName);
+                Volume vol = VolumesFactory.getVolumeByName(volName);
                 if (vol.getSourceLanguage().equals(parameters.sourceLang)) {
-                    Dictionary dict = DictionariesFactory.findDictionaryByName(vol.getDictname());
+                    Dictionary dict = DictionariesFactory.getDictionaryByName(vol.getDictname());
                     results.addAll(VolumeEntriesFactory.getVolumeEntriesVector(dict,vol,keys,null,null,0, 0));
                 }
             }

@@ -9,6 +9,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.8  2006/08/10 22:17:13  fbrunet
+ * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
+ * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+ * - Bug correction : +/- in advanced search
+ *
  * Revision 1.7  2006/06/19 15:27:01  fbrunet
  * Jibiki : improvement of the search result display
  * Lexalp : add help menu (link to wiki and bug tracker)
@@ -147,14 +152,19 @@ public class ViewQueryResult {
             // Set result number
             content.setTextNbResults(Integer.toString(qrset.size()));
             
+            
             // Create display
             Node parentNode = contributionNode.getParentNode();
-            Iterator iter = qrset.iterator();
-            while(iter.hasNext()) {
+            for (Iterator iter = qrset.iterator(); iter.hasNext();) {
+                
+                // FIXME: create a original template AND tempory template 
+                // -> don't set attribute class here (setAttribute("class","action")), only if jibiki hidden anchor (setAttribute("class","hidden"))
+                // use NAME (like AdminXslTmplXHTML.NAME_defaultxsl) and duplicate node !
                 
                 //
                 QueryResult qr = (QueryResult) iter.next();
-                VolumeEntry myEntry = qr.getSourceEntry();             
+                VolumeEntry myEntry = qr.getSourceEntry();  
+                //System.out.println("ViewQueryResult : " + qp.getXsl());
                 ResultFormatter rf = ResultFormatterFactory.getFormatter(qr, qp.getXsl(), ResultFormatterFactory.XHTML_DIALECT, null);
                 Utility.removeChildNodes(entryNode);
                 Node entryDOM = (Node)rf.getFormattedResult(qr, user);
@@ -328,10 +338,10 @@ public class ViewQueryResult {
                         qpxml.setXsl("XML");
                         qpxml.setLimit(qp.getLimit());
                         qpxml.setOffset(qp.getOffset());
-                        String[] dictNames = new String[1];
-                        dictNames[0] = myEntry.getDictionaryName();
-                        qpxml.setDictionaryNames(dictNames);
-                        Vector crit = new Vector();
+                        ArrayList dicts = new ArrayList();
+                        dicts.add(myEntry.getDictionary());
+                        qpxml.setDictionaries(dicts);
+                        ArrayList crit = new ArrayList();
                         String[] idc = new String[4];
                         idc[0] = Volume.CDM_entryId;
                         idc[1] = null;
@@ -360,6 +370,7 @@ public class ViewQueryResult {
             // the previous button
             if ( qp.getOffset() != 0 ) {
 
+                // ATTENTION NO DEEP COPY in QueryParameter duplicate method
                 QueryParameter previousQp = (QueryParameter) qp.duplicate();
                 previousQp.setOffset(qp.getOffset() - qp.getLimit());
                 // Top

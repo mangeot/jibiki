@@ -9,6 +9,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.28  2006/08/10 22:17:12  fbrunet
+ * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
+ * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+ * - Bug correction : +/- in advanced search
+ *
  * Revision 1.27  2006/06/01 22:05:05  fbrunet
  * New interface, quick search, new contribution management (the first edition not create new contribution. New contribution is created after add, remove element, update, save, etc. in the interface window)
  *
@@ -609,6 +614,8 @@ public class Volume {
 				throw new PapillonBusinessException("Error getting Volume's source language", ex);
 			}
 		}
+    
+    // FIXME: change String to Collection
 	public void setSourceLanguage(String lang) 
         throws PapillonBusinessException {
 			try {
@@ -627,6 +634,8 @@ public class Volume {
      *   retrieving data (usually due to an underlying data layer
 	 *   error).
      */
+    // FIXME: change String to Collection
+    // FIXME: supress getTargetLanguagesArray ? or getTargetLanguages ?
     public String getTargetLanguages() 
         throws PapillonBusinessException {
 			try {
@@ -636,10 +645,20 @@ public class Volume {
 			}
 		}
 
-	public String[] getTargetLanguagesArray() throws PapillonBusinessException {
-			return getTargetLanguages().split("\\s");
+	public Collection getTargetLanguagesArray() throws PapillonBusinessException {
+			
+        //return getTargetLanguages().split("\\s");
+        // FIXME: add target collection in volume
+        String[] targetsString = getTargetLanguages().split("\\s");
+        ArrayList targets = new ArrayList();
+        for (int i = 0; i < targetsString.length; i++) {
+            targets.add(targetsString[i]);
+        }
+        
+        return targets;
     }
 
+    // FIXME: change String to Collection
 	public void setTargetLanguages(String langs) 
         throws PapillonBusinessException {
 			try {
@@ -1316,7 +1335,7 @@ public class Volume {
                         System.out.println("Z + delta : " + Integer.toString(z));
                         
                         // Buffer volumeEntries
-                        Collection bufferResults = VolumeEntriesFactory.getVolumeEntriesVector(DictionariesFactory.findDictionaryByName(this.getDictname()), this, null, null, null, z, delta);
+                        Collection bufferResults = VolumeEntriesFactory.getVolumeEntriesVector(DictionariesFactory.getDictionaryByName(this.getDictname()), this, null, null, null, z, delta);
                         
                         // Index volumeEntries
                         Iterator buffer = bufferResults.iterator();

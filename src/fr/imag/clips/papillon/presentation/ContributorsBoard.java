@@ -9,6 +9,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.9  2006/08/10 22:17:13  fbrunet
+ * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
+ * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+ * - Bug correction : +/- in advanced search
+ *
  * Revision 1.8  2006/02/26 14:04:56  mangeot
  * Corrected a bug: the content was a static variable, thus there were problems when two users wanted to aces the same page at the same time
  *
@@ -63,6 +68,7 @@ import fr.imag.clips.papillon.presentation.PapillonSessionData;
 // Standard imports
 import java.io.IOException;
 import java.util.Date;
+import java.util.Iterator;
 import java.text.DateFormat;
 import java.io.*;
 
@@ -73,6 +79,7 @@ import fr.imag.clips.papillon.presentation.xhtml.orig.ContributorsBoardTmplXHTML
 import fr.imag.clips.papillon.data.*;
 import fr.imag.clips.papillon.business.utility.Utility;
 import fr.imag.clips.papillon.business.transformation.*;
+import fr.imag.clips.papillon.business.dictionary.Volume;
 import fr.imag.clips.papillon.business.PapillonLogger;
 
 
@@ -235,10 +242,11 @@ public class ContributorsBoard extends PapillonBasePO {
         // (it should be this way if the HTML is valid...)
         Text volumeTextTemplate = (Text)volumeOptionTemplate.getFirstChild(); 
                 
-		fr.imag.clips.papillon.business.dictionary.Volume[] AllVolumes = fr.imag.clips.papillon.business.dictionary.VolumesFactory.getVolumesArray();
-                
-        for (int i = 0; i < AllVolumes.length; i++) {
-            String volumeName = AllVolumes[i].getName();
+		//      
+        for (Iterator iter = fr.imag.clips.papillon.business.dictionary.VolumesFactory.getVolumesArray().iterator(); iter.hasNext();) {
+            String volumeName = ((Volume)iter.next()).getName();
+            
+            //
             volumeOptionTemplate.setValue(volumeName);
             volumeOptionTemplate.setLabel(volumeName);
             // Je dois ici mettre un text dans l'OPTION, car les browser PC ne sont pas conformes aux 

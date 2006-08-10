@@ -9,6 +9,11 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.7  2006/08/10 22:17:13  fbrunet
+ *  - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
+ *  - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+ *  - Bug correction : +/- in advanced search
+ *
  *  Revision 1.6  2006/05/22 22:45:54  fbrunet
  *  LexALP: add merge method in post-save processing (merge axies with same referenced lexies)
  *
@@ -111,6 +116,10 @@ import org.enhydra.xml.io.DOMFormatter;
  */
 public class LexALPLinker extends LinkerBasePO {
         
+    
+    //
+    private static final String PARAMETER_ALL= "*ALL*";
+    
     // Search form Parameters
     public class SearchFormParameters {
         public boolean isInitialized = false;
@@ -191,27 +200,42 @@ public class LexALPLinker extends LinkerBasePO {
         // However, building back the desired searchForm depends on it's exact shape.
         // add volumes languages in the sourceLang menu
         HashSet langSet = new HashSet();
+        boolean isAllSourcesOption = false;
+        
+        //
         for (int i=0; i < parameters.volumes.length; i++ ) {
             String volName = parameters.volumes[i];
-            if (volName != null && volName != "") {
-                Volume vol = VolumesFactory.findVolumeByName(parameters.volumes[i]);
+            if (volName != null && !volName.equals("") && !volName.equals(PARAMETER_ALL)) {
+                Volume vol = VolumesFactory.getVolumeByName(parameters.volumes[i]);
                 if (null != vol) {
                     langSet.add(vol.getSourceLanguage());
                 }
+            } else if (volName.equals(PARAMETER_ALL)) {
+                isAllSourcesOption = true;
             }
         }
+        
+        //
         for (int i=0; i < parameters.dictionaries.length; i++ ) {
             String dictName = parameters.dictionaries[i];
             if (dictName != null && dictName != "") {
-                Dictionary dict = DictionariesFactory.findDictionaryByName(parameters.dictionaries[i]);
+                Dictionary dict = DictionariesFactory.getDictionaryByName(parameters.dictionaries[i]);
                 if (null != dict) {
-                    String [] langs = dict.getSourceLanguagesArray();
-                    for (int j=0; j < langs.length; j++) 
-                        langSet.add(langs[j]);
+                    
+                    //
+                    for (Iterator iter = dict.getSourceLanguagesArray().iterator(); iter.hasNext();) 
+                        langSet.add((String)iter.next());
                 }
             }
         }
         
+        // All languages
+        XHTMLOptionElement allSourcesOption = searchForm.getElementAllSourcesOption();
+        allSourcesOption.removeAttribute("id");
+        if (!isAllSourcesOption) allSourcesOption.getParentNode().removeChild(allSourcesOption);
+        
+        
+        //
         if (!langSet.isEmpty()) {
             String[] langArray = (String[]) langSet.toArray(new String[langSet.size()]);
             Arrays.sort(langArray);
@@ -273,13 +297,13 @@ public class LexALPLinker extends LinkerBasePO {
         if ((parameters.facetValue != null) && (!parameters.facetValue.equals(""))) {
             
             //
-            QueryRequest query = new QueryRequest(VolumesFactory.getVolumesArrayName());
+            QueryRequest query = new QueryRequest(VolumesFactory.getVolumesArray());
                         
             //
             QueryCriteria criteria = new QueryCriteria();
             criteria.add("key", QueryCriteria.EQUAL, parameters.facet);
             criteria.add("value", parameters.comparisonOperator, parameters.facetValue);
-            criteria.add("lang", QueryCriteria.EQUAL, parameters.sourceLang);
+            if (!parameters.sourceLang.equals(PARAMETER_ALL)) criteria.add("lang", QueryCriteria.EQUAL, parameters.sourceLang);
             query.addCriteria(criteria);
             
             
@@ -325,9 +349,9 @@ public class LexALPLinker extends LinkerBasePO {
         for (int i=0; i < parameters.volumes.length; i++) {
             String volName = parameters.volumes[i];
             if (volName != null && volName != "") {
-                Volume vol = VolumesFactory.findVolumeByName(volName);
+                Volume vol = VolumesFactory.getVolumeByName(volName);
                 if (vol.getSourceLanguage().equals(parameters.sourceLang)) {
-                    Dictionary dict = DictionariesFactory.findDictionaryByName(vol.getDictname());
+                    Dictionary dict = DictionariesFactory.getDictionaryByName(vol.getDictname());
                     results.addAll(VolumeEntriesFactory.getVolumeEntriesVector(dict,vol,keys,null,null,0, 0));
                 }
             }

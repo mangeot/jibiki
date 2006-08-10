@@ -9,6 +9,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.13  2006/08/10 22:17:13  fbrunet
+ * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
+ * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+ * - Bug correction : +/- in advanced search
+ *
  * Revision 1.12  2006/04/05 12:38:21  mangeot
  * Fixed a confusion when importing entries versus contributions
  *
@@ -116,6 +121,7 @@ import fr.imag.clips.papillon.business.message.MessageDBLoader;
 // Standard imports
 import java.io.IOException;
 import java.util.Date;
+import java.util.Iterator;
 import java.text.DateFormat;
 import java.io.*;
 
@@ -246,11 +252,11 @@ public class AdminEntries extends PapillonBasePO {
         // (it should be this way if the HTML is valid...)
         Text volumeTextTemplate = (Text)volumeOptionTemplate.getFirstChild(); 
                 
-                
-        Volume[] AllVolumes = VolumesFactory.getVolumesArray();
-                
-        for (int i = 0; i < AllVolumes.length; i++) {
-            String volumeName = AllVolumes[i].getName();
+        //
+        for (Iterator iter = VolumesFactory.getVolumesArray().iterator(); iter.hasNext();) {
+            String volumeName = ((Volume)iter.next()).getName();
+            
+            //
             volumeOptionTemplate.setValue(volumeName);
             volumeOptionTemplate.setLabel(volumeName);
             // Je dois ici mettre un text dans l'OPTION, car les browser PC ne sont pas conformes aux 

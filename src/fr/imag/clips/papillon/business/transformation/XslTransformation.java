@@ -4,6 +4,11 @@
  *$Id$
  *------------------------
  *$Log$
+ *Revision 1.13  2006/08/10 22:17:13  fbrunet
+ *- Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
+ *- Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+ *- Bug correction : +/- in advanced search
+ *
  *Revision 1.12  2006/03/01 15:12:31  mangeot
  *Merge between maintrunk and LEXALP_1_1 branch
  *
@@ -91,6 +96,8 @@ package fr.imag.clips.papillon.business.transformation;
 
 import java.util.Hashtable;
 import java.util.Vector;
+import java.util.Iterator;
+import java.util.Collection;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -143,7 +150,8 @@ public class XslTransformation implements ResultFormatter {
         currentXslSheetSequence = new Vector();
 		
 		String formatter = (String) parameter;
-		
+        
+		/*
 		if (formatter!=null && !formatter.equals("")) {
 			currentXslSheetSequence.add(XslSheetFactory.findXslSheetByName(formatter));
 		}
@@ -156,7 +164,10 @@ public class XslTransformation implements ResultFormatter {
 			currentXslSheetSequence.add(XslSheetFactory.findXslSheetByName("DEFAULT"));
 		}
         // FIXME: How can the user specify a xsl if there is the choice between several...
-        
+        */
+         
+        currentXslSheetSequence.add(XslSheetFactory.getXslSheet(dict.getName(), vol.getName(), formatter));
+         
     }
     
     public Node getFormattedResult(QueryResult qr, User usr) throws PapillonBusinessException {
@@ -181,9 +192,13 @@ public class XslTransformation implements ResultFormatter {
 				if (myAnswer.getHtmlDom() == null) {					
 					Volume myVolume = myAnswer.getVolume();
 					Dictionary myDictionary = myAnswer.getDictionary();
-					String[] targets = myVolume.getTargetLanguagesArray();
-					for (int j=0;j<targets.length;j++) {
-						String target = targets[j];
+					
+                    //
+                    Collection targets = myVolume.getTargetLanguagesArray();
+					for (Iterator iter = targets.iterator(); iter.hasNext();) {
+						String target = (String)iter.next();
+                        
+                        //
 						if (target != null && !target.equals("")) {
 						NodeList myNodeList = ParseVolume.getCdmElements(myAnswer, Volume.CDM_translationReflexie, target);
 						if ((myNodeList != null) && (myNodeList.getLength()>0)) {
@@ -244,11 +259,8 @@ public class XslTransformation implements ResultFormatter {
 		java.io.UnsupportedEncodingException,
 		java.io.IOException {
 
-			Transformer myTransformer = (Transformer)XslSheetCache.get(xslSheet.getHandle());
-			if (myTransformer==null) {
-				myTransformer = myTransformerFactory.newTransformer(new StreamSource(new StringReader (xslSheet.getCode())));
-				XslSheetCache.put(xslSheet.getHandle(),myTransformer);
-			}
+			Transformer myTransformer = xslSheet.getTransformer();
+			
 			//the result
 			if (myDocumentBuilder==null) {
 				myDocumentBuilder = myDocumentBuilderFactory.newDocumentBuilder();
@@ -257,7 +269,9 @@ public class XslTransformation implements ResultFormatter {
 			//the transformation
 			// is there a way to obtain a dom result which is a text string?
 			myTransformer.transform (new DOMSource(xmlSource),new DOMResult(newDocument));
-			return newDocument;
+			
+            //
+            return newDocument;
 		}
 
     protected static String TransformToText(Node xmlSource, XslSheet xslSheet)
@@ -269,15 +283,14 @@ public class XslTransformation implements ResultFormatter {
 		java.io.IOException {
 
 			String resultString = "";
-			Transformer myTransformer = (Transformer)XslSheetCache.get(xslSheet.getHandle());
-			if (myTransformer==null) {
-				myTransformer = myTransformerFactory.newTransformer(new StreamSource(new StringReader (xslSheet.getCode())));
-				XslSheetCache.put(xslSheet.getHandle(),myTransformer);
-			}
+			Transformer myTransformer = xslSheet.getTransformer();
+			
 			//the result
 			if (myDocumentBuilder==null) {
 				myDocumentBuilder = myDocumentBuilderFactory.newDocumentBuilder();
 			}
+            
+            //
 			Document newDocument=myDocumentBuilder.newDocument();
 			//the transformation
 			// is there a way to obtain a dom result which is a text string?
@@ -301,7 +314,8 @@ public class XslTransformation implements ResultFormatter {
             try {
 				// We apply cascades of XSL
 				// First, the one for the dictionary if there is
-				XslSheet theXslSheet = XslSheetFactory.findXslSheetByName(answer.getDictionaryName());
+				/*
+                XslSheet theXslSheet = XslSheetFactory.findXslSheetByName(answer.getDictionaryName());
 				if (!theXslSheet.isEmpty()) {
 					result = Transform((Node)result, theXslSheet);					
 					// Second, the one for the volume if there is
@@ -315,6 +329,11 @@ public class XslTransformation implements ResultFormatter {
 						result = XslTransformation.Transform((Node)result, theXslSheet);
 					}
 				}
+                 */
+                XslSheet theXslSheet = XslSheetFactory.getXslSheet(answer.getDictionaryName(), answer.getVolumeName(), "");
+                if (!theXslSheet.isEmpty()) {
+                    result = XslTransformation.Transform((Node)result, theXslSheet);
+                }
 			}
 			catch(Exception ex) {
 				throw new fr.imag.clips.papillon.business.PapillonBusinessException("Exception in applyXslSheets()", ex);
@@ -322,6 +341,7 @@ public class XslTransformation implements ResultFormatter {
 			return result.getDocumentElement();
 	}
 
+    /*
 	public static Element applyXslSheets(IAnswer answer, String xslid)
 	throws fr.imag.clips.papillon.business.PapillonBusinessException {
 				org.w3c.dom.Document result = answer.getDom();
@@ -343,7 +363,8 @@ public class XslTransformation implements ResultFormatter {
 			}
 			return result.getDocumentElement();
 	}
-
+*/
+    /*
 	public static Node applyXslSheetForXml(String xmlString)
 	throws fr.imag.clips.papillon.business.PapillonBusinessException {
 
@@ -370,7 +391,7 @@ public class XslTransformation implements ResultFormatter {
 		}
 		return result;
 	}
-
+*/
 
     // FIXME: This is only called by DictEngine (dictd protocol). This should be handled via the notion of "dialect" of xslsheets.
 	public static String applyXslSheetsForText(IAnswer answer)
@@ -379,9 +400,20 @@ public class XslTransformation implements ResultFormatter {
 			org.w3c.dom.Document resultDOM = answer.getDom();
 			String resultString = "";
 			try {
+                
+                //
+                XslSheet theXslSheet = XslSheetFactory.getXslSheet(answer.getDictionaryName(), answer.getVolumeName(), XslSheet.TEXT_view);
+				if (!theXslSheet.isEmpty()) {
+					resultString = XslTransformation.TransformToText((Node)resultDOM, theXslSheet);
+				}
+				if (resultString == null || resultString.equals("")) {
+					resultString = answer.getXmlCode();
+				}
+                
 				// We apply cascades of XSL
 				// First, the one for the dictionary if there is
-				XslSheet theXslSheet = XslSheetFactory.findXslSheetByName(answer.getDictionaryName());
+				/*
+                XslSheet theXslSheet = XslSheetFactory.findXslSheetByName(answer.getDictionaryName());
 				if (!theXslSheet.isEmpty()) {
 					resultDOM = Transform((Node)resultDOM, theXslSheet);					
 					// Second, the one for the volume if there is
@@ -399,7 +431,7 @@ public class XslTransformation implements ResultFormatter {
 					resultString = answer.getXmlCode();
 				}
 				
-/*				theXslSheet = XslSheetFactory.findXslSheetByName(answer.getVolumeName() + XslSheet.TEXT_suffix);
+				theXslSheet = XslSheetFactory.findXslSheetByName(answer.getVolumeName() + XslSheet.TEXT_suffix);
 				if (theXslSheet.isEmpty()) {
 					theXslSheet = XslSheetFactory.findXslSheetByName(answer.getDictionaryName() + XslSheet.TEXT_suffix);
 				}
@@ -427,6 +459,11 @@ public class XslTransformation implements ResultFormatter {
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 			org.w3c.dom.Document result = answer.getDom();
             try {
+                XslSheet theXslSheet = XslSheetFactory.getXslSheet(answer.getDictionaryName(), answer.getVolumeName(), XslSheet.FO_view);
+				if (!theXslSheet.isEmpty()) {
+					result = XslTransformation.Transform((Node)result, theXslSheet);
+				}
+                /*
 				// We apply cascades of XSL
 				// First, the one for the dictionary if there is
 				XslSheet theXslSheet = XslSheetFactory.findXslSheetByName(answer.getDictionaryName());
@@ -443,17 +480,20 @@ public class XslTransformation implements ResultFormatter {
 				if (!theXslSheet.isEmpty()) {
 					result = XslTransformation.Transform((Node)result, theXslSheet);
 				}
+                 */
 			}
 			catch(Exception ex) {
 				throw new fr.imag.clips.papillon.business.PapillonBusinessException("Exception in applyXslSheets()", ex);
 			}	
 			return result.getDocumentElement();
 		}
-		
+	
+	
+    
 	public static void resetCache() {
 		XslSheetCache = new Hashtable();
 	}
-
+    
 }
 
 

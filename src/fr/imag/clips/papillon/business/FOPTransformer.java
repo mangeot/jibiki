@@ -2,7 +2,7 @@
  *  jibiki platform
  *
  * Jibiki/Papillon project © GETA-CLIPS-IMAG
- * Gilles Sérasset
+ * Francis Brunet-Manquat
  *-----------------------------------------------------------
  * $Id$
  *-----------------------------------------------------------
@@ -38,11 +38,15 @@ import com.lutris.util.ConfigException;
 
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 
-public class Saxon8bTransformer extends SystemCall {
-    String xsl; // name of the xsl (local file)
-    String xml; // name of the xml (local file)
-    String out; // name of the output file (local file)
-    String saxonJar;
+public class FOPTransformer extends SystemCall {
+    String fo; // name of the fo file (local file)
+    String pdf; // name of the pdf file (local file)
+    String fopJar;
+    String batikJar;
+    String xalanJar;
+    String xercesJar;
+    String avalonJar;
+    String xmlapiJar;
     
     static String javahome;
     static String fileseparator;
@@ -56,10 +60,16 @@ public class Saxon8bTransformer extends SystemCall {
         
     }
     
-    public Saxon8bTransformer(String xsl, String xml, String out) throws PapillonBusinessException {
-        this.xsl = xsl; this.xml = xml; this.out=out;
+    public FOPTransformer(String fo, String pdf) throws PapillonBusinessException {
+        this.fo = fo; this.pdf = pdf;
         try {
-            saxonJar =  Enhydra.getApplication().getConfig().getString("Papillon.Saxon.Classpath");
+            fopJar =  Enhydra.getApplication().getConfig().getString("Papillon.Fop.Classpath");
+            batikJar =  Enhydra.getApplication().getConfig().getString("Papillon.Batik.Classpath");
+            xalanJar =  Enhydra.getApplication().getConfig().getString("Papillon.Xalan.Classpath");
+            xercesJar =  Enhydra.getApplication().getConfig().getString("Papillon.Xerces.Classpath");
+            avalonJar =  Enhydra.getApplication().getConfig().getString("Papillon.Avalon.Classpath");
+            xmlapiJar =  Enhydra.getApplication().getConfig().getString("Papillon.XmlApi.Classpath");
+            
         } catch (ConfigException e) {
             throw new PapillonBusinessException("Could not get the Saxon Classpath, check the application config file.", e);
         }
@@ -67,14 +77,14 @@ public class Saxon8bTransformer extends SystemCall {
     }
     
     /** @returns the command line as a String array where the first element is the command, followed by each argument.
-    */
+        */
     public  String [] commandLine() {
         String command = javahome + fileseparator + "bin/java";
         String classpathOption = "-cp";
-        String classpathValue = saxonJar;
+        String classpathValue = fopJar + ":" + batikJar  + ":" + xalanJar  + ":" + xercesJar  + ":" + avalonJar  + ":" + xmlapiJar;
         
         String [] cmd = {command, classpathOption, classpathValue, 
-            "net.sf.saxon.Transform", "-o", out, xml, xsl};
+            "org.apache.fop.apps.Fop", "-fo", fo, "-pdf", pdf};
         
         //
         for (int i = 0; i < cmd.length; i++ ) {
@@ -85,9 +95,9 @@ public class Saxon8bTransformer extends SystemCall {
     }
     
     /** writes the data to the process input stream. 
-    * Do nothing if you do not have any input data to be given to the process input stream
-    *
-    */
+        * Do nothing if you do not have any input data to be given to the process input stream
+        *
+        */
     public void writeInputToProcess(OutputStream pin) {
     }
     
@@ -99,10 +109,10 @@ public class Saxon8bTransformer extends SystemCall {
         System.out.println("--> " + errorMessage);
     }
     
-    public static void doSaxonTransformation(String xsl, String xml, String out) 
-    throws PapillonBusinessException {
-        Saxon8bTransformer transf = new Saxon8bTransformer(xsl, xml, out);
-        transf.call();
-    }
+    public static void doFOPTransformation(String fo, String pdf) 
+        throws PapillonBusinessException {
+            FOPTransformer transf = new FOPTransformer(fo, pdf);
+            transf.call();
+        }
     
 }

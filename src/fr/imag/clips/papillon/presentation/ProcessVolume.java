@@ -9,6 +9,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2006/08/10 22:17:13  fbrunet
+ * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
+ * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+ * - Bug correction : +/- in advanced search
+ *
  * Revision 1.2  2006/02/26 14:04:56  mangeot
  * Corrected a bug: the content was a static variable, thus there were problems when two users wanted to aces the same page at the same time
  *
@@ -79,6 +84,8 @@ import fr.imag.clips.papillon.presentation.PapillonSessionData;
 
 // Standard imports
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Date;
 import java.text.DateFormat;
 import java.io.*;
@@ -92,6 +99,8 @@ import fr.imag.clips.papillon.business.dictionary.IQuery;
 import fr.imag.clips.papillon.business.dictionary.Volume;
 import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
+import fr.imag.clips.papillon.business.xsl.XslSheetFactory;
+import fr.imag.clips.papillon.business.xsl.XslSheet;
 
 
 public class ProcessVolume extends PapillonBasePO {
@@ -181,7 +190,7 @@ public class ProcessVolume extends PapillonBasePO {
 			
 			java.util.Vector myKeys = new java.util.Vector();
 			java.util.Vector myClauses = new java.util.Vector();
-			Volume myVolume = VolumesFactory.findVolumeByName(volume);
+			Volume myVolume = VolumesFactory.getVolumeByName(volume);
 			String source = "eng";
 			if (myVolume !=null && !myVolume.isEmpty()) {
 				source = myVolume.getSourceLanguage();
@@ -265,10 +274,11 @@ public class ProcessVolume extends PapillonBasePO {
         // (it should be this way if the HTML is valid...)
         Text volumeTextTemplate = (Text)volumeOptionTemplate.getFirstChild(); 
                 
-		fr.imag.clips.papillon.business.dictionary.Volume[] AllVolumes = fr.imag.clips.papillon.business.dictionary.VolumesFactory.getVolumesArray();
-                
-        for (int i = 0; i < AllVolumes.length; i++) {
-            String volumeName = AllVolumes[i].getName();
+		//       
+        for (Iterator iter = VolumesFactory.getVolumesArray().iterator(); iter.hasNext();) {
+            String volumeName = ((Volume)iter.next()).getName();
+            
+            //
             volumeOptionTemplate.setValue(volumeName);
             volumeOptionTemplate.setLabel(volumeName);
             // Je dois ici mettre un text dans l'OPTION, car les browser PC ne sont pas conformes aux 
@@ -284,11 +294,12 @@ public class ProcessVolume extends PapillonBasePO {
         xslOptionTemplate.removeAttribute("id");
         Text xslTextTemplate = (Text)xslOptionTemplate.getFirstChild(); 
 		
-		fr.imag.clips.papillon.business.xsl.XslSheet[] AllXsls = fr.imag.clips.papillon.business.xsl.XslSheetFactory.getXslSheetsArray();
+		Collection AllXsls = XslSheetFactory.getXslSheetsArray();
 		
-        for (int i = 0; i < AllXsls.length; i++) {
-            String xslName = AllXsls[i].getName();
-            String xslDescription = AllXsls[i].getDescription();
+        for (Iterator iter = AllXsls.iterator(); iter.hasNext();) {
+            XslSheet xsl = (XslSheet)iter.next();
+            String xslName = xsl.getName();
+            String xslDescription = xsl.getDescription();
 			if (xslDescription != null && !xslDescription.equals("")) {
 				xslDescription = " (" + xslDescription + ")";
 			}
@@ -296,7 +307,7 @@ public class ProcessVolume extends PapillonBasePO {
 				xslDescription = "";
 			}
 			xslName += xslDescription;
-            xslOptionTemplate.setValue(AllXsls[i].getHandle());
+            xslOptionTemplate.setValue(xsl.getHandle());
             xslOptionTemplate.setLabel(xslName);
             xslTextTemplate.setData(xslName);
             xslSelect.appendChild(xslOptionTemplate.cloneNode(true));

@@ -9,6 +9,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.8  2006/08/10 22:17:13  fbrunet
+ * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
+ * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+ * - Bug correction : +/- in advanced search
+ *
  * Revision 1.7  2006/03/01 15:12:31  mangeot
  * Merge between maintrunk and LEXALP_1_1 branch
  *
@@ -60,9 +65,17 @@
  */
 
 package fr.imag.clips.papillon.business.xsl;
+
 import fr.imag.clips.papillon.data.*;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.CurrentDBTransaction;
+
+import java.io.StringReader;
+
+import javax.xml.transform.Transformer;
+import javax.xml.transform.Templates;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamSource;
 
 import com.lutris.appserver.server.sql.DatabaseManagerException;
 import com.lutris.appserver.server.sql.ObjectIdException;
@@ -79,19 +92,22 @@ public class XslSheet {
 	public final static String XML_view = "XML";
     
 	protected XslSheetDO myDO = null;
+    protected Templates myTemplate = null;
+   
     
     /**
      * The public constructor.
      */
-    public XslSheet() throws PapillonBusinessException {
-        try {
-            this.myDO = XslSheetDO.createVirgin(CurrentDBTransaction.get());  
-        } catch(DatabaseManagerException ex) {
-            throw new PapillonBusinessException("Error creating empty XslSheet", ex);
-        } catch(ObjectIdException ex) {
-            throw new PapillonBusinessException("Error creating empty XslSheet", ex);
+    public XslSheet() 
+        throws PapillonBusinessException {
+            try {
+                this.myDO = XslSheetDO.createVirgin(CurrentDBTransaction.get());  
+            } catch(DatabaseManagerException ex) {
+                throw new PapillonBusinessException("Error creating empty XslSheet", ex);
+            } catch(ObjectIdException ex) {
+                throw new PapillonBusinessException("Error creating empty XslSheet", ex);
+            }
         }
-    }
 
     /** The protected constructor
      *
@@ -99,8 +115,19 @@ public class XslSheet {
      */
     protected XslSheet(XslSheetDO theSheet) 
         throws PapillonBusinessException  {
-        this.myDO = theSheet;
-    }
+            try {
+                
+                //
+                this.myDO = theSheet;
+                
+                // Create template
+                TransformerFactory myTransformerFactory = TransformerFactory.newInstance();
+                myTemplate = myTransformerFactory.newTemplates(new StreamSource(new StringReader (this.getCode())));
+                
+            } catch(javax.xml.transform.TransformerConfigurationException ex) {
+                throw new PapillonBusinessException("Error creating XslSheet", ex);
+            }
+        }
 
     /**
      * Gets the object id for the message
@@ -124,6 +151,8 @@ public class XslSheet {
             throw new PapillonBusinessException("Error getting XslSheet's handle", ex);
         }
     }
+    
+    
 ////////////////////////// data member Name
 
 
@@ -241,12 +270,12 @@ public class XslSheet {
     
     
 ////////////////////////// data member Default
- public boolean getDefaultxsl () throws PapillonBusinessException {
+ public boolean isDefaultxsl() throws PapillonBusinessException {
         try {
             String def =  this.myDO.getDefaultxsl();
             return ((def != null) && (def.equals("Y")));
         } catch(DataObjectException  ex) {
-            throw new PapillonBusinessException("Error getting XslSheet's defaultxls", ex);
+            throw new PapillonBusinessException("Error getting XslSheet's defaultxsl", ex);
         }
     }
 
@@ -260,6 +289,26 @@ public class XslSheet {
     }
    
    
+    ////////////////////////// data member userxsl
+    public boolean isExternalxsl() throws PapillonBusinessException {
+        try {
+            String isExternalxsl =  this.myDO.getExternalxsl();
+            return ((isExternalxsl != null) && (isExternalxsl.equals("Y")));
+        } catch(DataObjectException  ex) {
+            throw new PapillonBusinessException("Error getting XslSheet's externalxsl", ex);
+        }
+    }
+    
+    
+    public void setExternalxsl(boolean externalxsl) throws PapillonBusinessException {
+        try {
+            myDO.setExternalxsl(externalxsl ? "Y" : "N");   
+        } catch(DataObjectException ex) {
+            throw new PapillonBusinessException("Error setting XslSheet's userxsl", ex);
+        }
+    }
+    
+    
 ////////////////////////// data member Description
 
 
@@ -345,16 +394,25 @@ public class XslSheet {
    public void setCode ( String code )
    throws PapillonBusinessException {
         try {
+            
+            //
             myDO.setCode(code);   
+            
+            // Modify template
+            TransformerFactory myTransformerFactory = TransformerFactory.newInstance();
+            myTemplate = myTransformerFactory.newTemplates(new StreamSource(new StringReader (this.getCode())));
+            
         } catch(DataObjectException ex) {
             throw new PapillonBusinessException("Error setting XslSheet's code", ex);
+        } catch(javax.xml.transform.TransformerConfigurationException ex) {
+            throw new PapillonBusinessException("Error modifying xsl template", ex);
         }
     }
  
        public void save() 
         throws PapillonBusinessException {
 			// reset XslSheetFactory cache
-			XslSheetFactory.resetCache();
+			//XslSheetFactory.resetCache();
         try {
             this.myDO.commit();
         } catch(Exception ex) {
@@ -378,6 +436,28 @@ public class XslSheet {
         }
     }
      
-   
-
+    
+    ////////////////////////// Transformer
+    
+    
+    /**
+     * Get transformer of the xslsheets
+     *
+     * @return transformer of the xslsheets
+     */
+    public Transformer getTransformer () 
+        throws PapillonBusinessException {
+            try {
+                
+                //
+                return this.myTemplate.newTransformer();
+            
+            } catch(Exception ex) {
+                throw new PapillonBusinessException("Error getting transformer", ex);
+            }
+        }
+    
+    
+    
+    // A FAIRE method transform !!
 }

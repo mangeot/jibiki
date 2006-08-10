@@ -10,24 +10,53 @@
       <h2 class="menuTitle">
       	<a title="Traduction d&rsquo;un mot"  onclick="javascript:alert('Traduction d&rsquo;un mot')" href="javascript:void(0)">Consultation&nbsp;:</a>
       </h2>
-      <form id="ConsultForm" action="Home.po">
+
+              <form  id="ConsultForm" method="get" action="Home.po" >
         <div>
-        <input type="hidden" name="RESOURCES" value="*ANY*" />
-        <label for="HeadwordInput" accesskey="m"><span class="accesskey">M</span>ot&nbsp;:</label>
-        <input type="text" id="HeadwordInput" name="HEADWORD" size="14" maxlength="40" />
-         <input type="hidden" name="SOURCE" value="est" />
-         <input type="hidden" name="TARGETS" value="fra" />
-        <select class="hidden" id="Source">
-          <option id="SourceOptionTemplate" value="NONE" label="NONE">NONE</option>
-        </select>
-        <select class="hidden" id="Target">
-          <option id="TargetOptionTemplate" value="NONE" label="NONENONENONE">NONE</option>
-          <option id="AllTargets" value="*ALL*" label="All">All</option>
-        </select>
-        <br />
-        <input type="submit" name="lookup" value="Go" />
-        </div>
-      </form>
+                <div>
+                    <div class="menuColumnSize">
+                        <div class="menuVariableName">
+                            <label for="ValueField" accesskey="m" ><span class="accesskey">M</span>ot&nbsp;:</label>
+                        </div>
+                        <div class="menuVariableValue" >
+                            <input type="hidden" id="Facet" name="FACET.0" value="cdm-headword"/>
+                            <input type="hidden" id="Operator" name="OPERATOR.0" value="2"/>
+                            <input id="ValueField" name="FACETVALUE.0" type="text" class="menuVariableValueWidth" />
+                        </div>
+                    </div>
+                    <div class="hidden">
+                        <div class="menuVariableName">
+                            <label for="SourceLang" accesskey="s"><span class="accesskey">S</span>ource&nbsp;:</label>
+                        </div>
+                        <div class="menuVariableValue" >
+                            <select id="SourceLang" class="menuVariableValueWidth" >
+                                <option id="SourceOptionTemplate" value="NONE" label="NONE">NONE</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="hidden">
+                        <div class="menuVariableName">
+                            <label for="Targets" accesskey="t"><span class="accesskey">C</span>ible&nbsp;:</label>
+                         </div>
+                        <div class="menuVariableValue" >
+                            <select id="Targets" class="menuVariableValueWidth">
+                                <option id="TargetTmpl" label="NONE" value="NONE">NONE</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                	<input type="hidden" name="SOURCE" value="est" />
+         			<input type="hidden" name="TARGETS" value="fra" />
+                    <input type="hidden" name="XSL" value="Default"/>
+                    <input type="hidden" name="NB_RESULT_PER_PAGE" value="5" />
+                    <input type="hidden" name="OFFSET"/>
+                    <input type="hidden" name="action" value="lookup" />
+                    <input type="submit" value="Go" class="menuGo" />
+                </div>
+                </div>
+            </form>
+
       <a title="Fonction de recherche avancée d'un mot" href="ConsultExpert.po">Recherche avancée</a>
       <br />
       <a title="Recherche Alphabétique d'un mot" onclick="window.open('BrowseVolumePage.po?VOLUME=GDEF_est&amp;STATUS=validated','Recherche alphabétique d\'un mot','width=200,height=700,resizable=no,scrollbars=no');return false;" href="BrowseVolumePage.po">Recherche alphabétique</a>

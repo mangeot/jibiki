@@ -3,6 +3,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.43  2006/08/10 22:17:12  fbrunet
+ * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
+ * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+ * - Bug correction : +/- in advanced search
+ *
  * Revision 1.42  2006/06/01 22:05:05  fbrunet
  * New interface, quick search, new contribution management (the first edition not create new contribution. New contribution is created after add, remove element, update, save, etc. in the interface window)
  *
@@ -185,7 +190,9 @@ import com.lutris.appserver.server.sql.ObjectId;
 
 import java.util.*;
 
+import fr.imag.clips.papillon.Papillon;
 import fr.imag.clips.papillon.business.utility.Utility;
+import fr.imag.clips.papillon.business.xsl.XslSheetFactory;
 
 /**
 * Used to find the instances of xslsheet.
@@ -212,11 +219,55 @@ public class VolumesFactory {
 	protected final static String XPATH_ATTRIBUTE="xpath";
 	protected final static String NAME_ATTRIBUTE="name";
 	protected final static String DEFAULT_ATTRIBUTE="default";
+    protected final static String EXTERNAL_ATTRIBUTE="external";
 	
 	protected final static String VOLUME_GDEF_est="GDEF_est";
 	protected final static String VOLUME_GDEF_tes="GDEF_tes";
 	protected final static String VOLUME_GDEF_fra="GDEF_fra";
-		
+    
+    /** 
+        * The initializeVolumeCache method performs a database query to
+        * initialize the volume cache
+        *
+        * @exception PapillonBusinessException
+        *   If there is a problem retrieving disc information.
+        */
+    public static void initializeVolumeCache() 
+        throws PapillonBusinessException {
+            
+            try {
+                
+                // Initialize cache
+                VolumeCache.volumeCacheInit();
+                
+                // Perform query
+                VolumeQuery query = new VolumeQuery(CurrentDBTransaction.get());
+                query.addOrderByName(true);
+                VolumeDO[] DOarray = query.getDOArray();
+                
+                // Add volumes in cache (keys are the volume names)
+                for ( int i = 0; i < DOarray.length; i++ ) {
+                    Volume vol = new Volume(DOarray[i]);
+                    VolumeCache.putVolumeInCache(vol.getName(), vol);
+                }
+                
+            }catch(Exception ex) {
+                throw new PapillonBusinessException("Exception in initializeVolumeCache()", ex);
+            }
+        }
+    
+    
+    /** 
+        * The newVolume method create a new volume base on volume element into the metadata file
+        *
+        * @param String
+        * @param Element : dictionary element into the metadata file
+        * @param URL
+        *
+        * @return Volume
+        *
+        * @exception PapillonBusinessException, IOException
+        */
 	public static Volume newVolume(String dictname, Element volume, URL fileURL)
 		throws fr.imag.clips.papillon.business.PapillonBusinessException, java.io.IOException {
 		
@@ -267,12 +318,99 @@ public class VolumesFactory {
 			tmplEntry = updateTemplateEntry(tmplEntry, cdmElements);
 			
             String xmlCode=Utility.NodeToString(volume);
-            return createUniqueVolume(name, dictname, dbname, location, source, targets, href, cdmElements, xmlCode, schema, tmplInterface, tmplEntry, reverse);
+            
+            //
+            Volume newVolume = createUniqueVolume(name, dictname, dbname, location, source, targets, href, cdmElements, xmlCode, schema, tmplInterface, tmplEntry, reverse);
+            
+            // Add in cache
+            VolumeCache.putVolumeInCache(newVolume.getName(), newVolume);
+            
+            //
+            return newVolume;
 		} 
 	
-	public static Volume findVolumeByName(String name) 
+    
+    /** 
+        * Create an unique volume
+        *
+        * @param String
+        * @param String
+        * @param String
+        * @param String
+        * @param String
+        * @param String
+        * @param String
+        * @param Hashtable
+        * @param String
+        * @param String
+        * @param String
+        * @param String
+        * @param boolean
+        *
+        * @return Volume
+        *
+        * @exception PapillonBusinessException
+        */
+	protected static Volume createUniqueVolume(String name,
+											String dictname,
+											String dbname,
+											String location,
+											String source,
+											String targets,
+											String href,
+											java.util.Hashtable cdmElements,
+											String xmlCode,
+											String xmlSchema,
+											String tmplInterface,
+											String tmplEntry,
+											boolean reverse)
+		throws fr.imag.clips.papillon.business.PapillonBusinessException {
+			Volume myVolume = null;
+			if ((name!=null) && (dictname!=null) && (dbname!=null)
+				&& (source!=null) && (href!=null) && (xmlCode!=null)) 
+			{
+				//search for an existing dictionary
+				Volume Existe=VolumesFactory.getVolumeByName(name);
+				if (Existe == null || Existe.isEmpty()) {
+                    //does'nt exist, create :
+					myVolume=new Volume();
+					myVolume.setName(name);
+					myVolume.setDictname(dictname);
+					myVolume.setDbname(dbname);
+					myVolume.setLocation(location);
+					myVolume.setSourceLanguage(source);
+					myVolume.setTargetLanguages(targets);
+					myVolume.setVolumeRef(href);
+					myVolume.setCdmElements(cdmElements);
+					myVolume.setXmlCode(xmlCode);
+					myVolume.setXmlSchema(xmlSchema);
+					myVolume.setTemplateInterface(tmplInterface);
+					myVolume.setTemplateEntry(tmplEntry);
+					myVolume.setReverseLookup(reverse);
+				} else {
+                    PapillonLogger.writeDebugMsg("Volume already in the Database");
+				}
+			}
+			return myVolume;	
+		}
+    
+    /** 
+        * Find volume by name
+        *
+        * @param String
+        *
+        * @return Volume
+        *
+        * @exception PapillonBusinessException
+        */
+	public static Volume getVolumeByName(String name) 
         throws PapillonBusinessException {
-			Volume theVolume = null;
+			
+            //
+            return VolumeCache.getVolumeInCache(name);
+            
+            /*
+             Volume theVolume = null;
 			
             if (null != name && !name.equals("")) {        
 				try {
@@ -284,12 +422,40 @@ public class VolumesFactory {
 					VolumeDO theVolumeDO = query.getNextDO();
 					theVolume = new Volume(theVolumeDO);
 				}catch(Exception ex) {
-					throw new PapillonBusinessException("Exception in findVolumeByName()", ex);
+					throw new PapillonBusinessException("Exception in getVolumeByName()", ex);
 				}
             }
             return theVolume;
+             */
 		}
     
+    
+    /** 
+        * Get volume by handle
+        *
+        * @param String
+        *
+        * @return Volume
+        *
+        * @exception PapillonBusinessException
+        */
+	public static Volume getVolumeByHandle(String handle) 
+        throws PapillonBusinessException {
+			
+            //
+            return VolumeCache.getVolumeInCacheByHandle(handle);
+		}
+    
+    
+    /** 
+        * Find volume by database name
+        *
+        * @param String
+        *
+        * @return Volume
+        *
+        * @exception PapillonBusinessException
+        *
 	public static Volume findVolumeByDbname(String name) 
         throws PapillonBusinessException {
 			Volume theVolume = null;
@@ -309,50 +475,22 @@ public class VolumesFactory {
 			}
 			return theVolume;
 		}
+    */
     
-	public static Volume createUniqueVolume(String name,
-											String dictname,
-											String dbname,
-											String location,
-											String source,
-											String targets,
-											String href,
-											java.util.Hashtable cdmElements,
-											String xmlCode,
-											String xmlSchema,
-											String tmplInterface,
-											String tmplEntry,
-											boolean reverse)
-		throws fr.imag.clips.papillon.business.PapillonBusinessException {
-			Volume myVolume = null;
-			if ((name!=null) && (dictname!=null) && (dbname!=null)
-				&& (source!=null) && (href!=null) && (xmlCode!=null)) 
-			{
-				//search for an existing dictionary
-				Volume Existe=VolumesFactory.findVolumeByName(name);
-				if (Existe == null || Existe.isEmpty()) {
-				//does'nt exist, create :
-					myVolume=new Volume();
-					myVolume.setName(name);
-					myVolume.setDictname(dictname);
-					myVolume.setDbname(dbname);
-					myVolume.setLocation(location);
-					myVolume.setSourceLanguage(source);
-					myVolume.setTargetLanguages(targets);
-					myVolume.setVolumeRef(href);
-					myVolume.setCdmElements(cdmElements);
-					myVolume.setXmlCode(xmlCode);
-					myVolume.setXmlSchema(xmlSchema);
-					myVolume.setTemplateInterface(tmplInterface);
-					myVolume.setTemplateEntry(tmplEntry);
-					myVolume.setReverseLookup(reverse);
-				} else {
-				 PapillonLogger.writeDebugMsg("Volume already in the Database");
-				}
-			}
-			return myVolume;	
-		}
-	
+    
+
+    /** 
+        * Parse url file to create a new volume
+        *
+        * @param Dictionary
+        * @param URL
+        * @param boolean
+        * @param boolean
+        *
+        * @return Volume
+        *
+        * @exception PapillonBusinessException
+        */
 	public static Volume parseVolumeMetadata (Dictionary dict, URL fileURL, boolean parseEntries, boolean logContribs) 
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 			
@@ -389,12 +527,18 @@ public class VolumesFactory {
 								name = resVolume.getName() + "." + resVolume.getHandle();
 							}
 							
+                            //
                             String isDefault = stylesheet.getAttribute(DEFAULT_ATTRIBUTE);
                             boolean isDefaultXsl = (null != isDefault && isDefault.equals("true"));
                             
+                            //
+                            String isExternal = stylesheet.getAttribute(EXTERNAL_ATTRIBUTE);
+                            boolean isExternalXsl = (null != isExternal && isExternal.equals("true"));
+                            
+                            //
                             URL resultURL = new URL(fileURL,ref);
                             String xslString = fr.imag.clips.papillon.business.xsl.XslSheetFactory.parseXslSheet(resultURL);
-                            fr.imag.clips.papillon.business.xsl.XslSheetFactory.AddXslSheet(name, dict.getName(), resVolume.getName(),null,xslString,isDefaultXsl);
+                            XslSheetFactory.AddXslSheet(name, dict.getName(), resVolume.getName(), null, xslString, isDefaultXsl, isExternalXsl);
                         }
                     }
 
@@ -419,6 +563,7 @@ public class VolumesFactory {
 			return resVolume;
 		}
     
+    /*
     public static Volume findVolumeByID(String id) 
         throws PapillonBusinessException {
 			Volume theVolume = null;
@@ -439,27 +584,71 @@ public class VolumesFactory {
 				throw new PapillonBusinessException("Exception in findVolumeByID()", ex);
 			}
 		}
-	
+	*/
+    
+    
+    /** 
+        * Return a list of volume names
+        *
+        * @return String[]
+        *
+        * @exception PapillonBusinessException
+        +/
+    // FIXME: return Collection
     public static String[] getVolumesArrayName()
 		throws PapillonBusinessException {
 			return getVolumesArrayName(null, null, null);
 		}
+    */
     
-	public static Volume[] getVolumesArray()
+    /** 
+        * Return a list of volumes
+        *
+        * @return Collection
+        *
+        * @exception PapillonBusinessException
+        */
+    public static Collection getVolumesArray()
 		throws PapillonBusinessException {
 			return getVolumesArray(null, null, null);
 		}
     
+    
+    /** 
+        * Return a list of volume names
+        *
+        * @return String[]
+        *
+        * @exception PapillonBusinessException
+        +/
+    // FIXME: return Collection
     public static String[] getVolumesArrayName(String dictName)
 		throws PapillonBusinessException {
 			return getVolumesArrayName(dictName, null, null);
 		}
-	
-	public static Volume[] getVolumesArray(String dictName)
+	*/
+    
+    /** 
+        * Return a list of volumes
+        *
+        * @return Volume[]
+        *
+        * @exception PapillonBusinessException
+        */
+	public static Collection getVolumesArray(String dictName)
 		throws PapillonBusinessException {
 			return getVolumesArray(dictName, null, null);
 		}
     
+    
+    /** 
+        * Return a list of volume names
+        *
+        * @return String[]
+        *
+        * @exception PapillonBusinessException
+        +/
+    // FIXME: return Collection
     public static String[] getVolumesArrayName(String dictname, String source, String target)
 		throws PapillonBusinessException {
             Volume[] volumeList = getVolumesArray(dictname, source, target);
@@ -468,26 +657,130 @@ public class VolumesFactory {
                 nameList[i] = volumeList[i].getName();
 			return nameList;
 		}
-	
+	*/
+    
+    /** 
+        * Return a list of volumes
+        *
+        * @return Collection
+        *
+        * @exception PapillonBusinessException
+        */
 	// FIXME: should provide the same method with a dictionary instead of a dictionary name. And use it when possible.
-    public static Volume[] getVolumesArray(String dictname, String source, String target) 
+    public static Collection getVolumesArray(String dictname, String source, String target) 
         throws PapillonBusinessException {
-			Volume[] theDictArray = null;
+            
+            try {
+                
+                //
+                ArrayList volumes = new ArrayList(VolumeCache.getVolumesInCache());
+                
+                if ((dictname != null) && !dictname.equals("")) {
+                    
+                    //
+                    Collection volumesByDictionaryName = VolumeCache.getVolumesInCacheByDictionaryName(dictname);
+                    volumes.retainAll(volumesByDictionaryName);
+                }
+                
+                if ((source != null) && !source.equals("")) {
+                    
+                    //
+                    Collection volumesBySource = VolumeCache.getVolumesInCacheBySourceLanguage(source);
+                    volumes.retainAll(volumesBySource);
+                }
+                
+                if ((target != null) && !target.equals("")) {
+                    
+                    //
+                    Collection volumesByTarget = VolumeCache.getVolumesInCacheByTargetLanguage(target);
+                    volumes.retainAll(volumesByTarget);
+                }
+                
+                
+                //
+                return volumes;
+                
+                /*
+                Volume[] theDictArray = null;
+                ArrayList theDictArrayList = new ArrayList();
+
+                for (Iterator iter = volumes.iterator(); iter.hasNext();) {
+                    Volume volume = (Volume)iter.next();
+                    
+                    if ( ((dictname == null) || dictname.equals("")) 
+                         && ((source == null) || source.equals("")) 
+                         && ((target == null) || target.equals("")) ) { 
+                        
+                        //
+                        theDictArrayList.add(volume);
+                        
+                    } else if ( (dictname != null) && !dictname.equals("") && dictname.equals(dictname)
+                                && ((source == null) || source.equals("")) 
+                                && ((target == null) || target.equals("")) ) {
+                        
+                        //
+                        theDictArrayList.add(volume);
+                        
+                    } else if ( (dictname != null) && !dictname.equals("") && dictname.equals(dictname)
+                                && (source != null) && !source.equals("")  && volume.getSourceLanguage().equals(source)
+                                && ((target == null) || target.equals("")) ) {
+                        
+                        //
+                        theDictArrayList.add(volume);
+                        
+                    }  else if ( (dictname != null) && !dictname.equals("") && dictname.equals(dictname)
+                                 && (source != null) && !source.equals("") && volume.getSourceLanguage().equals(source)
+                                 && (target != null) && !target.equals("") ) {
+                        
+                        //
+                        String[] targets = volume.getTargetLanguagesArray();
+                        int j = 0;
+                        while ( (j < targets.length) && (!targets[j].equals(target)) ) {
+                            j++;
+                        }
+                        
+                        if (j < targets.length) {
+                            theDictArrayList.add(volume);
+                        }
+                    }
+                }
+                
+                // A ENLEVER !  ... mettre Collection a la place de Volume[]
+                theDictArray = new Volume[theDictArrayList.size()];
+                int i = 0;
+				for (Iterator iter = theDictArrayList.iterator(); iter.hasNext();) {
+                    theDictArray[i] = (Volume)iter.next();
+                    i++;
+                }
+                 //return theDictArray;
+                 */
+                
+			} catch(Exception ex) {
+				throw new PapillonBusinessException("Exception in getVolumesArray()", ex);
+			}
 			
-			try {
-				VolumeQuery query = new VolumeQuery(CurrentDBTransaction.get());            
-				if ((null != dictname) && (!dictname.trim().equals(""))) {
-					query.getQueryBuilder().addWhereClause("dictname", dictname, 
-														   QueryBuilder.EQUAL);
-				}
-				if ((null != source) && (!source.trim().equals(""))) {
-					query.getQueryBuilder().addWhereClause("sourceLanguage", source, 
-														   QueryBuilder.EQUAL);
-				}
-				if ((null != target) && (!dictname.trim().equals(""))) {
-					query.getQueryBuilder().addWhereClause("targetLanguages", target, 
-														   QueryBuilder.CASE_SENSITIVE_CONTAINS);
-				}
+			
+		}
+    
+    
+    /** 
+        * Return the collection of all volumes
+        *
+        * @return Collection
+        *
+        * @exception PapillonBusinessException
+        */
+    public static Collection getVolumes() 
+        throws PapillonBusinessException {
+            
+            return VolumeCache.getVolumesInCache();
+            
+            /*
+            Volume[] theDictArray = null;
+			
+            try {
+                VolumeQuery query = new VolumeQuery(CurrentDBTransaction.get());
+                
 				query.addOrderByName(true);  
 				VolumeDO[] DOarray = query.getDOArray();
 				theDictArray = new Volume[ DOarray.length ];
@@ -499,20 +792,51 @@ public class VolumesFactory {
 			}
 			
 			return theDictArray;
+             */
+		}
+    
+    /** 
+        * Return the list of all source languages
+        *
+        * @return Enumeration
+        *
+        * @exception PapillonBusinessException
+        */
+    public static Enumeration getSourceLanguages() 
+        throws PapillonBusinessException {
+            
+            return VolumeCache.getSourceLanguagesInCache();
+
+		}
+    
+    /** 
+        * Return the list of all target languages
+        *
+        * @return Enumeration
+        *
+        * @exception PapillonBusinessException
+        */
+    public static Enumeration getTargetLanguages() 
+        throws PapillonBusinessException {
+            
+            return VolumeCache.getTargetLanguagesInCache();
+            
 		}
 	
+    
+    /*
 	public static String getSymetricVolumeName(String myVolumeName) 
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 		String resName = "";
 			/* FIXME à recoder proprement en utilsant les language-link des metadonnées du dictionnaire 
-		Volume myVolume = findVolumeByName(myVolumeName);
+		Volume myVolume = getVolumeByName(myVolumeName);
 		if (myVolume != null && !myVolume.isEmpty()) {
 			Volume resVolume = getSymetricVolume(myVolume);
 			if (resVolume != null && !resVolume.isEmpty()) {
 				resName = resVolume.getName();
 			}
 		}
-			*/
+			+/
 		if (myVolumeName.equals(VOLUME_GDEF_est)
 			|| myVolumeName.equals(VOLUME_GDEF_tes)) {
 			resName = VOLUME_GDEF_fra;
@@ -524,6 +848,7 @@ public class VolumesFactory {
 	}
 	
 	
+   
 	protected static Volume getSymetricVolume(Volume myVolume) 
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 		Volume resVolume = null;
@@ -539,7 +864,20 @@ public class VolumesFactory {
 		}
 		return resVolume;
 	}
-		
+	*/
+	
+            
+    /** 
+    * Return the xml code of a tag in the url file 
+    *
+    * @param Element
+    * @param String
+    * @param URL
+    *
+    * @return String
+    *
+    * @exception PapillonBusinessException
+    */        
 	protected static String getXmlCode(Element myDOMElement, String tag, URL fileURL) throws PapillonBusinessException {
 		String res = "";
 		String href ="";
@@ -564,6 +902,18 @@ public class VolumesFactory {
 		return res;
 	}
 	
+    
+    /** 
+        * 
+        *
+        * @param String
+        * @param String
+        * @param String
+        *
+        * @return Hashtable
+        *
+        * @exception PapillonBusinessException
+        */
 	/* cdmElements Hashtable = {lang => Hashtable} = {CDM_element => Vector} = (xpathString, isIndex, XPath)*/
 	public static Hashtable buildCdmElementsTable(String xmlCode, String tmplEntry, String sourceLanguage) 
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
@@ -584,6 +934,15 @@ public class VolumesFactory {
 		return cdmElements;
 	}
 	
+    
+    /** 
+        * 
+        *
+        * @param Node
+        * @param String
+        *
+        * @return Hashtable
+        */
 	/* cdmElements Hashtable = {lang => Hashtable} = {CDM_element => Vector} = (xpathString, isIndex, XPath)*/
 	protected static Hashtable buildCdmElementsTable(Node cdmElt, String sourceLanguage) {
 		Hashtable cdmElements = new Hashtable();
@@ -622,6 +981,12 @@ public class VolumesFactory {
 		return cdmElements;
 	}
 	
+    
+    /** 
+        * 
+        *
+        * @param Hashtable
+        */
 	/* cdmElements Hashtable = {lang => Hashtable} = {CDM_element => Vector} = (xpathString, isIndex, XPath)*/
 	protected static void updateCdmElementsTable(Hashtable cdmElements) {
 	
@@ -650,6 +1015,13 @@ public class VolumesFactory {
 		addCdmElementInTable(cdmElements,Volume.CDM_templateEntry,Volume.DEFAULT_LANG,entryPath, false);
 	}
 	
+    
+    /** 
+        * 
+        *
+        * @param Hashtable
+        * @param String
+        */
 	/* cdmElements Hashtable = {lang => Hashtable} = {CDM_element => Vector} = (xpathString, isIndex, XPath)*/
 	protected static void completeCdmElementsTable(Hashtable elementsTable, String sourceLanguage) {
 		String currentXpath = getCdmXPathString(elementsTable, Volume.CDM_volume, Volume.DEFAULT_LANG);
@@ -794,8 +1166,18 @@ public class VolumesFactory {
 		}
 	}
 	
+    
+    /** 
+        * 
+        *
+        * @param String
+        * @param Hashtable
+        *
+        * @return String
+        *
+        * @exception PapillonBusinessException
+        */
 	// embeds the template entry into a contribution element 
-	
 	public static String updateTemplateEntry(String tmplEntry, Hashtable cdmElements) 
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 		if (tmplEntry !=null && !tmplEntry.equals("")) {			
@@ -827,6 +1209,15 @@ public class VolumesFactory {
 	}
 	
 	
+    /** 
+        * 
+        *
+        * @param Hashtable
+        * @param String
+        * @param String
+        *
+        * @return String
+        */
 	protected static String getCdmXPathString(Hashtable table, String name, String lang) {
 		String res = null;
 		if (table!=null) {
@@ -842,6 +1233,15 @@ public class VolumesFactory {
 	}
 
 	
+    /** 
+        * 
+        *
+        * @param Hashtable
+        * @param String
+        * @param String
+        * @param String
+        * @param boolean
+        */
 	protected static void addCdmElementInTable(Hashtable table, String elt, String lang, String xpathString, boolean isIndex) {
 	/* cdmElements Hashtable = {lang => Hashtable} = {CDM_element => Vector} = (xpathString, isIndex, XPath)*/
 //		PapillonLogger.writeDebugMsg("addCdmElementInTable: elt: " + elt + " lang: " + lang + " xpath: " + xpathString + " isIndex: " + isIndex);
@@ -856,6 +1256,16 @@ public class VolumesFactory {
 		tmpTable.put(elt,xpathAndIndexVector);
 	}
 	
+    
+    /** 
+        * 
+        *
+        * @param String
+        * @param String
+        * @param String
+        *
+        * @return String
+        */
 	protected static String searchAndReplace(String theString, String search, String replace) {
 		String searchedRegex = "\\Q" + search + "\\E";
 		theString = theString.replaceAll(searchedRegex, replace);
@@ -863,7 +1273,11 @@ public class VolumesFactory {
 	}
     
     
-    //
+    /** 
+        * The reConstructionIndex rebuild the volume index.
+        *
+        * @exception PapillonBusinessException
+        */
     public static void reConstructionIndex()
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
             
@@ -873,15 +1287,16 @@ public class VolumesFactory {
             try {
                 
                 //
-                Volume[] volumes = getVolumesArray();
-                for (int i=0; i < volumes.length; i++) {
+                for (Iterator iter = getVolumesArray().iterator(); iter.hasNext(); ) {
                    
+                    //
+                    Volume volume = (Volume)iter.next();
                     
                     // Truncate index volumes 
-                    IndexFactory.truncateIndexTable(volumes[i]);
+                    IndexFactory.truncateIndexTable(volume);
                     
                     //
-                    int count = volumes[i].getCount();
+                    int count = volume.getCount();
                     int delta = 10; // buffer limit
                     for (int z = 0; z < count; z=z+delta) {
                          
@@ -889,7 +1304,7 @@ public class VolumesFactory {
                         System.out.println("Z + delta : " + Integer.toString(z));
                         
                         // Buffer volumeEntries
-                        Collection bufferResults = VolumeEntriesFactory.getVolumeEntriesVector(DictionariesFactory.findDictionaryByName(volumes[i].getDictname()), volumes[i], null, null, null, z, delta);
+                        Collection bufferResults = VolumeEntriesFactory.getVolumeEntriesVector(DictionariesFactory.getDictionaryByName(volume.getDictname()), volume, null, null, null, z, delta);
                         
                         // Index volumeEntries
                         Iterator buffer = bufferResults.iterator();
@@ -904,7 +1319,7 @@ public class VolumesFactory {
                     ((DBTransaction) CurrentDBTransaction.get()).commit();
                     
                     //
-                    System.out.println(volumes[i].getName() + " index re-construction succeed !");
+                    System.out.println(volume.getName() + " index re-construction succeed !");
                 }
                 
                 
@@ -930,16 +1345,26 @@ public class VolumesFactory {
         }
 	
     
-    // FIXME : supress
+    /** 
+        * The modifiedStatus method modify the status of the contributions appearing "before" a not-finished contribution to modified status.
+        *
+        * @param User
+        *
+        * @exception PapillonBusinessException
+        */
+    // FIXME : supress when GDEF and Papillon project will be import in Jibiki
     public static void modifiedStatus(fr.imag.clips.papillon.business.user.User user)
         throws PapillonBusinessException {
 			try {
                 
-                String[] listName = VolumesFactory.getVolumesArrayName();
-                for (int j=0; j < listName.length; j++) {
+                //
+                for (Iterator iter = getVolumesArray().iterator(); iter.hasNext(); ) {
                     
                     //
-                    ArrayList allEntries = QueryRequest.findAllLexies(listName[j], user);
+                    Volume volume = (Volume)iter.next();
+                    
+                    //
+                    ArrayList allEntries = QueryRequest.findAllLexies(volume, user);
                     
                     //
                     for (int i = 0; i < allEntries.size(); i++) {

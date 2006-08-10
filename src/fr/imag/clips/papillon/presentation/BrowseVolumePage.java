@@ -9,6 +9,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.2  2006/08/10 22:17:13  fbrunet
+ * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
+ * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+ * - Bug correction : +/- in advanced search
+ *
  * Revision 1.1  2006/07/15 08:55:14  mangeot
  * The BrowseVolumePage opens an HTML form that is used to lookup a volume in alphabetical order.
  * The BrowseVolume is the server side of the AJAX script for retrieving the entries in alphabetical order
@@ -44,8 +49,12 @@ import com.lutris.appserver.server.httpPresentation.HttpPresentationException;
 import org.enhydra.xml.xmlc.XMLObject;
 
 // Standard imports
+import java.util.Collection;
+import java.util.Iterator;
 import java.io.IOException;
 
+import fr.imag.clips.papillon.business.dictionary.Volume;
+import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
 import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
 public class BrowseVolumePage extends PapillonBasePO {
@@ -97,10 +106,10 @@ public class BrowseVolumePage extends PapillonBasePO {
 			volumeTextTemplate.setData(volume);
 		}
 		else {
-			fr.imag.clips.papillon.business.dictionary.Volume[] AllVolumes = fr.imag.clips.papillon.business.dictionary.VolumesFactory.getVolumesArray();
 			
-			for (int i = 0; i < AllVolumes.length; i++) {
-				fr.imag.clips.papillon.business.dictionary.Volume myVolume = AllVolumes[i];
+            //
+			for (Iterator iter = VolumesFactory.getVolumesArray().iterator(); iter.hasNext();) {
+				Volume myVolume = (Volume)iter.next();
 				volumeOptionTemplate.setValue(myVolume.getName());
 				volumeOptionTemplate.setLabel(myVolume.getName());
 				// Je dois ici mettre un text dans l'OPTION, car les browser PC ne sont pas conformes aux

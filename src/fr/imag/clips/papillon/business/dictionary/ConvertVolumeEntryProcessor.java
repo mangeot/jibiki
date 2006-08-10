@@ -5,6 +5,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.2  2006/08/10 22:17:12  fbrunet
+ * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
+ * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+ * - Bug correction : +/- in advanced search
+ *
  * Revision 1.1  2005/08/05 18:47:02  mangeot
  * *** empty log message ***
  *
@@ -33,13 +38,22 @@ public class ConvertVolumeEntryProcessor implements IVolumeEntryProcessor {
 
 	protected static fr.imag.clips.papillon.business.xsl.XslSheet theStylesheet = null;
 
+    /*
 	public ConvertVolumeEntryProcessor(String stylesheetName) throws PapillonBusinessException {
 		theStylesheet = fr.imag.clips.papillon.business.xsl.XslSheetFactory.findXslSheetByHandle(stylesheetName);
 		if (theStylesheet == null || theStylesheet.isEmpty()) {
 			System.out.println("Stylesheet empty!");
 		}
 	}
-
+     */
+    
+    public ConvertVolumeEntryProcessor(String stylesheetName, String dictionaryName, String volumeName) throws PapillonBusinessException {
+		theStylesheet = fr.imag.clips.papillon.business.xsl.XslSheetFactory.getXslSheet(dictionaryName, volumeName, stylesheetName);
+		if (theStylesheet == null || theStylesheet.isEmpty()) {
+			System.out.println("Stylesheet empty!");
+		}
+	}
+    
 	public void process(VolumeEntry myEntry) throws PapillonBusinessException {
 		try {
 			System.out.println(myEntry.getHeadword());

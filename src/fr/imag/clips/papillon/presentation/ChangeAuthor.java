@@ -9,6 +9,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.14  2006/08/10 22:17:13  fbrunet
+ * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
+ * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+ * - Bug correction : +/- in advanced search
+ *
  * Revision 1.13  2006/03/13 08:48:00  fbrunet
  * bug corrections before merge
  *
@@ -357,7 +362,7 @@ public class ChangeAuthor extends PapillonBasePO {
 			}
 			Vector myKeys1 = new Vector();
 			Vector clausesVector = new Vector();
-			Volume myVolume = VolumesFactory.findVolumeByName(volume);
+			Volume myVolume = VolumesFactory.getVolumeByName(volume);
 			String source = "eng";
 			if (myVolume !=null && !myVolume.isEmpty()) {
 				source = myVolume.getSourceLanguage();
@@ -502,12 +507,12 @@ public class ChangeAuthor extends PapillonBasePO {
         // (it should be this way if the HTML is valid...)
         Text volumeTextTemplate = (Text)volumeOptionTemplate.getFirstChild(); 
                 
-                
-        Volume[] AllVolumes = VolumesFactory.getVolumesArray();
-        
-        for (int i = 0; i < AllVolumes.length; i++) {
-			Volume myVolume = AllVolumes[i];
-			String schema = myVolume.getXmlSchema();
+        //
+        for (Iterator iter =  VolumesFactory.getVolumesArray().iterator(); iter.hasNext();) {
+			Volume myVolume = (Volume)iter.next();
+			
+            //
+            String schema = myVolume.getXmlSchema();
 			if (schema != null && !schema.equals("")) {
 
             volumeOptionTemplate.setValue(myVolume.getName());

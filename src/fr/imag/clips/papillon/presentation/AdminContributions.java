@@ -9,6 +9,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.35  2006/08/10 22:17:13  fbrunet
+ * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
+ * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+ * - Bug correction : +/- in advanced search
+ *
  * Revision 1.34  2006/03/06 10:16:45  mangeot
  * MM: I do not delete any contribution, even not finished.
  * I tag them "deleted"
@@ -190,6 +195,7 @@ import fr.imag.clips.papillon.business.message.MessageDBLoader;
 // Standard imports
 import java.io.IOException;
 import java.util.Vector;
+import java.util.Iterator;
 import java.text.DateFormat;
 import java.io.*;
 
@@ -614,10 +620,10 @@ public class AdminContributions extends PapillonBasePO {
 			Text volumeTextTemplate = (Text)volumeOptionTemplate.getFirstChild(); 
 			
 			
-			Volume[] AllVolumes = VolumesFactory.getVolumesArray();
-			
-			for (int i = 0; i < AllVolumes.length; i++) {
-				Volume myVolume = AllVolumes[i];
+            //
+			for (Iterator iter = VolumesFactory.getVolumesArray().iterator(); iter.hasNext();) {
+				Volume myVolume = (Volume)iter.next();
+                
 				String schema = myVolume.getXmlSchema();
 				if (schema != null && !schema.equals("")) {
 					volumeOptionTemplate.setValue(myVolume.getName());
@@ -715,7 +721,7 @@ public class AdminContributions extends PapillonBasePO {
 					for(int i = 0; i < ContribVector.size(); i++) {
 						IAnswer myAnswer = (IAnswer)ContribVector.get(i);
 						if (myAnswer!=null && !myAnswer.isEmpty()) {
-							addElement(content, XslTransformation.applyXslSheets(myAnswer, null));
+							addElement(content, XslTransformation.applyXslSheets(myAnswer));
 						}
 					}
 				}
@@ -894,12 +900,8 @@ public class AdminContributions extends PapillonBasePO {
 		java.io.IOException {
 			
 			java.util.Vector myVector = new Vector();
-			Volume myVolume = VolumesFactory.findVolumeByName(volumeName);
-			String[] targets = null;
-			if (myVolume != null && !myVolume.isEmpty()) {
-				targets = myVolume.getTargetLanguagesArray();
-			}
-			java.util.Collection EntryCollection = DictionariesFactory.findAnswerAndTranslations(volumeName, handle, targets, this.getUser());
+			Volume myVolume = VolumesFactory.getVolumeByName(volumeName);
+			java.util.Collection EntryCollection = DictionariesFactory.findAnswerAndTranslations(volumeName, handle, myVolume.getTargetLanguagesArray(), this.getUser());
 			
 			if (EntryCollection != null && EntryCollection.size()>0) {
 				QueryResult myQueryResult = (QueryResult) EntryCollection.iterator().next();

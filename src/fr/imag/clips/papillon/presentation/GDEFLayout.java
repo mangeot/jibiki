@@ -9,6 +9,11 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.9  2006/08/10 22:17:13  fbrunet
+ *  - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
+ *  - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+ *  - Bug correction : +/- in advanced search
+ *
  *  Revision 1.8  2006/06/09 10:10:43  fbrunet
  *  Add generic components (AdvancedQueryForm, QueryRequest and ViewQueryResult) in Home.java
  *
@@ -77,6 +82,7 @@ import fr.imag.clips.papillon.business.PapillonBusinessException;
 // Standard imports
 import java.io.IOException;
 import java.util.Date;
+import java.util.Iterator;
 import java.text.DateFormat;
 
 //import java.io.*;
@@ -264,9 +270,6 @@ public class GDEFLayout implements StdLayout {
         HttpPresentationException,
         UnsupportedEncodingException {
             
-            String[] allSourceLanguages = AvailableLanguages.getSourceLanguagesArray();
-            String[] allTargetLanguages = AvailableLanguages.getTargetLanguagesArray();
-            
             QueryMenuXHTML queryMenu = (QueryMenuXHTML) MultilingualXHtmlTemplateFactory.createTemplate("QueryMenuXHTML", comms, sessionData);
             //XHTMLInputElement headwordInput = queryMenu.getElementHeadwordInput();
             XHTMLInputElement headwordInput = queryMenu.getElementValueField();
@@ -306,8 +309,10 @@ public class GDEFLayout implements StdLayout {
                 sessionData.setPreference("Home.po", targetSelect.getName(), prefTrgLang);
             }
             
-            for (int i = 0; i < allTargetLanguages.length; i++) {
-                String langi = allTargetLanguages[i];
+            for (Iterator iter = AvailableLanguages.getTargetLanguagesArray().iterator(); iter.hasNext();) {
+                String langi = (String)iter.next();
+                
+                //
                 targetOptionTemplate.setValue(langi);
                 if (sessionData.getClientWithLabelDisplayProblems()) {
                     targetOptionTemplate.setLabel(Languages.localizeLabel(langLoc, langi));

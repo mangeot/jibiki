@@ -9,6 +9,11 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.8  2006/08/10 22:17:13  fbrunet
+ *  - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
+ *  - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+ *  - Bug correction : +/- in advanced search
+ *
  *  Revision 1.7  2006/07/15 08:55:14  mangeot
  *  The BrowseVolumePage opens an HTML form that is used to lookup a volume in alphabetical order.
  *  The BrowseVolume is the server side of the AJAX script for retrieving the entries in alphabetical order
@@ -149,7 +154,7 @@ public class BrowseVolume extends AbstractPO {
 			java.util.Vector resultsVector = null;
 			if (headword != null && !headword.equals("") &&
 				volumeName != null && !volumeName.equals("")) {
-				Volume myVolume = VolumesFactory.findVolumeByName(volumeName);
+				Volume myVolume = VolumesFactory.getVolumeByName(volumeName);
 				if (myVolume != null && !myVolume.isEmpty()) {
 					java.util.Vector myKeys = new java.util.Vector();
 					String[] Headword = new String[4];

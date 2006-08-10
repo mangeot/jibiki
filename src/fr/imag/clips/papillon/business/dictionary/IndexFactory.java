@@ -3,6 +3,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.18  2006/08/10 22:17:12  fbrunet
+ * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
+ * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+ * - Bug correction : +/- in advanced search
+ *
  * Revision 1.17  2006/03/01 15:20:39  mangeot
  * syntax bug fix
  *
@@ -267,7 +272,7 @@ public class IndexFactory {
 	
 		
     // FIXME: dict is not used ! (maybe due to the fact that findAnswerByHandle does not ask for it.)
-	protected static Vector getAxiesPointingTo(Dictionary dict, Volume volume, String lexieId, String sourceLanguage) throws PapillonBusinessException {
+	protected static Collection getAxiesPointingTo(Dictionary dict, Volume volume, String lexieId, String sourceLanguage) throws PapillonBusinessException {
 		Vector theEntries = new Vector();
 		
 		String cmp_op = QueryBuilder.EQUAL;

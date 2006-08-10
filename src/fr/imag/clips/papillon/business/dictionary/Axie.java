@@ -9,6 +9,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.7  2006/08/10 22:17:12  fbrunet
+ * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
+ * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+ * - Bug correction : +/- in advanced search
+ *
  * Revision 1.6  2005/06/22 15:55:53  mangeot
  * Solved an unresolved prefix bug when the dml prefix was not in the template entry.
  * Now we use the DmlPrefixResolver to solve this issue.
@@ -665,7 +670,8 @@ public class Axie implements IAnswer {
         throws PapillonBusinessException {
 			Volume myVolume = this.getVolume();
 			if (myVolume == null || myVolume.isEmpty()) {
-				myVolume = VolumesFactory.findVolumeByDbname(this.getTableName());
+				//myVolume = VolumesFactory.findVolumeByDbname(this.getTableName());
+                myVolume = VolumesFactory.getVolumeByName(this.getVolumeName());
 			}
 			if (myVolume!=null && ! myVolume.isEmpty()) {
 				this.delete(myVolume.getIndexDbname());

@@ -3,6 +3,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.40  2006/08/10 22:17:12  fbrunet
+ * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
+ * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+ * - Bug correction : +/- in advanced search
+ *
  * Revision 1.39  2006/05/22 22:45:54  fbrunet
  * LexALP: add merge method in post-save processing (merge axies with same referenced lexies)
  *
@@ -187,8 +192,8 @@ public class ParseVolume {
 	public static String parseVolume (String volumeName, String URL, String defaultStatus, int replaceExistingEntries, int replaceExistingContributions, boolean logContribs)
         throws PapillonBusinessException {
 			String message = "";
-			Volume volume = VolumesFactory.findVolumeByName(volumeName);
-			Dictionary dict = DictionariesFactory.findDictionaryByName(volume.getDictname());
+			Volume volume = VolumesFactory.getVolumeByName(volumeName);
+			Dictionary dict = DictionariesFactory.getDictionaryByName(volume.getDictname());
             if (!volume.isEmpty()) {
                 message = parseVolume(dict, volume,URL, defaultStatus, replaceExistingEntries, replaceExistingContributions, logContribs);
             }

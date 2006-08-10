@@ -9,6 +9,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.9  2006/08/10 22:17:13  fbrunet
+ * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
+ * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+ * - Bug correction : +/- in advanced search
+ *
  * Revision 1.8  2006/06/19 15:27:01  fbrunet
  * Jibiki : improvement of the search result display
  * Lexalp : add help menu (link to wiki and bug tracker)
@@ -111,6 +116,7 @@ import fr.imag.clips.papillon.business.dictionary.QueryRequest;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory;
 import fr.imag.clips.papillon.business.dictionary.Volume;
+import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
 import fr.imag.clips.papillon.business.utility.Utility;
 import fr.imag.clips.papillon.business.transformation.ResultFormatter;
 import fr.imag.clips.papillon.business.transformation.ResultFormatterFactory;
@@ -150,16 +156,16 @@ public class AdvancedSearch extends PapillonBasePO {
         ////// Handle action events (edit, duplicate, delete, undete)
         // Retrieve parameters 
         String action = myGetParameter(EditEntryInitFactory.ACTION_PARAMETER);
-        String volume = myGetParameter(EditEntryInitFactory.VOLUME_PARAMETER);
+        String volumeName = myGetParameter(EditEntryInitFactory.VOLUME_PARAMETER);
         String entryHandle = myGetParameter(EditEntryInitFactory.HANDLE_PARAMETER);
         
         // 
         if (action!=null && !action.equals("") &&
-            volume!=null && !volume.equals("") &&
+            volumeName!=null && !volumeName.equals("") &&
             entryHandle!=null && !entryHandle.equals("")) {
             
             // Search last contribution corresponding to entryId
-            VolumeEntry myEntry = VolumeEntriesFactory.findEntryByEntryId(this.getUser(), volume, entryHandle);
+            VolumeEntry myEntry = VolumeEntriesFactory.findEntryByEntryId(this.getUser(), VolumesFactory.getVolumeByName(volumeName), entryHandle);
             
             // EDIT
             if (action.equals("edit")) {

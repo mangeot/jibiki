@@ -7,6 +7,11 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.6  2006/08/10 22:17:13  fbrunet
+ *  - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
+ *  - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+ *  - Bug correction : +/- in advanced search
+ *
  *  Revision 1.5  2006/02/26 14:04:56  mangeot
  *  Corrected a bug: the content was a static variable, thus there were problems when two users wanted to aces the same page at the same time
  *
@@ -65,6 +70,8 @@ import java.util.Date;
 import java.util.Vector;
 import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Collection;
 import java.text.DateFormat;
 
 import org.enhydra.xml.io.OutputOptions;
@@ -254,11 +261,11 @@ public abstract class AbstractPO implements HttpPresentation {
      *   retrieving data (usually due to an underlying data layer
                           *   error).
      */
-	public static String serializeParameterForUrl(String parameter, String[] table) {
+	public static String serializeParameterForUrl(String parameter, Collection table) {
 		String result = "";
 		if (table != null) {
-			for (int i=0;i<table.length;i++) {
-				result += parameter + "=" + myUrlEncode(table[i]) + "&";
+			for (Iterator iter = table.iterator(); iter.hasNext();) {
+				result += parameter + "=" + myUrlEncode((String)iter.next()) + "&";
 			}
 		}
 		return result;

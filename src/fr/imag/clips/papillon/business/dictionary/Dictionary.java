@@ -9,6 +9,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.8  2006/08/10 22:17:12  fbrunet
+ * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
+ * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+ * - Bug correction : +/- in advanced search
+ *
  * Revision 1.7  2006/05/05 02:08:23  fbrunet
  * bug correction : url utf8 transfert (in createEntryInit)
  *
@@ -71,7 +76,10 @@ import com.lutris.appserver.server.sql.DatabaseManagerException;
 import com.lutris.appserver.server.sql.ObjectIdException;
 import com.lutris.dods.builder.generator.query.DataObjectException;
 
+import java.util.Iterator;
 import java.util.Vector;
+import java.util.Collection;
+import java.util.ArrayList;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Element;
 
@@ -240,7 +248,9 @@ public class Dictionary {
         }
     }
     
-         public String getSourceLanguages() 
+    // FIXME: change String to Collection
+    // FIXME: supress getSourceLanguagesArray ? or getSourceLanguages ?
+    public String getSourceLanguages() 
         throws PapillonBusinessException {
         try {
             return myDO.getSourceLanguages();   
@@ -249,12 +259,20 @@ public class Dictionary {
         }
     }
 		
-		public String[] getSourceLanguagesArray()
+		public Collection getSourceLanguagesArray()
 			throws PapillonBusinessException {
-					return getSourceLanguages().split("\\s");
+                // FIXME: add source collection in dictionary
+                String[] sourcesString = getSourceLanguages().split("\\s");
+                ArrayList sources = new ArrayList();
+                for (int i = 0; i < sourcesString.length; i++) {
+                    sources.add(sourcesString[i]);
+                }
+                
+                return sources;
 			}
 
-		public void setSourceLanguages(String sources) 
+     // FIXME: change String to Collection
+    public void setSourceLanguages(String sources) 
         throws PapillonBusinessException {
         try {
             myDO.setSourceLanguages(sources);   
@@ -263,7 +281,9 @@ public class Dictionary {
         }
     }
 
-		public String getTargetLanguages()
+    // FIXME: change String to Collection
+    // FIXME: supress getTargetLanguagesArray ? or getTargetLanguages ?
+    public String getTargetLanguages()
 			throws PapillonBusinessException {
         try {
 					return myDO.getTargetLanguages();
@@ -273,10 +293,19 @@ public class Dictionary {
         }
 			}
 
-		public String[] getTargetLanguagesArray() throws PapillonBusinessException {
-			return getTargetLanguages().split("\\s");
+		public Collection getTargetLanguagesArray() throws PapillonBusinessException {
+			
+            // FIXME: add target collection in dictionary
+            String[] targetsString = getTargetLanguages().split("\\s");
+            ArrayList targets = new ArrayList();
+            for (int i = 0; i < targetsString.length; i++) {
+                targets.add(targetsString[i]);
+            }
+            
+            return targets;
     }
 		
+    // FIXME: change String to Collection
 	 public void setTargetLanguages(String targets) 
         throws PapillonBusinessException {
         try {
@@ -356,12 +385,13 @@ public class Dictionary {
      *   error).
      */
     public void deleteAll() throws PapillonBusinessException {
-		Volume[] TheVolumes = VolumesFactory.getVolumesArray(this.getName());
-		if (null != TheVolumes && TheVolumes.length > 0) {
-			for (int i=0; i< TheVolumes.length; i++) {
-				TheVolumes[i].deleteAll();
-			}
-		}
+		
+        //
+        for (Iterator iter =  VolumesFactory.getVolumesArray(this.getName()).iterator(); iter.hasNext();) {
+            ((Volume)iter.next()).deleteAll();
+        }
+        
+        //
 		this.delete();
 	}
 

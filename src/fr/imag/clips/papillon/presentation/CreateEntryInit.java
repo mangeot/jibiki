@@ -9,6 +9,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.8  2006/08/10 22:17:13  fbrunet
+ * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
+ * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+ * - Bug correction : +/- in advanced search
+ *
  * Revision 1.7  2006/06/19 15:27:01  fbrunet
  * Jibiki : improvement of the search result display
  * Lexalp : add help menu (link to wiki and bug tracker)
@@ -131,7 +136,7 @@ public class CreateEntryInit extends PapillonBasePO {
             removeInitJavascript();
                 
             // Parameters
-            String volume = myGetParameter(EditEntryInitFactory.VOLUME_PARAMETER);
+            String volumeName = myGetParameter(EditEntryInitFactory.VOLUME_PARAMETER);
             String volumeAnyway = myGetParameter(EditEntryInitFactory.VOLUME_ANYWAY_PARAMETER);
             String headwordAnyway = myGetParameter(EditEntryInitFactory.HEADWORD_ANYWAY_PARAMETER);
             String entryHandle = myGetParameter(EditEntryInitFactory.HANDLE_PARAMETER);
@@ -149,11 +154,11 @@ public class CreateEntryInit extends PapillonBasePO {
             }
             
             //
-            if (volume!=null && !volume.equals("")) {
-                this.setPreference(content.NAME_VOLUME, volume);
+            if (volumeName!=null && !volumeName.equals("")) {
+                this.setPreference(content.NAME_VOLUME, volumeName);
             }
             else {
-                volume = this.getPreference(content.NAME_VOLUME);
+                volumeName = this.getPreference(content.NAME_VOLUME);
             }
             
             //
@@ -178,14 +183,14 @@ public class CreateEntryInit extends PapillonBasePO {
                 //} else 
                     
                 if ( (action.equals("create") || action.equals("lookup"))
-                           && volume!=null && !volume.equals("") 
+                           && volumeName!=null && !volumeName.equals("")
                            && headword!=null && !headword.equals("")) {
                     
                     //
-                    displayLookupResultsAndCreate(volume, headword);
+                    displayLookupResultsAndCreate(VolumesFactory.getVolumeByName(volumeName), headword);
                     
                     // fill anyway parameter
-                    volumeAnyway = new String(volume);
+                    volumeAnyway = new String(volumeName);
                     headwordAnyway = new String(headword);
                     
                     // fill headword parameter (if results !)
@@ -219,7 +224,7 @@ public class CreateEntryInit extends PapillonBasePO {
                            && entryHandle!=null && !entryHandle.equals("")) {
                     
                     //
-                    VolumeEntry myEntry = VolumeEntriesFactory.findEntryByEntryId(this.getUser(), volume, entryHandle);
+                    VolumeEntry myEntry = VolumeEntriesFactory.findEntryByEntryId(this.getUser(), VolumesFactory.getVolumeByName(volumeName), entryHandle);
                     EditEntryInitFactory.editEntry(myEntry, this.getUser());
                     
                     // DUPLICATE
@@ -227,16 +232,17 @@ public class CreateEntryInit extends PapillonBasePO {
                            && entryHandle!=null && !entryHandle.equals("")) {
                     
                     //
-                    VolumeEntry myEntry = VolumeEntriesFactory.findEntryByEntryId(this.getUser(), volume, entryHandle);
+                    VolumeEntry myEntry = VolumeEntriesFactory.findEntryByEntryId(this.getUser(), VolumesFactory.getVolumeByName(volumeName), entryHandle);
                     EditEntryInitFactory.duplicateEntry(myEntry, this.getUser());                    
                     
                     // DELETE
                 } else if (action.equals("delete")
                            && entryHandle!=null && !entryHandle.equals("")
-                           && volume!=null && !volume.equals("") 
+                           && volumeName!=null && !volumeName.equals("") 
                            && headword!=null && !headword.equals("")) {
                     
                     //
+                    Volume volume = VolumesFactory.getVolumeByName(volumeName);
                     VolumeEntry myEntry = VolumeEntriesFactory.findEntryByEntryId(this.getUser(), volume, entryHandle);
                     EditEntryInitFactory.deleteEntry(myEntry, this.getUser()); 
                     displayLookupResultsAndCreate(volume, headword);
@@ -244,10 +250,11 @@ public class CreateEntryInit extends PapillonBasePO {
                     // UNDELETE
                 } else if (action.equals("undelete")
                            && entryHandle!=null && !entryHandle.equals("")
-                           && volume!=null && !volume.equals("") 
+                           && volumeName!=null && !volumeName.equals("") 
                            && headword!=null && !headword.equals("")) {
                     
                     //
+                    Volume volume = VolumesFactory.getVolumeByName(volumeName);
                     VolumeEntry myEntry = VolumeEntriesFactory.findEntryByEntryId(this.getUser(), volume, entryHandle);
                     EditEntryInitFactory.undeleteEntry(myEntry, this.getUser());
                     displayLookupResultsAndCreate(volume, headword);
@@ -262,12 +269,12 @@ public class CreateEntryInit extends PapillonBasePO {
             }
             
             //
-            displayLookupInterface(volume, headword, volumeAnyway, headwordAnyway);
+            displayLookupInterface(volumeName, headword, volumeAnyway, headwordAnyway);
             return content.getElementEditEntryInitContent();
         }
     
     
-    protected void displayLookupInterface(String volume, String headword, String volumeAnyway, String headwordAnyway)
+    protected void displayLookupInterface(String volumeName, String headword, String volumeAnyway, String headwordAnyway)
         throws fr.imag.clips.papillon.business.PapillonBusinessException,
         HttpPresentationException,
         java.io.UnsupportedEncodingException {
@@ -295,16 +302,17 @@ public class CreateEntryInit extends PapillonBasePO {
             // (it should be this way if the HTML is valid...)
             Text volumeTextTemplate = (Text)volumeOptionTemplate.getFirstChild();
             
-            Volume[] AllVolumes = VolumesFactory.getVolumesArray();
-            
-            for (int i = 0; i < AllVolumes.length; i++) {
-                Volume myVolume = AllVolumes[i];
+            //
+            for (Iterator iter = VolumesFactory.getVolumesArray().iterator(); iter.hasNext();) {
+                Volume myVolume = (Volume)iter.next();
+                
+                //
                 String itf = myVolume.getTemplateInterface();
                 volumeOptionTemplate.setValue(myVolume.getName());
                 volumeOptionTemplate.setLabel(myVolume.getName());
                 // Je dois ici mettre un text dans l'OPTION, car les browser PC ne sont pas conformes aux
                 // specs W3C.
-                volumeOptionTemplate.setSelected(myVolume.getName().equals(volume));
+                volumeOptionTemplate.setSelected(myVolume.getName().equals(volumeName));
                 volumeTextTemplate.setData(myVolume.getName());
                 volumeSelect.appendChild(volumeOptionTemplate.cloneNode(true));
             }
@@ -348,7 +356,7 @@ public class CreateEntryInit extends PapillonBasePO {
         }
 	*/
     
-    protected void displayLookupResultsAndCreate (String volumeName, String headword)
+    protected void displayLookupResultsAndCreate (Volume volume, String headword)
 		throws PapillonBusinessException,
 		java.io.UnsupportedEncodingException,
         java.io.IOException,
@@ -357,8 +365,8 @@ public class CreateEntryInit extends PapillonBasePO {
             //
             AdvancedQueryForm qf = new AdvancedQueryForm(this.getComms(), this.getSessionData(), true, false);
             QueryParameter qp = qf.getQueryParameter();
-            qp.setTargets(new String[0]);
-            Collection qrset = searchEntry(volumeName, qf, qp);
+            //qp.setTargets(new ArrayList());
+            Collection qrset = searchEntry(volume, qf, qp);
 
 			//
 			if (qrset != null && qrset.size()!=0) {
@@ -376,7 +384,7 @@ public class CreateEntryInit extends PapillonBasePO {
                 //
                 throw new ClientPageRedirectException(CreateEntryInitURL + "?" + 
                                                       EditEntryInitFactory.ACTION_PARAMETER + "=showAndCreate" + 
-                                                      "&" + EditEntryInitFactory.VOLUME_ANYWAY_PARAMETER + "=" + volumeName + 
+                                                      "&" + EditEntryInitFactory.VOLUME_ANYWAY_PARAMETER + "=" + volume.getName() + 
                                                       "&" + EditEntryInitFactory.HEADWORD_ANYWAY_PARAMETER + "=" + myUrlEncode(headword));
 			}
 		}
@@ -404,13 +412,13 @@ protected void removeInitJavascript () {
 
 	
 
-protected Collection searchEntry(String volumeName, AdvancedQueryForm qf, QueryParameter qp)
+protected Collection searchEntry(Volume volume, AdvancedQueryForm qf, QueryParameter qp)
       throws PapillonBusinessException,
       java.io.UnsupportedEncodingException,
       HttpPresentationException {
           
           //
-          QueryRequest queryReq = new QueryRequest(volumeName);
+          QueryRequest queryReq = new QueryRequest(volume);
           queryReq.setOrTree();   // OR(AND)
           ArrayList criteriaSearchList = qf.getCriteriaList();
           
@@ -780,7 +788,7 @@ protected Collection searchEntry(String volumeName, AdvancedQueryForm qf, QueryP
      
      removeEntryListTable();
      
-     Volume myVolume = VolumesFactory.findVolumeByName(volumeName);
+     Volume myVolume = VolumesFactory.getVolumeByName(volumeName);
      String[] targets = null;
      if (myVolume != null && !myVolume.isEmpty()) {
          targets = myVolume.getTargetLanguagesArray();

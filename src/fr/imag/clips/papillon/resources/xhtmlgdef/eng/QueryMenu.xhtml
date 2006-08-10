@@ -10,25 +10,52 @@
       <h2 class="menuTitle">
         <a title="Lookup a word in online dictionaries" href="javascript:void(0)">Lookup:</a>
       </h2>
-      <form id="ConsultForm" action="Home.po">
+               <form  id="ConsultForm" method="get" action="Home.po" >
         <div>
-        <input type="hidden" name="RESOURCES" value="*ANY*" />
-        <label for="HeadwordInput" accesskey="w">
-          <span class="accesskey">W</span>ord:</label>
-        <input type="text" id="HeadwordInput" name="HEADWORD" size="14" maxlength="40" />
-         <input type="hidden" name="SOURCE" value="est" />
-         <input type="hidden" name="TARGETS" value="fra" />
-        <select class="hidden" id="Source">
-          <option id="SourceOptionTemplate" value="NONE" label="NONE">NONE</option>
-        </select>
-        <select class="hidden" id="Target">
-          <option id="AllTargets" value="*ALL*" label="All">All</option>
-          <option id="TargetOptionTemplate" value="NONE" label="NONENONENONE">NONE</option>
-        </select>
-        <br/>
-        <input type="submit" name="lookup" value="Go" />
-        </div>
-      </form>
+                <div>
+                    <div class="menuColumnSize">
+                        <div class="menuVariableName">
+                            <label for="ValueField" accesskey="w" ><span class="accesskey">W</span>ord:</label>
+                        </div>
+                        <div class="menuVariableValue" >
+                            <input type="hidden" id="Facet" name="FACET.0" value="cdm-headword"/>
+                            <input type="hidden" id="Operator" name="OPERATOR.0" value="2"/>
+                            <input id="ValueField" name="FACETVALUE.0" type="text" class="menuVariableValueWidth" />
+                        </div>
+                    </div>
+                    <div class="hidden">
+                        <div class="menuVariableName">
+                            <label for="SourceLang" accesskey="s"><span class="accesskey">S</span>ource:</label>
+                        </div>
+                        <div class="menuVariableValue" >
+                            <select id="SourceLang" class="menuVariableValueWidth" >
+                                <option id="SourceOptionTemplate" value="NONE" label="NONE">NONE</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="hidden">
+                        <div class="menuVariableName">
+                            <label for="Targets" accesskey="t"><span class="accesskey">T</span>arget:</label>
+                         </div>
+                        <div class="menuVariableValue" >
+                            <select id="Targets" class="menuVariableValueWidth">
+                                <option id="TargetTmpl" label="NONE" value="NONE">NONE</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                	<input type="hidden" name="SOURCE" value="est" />
+         			<input type="hidden" name="TARGETS" value="fra" />
+                    <input type="hidden" name="XSL" value="Default"/>
+                    <input type="hidden" name="NB_RESULT_PER_PAGE" value="5" />
+                    <input type="hidden" name="OFFSET"/>
+                    <input type="hidden" name="action" value="lookup" />
+                    <input type="submit" value="Go" class="menuGo" />
+                </div>
+                </div>
+            </form>
+
       <a title="Advanced Lookup of a Word" href="ConsultExpert.po">Advanced Lookup</a>
       <br/>
       <a title="Alphabetical Lookup of a Word" onclick="window.open('BrowseVolumePage.po?STATUS=validated&amp;VOLUME=GDEF_est','Alphabetical lookup of a volume','width=200,height=700,resizable=no,scrollbars=no');return false;" href="BrowseVolumePage.po">Alphabetical Lookup</a>

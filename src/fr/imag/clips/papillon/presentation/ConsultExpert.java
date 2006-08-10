@@ -10,6 +10,11 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.32  2006/08/10 22:17:13  fbrunet
+ *  - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
+ *  - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+ *  - Bug correction : +/- in advanced search
+ *
  *  Revision 1.31  2006/03/10 16:23:18  mangeot
  *  Hack for targets.length==0, I am not satisfied...
  *
@@ -171,8 +176,13 @@ import org.enhydra.xml.xhtml.dom.*;
 
 // Standard imports
 import java.io.IOException;
-import java.io.*;
-import java.util.*;
+import java.io.UnsupportedEncodingException;
+import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Arrays;
+import java.util.Vector;
+import java.util.Iterator;
 import java.util.Date;
 import java.text.DateFormat;
 
@@ -335,10 +345,10 @@ public class ConsultExpert extends PapillonBasePO {
         } else {
             sourceLanguage = this.getPreference(content.NAME_SOURCE);
         }
-        String[] targetLanguages = myGetParameterValues(content.NAME_TARGETS);
-        String[] originalTargets = targetLanguages;
-        String[] resources = myGetParameterValues(content.NAME_RESOURCES);
-        String[] originalResources = resources;
+        List originalTargets = Arrays.asList(myGetParameterValues(content.NAME_TARGETS));
+        ArrayList targetLanguages = new ArrayList(originalTargets);
+        List originalResources = Arrays.asList(myGetParameterValues(content.NAME_RESOURCES));
+        ArrayList resources = new ArrayList(originalResources);
         String volume = myGetParameter(VOLUME_PARAMETER);
 
         String search1 = myGetParameter(content.NAME_search1);
@@ -416,25 +426,28 @@ public class ConsultExpert extends PapillonBasePO {
 		}
 
         // FIXME: Just get the first language for the moment. Architecture of this part should be revised.
-        String[] allSourceLanguages = AvailableLanguages.getSourceLanguagesArray();
-        String[] allTargetLanguages = AvailableLanguages.getTargetLanguagesArray();
-        String[] allResources = DictionariesFactory.getDictionariesNamesArray();
-
-		if (null != targetLanguages) {
-			if (targetLanguages.length == 0) {
-                targetLanguages = null;
-			}
-			else if (targetLanguages.length > 0) {
-				if (targetLanguages[0].equals(ANY_TARGET)) {
-					//targetLanguages = allTargetLanguages;
-					targetLanguages = null;
-				}
-			}
+        Collection allSourceLanguages = AvailableLanguages.getSourceLanguagesArray();
+        Collection allTargetLanguages = AvailableLanguages.getTargetLanguagesArray();
+        Collection dictionaries = DictionariesFactory.getDictionariesArray();
+        ArrayList allResources = new ArrayList();
+        
+        int i = 0;
+        for (Iterator iter = dictionaries.iterator(); iter.hasNext();) {
+            allResources.add(((Dictionary)iter.next()).getName());
         }
-        if (null != resources && resources.length > 0) {
-            if (resources[0].equals(ANY_RESOURCE)) {
-                resources = allResources;
-            }
+    
+        //
+		if ((targetLanguages.size() == 0) || ((targetLanguages.size() > 0) && ((String)targetLanguages.get(0)).equals(ANY_TARGET))) {
+            
+            // FIXME: null is important ?
+            targetLanguages = null;
+        }
+        
+        //
+        if ((resources.size() > 0) && ((String)resources.get(0)).equals(ANY_RESOURCE)) {
+            
+            //
+            resources = allResources;
         }
 
         // Header Script
@@ -554,9 +567,9 @@ public class ConsultExpert extends PapillonBasePO {
      * @exception  UnsupportedEncodingException  Description of the Exception
      */
     protected void addConsultForm(ConsultExpertXHTML content,
-								  String sourceLanguage, String[] allSourceLanguages,
-								  String[] originalTargets, String[] allTargetLanguages, 
-								  String[] originalResources, String[] allResources,
+								  String sourceLanguage, Collection allSourceLanguages,
+								  Collection originalTargets, Collection allTargetLanguages, 
+								  Collection originalResources, Collection allResources,
 								  String search1, String search1text,
 								  String search2, String search2text,
 								  int strategy1, int strategy2)
@@ -575,8 +588,12 @@ public class ConsultExpert extends PapillonBasePO {
         if (null == sourceLanguage || sourceLanguage.equals("")) {
             sourceLanguage = langLoc;
         }
-        for (int i = 0; i < allSourceLanguages.length; i++) {
-            String langi = allSourceLanguages[i];
+        
+        //
+        for (Iterator iter = allSourceLanguages.iterator(); iter.hasNext();) {
+            String langi = (String)iter.next();
+            
+            //
             sourceOptionTemplate.setValue(langi);
             if (this.IsClientWithLabelDisplayProblems()) {
                 sourceOptionTemplate.setLabel(Languages.localizeLabel(langLoc, langi));
@@ -606,8 +623,9 @@ public class ConsultExpert extends PapillonBasePO {
         // (it should be this way if the HTML is valid...)
         Text targetTextTemplate = (Text) targetOptionTemplate.getFirstChild();
 
-        for (int i = 0; i < allTargetLanguages.length; i++) {
-            String langi = allTargetLanguages[i];
+        //
+        for (Iterator iter = allTargetLanguages.iterator(); iter.hasNext();) {
+            String langi = (String)iter.next();
             targetOptionTemplate.setValue(langi);
             if (this.IsClientWithLabelDisplayProblems()) {
                 targetOptionTemplate.setLabel(Languages.localizeLabel(langLoc, langi));
@@ -619,11 +637,13 @@ public class ConsultExpert extends PapillonBasePO {
             targetSelect.appendChild(targetOptionTemplate.cloneNode(true));
         }
         targetSelect.removeChild(targetOptionTemplate);
-        this.setSelected(content.getElementTargets(), originalTargets);
+        this.setSelected(content.getElementTargets(), (String[])originalTargets.toArray(new String[originalTargets.size()]));
 
         // Adding the appropriate resources languages to the resources list
-        if (originalResources == null || originalResources.length == 0) {
-            originalResources = new String[]{ANY_RESOURCE};
+        if (originalResources == null || originalResources.size() == 0) {
+            ArrayList list = new ArrayList();
+            list.add(ANY_RESOURCE);
+            originalResources = list;
         }
         XHTMLOptionElement resourceOptionTemplate = content.getElementResourceOptionTemplate();
         XHTMLSelectElement resourceSelect = (XHTMLSelectElement) resourceOptionTemplate.getParentNode();
@@ -634,8 +654,12 @@ public class ConsultExpert extends PapillonBasePO {
         // We assume that the option element has only one text child
         // (it should be this way if the HTML is valid...)
         Text resourceTextTemplate = (Text) resourceOptionTemplate.getFirstChild();
-        for (int i = 0; i < allResources.length; i++) {
-            String resource = allResources[i];
+        
+        //
+        for (Iterator iter = allResources.iterator(); iter.hasNext();) {
+            String resource = (String)iter.next();
+            
+            //
             resourceOptionTemplate.setValue(resource);
             resourceOptionTemplate.setLabel(resource);
             // We should select the previously selected resources...
@@ -645,7 +669,7 @@ public class ConsultExpert extends PapillonBasePO {
             resourceSelect.appendChild(resourceOptionTemplate.cloneNode(true));
         }
         resourceSelect.removeChild(resourceOptionTemplate);
-        this.setSelected(content.getElementResources(), originalResources);
+        this.setSelected(content.getElementResources(), (String[])originalResources.toArray(new String[originalResources.size()]));
 
         // strategy
         if (!this.IsClientWithLabelDisplayProblems()) {
@@ -733,8 +757,8 @@ public class ConsultExpert extends PapillonBasePO {
      *      of the Exception
      */
     protected void addEntries(ConsultExpertXHTML content,
-							  String[] resources, String volume, 
-							  String source, String[] targets, 
+							  Collection resources, String volume, 
+							  String source, Collection targets, 
 							  String[] Headwords, int strategy1, 
 							  String search1, String search1text, String strategyString1,
 							  String search2, String search2text, String strategyString2,
@@ -823,8 +847,8 @@ public class ConsultExpert extends PapillonBasePO {
     protected void addEntryTable(ConsultExpertXHTML content,
 								 Collection qrset, 
 								 String source,
-								 String[] originalResources,
-								 String[] targets, 
+								 Collection originalResources,
+								 Collection targets, 
 								 String search1, String search1text, String strategyString1,
 								 String search2, String search2text, String strategyString2,
 								 int offset)
@@ -966,7 +990,7 @@ public class ConsultExpert extends PapillonBasePO {
      * @exception  java.io.UnsupportedEncodingException  Description of the
      *      Exception
      */
-    protected void addFoksEntryTable(ConsultExpertXHTML content, Vector EntryVector, String sourceLanguage, String[] originalTargets, String[] originalResources)
+    protected void addFoksEntryTable(ConsultExpertXHTML content, Vector EntryVector, String sourceLanguage, Collection originalTargets, Collection originalResources)
              throws PapillonBusinessException,
             java.io.UnsupportedEncodingException {
 
@@ -1226,7 +1250,6 @@ public class ConsultExpert extends PapillonBasePO {
     protected String buildLanguagesScript(String[] allSourceLanguages)
              throws fr.imag.clips.papillon.business.PapillonBusinessException {
 
-        String[] AllLanguages = AvailableLanguages.getAllLanguagesArray();
         String script;
 
         // Heading of the script
@@ -1238,8 +1261,10 @@ public class ConsultExpert extends PapillonBasePO {
 
         // Writing one Option variable for each existing language
         String langLoc = getUserPreferredLanguage();
-        for (int i = 0; i < AllLanguages.length; i++) {
-            String myLang = AllLanguages[i];
+        for (Iterator iter = AvailableLanguages.getAllLanguagesArray().iterator(); iter.hasNext();) {
+            String myLang = (String)iter.next();
+            
+            //
             String varLang = "  var " + myLang + " = new Option(\"" +
                     Languages.localizeName(langLoc, myLang) + "\", \"" + myLang + "\");";
             script = script + "\n" + varLang;
@@ -1251,10 +1276,13 @@ public class ConsultExpert extends PapillonBasePO {
         for (int i = 0; i < allSourceLanguages.length; i++) {
             String mySource = allSourceLanguages[i];
             String ifScript = "  if (object.SOURCE.options[object.SOURCE.selectedIndex].value == \"" + mySource + "\") {";
-            String[] myTargets = AvailableLanguages.getTargetLanguagesArray(mySource);
-            for (int j = 0; j < myTargets.length; j++) {
+           
+            //
+            int j = 0;
+            for (Iterator iter = AvailableLanguages.getTargetLanguagesArray(mySource).iterator(); iter.hasNext();) {
                 ifScript = ifScript + "\n" + "    object.TARGETS.options["
-                         + j + "] = " + myTargets[j] + ";";
+                         + j + "] = " + (String)iter.next() + ";";
+                j++;
             }
             script = script + "\n" + ifScript + "\n}";
         }

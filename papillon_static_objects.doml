@@ -7,6 +7,11 @@
  * $Id$
  *************************************************
  * $Log$
+ * Revision 1.9  2006/08/10 22:17:12  fbrunet
+ * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
+ * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+ * - Bug correction : +/- in advanced search
+ *
  * Revision 1.8  2005/07/16 12:21:05  mangeot
  * dictionaryname and volumename from xslsheets cannot be null any more
  *
@@ -134,6 +139,9 @@
             <type dbType="LONGVARCHAR" javaType="String"/>
           </column>
           <column id="defaultxsl" usedForQuery="true">
+            <type dbType="CHAR" javaType="String" size="1"/>
+          </column>
+          <column id="externalxsl" usedForQuery="true">
             <type dbType="CHAR" javaType="String" size="1"/>
           </column>
         </table>

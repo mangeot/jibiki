@@ -9,6 +9,11 @@
  *  $Id $
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.6  2006/08/10 22:17:13  fbrunet
+ *  - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
+ *  - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+ *  - Bug correction : +/- in advanced search
+ *
  *  Revision 1.5  2006/06/19 15:27:01  fbrunet
  *  Jibiki : improvement of the search result display
  *  Lexalp : add help menu (link to wiki and bug tracker)
@@ -82,6 +87,7 @@ import fr.imag.clips.papillon.business.PapillonBusinessException;
 // Standard imports
 import java.io.IOException;
 import java.util.Date;
+import java.util.Iterator;
 import java.text.DateFormat;
 
 //import java.io.*;
@@ -252,8 +258,6 @@ public class LexALPLayout implements StdLayout {
         HttpPresentationException,
         UnsupportedEncodingException {
             
-            String[] allSourceLanguages = AvailableLanguages.getSourceLanguagesArray();
-            String[] allTargetLanguages = AvailableLanguages.getTargetLanguagesArray();
             
             QueryMenuXHTML queryMenu = (QueryMenuXHTML) MultilingualXHtmlTemplateFactory.createTemplate(PACKAGE, "QueryMenuXHTML", comms, sessionData);
             //XHTMLInputElement headwordInput = queryMenu.getElementHeadwordInput();
@@ -278,8 +282,8 @@ public class LexALPLayout implements StdLayout {
                 sessionData.setPreference("Home.po", sourceSelect.getName(), prefSrcLang);
             }
             
-            for (int i = 0; i < allSourceLanguages.length; i++) {
-                String langi = allSourceLanguages[i];
+            for (Iterator iter = AvailableLanguages.getSourceLanguagesArray().iterator(); iter.hasNext();) {
+                String langi = (String)iter.next();
                 
                 sourceOptionTemplate.setValue(langi);
                 // Certains navigateurs ne sont pas conformes aux specs
@@ -313,8 +317,11 @@ public class LexALPLayout implements StdLayout {
                 sessionData.setPreference("Home.po", targetSelect.getName(), prefTrgLang);
             }
             
-            for (int i = 0; i < allTargetLanguages.length; i++) {
-                String langi = allTargetLanguages[i];
+            //
+            for (Iterator iter = AvailableLanguages.getTargetLanguagesArray().iterator(); iter.hasNext();) {
+                String langi = (String)iter.next();
+                
+                //
                 targetOptionTemplate.setValue(langi);
                 if (sessionData.getClientWithLabelDisplayProblems()) {
                     targetOptionTemplate.setLabel(Languages.localizeLabel(langLoc, langi));

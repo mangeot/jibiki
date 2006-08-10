@@ -9,6 +9,11 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.10  2006/08/10 22:17:13  fbrunet
+ *  - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
+ *  - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+ *  - Bug correction : +/- in advanced search
+ *
  *  Revision 1.9  2006/02/26 14:04:56  mangeot
  *  Corrected a bug: the content was a static variable, thus there were problems when two users wanted to aces the same page at the same time
  *
@@ -89,6 +94,8 @@ import fr.imag.clips.papillon.business.PapillonBusinessException;
 
 // Standard imports
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Date;
 import java.text.DateFormat;
 import java.io.*;
@@ -104,6 +111,7 @@ import fr.imag.clips.papillon.business.utility.Utility;
 import fr.imag.clips.papillon.business.transformation.*;
 import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
+import fr.imag.clips.papillon.business.xsl.XslSheetFactory;
 
 import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
@@ -189,31 +197,42 @@ public class AdminDictionaries extends PapillonBasePO {
         HttpPresentationRequest req = this.getComms().request;
         // If the page is called with parameters, take the requested action
         if (req.getParameterNames().hasMoreElements()) {
+            
             //TEMPORAIRE :avec l URL
             //AJOUT DE DICO
             String userMessage = "";
             String urlString = req.getParameter(content.NAME_url);
+            
+            //
             if (null != urlString && !urlString.equals("")) {
                 // The user asked for a dictionary to be uploaded
                 userMessage = handleDictionaryAddition(req);
+            
+            //
             } else if (null != req.getParameter(SEE_PARAMETER)) {
-                String handle = req.getParameter(SEE_PARAMETER);
-                Dictionary dict = DictionariesFactory.findDictionaryByID(handle);
+                String name = req.getParameter(SEE_PARAMETER);
+                Dictionary dict = DictionariesFactory.getDictionaryByHandle(name);
                 //adding an XML file
                 addXml(content, dict.getXmlCode());
 
+            //
             } else if (null != req.getParameter(REMOVE_PARAMETER)) {
-                String handle = req.getParameter(REMOVE_PARAMETER);
-                Dictionary dict = DictionariesFactory.findDictionaryByID(handle);
+                String name = req.getParameter(REMOVE_PARAMETER);
+                Dictionary dict = DictionariesFactory.getDictionaryByHandle(name);
                 dict.delete();
+                DictionariesFactory.initializeDictionaryCache();
                 userMessage = "Dictionary " + dict.getName() + " metadata  erased...";
+            
+            //
             } else if (null != req.getParameter(REMOVE_ALL_PARAMETER)) {
-                String handle = req.getParameter(REMOVE_ALL_PARAMETER);
-                Dictionary dict = DictionariesFactory.findDictionaryByID(handle);
+                String name = req.getParameter(REMOVE_ALL_PARAMETER);
+                Dictionary dict = DictionariesFactory.getDictionaryByHandle(name);
                 // here we should use a truncate sql statement with volume.getDbname();
                 dict.deleteAll();
                 userMessage = "Dictionary " + dict.getName() + " metadata and volumes erased...";
             }
+            
+            //
             if (userMessage != null) {
                 this.getSessionData().writeUserMessage(userMessage);
                 PapillonLogger.writeDebugMsg(userMessage);
@@ -280,7 +299,7 @@ public class AdminDictionaries extends PapillonBasePO {
     protected void addXml(AdminDictionariesXHTML content, String xmlString)
              throws fr.imag.clips.papillon.business.PapillonBusinessException {
 
-        Node xmlNode = XslTransformation.applyXslSheetForXml(xmlString);
+        Node xmlNode = XslSheetFactory.applyXslSheetForXml(xmlString);
 
         //where we must insert the xml
         HTMLElement theXml = content.getElementXml();
@@ -303,7 +322,7 @@ public class AdminDictionaries extends PapillonBasePO {
     protected void addDictionariesArray(AdminDictionariesXHTML content)
              throws fr.imag.clips.papillon.business.PapillonBusinessException {
 
-        Dictionary[] DictsTable = DictionariesFactory.getDictionariesArray();
+        Collection DictsTable = DictionariesFactory.getDictionariesArray();
         //where we must insert the form
         HTMLTableRowElement theRow = content.getElementTemplateRow();
         HTMLElement theName = content.getElementName();
@@ -332,18 +351,23 @@ public class AdminDictionaries extends PapillonBasePO {
         theRemoveAllAnchor.removeAttribute("id");
 
         //adding the volumes description
-        for (int i = 0; i < DictsTable.length; i++) {
-            content.setTextName(DictsTable[i].getName());
-            content.setTextCategory(DictsTable[i].getCategory());
-            content.setTextType(DictsTable[i].getType());
-            content.setTextSources(DictsTable[i].getSourceLanguages());
-            content.setTextTargets(DictsTable[i].getTargetLanguages());
-            content.setTextDomain(DictsTable[i].getDomain());
-            content.setTextLegal(DictsTable[i].getLegal());
+        for (Iterator iter = DictsTable.iterator(); iter.hasNext();) {
+            Dictionary dict = (Dictionary)iter.next();
+            content.setTextName(dict.getName());
+            content.setTextCategory(dict.getCategory());
+            content.setTextType(dict.getType());
+            content.setTextSources(dict.getSourceLanguages());
+            content.setTextTargets(dict.getTargetLanguages());
+            content.setTextDomain(dict.getDomain());
+            content.setTextLegal(dict.getLegal());
 
-            theSeeAnchor.setHref(this.getUrl() + "?" + SEE_PARAMETER + "=" + DictsTable[i].getHandle());
-            theRemoveAnchor.setHref(this.getUrl() + "?" + REMOVE_PARAMETER + "=" + DictsTable[i].getHandle());
-            theRemoveAllAnchor.setHref(this.getUrl() + "?" + REMOVE_ALL_PARAMETER + "=" + DictsTable[i].getHandle());
+            //
+            String handle = dict.getHandle();
+            
+            //
+            theSeeAnchor.setHref(this.getUrl() + "?" + SEE_PARAMETER + "=" + handle);
+            theRemoveAnchor.setHref(this.getUrl() + "?" + REMOVE_PARAMETER + "=" + handle);
+            theRemoveAllAnchor.setHref(this.getUrl() + "?" + REMOVE_ALL_PARAMETER + "=" + handle);
 
             theRowParent.appendChild(theRow.cloneNode(true));
         }

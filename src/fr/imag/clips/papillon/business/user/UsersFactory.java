@@ -3,6 +3,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.5  2006/08/10 22:17:13  fbrunet
+ * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
+ * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+ * - Bug correction : +/- in advanced search
+ *
  * Revision 1.4  2005/05/24 12:51:22  serasset
  * Updated many aspect of the Papillon project to handle lexalp project.
  * 1. Layout is now parametrable in the application configuration file.
@@ -67,7 +72,7 @@ public class UsersFactory {
             UserDO theUserDO = query.getNextDO();
             theUser = new User(theUserDO);
         }catch(Exception ex) {
-            throw new PapillonBusinessException("Exception in findVolumeByName()", ex);
+            throw new PapillonBusinessException("Exception in getVolumeByName()", ex);
         }
         return theUser;
     }
