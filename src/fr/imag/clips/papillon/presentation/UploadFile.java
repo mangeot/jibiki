@@ -9,6 +9,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.3  2006/08/10 09:55:21  mangeot
+ *  Added a bunzipper for .bz2 compressed files
+ *
  *  Revision 1.2  2006/08/07 09:32:21  mangeot
  *  Bug fix: when the method was finished, the file was deleted. I make a copy of the file before exiting.
  *
@@ -40,8 +43,10 @@ import fr.imag.clips.papillon.business.PapillonLogger;
 /**
 *  Description of the Class
  *
- * @author     serasset
- * @created    December 8, 2004
+ * @author     mangeot
+ * @created    August 8, 2006
+ *
+ * Imports a file from a multipart request into the local temp dir, decompress it and yelds a local file:/ URL.
  */
 public class UploadFile extends AbstractPO {
 	
@@ -182,7 +187,7 @@ public class UploadFile extends AbstractPO {
 						PapillonLogger.writeDebugMsg("Unexpected Error: malformed content type: " + contentType);
 					}
 				} 
-				if (!type.equals("") && !type.equals("gzip") && !type.equals("x_gzip") && !type.equals("zip") && fileName!= null) {
+				if (!type.equals("") && !type.equals("gzip") && !type.equals("x_gzip") && !type.equals("bzip2") && !type.equals("x_bzip2") && !type.equals("zip") && fileName!= null) {
 					try {
 						int i = fileName.lastIndexOf(".");
 						type = fileName.substring(i+1).toLowerCase();
@@ -192,6 +197,9 @@ public class UploadFile extends AbstractPO {
 				}				
 				if (type.equals("gzip") || type.equals("x_gzip") || type.equals("gz")) {
 					newFile = ungzipFile(theFile);
+				}
+				else if (type.equals("bzip") || type.equals("x_bzip") || type.equals("bz2")  || type.equals("bz")) {
+					newFile = unbzipFile(theFile);
 				}
 				else if (type.equals("zip")) {
 					newFile = unzipFile(theFile);
@@ -213,53 +221,104 @@ public class UploadFile extends AbstractPO {
 	protected java.io.File ungzipFile (de.opus5.servlet.UploadedFile file) throws 
 		java.io.IOException,
 		fr.imag.clips.papillon.business.PapillonBusinessException,
-			fr.imag.clips.papillon.business.PapillonImportException{
-		// First, computing the output name
-		String source = file.getFile().getCanonicalPath();
-		String dest = source + ".ungz";		
-		java.io.File newFile = null;
-		java.io.InputStream is = file.getInputStream();
-		
-		if (is.available() == 0) {
-			dest = "";
-            PapillonLogger.writeDebugMsg("ImportGZippedFile: Encountered an empty GZipped file.");
-			throw new fr.imag.clips.papillon.business.PapillonImportException("the GZipped file is empty.");
-        } 
-		else {
-            // gunzip the file, then apply the appropriate action, based on gunzipped file type.
-
-            java.io.FileOutputStream out = null;
-            java.util.zip.GZIPInputStream zIn = null;
-            try {
-				newFile = new java.io.File(dest);
-                out = new java.io.FileOutputStream(dest);
-                zIn = new java.util.zip.GZIPInputStream(is);
-                byte[] buffer = new byte[8 * 1024];
-                int count = 0;
-                do {
-                    out.write(buffer, 0, count);
-                    count = zIn.read(buffer, 0, buffer.length);
-                } while (count != -1);
-            } catch (java.io.IOException ioe) {
-                String msg = "Problem expanding gzip " + ioe.getMessage();
-                PapillonLogger.writeDebugMsg(msg);
-                throw new fr.imag.clips.papillon.business.PapillonBusinessException(msg, ioe);
-            } finally {
-                if (out != null) {
-                    try {
-                        out.close();
-                    } catch (java.io.IOException ioex) {}
-                }
-                if (zIn != null) {
-                    try {
-                        zIn.close();
-                    } catch (java.io.IOException ioex) {}
-                }
-            }
-			file.getFile().deleteOnExit();
+		fr.imag.clips.papillon.business.PapillonImportException{
+			// First, computing the output name
+			String source = file.getFile().getCanonicalPath();
+			String dest = source + ".ungz";		
+			java.io.File newFile = null;
+			java.io.InputStream is = file.getInputStream();
+			
+			if (is.available() == 0) {
+				dest = "";
+				PapillonLogger.writeDebugMsg("ImportGZippedFile: Encountered an empty GZipped file.");
+				throw new fr.imag.clips.papillon.business.PapillonImportException("the GZipped file is empty.");
+			} 
+			else {
+				// gunzip the file, then apply the appropriate action, based on gunzipped file type.
+				
+				java.io.FileOutputStream out = null;
+				java.util.zip.GZIPInputStream zIn = null;
+				try {
+					newFile = new java.io.File(dest);
+					out = new java.io.FileOutputStream(dest);
+					zIn = new java.util.zip.GZIPInputStream(is);
+					byte[] buffer = new byte[8 * 1024];
+					int count = 0;
+					do {
+						out.write(buffer, 0, count);
+						count = zIn.read(buffer, 0, buffer.length);
+					} while (count != -1);
+				} catch (java.io.IOException ioe) {
+					String msg = "Problem expanding gzip " + ioe.getMessage();
+					PapillonLogger.writeDebugMsg(msg);
+					throw new fr.imag.clips.papillon.business.PapillonBusinessException(msg, ioe);
+				} finally {
+					if (out != null) {
+						try {
+							out.close();
+						} catch (java.io.IOException ioex) {}
+					}
+					if (zIn != null) {
+						try {
+							zIn.close();
+						} catch (java.io.IOException ioex) {}
+					}
+				}
+				file.getFile().deleteOnExit();
+			}
+			return newFile;
 		}
-		return newFile;
-	}
+	
+	protected java.io.File unbzipFile (de.opus5.servlet.UploadedFile file) throws 
+		java.io.IOException,
+		fr.imag.clips.papillon.business.PapillonBusinessException,
+		fr.imag.clips.papillon.business.PapillonImportException{
+			// First, computing the output name
+			String source = file.getFile().getCanonicalPath();
+			String dest = source + ".unbz2";		
+			java.io.File newFile = null;
+			java.io.InputStream is = file.getInputStream();
+			
+			if (is.available() == 0) {
+				dest = "";
+				PapillonLogger.writeDebugMsg("ImportBZippedFile: Encountered an empty BZipped file.");
+				throw new fr.imag.clips.papillon.business.PapillonImportException("the BZipped file is empty.");
+			} 
+			else {
+				// gunzip the file, then apply the appropriate action, based on gunzipped file type.
+				
+				java.io.FileOutputStream out = null;
+				org.apache.tools.bzip2.CBZip2InputStream zIn = null;
+				try {
+					newFile = new java.io.File(dest);
+					out = new java.io.FileOutputStream(dest);
+					zIn = new org.apache.tools.bzip2.CBZip2InputStream(is);
+					byte[] buffer = new byte[8 * 1024];
+					int count = 0;
+					do {
+						out.write(buffer, 0, count);
+						count = zIn.read(buffer, 0, buffer.length);
+					} while (count != -1);
+				} catch (java.io.IOException ioe) {
+					String msg = "Problem expanding gzip " + ioe.getMessage();
+					PapillonLogger.writeDebugMsg(msg);
+					throw new fr.imag.clips.papillon.business.PapillonBusinessException(msg, ioe);
+				} finally {
+					if (out != null) {
+						try {
+							out.close();
+						} catch (java.io.IOException ioex) {}
+					}
+					if (zIn != null) {
+						try {
+							zIn.close();
+						} catch (java.io.IOException ioex) {}
+					}
+				}
+				file.getFile().deleteOnExit();
+			}
+			return newFile;
+		}
 	
 	protected java.io.File unzipFile (de.opus5.servlet.UploadedFile file) throws 
 		java.io.IOException,
