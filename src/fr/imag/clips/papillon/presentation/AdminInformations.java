@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.10  2006/08/10 19:21:37  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.9  2006/08/10 19:12:57  mangeot
  * *** empty log message ***
  *
@@ -477,8 +480,7 @@ public class AdminInformations extends PapillonBasePO {
                 theOptionTemplate.setValue(sectionNames[i]);
 				// Les infos récupérées des fichiers de config sont encodées en codage local.
 				// Il faut donc les redécoder à l'envers pour avoir de l'unicode 
-				
-                theOptionTemplate.setLabel(Utility.convertFromEncoding(sectionLocalizedNames[i],Languages.getDefaultEncoding()));
+                theOptionTemplate.setLabel(Utility.convertFromLocalEncoding(sectionLocalizedNames[i]));
                 // Je dois ici mettre un text dans l'OPTION, car les browser PC ne sont pas conformes aux
                 // specs W3C.
                 theTextTemplate.setData(sectionLocalizedNames[i]);

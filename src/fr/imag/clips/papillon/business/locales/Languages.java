@@ -9,6 +9,9 @@
  * $Id$
  *---------------------------------------------------------
  * $Log$
+ * Revision 1.5  2006/08/10 19:21:45  mangeot
+ * *** empty log message ***
+ *
  * Revision 1.4  2006/08/10 19:12:37  mangeot
  * Added getDefaultEncoding
  *
@@ -123,7 +126,7 @@ public class Languages {
 	
 	public static String getDefaultEncoding () {
 		String systemEncoding = myInputStreamReader.getEncoding();
-		if (systemEncoding.equals("UTF-8") || systemEncoding.equals("ASCII")) {
+		if (systemEncoding.equals("ASCII")) {
 			systemEncoding = "ISO-8859-1";
 		}
 		return systemEncoding;

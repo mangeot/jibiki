@@ -4,6 +4,9 @@
 *$Id$
 *------------------------------------------
 *$Log$
+*Revision 1.12  2006/08/10 19:21:58  mangeot
+**** empty log message ***
+*
 *Revision 1.11  2006/04/10 12:22:19  mangeot
 *Added XMl indeted or not when doing serialization in Node2String
 *
@@ -991,6 +994,27 @@ public class Utility {
         return java.net.URLEncoder.encode(str,encoding);
     }
 
+	/**
+		* converts a String from the local encoding to UTF-8
+     *
+     * @return a String
+     * @exception PapillonBusinessException if an error occurs
+     *   retrieving data (usually due to an underlying data layer
+						  *   error).
+     */
+	public static String convertFromLocalEncoding(String theString) {
+		String resultString = theString;
+		if (!fr.imag.clips.papillon.business.locales.Languages.getDefaultEncoding().equals("UTF-8")) {
+			try {
+				resultString = Utility.convertFromEncoding(theString,fr.imag.clips.papillon.business.locales.Languages.getDefaultEncoding());
+			}
+			catch (java.io.UnsupportedEncodingException e) {
+				PapillonLogger.writeDebugMsg("Error: UnsupportedEncodingException:"+e.toString());
+			}
+		}
+		return resultString;
+	}				
+	
 		/**
      * normalize all spaces into only one space character
      *
