@@ -150,14 +150,14 @@ public Node getInformationDocument(String docId, String lang) throws
         HTMLImageElement img = palette.getElementHTMLImageElementTemplate();
         img.removeAttribute("id");
         
-        img.setSrc(theIndex.getFilename());
+        img.setSrc(prefs.getRelativeDirName() + theIndex.getFilename());
         
         return (Node)img;
     } else if (theIndex.isAHTMLFile()) {
         return getInformationFile(theIndex);
     } else {
         // Just redirect the client to the file Name...
-        throw new ClientPageRedirectException(theIndex.getFilename());
+        throw new ClientPageRedirectException(prefs.getRelativeDirName() + theIndex.getFilename());
     }
     
 } 
