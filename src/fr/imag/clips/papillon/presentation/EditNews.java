@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2006/08/11 00:29:21  mangeot
+ * reset News DOM cache
+ *
  * Revision 1.2  2006/08/10 22:53:45  mangeot
  * Fixed an encoding bug when writing to a file
  *
@@ -80,6 +83,7 @@ public class EditNews extends PapillonBasePO {
 					org.w3c.dom.Node importedNode = myNewsDocument.importNode((org.w3c.dom.Node)newElement, true);
 					newParentNode.replaceChild(importedNode,(org.w3c.dom.Node)newsDOMDocument);
 					Utility.printToFile(myNewsDocument,getNewsFileAbsolutePath());
+					News.resetCache();
 				}
 			}
 		}
