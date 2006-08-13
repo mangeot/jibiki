@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.11  2006/08/13 14:19:04  mangeot
+ * changed req.getParameter into myGetParameter
+ *
  * Revision 1.10  2006/08/10 19:21:37  mangeot
  * *** empty log message ***
  *
@@ -365,21 +368,21 @@ public class AdminInformations extends PapillonBasePO {
 
             // Perhaps we should give default values (problem: in what language ?)
 
-            String docTitle=mReq.getParameter(FILE_TITLE);
+            String docTitle= myGetParameter(FILE_TITLE);
             //file author
-            String docAuthor=mReq.getParameter(FILE_AUTHOR);
+            String docAuthor= myGetParameter(FILE_AUTHOR);
             //file section
-            String docSection=mReq.getParameter(FILE_SECTION);
+            String docSection= myGetParameter(FILE_SECTION);
             //file language
-            String docLanguage=mReq.getParameter(FILE_LANGUAGE);
+            String docLanguage= myGetParameter(FILE_LANGUAGE);
             //file date
-            String docDate =  mReq.getParameter(FILE_DATE);
+            String docDate = myGetParameter(FILE_DATE);
             //file reference
-            String docReference=mReq.getParameter(FILE_REFERENCE);
+            String docReference= myGetParameter(FILE_REFERENCE);
 
 
             // In case of Replace, existing doc id
-            String docId=mReq.getParameter(REPLACE);
+            String docId= myGetParameter(REPLACE);
 
             String docOwner = this.getUser().getLogin();
 			String userMessage = "";
