@@ -4,6 +4,10 @@
 *$Id$
 *------------------------------------------
 *$Log$
+*Revision 1.16  2006/08/13 14:42:20  mangeot
+*Re-added the ArrayIntersection method with String[] arrays for retro-compatibility
+*-------------------------------------------------------------------
+*
 *Revision 1.15  2006/08/10 22:55:09  mangeot
 *Added a method for printong a DOM tree into a file
 *
@@ -1107,7 +1111,11 @@ public class Utility {
      *   retrieving data (usually due to an underlying data layer
      *   error).
      */
-		public static boolean IsInArray(String myString, Collection myArray) {
+	public static boolean IsInArray(String myString, String[] myArray) {
+		return IsInArray(myString,(java.util.Collection) java.util.Arrays.asList(myArray));
+	}
+
+	public static boolean IsInArray(String myString, Collection myArray) {
 			/*boolean found = false;
 			if (myString == null) {
 				found = true;
@@ -1133,6 +1141,10 @@ public class Utility {
 	*   retrieving data (usually due to an underlying data layer
 						 *   error).
 	*/
+	public static boolean IsInArray(String[] myStrings, String[] myArray) {
+		return IsInArray((java.util.Collection)java.util.Arrays.asList(myStrings), (java.util.Collection) java.util.Arrays.asList(myArray));
+	}
+
     public static boolean IsInArray(Collection myStrings, Collection myArray) {
         /*boolean found = false;
         if (myStrings != null && myStrings.length>0) {
@@ -1165,7 +1177,24 @@ public class Utility {
 	*   retrieving data (usually due to an underlying data layer
 						 *   error).
 	*/
-    public static Collection ArrayIntersection(Collection myArray1, Collection myArray2) {
+
+    public static String[] ArrayIntersection(String[] myArray1, String[] myArray2) {
+        java.util.Vector myRes = new java.util.Vector();
+        if (myArray1 != null && myArray1.length>0) {
+            for (int i=0; i<myArray1.length;i++) {
+                String tempString = myArray1[i];
+                if (IsInArray(tempString,myArray2)) {
+                    myRes.add(tempString);
+                }
+            }
+        }
+        return (String[]) myRes.toArray(new String[0]);
+	}
+        
+	//public static String[] ArrayIntersection(String[] myArray1, String[] myArray2) {
+	//	return (String[]) ArrayIntersection((java.util.Collection)java.util.Arrays.asList(myArray1), (java.util.Collection) java.util.Arrays.asList(myArray2));
+	//}
+	public static Collection ArrayIntersection(Collection myArray1, Collection myArray2) {
         /*java.util.Vector myRes = new java.util.Vector();
         if (myArray1 != null && myArray1.length>0) {
             for (int i=0; i<myArray1.length;i++) {
