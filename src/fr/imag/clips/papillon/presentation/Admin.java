@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.11  2006/08/17 21:26:13  mangeot
+ * Now uses myGetParameter() instead of req.getParameter() because of encoding problem
+ *
  * Revision 1.10  2006/04/06 11:44:21  mangeot
  * Fixed a pb after the merge: EditData handle was broken
  *
@@ -131,61 +134,59 @@ public class Admin extends PapillonBasePO {
         
         // Création du contenu
         content = (AdminTmplXHTML) MultilingualXHtmlTemplateFactory.createTemplate("AdminTmplXHTML", this.getComms(), this.getSessionData());
-
-        HttpPresentationRequest req = this.getComms().request;
 		
 		boolean cacheSet = fr.imag.clips.papillon.business.dictionary.VolumeEntry.CACHE_HTMLDOM;
 
 		
         // If the page is called with parameters, take the requested action
-        if (req.getParameterNames().hasMoreElements()) {
+        if (this.getComms().request.getParameterNames().hasMoreElements()) {
             // Get the main parameters
-            String mhonarcFolder = req.getParameter(content.NAME_Folder);
-     //       String dbUrl= req.getParameter(DB_URL);
+            String mhonarcFolder = myGetParameter(content.NAME_Folder);
+     //       String dbUrl= myGetParameter(DB_URL);
             
             // Get the requested action, THERE IS NO DEFAULT...
-            if (null != req.getParameter(content.NAME_AdminMessageSubmit)) {
-                AbstractPO.adminMessage=req.getParameter(content.NAME_AdminMessage);
+            if (null != myGetParameter(content.NAME_AdminMessageSubmit)) {
+                AbstractPO.adminMessage=myGetParameter(content.NAME_AdminMessage);
 			}
-            else if (null != req.getParameter(content.NAME_Flush)) {
+            else if (null != myGetParameter(content.NAME_Flush)) {
                 this.getSessionData().writeUserMessage("Flushing is not provided for the moment...");
-            } else if (null != req.getParameter(content.NAME_Reload)) {
+            } else if (null != myGetParameter(content.NAME_Reload)) {
                 this.getSessionData().writeUserMessage("Flushing&Reload is not provided for the moment...");
-            } else if (null != req.getParameter(content.NAME_Update)) {
+            } else if (null != myGetParameter(content.NAME_Update)) {
                 // Updating is the default action...
                 MessageDBLoader loader = new MessageDBLoader(mhonarcFolder);
                 loader.updateDatabase();
                 this.getSessionData().writeUserMessage(loader.getUserLog());
                 this.getSessionData().writeUserMessage("Updating... done.");
-            } else if (null != req.getParameter(content.NAME_ResetInterfaceDescriptionCache)) {
+            } else if (null != myGetParameter(content.NAME_ResetInterfaceDescriptionCache)) {
 				fr.imag.clips.papillon.business.edition.UITemplates.resetCache();
             }
-			else if (null != req.getParameter(content.NAME_ResetXslSheetTransformersCache)) {
+			else if (null != myGetParameter(content.NAME_ResetXslSheetTransformersCache)) {
 				fr.imag.clips.papillon.business.transformation.XslTransformation.resetCache();
             }
-			else if (null != req.getParameter(content.NAME_ResetLanguagesCache)) {
+			else if (null != myGetParameter(content.NAME_ResetLanguagesCache)) {
 				fr.imag.clips.papillon.business.locales.Languages.resetCache();
 				fr.imag.clips.papillon.business.dictionary.AvailableLanguages.resetCache();
             }
-			else if (null != req.getParameter(content.NAME_ResetNewsCache)) {
+			else if (null != myGetParameter(content.NAME_ResetNewsCache)) {
 				fr.imag.clips.papillon.presentation.News.resetCache();
             }
-			else if (null != req.getParameter(content.NAME_SetHTMLDomCaches)) {
+			else if (null != myGetParameter(content.NAME_SetHTMLDomCaches)) {
 				String setCacheString = myGetParameter(content.NAME_HTMLDomCaches);
 				cacheSet = (setCacheString!=null && !setCacheString.equals(""));
 				fr.imag.clips.papillon.business.dictionary.VolumeEntry.setCacheHtmlDom(cacheSet);
                 this.getSessionData().writeUserMessage("HTML DOM cache is set? " + cacheSet);
             }
-			else if (null != req.getParameter(content.NAME_SetEditData)) {
+			else if (null != myGetParameter(content.NAME_SetEditData)) {
 				String setEditDataString = myGetParameter(content.NAME_EditData);
 				EDIT_DATA = (setEditDataString!=null && !setEditDataString.equals(""));
                 this.getSessionData().writeUserMessage("EditData is set? " + EDIT_DATA);
             }
-			else if (null != req.getParameter(content.NAME_ReConstructionIndex)) {
+			else if (null != myGetParameter(content.NAME_ReConstructionIndex)) {
 				fr.imag.clips.papillon.business.dictionary.VolumesFactory.reConstructionIndex();
                 
             // FIXME: supress    
-            } else if (null != req.getParameter(content.NAME_ModifiedStatus)) {
+            } else if (null != myGetParameter(content.NAME_ModifiedStatus)) {
 				fr.imag.clips.papillon.business.dictionary.VolumesFactory.modifiedStatus(this.getUser());
             }
         }
