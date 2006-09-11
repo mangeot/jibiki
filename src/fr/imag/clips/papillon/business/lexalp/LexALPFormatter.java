@@ -4,6 +4,9 @@
  * $Id$
  *------------------------
  * $Log$
+ * Revision 1.8  2006/09/11 19:57:48  fbrunet
+ * - bug correction : interface edition (link axie to another axi)
+ *
  * Revision 1.7  2006/08/10 22:17:13  fbrunet
  * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
  * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
@@ -156,7 +159,7 @@ public class LexALPFormatter implements ResultFormatter {
             Document docSource = qr.getSourceEntry().getDom();
             
             //
-            if (null != dictXsl && ! dictXsl.isEmpty()) {
+            if (null != dictXsl && !dictXsl.isEmpty()) {
                 Node resultNode = formatResult(docSource, dictXsl, usr);
                 div.appendChild(res.importNode(resultNode, true));
             }
@@ -201,13 +204,14 @@ public class LexALPFormatter implements ResultFormatter {
             Document docCible = Transform(docSource, xsl);
            
             // Replace AUTO element
-            NodeList list = docCible.getElementsByTagName("AUTO");
+            NodeList list = docCible.getElementsByTagName("FindReference");
             while (list.getLength() > 0) {
                 Node node = list.item(0);
                 Node parentNode = node.getParentNode();
                 
+                
                 //
-                Node termRefAttribut = node.getAttributes().getNamedItem("termRef");
+                Node termRefAttribut = node.getAttributes().getNamedItem("termReference");
                 String termRef = termRefAttribut.getNodeValue();
                 Node langAttribut = node.getAttributes().getNamedItem("lang");
                 String lang = langAttribut.getNodeValue();
@@ -306,7 +310,7 @@ public class LexALPFormatter implements ResultFormatter {
                         // Insert new nodes
                         for (int j=0; j <  nodeL.getLength(); j++) {
                             Document docXpath = myDocumentBuilder.newDocument();
-                            Element result = docXpath.createElement("RESULT");
+                            Element result = docXpath.createElement("ResultReference");
                             docXpath.appendChild(result);                        
                             Node nodeXpath = docXpath.importNode(nodeL.item(j), true);
                             result.appendChild(nodeXpath);
@@ -326,7 +330,7 @@ public class LexALPFormatter implements ResultFormatter {
                 parentNode.removeChild(node);
                 
                 // Here because Res change after removeChild and appendChild methods
-                list = docCible.getElementsByTagName("AUTO");
+                list = docCible.getElementsByTagName("FindReference");
             }
             
             //

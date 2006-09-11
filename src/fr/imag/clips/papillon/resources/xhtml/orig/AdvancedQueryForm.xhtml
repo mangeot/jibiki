@@ -56,6 +56,7 @@
                             var thisRow = tableRows[i];
                             if (thisRow.cells[0].childNodes[0].nodeValue == value) {
                                 document.getElementById('SourceLang.' + result[1]).style.visibility = "hidden";
+                                document.getElementById('SourceLang.' + result[1]).value = "All";
                                 i = tableRows.length;
                             } else {
                                 document.getElementById('SourceLang.' + result[1]).style.visibility = "visible";

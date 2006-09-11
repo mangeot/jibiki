@@ -8,6 +8,9 @@
  * $Id$
  *---------------------------------------------------------
  * $Log$
+ * Revision 1.24  2006/09/11 19:57:48  fbrunet
+ * - bug correction : interface edition (link axie to another axi)
+ *
  * Revision 1.23  2006/08/10 22:17:12  fbrunet
  * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
  * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
@@ -138,18 +141,18 @@ public class UIGenerator {
 	/* Public methods                                     */
 	/******************************************************/
 	
-	public static void fillInterfaceTemplate(Element entryElt, Element rootItfElt,Element itfTemplate) {
+	public static void fillInterfaceTemplate(Element entryElt, Element rootItfElt, Element itfTemplate) {
 		Element correspItf = UIGenerator.findCorrespondingElement(entryElt, rootItfElt);
 		UIGenerator.fillTemplate(entryElt, correspItf, itfTemplate);
 	}
 	
 	public static boolean addElement(String elementName, String parentId, Element entryElt, Element entryTemplate, String[] siblingIds) {
-		PapillonLogger.writeDebugMsg("addElement: " + elementName + " parent: " + parentId + " entry: " + entryElt + " entryTemplate: " + entryTemplate);
+		//PapillonLogger.writeDebugMsg("addElement: " + elementName + " parent: " + parentId + " entry: " + entryElt + " entryTemplate: " + entryTemplate);
         
         //
         if (siblingIds != null) {
             for (int i=0; i < siblingIds.length; i++) {
-                PapillonLogger.writeDebugMsg("siblingIds: " + siblingIds[i]);
+                //PapillonLogger.writeDebugMsg("siblingIds: " + siblingIds[i]);
             }
         }
         
@@ -183,7 +186,7 @@ public class UIGenerator {
 	}
 	
 	public static boolean chooseElement(String elementId, String parentId, Element entryElt, Element entryTemplate) {
-		// PapillonLogger.writeDebugMsg("chooseElement: " + elementId + " parent: " + parentId);	
+		//PapillonLogger.writeDebugMsg("chooseElement: " + elementId + " parent: " + parentId);	
 		boolean found = false;
         
 		nodeMatcher.reset(parentId);
@@ -249,7 +252,7 @@ public class UIGenerator {
 		Vector removeNodes = new Vector();
 		for (int i=0; i<elementIds.length;i++) {
 			String elementId = elementIds[i];
-			//			PapillonLogger.writeDebugMsg("deleteElement: " + elementName + " eltId: " + elementIds[0]);            
+			//PapillonLogger.writeDebugMsg("deleteElement: " + elementName + " eltId: " + elementIds[0]);            
 			nodeMatcher.reset(elementId);
             if (nodeMatcher.find()) {
                 String currentName = nodeMatcher.group(1);
@@ -402,7 +405,7 @@ public class UIGenerator {
 		fillTemplate(entryNode, itfElt, itfTemplate, "");
 	}
 	
-	protected static void fillTemplate(Node entryNode, Element itfElt,Element itfTemplate, String oldId) {
+	protected static void fillTemplate(Node entryNode, Element itfElt, Element itfTemplate, String oldId) {
 		if (itfElt !=null) {
 			String newId = createId(entryNode, oldId);
 			String entryNodeName = entryNode.getNodeName();
@@ -524,6 +527,7 @@ public class UIGenerator {
 				idString = entryNode.getNodeName() + ID_SEPARATOR + "0";
 				break;
 		}
+        
 		return idString;
 	}
 	
@@ -598,7 +602,7 @@ public class UIGenerator {
 	}
 	
 	protected static boolean setNameCorrespondingAnchor(Node entryNode, Element itfElt, String newId) {
-		//	PapillonLogger.writeDebugMsg("setNameCorrespondingAnchor: " + entryNodeName);
+		//PapillonLogger.writeDebugMsg("setNameCorrespondingAnchor: " + entryNode.getNodeName());
 		boolean found = false;
 		if (entryNode.getNodeType() == Node.ELEMENT_NODE) {
 			Element entryElt = (Element) entryNode;
@@ -624,7 +628,7 @@ public class UIGenerator {
 	
 	
 	protected static boolean setIdCorrespondingLabel(String label, Element itfElt, String newId) {
-		//	PapillonLogger.writeDebugMsg("setIdCorrespondingLabel: " + label);
+		//PapillonLogger.writeDebugMsg("setIdCorrespondingLabel: " + label);
 		boolean found = false;
 		NodeList myNodeList = itfElt.getElementsByTagName ("label");
 		int i=0;
@@ -641,7 +645,7 @@ public class UIGenerator {
 	}
 	
 	protected static boolean setClassCorrespondingSpan(String spanTitle, String classType, Element itfElt) {
-		//	PapillonLogger.writeDebugMsg("setClassCorrespondingSpan: " + spanTitle + " class: " + classType);
+        //PapillonLogger.writeDebugMsg("setClassCorrespondingSpan: " + spanTitle + " class: " + classType);
 		boolean found = false;
 		NodeList myNodeList = itfElt.getElementsByTagName ("span");
 		int i=0;
@@ -658,7 +662,7 @@ public class UIGenerator {
 	}
 	
 	protected static boolean setIdCorrespondingSubmitInputs(String correspName, Element itfElt, String newId) {
-		//		PapillonLogger.writeDebugMsg("setIdCorrespondingSubmitInputs: " + correspName);
+		//PapillonLogger.writeDebugMsg("setIdCorrespondingSubmitInputs: " + correspName);
 		boolean found = false;
 		NodeList myNodeList = itfElt.getElementsByTagName ("input");
 		for (int i=0;i<myNodeList.getLength ();i++) {
@@ -676,18 +680,28 @@ public class UIGenerator {
 	}
     
     protected static boolean setClassCorrespondingLinkers(String correspName, Element itfElt, String newId) {
-		//		PapillonLogger.writeDebugMsg("setIdCorrespondingLinkers: " + correspName);
+		//PapillonLogger.writeDebugMsg("setIdCorrespondingLinkers: " + correspName + ", " + newId);
 		boolean found = false;
 		NodeList myNodeList = itfElt.getElementsByTagName ("img");
 		for (int i=0;i<myNodeList.getLength ();i++) {
 			Element currentElt = (Element) myNodeList.item(i);
 			String classValue = currentElt.getAttribute("class");
-            //System.out.println(classValue);
-			if (classValue !=null && classValue.indexOf(correspName) >= 0) {
-                classValue = classValue.replaceFirst(correspName,newId);
-                currentElt.setAttribute("class", classValue);
-                found = true;
-			}	
+            
+            //
+            if (classValue !=null) {
+                
+                // Compile regular expression
+                // Replace all correspName between = and (. or &) with newId
+                String patternStr = "(=)" + correspName + "([.&])";
+                String replaceStr = "$1" + newId + "$2";
+                Pattern pattern = Pattern.compile(patternStr);
+            
+                // Match and replace
+                Matcher matcher = pattern.matcher(classValue);
+                found = matcher.find();
+                String output = matcher.replaceAll(replaceStr);
+                currentElt.setAttribute("class", output);
+            }
 		}
 		return found;
 	}
@@ -738,7 +752,7 @@ public class UIGenerator {
 	}
 	
 	protected static boolean setIdCorrespondingSelectCheckbox(String correspName, Element itfElt, String newId) {
-		//		PapillonLogger.writeDebugMsg("setIdCorrespondingCheckbox: " + correspName);
+		//PapillonLogger.writeDebugMsg("setIdCorrespondingCheckbox: " + correspName);
 		boolean found = false;
 		NodeList myNodeList = itfElt.getElementsByTagName ("input");
 		int i=0;
@@ -761,7 +775,7 @@ public class UIGenerator {
 	}
 	
 	protected static boolean setIdValueCorrespondingBooleanCheckbox(String correspName, Element itfElt, String newId, String newValue) {
-		// PapillonLogger.writeDebugMsg("setIdValueCorrespondingBooleanCheckbox: " + correspName + " id: " + newId + " value: " + newValue);
+		//PapillonLogger.writeDebugMsg("setIdValueCorrespondingBooleanCheckbox: " + correspName + " id: " + newId + " value: " + newValue);
 		boolean found = false;
 		int foundInt = 0;
 		NodeList myNodeList = itfElt.getElementsByTagName ("input");
@@ -797,7 +811,7 @@ public class UIGenerator {
 	
 	
 	protected static boolean setIdValueCorrespondingSelect(String correspName, Element itfElt, String newId, String value) {
-		//	PapillonLogger.writeDebugMsg("setIdValueCorrespondingSelect: " + correspName);
+		//PapillonLogger.writeDebugMsg("setIdValueCorrespondingSelect: " + correspName);
 		boolean found = false;
 		NodeList myNodeList = itfElt.getElementsByTagName ("select");
 		int i=0;
@@ -818,7 +832,7 @@ public class UIGenerator {
 	}
 	
 	protected static boolean setSelected(Element itfElt, String value) {
-		//		PapillonLogger.writeDebugMsg("setSelected: " + value);
+		//PapillonLogger.writeDebugMsg("setSelected: " + value);
 		NodeList myNodeList = itfElt.getElementsByTagName("option");
 		boolean found = false;
 		int i=0;
@@ -932,7 +946,7 @@ public class UIGenerator {
 	}
 	
 	protected static Element getTemplateEntryElement(String elementName, String parentName, Element entryTemplate) {
-//		PapillonLogger.writeDebugMsg("getTemplateEntryElement: " + elementName + " parent: " + parentName);
+		//PapillonLogger.writeDebugMsg("getTemplateEntryElement: " + elementName + " parent: " + parentName);
 		Element resElt = null;
 		Element myParent = null;
 		if (entryTemplate.getTagName().equals(parentName)) {
