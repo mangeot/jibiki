@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.53  2006/09/12 19:26:10  fbrunet
+ * - improve reconstruction index
+ *
  * Revision 1.52  2006/08/10 22:17:12  fbrunet
  * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
  * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
@@ -412,7 +415,7 @@ public class VolumeEntriesFactory {
 	
 	public static Vector getVolumeEntriesVector(Dictionary dict, Volume volume, Vector Keys1, Vector Keys2, String any, int offset, int limit) throws PapillonBusinessException {
         Vector MyTable = null;
-		PapillonLogger.writeDebugMsg("getVolumeEntriesVector: " + volume.getName());
+		//PapillonLogger.writeDebugMsg("getVolumeEntriesVector: " + volume.getName());
         if (null != volume) {
             if (volume.getLocation().equals(Volume.LOCAL_LOCATION)) {
                 MyTable = getDbTableEntriesVector(dict, volume,Keys1, Keys2, any, offset, limit);

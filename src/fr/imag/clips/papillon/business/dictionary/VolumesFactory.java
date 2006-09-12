@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.44  2006/09/12 19:26:10  fbrunet
+ * - improve reconstruction index
+ *
  * Revision 1.43  2006/08/10 22:17:12  fbrunet
  * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
  * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
@@ -1301,7 +1304,7 @@ public class VolumesFactory {
                     for (int z = 0; z < count; z=z+delta) {
                          
                         //
-                        System.out.println("Z + delta : " + Integer.toString(z));
+                        PapillonLogger.writeDebugMsg(volume.getName() + " index : " + Integer.toString(z) + "->" + Integer.toString(z+delta-1));
                         
                         // Buffer volumeEntries
                         Collection bufferResults = VolumeEntriesFactory.getVolumeEntriesVector(DictionariesFactory.getDictionaryByName(volume.getDictname()), volume, null, null, null, z, delta);
@@ -1312,11 +1315,10 @@ public class VolumesFactory {
                             VolumeEntry ve = (VolumeEntry)buffer.next();
                             ParseVolume.parseEntry(ve);
                         }
+                        
+                        // A part was correct, commit the transaction ...
+                        ((DBTransaction) CurrentDBTransaction.get()).commit();
                     }
-                    
-                    // End transaction
-                    // a part was correct, commit the transaction ...
-                    ((DBTransaction) CurrentDBTransaction.get()).commit();
                     
                     //
                     System.out.println(volume.getName() + " index re-construction succeed !");
