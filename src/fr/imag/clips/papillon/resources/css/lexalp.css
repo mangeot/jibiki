@@ -4,6 +4,9 @@
  * $Id$
  *------
  * $Log$
+ * Revision 1.9  2006/09/18 12:24:54  fbrunet
+ * - add xsl cascading to lexalp formatter (in xsl view, add tag nextXsl with dictionaryName, volumeName and xslName attributes)
+ *
  * Revision 1.8  2006/06/09 10:10:43  fbrunet
  * Add generic components (AdvancedQueryForm, QueryRequest and ViewQueryResult) in Home.java
  *
@@ -574,6 +577,14 @@ margin-right:10px;
 }
 
 .translation {
+	border: 1px dashed #898989;
+    margin-left:20px;
+    margin-right:20px;
+    margin-top:20px;
+    padding: 5px 5px 5px 5px;
+}
+
+.relatedAxie {
 	border: 1px dashed #898989;
     margin-left:20px;
     margin-right:20px;

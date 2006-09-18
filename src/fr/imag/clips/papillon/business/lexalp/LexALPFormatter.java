@@ -4,6 +4,9 @@
  * $Id$
  *------------------------
  * $Log$
+ * Revision 1.9  2006/09/18 12:24:54  fbrunet
+ * - add xsl cascading to lexalp formatter (in xsl view, add tag nextXsl with dictionaryName, volumeName and xslName attributes)
+ *
  * Revision 1.8  2006/09/11 19:57:48  fbrunet
  * - bug correction : interface edition (link axie to another axi)
  *
@@ -197,107 +200,114 @@ public class LexALPFormatter implements ResultFormatter {
     private Node formatResult(Document docSource, XslSheet xsl, User usr) throws PapillonBusinessException {
         try {
             
-            //System.out.println("source " + docSource.getDocumentElement().getNodeName());
-            //System.out.println("xsl " + xsl.getName());
-            
-            // Transform
-            Document docCible = Transform(docSource, xsl);
-           
-            // Replace AUTO element
-            NodeList list = docCible.getElementsByTagName("FindReference");
-            while (list.getLength() > 0) {
-                Node node = list.item(0);
-                Node parentNode = node.getParentNode();
+            // init
+            boolean isTransform = true;
+            Document docCible = null;
                 
+            //
+            while (isTransform) {
                 
-                //
-                Node termRefAttribut = node.getAttributes().getNamedItem("termReference");
-                String termRef = termRefAttribut.getNodeValue();
-                Node langAttribut = node.getAttributes().getNamedItem("lang");
-                String lang = langAttribut.getNodeValue();
-                Node xpathAttribut = node.getAttributes().getNamedItem("xpath");
-                String xpath = xpathAttribut.getNodeValue();
-                Node xslNameAttribut = node.getAttributes().getNamedItem("xslName");
-                Node dictionaryNameAttribut = node.getAttributes().getNamedItem("dictionaryName");
-                Node volumeNameAttribut = node.getAttributes().getNamedItem("volumeName");
-                //Node namespaceAttribut = node.getAttributes().getNamedItem("namespace");
+                System.out.println("test : " + docSource.getDocumentElement().getTagName());
                 
-                //
-                String xslName = "";
-                if ( xslNameAttribut != null ) { xslName = xslNameAttribut.getNodeValue(); }
+                // Transform
+                docCible = Transform(docSource, xsl);
                 
-                //
-                String dictionaryName = "";
-                if ( dictionaryNameAttribut != null ) { dictionaryName = dictionaryNameAttribut.getNodeValue(); }
-                
-                //
-                String volumeName = "";
-                if ( volumeNameAttribut != null ) { volumeName = volumeNameAttribut.getNodeValue(); }
-                
-                //FIXME: search the specified entry, then gets its dictionary and volume to correctly select the XSL
-                //newXsl = XslSheetFactory.findXslSheetByName(xslNameAttribut.getNodeValue());
-                XslSheet newXsl = XslSheetFactory.getXslSheet(dictionaryName, volumeName, xslName);
-                //System.out.println("XslSheetFactory.getXslSheet(" + dictionaryName + ", " + volumeName + ", " + xslName + ") -> " + xpath);
-
-                
-                /*
-                // Find entry
-                QueryRequest queryReq = new QueryRequest(VolumesFactory.getVolumesArrayName(null, lang, null));
-                QueryCriteria criteria = new QueryCriteria();
-                criteria.add("key", QueryCriteria.EQUAL, Volume.CDM_entryId);
-                criteria.add("value", QueryCriteria.EQUAL, termRef);     // Termref is an entryid
-                queryReq.addCriteria(criteria);
-                QueryCriteria criteriaStatus = new QueryCriteria();
-                criteriaStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);                  // FINISHED_STATUS
-                criteriaStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.FINISHED_STATUS);
-                queryReq.addCriteria(criteriaStatus);
-                
-                //
-                Collection qrset = queryReq.findLexie(usr);
-                
-                // Find not finished entry if no finished entry
-                // FIXME: guess user can view not finished status !!!
-                if ( qrset.isEmpty()) {
-                    queryReq = new QueryRequest(VolumesFactory.getVolumesArrayName(null, lang, null));
-                    queryReq.addCriteria(criteria);
-                    criteriaStatus = new QueryCriteria();
-                    criteriaStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);                  // NOT_FINISHED_STATUS
-                    criteriaStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.NOT_FINISHED_STATUS);
-                    queryReq.addCriteria(criteriaStatus);
+                // Replace FindReference element by ResultReference
+                // attributes :  termReference, lang, xpath, xslName, dictionaryName, volumeName, ...
+                NodeList list = docCible.getElementsByTagName("FindReference");
+                while (list.getLength() > 0) {
+                    Node node = list.item(0);
+                    Node parentNode = node.getParentNode();
+                    
                     
                     //
-                    qrset = queryReq.findLexie(usr);
-                }
-                */
-                
-                // Find entry
-                // FIXME : Change DB to do quick entry id search !
-                QueryRequest queryReq = new QueryRequest(VolumesFactory.getVolumesArray(null, lang, null));
-                QueryCriteria criteria = new QueryCriteria();
-                criteria.add("key", QueryCriteria.EQUAL, Volume.CDM_entryId);
-                criteria.add("value", QueryCriteria.EQUAL, termRef);     // Termref is an entryid
-                queryReq.addCriteria(criteria);
-                
-                ArrayList listStatus = new ArrayList();
-                QueryCriteria criteriaFinishedStatus = new QueryCriteria();
-                criteriaFinishedStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);  
-                criteriaFinishedStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.FINISHED_STATUS);
-                listStatus.add(criteriaFinishedStatus);
-                QueryCriteria criteriaModifiedStatus = new QueryCriteria();
-                criteriaModifiedStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);
-                criteriaModifiedStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.MODIFIED_STATUS);
-                listStatus.add(criteriaModifiedStatus);
-                queryReq.addOrCriteriaList(listStatus);
-                
-                //
-                Collection qrset = queryReq.findLexie(usr);
-                
-                //if (qrset.size() == 0) {
+                    Node termRefAttribut = node.getAttributes().getNamedItem("termReference");
+                    String termRef = termRefAttribut.getNodeValue();
+                    Node langAttribut = node.getAttributes().getNamedItem("lang");
+                    String lang = langAttribut.getNodeValue();
+                    Node xpathAttribut = node.getAttributes().getNamedItem("xpath");
+                    String xpath = xpathAttribut.getNodeValue();
+                    Node xslNameAttribut = node.getAttributes().getNamedItem("xslName");
+                    Node dictionaryNameAttribut = node.getAttributes().getNamedItem("dictionaryName");
+                    Node volumeNameAttribut = node.getAttributes().getNamedItem("volumeName");
+                    //Node namespaceAttribut = node.getAttributes().getNamedItem("namespace");
+                    
+                    //
+                    String xslName = "";
+                    if ( xslNameAttribut != null ) { xslName = xslNameAttribut.getNodeValue(); }
+                    
+                    //
+                    String dictionaryName = "";
+                    if ( dictionaryNameAttribut != null ) { dictionaryName = dictionaryNameAttribut.getNodeValue(); }
+                    
+                    //
+                    String volumeName = "";
+                    if ( volumeNameAttribut != null ) { volumeName = volumeNameAttribut.getNodeValue(); }
+                    
+                    //FIXME: search the specified entry, then gets its dictionary and volume to correctly select the XSL
+                    //newXsl = XslSheetFactory.findXslSheetByName(xslNameAttribut.getNodeValue());
+                    XslSheet newXsl = XslSheetFactory.getXslSheet(dictionaryName, volumeName, xslName);
+                    //System.out.println("XslSheetFactory.getXslSheet(" + dictionaryName + ", " + volumeName + ", " + xslName + ") -> " + xpath);
+                    
+                    
+                    /*
+                     // Find entry
+                     QueryRequest queryReq = new QueryRequest(VolumesFactory.getVolumesArrayName(null, lang, null));
+                     QueryCriteria criteria = new QueryCriteria();
+                     criteria.add("key", QueryCriteria.EQUAL, Volume.CDM_entryId);
+                     criteria.add("value", QueryCriteria.EQUAL, termRef);     // Termref is an entryid
+                     queryReq.addCriteria(criteria);
+                     QueryCriteria criteriaStatus = new QueryCriteria();
+                     criteriaStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);                  // FINISHED_STATUS
+                     criteriaStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.FINISHED_STATUS);
+                     queryReq.addCriteria(criteriaStatus);
+                     
+                     //
+                     Collection qrset = queryReq.findLexie(usr);
+                     
+                     // Find not finished entry if no finished entry
+                     // FIXME: guess user can view not finished status !!!
+                     if ( qrset.isEmpty()) {
+                         queryReq = new QueryRequest(VolumesFactory.getVolumesArrayName(null, lang, null));
+                         queryReq.addCriteria(criteria);
+                         criteriaStatus = new QueryCriteria();
+                         criteriaStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);                  // NOT_FINISHED_STATUS
+                         criteriaStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.NOT_FINISHED_STATUS);
+                         queryReq.addCriteria(criteriaStatus);
+                         
+                         //
+                         qrset = queryReq.findLexie(usr);
+                     }
+                     */
+                    
+                    // Find entry
+                    // FIXME : Change DB to do quick entry id search !
+                    QueryRequest queryReq = new QueryRequest(VolumesFactory.getVolumesArray(null, lang, null));
+                    QueryCriteria criteria = new QueryCriteria();
+                    criteria.add("key", QueryCriteria.EQUAL, Volume.CDM_entryId);
+                    criteria.add("value", QueryCriteria.EQUAL, termRef);     // Termref is an entryid
+                    queryReq.addCriteria(criteria);
+                    
+                    ArrayList listStatus = new ArrayList();
+                    QueryCriteria criteriaFinishedStatus = new QueryCriteria();
+                    criteriaFinishedStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);  
+                    criteriaFinishedStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.FINISHED_STATUS);
+                    listStatus.add(criteriaFinishedStatus);
+                    QueryCriteria criteriaModifiedStatus = new QueryCriteria();
+                    criteriaModifiedStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);
+                    criteriaModifiedStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.MODIFIED_STATUS);
+                    listStatus.add(criteriaModifiedStatus);
+                    queryReq.addOrCriteriaList(listStatus);
+                    
+                    //
+                    Collection qrset = queryReq.findLexie(usr);
+                    
+                    //if (qrset.size() == 0) {
                     
                     //
                     //parentNode.insertBefore(docCible.createElement("NORESULT"), node);
                     
-                //} else {
+                    //} else {
                     
                     //
                     Iterator iter = qrset.iterator();
@@ -323,15 +333,51 @@ public class LexALPFormatter implements ResultFormatter {
                             //
                             parentNode.insertBefore(docCible.importNode(result, true), node);
                         }
-                    //}
+                        //}
+                    }
+                    
+                    //
+                    parentNode.removeChild(node);
+                    
+                    // Here because Res change after removeChild and appendChild methods
+                    list = docCible.getElementsByTagName("FindReference");
                 }
                 
                 //
-                parentNode.removeChild(node);
+                NodeList nextXslList = docCible.getElementsByTagName("nextXsl");
+                if (nextXslList.getLength() > 0) {
+                    Node nextXsl = nextXslList.item(0);
+                    
+                    //
+                    Node nextXslNameAttribut = nextXsl.getAttributes().getNamedItem("xslName");
+                    Node nextDictionaryNameAttribut = nextXsl.getAttributes().getNamedItem("dictionaryName");
+                    Node nextVolumeNameAttribut = nextXsl.getAttributes().getNamedItem("volumeName");
+                    
+                    //
+                    String nextXslName = "";
+                    if ( nextXslNameAttribut != null ) { nextXslName = nextXslNameAttribut.getNodeValue(); }
+                    
+                    //
+                    String nextDictionaryName = "";
+                    if ( nextDictionaryNameAttribut != null ) { nextDictionaryName = nextDictionaryNameAttribut.getNodeValue(); }
+                    
+                    //
+                    String nextVolumeName = "";
+                    if ( nextVolumeNameAttribut != null ) { nextVolumeName = nextVolumeNameAttribut.getNodeValue(); }
+                    
+                    //
+                    xsl = XslSheetFactory.getXslSheet(nextDictionaryName, nextVolumeName, nextXslName);
+                    isTransform = true;
+                    docSource = docCible;
+                    
+                    // erase node nextXsl !!!!
+                        
+                } else {
+                    isTransform = false;
+                }
                 
-                // Here because Res change after removeChild and appendChild methods
-                list = docCible.getElementsByTagName("FindReference");
             }
+            
             
             //
             return docCible.getDocumentElement();
