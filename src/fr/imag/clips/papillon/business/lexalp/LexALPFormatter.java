@@ -4,6 +4,9 @@
  * $Id$
  *------------------------
  * $Log$
+ * Revision 1.10  2006/09/19 08:15:22  fbrunet
+ * *** empty log message ***
+ *
  * Revision 1.9  2006/09/18 12:24:54  fbrunet
  * - add xsl cascading to lexalp formatter (in xsl view, add tag nextXsl with dictionaryName, volumeName and xslName attributes)
  *
@@ -207,8 +210,6 @@ public class LexALPFormatter implements ResultFormatter {
             //
             while (isTransform) {
                 
-                System.out.println("test : " + docSource.getDocumentElement().getTagName());
-                
                 // Transform
                 docCible = Transform(docSource, xsl);
                 
@@ -302,13 +303,6 @@ public class LexALPFormatter implements ResultFormatter {
                     //
                     Collection qrset = queryReq.findLexie(usr);
                     
-                    //if (qrset.size() == 0) {
-                    
-                    //
-                    //parentNode.insertBefore(docCible.createElement("NORESULT"), node);
-                    
-                    //} else {
-                    
                     //
                     Iterator iter = qrset.iterator();
                     while(iter.hasNext()) {
@@ -333,7 +327,6 @@ public class LexALPFormatter implements ResultFormatter {
                             //
                             parentNode.insertBefore(docCible.importNode(result, true), node);
                         }
-                        //}
                     }
                     
                     //
@@ -377,6 +370,13 @@ public class LexALPFormatter implements ResultFormatter {
                 }
                 
             }
+            
+            //
+            //if (ACTION) {
+                // Replace actions ...
+            //} else {
+                // Delete actions ...
+            //}
             
             
             //
