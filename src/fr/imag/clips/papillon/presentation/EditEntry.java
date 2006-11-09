@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.32  2006/11/09 09:04:42  fbrunet
+ * *** empty log message ***
+ *
  * Revision 1.31  2006/05/23 07:57:51  fbrunet
  * Modify edit management : When an user edit a lexie, this lexie doesn't change until an upgrade/finish action (then a new contibution is created link to lexie with a not-finished status).
  *
@@ -59,10 +62,12 @@ import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
 public class EditEntry extends EditingBasePO {
     
+    // Public parameters
     public static String VolumeName_PARAMETER = EditEntryXHTML.NAME_VolumeName;  
     public static String EntryHandle_PARAMETER = EditEntryXHTML.NAME_EntryHandle;
 	public static String Referrer_PARAMETER = EditEntryXHTML.NAME_Referrer; 
 	
+    // URL
 	protected final static String EditEntryInitURL = "LexalpEditEntryInit.po";
     protected final static String EditingErrorURL = "EditingError.po";
 		
@@ -92,6 +97,7 @@ public class EditEntry extends EditingBasePO {
 			referrer = this.getReferrer();
 		}
 		
+        //
 		EditEntryXHTML content = (EditEntryXHTML) MultilingualXHtmlTemplateFactory.createTemplate("EditEntryXHTML", this.myComms, this.sessionData);
 
 		// Manage VolumeEntry
@@ -131,7 +137,7 @@ public class EditEntry extends EditingBasePO {
 			myItfTemplate = (Element) myInterface.cloneNode(true);	
 		}
 		
-        // add volume name & entry handle in the form	
+        // Add volume name & entry handle in the form	
 		//UIGenerator.setValueInput(myInterface, VolumeName_PARAMETER, volumeName);
 		//UIGenerator.setValueInput(myInterface, EntryHandle_PARAMETER, entryHandle);
 		//UIGenerator.setValueInput(myInterface, Referrer_PARAMETER, referrer);
@@ -141,7 +147,14 @@ public class EditEntry extends EditingBasePO {
 		EntryHandleElement.setValue(entryHandle);
         XHTMLInputElement ReferrerElement = content.getElementReferrer();
 		ReferrerElement.setValue(referrer);
-				
+        
+        // Disable undo update button if entry contribution have not old contribution
+        /*String previousContributionId = myVolumeEntry.getClassifiedNotFinishedContributionId();
+        if ((previousContributionId == null) || (previousContributionId.equals(""))) {
+            XHTMLInputElement UndoUpdateElement = content.getElementUndoUpdate();
+            UndoUpdateElement.setDisabled(true);	
+        }*/
+        
         // fillInterfaceTemplate
 		UIGenerator.fillInterfaceTemplate(myVolumeEntry.getDom().getDocumentElement(), myInterface, myItfTemplate);
         

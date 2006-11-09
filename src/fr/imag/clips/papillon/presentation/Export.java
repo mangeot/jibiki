@@ -309,9 +309,9 @@ public class Export extends PapillonBasePO {
             FOPTransformer.doFOPTransformation(fileDir.getCanonicalPath() + File.separator + foFilename, fileDir.getCanonicalPath() + File.separator + pdfFilename);
             
             // Delete files
-            xmlFile.delete();
-            java.io.File foFile = new java.io.File(fileDir.getCanonicalPath() + File.separator + foFilename);
-            foFile.delete();
+            //xmlFile.delete();
+            //java.io.File foFile = new java.io.File(fileDir.getCanonicalPath() + File.separator + foFilename);
+            //foFile.delete();
             
         
             //

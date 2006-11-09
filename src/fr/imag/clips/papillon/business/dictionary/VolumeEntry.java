@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.43  2006/11/09 09:04:42  fbrunet
+ * *** empty log message ***
+ *
  * Revision 1.42  2006/08/10 22:17:12  fbrunet
  * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
  * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
@@ -1254,10 +1257,13 @@ public class VolumeEntry implements IAnswer {
 		ParseVolume.setCdmElement(this, Volume.CDM_previousClassifiedFinishedContributionElement, contribution.getContributionId());
 	}
     
+    public void setClassifiedFinishedContribution(String contributionId) throws PapillonBusinessException {
+		ParseVolume.setCdmElement(this, Volume.CDM_previousClassifiedFinishedContributionElement, contributionId);
+	}
+    
     public void setClassifiedFinishedContribution() throws PapillonBusinessException {
 		ParseVolume.setCdmElement(this, Volume.CDM_previousClassifiedFinishedContributionElement, "");
 	}
-    
     
     public String getClassifiedNotFinishedContributionId() throws PapillonBusinessException {
 		return ParseVolume.getCdmString(this, Volume.CDM_previousClassifiedNotFinishedContribution);
@@ -1265,6 +1271,10 @@ public class VolumeEntry implements IAnswer {
     
     public void setClassifiedNotFinishedContribution(VolumeEntry contribution) throws PapillonBusinessException {
 		ParseVolume.setCdmElement(this, Volume.CDM_previousClassifiedNotFinishedContributionElement, contribution.getContributionId());
+	}
+    
+    public void setClassifiedNotFinishedContribution(String contributionId) throws PapillonBusinessException {
+		ParseVolume.setCdmElement(this, Volume.CDM_previousClassifiedNotFinishedContributionElement, contributionId);
 	}
     
     public void setClassifiedNotFinishedContribution() throws PapillonBusinessException {

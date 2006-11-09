@@ -4,6 +4,9 @@
  * $Id$
  *------------------------
  * $Log$
+ * Revision 1.11  2006/11/09 09:04:42  fbrunet
+ * *** empty log message ***
+ *
  * Revision 1.10  2006/09/19 08:15:22  fbrunet
  * *** empty log message ***
  *
@@ -132,6 +135,8 @@ public class LexALPFormatter implements ResultFormatter {
     protected Dictionary currentDictionary;
     protected Volume sourceVolume;
     
+    
+    //
     public void initializeFormatter(Dictionary dictionary, Volume volume, Object parameter, int dialect, String lang) throws PapillonBusinessException {
         
         try {
@@ -154,32 +159,44 @@ public class LexALPFormatter implements ResultFormatter {
         
     }
     
+    
+    //
     public Node getFormattedResult(QueryResult qr, User usr) throws PapillonBusinessException {
         try {
+            
+            // Get document source
+            Document docSource = qr.getSourceEntry().getDom();
     
+            // Create document result
             Document res = myDocumentBuilder.newDocument();
             Element div = res.createElement("div");
             res.appendChild(div);
             
-            // First format the source entry
-            Document docSource = qr.getSourceEntry().getDom();
-            
             //
             if (null != dictXsl && !dictXsl.isEmpty()) {
+                
+                // Format document source
                 Node resultNode = formatResult(docSource, dictXsl, usr);
                 div.appendChild(res.importNode(resultNode, true));
             }
             
-            // FIXME : supress 
+            // Add 
+            // FIXME : supress, find another solution ()
             if (qr.getResultKind() == QueryResult.AXIE_COLLECTION_RESULT) {
+                
                 // Then append each translation
                 Iterator iter = qr.getLexiesCollection().iterator();
                 while (iter.hasNext()) {
                     VolumeEntry ve = (VolumeEntry) iter.next();
+                    
+                    //
                     if (! ve.getHandle().equals(qr.getSourceEntry().getHandle()) ) {
                         Document doc = ve.getDom();
+                        
+                        //
                         if (null != dictXsl && ! dictXsl.isEmpty()) {
-                            //doc = Transform(doc, dictXsl);
+                            
+                            //
                             Element resultNode = (Element)formatResult(doc, dictXsl, usr);
                             resultNode.setAttribute("class", "translation");
                             div.appendChild(res.importNode(resultNode, true));
@@ -336,8 +353,10 @@ public class LexALPFormatter implements ResultFormatter {
                     list = docCible.getElementsByTagName("FindReference");
                 }
                 
-                //
-                NodeList nextXslList = docCible.getElementsByTagName("nextXsl");
+                // Manage xsl cascading !!
+                NodeList nextXslList = docCible.getElementsByTagName("nextXsl"); 
+                /// fixme : id !!! supress ... not in xsl file !
+                
                 if (nextXslList.getLength() > 0) {
                     Node nextXsl = nextXslList.item(0);
                     
@@ -371,13 +390,20 @@ public class LexALPFormatter implements ResultFormatter {
                 
             }
             
-            //
-            //if (ACTION) {
-                // Replace actions ...
-            //} else {
+            /*
+            // Manage entry actions
+            Element actionElement = docCible.getElementById("actions");
+            if (true && (actionElement!=null)) {
+                // Replace actions
+                
+                
+            } else if (actionElement!=null) {
                 // Delete actions ...
-            //}
-            
+                
+                actionElement.getParentNode().removeChild(actionElement);
+                
+            }
+            */
             
             //
             return docCible.getDocumentElement();

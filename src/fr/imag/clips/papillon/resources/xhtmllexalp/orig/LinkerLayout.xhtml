@@ -18,7 +18,10 @@
       function updateParent(idFieldValue, langFieldValue) {
         idField = document.getElementById("idFieldName").value;
         langField = document.getElementById("langFieldName").value;
-        opener.updateFields(idField, idFieldValue, langField, langFieldValue);
+        
+        alert(opener.location);
+        opener.updateFields(idField, idFieldValue);
+        opener.updateFields(langField, langFieldValue);
         window.close();
       }
       

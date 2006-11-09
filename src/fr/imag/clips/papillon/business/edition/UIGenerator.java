@@ -8,6 +8,9 @@
  * $Id$
  *---------------------------------------------------------
  * $Log$
+ * Revision 1.25  2006/11/09 09:04:42  fbrunet
+ * *** empty log message ***
+ *
  * Revision 1.24  2006/09/11 19:57:48  fbrunet
  * - bug correction : interface edition (link axie to another axi)
  *
@@ -691,8 +694,8 @@ public class UIGenerator {
             if (classValue !=null) {
                 
                 // Compile regular expression
-                // Replace all correspName between = and (. or &) with newId
-                String patternStr = "(=)" + correspName + "([.&])";
+                // Replace all correspName between = and (", . or &) with newId
+                String patternStr = "(=)" + correspName + "([.&]|$)";
                 String replaceStr = "$1" + newId + "$2";
                 Pattern pattern = Pattern.compile(patternStr);
             

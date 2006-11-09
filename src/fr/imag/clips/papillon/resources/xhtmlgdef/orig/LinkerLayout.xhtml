@@ -22,7 +22,8 @@
         idField = document.getElementById("idFieldName").value;
         langField = document.getElementById("langFieldName").value;
       
-        opener.updateFields(idField, idFieldValue, langField, langFieldValue);
+        opener.updateFields(idField, idFieldValue);
+        opener.updateFields(langField, langFieldValue);
         window.close();
       }
       

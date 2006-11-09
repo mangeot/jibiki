@@ -10,6 +10,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.8  2006/11/09 09:04:42  fbrunet
+ * *** empty log message ***
+ *
  * Revision 1.7  2006/06/19 15:27:01  fbrunet
  * Jibiki : improvement of the search result display
  * Lexalp : add help menu (link to wiki and bug tracker)
@@ -201,7 +204,7 @@ public class EditEntryInitFactory {
         //
         if ( myEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS) ) {
             
-            //
+            // Create contribution base on myEntry, history not copied !
             VolumeEntry newEntry = VolumeEntriesFactory.newEntryFromExisting(myEntry);
             newEntry.setEntryId();
             newEntry.setAuthor(user.getLogin());
@@ -239,17 +242,44 @@ public class EditEntryInitFactory {
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
         
         //
-        if ( myEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS) ||
-             (myEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS) && myEntry.getModificationAuthor().equals(user.getLogin())) ) {
-            
-            //
+        if ( myEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS) ) {
+             
+            // Create contribution base on myEntry with status Delete !
             VolumeEntry newEntry = VolumeEntriesFactory.newEntryFromExisting(myEntry);
             newEntry.setClassifiedFinishedContribution(myEntry);
+            newEntry.setClassifiedNotFinishedContribution();
             newEntry.setModification(user.getLogin(), "delete");
             newEntry.setStatus(VolumeEntry.DELETED_STATUS);
+            newEntry.save();
+            
+            // Change myEntry status
             myEntry.setStatus(VolumeEntry.CLASSIFIED_FINISHED_STATUS);
             myEntry.save();
+            
+            
+        } else if (myEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS) && myEntry.getModificationAuthor().equals(user.getLogin())) {
+            
+            //
+            String lastFinishEntryId = myEntry.getClassifiedFinishedContributionId(); 
+            if ((lastFinishEntryId != null) && (!lastFinishEntryId.equals(""))) {
+                
+                // Change status of last finish contribution
+                VolumeEntry lastFinishEntry = VolumeEntriesFactory.findEntryByEntryId(user, myEntry.getVolume(), lastFinishEntryId);
+                lastFinishEntry.setStatus(VolumeEntry.CLASSIFIED_FINISHED_STATUS);  // MODIFIED_STATUS -> CLASSIFIED_FINISHED_STATUS
+                lastFinishEntry.save();
+            }
+            
+            // Create contribution base on myEntry with status Delete !
+            VolumeEntry newEntry = VolumeEntriesFactory.newEntryFromExisting(myEntry);
+            if (lastFinishEntryId != null) newEntry.setClassifiedFinishedContribution(lastFinishEntryId);
+            newEntry.setClassifiedNotFinishedContribution(myEntry);
+            newEntry.setModification(user.getLogin(), "delete");
+            newEntry.setStatus(VolumeEntry.DELETED_STATUS);
             newEntry.save();
+            
+            // Change myEntry status
+            myEntry.setStatus(VolumeEntry.CLASSIFIED_NOT_FINISHED_STATUS);
+            myEntry.save();
             
         }  else {
             
@@ -276,7 +306,15 @@ public class EditEntryInitFactory {
         //
         if ( myEntry.getStatus().equals(VolumeEntry.DELETED_STATUS) ) {
             
-            //
+            // Change status previous contribution of myEntry
+            VolumeEntry previousEntry = VolumeEntriesFactory.findEntryByEntryId(user, myEntry.getVolume(), myEntry.getClassifiedFinishedContributionId());
+            previousEntry.setStatus(VolumeEntry.FINISHED_STATUS);
+                
+            // Remove contribution with status delete
+            myEntry.delete();
+            
+            /*
+             // Keep entry deleted !
             VolumeEntry newEntry = VolumeEntriesFactory.newEntryFromExisting(myEntry);
             newEntry.setClassifiedFinishedContribution(myEntry);
             newEntry.setModification(user.getLogin(), "undelete");
@@ -284,11 +322,12 @@ public class EditEntryInitFactory {
             myEntry.setStatus(VolumeEntry.CLASSIFIED_FINISHED_STATUS);
             myEntry.save();
             newEntry.save();
+            */
             
             //
             throw new ClientPageRedirectException(EditEntryURL + "?" + 
-                                                  EditEntry.VolumeName_PARAMETER + "=" + newEntry.getVolumeName() + 
-                                                  "&" + EditEntry.EntryHandle_PARAMETER + "=" + newEntry.getHandle());
+                                                  EditEntry.VolumeName_PARAMETER + "=" + myEntry.getVolumeName() + 
+                                                  "&" + EditEntry.EntryHandle_PARAMETER + "=" + myEntry.getHandle());
             
         }  else {
             
