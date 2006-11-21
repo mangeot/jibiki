@@ -1,3 +1,6 @@
+TAG: RELEASE_DRI_INRIA 2006/11/21
+  Version exported for installation on the INRIA dri server.
+
 TAG: JIBIKI_BEFORE_MERGE 2006/03/01
   Represent the trunk release in GDEF/Mathieu's version before merge with the Lexalp branch
   
