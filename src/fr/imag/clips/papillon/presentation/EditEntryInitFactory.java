@@ -10,6 +10,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.9  2006/11/21 22:51:55  fbrunet
+ * Correct UIGenerator bug and another minor bugs
+ *
  * Revision 1.8  2006/11/09 09:04:42  fbrunet
  * *** empty log message ***
  *
@@ -242,7 +245,8 @@ public class EditEntryInitFactory {
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
         
         //
-        if ( myEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS) ) {
+        if ( myEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS) ||
+             (myEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS) && myEntry.getModificationAuthor().equals(user.getLogin())) ) {
              
             // Create contribution base on myEntry with status Delete !
             VolumeEntry newEntry = VolumeEntriesFactory.newEntryFromExisting(myEntry);
@@ -257,7 +261,7 @@ public class EditEntryInitFactory {
             myEntry.save();
             
             
-        } else if (myEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS) && myEntry.getModificationAuthor().equals(user.getLogin())) {
+        /* } else if (myEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS) && myEntry.getModificationAuthor().equals(user.getLogin())) {
             
             //
             String lastFinishEntryId = myEntry.getClassifiedFinishedContributionId(); 
@@ -280,7 +284,7 @@ public class EditEntryInitFactory {
             // Change myEntry status
             myEntry.setStatus(VolumeEntry.CLASSIFIED_NOT_FINISHED_STATUS);
             myEntry.save();
-            
+            */
         }  else {
             
             // Error message
@@ -306,15 +310,16 @@ public class EditEntryInitFactory {
         //
         if ( myEntry.getStatus().equals(VolumeEntry.DELETED_STATUS) ) {
             
+            /*
             // Change status previous contribution of myEntry
             VolumeEntry previousEntry = VolumeEntriesFactory.findEntryByEntryId(user, myEntry.getVolume(), myEntry.getClassifiedFinishedContributionId());
             previousEntry.setStatus(VolumeEntry.FINISHED_STATUS);
                 
             // Remove contribution with status delete
             myEntry.delete();
-            
-            /*
-             // Keep entry deleted !
+            */
+        
+            // Keep entry deleted !
             VolumeEntry newEntry = VolumeEntriesFactory.newEntryFromExisting(myEntry);
             newEntry.setClassifiedFinishedContribution(myEntry);
             newEntry.setModification(user.getLogin(), "undelete");
@@ -322,12 +327,12 @@ public class EditEntryInitFactory {
             myEntry.setStatus(VolumeEntry.CLASSIFIED_FINISHED_STATUS);
             myEntry.save();
             newEntry.save();
-            */
+            
             
             //
             throw new ClientPageRedirectException(EditEntryURL + "?" + 
-                                                  EditEntry.VolumeName_PARAMETER + "=" + myEntry.getVolumeName() + 
-                                                  "&" + EditEntry.EntryHandle_PARAMETER + "=" + myEntry.getHandle());
+                                                  EditEntry.VolumeName_PARAMETER + "=" + newEntry.getVolumeName() + 
+                                                  "&" + EditEntry.EntryHandle_PARAMETER + "=" + newEntry.getHandle());
             
         }  else {
             

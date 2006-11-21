@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.14  2006/11/21 22:51:55  fbrunet
+ * Correct UIGenerator bug and another minor bugs
+ *
  * Revision 1.13  2006/08/10 22:17:13  fbrunet
  * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
  * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
@@ -560,21 +563,40 @@ public class AdminVolumes extends PapillonBasePO {
             //
             for (Iterator iter = VolumesFactory.getVolumesArray().iterator(); iter.hasNext();) { 
                 Volume volume = (Volume)iter.next();
+                
+                //
                 PapillonLogger.writeDebugMsg("Transformation " + volume.getName() + " volume");
+                
+                //
                 volume.launchTransformation(objectResult, this.getUser());
             }
+            
+            //
             result = "Transform all volumes";
         
+            //
+            PapillonLogger.writeDebugMsg(result + " succeed !");
+            
         } else {
             //
             Volume myVolume = VolumesFactory.getVolumeByName(volName);
             
             //
             if (myVolume!=null && !myVolume.isEmpty()) {
+                
+                //
                 PapillonLogger.writeDebugMsg("Transformation " + myVolume.getName() + " volume");
+                
+                //
                 myVolume.launchTransformation(objectResult, this.getUser());
                 result = "Transform " + myVolume.getName() + " volume";
+                
+                //
+                PapillonLogger.writeDebugMsg(result + " succeed !");
+                
             } else {
+                
+                //
                 result = "Empty volume";
             }        
         }

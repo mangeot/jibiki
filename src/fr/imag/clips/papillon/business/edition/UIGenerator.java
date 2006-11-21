@@ -8,6 +8,9 @@
  * $Id$
  *---------------------------------------------------------
  * $Log$
+ * Revision 1.26  2006/11/21 22:51:55  fbrunet
+ * Correct UIGenerator bug and another minor bugs
+ *
  * Revision 1.25  2006/11/09 09:04:42  fbrunet
  * *** empty log message ***
  *
@@ -541,7 +544,9 @@ public class UIGenerator {
 	protected static Element findCorrespondingElement(Element entryElt, Element itfElt, boolean template) {
 		// if template is true, it means that if nothing is found, the result is null
 		// instead of the parent interface element.
-		//PapillonLogger.writeDebugMsg("findCorrespondingElement " + entryElt.getNodeName() + " itfelt: " + itfElt.getNodeName() + " class: " + itfElt.getAttribute(ITF_ATTR_NAME));
+		//PapillonLogger.writeDebugMsg("findCorrespondingElement " + entryElt.getNodeName());
+        //PapillonLogger.writeDebugMsg(" itfelt: " + itfElt.getNodeName());
+        //PapillonLogger.writeDebugMsg(" class: " + itfElt.getAttribute(ITF_ATTR_NAME));
 		Element resultElt = null;
 		String entryEltName = entryElt.getNodeName();
 		NodeList myNodeList = itfElt.getElementsByTagName (ITF_ELT_DUPLICATE_NAME);
@@ -767,7 +772,7 @@ public class UIGenerator {
 				&& type.equals("checkbox")) {
 				String value = currentElt.getAttribute("value");
 				if (value.equals(correspName)) {
-					currentElt.setAttribute("id",newId);
+					currentElt.setAttribute("id","chkb-"+newId);
 					currentElt.setAttribute("value",newId);
 					found = true;
 				}

@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.29  2006/11/21 22:51:55  fbrunet
+ * Correct UIGenerator bug and another minor bugs
+ *
  * Revision 1.28  2006/08/10 22:17:12  fbrunet
  * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
  * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
@@ -1280,59 +1283,65 @@ public class Volume {
     public void launchTransformation(String xslTransformation, User user) 
         throws PapillonBusinessException {
 			/*
+             try {
+                 //
+                 TransformerFactory myTransformerFactory = TransformerFactory.newInstance();
+                 Transformer myTransformer = myTransformerFactory.newTransformer(new StreamSource(new StringReader(xslTransformation)));
+                 
+                 //
+                 ArrayList allEntries = QueryRequest.findAllLexies(this.getName(), user);
+                 
+                 //
+                 for (int i = 0; i < allEntries.size(); i++) {
+                     //
+                     QueryResult qr = (QueryResult) allEntries.get(i);
+                     VolumeEntry ve = qr.getSourceEntry();
+                     
+                     //
+                     DOMSource xmlSource = new DOMSource(Utility.buildDOMTree(ve.getXmlCode()));
+                     DOMResult xmlTarget = new DOMResult();
+                     
+                     //
+                     myTransformer.transform(xmlSource, xmlTarget);
+                     
+                     //
+                     //System.out.println(ve.getXmlCode());
+                     //System.out.println(Utility.NodeToString((Document) xmlTarget.getNode()))
+                     
+                     //
+                     ve.setDom((Document) xmlTarget.getNode());
+                     ve.save();
+                 }
+             } catch(Exception ex) {
+                 throw new PapillonBusinessException("Error deleting Volume", ex);
+             }
+             */
+            
+            
+            
+            
             try {
-                //
+                // Get transformer
                 TransformerFactory myTransformerFactory = TransformerFactory.newInstance();
                 Transformer myTransformer = myTransformerFactory.newTransformer(new StreamSource(new StringReader(xslTransformation)));
                 
-                //
-                ArrayList allEntries = QueryRequest.findAllLexies(this.getName(), user);
+                // Truncate index volumes 
+                IndexFactory.truncateIndexTable(this);
                 
                 //
-                for (int i = 0; i < allEntries.size(); i++) {
-                    //
-                    QueryResult qr = (QueryResult) allEntries.get(i);
-                    VolumeEntry ve = qr.getSourceEntry();
+                int count = this.getCount();
+                int delta = 20; // buffer limit
+                
+                //
+                System.out.println("Volume : " + this.getName() + " - " + count + " entries");
+                
+                //
+                for (int z = 0; z < count; z=z+delta) {
                     
-                    //
-                    DOMSource xmlSource = new DOMSource(Utility.buildDOMTree(ve.getXmlCode()));
-                    DOMResult xmlTarget = new DOMResult();
-                    
-                    //
-                    myTransformer.transform(xmlSource, xmlTarget);
-                    
-                    //
-                    //System.out.println(ve.getXmlCode());
-                    //System.out.println(Utility.NodeToString((Document) xmlTarget.getNode()))
-                    
-                    //
-                    ve.setDom((Document) xmlTarget.getNode());
-                    ve.save();
-                }
-            } catch(Exception ex) {
-				throw new PapillonBusinessException("Error deleting Volume", ex);
-			}
-            */
-            
-            
-            // Begin transaction
-            CurrentDBTransaction.registerNewDBTransaction();
-            
-            try {
-                    // Get transformer
-                    TransformerFactory myTransformerFactory = TransformerFactory.newInstance();
-                    Transformer myTransformer = myTransformerFactory.newTransformer(new StreamSource(new StringReader(xslTransformation)));
-                    
-                    // Truncate index volumes 
-                    IndexFactory.truncateIndexTable(this);
-                    
-                    //
-                    int count = this.getCount();
-                    int delta = 10; // buffer limit
-                    for (int z = 0; z < count; z=z+delta) {
+                    try {
                         
-                        //
-                        System.out.println("Z + delta : " + Integer.toString(z));
+                        // Begin transaction
+                        CurrentDBTransaction.registerNewDBTransaction();
                         
                         // Buffer volumeEntries
                         Collection bufferResults = VolumeEntriesFactory.getVolumeEntriesVector(DictionariesFactory.getDictionaryByName(this.getDictname()), this, null, null, null, z, delta);
@@ -1342,40 +1351,60 @@ public class Volume {
                         while ( buffer.hasNext() ) {
                             VolumeEntry ve = (VolumeEntry)buffer.next();
                             
-                            //
-                            DOMSource xmlSource = new DOMSource(Utility.buildDOMTree(ve.getXmlCode()));
-                            DOMResult xmlTarget = new DOMResult();
+                            if (!ve.isEmpty() 
+                                && (ve.getXmlCode() != null) 
+                                && !ve.getXmlCode().equals("")) {
+                                
+                                //
+                                DOMSource xmlSource = new DOMSource(Utility.buildDOMTree(ve.getXmlCode()));
+                                DOMResult xmlTarget = new DOMResult();
                             
-                            //
-                            myTransformer.transform(xmlSource, xmlTarget);
+                                //
+                                myTransformer.transform(xmlSource, xmlTarget);
                             
-                            //
-                            //System.out.println(ve.getXmlCode());
-                            //System.out.println(Utility.NodeToString((Document) xmlTarget.getNode()))
+                                //
+                                //System.out.println(ve.getXmlCode());
+                                //System.out.println(Utility.NodeToString((Document) xmlTarget.getNode()))
+                                
+                                //
+                                ve.setDom((Document) xmlTarget.getNode());
+                                ve.save();
                             
-                            //
-                            ve.setDom((Document) xmlTarget.getNode());
-                            ve.save();
+                            } else {
+                                
+                                //
+                                System.out.println("Document null : entry " + ve.getContributionId());
+                            }
+
                         }
+                        
+                        // End transaction
+                        // a part was correct, commit the transaction ...
+                        ((DBTransaction) CurrentDBTransaction.get()).commit();
+                        
+                        //
+                        System.out.println(Integer.toString(z) + " to " + Integer.toString(z + delta -1));
+                        
+                    } catch (Exception e) {
+                        String userMessage = "Problems when transform entries.";
+                        PapillonLogger.writeDebugMsg(userMessage);
+                        e.printStackTrace();
+                        try {
+                            ((DBTransaction) CurrentDBTransaction.get()).rollback();
+                        } catch (java.sql.SQLException sqle) {
+                            PapillonLogger.writeDebugMsg("launchTransformation: SQLException while rolling back failed transaction.");
+                            sqle.printStackTrace();
+                        }
+                    } finally {
+                        CurrentDBTransaction.releaseCurrentDBTransaction();
                     }
-                    
-                    // End transaction
-                    // a part was correct, commit the transaction ...
-                    ((DBTransaction) CurrentDBTransaction.get()).commit();
-                
-            } catch (Exception e) {
-                String userMessage = "Problems when transform entries.";
-                PapillonLogger.writeDebugMsg(userMessage);
-                e.printStackTrace();
-                try {
-                    ((DBTransaction) CurrentDBTransaction.get()).rollback();
-                } catch (java.sql.SQLException sqle) {
-                    PapillonLogger.writeDebugMsg("launchTransformation: SQLException while rolling back failed transaction.");
-                    sqle.printStackTrace();
                 }
-            } finally {
-                CurrentDBTransaction.releaseCurrentDBTransaction();
+                
+            } catch (javax.xml.transform.TransformerConfigurationException e) {
+                e.printStackTrace();
             }
+            
+            
 		}
     
 }				
