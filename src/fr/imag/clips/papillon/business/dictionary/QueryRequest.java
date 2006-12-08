@@ -289,6 +289,7 @@ package fr.imag.clips.papillon.business.dictionary;
                     RDBColumn objectIdRDB = new RDBColumn( table, "ObjectId", false );
                     query.addWhereIn(objectIdRDB, querySearch);
                 } 
+                
             } catch(Exception ex) {
                 throw new PapillonBusinessException("Exception in findLexie() ", ex);
             }
@@ -455,16 +456,17 @@ package fr.imag.clips.papillon.business.dictionary;
                 for (Iterator iter = volumes.iterator(); iter.hasNext();) {
                     Volume volume = (Volume)iter.next();
                     
-                    //
+                    // Create query
                     VolumeEntryQuery veQuery = new VolumeEntryQuery(volume.getDbname(), CurrentDBTransaction.get());
                     findLexie(veQuery.getQueryBuilder(), volume.getDbname(), volume.getIndexDbname());
                     
-                    // limit/offset and sort
+                    // limit/offset
                     if ( (limit != null) && (offset != null) 
                          && ((!limit.equals("0")) || (!offset.equals("0")))) {
                         veQuery.getQueryBuilder().addEndClause(" LIMIT " + limit + " OFFSET " + offset);
                     }
                     
+                    // Order by
                     veQuery.getQueryBuilder().addOrderByColumn("multilingual_sort('" + volume.getSourceLanguage() + "',headword)","");
                     
                     // debug

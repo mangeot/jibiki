@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.54  2006/12/08 14:55:16  fbrunet
+ * Add new method in VolumeEntriesFactory.java - getVolumeEntries - to correct transformation xsl bug
+ *
  * Revision 1.53  2006/09/12 19:26:10  fbrunet
  * - improve reconstruction index
  *
@@ -344,6 +347,9 @@ import fr.imag.clips.papillon.data.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+
+/* Execption */
+import fr.imag.clips.papillon.business.PapillonBusinessException;
 
 /**
 * Used to find the instances of xslsheet.
@@ -1410,5 +1416,45 @@ public static void sort (Vector EntryVector, String sortBy) {
         }
     }
 }
+
+
+// Return the entries of the volume in relation to the offset and the limit
+// limit
+public static Collection getVolumeEntries(Volume volume, int offset, int limit, User user) throws PapillonBusinessException {
+    try {
+        
+        //
+        ArrayList result = new ArrayList();
+        
+        // New query builder
+        VolumeEntryQuery veQuery = new VolumeEntryQuery(volume.getDbname(), CurrentDBTransaction.get());
+        
+        // Limit and offset
+        veQuery.getQueryBuilder().addEndClause(" LIMIT " + Integer.toString(limit) + " OFFSET " + Integer.toString(offset));
+        
+        // Order by objectId
+        veQuery.getQueryBuilder().addOrderByColumn("objectId","");
+        
+        // Debug
+        //veQuery.getQueryBuilder().debug();
+        
+        // 
+        VolumeEntryDO[] DOarray = veQuery.getDOArray();
+        if (null != DOarray) {
+            for (int j=0; j < DOarray.length; j++) {
+                
+                //
+                VolumeEntry tempEntry = new VolumeEntry(DictionariesFactory.getDictionaryByName(volume.getDictname()), volume, DOarray[j]);
+                result.add(tempEntry);
+            }
+        } 
+        
+        //
+        return result;
+        
+    } catch(Exception ex) {
+        throw new PapillonBusinessException("Exception in getVolumeEntries() ", ex);
+    }
+}    
 
 }

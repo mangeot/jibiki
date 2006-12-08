@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.30  2006/12/08 14:55:16  fbrunet
+ * Add new method in VolumeEntriesFactory.java - getVolumeEntries - to correct transformation xsl bug
+ *
  * Revision 1.29  2006/11/21 22:51:55  fbrunet
  * Correct UIGenerator bug and another minor bugs
  *
@@ -1344,13 +1347,16 @@ public class Volume {
                         CurrentDBTransaction.registerNewDBTransaction();
                         
                         // Buffer volumeEntries
-                        Collection bufferResults = VolumeEntriesFactory.getVolumeEntriesVector(DictionariesFactory.getDictionaryByName(this.getDictname()), this, null, null, null, z, delta);
+                        // Replace getVolumeEntriesVector because "order by" expression   
+                        //Collection bufferResults = VolumeEntriesFactory.getVolumeEntriesVector(DictionariesFactory.getDictionaryByName(this.getDictname()), this, null, null, null, z, delta);
+                        Collection bufferResults = VolumeEntriesFactory.getVolumeEntries(this, z, delta, user);
                         
                         // Index volumeEntries
                         Iterator buffer = bufferResults.iterator();
                         while ( buffer.hasNext() ) {
                             VolumeEntry ve = (VolumeEntry)buffer.next();
                             
+                            //
                             if (!ve.isEmpty() 
                                 && (ve.getXmlCode() != null) 
                                 && !ve.getXmlCode().equals("")) {
@@ -1363,8 +1369,8 @@ public class Volume {
                                 myTransformer.transform(xmlSource, xmlTarget);
                             
                                 //
-                                //System.out.println(ve.getXmlCode());
-                                //System.out.println(Utility.NodeToString((Document) xmlTarget.getNode()))
+                                //PapillonLogger.writeDebugMsg(ve.getXmlCode());
+                                //PapillonLogger.writeDebugMsg(Utility.NodeToString((Document) xmlTarget.getNode()))
                                 
                                 //
                                 ve.setDom((Document) xmlTarget.getNode());
@@ -1373,7 +1379,7 @@ public class Volume {
                             } else {
                                 
                                 //
-                                System.out.println("Document null : entry " + ve.getContributionId());
+                                PapillonLogger.writeDebugMsg("Database return a null DO while applying a transformation");
                             }
 
                         }
@@ -1383,7 +1389,7 @@ public class Volume {
                         ((DBTransaction) CurrentDBTransaction.get()).commit();
                         
                         //
-                        System.out.println(Integer.toString(z) + " to " + Integer.toString(z + delta -1));
+                        PapillonLogger.writeDebugMsg(Integer.toString(z) + " to " + Integer.toString(z + delta -1));
                         
                     } catch (Exception e) {
                         String userMessage = "Problems when transform entries.";
