@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.55  2006/12/13 09:32:00  fbrunet
+ * *** empty log message ***
+ *
  * Revision 1.54  2006/12/08 14:55:16  fbrunet
  * Add new method in VolumeEntriesFactory.java - getVolumeEntries - to correct transformation xsl bug
  *
@@ -1419,8 +1422,7 @@ public static void sort (Vector EntryVector, String sortBy) {
 
 
 // Return the entries of the volume in relation to the offset and the limit
-// limit
-public static Collection getVolumeEntries(Volume volume, int offset, int limit, User user) throws PapillonBusinessException {
+public static Collection getVolumeEntries(Volume volume, int offset, int limit) throws PapillonBusinessException {
     try {
         
         //

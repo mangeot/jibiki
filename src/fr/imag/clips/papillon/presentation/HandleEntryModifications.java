@@ -8,6 +8,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.11  2006/12/13 09:32:00  fbrunet
+ * *** empty log message ***
+ *
  * Revision 1.10  2006/11/09 09:04:42  fbrunet
  * *** empty log message ***
  *
@@ -185,9 +188,10 @@ public class HandleEntryModifications extends EditingBasePO {
                        && !(myVolumeEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS) 
                             && (myVolumeEntry.getModificationAuthor().equals(this.getUser().getLogin())
                                 || this.getUser().isInGroup(Group.ADMIN_GROUP))) ) {
-				// Error if entry is not NOT_FINISHED_STATUS and (same user or admin user) 
                 
                 // Error page redirection
+                PapillonLogger.writeDebugMsg("HandleEntryModification : status = " + myVolumeEntry.getStatus() + " modification author = " + myVolumeEntry.getModificationAuthor());
+                PapillonLogger.writeDebugMsg("HandleEntryModification : Error entry is not NOT_FINISHED_STATUS and (same user or admin user)");
 				throw new ClientPageRedirectException(EditingErrorURL);
 			}
 			
@@ -333,7 +337,7 @@ public class HandleEntryModifications extends EditingBasePO {
                 NFVolumeEntry.save();
                 
                 //
-                System.out.println("myVolumeEntry CId" + myVolumeEntry.getContributionId() + "-> NFVolumeEntry CId : " + NFVolumeEntry.getContributionId());
+                //System.out.println("myVolumeEntry CId" + myVolumeEntry.getContributionId() + "-> NFVolumeEntry CId : " + NFVolumeEntry.getContributionId());
                 
                 // Call PostProcessor
                 // FIXME: call specific update PostProcessor !
@@ -397,7 +401,7 @@ public class HandleEntryModifications extends EditingBasePO {
     //
 	protected void undoDraftEntry(VolumeEntry myVolumeEntry, User user, String referrer) 
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
-            
+            /*
             // TEST
             String previousContributionId = myVolumeEntry.getClassifiedNotFinishedContributionId();
             while ((previousContributionId != null) && (!previousContributionId.equals(""))) {
@@ -407,9 +411,10 @@ public class HandleEntryModifications extends EditingBasePO {
                 VolumeEntry previousEntry = VolumeEntriesFactory.findEntryByContributionId(myVolumeEntry.getVolume().getName(), previousContributionId);
                 previousContributionId = previousEntry.getClassifiedNotFinishedContributionId();
             }
+            */
             
             //
-            previousContributionId = myVolumeEntry.getClassifiedNotFinishedContributionId();
+            String previousContributionId = myVolumeEntry.getClassifiedNotFinishedContributionId();
             if ((previousContributionId != null) && (!previousContributionId.equals(""))) {
             
                 //
@@ -431,6 +436,7 @@ public class HandleEntryModifications extends EditingBasePO {
             }  else {
                 
                 // Error page
+                PapillonLogger.writeDebugMsg("HandleEntryModification : Error undoDraftEntry method");
                 throw new ClientPageRedirectException(EditingErrorURL);
             }
     

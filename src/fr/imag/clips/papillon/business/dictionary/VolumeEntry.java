@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.44  2006/12/13 09:32:00  fbrunet
+ * *** empty log message ***
+ *
  * Revision 1.43  2006/11/09 09:04:42  fbrunet
  * *** empty log message ***
  *
@@ -252,11 +255,14 @@
 
 package fr.imag.clips.papillon.business.dictionary;
 
+import java.io.*;
+
 import java.util.Locale;
 import java.util.Vector;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import fr.imag.clips.papillon.data.*;
@@ -267,8 +273,24 @@ import com.lutris.appserver.server.sql.DatabaseManagerException;
 import com.lutris.appserver.server.sql.ObjectIdException;
 import com.lutris.dods.builder.generator.query.DataObjectException;
 
+//pour parser le document avec le DOM
+import org.w3c.dom.*;
+
+// Sax
+import org.xml.sax.InputSource;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import org.apache.xml.serialize.*;
+import org.apache.xalan.serialize.*;
+import org.apache.tools.tar.*;
+
 import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.utility.Utility;
+
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 /**
 * Represents a Dictionary Entry. 
@@ -1389,7 +1411,7 @@ public class VolumeEntry implements IAnswer {
      * @exception PapillonBusinessException if an error occurs
      *   replacing data (usually due to an underlying data layer
 	 *   error).
-     */
+     *
 	 public boolean replaceData(VolumeEntry otherEntry) throws PapillonBusinessException {
 		boolean res = false;
 		if (getVolumeName().equals(otherEntry.getVolumeName()) &&
@@ -1405,6 +1427,7 @@ public class VolumeEntry implements IAnswer {
 		}
 		return res;
 	 }
+     */
 
     /**
      * getParticule
@@ -1436,26 +1459,35 @@ public class VolumeEntry implements IAnswer {
 		throws PapillonBusinessException {
 			boolean res = false;
 			try {
-				// reset caches
+				// Reset caches
 				VolumeEntriesFactory.resetCountCache(this.getVolume().getName());
-				IndexFactory.deleteIndexForEntryId(this.getVolume().getIndexDbname(), this.getHandle());
+				
+                // Delete index
+                IndexFactory.deleteIndexForEntryId(this.getVolume().getIndexDbname(), this.getHandle());
 				
                 //
                 this.setEntryIdIfNull();
 				this.setContributionIdIfNull();
 				
-                // new index
+                // New index
                 res = ParseVolume.parseEntry(this);
-				
+                
+                //
+                //normalizeDom(); 
+                
                 //
                 this.myDO.setXmlCode(Utility.NodeToString(this.dom));
+                PapillonLogger.writeDebugMsg("---------------> target XMLCode : " + this.myDO.getXmlCode());
 				this.myDO.setDom(Utility.serializeDocument(this.dom));
-				this.myDO.setHtmldom(Utility.serializeDocument(this.htmldom));
+                PapillonLogger.writeDebugMsg("---------------> target DOM : " + Utility.NodeToString(Utility.deSerializeDocument(this.myDO.getDom())));
+				this.myDO.setHtmldom(Utility.serializeDocument(this.htmldom));  // FIXME: supress HTML Dom
 				this.myDO.commit();
 			
             } catch(Exception ex) {
 				throw new PapillonBusinessException("Error saving volumeEntry", ex);
 			}
+            
+            //
 			return res;
 		}
     
@@ -1530,5 +1562,34 @@ public class VolumeEntry implements IAnswer {
 		}
     }
     
+
+private void normalizeDom() {
+
+    //
+    if (this.dom!=null) {
+        try {
+            
+            //
+            String domString= Utility.NodeToString(this.dom);
+            
+            // Normalized value
+            String patternStr = "(\n|\r|\t|[ ])+";
+            String replaceStr = " ";
+            Pattern pattern = Pattern.compile(patternStr);
+            Matcher matcher = pattern.matcher(domString);
+            domString = matcher.replaceAll(replaceStr);
+            //PapillonLogger.writeDebugMsg("volumeEntry: normalized dom : " + domString);	
+            
+            //
+            this.dom = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(domString)));
+           
+        } catch (java.lang.Exception ioe) {
+            PapillonLogger.writeDebugMsg("VolumeEntry : normalizeDom - java.io.IOException - " + ioe);
+        }
+    }
+    
+   
+    
+}
 
 }

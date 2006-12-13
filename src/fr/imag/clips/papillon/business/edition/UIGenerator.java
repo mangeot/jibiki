@@ -8,6 +8,9 @@
  * $Id$
  *---------------------------------------------------------
  * $Log$
+ * Revision 1.27  2006/12/13 09:32:00  fbrunet
+ * *** empty log message ***
+ *
  * Revision 1.26  2006/11/21 22:51:55  fbrunet
  * Correct UIGenerator bug and another minor bugs
  *
@@ -223,7 +226,16 @@ public class UIGenerator {
 	// Update an element in the XML entry entryElt with the new value value
 	public static boolean updateElement(String elementId, String value, Element entryElt) {
 		//PapillonLogger.writeDebugMsg("updateElement: " + elementId + " value: " + value);	
-        
+/*
+        // Normalized value
+        String patternStr = "(\n|\r|\t|[ ])+";
+        String replaceStr = " ";
+        Pattern pattern = Pattern.compile(patternStr);
+        Matcher matcher = pattern.matcher(value);
+        value = matcher.replaceAll(replaceStr);
+        //PapillonLogger.writeDebugMsg("updateElement: normalized value: " + value);	
+        */
+        //
         attributeMatcher.reset(elementId);
         nodeMatcher.reset(elementId);
         Element res = null;
@@ -716,7 +728,7 @@ public class UIGenerator {
     
 	
 	protected static boolean setIdValueCorrespondingTextInput(String correspName, Element itfElt, String newId, String value) {
-		//PapillonLogger.writeDebugMsg("findCorrespondingTextInput: " + correspName);
+		//PapillonLogger.writeDebugMsg("findCorrespondingTextInput: " + correspName + " (newId = " + newId + ") (value = " + value + ")");
 		boolean found = false;
 		NodeList myNodeList = itfElt.getElementsByTagName ("input");
 		int i=0;

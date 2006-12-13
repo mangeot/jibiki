@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.12  2006/12/13 09:32:00  fbrunet
+ * *** empty log message ***
+ *
  * Revision 1.11  2006/08/17 21:26:13  mangeot
  * Now uses myGetParameter() instead of req.getParameter() because of encoding problem
  *
@@ -188,6 +191,9 @@ public class Admin extends PapillonBasePO {
             // FIXME: supress    
             } else if (null != myGetParameter(content.NAME_ModifiedStatus)) {
 				fr.imag.clips.papillon.business.dictionary.VolumesFactory.modifiedStatus(this.getUser());
+            
+            } else if (null != myGetParameter(content.NAME_NormalizeXML)) {
+				fr.imag.clips.papillon.business.dictionary.VolumesFactory.normalizeXML(this.getUser());
             }
         }
 		

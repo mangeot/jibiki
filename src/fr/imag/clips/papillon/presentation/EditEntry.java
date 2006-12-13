@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.33  2006/12/13 09:32:00  fbrunet
+ * *** empty log message ***
+ *
  * Revision 1.32  2006/11/09 09:04:42  fbrunet
  * *** empty log message ***
  *
@@ -120,11 +123,13 @@ public class EditEntry extends EditingBasePO {
              
 			// Verification of the DOM
 			if (myVolumeEntry.getDom() == null) {
+                PapillonLogger.writeDebugMsg ("EditEntry : The dom entry is null.");
 				throw new ClientPageRedirectException(EditingErrorURL);
 			}
 		}
 		// TODO answer if no arguments
 		else {
+            PapillonLogger.writeDebugMsg ("EditEntry : No parameters (volumeName & entryHandle)");
 			throw new ClientPageRedirectException(EditEntryInitURL);
 		}
 		

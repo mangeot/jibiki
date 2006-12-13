@@ -4,6 +4,9 @@
 *$Id$
 *------------------------------------------
 *$Log$
+*Revision 1.17  2006/12/13 09:32:00  fbrunet
+**** empty log message ***
+*
 *Revision 1.16  2006/08/13 14:42:20  mangeot
 *Re-added the ArrayIntersection method with String[] arrays for retro-compatibility
 *-------------------------------------------------------------------
@@ -154,11 +157,11 @@ public class Utility {
      */
 	/* prints XML declaration */
 	public static String NodeToString(Document doc) {
-		return NodeToString(doc.getDocumentElement(), true, true);
+		return NodeToString(doc.getDocumentElement(), true, false);
 	}
 	
 	public static String NodeToString(Document doc, boolean printXmlDeclaration, boolean setIndenting) {
-		return NodeToString(doc,printXmlDeclaration,setIndenting,false);
+		return NodeToString(doc, printXmlDeclaration, setIndenting, false);
 	}
 	
 	public static String NodeToString(Document doc, boolean printXmlDeclaration, boolean setIndenting, boolean printDoctype) {
@@ -169,6 +172,7 @@ public class Utility {
 					myOutputFormat.setMethod("text");
 					myOutputFormat.setIndenting(setIndenting);
 					myOutputFormat.setOmitDocumentType(!printDoctype);
+                    myOutputFormat.setPreserveSpace(false);
 					myOutputFormat.setOmitXMLDeclaration(!printXmlDeclaration);
 					XMLSerializer myXMLSerializer = new XMLSerializer(myStringWriter, myOutputFormat);
 					myXMLSerializer.serialize(doc);

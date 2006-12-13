@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.31  2006/12/13 09:32:00  fbrunet
+ * *** empty log message ***
+ *
  * Revision 1.30  2006/12/08 14:55:16  fbrunet
  * Add new method in VolumeEntriesFactory.java - getVolumeEntries - to correct transformation xsl bug
  *
@@ -1283,6 +1286,7 @@ public class Volume {
 		}
     
     
+    // Apply xsl transformation to all entries of the volume
     public void launchTransformation(String xslTransformation, User user) 
         throws PapillonBusinessException {
 			/*
@@ -1349,9 +1353,9 @@ public class Volume {
                         // Buffer volumeEntries
                         // Replace getVolumeEntriesVector because "order by" expression   
                         //Collection bufferResults = VolumeEntriesFactory.getVolumeEntriesVector(DictionariesFactory.getDictionaryByName(this.getDictname()), this, null, null, null, z, delta);
-                        Collection bufferResults = VolumeEntriesFactory.getVolumeEntries(this, z, delta, user);
+                        Collection bufferResults = VolumeEntriesFactory.getVolumeEntries(this, z, delta);
                         
-                        // Index volumeEntries
+                        //
                         Iterator buffer = bufferResults.iterator();
                         while ( buffer.hasNext() ) {
                             VolumeEntry ve = (VolumeEntry)buffer.next();

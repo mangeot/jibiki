@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.9  2006/12/13 09:32:00  fbrunet
+ * *** empty log message ***
+ *
  * Revision 1.8  2006/08/10 22:17:13  fbrunet
  * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
  * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
@@ -254,8 +257,9 @@ public class ViewQueryResult {
                     + EditEntryInitFactory.ACTION_PARAMETER + "=";
                     
                     // Actions
-                    if ( (   (!myEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS)) 
-                             && (!myEntry.getStatus().equals(VolumeEntry.MODIFIED_STATUS)) )
+                    if ( (   (  !myEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS)) 
+                                && (!myEntry.getStatus().equals(VolumeEntry.MODIFIED_STATUS)) )
+                         
                          ||  ( myEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS)
                                && (myEntry.getModificationAuthor().equals(user.getLogin())
                                    || user.isInGroup(Group.ADMIN_GROUP)))
@@ -336,8 +340,8 @@ public class ViewQueryResult {
                         // FIXME : create new page.po like history
                         QueryParameter qpxml = new QueryParameter();
                         qpxml.setXsl("XML");
-                        qpxml.setLimit(qp.getLimit());
-                        qpxml.setOffset(qp.getOffset());
+                        //qpxml.setLimit(qp.getLimit());
+                        //qpxml.setOffset(qp.getOffset());
                         ArrayList dicts = new ArrayList();
                         dicts.add(myEntry.getDictionary());
                         qpxml.setDictionaries(dicts);
