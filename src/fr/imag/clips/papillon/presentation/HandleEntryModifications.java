@@ -8,6 +8,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.12  2006/12/14 20:03:26  fbrunet
+ * Add method to normalize value into XML structure.
+ *
  * Revision 1.11  2006/12/13 09:32:00  fbrunet
  * *** empty log message ***
  *
@@ -165,6 +168,7 @@ public class HandleEntryModifications extends EditingBasePO {
 			VolumeEntry myVolumeEntry = VolumeEntriesFactory.findEntryByHandle(volumeName, entryHandle);
 			
 			// Entry verification
+            // FIXME : Modifier sa localisation !!!
             if ( myVolumeEntry!=null && !myVolumeEntry.isEmpty()
                  && myVolumeEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS) ) {
                 // If entry is finished, create draft !
@@ -344,7 +348,7 @@ public class HandleEntryModifications extends EditingBasePO {
                 ResultPostUpdateProcessor postUpdateProcessor = ResultPostUpdateProcessorFactory.getPostUpdateProcessor(NFVolumeEntry);
                 postUpdateProcessor.transformation(NFVolumeEntry, user);
                 
-                // new current volume entry
+                // New current volume entry
                 throw new ClientPageRedirectException(
 													  EditEntryURL + "?" + 
 													  EditEntry.VolumeName_PARAMETER + "=" + NFVolumeEntry.getVolumeName() + "&" + 

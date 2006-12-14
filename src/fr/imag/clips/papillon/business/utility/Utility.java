@@ -4,6 +4,9 @@
 *$Id$
 *------------------------------------------
 *$Log$
+*Revision 1.18  2006/12/14 20:03:26  fbrunet
+*Add method to normalize value into XML structure.
+*
 *Revision 1.17  2006/12/13 09:32:00  fbrunet
 **** empty log message ***
 *
@@ -169,10 +172,11 @@ public class Utility {
 			if (doc!=null) {
 				try {
 					StringWriter myStringWriter = new StringWriter();
-					myOutputFormat.setMethod("text");
+					myOutputFormat.setMethod("text");   //.setMethod("XML"); ?
 					myOutputFormat.setIndenting(setIndenting);
 					myOutputFormat.setOmitDocumentType(!printDoctype);
                     myOutputFormat.setPreserveSpace(false);
+                    //myOutputFormat.setEncoding("UTF-8");
 					myOutputFormat.setOmitXMLDeclaration(!printXmlDeclaration);
 					XMLSerializer myXMLSerializer = new XMLSerializer(myStringWriter, myOutputFormat);
 					myXMLSerializer.serialize(doc);

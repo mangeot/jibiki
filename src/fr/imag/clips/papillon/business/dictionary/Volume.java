@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.32  2006/12/14 20:03:26  fbrunet
+ * Add method to normalize value into XML structure.
+ *
  * Revision 1.31  2006/12/13 09:32:00  fbrunet
  * *** empty log message ***
  *
@@ -1338,12 +1341,10 @@ public class Volume {
                 //
                 int count = this.getCount();
                 int delta = 20; // buffer limit
-                
-                //
                 System.out.println("Volume : " + this.getName() + " - " + count + " entries");
                 
                 //
-                for (int z = 0; z < count; z=z+delta) {
+                for (int i = 0; i < count; i=i+delta) {
                     
                     try {
                         
@@ -1353,7 +1354,7 @@ public class Volume {
                         // Buffer volumeEntries
                         // Replace getVolumeEntriesVector because "order by" expression   
                         //Collection bufferResults = VolumeEntriesFactory.getVolumeEntriesVector(DictionariesFactory.getDictionaryByName(this.getDictname()), this, null, null, null, z, delta);
-                        Collection bufferResults = VolumeEntriesFactory.getVolumeEntries(this, z, delta);
+                        Collection bufferResults = VolumeEntriesFactory.getVolumeEntries(this, i, delta);
                         
                         //
                         Iterator buffer = bufferResults.iterator();
@@ -1366,16 +1367,13 @@ public class Volume {
                                 && !ve.getXmlCode().equals("")) {
                                 
                                 //
-                                DOMSource xmlSource = new DOMSource(Utility.buildDOMTree(ve.getXmlCode()));
+                                DOMSource xmlSource = new DOMSource(ve.getDom());
                                 DOMResult xmlTarget = new DOMResult();
                             
                                 //
                                 myTransformer.transform(xmlSource, xmlTarget);
-                            
-                                //
-                                //PapillonLogger.writeDebugMsg(ve.getXmlCode());
                                 //PapillonLogger.writeDebugMsg(Utility.NodeToString((Document) xmlTarget.getNode()))
-                                
+                               
                                 //
                                 ve.setDom((Document) xmlTarget.getNode());
                                 ve.save();
@@ -1388,12 +1386,10 @@ public class Volume {
 
                         }
                         
-                        // End transaction
-                        // a part was correct, commit the transaction ...
+                        // End transaction : a part was correct, commit the transaction ...
                         ((DBTransaction) CurrentDBTransaction.get()).commit();
-                        
-                        //
-                        PapillonLogger.writeDebugMsg(Integer.toString(z) + " to " + Integer.toString(z + delta -1));
+                        PapillonLogger.writeDebugMsg(Integer.toString(i) + " to " + Integer.toString(i + delta -1));
+                       
                         
                     } catch (Exception e) {
                         String userMessage = "Problems when transform entries.";

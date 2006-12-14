@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.56  2006/12/14 20:03:26  fbrunet
+ * Add method to normalize value into XML structure.
+ *
  * Revision 1.55  2006/12/13 09:32:00  fbrunet
  * *** empty log message ***
  *
@@ -339,7 +342,6 @@ import fr.imag.clips.papillon.business.PapillonLogger;
 
 import com.lutris.appserver.server.sql.ObjectId;
 
-
 import fr.imag.clips.papillon.business.utility.*;
 import fr.imag.clips.papillon.business.user.User;
 import fr.imag.clips.papillon.business.user.UsersFactory;
@@ -350,6 +352,9 @@ import fr.imag.clips.papillon.data.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 /* Execption */
 import fr.imag.clips.papillon.business.PapillonBusinessException;
@@ -1457,6 +1462,37 @@ public static Collection getVolumeEntries(Volume volume, int offset, int limit) 
     } catch(Exception ex) {
         throw new PapillonBusinessException("Exception in getVolumeEntries() ", ex);
     }
-}    
+}
+
+
+//
+public static String normalizeValue(String value) {
+    
+    //
+    String patternStr = "(\n|\r|\t|[ ])+";
+    String replaceStr = " ";
+    Pattern pattern = Pattern.compile(patternStr);
+    Matcher matcher = pattern.matcher(value);
+    value = matcher.replaceAll(replaceStr);
+    
+    // 
+    patternStr = "^ ";
+    replaceStr = "";
+    pattern = Pattern.compile(patternStr);
+    matcher = pattern.matcher(value);
+    value = matcher.replaceAll(replaceStr);
+    
+    // 
+    patternStr = " $";
+    replaceStr = "";
+    pattern = Pattern.compile(patternStr);
+    matcher = pattern.matcher(value);
+    value = matcher.replaceAll(replaceStr);
+    //PapillonLogger.writeDebugMsg("updateElement: normalized value: " + value);
+    
+    //
+    return value;
+}
+
 
 }

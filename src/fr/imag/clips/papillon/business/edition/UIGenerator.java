@@ -8,6 +8,9 @@
  * $Id$
  *---------------------------------------------------------
  * $Log$
+ * Revision 1.28  2006/12/14 20:03:26  fbrunet
+ * Add method to normalize value into XML structure.
+ *
  * Revision 1.27  2006/12/13 09:32:00  fbrunet
  * *** empty log message ***
  *
@@ -99,6 +102,7 @@ import java.util.Vector;
 
 // internal imports
 import fr.imag.clips.papillon.business.PapillonLogger;
+import fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory;
 
 // DOM elements
 import org.w3c.dom.Attr;
@@ -108,6 +112,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+//
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
@@ -226,15 +231,10 @@ public class UIGenerator {
 	// Update an element in the XML entry entryElt with the new value value
 	public static boolean updateElement(String elementId, String value, Element entryElt) {
 		//PapillonLogger.writeDebugMsg("updateElement: " + elementId + " value: " + value);	
-/*
+
         // Normalized value
-        String patternStr = "(\n|\r|\t|[ ])+";
-        String replaceStr = " ";
-        Pattern pattern = Pattern.compile(patternStr);
-        Matcher matcher = pattern.matcher(value);
-        value = matcher.replaceAll(replaceStr);
-        //PapillonLogger.writeDebugMsg("updateElement: normalized value: " + value);	
-        */
+        value = VolumeEntriesFactory.normalizeValue(value);
+	        
         //
         attributeMatcher.reset(elementId);
         nodeMatcher.reset(elementId);

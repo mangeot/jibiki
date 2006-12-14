@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.46  2006/12/14 20:03:26  fbrunet
+ * Add method to normalize value into XML structure.
+ *
  * Revision 1.45  2006/12/13 09:32:00  fbrunet
  * *** empty log message ***
  *
@@ -199,6 +202,9 @@ import java.util.*;
 import fr.imag.clips.papillon.Papillon;
 import fr.imag.clips.papillon.business.utility.Utility;
 import fr.imag.clips.papillon.business.xsl.XslSheetFactory;
+
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 /**
 * Used to find the instances of xslsheet.
@@ -1345,7 +1351,7 @@ public class VolumesFactory {
                 
             } finally {
                 CurrentDBTransaction.releaseCurrentDBTransaction();
-                System.out.println("Index re-construction succeed !");
+                PapillonLogger.writeDebugMsg("Index re-construction succeed !");
             }
 
         }
@@ -1401,97 +1407,119 @@ public class VolumesFactory {
 		}
     
     
+    
     /** 
-        * 
-        * @param User
+        * The reConstructionIndex rebuild the volume index.
         *
         * @exception PapillonBusinessException
         */
-    public static void normalizeXML(fr.imag.clips.papillon.business.user.User user)
-        throws PapillonBusinessException {
+    public static void standardization()
+        throws fr.imag.clips.papillon.business.PapillonBusinessException {
+            
+            // Standardization on all volumes
+            for (Iterator iter = getVolumesArray().iterator(); iter.hasNext(); ) {
+                Volume volume = (Volume)iter.next();
 
-            //try {
+                //
+                int count = volume.getCount();
+                int delta = 20; // buffer limit
+                PapillonLogger.writeDebugMsg("Volume : " + volume.getName() + " - " + count + " entries");
                 
                 //
-                for (Iterator iter = getVolumesArray().iterator(); iter.hasNext(); ) {
+                for (int i = 0; i < count; i=i+delta) {
                     
-                    //
-                    Volume volume = (Volume)iter.next();
-                    
-                    //
-                    int count = volume.getCount();
-                    int delta = 20; // buffer limit
-                    
-                    //
-                    System.out.println("Volume : " + volume.getName() + " - " + count + " entries");
-                    
-                    //
-                    for (int z = 0; z < count; z=z+delta) {
+                    try {
                         
-                        try {
-                            
-                            // Begin transaction
-                            CurrentDBTransaction.registerNewDBTransaction();
-                            
-                            // Buffer volumeEntries
-                            Collection bufferResults = VolumeEntriesFactory.getVolumeEntries(volume, z, delta);
+                        // Begin transaction
+                        CurrentDBTransaction.registerNewDBTransaction();
+                        
+                        // Buffer volumeEntries
+                        Collection bufferResults = VolumeEntriesFactory.getVolumeEntries(volume, i, delta);
+                        
+                        //
+                        Iterator buffer = bufferResults.iterator();
+                        while ( buffer.hasNext() ) {
+                            VolumeEntry ve = (VolumeEntry)buffer.next();
                             
                             //
-                            Iterator buffer = bufferResults.iterator();
-                            while ( buffer.hasNext() ) {
-                                VolumeEntry ve = (VolumeEntry)buffer.next();
+                            if (!ve.isEmpty() 
+                                && (ve.getXmlCode() != null) 
+                                && !ve.getXmlCode().equals("")) {
                                 
                                 //
-                                if (!ve.isEmpty() 
-                                    && (ve.getXmlCode() != null) 
-                                    && !ve.getXmlCode().equals("")) {
-                                    
-                                    //
-                                    //ve....
-                                    
-                                    //
-                                    //PapillonLogger.writeDebugMsg(ve.getXmlCode());
-                                    //PapillonLogger.writeDebugMsg(Utility.NodeToString((Document) xmlTarget.getNode()))
-                                    
-                                    //
-                                    ve.save();
-                                    
-                                } else {
-                                    
-                                    //
-                                    PapillonLogger.writeDebugMsg("Database return a null DO while applying the normalization");
-                                }
+                                Document dom = ve.getDom();
+                                Element root = dom.getDocumentElement();
+                                normalizeNode(root.getFirstChild());
+                                ve.save();
                                 
+                            } else {
+                                
+                                //
+                                PapillonLogger.writeDebugMsg("Database return a null DO while applying a transformation");
                             }
                             
-                            // End transaction
-                            // a part was correct, commit the transaction ...
-                            ((DBTransaction) CurrentDBTransaction.get()).commit();
-                            
-                            //
-                            PapillonLogger.writeDebugMsg(Integer.toString(z) + " to " + Integer.toString(z + delta -1));
-                            
-                        } catch (Exception e) {
-                            String userMessage = "Problems when transform entries.";
-                            PapillonLogger.writeDebugMsg(userMessage);
-                            e.printStackTrace();
-                            try {
-                                ((DBTransaction) CurrentDBTransaction.get()).rollback();
-                            } catch (java.sql.SQLException sqle) {
-                                PapillonLogger.writeDebugMsg("launchTransformation: SQLException while rolling back failed transaction.");
-                                sqle.printStackTrace();
-                            }
-                        } finally {
-                            CurrentDBTransaction.releaseCurrentDBTransaction();
                         }
+                        
+                        // End transaction : a part was correct, commit the transaction ...
+                        ((DBTransaction) CurrentDBTransaction.get()).commit();
+                        PapillonLogger.writeDebugMsg(Integer.toString(i) + " to " + Integer.toString(i + delta - 1));                        
+                        
+                    } catch (Exception e) {
+                        String userMessage = "Problems when normalize entries.";
+                        PapillonLogger.writeDebugMsg(userMessage);
+                        e.printStackTrace();
+                        
+                        //
+                        try {
+                            ((DBTransaction) CurrentDBTransaction.get()).rollback();
+                        } catch (java.sql.SQLException sqle) {
+                            PapillonLogger.writeDebugMsg("Standardization: SQLException while rolling back failed transaction.");
+                            sqle.printStackTrace();
+                        }
+                        
+                    } finally {
+                        CurrentDBTransaction.releaseCurrentDBTransaction();
                     }
-                    
                 }
-                //} catch (javax.xml.transform.TransformerConfigurationException e) {
-                //    e.printStackTrace();
-                //}
+                
+                //
+                PapillonLogger.writeDebugMsg(volume.getName() + " : Standardization succeed !");
+                
+            }
             
+            //
+            PapillonLogger.writeDebugMsg("Standardization process succeed !");
+        }
+    
+    
+    /** 
+        * 
+        */
+    private static void normalizeNode(Node node) {
+        
+        while (node != null) {
+            //
+            String value = node.getNodeValue();
             
-		}
+            // Normalize value
+            if (value != null && !value.equals("")) {
+                
+                //
+                node.setNodeValue(VolumeEntriesFactory.normalizeValue(value));
+            }
+            
+            //
+            normalizeNode(node.getFirstChild());
+            
+            //
+            node = node.getNextSibling();
+        }
+        
+       
+        
+    }
+    
+    
+
 }
 

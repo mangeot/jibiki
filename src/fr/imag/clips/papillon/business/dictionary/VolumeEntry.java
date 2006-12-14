@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.45  2006/12/14 20:03:26  fbrunet
+ * Add method to normalize value into XML structure.
+ *
  * Revision 1.44  2006/12/13 09:32:00  fbrunet
  * *** empty log message ***
  *
@@ -1473,13 +1476,8 @@ public class VolumeEntry implements IAnswer {
                 res = ParseVolume.parseEntry(this);
                 
                 //
-                //normalizeDom(); 
-                
-                //
                 this.myDO.setXmlCode(Utility.NodeToString(this.dom));
-                PapillonLogger.writeDebugMsg("---------------> target XMLCode : " + this.myDO.getXmlCode());
 				this.myDO.setDom(Utility.serializeDocument(this.dom));
-                PapillonLogger.writeDebugMsg("---------------> target DOM : " + Utility.NodeToString(Utility.deSerializeDocument(this.myDO.getDom())));
 				this.myDO.setHtmldom(Utility.serializeDocument(this.htmldom));  // FIXME: supress HTML Dom
 				this.myDO.commit();
 			

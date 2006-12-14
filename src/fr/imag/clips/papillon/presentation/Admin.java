@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.13  2006/12/14 20:03:26  fbrunet
+ * Add method to normalize value into XML structure.
+ *
  * Revision 1.12  2006/12/13 09:32:00  fbrunet
  * *** empty log message ***
  *
@@ -192,8 +195,9 @@ public class Admin extends PapillonBasePO {
             } else if (null != myGetParameter(content.NAME_ModifiedStatus)) {
 				fr.imag.clips.papillon.business.dictionary.VolumesFactory.modifiedStatus(this.getUser());
             
-            } else if (null != myGetParameter(content.NAME_NormalizeXML)) {
-				fr.imag.clips.papillon.business.dictionary.VolumesFactory.normalizeXML(this.getUser());
+            } else if (null != myGetParameter(content.NAME_Standardization)) {
+				fr.imag.clips.papillon.business.dictionary.VolumesFactory.standardization();
+                
             }
         }
 		
