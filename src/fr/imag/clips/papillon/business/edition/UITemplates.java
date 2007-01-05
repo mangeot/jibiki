@@ -8,6 +8,13 @@
  * $Id$
  *---------------------------------------------------------
  * $Log$
+ * Revision 1.8  2007/01/05 13:57:25  serasset
+ * multiple code cleanup.
+ * separation of XMLServices from the Utility class
+ * added an xml parser pool to allow reuse of parser in a multithreaded context
+ * added a new field in the db to identify the db layer version
+ * added a new system property to know which db version is known by the current app
+ *
  * Revision 1.7  2006/08/10 22:17:13  fbrunet
  * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
  * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
@@ -33,10 +40,10 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 
 import fr.imag.clips.papillon.business.dictionary.Volume;
-import fr.imag.clips.papillon.business.utility.Utility;
 import fr.imag.clips.papillon.business.PapillonLogger;
 
 import fr.imag.clips.papillon.business.PapillonBusinessException;
+import fr.imag.clips.papillon.business.xml.XMLServices;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -66,7 +73,7 @@ public class UITemplates {
 			if (typeTable == null) {
 				Volume myVolume = fr.imag.clips.papillon.business.dictionary.VolumesFactory.getVolumeByName(volumeName);
 			//	initElt = Utility.buildDOMTreeFromUrl("file:///Projects/NewUIGenerator/interface.xhtml").getDocumentElement();
-				initElt = Utility.buildDOMTree(myVolume.getTemplateInterface()).getDocumentElement();
+				initElt = XMLServices.buildDOMTree(myVolume.getTemplateInterface()).getDocumentElement();
 				if (initElt!=null) {
 					initInterfaceTable(initElt,volumeName);
 				}
@@ -123,7 +130,7 @@ public class UITemplates {
 			if (resEntry==null) {
 				Volume myVolume = fr.imag.clips.papillon.business.dictionary.VolumesFactory.getVolumeByName(volumeName);
 			//	resEntry = Utility.buildDOMTreeFromUrl("file:///Projects/NewUIGenerator/entry-template.xml").getDocumentElement();
-				resEntry = Utility.buildDOMTree(myVolume.getTemplateEntry()).getDocumentElement();
+				resEntry = XMLServices.buildDOMTree(myVolume.getTemplateEntry()).getDocumentElement();
 				entryTemplateTable.put(volumeName, resEntry);
 			}
 		}

@@ -3,6 +3,13 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.15  2007/01/05 13:57:26  serasset
+ * multiple code cleanup.
+ * separation of XMLServices from the Utility class
+ * added an xml parser pool to allow reuse of parser in a multithreaded context
+ * added a new field in the db to identify the db layer version
+ * added a new system property to know which db version is known by the current app
+ *
  * Revision 1.14  2006/08/10 22:56:01  fbrunet
  * *** empty log message ***
  *
@@ -101,42 +108,30 @@ package fr.imag.clips.papillon.business.xsl;
 
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.PapillonLogger;
+import fr.imag.clips.papillon.business.xml.XMLServices;
 import fr.imag.clips.papillon.CurrentDBTransaction;
-import fr.imag.clips.papillon.business.utility.*;
 
 import fr.imag.clips.papillon.data.XslSheetDO;
 import fr.imag.clips.papillon.data.XslSheetQuery;
-
-import com.lutris.appserver.server.sql.ObjectId;
 
 //for URLs
 import java.net.URL;
 
 import java.lang.Exception;
-import java.util.Vector;
-import java.util.Hashtable;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.ArrayList;
-import java.lang.Boolean;
 
 //pour les nouvelles entrees
 import org.w3c.dom.*;
 import java.util.Properties;
 //import org.apache.xalan.xsltc.runtime.AbstractTranslet;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.Templates;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.dom.DOMResult;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 
 /**
@@ -329,8 +324,8 @@ public class XslSheetFactory {
             String result = null;
             
             try {
-                Document docXml = Utility.buildDOMTree(fileURL);                
-                if (null != docXml) result=Utility.NodeToString(docXml);
+                Document docXml = XMLServices.buildDOMTree(fileURL);
+                if (null != docXml) result= XMLServices.xmlCode(docXml);
                 
                 //  PapillonLogger.writeDebugMsg("The XSL sheet:");
                 //  PapillonLogger.writeDebugMsg(result);
@@ -496,7 +491,7 @@ public class XslSheetFactory {
             try {   
                 
                 //
-                Document xmlSource = Utility.buildDOMTree(xmlString);
+                Document xmlSource = XMLServices.buildDOMTree(xmlString);
                 if (myDocumentBuilder == null) {
                     myDocumentBuilder = myDocumentBuilderFactory.newDocumentBuilder();
                 }        

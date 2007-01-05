@@ -7,6 +7,13 @@
  * $Id$
  *************************************************
  * $Log$
+ * Revision 1.7  2007/01/05 13:57:25  serasset
+ * multiple code cleanup.
+ * separation of XMLServices from the Utility class
+ * added an xml parser pool to allow reuse of parser in a multithreaded context
+ * added a new field in the db to identify the db layer version
+ * added a new system property to know which db version is known by the current app
+ *
  * Revision 1.6  2006/02/26 19:25:00  mangeot
  * Added a new field in index table: msort=multilingual_sort(lang,value)
  *
@@ -42,24 +49,24 @@
  */</javadoc>
             <type canBeNull="true" dbType="LONGVARCHAR" javaType="String"/>
           </column>
-          <column id="dom">
+          <!--column id="dom">
             <javadoc>/**
  * the entry as a dom document node
  */</javadoc>
             <type dbType="LONGVARBINARY" javaType="byte[]"/>
-          </column>
+          </column-->
           <column id="xmlCode" usedForQuery="true">
             <javadoc>/**
  * The XML code of the volume entry.
  */</javadoc>
             <type dbType="LONGVARCHAR" javaType="String"/>
           </column>
-          <column id="htmldom">
+          <!--column id="htmldom">
             <javadoc>/**
  * the entry formatted in html as a dom document node
  */</javadoc>
             <type canBeNull="true" dbType="LONGVARBINARY" javaType="byte[]"/>
-          </column>
+          </column-->
         </table>
         <table id="fr.imag.clips.papillon.data.Index" dbTableName="index">
           <column id="key" usedForQuery="true">

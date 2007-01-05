@@ -74,13 +74,13 @@ public class ErrorAnswer implements IAnswer {
 		;
 	}
 
-    public org.w3c.dom.Document getHtmlDom() throws fr.imag.clips.papillon.business.PapillonBusinessException {
-		return null;
-	}
-
-    public void setHtmlDom(org.w3c.dom.Document myDoc) throws fr.imag.clips.papillon.business.PapillonBusinessException {
-		;
-	}
+//    public org.w3c.dom.Document getHtmlDom() throws fr.imag.clips.papillon.business.PapillonBusinessException {
+//		return null;
+//	}
+//
+//    public void setHtmlDom(org.w3c.dom.Document myDoc) throws fr.imag.clips.papillon.business.PapillonBusinessException {
+//		;
+//	}
 		
 
     public String getHandle() throws fr.imag.clips.papillon.business.PapillonBusinessException {

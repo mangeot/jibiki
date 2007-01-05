@@ -3,6 +3,13 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.8  2007/01/05 13:57:25  serasset
+ * multiple code cleanup.
+ * separation of XMLServices from the Utility class
+ * added an xml parser pool to allow reuse of parser in a multithreaded context
+ * added a new field in the db to identify the db layer version
+ * added a new system property to know which db version is known by the current app
+ *
  * Revision 1.7  2006/08/10 22:17:12  fbrunet
  * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
  * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
@@ -51,27 +58,20 @@
 
 package fr.imag.clips.papillon.business.dictionary;
 
-import fr.imag.clips.papillon.data.*;
-import fr.imag.clips.papillon.CurrentDBTransaction;
-
-//pour les nouvelles entrees faire le nettoyage un jour ...
-import org.w3c.dom.*;
-
-//For the volume SAX Parser 
-import org.xml.sax.*;
-
-//import com.lutris.appserver.server.sql.DBConnection;
+import com.lutris.appserver.server.sql.ObjectId;
 import com.lutris.dods.builder.generator.query.QueryBuilder;
-
+import fr.imag.clips.papillon.CurrentDBTransaction;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.PapillonLogger;
-
-import com.lutris.appserver.server.sql.ObjectId;
-
-import fr.imag.clips.papillon.business.utility.*;
 import fr.imag.clips.papillon.business.user.User;
+import fr.imag.clips.papillon.business.xml.XMLServices;
+import fr.imag.clips.papillon.data.PapillonAxiDO;
+import fr.imag.clips.papillon.data.PapillonAxiQuery;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
-/* for the vectors */
 import java.util.*;
 
 
@@ -367,7 +367,7 @@ public class PapillonPivotFactory {
 	
 		protected static Document createXmlCodeFromScratch (String semCat)  throws fr.imag.clips.papillon.business.PapillonBusinessException {
 		Volume papillonPivotVolume = VolumesFactory.getVolumeByName(VOLUMENAME);
-		Document myDoc = Utility.buildDOMTree(papillonPivotVolume.getTemplateEntry());
+		Document myDoc = XMLServices.buildDOMTree(papillonPivotVolume.getTemplateEntry());
 
 			NodeList entryList = myDoc.getElementsByTagName(Axie.ENTRY_ELEMENT);
 			if (entryList != null && entryList.getLength()>0) {

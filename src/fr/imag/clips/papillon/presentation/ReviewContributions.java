@@ -9,6 +9,13 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.35  2007/01/05 13:57:26  serasset
+ * multiple code cleanup.
+ * separation of XMLServices from the Utility class
+ * added an xml parser pool to allow reuse of parser in a multithreaded context
+ * added a new field in the db to identify the db layer version
+ * added a new system property to know which db version is known by the current app
+ *
  * Revision 1.34  2006/08/10 22:17:13  fbrunet
  * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
  * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
@@ -883,7 +890,7 @@ public class ReviewContributions extends PapillonBasePO {
         throws PapillonBusinessException,
         java.io.UnsupportedEncodingException {
 
-            // On rÈcupËre les ÈlÈments du layout
+            // On récupère les éléments du layout
 			String lookupParam = content.NAME_LOOKUP + "=" + "lookup";
 			String sortHref = "&" + lookupParam + queryString;
 			
@@ -942,7 +949,7 @@ public class ReviewContributions extends PapillonBasePO {
 
 			String removeMessage = Utility.getText(removeMessageElement);
 
-            // On rÈcupËre le noeud contenant la table...
+            // On récupère le noeud contenant la table...
             Node entryTable = entryListRow.getParentNode();
             if (null != EntryCollection && EntryCollection.size()>0) {
 				PapillonLogger.writeDebugMsg("addEntryTable " + EntryCollection.size());

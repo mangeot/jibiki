@@ -3,6 +3,13 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.11  2007/01/05 13:57:25  serasset
+ * multiple code cleanup.
+ * separation of XMLServices from the Utility class
+ * added an xml parser pool to allow reuse of parser in a multithreaded context
+ * added a new field in the db to identify the db layer version
+ * added a new system property to know which db version is known by the current app
+ *
  * Revision 1.10  2006/03/27 11:47:24  mangeot
  * Added finitionDate in contributionLog
  *
@@ -70,28 +77,14 @@
 
 package fr.imag.clips.papillon.business.dictionary;
 
-import fr.imag.clips.papillon.data.*;
-import fr.imag.clips.papillon.CurrentDBTransaction;
-
-//for URLs
-import java.net.*;
-
-
-//pour parser le document avec le DOM
-import org.w3c.dom.*;
-
 import com.lutris.dods.builder.generator.query.QueryBuilder;
-
-import fr.imag.clips.papillon.business.user.User;
+import fr.imag.clips.papillon.CurrentDBTransaction;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
-import fr.imag.clips.papillon.business.PapillonLogger;
+import fr.imag.clips.papillon.business.user.User;
+import fr.imag.clips.papillon.data.ContributionLogDO;
+import fr.imag.clips.papillon.data.ContributionLogQuery;
 
-import com.lutris.appserver.server.sql.ObjectId;
-
-import java.util.*;
-import java.io.*;
-
-import fr.imag.clips.papillon.business.utility.*;
+import java.util.Vector;
 
 /**
 * Used to find the instances of xslsheet.

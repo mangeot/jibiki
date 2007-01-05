@@ -3,6 +3,13 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.57  2007/01/05 13:57:25  serasset
+ * multiple code cleanup.
+ * separation of XMLServices from the Utility class
+ * added an xml parser pool to allow reuse of parser in a multithreaded context
+ * added a new field in the db to identify the db layer version
+ * added a new system property to know which db version is known by the current app
+ *
  * Revision 1.56  2006/12/14 20:03:26  fbrunet
  * Add method to normalize value into XML structure.
  *
@@ -316,48 +323,23 @@
 
 package fr.imag.clips.papillon.business.dictionary;
 
-import fr.imag.clips.papillon.data.*;
-import fr.imag.clips.papillon.papillon_data.*;
-import fr.imag.clips.papillon.CurrentDBTransaction;
-
-// For parsing
-import java.io.*;
-
-// For vectors
-import java.util.*;
-
-// For the SAX parser
-import org.apache.xerces.parsers.*;
-import org.xml.sax.*;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-
-//import com.lutris.appserver.server.sql.DBConnection;
+import com.lutris.appserver.server.sql.ObjectId;
 import com.lutris.dods.builder.generator.query.QueryBuilder;
-
+import fr.imag.clips.papillon.CurrentDBTransaction;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.PapillonLogger;
-
-import com.lutris.appserver.server.sql.ObjectId;
-
-import fr.imag.clips.papillon.business.utility.*;
 import fr.imag.clips.papillon.business.user.User;
 import fr.imag.clips.papillon.business.user.UsersFactory;
-
-/* For the SQL statements */
+import fr.imag.clips.papillon.business.xml.XMLServices;
 import fr.imag.clips.papillon.data.*;
+import fr.imag.clips.papillon.papillon_data.ManageDatabase;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-
-import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Vector;
 import java.util.regex.Matcher;
-
-/* Execption */
-import fr.imag.clips.papillon.business.PapillonBusinessException;
+import java.util.regex.Pattern;
 
 /**
 * Used to find the instances of xslsheet.
@@ -1342,7 +1324,7 @@ throws fr.imag.clips.papillon.business.PapillonBusinessException {
         if (myDict != null && !myDict.isEmpty()) {
             myEntry = new VolumeEntry(myDict, myVolume);
             String templateEntry = myVolume.getTemplateEntry();
-            myEntry.setDom(Utility.buildDOMTree(templateEntry));
+            myEntry.setDom(XMLServices.buildDOMTree(templateEntry));
         }
     }
     return myEntry;

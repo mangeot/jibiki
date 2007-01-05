@@ -3,6 +3,13 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.41  2007/01/05 13:57:25  serasset
+ * multiple code cleanup.
+ * separation of XMLServices from the Utility class
+ * added an xml parser pool to allow reuse of parser in a multithreaded context
+ * added a new field in the db to identify the db layer version
+ * added a new system property to know which db version is known by the current app
+ *
  * Revision 1.40  2006/08/10 22:17:12  fbrunet
  * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
  * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
@@ -106,12 +113,12 @@
 package fr.imag.clips.papillon.business.dictionary;
 
 // internal imports
-import fr.imag.clips.papillon.business.PapillonLogger;
+
 import fr.imag.clips.papillon.business.PapillonBusinessException;
-import fr.imag.clips.papillon.business.utility.Utility;
+import fr.imag.clips.papillon.business.PapillonLogger;
+import fr.imag.clips.papillon.business.xml.XMLServices;
 
 import java.util.Vector;
-import java.util.Hashtable;
 
 public class ParseVolume {
 	
@@ -384,7 +391,7 @@ public class ParseVolume {
 	protected static boolean parseEntry(Dictionary myDict, Volume myVolume, String entryString, String defaultStatus, boolean isContributionVolume, int replaceExistingEntries, int replaceExistingContributions, boolean logContribs, java.util.Vector DiscardedEntries) throws PapillonBusinessException {
 		boolean result=false;
 		//PapillonLogger.writeDebugMsg("Parse entry [" + entryString + "]");
-		org.w3c.dom.Document myDoc = Utility.buildDOMTree(entryString);
+		org.w3c.dom.Document myDoc = XMLServices.buildDOMTree(entryString);
 		if (myDoc!=null) {
 			VolumeEntry newEntry = new VolumeEntry(myDict, myVolume);
 			// newEntry.setXmlCode(entryString) is called by myEntry.save();

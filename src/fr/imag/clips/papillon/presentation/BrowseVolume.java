@@ -9,6 +9,13 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.9  2007/01/05 13:57:26  serasset
+ *  multiple code cleanup.
+ *  separation of XMLServices from the Utility class
+ *  added an xml parser pool to allow reuse of parser in a multithreaded context
+ *  added a new field in the db to identify the db layer version
+ *  added a new system property to know which db version is known by the current app
+ *
  *  Revision 1.8  2006/08/10 22:17:13  fbrunet
  *  - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
  *  - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
@@ -52,7 +59,7 @@ import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
 import fr.imag.clips.papillon.business.dictionary.Index;
 import fr.imag.clips.papillon.business.dictionary.IndexFactory;
 
-import fr.imag.clips.papillon.business.utility.Utility;
+import fr.imag.clips.papillon.business.xml.XMLServices;
 
 /**
 *  Description of the Class
@@ -226,7 +233,7 @@ public class BrowseVolume extends AbstractPO {
 				}
 			}
 			
-			org.w3c.dom.Document myDoc = Utility.buildDOMTree("<?xml version='1.0' encoding='UTF-8' ?><entries>" + allArray + "</entries>");
+			org.w3c.dom.Document myDoc = XMLServices.buildDOMTree("<?xml version='1.0' encoding='UTF-8' ?><entries>" + allArray + "</entries>");
 			
             return (org.w3c.dom.Node) myDoc;
         }

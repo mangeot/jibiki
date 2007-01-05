@@ -9,6 +9,13 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.10  2007/01/05 13:57:26  serasset
+ * multiple code cleanup.
+ * separation of XMLServices from the Utility class
+ * added an xml parser pool to allow reuse of parser in a multithreaded context
+ * added a new field in the db to identify the db layer version
+ * added a new system property to know which db version is known by the current app
+ *
  * Revision 1.9  2006/05/05 02:08:23  fbrunet
  * bug correction : url utf8 transfert (in createEntryInit)
  *
@@ -70,6 +77,7 @@ package fr.imag.clips.papillon.business.user;
 
 import fr.imag.clips.papillon.data.*;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
+import fr.imag.clips.papillon.business.xml.XMLServices;
 import fr.imag.clips.papillon.CurrentDBTransaction;
 
 /* for password encryption */
@@ -81,7 +89,6 @@ import java.lang.*;
 
 
 /* for the ADMIN password in config file */
-import com.lutris.util.Config;
 import com.lutris.appserver.server.Enhydra;
 import com.lutris.util.ConfigException;
 
@@ -93,8 +100,6 @@ import com.lutris.dods.builder.generator.query.DataObjectException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-
-import fr.imag.clips.papillon.business.utility.Utility;
 
 
 public class User implements com.lutris.appserver.server.user.User {
@@ -653,7 +658,7 @@ public class User implements com.lutris.appserver.server.user.User {
 				xmlCode = serializeXml();
 			}
 			if (xmlCode!=null && !xmlCode.equals("")) {
-				Document myDocDOM = Utility.buildDOMTree(xmlCode);
+				Document myDocDOM = XMLServices.buildDOMTree(xmlCode);
 				NodeList myNodeList = myDocDOM.getElementsByTagName(PREFERENCE_TAG);
 				for (int i=0;i<myNodeList.getLength ();i++) {
 					Element currentElt = (Element) myNodeList.item(i);
@@ -678,7 +683,7 @@ public class User implements com.lutris.appserver.server.user.User {
 				xmlCode = serializeXml();
 			}
 			if (xmlCode!=null && !xmlCode.equals("")) {
-				Document myDocDOM = Utility.buildDOMTree(xmlCode);
+				Document myDocDOM = XMLServices.buildDOMTree(xmlCode);
 				NodeList myNodeList = myDocDOM.getElementsByTagName(PREFERENCE_TAG);
 				int i=0;
 				while (i<myNodeList.getLength () && !found) {
@@ -704,7 +709,7 @@ public class User implements com.lutris.appserver.server.user.User {
 						found = true;
 					}
 				}
-				this.setXmlCode(Utility.NodeToString(myDocDOM)); 
+				this.setXmlCode(XMLServices.xmlCode(myDocDOM));
 				this.save();
 			}
 			return found;

@@ -3,6 +3,13 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.33  2007/01/05 13:57:25  serasset
+ * multiple code cleanup.
+ * separation of XMLServices from the Utility class
+ * added an xml parser pool to allow reuse of parser in a multithreaded context
+ * added a new field in the db to identify the db layer version
+ * added a new system property to know which db version is known by the current app
+ *
  * Revision 1.32  2006/08/10 22:17:12  fbrunet
  * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
  * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
@@ -209,37 +216,21 @@
 
 package fr.imag.clips.papillon.business.dictionary;
 
-import fr.imag.clips.papillon.data.*;
-
-//pour les nouvelles entrees
-import org.w3c.dom.*;
-
-//import com.lutris.appserver.server.sql.DBConnection;
-import com.lutris.dods.builder.generator.query.QueryBuilder;
-
-import fr.imag.clips.papillon.business.user.User;
+import fr.imag.clips.papillon.CurrentDBTransaction;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.PapillonLogger;
-import fr.imag.clips.papillon.business.dictionary.QueryParameter;
-import fr.imag.clips.papillon.business.dictionary.Dictionary;
-import fr.imag.clips.papillon.Papillon;
+import fr.imag.clips.papillon.business.user.User;
+import fr.imag.clips.papillon.business.utility.Utility;
+import fr.imag.clips.papillon.business.xml.XMLServices;
 import fr.imag.clips.papillon.business.xsl.XslSheetFactory;
+import fr.imag.clips.papillon.data.DictionaryDO;
+import fr.imag.clips.papillon.data.DictionaryQuery;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
-import com.lutris.appserver.server.sql.ObjectId;
-
-import java.util.Collection;
-import java.util.Vector;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Enumeration;
-
-// For URLs
-import java.net.*;
-
-import fr.imag.clips.papillon.business.utility.*;
-
-import fr.imag.clips.papillon.CurrentDBTransaction;
+import java.net.URL;
+import java.util.*;
 
 /**
 * Used to find the instances of xslsheet.
@@ -346,7 +337,7 @@ public class DictionariesFactory {
             targets.trim();
 			
             // FIXME: Should we store the DOM ?
-            String xmlCode=Utility.NodeToString(dictionary);
+            String xmlCode= XMLServices.NodeToString(dictionary);
 			
             //
             Dictionary newDictionary = createUniqueDictionary(name, fullname, category, type, domain, legal, sources, targets, xmlCode);
@@ -431,9 +422,9 @@ public class DictionariesFactory {
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
             Dictionary myDict = null;
             try {
-                Document docXml = Utility.buildDOMTree(fileURL);
+                Document docXml = XMLServices.buildDOMTree(fileURL);
                 PapillonLogger.writeDebugMsg("The xml");
-                PapillonLogger.writeDebugMsg(Utility.NodeToString(docXml));
+                PapillonLogger.writeDebugMsg(XMLServices.xmlCode(docXml));
 				
                 // on recupere l'element dictionary
                 Element dictionary;
@@ -677,45 +668,47 @@ public class DictionariesFactory {
         */    
     // used only in DictEngine
     public static Collection getDictionaryEntriesCollection(Dictionary dict,
-															String source,
-															Collection targets,
-															Vector Keys1,
-															Vector Keys2,
-															String anyContains,
-															User user,
-															int offset) 
-		throws PapillonBusinessException {
-			//	Collection qrset = new HashSet();
-            Collection qrset = new Vector();
-			if (null != dict 
-				&& Utility.IsInArray(source, dict.getSourceLanguagesArray())
-				&& Utility.IsInArray(targets, dict.getTargetLanguagesArray())) {
-                
-                //
-                for (Iterator iter = VolumesFactory.getVolumesArray(dict.getName(), source, null).iterator(); iter.hasNext();) {
-                    Volume myVolume = (Volume)iter.next();
-                    
-                    // FIXME: get the limit argument
-                    Vector entriesVector = VolumeEntriesFactory.getVolumeEntriesVector(dict, myVolume, Keys1, Keys2, anyContains, offset, 0);
-                    
-                    //FIXME: hack for targets array. If the array is null, it means that all targets are asked
-                    if (targets == null) {
-                        targets = myVolume.getTargetLanguagesArray();
-                    }
-                    
-                    //
-                    for (Iterator iter2 = entriesVector.iterator(); iter2.hasNext();) {
-                        
-                        //
-                        VolumeEntry ve = (VolumeEntry) iter2.next();
-                        qrset.addAll(expandResult(ve,targets,user));
-                    }
-                }
-			}
-            
+                                                            String source,
+                                                            Collection targets,
+                                                            Vector Keys1,
+                                                            Vector Keys2,
+                                                            String anyContains,
+                                                            User user,
+                                                            int offset)
+            throws PapillonBusinessException {
+        //	Collection qrset = new HashSet();
+        Collection qrset = new Vector();
+        if ((null != dict)
+                && dict.getSourceLanguagesArray().contains(source)
+                // FIXME: up to now, the preceding statement was always true. I changed it to intersect...
+                && ((targets == null) || Utility.intersect(targets, dict.getTargetLanguagesArray()))) {
+
             //
-			return qrset;
-		}
+            for (Iterator iter = VolumesFactory.getVolumesArray(dict.getName(), source, null).iterator(); iter.hasNext();)
+            {
+                Volume myVolume = (Volume) iter.next();
+
+                // FIXME: get the limit argument
+                Vector entriesVector = VolumeEntriesFactory.getVolumeEntriesVector(dict, myVolume, Keys1, Keys2, anyContains, offset, 0);
+
+                //FIXME: hack for targets array. If the array is null, it means that all targets are asked
+                if (targets == null) {
+                    targets = myVolume.getTargetLanguagesArray();
+                }
+
+                //
+                for (Iterator iter2 = entriesVector.iterator(); iter2.hasNext();) {
+
+                    //
+                    VolumeEntry ve = (VolumeEntry) iter2.next();
+                    qrset.addAll(expandResult(ve, targets, user));
+                }
+            }
+        }
+
+        //
+        return qrset;
+    }
 	
 	
     /** 
@@ -863,7 +856,7 @@ public class DictionariesFactory {
 			Collection entriesCollection = null;
 			
             //
-            if (null != dict && Utility.IsInArray(source, dict.getTargetLanguagesArray())) {
+            if (null != dict && dict.getTargetLanguagesArray().contains(source)) {
                 
                 //
                 entriesCollection = (Collection) new Vector();
@@ -875,8 +868,8 @@ public class DictionariesFactory {
                     Volume myVolume = (Volume)iter.next();
                     if (myVolume.IsReverseLookup() 
                         && !myVolume.getName().equals(PAPILLONAXI)
-                        && Utility.IsInArray(source, myVolume.getTargetLanguagesArray())  
-                        && Utility.IsInArray(myVolume.getSourceLanguage(), targets)
+                        && myVolume.getTargetLanguagesArray().contains(source)
+                        && targets.contains(myVolume.getSourceLanguage())
                         && theKeys1.size()>0) {
                         PapillonLogger.writeDebugMsg("Volume Reverse Lookup: " + myVolume.getName() + " " + source + " -> " + myVolume.getSourceLanguage());
                         for (java.util.Enumeration enumKeys = theKeys1.elements(); enumKeys.hasMoreElements();) {

@@ -3,6 +3,13 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2007/01/05 13:57:25  serasset
+ * multiple code cleanup.
+ * separation of XMLServices from the Utility class
+ * added an xml parser pool to allow reuse of parser in a multithreaded context
+ * added a new field in the db to identify the db layer version
+ * added a new system property to know which db version is known by the current app
+ *
  * Revision 1.3  2005/01/15 12:51:24  mangeot
  * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
  *
@@ -22,9 +29,8 @@
 package fr.imag.clips.papillon.business.dictionary;
 
 // General import
-import java.util.TreeSet;
 
-import fr.imag.clips.papillon.business.PapillonBusinessException;
+import java.util.TreeSet;
 
 /**
 * Used to manage wrappers.

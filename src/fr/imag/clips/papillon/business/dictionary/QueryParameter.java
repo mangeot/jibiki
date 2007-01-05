@@ -9,6 +9,13 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.5  2007/01/05 13:57:25  serasset
+ * multiple code cleanup.
+ * separation of XMLServices from the Utility class
+ * added an xml parser pool to allow reuse of parser in a multithreaded context
+ * added a new field in the db to identify the db layer version
+ * added a new system property to know which db version is known by the current app
+ *
  * Revision 1.4  2006/08/10 22:17:12  fbrunet
  * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
  * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
@@ -41,12 +48,10 @@
 package fr.imag.clips.papillon.business.dictionary;
 
 /* standards imports */
-import java.util.Hashtable;
+
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Collection;
-import java.lang.Integer;
-import java.lang.Object;
+import java.util.List;
 
 
 /**

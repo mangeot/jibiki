@@ -9,6 +9,13 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2007/01/05 13:57:26  serasset
+ * multiple code cleanup.
+ * separation of XMLServices from the Utility class
+ * added an xml parser pool to allow reuse of parser in a multithreaded context
+ * added a new field in the db to identify the db layer version
+ * added a new system property to know which db version is known by the current app
+ *
  * Revision 1.3  2006/08/11 00:29:21  mangeot
  * reset News DOM cache
  *
@@ -31,11 +38,10 @@
 package fr.imag.clips.papillon.presentation;
 
 // Enhydra SuperServlet imports
-import com.lutris.appserver.server.httpPresentation.HttpPresentation;
 import com.lutris.appserver.server.httpPresentation.HttpPresentationException;
 
 import fr.imag.clips.papillon.presentation.xhtml.orig.EditNewsTmplXHTML;
-import fr.imag.clips.papillon.business.utility.Utility;
+import fr.imag.clips.papillon.business.xml.XMLServices;
 
 
 public class EditNews extends PapillonBasePO {
@@ -70,19 +76,19 @@ public class EditNews extends PapillonBasePO {
 			
 			textarea = textarea.substring(textarea.indexOf("<?xml version"));
 			
-			org.w3c.dom.Document newDocument = Utility.buildDOMTree(textarea);
+			org.w3c.dom.Document newDocument = XMLServices.buildDOMTree(textarea);
 			//org.w3c.dom.Element newElement = newDocument.getElementById(NewsContentIdString);
 			org.w3c.dom.Element newElement = newDocument.getDocumentElement();
 			
 			org.xml.sax.InputSource newsInputSource = getInputSource(getNewsFileAbsolutePath());
 			if (newsInputSource != null) {
-				org.w3c.dom.Document myNewsDocument = fr.imag.clips.papillon.business.utility.Utility.buildDOMTree(newsInputSource);
+				org.w3c.dom.Document myNewsDocument = XMLServices.buildDOMTree(newsInputSource);
 				if (myNewsDocument != null) {
 					newsDOMDocument = myNewsDocument.getElementById(NewsContentIdString);
 					org.w3c.dom.Node newParentNode = newsDOMDocument.getParentNode();
 					org.w3c.dom.Node importedNode = myNewsDocument.importNode((org.w3c.dom.Node)newElement, true);
 					newParentNode.replaceChild(importedNode,(org.w3c.dom.Node)newsDOMDocument);
-					Utility.printToFile(myNewsDocument,getNewsFileAbsolutePath());
+					XMLServices.printToFile(myNewsDocument,getNewsFileAbsolutePath());
 					News.resetCache();
 				}
 			}
@@ -92,13 +98,13 @@ public class EditNews extends PapillonBasePO {
 		
 			org.xml.sax.InputSource newsInputSource = getInputSource(getNewsFileAbsolutePath());
 			if (newsInputSource != null) {
-				org.w3c.dom.Document myNewsDocument = fr.imag.clips.papillon.business.utility.Utility.buildDOMTree(newsInputSource);
+				org.w3c.dom.Document myNewsDocument = XMLServices.buildDOMTree(newsInputSource);
 				if (myNewsDocument != null) {
 					newsDOMDocument = myNewsDocument.getElementById(NewsContentIdString);
 				}
 			}
 			
-		org.w3c.dom.Text textareaTextNode = new org.apache.xerces.dom.TextImpl((org.apache.xerces.dom.DocumentImpl)content.getOwnerDocument(), Utility.NodeToString((org.w3c.dom.Element) newsDOMDocument));
+		org.w3c.dom.Text textareaTextNode = new org.apache.xerces.dom.TextImpl((org.apache.xerces.dom.DocumentImpl)content.getOwnerDocument(), XMLServices.NodeToString((org.w3c.dom.Element) newsDOMDocument));
 
         //On rend le contenu correct
 		content.getElementPreview().appendChild(content.importNode(newsDOMDocument, true));

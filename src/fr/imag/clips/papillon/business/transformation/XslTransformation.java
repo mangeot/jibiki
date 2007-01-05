@@ -4,6 +4,13 @@
  *$Id$
  *------------------------
  *$Log$
+ *Revision 1.14  2007/01/05 13:57:25  serasset
+ *multiple code cleanup.
+ *separation of XMLServices from the Utility class
+ *added an xml parser pool to allow reuse of parser in a multithreaded context
+ *added a new field in the db to identify the db layer version
+ *added a new system property to know which db version is known by the current app
+ *
  *Revision 1.13  2006/08/10 22:17:13  fbrunet
  *- Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
  *- Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
@@ -94,14 +101,16 @@
 
 package fr.imag.clips.papillon.business.transformation;
 
-import java.util.Hashtable;
-import java.util.Vector;
-import java.util.Iterator;
-import java.util.Collection;
-
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.StringReader;
+import fr.imag.clips.papillon.business.PapillonBusinessException;
+import fr.imag.clips.papillon.business.dictionary.*;
+import fr.imag.clips.papillon.business.user.User;
+import fr.imag.clips.papillon.business.xml.XMLServices;
+import fr.imag.clips.papillon.business.xsl.XslSheet;
+import fr.imag.clips.papillon.business.xsl.XslSheetFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -110,236 +119,216 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import fr.imag.clips.papillon.business.user.User;
-import fr.imag.clips.papillon.business.dictionary.IAnswer;
-import fr.imag.clips.papillon.business.dictionary.QueryResult;
-import fr.imag.clips.papillon.business.dictionary.Dictionary;
-import fr.imag.clips.papillon.business.dictionary.ParseVolume;
-import fr.imag.clips.papillon.business.dictionary.Volume;
-import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
-import fr.imag.clips.papillon.business.xsl.XslSheet;
-import fr.imag.clips.papillon.business.xsl.XslSheetFactory;
-import fr.imag.clips.papillon.business.utility.Utility;
-import fr.imag.clips.papillon.business.transformation.ResultFormatter;
-
-import fr.imag.clips.papillon.business.PapillonLogger;
-import fr.imag.clips.papillon.business.PapillonBusinessException;
+import java.io.ByteArrayOutputStream;
+import java.util.Collection;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Vector;
 
 
 public class XslTransformation implements ResultFormatter {
 
-	public static final String XML_FORMATTER = "XML";
-	
-	// Constants
-	// Note: I use constants extensively because the XSL transformations are a little
-	// bit slow
-	protected static Hashtable XslSheetCache = new Hashtable();
-	
+    public static final String XML_FORMATTER = "XML";
+
+    // Constants
+    // Note: I use constants extensively because the XSL transformations are a little
+    // bit slow
+    protected static Hashtable XslSheetCache = new Hashtable();
+
     protected Vector currentXslSheetSequence = null;
-    
+
     public void initializeFormatter(Dictionary dict, Volume vol, Object parameter, int dialect, String lang) throws PapillonBusinessException {
         // Find the correct XslSheet or xslsheet sequence for the given parameters.
         // FIXME: I currently use the same strategy, but this has to be redefined.
         currentXslSheetSequence = new Vector();
-		
-		String formatter = (String) parameter;
-        
-		/*
-		if (formatter!=null && !formatter.equals("")) {
-			currentXslSheetSequence.add(XslSheetFactory.findXslSheetByName(formatter));
-		}
-		else {
-			// Get the dictionary sheet...
-			currentXslSheetSequence.add(XslSheetFactory.findXslSheetByName(dict.getName()));
-			// Then the volume one...
-			currentXslSheetSequence.add(XslSheetFactory.findXslSheetByName(vol.getName()));
-			// Last, the defaut one
-			currentXslSheetSequence.add(XslSheetFactory.findXslSheetByName("DEFAULT"));
-		}
+
+        String formatter = (String) parameter;
+
+        /*
+        if (formatter!=null && !formatter.equals("")) {
+            currentXslSheetSequence.add(XslSheetFactory.findXslSheetByName(formatter));
+        }
+        else {
+            // Get the dictionary sheet...
+            currentXslSheetSequence.add(XslSheetFactory.findXslSheetByName(dict.getName()));
+            // Then the volume one...
+            currentXslSheetSequence.add(XslSheetFactory.findXslSheetByName(vol.getName()));
+            // Last, the defaut one
+            currentXslSheetSequence.add(XslSheetFactory.findXslSheetByName("DEFAULT"));
+        }
         // FIXME: How can the user specify a xsl if there is the choice between several...
         */
-         
+
         currentXslSheetSequence.add(XslSheetFactory.getXslSheet(dict.getName(), vol.getName(), formatter));
-         
+
     }
-    
+
     public Node getFormattedResult(QueryResult qr, User usr) throws PapillonBusinessException {
         Node doc = null;
         try {
-            if ((qr.getResultKind() == QueryResult.UNIQUE_RESULT) || 
-                (qr.getResultKind() == QueryResult.REVERSE_UNIQUE_RESULT)) {
+            if ((qr.getResultKind() == QueryResult.UNIQUE_RESULT) ||
+                    (qr.getResultKind() == QueryResult.REVERSE_UNIQUE_RESULT)) {
                 doc = (Node) qr.getSourceEntry().getDom();
-                for (int i=0; i < currentXslSheetSequence.size(); i++) {
+                for (int i = 0; i < currentXslSheetSequence.size(); i++) {
                     XslSheet xsl = (XslSheet) currentXslSheetSequence.elementAt(i);
-                    if (null != xsl && ! xsl.isEmpty()) {
+                    if (null != xsl && !xsl.isEmpty()) {
                         doc = Transform(doc, xsl);
                     }
                 }
-            } 
-			else if (qr.getResultKind() == QueryResult.AXIE_COLLECTION_RESULT) {
+            } else if (qr.getResultKind() == QueryResult.AXIE_COLLECTION_RESULT) {
                 // FIXME: What should I do in this case ?
-                doc = (Node)qr.getSourceEntry().getDom();
-            }
-			else if (qr.getResultKind() == QueryResult.DIRECT_TRANSLATIONS_RESULT) {
-				VolumeEntry myAnswer = qr.getSourceEntry();
-				if (myAnswer.getHtmlDom() == null) {					
-					Volume myVolume = myAnswer.getVolume();
-					Dictionary myDictionary = myAnswer.getDictionary();
-					
+                doc = (Node) qr.getSourceEntry().getDom();
+            } else if (qr.getResultKind() == QueryResult.DIRECT_TRANSLATIONS_RESULT) {
+                VolumeEntry myAnswer = qr.getSourceEntry();
+
+                Volume myVolume = myAnswer.getVolume();
+                Dictionary myDictionary = myAnswer.getDictionary();
+
+                //
+                Collection targets = myVolume.getTargetLanguagesArray();
+                for (Iterator iter = targets.iterator(); iter.hasNext();) {
+                    String target = (String) iter.next();
+
                     //
-                    Collection targets = myVolume.getTargetLanguagesArray();
-					for (Iterator iter = targets.iterator(); iter.hasNext();) {
-						String target = (String)iter.next();
-                        
-                        //
-						if (target != null && !target.equals("")) {
-						NodeList myNodeList = ParseVolume.getCdmElements(myAnswer, Volume.CDM_translationReflexie, target);
-						if ((myNodeList != null) && (myNodeList.getLength()>0)) {
-							for (int i=0; i<myNodeList.getLength();i++) {
-								Node myNode = myNodeList.item(i);
-								String translationId = myNode.getNodeValue();
-								if (myNode.getNodeType()==Node.TEXT_NODE) {
-									Node textNode = myNode;
-									myNode = myNode.getParentNode();
-									myNode.removeChild(textNode);
-								}
-								VolumeEntry newEntry = (VolumeEntry) qr.getLexiesHashtable().get(translationId);
-								if (newEntry != null && !newEntry.isEmpty()) {
-									Node tempNode = myAnswer.getDom().importNode((Node)newEntry.getDom().getDocumentElement(),true);
-									myNode.appendChild(tempNode);
-								}
-							}
-						}
-					}
-					}
-					doc = (Node)myAnswer.getDom();
-					for (int i=0; i < currentXslSheetSequence.size(); i++) {
-						XslSheet xsl = (XslSheet) currentXslSheetSequence.elementAt(i);
-						if (null != xsl && ! xsl.isEmpty()) {
-							doc = Transform(doc, xsl);
-						}
-					}
-				}
-				else {
-					doc = (Node)myAnswer.getHtmlDom();
-				}
-			}
-		} 
-		catch(Exception ex) {
+                    if (target != null && !target.equals("")) {
+                        NodeList myNodeList = ParseVolume.getCdmElements(myAnswer, Volume.CDM_translationReflexie, target);
+                        if ((myNodeList != null) && (myNodeList.getLength() > 0)) {
+                            for (int i = 0; i < myNodeList.getLength(); i++) {
+                                Node myNode = myNodeList.item(i);
+                                String translationId = myNode.getNodeValue();
+                                if (myNode.getNodeType() == Node.TEXT_NODE) {
+                                    Node textNode = myNode;
+                                    myNode = myNode.getParentNode();
+                                    myNode.removeChild(textNode);
+                                }
+                                VolumeEntry newEntry = (VolumeEntry) qr.getLexiesHashtable().get(translationId);
+                                if (newEntry != null && !newEntry.isEmpty()) {
+                                    Node tempNode = myAnswer.getDom().importNode((Node) newEntry.getDom().getDocumentElement(), true);
+                                    myNode.appendChild(tempNode);
+                                }
+                            }
+                        }
+                    }
+                }
+                doc = (Node) myAnswer.getDom();
+                for (int i = 0; i < currentXslSheetSequence.size(); i++) {
+                    XslSheet xsl = (XslSheet) currentXslSheetSequence.elementAt(i);
+                    if (null != xsl && !xsl.isEmpty()) {
+                        doc = Transform(doc, xsl);
+                    }
+                }
+
+            }
+        }
+        catch (Exception ex) {
             throw new fr.imag.clips.papillon.business.PapillonBusinessException("Exception in getFormattedResult()", ex);
-        }	
-		if (doc != null && doc.getNodeType()==Node.DOCUMENT_NODE) { 
-			doc = (Node)((Document)doc).getDocumentElement();
-		}
-		return doc;
-	}
+        }
+        if (doc != null && doc.getNodeType() == Node.DOCUMENT_NODE) {
+            doc = (Node) ((Document) doc).getDocumentElement();
+        }
+        return doc;
+    }
 
-    
-	//outils pour les transformation
-	protected static final TransformerFactory myTransformerFactory = TransformerFactory.newInstance();
-	// preparation du resultat//usine a document duilder
-	protected static final DocumentBuilderFactory myDocumentBuilderFactory = DocumentBuilderFactory.newInstance();
-	//on cree le constructeur de document
-	protected static DocumentBuilder myDocumentBuilder = null; 	
-	/**
-    Transform the xml source by processing it with an xsl sheet.
-	 */
+
+    //outils pour les transformation
+    protected static final TransformerFactory myTransformerFactory = TransformerFactory.newInstance();
+    // preparation du resultat//usine a document duilder
+    protected static final DocumentBuilderFactory myDocumentBuilderFactory = DocumentBuilderFactory.newInstance();
+    //on cree le constructeur de document
+    protected static DocumentBuilder myDocumentBuilder = null;
+
+    /**
+     * Transform the xml source by processing it with an xsl sheet.
+     */
     public static Document Transform(Node xmlSource, XslSheet xslSheet)
-		throws fr.imag.clips.papillon.business.PapillonBusinessException,
-		javax.xml.transform.TransformerConfigurationException,
-		javax.xml.parsers.ParserConfigurationException,
-		javax.xml.transform.TransformerException,
-		java.io.UnsupportedEncodingException,
-		java.io.IOException {
+            throws fr.imag.clips.papillon.business.PapillonBusinessException,
+                   javax.xml.transform.TransformerConfigurationException,
+                   javax.xml.parsers.ParserConfigurationException,
+                   javax.xml.transform.TransformerException,
+                   java.io.UnsupportedEncodingException,
+                   java.io.IOException {
 
-			Transformer myTransformer = xslSheet.getTransformer();
-			
-			//the result
-			if (myDocumentBuilder==null) {
-				myDocumentBuilder = myDocumentBuilderFactory.newDocumentBuilder();
-			}
-			Document newDocument=myDocumentBuilder.newDocument();
-			//the transformation
-			// is there a way to obtain a dom result which is a text string?
-			myTransformer.transform (new DOMSource(xmlSource),new DOMResult(newDocument));
-			
-            //
-            return newDocument;
-		}
+        Transformer myTransformer = xslSheet.getTransformer();
+
+        //the result
+        if (myDocumentBuilder == null) {
+            myDocumentBuilder = myDocumentBuilderFactory.newDocumentBuilder();
+        }
+        Document newDocument = myDocumentBuilder.newDocument();
+        //the transformation
+        // is there a way to obtain a dom result which is a text string?
+        myTransformer.transform(new DOMSource(xmlSource), new DOMResult(newDocument));
+
+        //
+        return newDocument;
+    }
 
     protected static String TransformToText(Node xmlSource, XslSheet xslSheet)
-		throws fr.imag.clips.papillon.business.PapillonBusinessException,
-		javax.xml.transform.TransformerConfigurationException,
-		javax.xml.parsers.ParserConfigurationException,
-		javax.xml.transform.TransformerException,
-		java.io.UnsupportedEncodingException,
-		java.io.IOException {
+            throws fr.imag.clips.papillon.business.PapillonBusinessException,
+                   javax.xml.transform.TransformerConfigurationException,
+                   javax.xml.parsers.ParserConfigurationException,
+                   javax.xml.transform.TransformerException,
+                   java.io.UnsupportedEncodingException,
+                   java.io.IOException {
 
-			String resultString = "";
-			Transformer myTransformer = xslSheet.getTransformer();
-			
-			//the result
-			if (myDocumentBuilder==null) {
-				myDocumentBuilder = myDocumentBuilderFactory.newDocumentBuilder();
-			}
-            
-            //
-			Document newDocument=myDocumentBuilder.newDocument();
-			//the transformation
-			// is there a way to obtain a dom result which is a text string?
-		//	myTransformer.transform (new DOMSource(xmlSource),new DOMResult(newDocument));
-			ByteArrayOutputStream bytearrayout = new ByteArrayOutputStream();
-			myTransformer.transform (new DOMSource(xmlSource),new StreamResult(bytearrayout));
-			resultString = bytearrayout.toString("UTF-8");
-			bytearrayout.close();
-			return resultString;
-		}
+        String resultString = "";
+        Transformer myTransformer = xslSheet.getTransformer();
 
-	
-	public static String applyXslSheetsAndSerialize(IAnswer answer)
-    throws fr.imag.clips.papillon.business.PapillonBusinessException {
-		return Utility.NodeToString(applyXslSheets(answer));
-	}
-	
-	public static Element applyXslSheets(IAnswer answer)
-	throws fr.imag.clips.papillon.business.PapillonBusinessException {
-		org.w3c.dom.Document result = answer.getDom();
-            try {
-				// We apply cascades of XSL
-				// First, the one for the dictionary if there is
-				/*
-                XslSheet theXslSheet = XslSheetFactory.findXslSheetByName(answer.getDictionaryName());
-				if (!theXslSheet.isEmpty()) {
-					result = Transform((Node)result, theXslSheet);					
-					// Second, the one for the volume if there is
-					theXslSheet = XslSheetFactory.findXslSheetByName(answer.getVolumeName());
-					if (null != theXslSheet && !theXslSheet.isEmpty()) {
-						result = Transform((Node)result, theXslSheet);
-					}
-					// Last, the default one
-					theXslSheet = XslSheetFactory.findDefaultXslSheet();
-					if (!theXslSheet.isEmpty()) {
-						result = XslTransformation.Transform((Node)result, theXslSheet);
-					}
-				}
-                 */
-                XslSheet theXslSheet = XslSheetFactory.getXslSheet(answer.getDictionaryName(), answer.getVolumeName(), "");
-                if (!theXslSheet.isEmpty()) {
-                    result = XslTransformation.Transform((Node)result, theXslSheet);
-                }
-			}
-			catch(Exception ex) {
-				throw new fr.imag.clips.papillon.business.PapillonBusinessException("Exception in applyXslSheets()", ex);
-			}	
-			return result.getDocumentElement();
-	}
+        //the result
+        if (myDocumentBuilder == null) {
+            myDocumentBuilder = myDocumentBuilderFactory.newDocumentBuilder();
+        }
+
+        //
+        Document newDocument = myDocumentBuilder.newDocument();
+        //the transformation
+        // is there a way to obtain a dom result which is a text string?
+        //	myTransformer.transform (new DOMSource(xmlSource),new DOMResult(newDocument));
+        ByteArrayOutputStream bytearrayout = new ByteArrayOutputStream();
+        myTransformer.transform(new DOMSource(xmlSource), new StreamResult(bytearrayout));
+        resultString = bytearrayout.toString("UTF-8");
+        bytearrayout.close();
+        return resultString;
+    }
+
+
+    public static String applyXslSheetsAndSerialize(IAnswer answer)
+            throws fr.imag.clips.papillon.business.PapillonBusinessException {
+        return XMLServices.NodeToString(applyXslSheets(answer));
+    }
+
+    public static Element applyXslSheets(IAnswer answer)
+            throws fr.imag.clips.papillon.business.PapillonBusinessException {
+        org.w3c.dom.Document result = answer.getDom();
+        try {
+            // We apply cascades of XSL
+            // First, the one for the dictionary if there is
+            /*
+           XslSheet theXslSheet = XslSheetFactory.findXslSheetByName(answer.getDictionaryName());
+           if (!theXslSheet.isEmpty()) {
+               result = Transform((Node)result, theXslSheet);
+               // Second, the one for the volume if there is
+               theXslSheet = XslSheetFactory.findXslSheetByName(answer.getVolumeName());
+               if (null != theXslSheet && !theXslSheet.isEmpty()) {
+                   result = Transform((Node)result, theXslSheet);
+               }
+               // Last, the default one
+               theXslSheet = XslSheetFactory.findDefaultXslSheet();
+               if (!theXslSheet.isEmpty()) {
+                   result = XslTransformation.Transform((Node)result, theXslSheet);
+               }
+           }
+            */
+            XslSheet theXslSheet = XslSheetFactory.getXslSheet(answer.getDictionaryName(), answer.getVolumeName(), "");
+            if (!theXslSheet.isEmpty()) {
+                result = XslTransformation.Transform((Node) result, theXslSheet);
+            }
+        }
+        catch (Exception ex) {
+            throw new fr.imag.clips.papillon.business.PapillonBusinessException("Exception in applyXslSheets()", ex);
+        }
+        return result.getDocumentElement();
+    }
 
     /*
 	public static Element applyXslSheets(IAnswer answer, String xslid)
@@ -370,7 +359,7 @@ public class XslTransformation implements ResultFormatter {
 
 		Node result = null;
 		XslSheet theXslSheet;
-		Document resultDoc = Utility.buildDOMTree(xmlString);
+		Document resultDoc = Utility.newDOMTree(xmlString);
 		if (resultDoc != null) {
 		try {
 			// If there is one XSL sheet for XML
@@ -394,106 +383,106 @@ public class XslTransformation implements ResultFormatter {
 */
 
     // FIXME: This is only called by DictEngine (dictd protocol). This should be handled via the notion of "dialect" of xslsheets.
-	public static String applyXslSheetsForText(IAnswer answer)
-		throws fr.imag.clips.papillon.business.PapillonBusinessException {
-			
-			org.w3c.dom.Document resultDOM = answer.getDom();
-			String resultString = "";
-			try {
-                
-                //
-                XslSheet theXslSheet = XslSheetFactory.getXslSheet(answer.getDictionaryName(), answer.getVolumeName(), XslSheet.TEXT_view);
-				if (!theXslSheet.isEmpty()) {
-					resultString = XslTransformation.TransformToText((Node)resultDOM, theXslSheet);
-				}
-				if (resultString == null || resultString.equals("")) {
-					resultString = answer.getXmlCode();
-				}
-                
-				// We apply cascades of XSL
-				// First, the one for the dictionary if there is
-				/*
-                XslSheet theXslSheet = XslSheetFactory.findXslSheetByName(answer.getDictionaryName());
-				if (!theXslSheet.isEmpty()) {
-					resultDOM = Transform((Node)resultDOM, theXslSheet);					
-					// Second, the one for the volume if there is
-					theXslSheet = XslSheetFactory.findXslSheetByName(answer.getVolumeName());
-					if (null != theXslSheet && !theXslSheet.isEmpty()) {
-						resultDOM = Transform((Node)resultDOM, theXslSheet);
-					}
-				}
-				// Last, the default one
-				theXslSheet = XslSheetFactory.findXslSheetByName(XslSheet.TEXT_view);
-				if (!theXslSheet.isEmpty()) {
-					resultString = XslTransformation.TransformToText((Node)resultDOM, theXslSheet);
-				}
-				if (resultString == null || resultString.equals("")) {
-					resultString = answer.getXmlCode();
-				}
-				
-				theXslSheet = XslSheetFactory.findXslSheetByName(answer.getVolumeName() + XslSheet.TEXT_suffix);
-				if (theXslSheet.isEmpty()) {
-					theXslSheet = XslSheetFactory.findXslSheetByName(answer.getDictionaryName() + XslSheet.TEXT_suffix);
-				}
- 
-				if (theXslSheet.isEmpty()) {
-					theXslSheet = XslSheetFactory.findXslSheetByName(XslSheet.TEXT_view);
-				}
 
-				if (!theXslSheet.isEmpty()) {	
-					Document resultDoc = answer.getDom();				
-					result = TransformToText((Node)resultDoc, theXslSheet);
-				}
-				else {
-					result = answer.getXmlCode();
-				} */
-			}
-			catch(Exception ex) {
-				throw new fr.imag.clips.papillon.business.PapillonBusinessException("Exception in applyXslSheetForXml()", ex);
-			}
-			return resultString;
-		}
-	
+    public static String applyXslSheetsForText(IAnswer answer)
+            throws fr.imag.clips.papillon.business.PapillonBusinessException {
+
+        org.w3c.dom.Document resultDOM = answer.getDom();
+        String resultString = "";
+        try {
+
+            //
+            XslSheet theXslSheet = XslSheetFactory.getXslSheet(answer.getDictionaryName(), answer.getVolumeName(), XslSheet.TEXT_view);
+            if (!theXslSheet.isEmpty()) {
+                resultString = XslTransformation.TransformToText((Node) resultDOM, theXslSheet);
+            }
+            if (resultString == null || resultString.equals("")) {
+                resultString = answer.getXmlCode();
+            }
+
+            // We apply cascades of XSL
+            // First, the one for the dictionary if there is
+            /*
+                   XslSheet theXslSheet = XslSheetFactory.findXslSheetByName(answer.getDictionaryName());
+                   if (!theXslSheet.isEmpty()) {
+                       resultDOM = Transform((Node)resultDOM, theXslSheet);
+                       // Second, the one for the volume if there is
+                       theXslSheet = XslSheetFactory.findXslSheetByName(answer.getVolumeName());
+                       if (null != theXslSheet && !theXslSheet.isEmpty()) {
+                           resultDOM = Transform((Node)resultDOM, theXslSheet);
+                       }
+                   }
+                   // Last, the default one
+                   theXslSheet = XslSheetFactory.findXslSheetByName(XslSheet.TEXT_view);
+                   if (!theXslSheet.isEmpty()) {
+                       resultString = XslTransformation.TransformToText((Node)resultDOM, theXslSheet);
+                   }
+                   if (resultString == null || resultString.equals("")) {
+                       resultString = answer.getXmlCode();
+                   }
+
+                   theXslSheet = XslSheetFactory.findXslSheetByName(answer.getVolumeName() + XslSheet.TEXT_suffix);
+                   if (theXslSheet.isEmpty()) {
+                       theXslSheet = XslSheetFactory.findXslSheetByName(answer.getDictionaryName() + XslSheet.TEXT_suffix);
+                   }
+
+                   if (theXslSheet.isEmpty()) {
+                       theXslSheet = XslSheetFactory.findXslSheetByName(XslSheet.TEXT_view);
+                   }
+
+                   if (!theXslSheet.isEmpty()) {
+                       Document resultDoc = answer.getDom();
+                       result = TransformToText((Node)resultDoc, theXslSheet);
+                   }
+                   else {
+                       result = answer.getXmlCode();
+                   } */
+        }
+        catch (Exception ex) {
+            throw new fr.imag.clips.papillon.business.PapillonBusinessException("Exception in applyXslSheetForXml()", ex);
+        }
+        return resultString;
+    }
+
     // This should be handled via the notion of "dialect" of xslsheets.
-	public static Element applyXslSheetsForFo(IAnswer answer)
-		throws fr.imag.clips.papillon.business.PapillonBusinessException {
-			org.w3c.dom.Document result = answer.getDom();
-            try {
-                XslSheet theXslSheet = XslSheetFactory.getXslSheet(answer.getDictionaryName(), answer.getVolumeName(), XslSheet.FO_view);
-				if (!theXslSheet.isEmpty()) {
-					result = XslTransformation.Transform((Node)result, theXslSheet);
-				}
-                /*
-				// We apply cascades of XSL
-				// First, the one for the dictionary if there is
-				XslSheet theXslSheet = XslSheetFactory.findXslSheetByName(answer.getDictionaryName());
-				if (!theXslSheet.isEmpty()) {
-					result = Transform((Node)result, theXslSheet);					
-					// Second, the one for the volume if there is
-					theXslSheet = XslSheetFactory.findXslSheetByName(answer.getVolumeName());
-					if (null != theXslSheet && !theXslSheet.isEmpty()) {
-						result = Transform((Node)result, theXslSheet);
-					}
-				}
-				// Last, the default one
-				theXslSheet = XslSheetFactory.findXslSheetByName(XslSheet.FO_view);
-				if (!theXslSheet.isEmpty()) {
-					result = XslTransformation.Transform((Node)result, theXslSheet);
-				}
-                 */
-			}
-			catch(Exception ex) {
-				throw new fr.imag.clips.papillon.business.PapillonBusinessException("Exception in applyXslSheets()", ex);
-			}	
-			return result.getDocumentElement();
-		}
-	
-	
-    
-	public static void resetCache() {
-		XslSheetCache = new Hashtable();
-	}
-    
+    public static Element applyXslSheetsForFo(IAnswer answer)
+            throws fr.imag.clips.papillon.business.PapillonBusinessException {
+        org.w3c.dom.Document result = answer.getDom();
+        try {
+            XslSheet theXslSheet = XslSheetFactory.getXslSheet(answer.getDictionaryName(), answer.getVolumeName(), XslSheet.FO_view);
+            if (!theXslSheet.isEmpty()) {
+                result = XslTransformation.Transform((Node) result, theXslSheet);
+            }
+            /*
+           // We apply cascades of XSL
+           // First, the one for the dictionary if there is
+           XslSheet theXslSheet = XslSheetFactory.findXslSheetByName(answer.getDictionaryName());
+           if (!theXslSheet.isEmpty()) {
+               result = Transform((Node)result, theXslSheet);
+               // Second, the one for the volume if there is
+               theXslSheet = XslSheetFactory.findXslSheetByName(answer.getVolumeName());
+               if (null != theXslSheet && !theXslSheet.isEmpty()) {
+                   result = Transform((Node)result, theXslSheet);
+               }
+           }
+           // Last, the default one
+           theXslSheet = XslSheetFactory.findXslSheetByName(XslSheet.FO_view);
+           if (!theXslSheet.isEmpty()) {
+               result = XslTransformation.Transform((Node)result, theXslSheet);
+           }
+            */
+        }
+        catch (Exception ex) {
+            throw new fr.imag.clips.papillon.business.PapillonBusinessException("Exception in applyXslSheets()", ex);
+        }
+        return result.getDocumentElement();
+    }
+
+
+    public static void resetCache() {
+        XslSheetCache = new Hashtable();
+    }
+
 }
 
 

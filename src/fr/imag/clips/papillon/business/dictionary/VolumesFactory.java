@@ -3,9 +3,12 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.47  2007/01/05 12:57:49  fbrunet
- * Add undo draft method (bug in EditEntry.java : undo after last finish contribution)
- * Modify transformation method
+ * Revision 1.48  2007/01/05 13:57:25  serasset
+ * multiple code cleanup.
+ * separation of XMLServices from the Utility class
+ * added an xml parser pool to allow reuse of parser in a multithreaded context
+ * added a new field in the db to identify the db layer version
+ * added a new system property to know which db version is known by the current app
  *
  * Revision 1.46  2006/12/14 20:03:26  fbrunet
  * Add method to normalize value into XML structure.
@@ -182,46 +185,26 @@
 
 package fr.imag.clips.papillon.business.dictionary;
 
-import fr.imag.clips.papillon.data.*;
-import fr.imag.clips.papillon.CurrentDBTransaction;
 import com.lutris.appserver.server.sql.DBTransaction;
-
-//for URLs
-import java.net.URL;
-import java.net.MalformedURLException;
-
-
-//pour parser le document avec le DOM
-import org.w3c.dom.*;
-
-import com.lutris.dods.builder.generator.query.QueryBuilder;
-
+import fr.imag.clips.papillon.CurrentDBTransaction;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.user.User;
-
-import com.lutris.appserver.server.sql.ObjectId;
-
-import java.util.*;
-
-import fr.imag.clips.papillon.Papillon;
-import fr.imag.clips.papillon.business.utility.Utility;
+import fr.imag.clips.papillon.business.xml.XMLServices;
 import fr.imag.clips.papillon.business.xsl.XslSheetFactory;
+import fr.imag.clips.papillon.data.VolumeDO;
+import fr.imag.clips.papillon.data.VolumeQuery;
+import org.w3c.dom.*;
 
-// Transforamtion
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.stream.StreamSource;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
 import java.io.StringReader;
-
-// Regular expression
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
 
 /**
 * Used to find the instances of xslsheet.
@@ -338,7 +321,7 @@ public class VolumesFactory {
             String tmplInterface = getXmlCode(volume,TEMPLATE_INTERFACE_TAG, fileURL);
             String tmplEntry = getXmlCode(volume,TEMPLATE_ENTRY_TAG, fileURL);
 						
-			org.w3c.dom.Document myDoc = Utility.buildDOMTree(tmplEntry);
+			org.w3c.dom.Document myDoc = XMLServices.buildDOMTree(tmplEntry);
 			if (myDoc != null) {
 				ParseVolume.compileXPathTable(cdmElements, myDoc.getDocumentElement());
 			}
@@ -346,7 +329,7 @@ public class VolumesFactory {
 			// Embedding the entry into a contribution element
 			tmplEntry = updateTemplateEntry(tmplEntry, cdmElements);
 			
-            String xmlCode=Utility.NodeToString(volume);
+            String xmlCode= XMLServices.NodeToString(volume);
             
             //
             Volume newVolume = createUniqueVolume(name, dictname, dbname, location, source, targets, href, cdmElements, xmlCode, schema, tmplInterface, tmplEntry, reverse);
@@ -526,7 +509,7 @@ public class VolumesFactory {
             Volume resVolume = null;
 			
             try {
-                Document docXml = Utility.buildDOMTree(fileURL);
+                Document docXml = XMLServices.buildDOMTree(fileURL);
              //   PapillonLogger.writeDebugMsg("The xml code:");
               //  PapillonLogger.writeDebugMsg(Utility.NodeToString(docXml));
                 
@@ -918,7 +901,7 @@ public class VolumesFactory {
 				if (href!=null && !href.equals("")) {
 					URL resultURL = new URL(fileURL,href);
 					PapillonLogger.writeDebugMsg("getXmlCode with URL: " + resultURL.toString());
-					res = Utility.NodeToString(Utility.buildDOMTree(resultURL));
+					res = XMLServices.xmlCode(XMLServices.buildDOMTree(resultURL));
 				}
 			}
 			else {
@@ -947,7 +930,7 @@ public class VolumesFactory {
 	public static Hashtable buildCdmElementsTable(String xmlCode, String tmplEntry, String sourceLanguage) 
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 		Hashtable cdmElements = new Hashtable();
-		Document docXml = Utility.buildDOMTree(xmlCode);
+		Document docXml = XMLServices.buildDOMTree(xmlCode);
 		NodeList cdmElts = docXml.getElementsByTagName(CDM_ELEMENTS_TAG);
 		if (null != cdmElts && cdmElts.getLength()>0) {
 			Element cdmElt = (Element)cdmElts.item(0);
@@ -956,7 +939,7 @@ public class VolumesFactory {
 		else {
 			PapillonLogger.writeDebugMsg("No cdm-elements tag");   
 		}
-		org.w3c.dom.Document myDoc = Utility.buildDOMTree(tmplEntry);
+		org.w3c.dom.Document myDoc = XMLServices.buildDOMTree(tmplEntry);
 		if (myDoc != null) {
 			ParseVolume.compileXPathTable(cdmElements, myDoc.getDocumentElement());
 		}
@@ -1210,7 +1193,7 @@ public class VolumesFactory {
 	public static String updateTemplateEntry(String tmplEntry, Hashtable cdmElements) 
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 		if (tmplEntry !=null && !tmplEntry.equals("")) {			
-			org.w3c.dom.Document templateDoc = Utility.buildDOMTree(tmplEntry);
+			org.w3c.dom.Document templateDoc = XMLServices.buildDOMTree(tmplEntry);
 			org.w3c.dom.NodeList contribNodeList = ParseVolume.getCdmElements(templateDoc, Volume.CDM_contribution, Volume.DEFAULT_LANG, cdmElements);
 			org.w3c.dom.NodeList entryNodeList = ParseVolume.getCdmElements(templateDoc, Volume.CDM_templateEntry, Volume.DEFAULT_LANG, cdmElements);
 			
@@ -1218,7 +1201,7 @@ public class VolumesFactory {
 				&& (entryNodeList != null && entryNodeList.getLength()==1)) {
 				Node myEntryNode = entryNodeList.item(0);
 				String contributionString = VolumeEntry.ContributionHeader + VolumeEntry.ContributionFooter;
-				org.w3c.dom.Document contributionDoc = Utility.buildDOMTree(contributionString);
+				org.w3c.dom.Document contributionDoc = XMLServices.buildDOMTree(contributionString);
 				Node contributionNode = templateDoc.importNode(contributionDoc.getDocumentElement(),true);				
 				Node entryParent = myEntryNode.getParentNode();
 				entryParent.replaceChild(contributionNode, myEntryNode);
@@ -1226,7 +1209,7 @@ public class VolumesFactory {
 				if (dataNodeList != null && dataNodeList.getLength()==1) {
 					Node dataNode = dataNodeList.item(0);
 					dataNode.appendChild(myEntryNode);
-					tmplEntry = Utility.NodeToString(templateDoc);
+					tmplEntry = XMLServices.xmlCode(templateDoc);
 				}
 			}
 			else {
@@ -1371,46 +1354,46 @@ public class VolumesFactory {
                 PapillonLogger.writeDebugMsg("Index re-construction succeed !");
             }
             */
-            
+
             //
             for (Iterator iter = getVolumesArray().iterator(); iter.hasNext(); ) {
                 Volume volume = (Volume)iter.next();
-                
+
                 //
                 int count = volume.getCount();
                 int delta = 20; // buffer limit
                 PapillonLogger.writeDebugMsg("Volume : " + volume.getName() + " - " + count + " entries");
-                
+
                 //
                 for (int i = 0; i < count; i=i+delta) {
-                    
+
                     try {
-                        
+
                         // Begin transaction
                         CurrentDBTransaction.registerNewDBTransaction();
-                        
+
                         // Buffer volumeEntries
                         Collection bufferResults = VolumeEntriesFactory.getVolumeEntries(volume, i, delta);
-                        
+
                         //
                         Iterator buffer = bufferResults.iterator();
                         while ( buffer.hasNext() ) {
                             VolumeEntry ve = (VolumeEntry)buffer.next();
-                            
+
                             //
                             ParseVolume.parseEntry(ve);
-                            
+
                         }
-                        
+
                         // End transaction : a part was correct, commit the transaction ...
                         ((DBTransaction) CurrentDBTransaction.get()).commit();
-                        PapillonLogger.writeDebugMsg(Integer.toString(i) + " to " + Integer.toString(i + delta - 1));                        
-                        
+                        PapillonLogger.writeDebugMsg(Integer.toString(i) + " to " + Integer.toString(i + delta - 1));
+
                     } catch (Exception e) {
                         String userMessage = "Problems when re-index entries.";
                         PapillonLogger.writeDebugMsg(userMessage);
                         e.printStackTrace();
-                        
+
                         //
                         try {
                             ((DBTransaction) CurrentDBTransaction.get()).rollback();
@@ -1418,23 +1401,23 @@ public class VolumesFactory {
                             PapillonLogger.writeDebugMsg("reConstructionIndex: SQLException while rolling back failed transaction.");
                             sqle.printStackTrace();
                         }
-                        
+
                     } finally {
                         CurrentDBTransaction.releaseCurrentDBTransaction();
                     }
                 }
-                
+
                 //
                 PapillonLogger.writeDebugMsg(volume.getName() + " index re-construction succeed !");
-                
+
             }
-            
+
             //
             PapillonLogger.writeDebugMsg("Index re-construction process succeed !");
         }
-	
-    
-    /** 
+
+
+    /**
         * The modifiedStatus method modify the status of the contributions appearing "before" a not-finished contribution to modified status.
         *
         * @param User
@@ -1496,7 +1479,7 @@ public class VolumesFactory {
             // Standardization launch on all volumes
             for (Iterator iter = getVolumesArray().iterator(); iter.hasNext(); ) {
                 Volume volume = (Volume)iter.next();
-                    
+
                 //
                 int count = volume.getCount();
                 int delta = 20; // buffer limit
@@ -1520,16 +1503,16 @@ public class VolumesFactory {
                             
                             //
                             if (!ve.isEmpty() ) {
-                                //&& (ve.getXmlCode() != null) 
+                                //&& (ve.getXmlCode() != null)
                                 //&& !ve.getXmlCode().equals("")) {
                                 
                                 //
                                 Document dom = ve.getDom();
-                                PapillonLogger.writeDebugMsg(Utility.NodeToString(dom));
+                                PapillonLogger.writeDebugMsg(XMLServices.xmlCodePrettyPrinted(dom));
                                 Element root = dom.getDocumentElement();
                                 normalizeNode(root.getFirstChild());
                                 ve.save();
-                      
+                                
                             } else {
                                 
                                 //
@@ -1559,6 +1542,7 @@ public class VolumesFactory {
                         CurrentDBTransaction.releaseCurrentDBTransaction();
                     }
                 }
+                
                 //
                 PapillonLogger.writeDebugMsg(volume.getName() + " : standardization succeed !");
                 
@@ -1578,7 +1562,6 @@ public class VolumesFactory {
         */
     private static void normalizeNode(Node node) {
         
-        //
         while (node != null) {
             String value = node.getNodeValue();
             
@@ -1592,43 +1575,43 @@ public class VolumesFactory {
             node = node.getNextSibling();
         }
     }
-    
-    
-    /** 
+
+
+    /**
         * Apply xsl transformation to all entries of the volume
         *
         * @param Node
         *
         * @exception PapillonBusinessException
         */
-    public static void launchTransformation(String xslTransformation, Volume volume, User user) 
+    public static void launchTransformation(String xslTransformation, Volume volume, User user)
         throws PapillonBusinessException {
 			/*
              try {
                  //
                  TransformerFactory myTransformerFactory = TransformerFactory.newInstance();
                  Transformer myTransformer = myTransformerFactory.newTransformer(new StreamSource(new StringReader(xslTransformation)));
-                 
+
                  //
                  ArrayList allEntries = QueryRequest.findAllLexies(this.getName(), user);
-                 
+
                  //
                  for (int i = 0; i < allEntries.size(); i++) {
                      //
                      QueryResult qr = (QueryResult) allEntries.get(i);
                      VolumeEntry ve = qr.getSourceEntry();
-                     
+
                      //
                      DOMSource xmlSource = new DOMSource(Utility.buildDOMTree(ve.getXmlCode()));
                      DOMResult xmlTarget = new DOMResult();
-                     
+
                      //
                      myTransformer.transform(xmlSource, xmlTarget);
-                     
+
                      //
                      //System.out.println(ve.getXmlCode());
                      //System.out.println(Utility.NodeToString((Document) xmlTarget.getNode()))
-                     
+
                      //
                      ve.setDom((Document) xmlTarget.getNode());
                      ve.save();
@@ -1637,80 +1620,80 @@ public class VolumesFactory {
                  throw new PapillonBusinessException("Error deleting Volume", ex);
              }
              */
-            
-            
-            
-            
+
+
+
+
             try {
                 // Get transformer
                 TransformerFactory myTransformerFactory = TransformerFactory.newInstance();
                 Transformer myTransformer = myTransformerFactory.newTransformer(new StreamSource(new StringReader(xslTransformation)));
-                
-                // Truncate index volumes 
+
+                // Truncate index volumes
                 IndexFactory.truncateIndexTable(volume);
-                
+
                 //
                 int count = volume.getCount();
                 int delta = 20; // buffer limit
                 PapillonLogger.writeDebugMsg("Volume : " + volume.getName() + " - " + count + " entries");
-                
+
                 //
                 for (int i = 0; i < count; i=i+delta) {
-                    
+
                     try {
-                        
+
                         // Begin transaction
                         CurrentDBTransaction.registerNewDBTransaction();
-                        
+
                         // Buffer volumeEntries
-                        // Replace getVolumeEntriesVector because "order by" expression   
+                        // Replace getVolumeEntriesVector because "order by" expression
                         //Collection bufferResults = VolumeEntriesFactory.getVolumeEntriesVector(DictionariesFactory.getDictionaryByName(volume.getDictname()), volume, null, null, null, z, delta);
                         Collection bufferResults = VolumeEntriesFactory.getVolumeEntries(volume, i, delta);
-                        
+
                         //
                         Iterator buffer = bufferResults.iterator();
                         while ( buffer.hasNext() ) {
                             VolumeEntry ve = (VolumeEntry)buffer.next();
-                            
+
                             //
                             if ( !ve.isEmpty() ) {
-                                //&& (ve.getXmlCode() != null) 
+                                //&& (ve.getXmlCode() != null)
                                 //&& !ve.getXmlCode().equals("")) {
-                                
+
                                 //
                                 PapillonLogger.writeDebugMsg("--------------> Entry ID : " + ve.getEntryId());
-                                PapillonLogger.writeDebugMsg(Utility.NodeToString((Document)ve.getDom()));
-                                    
+                                PapillonLogger.writeDebugMsg(XMLServices.xmlCodePrettyPrinted((Document)ve.getDom()));
+
                                 //
                                 DOMSource xmlSource = new DOMSource(ve.getDom());
                                 DOMResult xmlTarget = new DOMResult();
-                                
+
                                 //
                                 myTransformer.transform(xmlSource, xmlTarget);
                                 //PapillonLogger.writeDebugMsg(Utility.NodeToString((Document) xmlTarget.getNode()))
-                                
+
                                 //
                                 ve.setDom((Document) xmlTarget.getNode());
                                 ve.save();
-                                
+
                             } else {
-                                
+
                                 //
                                 PapillonLogger.writeDebugMsg("Database return a null DO while applying a transformation");
                             }
-                            
+
                         }
-                        
+
                         // End transaction : a part was correct, commit the transaction ...
                         ((DBTransaction) CurrentDBTransaction.get()).commit();
                         PapillonLogger.writeDebugMsg(Integer.toString(i) + " to " + Integer.toString(i + delta -1));
-                        
-                        
+
+
                     } catch (Exception e) {
                         String userMessage = "Problems when transform entries.";
                         PapillonLogger.writeDebugMsg(userMessage);
                         e.printStackTrace();
-                        
+
                         try {
                             ((DBTransaction) CurrentDBTransaction.get()).rollback();
                         } catch (java.sql.SQLException sqle) {
@@ -1721,16 +1704,16 @@ public class VolumesFactory {
                         CurrentDBTransaction.releaseCurrentDBTransaction();
                     }
                 }
-                
+
             } catch (javax.xml.transform.TransformerConfigurationException e) {
                 e.printStackTrace();
             }
-            
+
             //
             PapillonLogger.writeDebugMsg(volume.getName() + " : transformation succeed !");
-            
+
 		}
-    
+
 
 }
 

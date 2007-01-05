@@ -9,6 +9,13 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.8  2007/01/05 13:57:25  serasset
+ * multiple code cleanup.
+ * separation of XMLServices from the Utility class
+ * added an xml parser pool to allow reuse of parser in a multithreaded context
+ * added a new field in the db to identify the db layer version
+ * added a new system property to know which db version is known by the current app
+ *
  * Revision 1.7  2006/08/10 22:17:12  fbrunet
  * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
  * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
@@ -72,31 +79,21 @@
 
 package fr.imag.clips.papillon.business.dictionary;
 
-import fr.imag.clips.papillon.data.*;
-import fr.imag.clips.papillon.business.PapillonBusinessException;
-import fr.imag.clips.papillon.business.utility.Utility;
-import fr.imag.clips.papillon.CurrentDBTransaction;
-
 import com.lutris.appserver.server.sql.DatabaseManagerException;
 import com.lutris.appserver.server.sql.ObjectIdException;
 import com.lutris.dods.builder.generator.query.DataObjectException;
-
-
-/* standards imports */
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Vector;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-
-
-/* W3C imports */
-import org.w3c.dom.Attr;
+import fr.imag.clips.papillon.CurrentDBTransaction;
+import fr.imag.clips.papillon.business.PapillonBusinessException;
+import fr.imag.clips.papillon.business.utility.Utility;
+import fr.imag.clips.papillon.business.xml.XMLServices;
+import fr.imag.clips.papillon.data.PapillonAxiDO;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Vector;
 
 /**
 * Represents a Mailing list Dictionary. 
@@ -455,29 +452,29 @@ public class Axie implements IAnswer {
 	}
 	
 	
-	/**
-		* Gets the html dom of the entry
-	 *
-	 * @return the html dom of the entry.
-	 * @exception PapillonBusinessException if an error occurs
-	 *   retrieving data (usually due to an underlying data layer
-						  *   error).
-	 **/
-	public org.w3c.dom.Document getHtmlDom() {
-		return this.htmldom;
-	}
-	
-	/**
-		* Sets the html dom of the entry
-	 *
-	 * @return void.
-	 * @exception PapillonBusinessException if an error occurs
-	 *   retrieving data (usually due to an underlying data layer
-						  *   error).
-	 **/
-	public void setHtmlDom(org.w3c.dom.Document myDoc) {
-		this.htmldom = myDoc;
-	}
+//	/**
+//		* Gets the html dom of the entry
+//	 *
+//	 * @return the html dom of the entry.
+//	 * @exception PapillonBusinessException if an error occurs
+//	 *   retrieving data (usually due to an underlying data layer
+//						  *   error).
+//	 **/
+//	public org.w3c.dom.Document getHtmlDom() {
+//		return this.htmldom;
+//	}
+//
+//	/**
+//		* Sets the html dom of the entry
+//	 *
+//	 * @return void.
+//	 * @exception PapillonBusinessException if an error occurs
+//	 *   retrieving data (usually due to an underlying data layer
+//						  *   error).
+//	 **/
+//	public void setHtmlDom(org.w3c.dom.Document myDoc) {
+//		this.htmldom = myDoc;
+//	}
 	
 	// XML code
     public String getXmlCode()
@@ -648,7 +645,7 @@ public class Axie implements IAnswer {
 			try {
 				IndexFactory.deleteIndexForEntryId(this.getVolume().getIndexDbname(),this.getHandle());
 				res = ParseVolume.parseAxie(this);
-				this.myDO.setXmlCode(Utility.NodeToString(this.dom));
+				this.myDO.setXmlCode(XMLServices.xmlCode(this.dom));
 				this.myDO.setDom(Utility.serializeDocument(this.dom));
 				this.myDO.setHtmldom(Utility.serializeDocument(this.htmldom));
 				this.myDO.setLexies(Utility.serializeHashtable(this.lexies));

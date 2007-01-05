@@ -11,6 +11,13 @@ Id:
   
 Log:
    $Log$
+   Revision 1.22  2007/01/05 13:57:25  serasset
+   multiple code cleanup.
+   separation of XMLServices from the Utility class
+   added an xml parser pool to allow reuse of parser in a multithreaded context
+   added a new field in the db to identify the db layer version
+   added a new system property to know which db version is known by the current app
+
    Revision 1.21  2006/08/10 22:17:12  fbrunet
    - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
    - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
@@ -117,6 +124,7 @@ Most useful targets:
   <!-- PAPILLON-SPECIFIC -->
   <!-- Load the properties that are specific to the papillon conf -->
   <property file="papillon.properties"/>
+  <property file="dblayer.version"/>
 
   <!-- directory locations -->
   <property name="dir.package"   value="fr/imag/clips/papillon"/>
@@ -199,7 +207,7 @@ Most useful targets:
     <!--pathelement path="${papillon.regexp.jar}"/-->
     <pathelement path="${papillon.pgsql.jar}"/>
     <pathelement path="${papillon.fop.jar}"/>
-    <pathelement path="${papillon.observateur.jar}"/>
+    <!--pathelement path="${papillon.observateur.jar}"/-->
   </path>
 
   <path id="enhydra.classpath">
@@ -228,7 +236,7 @@ Most useful targets:
   <!-- =================================================================== -->
   <!-- Help the user (default)                                             -->
   <!-- =================================================================== -->
-  <target name="help" depends="">
+  <target name="help">
     <echo>
 Building Papillon project.
 
@@ -435,6 +443,7 @@ For Lexalp, call ant using -Dapplication.name=Lexalp
      <filter token="DEPLOY_PATH"  value="${dir.output}" />
      <filter token="PROJECT_PATH" value="${dir.project}" />
      <filter token="ENHYDRA_DIR" value="${enhydra.dir}" />
+     <filter token="DB_LAYER_VERSION" value="${jibiki.dblayer.version}" />
      <!-- Papillon-specific filters -->
      <filter token="XALAN_LIB"    value="${papillon.xalan.jar}" />
      <filter token="XERCES_LIB"  value="${papillon.xerces.jar}" />
@@ -444,7 +453,8 @@ For Lexalp, call ant using -Dapplication.name=Lexalp
      <filter token="FOP_LIB" value="${papillon.fop.jar}" />
      <filter token="AVALON_LIB" value="${papillon.avalon.jar}" />
      <filter token="BATIK_LIB" value="${papillon.batik.jar}" />
-     <filter token="OBSERVATEUR_LIB" value="${papillon.observateur.jar}" />
+
+     <!--filter token="OBSERVATEUR_LIB" value="${papillon.observateur.jar}" /-->
      <filter token="FO_PATH" value="${papillon.fo.xsl}" />
      <!-- /Papillon-specific filters -->
 

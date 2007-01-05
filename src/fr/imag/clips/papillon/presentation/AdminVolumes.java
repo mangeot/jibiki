@@ -9,6 +9,13 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.16  2007/01/05 13:57:26  serasset
+ * multiple code cleanup.
+ * separation of XMLServices from the Utility class
+ * added an xml parser pool to allow reuse of parser in a multithreaded context
+ * added a new field in the db to identify the db layer version
+ * added a new system property to know which db version is known by the current app
+ *
  * Revision 1.15  2007/01/05 12:57:49  fbrunet
  * Add undo draft method (bug in EditEntry.java : undo after last finish contribution)
  * Modify transformation method
@@ -117,27 +124,19 @@
 package fr.imag.clips.papillon.presentation;
 
 // Enhydra SuperServlet imports
-import com.lutris.appserver.server.httpPresentation.HttpPresentation;
 import com.lutris.appserver.server.httpPresentation.HttpPresentationRequest;
 import com.lutris.appserver.server.httpPresentation.HttpPresentationException;
 //import org.enhydra.xml.xmlc.XMLObject;
 import org.w3c.dom.html.*;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
-
-import fr.imag.clips.papillon.business.message.MessageDBLoader;
 
 //import com.lutris.appserver.server.httpPresentation.HttpPresentationOutputStream;
 //import com.lutris.appserver.server.httpPresentation.HttpPresentationResponse;
 
 // Standard imports
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Iterator;
-import java.util.Date;
-import java.text.DateFormat;
-import java.io.*;
 
 // For URLs
 import java.net.URL;
@@ -151,10 +150,9 @@ import fr.imag.clips.papillon.business.dictionary.*;
 
 // import fr.imag.clips.papillon.data.*;
 import fr.imag.clips.papillon.business.edition.GenerateTemplate;
-import fr.imag.clips.papillon.business.utility.Utility;
-import fr.imag.clips.papillon.business.transformation.*;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.PapillonLogger;
+import fr.imag.clips.papillon.business.xml.XMLServices;
 import fr.imag.clips.papillon.business.xsl.XslSheetFactory;
 
 import fr.imag.clips.papillon.presentation.xhtml.orig.*;
@@ -528,7 +526,7 @@ public class AdminVolumes extends PapillonBasePO {
 		String result = "Nothing uploaded";
 		if (myVolume!=null && !myVolume.isEmpty()) {
 			if (object !=null && !object.equals("")) {
-				String objectResult = Utility.NodeToString(Utility.buildDOMTreeFromUrl(url));
+				String objectResult = XMLServices.xmlCode(XMLServices.buildDOMTreeFromUrl(url));
 				result= object + " reloaded";
 				if (object.equals(Object_Schema)) {
 					myVolume.setXmlSchema(objectResult);
@@ -559,7 +557,7 @@ public class AdminVolumes extends PapillonBasePO {
     //
     protected String launchTranformation(String volName, String url) throws PapillonBusinessException {
 		String result = "Nothing uploaded";
-        String objectResult = Utility.NodeToString(Utility.buildDOMTreeFromUrl(url));
+        String objectResult = XMLServices.xmlCode(XMLServices.buildDOMTreeFromUrl(url));
         
         //
         if ( (volName != null) && volName.equals("All") ) {

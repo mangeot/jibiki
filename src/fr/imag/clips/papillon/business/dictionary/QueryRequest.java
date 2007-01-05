@@ -8,26 +8,21 @@
 
 
 package fr.imag.clips.papillon.business.dictionary;
-    
-    import fr.imag.clips.papillon.CurrentDBTransaction;
-    import fr.imag.clips.papillon.data.*;
-    import fr.imag.clips.papillon.business.user.User;
-    import fr.imag.clips.papillon.business.dictionary.QueryResult;
 
-    /* standards imports */
-    import java.util.ArrayList;
-    import java.util.Iterator;
-    import java.util.Collection;
-    import java.util.Vector;
+import com.lutris.dods.builder.generator.query.QueryBuilder;
+import com.lutris.dods.builder.generator.query.RDBColumn;
+import com.lutris.dods.builder.generator.query.RDBTable;
+import fr.imag.clips.papillon.CurrentDBTransaction;
+import fr.imag.clips.papillon.business.PapillonBusinessException;
+import fr.imag.clips.papillon.business.user.User;
+import fr.imag.clips.papillon.data.VolumeEntryDO;
+import fr.imag.clips.papillon.data.VolumeEntryQuery;
 
-    /* Query builder */
-    import com.lutris.dods.builder.generator.query.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 
-    /* Execption */
-    import fr.imag.clips.papillon.business.PapillonBusinessException;
-    import fr.imag.clips.papillon.business.PapillonLogger;
-    
-    /**
+/**
         * A Request is a business object passed when querying dictionaries.
      */
     public class QueryRequest {

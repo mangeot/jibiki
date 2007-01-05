@@ -9,6 +9,13 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.34  2007/01/05 13:57:25  serasset
+ * multiple code cleanup.
+ * separation of XMLServices from the Utility class
+ * added an xml parser pool to allow reuse of parser in a multithreaded context
+ * added a new field in the db to identify the db layer version
+ * added a new system property to know which db version is known by the current app
+ *
  * Revision 1.33  2007/01/05 12:57:49  fbrunet
  * Add undo draft method (bug in EditEntry.java : undo after last finish contribution)
  * Modify transformation method
@@ -196,55 +203,30 @@
 
 package fr.imag.clips.papillon.business.dictionary;
 
-import fr.imag.clips.papillon.data.*;
-import fr.imag.clips.papillon.CurrentDBTransaction;
 import com.lutris.appserver.server.sql.DBTransaction;
-
-//for URLs
-import java.net.URL;
-import java.net.MalformedURLException;
-
-
-//pour parser le document avec le DOM
-import org.w3c.dom.*;
-
-import com.lutris.dods.builder.generator.query.QueryBuilder;
-
-
-
-
-import fr.imag.clips.papillon.data.*;
-import fr.imag.clips.papillon.papillon_data.*;
-import fr.imag.clips.papillon.CurrentDBTransaction;
-import fr.imag.clips.papillon.business.user.User;
-
-
 import com.lutris.appserver.server.sql.DatabaseManagerException;
 import com.lutris.appserver.server.sql.ObjectIdException;
 import com.lutris.dods.builder.generator.query.DataObjectException;
+import fr.imag.clips.papillon.CurrentDBTransaction;
+import fr.imag.clips.papillon.business.PapillonBusinessException;
+import fr.imag.clips.papillon.business.PapillonLogger;
+import fr.imag.clips.papillon.business.user.User;
+import fr.imag.clips.papillon.business.utility.Utility;
+import fr.imag.clips.papillon.business.xml.XMLServices;
+import fr.imag.clips.papillon.data.VolumeDO;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
-import java.io.*;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamSource;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-
-//Dom objects
-import org.w3c.dom.*;
-import org.w3c.dom.Document;
-import org.w3c.dom.html.*;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.Text;
-
-//  Imported JAVA API for XML Parsing classes
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-//pour le debugage
-import fr.imag.clips.papillon.business.utility.Utility;
-import fr.imag.clips.papillon.business.PapillonBusinessException;
-import fr.imag.clips.papillon.business.PapillonLogger;
 
 /**
  * Represents a Volume. 
@@ -977,7 +959,7 @@ public class Volume {
 		}	
 	
     public String getFormatterClassName() throws PapillonBusinessException {
-        NodeList formatters = Utility.buildDOMTree(this.getXmlCode()).getElementsByTagName("result-formatter"); 
+        NodeList formatters = XMLServices.buildDOMTree(this.getXmlCode()).getElementsByTagName("result-formatter");
         String classname = null;
         if ((null != formatters) && (formatters.getLength() > 0)) {
             // FIXME : no .getFirstChild needs
@@ -987,7 +969,7 @@ public class Volume {
 	}
    
     public String getPreProcessorClassName() throws PapillonBusinessException {
-        NodeList preProcessor = Utility.buildDOMTree(this.getXmlCode()).getElementsByTagName("result-preprocessor"); 
+        NodeList preProcessor = XMLServices.buildDOMTree(this.getXmlCode()).getElementsByTagName("result-preprocessor");
         String classname = null;
         if ((null != preProcessor) && (preProcessor.getLength() > 0)) {
             // FIXME : no .getFirstChild needs
@@ -997,7 +979,7 @@ public class Volume {
 	}
     
     public String getPostUpdateProcessorClassName() throws PapillonBusinessException {
-        NodeList postProcessor = Utility.buildDOMTree(this.getXmlCode()).getElementsByTagName("result-postupdateprocessor"); 
+        NodeList postProcessor = XMLServices.buildDOMTree(this.getXmlCode()).getElementsByTagName("result-postupdateprocessor");
         String classname = null;
         if ((null != postProcessor) && (postProcessor.getLength() > 0)) {
             // FIXME : no .getFirstChild needs
@@ -1007,7 +989,7 @@ public class Volume {
 	}
     
     public String getPostSaveProcessorClassName() throws PapillonBusinessException {
-        NodeList postProcessor = Utility.buildDOMTree(this.getXmlCode()).getElementsByTagName("result-postsaveprocessor"); 
+        NodeList postProcessor = XMLServices.buildDOMTree(this.getXmlCode()).getElementsByTagName("result-postsaveprocessor");
         String classname = null;
         if ((null != postProcessor) && (postProcessor.getLength() > 0)) {
             // FIXME : no .getFirstChild needs
@@ -1195,7 +1177,7 @@ public class Volume {
 			
 			String templateEntry = this.getTemplateEntry();
 			
-			org.w3c.dom.Document templateDoc = Utility.buildDOMTree(templateEntry);
+			org.w3c.dom.Document templateDoc = XMLServices.buildDOMTree(templateEntry);
 			
 			org.w3c.dom.NodeList volumeNodes = ParseVolume.getCdmElements(templateDoc, Volume.CDM_volume, Volume.DEFAULT_LANG, this.getCdmElements()); 
 
@@ -1203,7 +1185,7 @@ public class Volume {
 				org.w3c.dom.Node volumeNode = volumeNodes.item(0);
 				org.w3c.dom.Text myTextNode = templateDoc.createTextNode(Volume.XmlFooterSeparator);
 				volumeNode.appendChild(myTextNode);
-				templateEntry = Utility.NodeToString(templateDoc);
+				templateEntry = XMLServices.xmlCode(templateDoc);
 				int XmlFooterSeparatorIndex = templateEntry.lastIndexOf(Volume.XmlFooterSeparator);
 				
 				xmlFooter = templateEntry.substring(XmlFooterSeparatorIndex+Volume.XmlFooterSeparator.length());
@@ -1280,4 +1262,5 @@ public class Volume {
 				throw new PapillonBusinessException("Error deleting Volume", ex);
 			}
 		}
-}				
+
+}

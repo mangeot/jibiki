@@ -9,14 +9,12 @@
 package fr.imag.clips.papillon.business.dictionary;
 
 /* standards imports */
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.lang.Integer;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
 
-/* dods import */
 import com.lutris.dods.builder.generator.query.QueryBuilder;
+
+import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class QueryCriteria {
 

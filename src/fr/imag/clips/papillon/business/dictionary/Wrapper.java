@@ -9,6 +9,13 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2007/01/05 13:57:25  serasset
+ * multiple code cleanup.
+ * separation of XMLServices from the Utility class
+ * added an xml parser pool to allow reuse of parser in a multithreaded context
+ * added a new field in the db to identify the db layer version
+ * added a new system property to know which db version is known by the current app
+ *
  * Revision 1.3  2005/01/23 17:21:16  mangeot
  * *** empty log message ***
  *
@@ -27,21 +34,20 @@
 package fr.imag.clips.papillon.business.dictionary;
 
 
+import fr.imag.clips.papillon.business.PapillonBusinessException;
+import fr.imag.clips.papillon.business.utility.Utility;
+import fr.imag.clips.papillon.business.xml.XMLServices;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.tidy.Configuration;
+import org.w3c.tidy.Tidy;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
-import fr.imag.clips.papillon.business.PapillonBusinessException;
-import fr.imag.clips.papillon.business.utility.Utility;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.tidy.Configuration;
-import org.w3c.tidy.Tidy;
-
 
 
 /**
@@ -128,7 +134,7 @@ public class Wrapper {
    public String getResultXmlCode (String[] Headwords)
        throws PapillonBusinessException, java.io.IOException {
            Element myElement = getResultElement(Headwords);
-           String xmlCode =  Utility.NodeToString(myElement);
+           String xmlCode =  XMLServices.NodeToString(myElement);
 		   xmlCode = Utility.trimXMLHeader(xmlCode);
            return xmlCode;
        }

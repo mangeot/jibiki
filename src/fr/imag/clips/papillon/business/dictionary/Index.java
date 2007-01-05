@@ -9,6 +9,13 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.6  2007/01/05 13:57:25  serasset
+ * multiple code cleanup.
+ * separation of XMLServices from the Utility class
+ * added an xml parser pool to allow reuse of parser in a multithreaded context
+ * added a new field in the db to identify the db layer version
+ * added a new system property to know which db version is known by the current app
+ *
  * Revision 1.5  2006/02/26 19:21:38  mangeot
  * Work on BrowseVolume
  *
@@ -44,13 +51,12 @@
 
 package fr.imag.clips.papillon.business.dictionary;
 
-import fr.imag.clips.papillon.data.*;
-import fr.imag.clips.papillon.business.PapillonBusinessException;
-import fr.imag.clips.papillon.CurrentDBTransaction;
-
 import com.lutris.appserver.server.sql.DatabaseManagerException;
 import com.lutris.appserver.server.sql.ObjectIdException;
 import com.lutris.dods.builder.generator.query.DataObjectException;
+import fr.imag.clips.papillon.CurrentDBTransaction;
+import fr.imag.clips.papillon.business.PapillonBusinessException;
+import fr.imag.clips.papillon.data.IndexDO;
 
 /**
  * Represents a volume index. 

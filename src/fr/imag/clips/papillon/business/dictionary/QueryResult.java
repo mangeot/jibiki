@@ -9,6 +9,13 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2007/01/05 13:57:25  serasset
+ * multiple code cleanup.
+ * separation of XMLServices from the Utility class
+ * added an xml parser pool to allow reuse of parser in a multithreaded context
+ * added a new field in the db to identify the db layer version
+ * added a new system property to know which db version is known by the current app
+ *
  * Revision 1.3  2006/03/01 15:12:31  mangeot
  * Merge between maintrunk and LEXALP_1_1 branch
  *
@@ -38,8 +45,8 @@
 package fr.imag.clips.papillon.business.dictionary;
 
 /* standards imports */
+
 import java.util.Hashtable;
-import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
 
 /**
  * A QueryResult is a business object return when querying dictionaries.

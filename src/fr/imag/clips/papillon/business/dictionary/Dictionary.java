@@ -9,6 +9,13 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.9  2007/01/05 13:57:25  serasset
+ * multiple code cleanup.
+ * separation of XMLServices from the Utility class
+ * added an xml parser pool to allow reuse of parser in a multithreaded context
+ * added a new field in the db to identify the db layer version
+ * added a new system property to know which db version is known by the current app
+ *
  * Revision 1.8  2006/08/10 22:17:12  fbrunet
  * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
  * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
@@ -66,22 +73,19 @@
 
 package fr.imag.clips.papillon.business.dictionary;
 
-import fr.imag.clips.papillon.data.*;
-import fr.imag.clips.papillon.business.PapillonBusinessException;
-import fr.imag.clips.papillon.CurrentDBTransaction;
-
-import fr.imag.clips.papillon.business.utility.Utility;
-
 import com.lutris.appserver.server.sql.DatabaseManagerException;
 import com.lutris.appserver.server.sql.ObjectIdException;
 import com.lutris.dods.builder.generator.query.DataObjectException;
-
-import java.util.Iterator;
-import java.util.Vector;
-import java.util.Collection;
-import java.util.ArrayList;
-import org.w3c.dom.NodeList;
+import fr.imag.clips.papillon.CurrentDBTransaction;
+import fr.imag.clips.papillon.business.PapillonBusinessException;
+import fr.imag.clips.papillon.business.xml.XMLServices;
+import fr.imag.clips.papillon.data.DictionaryDO;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 
 
 /**
@@ -333,7 +337,7 @@ public class Dictionary {
     }
 
     public String getFormatterClassName() throws PapillonBusinessException {
-        NodeList formatters = Utility.buildDOMTree(this.getXmlCode()).getElementsByTagName("result-formatter"); 
+        NodeList formatters = XMLServices.buildDOMTree(this.getXmlCode()).getElementsByTagName("result-formatter");
         String classname = null;
         if ((null != formatters) && (formatters.getLength() > 0)) {
             classname = ((Element) formatters.item(0)).getAttribute("class-name");
@@ -342,7 +346,7 @@ public class Dictionary {
     }
   
     public String getPreProcessorClassName() throws PapillonBusinessException {
-        NodeList preProcessor = Utility.buildDOMTree(this.getXmlCode()).getElementsByTagName("result-preprocessor"); 
+        NodeList preProcessor = XMLServices.buildDOMTree(this.getXmlCode()).getElementsByTagName("result-preprocessor");
         String classname = null;
         if ((null != preProcessor) && (preProcessor.getLength() > 0)) {
             classname = ((Element) preProcessor.item(0)).getAttribute("class-name");
@@ -351,7 +355,7 @@ public class Dictionary {
 	}
     
     public String getPostUpdateProcessorClassName() throws PapillonBusinessException {
-        NodeList postProcessor = Utility.buildDOMTree(this.getXmlCode()).getElementsByTagName("result-postupdateprocessor"); 
+        NodeList postProcessor = XMLServices.buildDOMTree(this.getXmlCode()).getElementsByTagName("result-postupdateprocessor");
         String classname = null;
         if ((null != postProcessor) && (postProcessor.getLength() > 0)) {
             classname = ((Element) postProcessor.item(0)).getAttribute("class-name");
@@ -360,7 +364,7 @@ public class Dictionary {
 	}
     
     public String getPostSaveProcessorClassName() throws PapillonBusinessException {
-        NodeList postProcessor = Utility.buildDOMTree(this.getXmlCode()).getElementsByTagName("result-postsaveprocessor"); 
+        NodeList postProcessor = XMLServices.buildDOMTree(this.getXmlCode()).getElementsByTagName("result-postsaveprocessor");
         String classname = null;
         if ((null != postProcessor) && (postProcessor.getLength() > 0)) {
             classname = ((Element) postProcessor.item(0)).getAttribute("class-name");

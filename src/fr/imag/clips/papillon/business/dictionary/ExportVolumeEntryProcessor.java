@@ -5,6 +5,13 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.5  2007/01/05 13:57:25  serasset
+ * multiple code cleanup.
+ * separation of XMLServices from the Utility class
+ * added an xml parser pool to allow reuse of parser in a multithreaded context
+ * added a new field in the db to identify the db layer version
+ * added a new system property to know which db version is known by the current app
+ *
  * Revision 1.4  2006/04/10 12:19:17  mangeot
  * XML indented or not
  *
@@ -27,9 +34,9 @@
 
 package fr.imag.clips.papillon.business.dictionary;
 
-import fr.imag.clips.papillon.business.utility.Utility;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
-import fr.imag.clips.papillon.business.PapillonLogger;
+import fr.imag.clips.papillon.business.utility.Utility;
+import fr.imag.clips.papillon.business.xml.XMLServices;
 
 public class ExportVolumeEntryProcessor implements IVolumeEntryProcessor {
 
@@ -62,16 +69,16 @@ public class ExportVolumeEntryProcessor implements IVolumeEntryProcessor {
 		}
 		else if (outputFormat != null && outputFormat.equals(PDFFormat)) {
 			org.w3c.dom.Element myElement = fr.imag.clips.papillon.business.transformation.XslTransformation.applyXslSheetsForFo((IAnswer) myEntry);
-			resultString = Utility.NodeToString(myElement, false, false);
+			resultString = XMLServices.NodeToString(myElement, false, false);
 		}
 		else { // (outputFormat == null || outputFormat.equals("") || outputFormat.equals(XMLFormat))
 			String contribString = myVolume.getCdmContribution();
 			String xmlCode;
 			if (outputFormat.equals(XMLIndentFormat)) {
-				 xmlCode = Utility.NodeToString(myEntry.getDom(), false, true);
+				 xmlCode = XMLServices.NodeToString(myEntry.getDom(), false, true);
 			}
 			else {
-				xmlCode = Utility.NodeToString(myEntry.getDom(), false, false);
+				xmlCode = XMLServices.NodeToString(myEntry.getDom(), false, false);
 			}
 			if (xmlCode.indexOf("<" + contribString)>0) {
 				xmlCode= xmlCode.substring(xmlCode.indexOf("<" + contribString)); 

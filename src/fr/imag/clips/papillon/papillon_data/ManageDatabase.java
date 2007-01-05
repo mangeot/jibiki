@@ -2,6 +2,13 @@
  * $Id$
  *-----------------------------------------------------------------------------
  * $Log$
+ * Revision 1.10  2007/01/05 13:57:26  serasset
+ * multiple code cleanup.
+ * separation of XMLServices from the Utility class
+ * added an xml parser pool to allow reuse of parser in a multithreaded context
+ * added a new field in the db to identify the db layer version
+ * added a new system property to know which db version is known by the current app
+ *
  * Revision 1.9  2006/03/01 15:12:31  mangeot
  * Merge between maintrunk and LEXALP_1_1 branch
  *
@@ -12,6 +19,7 @@ package fr.imag.clips.papillon.papillon_data;
 
 import fr.imag.clips.papillon.CurrentDBTransaction;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
+import fr.imag.clips.papillon.business.PapillonLogger;
 
 import java.sql.*;
 
@@ -40,8 +48,11 @@ public class ManageDatabase implements Query {
     protected String currentSQL = "";
     protected DBTransaction transaction;
 	
+
     /**
-        * Public constructor
+     *
+     * @param trans
+     * @param sql
      */
     public ManageDatabase(DBTransaction trans, String sql) {
         this.transaction = trans;
@@ -52,6 +63,7 @@ public class ManageDatabase implements Query {
         * WARNING!	 This method is	disabled.
      * The reason is that this special set of Queries do not return any result.
      * Moreover, it is also disabled in Quries implementations.
+    * @deprecated use getNextDO() instead.
 	 */
 	public Object next(ResultSet rs) throws SQLException, ObjectIdException {
         // TODO: It	would be nice to throw an unchecked	exception here
@@ -244,7 +256,7 @@ public class ManageDatabase implements Query {
     
     public static java.util.Vector getTableNames ()
         throws PapillonBusinessException {
-			String sql = "SELECT tablename FROM pg_tables where tableowner='papillon'";
+			//String sql = "SELECT tablename FROM pg_tables where tableowner='papillon'";
 			
 			java.util.Vector TableNames = new java.util.Vector();
             DBConnection myDbConnection = null;
@@ -262,12 +274,14 @@ public class ManageDatabase implements Query {
 			   }
             }  catch(SQLException se) {
                 //very important to throw out bad connections
-				System.out.println("SQL exception: ");
+                PapillonLogger.writeErrorMsg("SQL exception: ");
+				// System.out.println("SQL exception: ");
 				se.printStackTrace();
-                if(myDbConnection.handleException(se)) myDbConnection=null;
+                if(myDbConnection != null && myDbConnection.handleException(se)) myDbConnection=null;
             } catch(Exception e) {
-				String err = "ERROR DatabaseConnexion: Exception while running the query: " + sql;
-				System.out.println(err);
+				String err = "ERROR DatabaseConnexion: Exception while querying the table names";
+                PapillonLogger.writeErrorMsg(err);
+                // System.out.println(err);
 				e.printStackTrace();
 				//throw new PapillonBusinessException( err, e );
             } finally {
@@ -277,8 +291,9 @@ public class ManageDatabase implements Query {
 						myDbConnection.release();
 					}
 					catch ( SQLException e ) { 
-						String err = "ERROR DatabaseConnexion2: Exception while running the query: " + sql;
-						System.out.println(err);
+						String err = "ERROR DatabaseConnexion2: Exception while releasing transaction after querying the table names";
+                        PapillonLogger.writeErrorMsg(err);
+						// System.out.println(err);
 						e.printStackTrace();
 //						throw new PapillonBusinessException( err, e );
 					}
@@ -327,7 +342,8 @@ public class ManageDatabase implements Query {
 				return resVector;
 	        }
 	
-    
+
+
 /*
     protected static void simpleExecuteSql (String sql)
         throws PapillonBusinessException {

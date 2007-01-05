@@ -9,6 +9,13 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.2  2007/01/05 13:57:26  serasset
+ * multiple code cleanup.
+ * separation of XMLServices from the Utility class
+ * added an xml parser pool to allow reuse of parser in a multithreaded context
+ * added a new field in the db to identify the db layer version
+ * added a new system property to know which db version is known by the current app
+ *
  * Revision 1.1  2005/07/28 14:36:56  mangeot
  * Added a News presentation page that takes a static xhtml page and displays it.
  * People can edit this static page on the server by accessing it via ftp or ssh.
@@ -22,8 +29,8 @@
 package fr.imag.clips.papillon.presentation;
 
 // Enhydra SuperServlet imports
-import com.lutris.appserver.server.httpPresentation.HttpPresentation;
 import com.lutris.appserver.server.httpPresentation.HttpPresentationException;
+import fr.imag.clips.papillon.business.xml.XMLServices;
 
 public class News extends PapillonBasePO {
 	
@@ -55,7 +62,7 @@ public class News extends PapillonBasePO {
 		if (NewsDOMCache == null) {
 			org.xml.sax.InputSource newsInputSource = getInputSource(getNewsFileAbsolutePath());
 			if (newsInputSource != null) {
-				org.w3c.dom.Document myNewsDocument = fr.imag.clips.papillon.business.utility.Utility.buildDOMTree(newsInputSource);
+				org.w3c.dom.Document myNewsDocument = XMLServices.buildDOMTree(newsInputSource);
 				if (myNewsDocument != null) {
 					NewsDOMCache = myNewsDocument.getElementById(NewsContentIdString);
 				}

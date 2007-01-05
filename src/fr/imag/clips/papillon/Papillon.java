@@ -9,6 +9,13 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.10  2007/01/05 13:57:25  serasset
+ * multiple code cleanup.
+ * separation of XMLServices from the Utility class
+ * added an xml parser pool to allow reuse of parser in a multithreaded context
+ * added a new field in the db to identify the db layer version
+ * added a new system property to know which db version is known by the current app
+ *
  * Revision 1.9  2006/08/10 22:17:12  fbrunet
  * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
  * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
@@ -62,8 +69,6 @@ import com.lutris.appserver.server.httpPresentation.*;
 import com.lutris.util.*;
 import com.lutris.logging.Logger;
 
-import java.util.Hashtable;
-
 import fr.imag.clips.papillon.business.dictionary.DictionariesFactory;
 import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
 import fr.imag.clips.papillon.business.xsl.XslSheetFactory;
@@ -73,8 +78,8 @@ import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.dict.server.JDictd;
 
 /*for tests*/
-import fr.imag.clips.papillon.business.PapillonLogger;
-import fr.imag.clips.papillon.business.locales.*;
+import fr.imag.clips.papillon.business.xml.XMLParsersPool;
+import fr.imag.clips.papillon.papillon_data.DataLayerVersion;
 
 
 /**
@@ -111,6 +116,9 @@ public class Papillon extends StandardApplication {
 		//java.nio.charset.Charset defaultCharset = java.nio.charset.Charset.defaultCharset();
 		java.io.InputStreamReader myInputStreamReader = new java.io.InputStreamReader(System.in);
         Enhydra.getLogChannel().write(Logger.INFO, "Local system default charset: "+myInputStreamReader.getEncoding());
+
+        // Check the version of the data layer
+        Enhydra.getLogChannel().write(Logger.INFO, "Database uses Data Layer Version n°: " + DataLayerVersion.getDBVersion());
         
         //  Dictd specific settings.
         boolean listen = false; 
@@ -133,7 +141,14 @@ public class Papillon extends StandardApplication {
             // Here is where I startup JDictd server
             JDictd.listen(port,Enhydra.getApplication(),timeout);
         }
-        
+
+        // Initialize the XMLParsersPool
+        try {
+            XMLParsersPool.initializeXMLParsersPool();
+        } catch (PapillonBusinessException e) {
+            throw new ApplicationException("Problem when initializing the XML parsers pool. Quitting.", e);
+        }
+
         // Get current Layout Setting.
         String priorityPackage = null; 
         try {
