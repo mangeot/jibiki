@@ -9,6 +9,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.10  2007/01/05 12:57:49  fbrunet
+ * Add undo draft method (bug in EditEntry.java : undo after last finish contribution)
+ * Modify transformation method
+ *
  * Revision 1.9  2006/12/13 09:32:00  fbrunet
  * *** empty log message ***
  *
@@ -340,8 +344,6 @@ public class ViewQueryResult {
                         // FIXME : create new page.po like history
                         QueryParameter qpxml = new QueryParameter();
                         qpxml.setXsl("XML");
-                        //qpxml.setLimit(qp.getLimit());
-                        //qpxml.setOffset(qp.getOffset());
                         ArrayList dicts = new ArrayList();
                         dicts.add(myEntry.getDictionary());
                         qpxml.setDictionaries(dicts);

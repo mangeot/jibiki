@@ -6,7 +6,11 @@
  *-----------------------------------------------------------
  * $Id$
  *-----------------------------------------------------------
- * $Log *
+ * $Log$
+ * Revision 1.2  2007/01/05 12:57:49  fbrunet
+ * Add undo draft method (bug in EditEntry.java : undo after last finish contribution)
+ * Modify transformation method
+ * *
  */
 package fr.imag.clips.papillon.business.system;
 

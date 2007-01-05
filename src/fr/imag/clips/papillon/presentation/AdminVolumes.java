@@ -9,6 +9,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.15  2007/01/05 12:57:49  fbrunet
+ * Add undo draft method (bug in EditEntry.java : undo after last finish contribution)
+ * Modify transformation method
+ *
  * Revision 1.14  2006/11/21 22:51:55  fbrunet
  * Correct UIGenerator bug and another minor bugs
  *
@@ -563,21 +567,18 @@ public class AdminVolumes extends PapillonBasePO {
             //
             for (Iterator iter = VolumesFactory.getVolumesArray().iterator(); iter.hasNext();) { 
                 Volume volume = (Volume)iter.next();
-                
-                //
                 PapillonLogger.writeDebugMsg("Transformation " + volume.getName() + " volume");
-                
+
                 //
-                volume.launchTransformation(objectResult, this.getUser());
+                VolumesFactory.launchTransformation(objectResult, volume, this.getUser());
             }
             
             //
             result = "Transform all volumes";
-        
-            //
             PapillonLogger.writeDebugMsg(result + " succeed !");
             
         } else {
+            
             //
             Volume myVolume = VolumesFactory.getVolumeByName(volName);
             
@@ -588,11 +589,8 @@ public class AdminVolumes extends PapillonBasePO {
                 PapillonLogger.writeDebugMsg("Transformation " + myVolume.getName() + " volume");
                 
                 //
-                myVolume.launchTransformation(objectResult, this.getUser());
+                VolumesFactory.launchTransformation(objectResult, myVolume, this.getUser());
                 result = "Transform " + myVolume.getName() + " volume";
-                
-                //
-                PapillonLogger.writeDebugMsg(result + " succeed !");
                 
             } else {
                 
@@ -600,6 +598,7 @@ public class AdminVolumes extends PapillonBasePO {
                 result = "Empty volume";
             }        
         }
+        
         //
 		return result;
 	}

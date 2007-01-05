@@ -9,6 +9,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.34  2007/01/05 12:57:49  fbrunet
+ * Add undo draft method (bug in EditEntry.java : undo after last finish contribution)
+ * Modify transformation method
+ *
  * Revision 1.33  2006/12/13 09:32:00  fbrunet
  * *** empty log message ***
  *
@@ -153,12 +157,20 @@ public class EditEntry extends EditingBasePO {
         XHTMLInputElement ReferrerElement = content.getElementReferrer();
 		ReferrerElement.setValue(referrer);
         
-        // Disable undo update button if entry contribution have not old contribution
-        /*String previousContributionId = myVolumeEntry.getClassifiedNotFinishedContributionId();
-        if ((previousContributionId == null) || (previousContributionId.equals(""))) {
+        // Disable undo update
+        String previousNFContributionId = myVolumeEntry.getClassifiedNotFinishedContributionId();
+        String previousFContributionId = myVolumeEntry.getClassifiedFinishedContributionId();
+        /*
+        if (myVolumeEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS) 
+            || (myVolumeEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS) 
+                && (((previousNFContributionId == null) || (previousNFContributionId.equals("")))
+                     && ((previousFContributionId == null) || (previousFContributionId.equals(""))) ) ) ) {
             XHTMLInputElement UndoUpdateElement = content.getElementUndoUpdate();
             UndoUpdateElement.setDisabled(true);	
-        }*/
+        }
+        */
+        XHTMLInputElement undoUpdateElement = content.getElementUndoUpdate();
+        undoUpdateElement.setDisabled(true);	
         
         // fillInterfaceTemplate
 		UIGenerator.fillInterfaceTemplate(myVolumeEntry.getDom().getDocumentElement(), myInterface, myItfTemplate);

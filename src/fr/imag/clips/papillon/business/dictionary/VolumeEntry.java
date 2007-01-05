@@ -9,6 +9,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.46  2007/01/05 12:57:49  fbrunet
+ * Add undo draft method (bug in EditEntry.java : undo after last finish contribution)
+ * Modify transformation method
+ *
  * Revision 1.45  2006/12/14 20:03:26  fbrunet
  * Add method to normalize value into XML structure.
  *
@@ -1559,35 +1563,7 @@ public class VolumeEntry implements IAnswer {
 			throw new PapillonBusinessException("javax.xml.transform.TransformerException: ", e);
 		}
     }
-    
 
-private void normalizeDom() {
-
-    //
-    if (this.dom!=null) {
-        try {
-            
-            //
-            String domString= Utility.NodeToString(this.dom);
-            
-            // Normalized value
-            String patternStr = "(\n|\r|\t|[ ])+";
-            String replaceStr = " ";
-            Pattern pattern = Pattern.compile(patternStr);
-            Matcher matcher = pattern.matcher(domString);
-            domString = matcher.replaceAll(replaceStr);
-            //PapillonLogger.writeDebugMsg("volumeEntry: normalized dom : " + domString);	
-            
-            //
-            this.dom = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(domString)));
-           
-        } catch (java.lang.Exception ioe) {
-            PapillonLogger.writeDebugMsg("VolumeEntry : normalizeDom - java.io.IOException - " + ioe);
-        }
-    }
     
-   
-    
-}
-
+    //Update, finish, getPrevious(), isPrecedéDraft(), isPrecedéFinish()
 }

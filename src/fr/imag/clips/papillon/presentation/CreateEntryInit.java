@@ -9,6 +9,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.9  2007/01/05 12:57:49  fbrunet
+ * Add undo draft method (bug in EditEntry.java : undo after last finish contribution)
+ * Modify transformation method
+ *
  * Revision 1.8  2006/08/10 22:17:13  fbrunet
  * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
  * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
@@ -170,7 +174,7 @@ public class CreateEntryInit extends PapillonBasePO {
             //
             if (action!=null && !action.equals("")) {
                 
-                System.out.println("action " + action);
+                //PapillonLogger.writeDebugMsg("action " + action);
                
                     // LOOKUP
                 //if (action.equals("lookup")
