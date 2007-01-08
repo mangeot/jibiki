@@ -10,6 +10,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.12  2007/01/08 15:13:42  fbrunet
+ * Correction of th xml attribut bug in ContributionHeader (VolumeEntry class)
+ *
  * Revision 1.11  2006/09/11 19:57:48  fbrunet
  * - bug correction : interface edition (link axie to another axi)
  *
@@ -148,7 +151,6 @@ public class LexalpEditEntryInit extends PapillonBasePO {
     protected final static String ConsultExpertHandleParameter = "handle";
     protected final static String ConsultExpertFormatterParameter = "xslid";
     
-    protected final static String EditEntryURL = "EditEntry.po";
     protected final static String EditingErrorURL = "EditingError.po";
     
     protected LexalpEditEntryInitXHTML content;

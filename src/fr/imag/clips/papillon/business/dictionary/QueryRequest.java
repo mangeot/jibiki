@@ -37,6 +37,9 @@ import java.util.Iterator;
         protected ArrayList targets;
         
         //
+        private final boolean DEBUG = false;
+        
+        //
         public QueryRequest(Volume volume) {
             criteriaTree = new ArrayList();
             volumes = new ArrayList();
@@ -345,8 +348,8 @@ import java.util.Iterator;
                     }
                     veQuery.getQueryBuilder().addOrderByColumn("multilingual_sort('" + volume.getSourceLanguage() + "',headword)","");
                     
-                    // debug
-                    //veQuery.getQueryBuilder().debug();
+                    // Debug
+                    if (DEBUG) veQuery.getQueryBuilder().debug();
                     
                     //
                     VolumeEntryDO[] DOarray = veQuery.getDOArray();
@@ -465,7 +468,7 @@ import java.util.Iterator;
                     veQuery.getQueryBuilder().addOrderByColumn("multilingual_sort('" + volume.getSourceLanguage() + "',headword)","");
                     
                     // debug
-                    //veQuery.getQueryBuilder().debug();
+                    if (DEBUG) veQuery.getQueryBuilder().debug();
                     
                     //
                     VolumeEntryDO[] DOarray = veQuery.getDOArray();

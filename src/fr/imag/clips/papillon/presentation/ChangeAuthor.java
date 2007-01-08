@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.15  2007/01/08 15:13:42  fbrunet
+ * Correction of th xml attribut bug in ContributionHeader (VolumeEntry class)
+ *
  * Revision 1.14  2006/08/10 22:17:13  fbrunet
  * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
  * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
@@ -116,7 +119,6 @@ public class ChangeAuthor extends PapillonBasePO {
 	protected final static int STEP_CHANGE_AUTHOR = 3;
 
 	protected final static String ALL="*ALL*";
-	protected final static String EditURL="EditEntry.po";
 	protected final static String EditVolumeParameter=EditEntry.VolumeName_PARAMETER;
 	protected final static String EditHandleParameter=EditEntry.EntryHandle_PARAMETER;
 

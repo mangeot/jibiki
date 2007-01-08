@@ -4,6 +4,9 @@
  * $Id$
  *------------------------
  * $Log$
+ * Revision 1.12  2007/01/08 15:13:42  fbrunet
+ * Correction of th xml attribut bug in ContributionHeader (VolumeEntry class)
+ *
  * Revision 1.11  2006/11/09 09:04:42  fbrunet
  * *** empty log message ***
  *
@@ -135,6 +138,8 @@ public class LexALPFormatter implements ResultFormatter {
     protected Dictionary currentDictionary;
     protected Volume sourceVolume;
     
+    //
+    private final boolean DEBUG = false;
     
     //
     public void initializeFormatter(Dictionary dictionary, Volume volume, Object parameter, int dialect, String lang) throws PapillonBusinessException {
@@ -163,6 +168,8 @@ public class LexALPFormatter implements ResultFormatter {
     //
     public Node getFormattedResult(QueryResult qr, User usr) throws PapillonBusinessException {
         try {
+            //
+            if (DEBUG) PapillonLogger.writeDebugMsg("LexALPFormatrer : begin getFormattedResult");
             
             // Get document source
             Document docSource = qr.getSourceEntry().getDom();
@@ -206,6 +213,7 @@ public class LexALPFormatter implements ResultFormatter {
             }            
             
             //
+            if (DEBUG) PapillonLogger.writeDebugMsg("LexALPFormatrer : end getFormattedResult");
             return (Node) res.getDocumentElement();
             
         } catch(Exception ex) {

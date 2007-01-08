@@ -8,6 +8,9 @@
  * $Id$
  *---------------------------------------------------------
  * $Log$
+ * Revision 1.9  2007/01/08 15:13:42  fbrunet
+ * Correction of th xml attribut bug in ContributionHeader (VolumeEntry class)
+ *
  * Revision 1.8  2007/01/05 13:57:25  serasset
  * multiple code cleanup.
  * separation of XMLServices from the Utility class
@@ -65,7 +68,7 @@ public class UITemplates {
 	// public methods
 	public static Element getInterface(String volumeName, String type, ArrayList languages) 
 		throws PapillonBusinessException {
-		PapillonLogger.writeDebugMsg("UITemplates.getInterface: volume: " +  volumeName + " type: " + type);
+		//PapillonLogger.writeDebugMsg("UITemplates.getInterface: volume: " +  volumeName + " type: " + type);
 		Element initElt = null;
 		Element resultElt = null;
 		if (volumeName!=null && !volumeName.equals("")) {

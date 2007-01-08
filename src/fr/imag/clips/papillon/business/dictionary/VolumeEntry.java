@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.48  2007/01/08 15:13:42  fbrunet
+ * Correction of th xml attribut bug in ContributionHeader (VolumeEntry class)
+ *
  * Revision 1.47  2007/01/05 13:57:25  serasset
  * multiple code cleanup.
  * separation of XMLServices from the Utility class
@@ -336,7 +339,7 @@ public class VolumeEntry implements IAnswer {
             + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
             + " xsi:schemaLocation=\"http://www-clips.imag.fr/geta/services/dml "
             + " http://www-clips.imag.fr/geta/services/dml/dml.xsd\""
-            + contributionIdAttr + "=\"\" " + originalContributionIdAttr + "=\"\">"
+            + " " + contributionIdAttr + "=\"\" " + originalContributionIdAttr + "=\"\">"
             + "<" + metadataTag + ">"
             + "<" + authorTag + "/>"
             + "<" + groupsTag + "/>"

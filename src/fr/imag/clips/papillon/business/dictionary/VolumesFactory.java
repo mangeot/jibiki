@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.49  2007/01/08 15:13:42  fbrunet
+ * Correction of th xml attribut bug in ContributionHeader (VolumeEntry class)
+ *
  * Revision 1.48  2007/01/05 13:57:25  serasset
  * multiple code cleanup.
  * separation of XMLServices from the Utility class
@@ -1201,8 +1204,9 @@ public class VolumesFactory {
 				&& (entryNodeList != null && entryNodeList.getLength()==1)) {
 				Node myEntryNode = entryNodeList.item(0);
 				String contributionString = VolumeEntry.ContributionHeader + VolumeEntry.ContributionFooter;
+                PapillonLogger.writeDebugMsg(contributionString);
 				org.w3c.dom.Document contributionDoc = XMLServices.buildDOMTree(contributionString);
-				Node contributionNode = templateDoc.importNode(contributionDoc.getDocumentElement(),true);				
+				Node contributionNode = templateDoc.importNode(contributionDoc.getDocumentElement(), true);				
 				Node entryParent = myEntryNode.getParentNode();
 				entryParent.replaceChild(contributionNode, myEntryNode);
 				NodeList dataNodeList = ParseVolume.getCdmElements(templateDoc, Volume.CDM_contributionDataElement, Volume.DEFAULT_LANG, cdmElements);
@@ -1484,7 +1488,7 @@ public class VolumesFactory {
                 int count = volume.getCount();
                 int delta = 20; // buffer limit
                 PapillonLogger.writeDebugMsg("Volume : " + volume.getName() + " - " + count + " entries");
-                
+                    
                 //
                 for (int i = 0; i < count; i=i+delta) {
                     
@@ -1508,9 +1512,9 @@ public class VolumesFactory {
                                 
                                 //
                                 Document dom = ve.getDom();
-                                PapillonLogger.writeDebugMsg(XMLServices.xmlCodePrettyPrinted(dom));
                                 Element root = dom.getDocumentElement();
-                                normalizeNode(root.getFirstChild());
+                                normalizeNode((Node)root);
+                                //PapillonLogger.writeDebugMsg(XMLServices.xmlCodePrettyPrinted(dom));
                                 ve.save();
                                 
                             } else {
@@ -1661,8 +1665,8 @@ public class VolumesFactory {
                                 //&& !ve.getXmlCode().equals("")) {
 
                                 //
-                                PapillonLogger.writeDebugMsg("--------------> Entry ID : " + ve.getEntryId());
-                                PapillonLogger.writeDebugMsg(XMLServices.xmlCodePrettyPrinted((Document)ve.getDom()));
+                                //PapillonLogger.writeDebugMsg("--------------> Entry ID : " + ve.getEntryId());
+                                //PapillonLogger.writeDebugMsg(XMLServices.xmlCodePrettyPrinted((Document)ve.getDom()));
 
                                 //
                                 DOMSource xmlSource = new DOMSource(ve.getDom());

@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.7  2007/01/08 15:13:42  fbrunet
+ * Correction of th xml attribut bug in ContributionHeader (VolumeEntry class)
+ *
  * Revision 1.6  2006/08/10 22:17:13  fbrunet
  * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
  * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
@@ -85,6 +88,9 @@ public class ConfirmEntry extends EditingBasePO {
 		throws java.io.UnsupportedEncodingException, 
 		HttpPresentationException {
 			
+            //
+            PapillonLogger.writeDebugMsg ("ConfirmEntry : getContent");   
+            
 			// Management of the parameters
 			String volumeName = myGetParameter(VolumeName_PARAMETER);
 			String entryHandle = myGetParameter(EntryHandle_PARAMETER);

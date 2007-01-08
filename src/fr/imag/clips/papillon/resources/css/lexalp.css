@@ -4,6 +4,9 @@
  * $Id$
  *------
  * $Log$
+ * Revision 1.10  2007/01/08 15:13:42  fbrunet
+ * Correction of th xml attribut bug in ContributionHeader (VolumeEntry class)
+ *
  * Revision 1.9  2006/09/18 12:24:54  fbrunet
  * - add xsl cascading to lexalp formatter (in xsl view, add tag nextXsl with dictionaryName, volumeName and xslName attributes)
  *
@@ -428,6 +431,7 @@ A:hover {
 
 .term {
 	font-weight: bold;
+    margin-right:20px;
 	//font-variant: small-caps;
 }
 
@@ -439,8 +443,19 @@ A:hover {
 
 .status {
 	font-size: xx-small;
+}
+
+.idTerm {
+	font-size: xx-small;
 	margin-left:10px;
 	margin-right: 10px;
+}
+
+.phraseologicalUnit {
+	font-size: xx-small;
+}
+
+.grammar {
 }	
 
 .kwic {

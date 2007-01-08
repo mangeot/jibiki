@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.35  2007/01/08 15:13:42  fbrunet
+ * Correction of th xml attribut bug in ContributionHeader (VolumeEntry class)
+ *
  * Revision 1.34  2007/01/05 12:57:49  fbrunet
  * Add undo draft method (bug in EditEntry.java : undo after last finish contribution)
  * Modify transformation method
@@ -93,6 +96,9 @@ public class EditEntry extends EditingBasePO {
     public org.w3c.dom.Node getContent() 
 		throws java.io.UnsupportedEncodingException, 
 			HttpPresentationException {
+        
+        //
+        PapillonLogger.writeDebugMsg ("EditEntry : getContent");        
                 
         // Management of the parameters
 	    String volumeName = myGetParameter(EditEntryXHTML.NAME_VolumeName);
@@ -103,10 +109,10 @@ public class EditEntry extends EditingBasePO {
 		if (referrer== null || referrer.equals("")) {
 			referrer = this.getReferrer();
 		}
-		
+        
         //
 		EditEntryXHTML content = (EditEntryXHTML) MultilingualXHtmlTemplateFactory.createTemplate("EditEntryXHTML", this.myComms, this.sessionData);
-
+        
 		// Manage VolumeEntry
 		VolumeEntry myVolumeEntry = null;
 		if (volumeName!=null && !volumeName.equals("")
@@ -114,7 +120,8 @@ public class EditEntry extends EditingBasePO {
 			
 			// VolumeEntry
 			myVolumeEntry = VolumeEntriesFactory.findEntryByHandle(volumeName, entryHandle);
-			
+			PapillonLogger.writeDebugMsg("EditEntry : myVolumeEntry.ContributionId " + myVolumeEntry.getContributionId());
+            
             /*
 			// Verification 
 			if (myVolumeEntry!=null && !myVolumeEntry.isEmpty()
@@ -136,50 +143,49 @@ public class EditEntry extends EditingBasePO {
             PapillonLogger.writeDebugMsg ("EditEntry : No parameters (volumeName & entryHandle)");
 			throw new ClientPageRedirectException(EditEntryInitURL);
 		}
-		
-        // fill template
+        
+        // Get interface template
 		Element myInterface = UITemplates.getInterface(volumeName, UITemplates.DEFAULT_FORM, this.getSessionData().getUserAcceptLanguages()); 
 		Element myItfTemplate = null;	
-		
-		if (myInterface!=null) {
+		if (myInterface !=  null) {
 			myInterface = (Element) myInterface.cloneNode(true);
 			myItfTemplate = (Element) myInterface.cloneNode(true);	
 		}
-		
+        
         // Add volume name & entry handle in the form	
 		//UIGenerator.setValueInput(myInterface, VolumeName_PARAMETER, volumeName);
 		//UIGenerator.setValueInput(myInterface, EntryHandle_PARAMETER, entryHandle);
 		//UIGenerator.setValueInput(myInterface, Referrer_PARAMETER, referrer);
-        XHTMLInputElement VolumeNameElement = content.getElementVolumeName();
-		VolumeNameElement.setValue(volumeName);
-        XHTMLInputElement EntryHandleElement = content.getElementEntryHandle();
-		EntryHandleElement.setValue(entryHandle);
-        XHTMLInputElement ReferrerElement = content.getElementReferrer();
-		ReferrerElement.setValue(referrer);
+        XHTMLInputElement volumeNameElement = content.getElementVolumeName();
+		volumeNameElement.setValue(volumeName);
+        XHTMLInputElement entryHandleElement = content.getElementEntryHandle();
+		entryHandleElement.setValue(entryHandle);
+        XHTMLInputElement referrerElement = content.getElementReferrer();
+		referrerElement.setValue(referrer);
         
-        // Disable undo update
+        /*
+        // Enable undo update button
         String previousNFContributionId = myVolumeEntry.getClassifiedNotFinishedContributionId();
         String previousFContributionId = myVolumeEntry.getClassifiedFinishedContributionId();
-        /*
-        if (myVolumeEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS) 
-            || (myVolumeEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS) 
-                && (((previousNFContributionId == null) || (previousNFContributionId.equals("")))
-                     && ((previousFContributionId == null) || (previousFContributionId.equals(""))) ) ) ) {
-            XHTMLInputElement UndoUpdateElement = content.getElementUndoUpdate();
-            UndoUpdateElement.setDisabled(true);	
+        if (myVolumeEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS) 
+            && (    ((previousNFContributionId != null)
+                    && (!previousNFContributionId.equals("")))
+                ||  ((previousFContributionId != null)
+                    && (!previousFContributionId.equals(""))))){
+            XHTMLInputElement undoUpdateElement = content.getElementUndoUpdate();
+            undoUpdateElement.setDisabled(false);	
         }
         */
-        XHTMLInputElement undoUpdateElement = content.getElementUndoUpdate();
-        undoUpdateElement.setDisabled(true);	
         
-        // fillInterfaceTemplate
+        // Fill interface template
 		UIGenerator.fillInterfaceTemplate(myVolumeEntry.getDom().getDocumentElement(), myInterface, myItfTemplate);
         
-		//
-		XHTMLElement editingInterfaceElement = content.getElementEditEntryContent();
-		editingInterfaceElement.appendChild(content.importNode(myInterface, true));            
+        // Append interface
+        XHTMLElement editingInterfaceElement = content.getElementEditEntryContent();
+		editingInterfaceElement.appendChild(content.importNode(myInterface, true));
         
         //
+        PapillonLogger.writeDebugMsg("EditEntry : return");
 		return content.getElementEditEntryForm();
         }   
 }
