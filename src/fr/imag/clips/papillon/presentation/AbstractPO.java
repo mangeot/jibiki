@@ -7,6 +7,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.7  2007/01/09 17:31:04  fbrunet
+ *  Bug correction : error in user verification in HandleEntryModifications class (induce wrong redirection)
+ *
  *  Revision 1.6  2006/08/10 22:17:13  fbrunet
  *  - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
  *  - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
@@ -176,6 +179,7 @@ public abstract class AbstractPO implements HttpPresentation {
         throws HttpPresentationException, IOException, Exception {
             this.myComms = comms;
             initSessionData();
+            
             // Check if the user needs to be logged in for this request.
             if (this.loggedInUserRequired()) {
                 checkForUserLogin();                  // This will redirect the user to the login page if necessary

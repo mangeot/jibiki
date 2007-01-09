@@ -8,6 +8,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.15  2007/01/09 17:31:04  fbrunet
+ * Bug correction : error in user verification in HandleEntryModifications class (induce wrong redirection)
+ *
  * Revision 1.14  2007/01/08 15:13:42  fbrunet
  * Correction of th xml attribut bug in ContributionHeader (VolumeEntry class)
  *
@@ -179,9 +182,11 @@ public class HandleEntryModifications extends EditingBasePO {
             VolumeEntry newVolumeEntry = null;
 			
             // 
-			if ( oldVolumeEntry!=null && !oldVolumeEntry.isEmpty() 
-                 &&     !( oldVolumeEntry.getModificationAuthor().equals(this.getUser().getLogin())
-                           || this.getUser().isInGroup(Group.ADMIN_GROUP))) {
+			if ( oldVolumeEntry == null || oldVolumeEntry.isEmpty() ) {
+
+                // FIXME: add correct verification process !
+                //&&     !( oldVolumeEntry.getModificationAuthor().equals(this.getUser().getLogin())
+                //      || this.getUser().isInGroup(Group.ADMIN_GROUP))) {
                 
                 // FIXME: Add a user error message !!!
 				throw new ClientPageRedirectException(EditEntryInitURL);
