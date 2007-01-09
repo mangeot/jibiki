@@ -37,7 +37,7 @@ import java.util.Iterator;
         protected ArrayList targets;
         
         //
-        private final boolean DEBUG = true;
+        private final boolean DEBUG = false;
         
         //
         public QueryRequest(Volume volume) {

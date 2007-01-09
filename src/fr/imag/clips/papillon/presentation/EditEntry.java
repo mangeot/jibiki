@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.36  2007/01/09 17:46:03  fbrunet
+ * *** empty log message ***
+ *
  * Revision 1.35  2007/01/08 15:13:42  fbrunet
  * Correction of th xml attribut bug in ContributionHeader (VolumeEntry class)
  *
@@ -185,7 +188,6 @@ public class EditEntry extends EditingBasePO {
 		editingInterfaceElement.appendChild(content.importNode(myInterface, true));
         
         //
-        PapillonLogger.writeDebugMsg("EditEntry : return");
 		return content.getElementEditEntryForm();
         }   
 }
