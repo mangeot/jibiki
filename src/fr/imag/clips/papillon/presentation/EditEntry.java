@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.37  2007/01/12 13:08:51  fbrunet
+ * Bug correction : undo error in HandleEntryModifications class
+ *
  * Revision 1.36  2007/01/09 17:46:03  fbrunet
  * *** empty log message ***
  *
@@ -166,7 +169,6 @@ public class EditEntry extends EditingBasePO {
         XHTMLInputElement referrerElement = content.getElementReferrer();
 		referrerElement.setValue(referrer);
         
-        /*
         // Enable undo update button
         String previousNFContributionId = myVolumeEntry.getClassifiedNotFinishedContributionId();
         String previousFContributionId = myVolumeEntry.getClassifiedFinishedContributionId();
@@ -178,7 +180,6 @@ public class EditEntry extends EditingBasePO {
             XHTMLInputElement undoUpdateElement = content.getElementUndoUpdate();
             undoUpdateElement.setDisabled(false);	
         }
-        */
         
         // Fill interface template
 		UIGenerator.fillInterfaceTemplate(myVolumeEntry.getDom().getDocumentElement(), myInterface, myItfTemplate);

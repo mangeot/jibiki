@@ -8,6 +8,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.16  2007/01/12 13:08:51  fbrunet
+ * Bug correction : undo error in HandleEntryModifications class
+ *
  * Revision 1.15  2007/01/09 17:31:04  fbrunet
  * Bug correction : error in user verification in HandleEntryModifications class (induce wrong redirection)
  *
@@ -174,6 +177,7 @@ public class HandleEntryModifications extends EditingBasePO {
 				entryHandle==null || entryHandle.equals("")) {
 				                
                 // FIXME: Add a user error message !!!
+                PapillonLogger.writeDebugMsg("volumeName==null || ...");
 				throw new ClientPageRedirectException(EditEntryInitURL);
 			}
 		
@@ -189,6 +193,7 @@ public class HandleEntryModifications extends EditingBasePO {
                 //      || this.getUser().isInGroup(Group.ADMIN_GROUP))) {
                 
                 // FIXME: Add a user error message !!!
+                PapillonLogger.writeDebugMsg("oldVolumeEntry==null || ...");
 				throw new ClientPageRedirectException(EditEntryInitURL);
 			
             } else if (submitUndoUpdate!=null && !submitUndoUpdate.equals("")) {
@@ -226,6 +231,7 @@ public class HandleEntryModifications extends EditingBasePO {
             } else {
              
                 //
+                PapillonLogger.writeDebugMsg("else");
 				throw new ClientPageRedirectException(EditEntryInitURL);
             }
 			
@@ -462,6 +468,8 @@ public class HandleEntryModifications extends EditingBasePO {
                 
                 //
                 VolumeEntry previousEntry = VolumeEntriesFactory.findEntryByContributionId(newVolumeEntry.getVolume().getName(), previousFContributionId);
+                previousEntry.setStatus(VolumeEntry.FINISHED_STATUS);
+				previousEntry.save(); 
                 
                 //
                 PapillonLogger.writeDebugMsg("HandleEntryModifications : previousEntry.ContributionId " + previousEntry.getContributionId() + " - deleted -> newVolumeEntry.ContributionId " + newVolumeEntry.getClassifiedNotFinishedContributionId());
