@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.51  2007/01/15 17:24:28  serasset
+ * Merged Modification made for the DRI instance with main trunk modifications.
+ *
  * Revision 1.50  2007/01/15 17:12:18  serasset
  * Several notes added, suppressed the HTMLDOM_CACHE stuff.
  *
@@ -278,9 +281,9 @@ public class VolumesFactory {
     /** 
         * The newVolume method create a new volume base on volume element into the metadata file
         *
-        * @param String
-        * @param Element : dictionary element into the metadata file
-        * @param URL
+        * @param dictname
+        * @param volume : dictionary element into the metadata file
+        * @param fileURL
         *
         * @return Volume
         *

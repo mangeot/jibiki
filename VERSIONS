@@ -1,3 +1,6 @@
+BRANCH: RELEASE_DRI_INRIA_0_1 2006/12/06
+  Branch for installation on the inria DRI server.
+
 TAG: RELEASE_DRI_INRIA 2006/11/21
   Version exported for installation on the INRIA dri server.
 

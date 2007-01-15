@@ -9,6 +9,13 @@
  *  $Id $
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.7  2007/01/15 17:24:28  serasset
+ *  Merged Modification made for the DRI instance with main trunk modifications.
+ *
+ *  Revision 1.6.2.1  2006/12/14 12:19:29  serasset
+ *  Added DRI application specific files
+ *  Modified the LexalpLayout to make it more generic
+ *
  *  Revision 1.6  2006/08/10 22:17:13  fbrunet
  *  - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
  *  - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
@@ -124,7 +131,7 @@ public class LexALPLayout implements StdLayout {
         throws com.lutris.appserver.server.httpPresentation.HttpPresentationException, UnsupportedEncodingException {
             
             // Création du document
-            layout = (LayoutXHTML) MultilingualXHtmlTemplateFactory.createTemplate(PACKAGE, "LayoutXHTML", comms, sessionData);
+            layout = (LayoutXHTML) MultilingualXHtmlTemplateFactory.createTemplate("LayoutXHTML", comms, sessionData);
             
             // adding a new script if needed
             XHTMLScriptElement scriptElement = (XHTMLScriptElement) layout.getElementScript();
@@ -186,7 +193,7 @@ public class LexALPLayout implements StdLayout {
     protected void handleLangForm(HttpPresentationComms comms, PapillonSessionData sessionData, String url)
         throws com.lutris.appserver.server.httpPresentation.HttpPresentationException, PapillonBusinessException {
             
-            UserLanguageSelectXHTML langSelect = (UserLanguageSelectXHTML) MultilingualXHtmlTemplateFactory.createTemplate(PACKAGE, "UserLanguageSelectXHTML", comms, sessionData);
+            UserLanguageSelectXHTML langSelect = (UserLanguageSelectXHTML) MultilingualXHtmlTemplateFactory.createTemplate("UserLanguageSelectXHTML", comms, sessionData);
             XHTMLSelectElement langSelectElement = (XHTMLSelectElement) langSelect.getElementLang();
             
             // I select by default the user preferred language for the languages menu
@@ -195,7 +202,7 @@ public class LexALPLayout implements StdLayout {
             }
             PapillonBasePO.setSelected(langSelectElement, sessionData.getUserPreferredLanguage());
             
-            LangAndUserXHTML userMenu = (LangAndUserXHTML) MultilingualXHtmlTemplateFactory.createTemplate(PACKAGE, "LangAndUserXHTML", comms, sessionData);
+            LangAndUserXHTML userMenu = (LangAndUserXHTML) MultilingualXHtmlTemplateFactory.createTemplate("LangAndUserXHTML", comms, sessionData);
             // I add the LangSelectElement in the menu
             Node selectHolder = userMenu.getElementLangSelectPlace();
             selectHolder.getParentNode().replaceChild(userMenu.importNode(langSelectElement, true), selectHolder);
@@ -259,7 +266,7 @@ public class LexALPLayout implements StdLayout {
         UnsupportedEncodingException {
             
             
-            QueryMenuXHTML queryMenu = (QueryMenuXHTML) MultilingualXHtmlTemplateFactory.createTemplate(PACKAGE, "QueryMenuXHTML", comms, sessionData);
+            QueryMenuXHTML queryMenu = (QueryMenuXHTML) MultilingualXHtmlTemplateFactory.createTemplate("QueryMenuXHTML", comms, sessionData);
             //XHTMLInputElement headwordInput = queryMenu.getElementHeadwordInput();
             XHTMLInputElement headwordInput = queryMenu.getElementValueField();
             String headtmp = sessionData.getPreference("Home.po", headwordInput.getName());
@@ -359,7 +366,7 @@ public class LexALPLayout implements StdLayout {
             // If the user is logged in add the lexie menu
             User myUser = sessionData.getUser();
             if (null != myUser && !myUser.isEmpty()) {
-                LexiesManagementXHTML lexiesMenu = (LexiesManagementXHTML) MultilingualXHtmlTemplateFactory.createTemplate(PACKAGE, "LexiesManagementXHTML", comms, sessionData);
+                LexiesManagementXHTML lexiesMenu = (LexiesManagementXHTML) MultilingualXHtmlTemplateFactory.createTemplate("LexiesManagementXHTML", comms, sessionData);
                 
                 Node placeHolder = layout.getElementMenuBlockPlaceHolder();
                 Node placeHolderMother = placeHolder.getParentNode();
@@ -385,7 +392,7 @@ public class LexALPLayout implements StdLayout {
             // If the user is logged in add the help menu
             User myUser = sessionData.getUser();
             if (null != myUser && !myUser.isEmpty()) {
-                HelpMenuXHTML helpMenu = (HelpMenuXHTML) MultilingualXHtmlTemplateFactory.createTemplate(PACKAGE, "HelpMenuXHTML", comms, sessionData);
+                HelpMenuXHTML helpMenu = (HelpMenuXHTML) MultilingualXHtmlTemplateFactory.createTemplate("HelpMenuXHTML", comms, sessionData);
                 
                 Node placeHolder = layout.getElementMenuBlockPlaceHolder();
                 Node placeHolderMother = placeHolder.getParentNode();
@@ -411,7 +418,7 @@ public class LexALPLayout implements StdLayout {
             // If the user is logged in add the lexie menu
             User myUser = sessionData.getUser();
             if (null != myUser && !myUser.isEmpty()) {
-                AxiesManagementXHTML axiesMenu = (AxiesManagementXHTML) MultilingualXHtmlTemplateFactory.createTemplate(PACKAGE, "AxiesManagementXHTML", comms, sessionData);
+                AxiesManagementXHTML axiesMenu = (AxiesManagementXHTML) MultilingualXHtmlTemplateFactory.createTemplate("AxiesManagementXHTML", comms, sessionData);
                 
                 Node placeHolder = layout.getElementMenuBlockPlaceHolder();
                 Node placeHolderMother = placeHolder.getParentNode();
@@ -437,7 +444,7 @@ public class LexALPLayout implements StdLayout {
             // If the user is not a specialist reviewer
             User myUser = sessionData.getUser();
             if (null != myUser && !myUser.isEmpty() && myUser.isSpecialist()) {
-                ReviewerMenuXHTML reviewerMenu = (ReviewerMenuXHTML) MultilingualXHtmlTemplateFactory.createTemplate(PACKAGE, "ReviewerMenuXHTML", comms, sessionData);
+                ReviewerMenuXHTML reviewerMenu = (ReviewerMenuXHTML) MultilingualXHtmlTemplateFactory.createTemplate("ReviewerMenuXHTML", comms, sessionData);
 
                 Node placeHolder = layout.getElementMenuBlockPlaceHolder();
                 Node placeHolderMother = placeHolder.getParentNode();
@@ -463,7 +470,7 @@ public class LexALPLayout implements StdLayout {
             // If the user is not a specialist reviewer
             User myUser = sessionData.getUser();
             if (null != myUser && !myUser.isEmpty() && myUser.isAdmin()) {
-                AdministrationMenuXHTML adminMenu = (AdministrationMenuXHTML) MultilingualXHtmlTemplateFactory.createTemplate(PACKAGE, "AdministrationMenuXHTML", comms, sessionData);
+                AdministrationMenuXHTML adminMenu = (AdministrationMenuXHTML) MultilingualXHtmlTemplateFactory.createTemplate("AdministrationMenuXHTML", comms, sessionData);
                 
                 Node placeHolder = layout.getElementMenuBlockPlaceHolder();
                 Node placeHolderMother = placeHolder.getParentNode();
