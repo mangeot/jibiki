@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.15  2007/01/15 19:44:33  serasset
+ * Corrected an error due to HTMLDOM removal.
+ *
  * Revision 1.14  2007/01/15 17:12:18  serasset
  * Several notes added, suppressed the HTMLDOM_CACHE stuff.
  *
@@ -180,12 +183,12 @@ public class Admin extends PapillonBasePO {
 			else if (null != myGetParameter(content.NAME_ResetNewsCache)) {
 				fr.imag.clips.papillon.presentation.News.resetCache();
             }
-			else if (null != myGetParameter(content.NAME_SetHTMLDomCaches)) {
+			//else if (null != myGetParameter(content.NAME_SetHTMLDomCaches)) {
 				//String setCacheString = myGetParameter(content.NAME_HTMLDomCaches);
 				//cacheSet = (setCacheString!=null && !setCacheString.equals(""));
 				//fr.imag.clips.papillon.business.dictionary.VolumeEntry.setCacheHtmlDom(cacheSet);
                 //this.getSessionData().writeUserMessage("HTML DOM cache is set? " + cacheSet);
-            }
+            //}
 			else if (null != myGetParameter(content.NAME_SetEditData)) {
 				String setEditDataString = myGetParameter(content.NAME_EditData);
 				EDIT_DATA = (setEditDataString!=null && !setEditDataString.equals(""));
