@@ -6,6 +6,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.2  2007/01/15 17:12:18  serasset
+ * Several notes added, suppressed the HTMLDOM_CACHE stuff.
+ *
  * Revision 1.1  2007/01/05 13:57:26  serasset
  * multiple code cleanup.
  * separation of XMLServices from the Utility class
@@ -144,7 +147,7 @@ public class XMLServices {
     public static void formatXml(Document doc, Writer wrt, boolean pretty) throws PapillonBusinessException {
         try {
             OutputFormat format = new OutputFormat(doc);
-            format.setOmitXMLDeclaration(true); // FIXME: test if XML declaration has to be in the DB...
+            format.setOmitXMLDeclaration(true);
             if (pretty) {
                 format.setIndenting(true);
                 format.setIndent(2);
@@ -160,7 +163,7 @@ public class XMLServices {
     public static void formatXml(Document doc, OutputStream outs, boolean pretty) throws PapillonBusinessException {
         try {
             OutputFormat format = new OutputFormat(doc);
-            format.setOmitXMLDeclaration(true); // FIXME: test if XML declaration has to be in the DB...
+            format.setOmitXMLDeclaration(true);
             if (pretty) {
                 format.setIndenting(true);
                 format.setIndent(2);
@@ -177,6 +180,7 @@ public class XMLServices {
      * Serialize the DOM element
      *
      * @return the xml code as a string.
+     * @deprecated Use xmlCode or xmlPretty unless you have a special requirement.
      */
     /* prints XML declaration */
     public static String xmlCodeOld(Document doc) {

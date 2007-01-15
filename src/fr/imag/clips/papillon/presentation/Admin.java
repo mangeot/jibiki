@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.14  2007/01/15 17:12:18  serasset
+ * Several notes added, suppressed the HTMLDOM_CACHE stuff.
+ *
  * Revision 1.13  2006/12/14 20:03:26  fbrunet
  * Add method to normalize value into XML structure.
  *
@@ -141,7 +144,7 @@ public class Admin extends PapillonBasePO {
         // Création du contenu
         content = (AdminTmplXHTML) MultilingualXHtmlTemplateFactory.createTemplate("AdminTmplXHTML", this.getComms(), this.getSessionData());
 		
-		boolean cacheSet = fr.imag.clips.papillon.business.dictionary.VolumeEntry.CACHE_HTMLDOM;
+		//boolean cacheSet = fr.imag.clips.papillon.business.dictionary.VolumeEntry.CACHE_HTMLDOM;
 
 		
         // If the page is called with parameters, take the requested action
@@ -178,10 +181,10 @@ public class Admin extends PapillonBasePO {
 				fr.imag.clips.papillon.presentation.News.resetCache();
             }
 			else if (null != myGetParameter(content.NAME_SetHTMLDomCaches)) {
-				String setCacheString = myGetParameter(content.NAME_HTMLDomCaches);
-				cacheSet = (setCacheString!=null && !setCacheString.equals(""));
-				fr.imag.clips.papillon.business.dictionary.VolumeEntry.setCacheHtmlDom(cacheSet);
-                this.getSessionData().writeUserMessage("HTML DOM cache is set? " + cacheSet);
+				//String setCacheString = myGetParameter(content.NAME_HTMLDomCaches);
+				//cacheSet = (setCacheString!=null && !setCacheString.equals(""));
+				//fr.imag.clips.papillon.business.dictionary.VolumeEntry.setCacheHtmlDom(cacheSet);
+                //this.getSessionData().writeUserMessage("HTML DOM cache is set? " + cacheSet);
             }
 			else if (null != myGetParameter(content.NAME_SetEditData)) {
 				String setEditDataString = myGetParameter(content.NAME_EditData);
@@ -201,16 +204,16 @@ public class Admin extends PapillonBasePO {
             }
         }
 		
-		addAdminForm(content, cacheSet, EDIT_DATA);
+		addAdminForm(content, EDIT_DATA);
 
         //On rends le contenu correct
         return content.getElementHomeContent();
     }
 	
-	protected static void addAdminForm (AdminTmplXHTML content, boolean cacheSet, boolean editData) {
+	protected static void addAdminForm (AdminTmplXHTML content, boolean editData) {
 	
-		XHTMLInputElement cacheElement = content.getElementHTMLDomCaches();
-		cacheElement.setChecked(cacheSet);
+		//XHTMLInputElement cacheElement = content.getElementHTMLDomCaches();
+		//cacheElement.setChecked(cacheSet);
 		
 		XHTMLInputElement editDataElement = content.getElementEditData();
 		editDataElement.setChecked(editData);

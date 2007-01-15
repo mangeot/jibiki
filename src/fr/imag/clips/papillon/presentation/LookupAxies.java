@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.7  2007/01/15 17:12:18  serasset
+ * Several notes added, suppressed the HTMLDOM_CACHE stuff.
+ *
  * Revision 1.6  2006/08/10 22:17:13  fbrunet
  * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
  * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
@@ -153,8 +156,8 @@ public class LookupAxies extends PapillonBasePO {
             Collection myAxies = null;
             String userMessage = null;
 
-						Volume papillonAxiVolume = VolumesFactory.getVolumeByName(PapillonPivotFactory.VOLUMENAME);
-						Dictionary papillonDictionary = DictionariesFactory.getDictionaryByName(PapillonPivotFactory.DICTNAME);
+			Volume papillonAxiVolume = VolumesFactory.getVolumeByName(PapillonPivotFactory.VOLUMENAME);
+			Dictionary papillonDictionary = DictionariesFactory.getDictionaryByName(PapillonPivotFactory.DICTNAME);
 
 
             // looking for an axie with a lexie id linked to the axie

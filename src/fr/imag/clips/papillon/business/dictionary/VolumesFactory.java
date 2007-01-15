@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.50  2007/01/15 17:12:18  serasset
+ * Several notes added, suppressed the HTMLDOM_CACHE stuff.
+ *
  * Revision 1.49  2007/01/08 15:13:42  fbrunet
  * Correction of th xml attribut bug in ContributionHeader (VolumeEntry class)
  *
@@ -513,8 +516,8 @@ public class VolumesFactory {
 			
             try {
                 Document docXml = XMLServices.buildDOMTree(fileURL);
-             //   PapillonLogger.writeDebugMsg("The xml code:");
-              //  PapillonLogger.writeDebugMsg(Utility.NodeToString(docXml));
+                PapillonLogger.writeDebugMsg("The xml code:");
+                PapillonLogger.writeDebugMsg(XMLServices.xmlCodePrettyPrinted(docXml));
                 
 				//on recupere le dictionnaire
 				Element volume;	
@@ -1203,10 +1206,10 @@ public class VolumesFactory {
 			if ((contribNodeList == null || contribNodeList.getLength()==0)
 				&& (entryNodeList != null && entryNodeList.getLength()==1)) {
 				Node myEntryNode = entryNodeList.item(0);
-				String contributionString = VolumeEntry.ContributionHeader + VolumeEntry.ContributionFooter;
-                PapillonLogger.writeDebugMsg(contributionString);
-				org.w3c.dom.Document contributionDoc = XMLServices.buildDOMTree(contributionString);
-				Node contributionNode = templateDoc.importNode(contributionDoc.getDocumentElement(), true);				
+                // FIXME: maybe use XMLC to have an already compiled DOM ?
+                String contributionString = VolumeEntry.ContributionHeader + VolumeEntry.ContributionFooter;
+                org.w3c.dom.Document contributionDoc = XMLServices.buildDOMTree(contributionString);
+				Node contributionNode = templateDoc.importNode(contributionDoc.getDocumentElement(),true);
 				Node entryParent = myEntryNode.getParentNode();
 				entryParent.replaceChild(contributionNode, myEntryNode);
 				NodeList dataNodeList = ParseVolume.getCdmElements(templateDoc, Volume.CDM_contributionDataElement, Volume.DEFAULT_LANG, cdmElements);

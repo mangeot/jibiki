@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.34  2007/01/15 17:12:18  serasset
+ * Several notes added, suppressed the HTMLDOM_CACHE stuff.
+ *
  * Revision 1.33  2007/01/05 13:57:25  serasset
  * multiple code cleanup.
  * separation of XMLServices from the Utility class
@@ -286,7 +289,7 @@ public class DictionariesFactory {
     /** 
         * The newDictionary method create a new dictionary base on dictionary element into the metadata file
         *
-        * @param Element : dictionary element into the metadata file
+        * @param dictionary element into the metadata file
         *
         * @return Dictionary
         *
@@ -296,7 +299,7 @@ public class DictionariesFactory {
     public static Dictionary newDictionary(Element dictionary)
         throws fr.imag.clips.papillon.business.PapillonBusinessException, java.io.IOException {
 			
-            // Cette m√©thode d√©pend du sch√©ma des dictionnaires.
+            // Cette méthode dépend du schéma des dictionnaires.
             String fullname = dictionary.getAttribute("fullname");
             String name = dictionary.getAttribute("name");
             String category = dictionary.getAttribute("category");
@@ -324,7 +327,7 @@ public class DictionariesFactory {
                     sources = sources + " " + tempElt.getAttributeNS(DML_URI, "lang");
                 }
             }
-            sources.trim();
+            sources = sources.trim();
 			
             NodeList targetNodes = dictionary.getElementsByTagName("target-language");
             String targets = "";
@@ -334,7 +337,7 @@ public class DictionariesFactory {
                     targets = targets + " " +  tempElt.getAttributeNS(DML_URI, "lang");
                 }
             }
-            targets.trim();
+            targets = targets.trim();
 			
             // FIXME: Should we store the DOM ?
             String xmlCode= XMLServices.NodeToString(dictionary);
@@ -371,40 +374,47 @@ public class DictionariesFactory {
         * @exception PapillonBusinessException
         */
     protected static Dictionary createUniqueDictionary (String name,
-                                                     String fullname,
-                                                     String category,
-                                                     String type,
-                                                     String domain,
-                                                     String legal,
-                                                     String sources,
-                                                     String targets,
-                                                     String xmlCode)
-        throws fr.imag.clips.papillon.business.PapillonBusinessException {
-            Dictionary myDictionary = null;
-            if ((name!=null) && (fullname!=null) && (category!=null) && (type!=null) && (sources!=null) && (xmlCode!=null))
-            {
-                // search for an existing dictionary
-                Dictionary Existe=DictionariesFactory.getDictionaryByName(name);
-                if (Existe.isEmpty()) {//does'nt exist, create :
-                    myDictionary=new Dictionary();
-                    myDictionary.setName(name);
-                    myDictionary.setFullName(fullname);
-                    myDictionary.setCategory(category);
-                    myDictionary.setType(type);
-                    myDictionary.setDomain(domain);
-                    myDictionary.setLegal(legal);
-                    myDictionary.setSourceLanguages(sources);
-                    myDictionary.setTargetLanguages(targets);
-                    myDictionary.setXmlCode(xmlCode);
-                
-                } else {
-                    PapillonLogger.writeDebugMsg("Dico deja existant dans la base");
-                }
+                                                        String fullname,
+                                                        String category,
+                                                        String type,
+                                                        String domain,
+                                                        String legal,
+                                                        String sources,
+                                                        String targets,
+                                                        String xmlCode)
+            throws fr.imag.clips.papillon.business.PapillonBusinessException {
+        Dictionary myDictionary = null;
+        if ((name!=null) && (fullname!=null) && (category!=null) && (type!=null) && (sources!=null) && (xmlCode!=null))
+        {
+            // search for an existing dictionary
+            myDictionary=DictionariesFactory.getDictionaryByName(name);
+            if (myDictionary == null || myDictionary.isEmpty()) {//the dictionary is new, create it...
+                myDictionary=new Dictionary();
+                myDictionary.setName(name);
+                myDictionary.setFullName(fullname);
+                myDictionary.setCategory(category);
+                myDictionary.setType(type);
+                myDictionary.setDomain(domain);
+                myDictionary.setLegal(legal);
+                myDictionary.setSourceLanguages(sources);
+                myDictionary.setTargetLanguages(targets);
+                myDictionary.setXmlCode(xmlCode);
+            } else {
+                PapillonLogger.writeDebugMsg("Dico deja existant dans la base");
             }
-            return myDictionary;
+        } else {
+            PapillonLogger.writeDebugMsg("Could not retrieve one of the mandatory elements:");
+            PapillonLogger.writeDebugMsg("dictionary name = " + name);
+            PapillonLogger.writeDebugMsg("dictionary full name = " + fullname);
+            PapillonLogger.writeDebugMsg("dictionary category = " + category);
+            PapillonLogger.writeDebugMsg("dictionary type = " + type);
+            PapillonLogger.writeDebugMsg("dictionary sources = " + sources);
+            if (xmlCode == null) PapillonLogger.writeDebugMsg("dictionary xmlcode is null.");
         }
-	
-    
+        return myDictionary;
+    }
+
+
     /** 
         * The parseDictionaryMetadata method parse the url file, create the new dictionary in the database, load volumes and entries if specify and return the new dictionary.
         *

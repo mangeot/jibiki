@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.6  2007/01/15 17:12:18  serasset
+ * Several notes added, suppressed the HTMLDOM_CACHE stuff.
+ *
  * Revision 1.5  2006/08/10 21:28:57  mangeot
  * error treatment
  *
@@ -67,7 +70,7 @@ public class MultilingualXHtmlTemplateFactory {
      * the HTTPRequest (which contains the user's preferred languages).
      *
      * @return The localized HTML Template Object
-     * @deprecated Use createTemplate with package specifier.
+     //* @deprecated Use createTemplate with package specifier.
      */
     public static java.lang.Object createTemplate(String xhtmlClass,
                                                   HttpPresentationComms comms,

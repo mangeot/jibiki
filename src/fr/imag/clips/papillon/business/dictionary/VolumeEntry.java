@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.49  2007/01/15 17:12:18  serasset
+ * Several notes added, suppressed the HTMLDOM_CACHE stuff.
+ *
  * Revision 1.48  2007/01/08 15:13:42  fbrunet
  * Correction of th xml attribut bug in ContributionHeader (VolumeEntry class)
  *
@@ -289,6 +292,7 @@ import java.util.regex.Pattern;
 /**
  * Represents a Dictionary Entry.
  */
+// FIXME: All CDM field access should be realized in a superclass to simplify this class.
 public class VolumeEntry implements IAnswer {
 
     public final static String ORIGINAL_STATUS = "original";    // FIXME: in use ?
@@ -371,7 +375,7 @@ public class VolumeEntry implements IAnswer {
     protected static final String CONTRIBUTION_ID_SUFFIX = ".c";
 
     // by default, the HTML DOM is not cached
-    public static boolean CACHE_HTMLDOM = false;
+    //public static boolean CACHE_HTMLDOM = false;
 
     /**
      * The DO of the Dictionary.
@@ -617,6 +621,8 @@ public class VolumeEntry implements IAnswer {
      */
     public String getXmlCode()
             throws PapillonBusinessException {
+        // FIXME: Warning, the xmlcode is the code as available in the db, it does not correspond
+        // FIXME: ... to the dom that may have been changed since the entry has been retrieved from the db.
         try {
             return this.myDO.getXmlCode();
         } catch (DataObjectException ex) {
@@ -1434,9 +1440,9 @@ public class VolumeEntry implements IAnswer {
         return ParseVolume.getCdmString(this, Volume.CDM_gdefEstParticule, this.getSourceLanguage());
     }
 
-    public static void setCacheHtmlDom(boolean cache) {
-        CACHE_HTMLDOM = cache;
-    }
+//    public static void setCacheHtmlDom(boolean cache) {
+//        CACHE_HTMLDOM = cache;
+//    }
 
 
     /**

@@ -4,6 +4,9 @@
  * $Id$
  *------------------------
  * $Log$
+ * Revision 1.13  2007/01/15 17:12:18  serasset
+ * Several notes added, suppressed the HTMLDOM_CACHE stuff.
+ *
  * Revision 1.12  2007/01/08 15:13:42  fbrunet
  * Correction of th xml attribut bug in ContributionHeader (VolumeEntry class)
  *
@@ -181,7 +184,9 @@ public class LexALPFormatter implements ResultFormatter {
             
             //
             if (null != dictXsl && !dictXsl.isEmpty()) {
-                
+
+                System.out.println(dictXsl.getCode());
+
                 // Format document source
                 Node resultNode = formatResult(docSource, dictXsl, usr);
                 div.appendChild(res.importNode(resultNode, true));

@@ -2,6 +2,9 @@
  * $Id$
  *-----------------------------------------------------------------------------
  * $Log$
+ * Revision 1.11  2007/01/15 17:12:18  serasset
+ * Several notes added, suppressed the HTMLDOM_CACHE stuff.
+ *
  * Revision 1.10  2007/01/05 13:57:26  serasset
  * multiple code cleanup.
  * separation of XMLServices from the Utility class
@@ -119,8 +122,8 @@ public class ManageDatabase implements Query {
     
     protected static String createVolumeTableParamsSql = " (" +
         "headword TEXT DEFAULT '\'''\''    ," +
-		"dom BYTEA NOT NULL   ," +
-		"htmldom BYTEA NOT NULL   ," +
+		//"dom BYTEA NOT NULL   ," +
+		//"htmldom BYTEA NOT NULL   ," +
         "xmlCode TEXT DEFAULT '\'''\'' NOT NULL   ," +
         
         "ObjectId DECIMAL(19,0) NOT NULL PRIMARY KEY," +
@@ -262,7 +265,8 @@ public class ManageDatabase implements Query {
             DBConnection myDbConnection = null;
             try {
                 myDbConnection = Enhydra.getDatabaseManager().allocateConnection();
-				String databaseUser = Enhydra.getApplication().getConfig().getString(DatabaseUserString);
+                String dbUserStringConfig = "DatabaseManager.DB." + Enhydra.getDatabaseManager().getDefaultDB() + ".Connection.User";
+                String databaseUser = Enhydra.getApplication().getConfig().getString(dbUserStringConfig);
 
 				com.lutris.dods.builder.generator.query.QueryBuilder myQueryBuilder = new com.lutris.dods.builder.generator.query.QueryBuilder("pg_tables");
 				com.lutris.dods.builder.generator.query.RDBTable pg_tables = new com.lutris.dods.builder.generator.query.RDBTable("pg_tables");
