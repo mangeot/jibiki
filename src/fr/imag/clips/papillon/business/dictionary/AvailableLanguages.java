@@ -9,6 +9,9 @@
  * $Id$
  *---------------------------------------------------------
  * $Log$
+ * Revision 1.6  2007/01/16 13:28:31  serasset
+ * Added cache reinitialization when a metadata is modified.
+ *
  * Revision 1.5  2006/08/10 22:17:12  fbrunet
  * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
  * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
@@ -66,7 +69,6 @@ public class AvailableLanguages {
                     //
                     for (Iterator iter2 = dict.getSourceLanguagesArray().iterator(); iter2.hasNext();) {
                         String source = (String)iter2.next();
-                        
                         if (null != source && !source.equals("") && !source.equals("axi")) {
                             if (MapLanguages.containsKey(source)) {
                                 targetSet=(TreeSet) MapLanguages.get(source);
@@ -97,7 +99,7 @@ public class AvailableLanguages {
      */
     public static Collection getSourceLanguagesArray()
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
-			if (SourceLanguagesArray == null) {
+            if (SourceLanguagesArray == null) {
 				SourceLanguagesArray = getAvailableLanguagesMap().keySet();
 			}
             return SourceLanguagesArray;
@@ -176,14 +178,14 @@ public class AvailableLanguages {
 	} 
 	
 	public static boolean resetCache () {
-		TreeMap MapLanguages = null;
+		MapLanguages = null;
 		SourceLanguagesArray = null;
 		TargetLanguagesArray = null;
 		AllLanguagesArray = null;
 		
 		CdmElementsWithDefaultLanguage = null;
-		
-		return true;
+
+        return true;
 	}
 	
 }

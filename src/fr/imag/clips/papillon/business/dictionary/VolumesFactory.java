@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.52  2007/01/16 13:28:31  serasset
+ * Added cache reinitialization when a metadata is modified.
+ *
  * Revision 1.51  2007/01/15 17:24:28  serasset
  * Merged Modification made for the DRI instance with main trunk modifications.
  *
@@ -294,7 +297,7 @@ public class VolumesFactory {
 		
 			Hashtable cdmElements = null;
             
-			// Cette m√©thode d√©pend du sch√©ma des volumes.
+			// Cette méthode dépend du schéma des volumes.
             String name = volume.getAttribute("name");
             String dbname = volume.getAttribute("dbname");
             String location = volume.getAttribute(LOCATION_ATTRIBUTE);
@@ -345,6 +348,9 @@ public class VolumesFactory {
             
             // Add in cache
             VolumeCache.putVolumeInCache(newVolume.getName(), newVolume);
+
+            // reset Available languages so that they are correctly computed afterwards
+            AvailableLanguages.resetCache();
             
             //
             return newVolume;
@@ -391,8 +397,8 @@ public class VolumesFactory {
 				&& (source!=null) && (href!=null) && (xmlCode!=null)) 
 			{
 				//search for an existing dictionary
-				Volume Existe=VolumesFactory.getVolumeByName(name);
-				if (Existe == null || Existe.isEmpty()) {
+				myVolume = VolumesFactory.getVolumeByName(name);
+				if (myVolume == null || myVolume.isEmpty()) {
                     //does'nt exist, create :
 					myVolume=new Volume();
 					myVolume.setName(name);

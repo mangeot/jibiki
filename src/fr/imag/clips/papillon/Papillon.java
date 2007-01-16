@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.11  2007/01/16 13:28:31  serasset
+ * Added cache reinitialization when a metadata is modified.
+ *
  * Revision 1.10  2007/01/05 13:57:25  serasset
  * multiple code cleanup.
  * separation of XMLServices from the Utility class
@@ -71,6 +74,7 @@ import com.lutris.logging.Logger;
 
 import fr.imag.clips.papillon.business.dictionary.DictionariesFactory;
 import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
+import fr.imag.clips.papillon.business.dictionary.AvailableLanguages;
 import fr.imag.clips.papillon.business.xsl.XslSheetFactory;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 
@@ -175,47 +179,37 @@ public class Papillon extends StandardApplication {
         } catch (ConfigException e) {
             // nothing... failing to default...
         }
-        
+
+        try {
+            Papillon.initializeAllCaches();
+        } catch (PapillonBusinessException e) {
+            throw new ApplicationException("Initialize caches error", e);
+        }
+
+    }
+
+    public synchronized static void initializeAllCaches() throws PapillonBusinessException {
         // Initialize dictionarie cache
-        try {
-            DictionariesFactory.initializeDictionaryCache();
-        } catch (PapillonBusinessException e) {
-            throw new ApplicationException("Initialize dictionaries error", e);
-        }
-        
+
+        DictionariesFactory.initializeDictionaryCache();
+
         // Initialize volume cache
-        try {
-           VolumesFactory.initializeVolumeCache();
-        } catch (PapillonBusinessException e) {
-            throw new ApplicationException("Initialize volumes error", e);
-        }
-        
+        VolumesFactory.initializeVolumeCache();
+
         // Initialize transformer factory
         // FIXME : For Xalan 2_7_0
-        //try {
         //    XslSheetFactory.initializeTransformerFactory();
-        //} catch (PapillonBusinessException e) {
-        //    throw new ApplicationException("Initialize transformer factory error", e);
-        //}
-        
+
         // Initialize xsl sheet cache
-        try {
-            XslSheetFactory.initializeXslSheetCache();
-        } catch (PapillonBusinessException e) {
-            throw new ApplicationException("Initialize xsl sheet error", e);
-        }
-        
-        
+        XslSheetFactory.initializeXslSheetCache();
+
         // Initialize jibiki xsl sheets
-        try {
-            XslSheetFactory.initializeJibikiXslSheet();
-        } catch (PapillonBusinessException e) {
-            throw new ApplicationException("Initialize jibiki xsl sheet error", e);
-        }
-        
-       
+        XslSheetFactory.initializeJibikiXslSheet();
+
+        AvailableLanguages.resetCache();
+
     }
-    
+
     public String getPriorityPackage() {
         return presentationPriorityPackage;
     }

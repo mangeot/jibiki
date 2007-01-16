@@ -9,6 +9,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.11  2007/01/16 13:28:31  serasset
+ *  Added cache reinitialization when a metadata is modified.
+ *
  *  Revision 1.10  2006/08/10 22:17:13  fbrunet
  *  - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
  *  - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
@@ -86,6 +89,7 @@ import org.w3c.dom.Text;
 
 import fr.imag.clips.papillon.business.message.MessageDBLoader;
 import fr.imag.clips.papillon.CurrentDBTransaction;
+import fr.imag.clips.papillon.Papillon;
 import com.lutris.appserver.server.sql.DBTransaction;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 
@@ -220,7 +224,7 @@ public class AdminDictionaries extends PapillonBasePO {
                 String name = req.getParameter(REMOVE_PARAMETER);
                 Dictionary dict = DictionariesFactory.getDictionaryByHandle(name);
                 dict.delete();
-                DictionariesFactory.initializeDictionaryCache();
+                Papillon.initializeAllCaches();
                 userMessage = "Dictionary " + dict.getName() + " metadata  erased...";
             
             //
@@ -229,6 +233,7 @@ public class AdminDictionaries extends PapillonBasePO {
                 Dictionary dict = DictionariesFactory.getDictionaryByHandle(name);
                 // here we should use a truncate sql statement with volume.getDbname();
                 dict.deleteAll();
+                Papillon.initializeAllCaches();
                 userMessage = "Dictionary " + dict.getName() + " metadata and volumes erased...";
             }
             
@@ -285,6 +290,7 @@ public class AdminDictionaries extends PapillonBasePO {
         } finally {
             CurrentDBTransaction.releaseCurrentDBTransaction();
         }
+        Papillon.initializeAllCaches();
         return userMessage;
     }
 

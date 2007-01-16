@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.17  2007/01/16 13:28:31  serasset
+ * Added cache reinitialization when a metadata is modified.
+ *
  * Revision 1.16  2007/01/05 13:57:26  serasset
  * multiple code cleanup.
  * separation of XMLServices from the Utility class
@@ -143,6 +146,7 @@ import java.net.URL;
 
 
 import fr.imag.clips.papillon.CurrentDBTransaction;
+import fr.imag.clips.papillon.Papillon;
 import com.lutris.appserver.server.sql.DBTransaction;
 
 //pour les dictionary
@@ -239,7 +243,7 @@ public class AdminVolumes extends PapillonBasePO {
                 String handle = myGetParameter(REMOVE_METADATA_PARAMETER);
                 Volume volume = VolumesFactory.getVolumeByHandle(handle);
                 volume.delete();
-                VolumesFactory.initializeVolumeCache();
+                Papillon.initializeAllCaches();
                 userMessage = "Volume " + volume.getName() + " metadata  erased...";	
             
             //
@@ -248,8 +252,8 @@ public class AdminVolumes extends PapillonBasePO {
                 Volume volume = VolumesFactory.getVolumeByHandle(handle);
                 if (null != volume && !volume.isEmpty()) {
                     volume.deleteAll();
-                    VolumesFactory.initializeVolumeCache();
-                    userMessage = "Volume " + volume.getName() + " entries and metadata  erased...";                    
+                    Papillon.initializeAllCaches();
+                    userMessage = "Volume " + volume.getName() + " entries and metadata  erased...";
                 }
             
             //
@@ -345,7 +349,11 @@ public class AdminVolumes extends PapillonBasePO {
         } finally {
             CurrentDBTransaction.releaseCurrentDBTransaction();
         }
-		return userMessage;
+        // Finally initialize all caches
+        // FIXME: other connection can certainly happen during cache initialization... how can we avoid this ?
+        Papillon.initializeAllCaches();
+        
+        return userMessage;
     }
 
 	
@@ -521,7 +529,8 @@ public class AdminVolumes extends PapillonBasePO {
     }
 
 	protected String uploadObject(String volName, String object, String url) throws PapillonBusinessException {
-		PapillonLogger.writeDebugMsg("uploadObject volName: " + volName);
+        // FIXME: shouldn't this be protected in a transaction ?
+        PapillonLogger.writeDebugMsg("uploadObject volName: " + volName);
 		Volume myVolume = VolumesFactory.getVolumeByName(volName);
 		String result = "Nothing uploaded";
 		if (myVolume!=null && !myVolume.isEmpty()) {
@@ -549,7 +558,8 @@ public class AdminVolumes extends PapillonBasePO {
 				}
 				fr.imag.clips.papillon.business.edition.UITemplates.resetCache();
 				myVolume.save();
-			}
+                Papillon.initializeAllCaches();
+            }
 		}
 		return result;
 	}

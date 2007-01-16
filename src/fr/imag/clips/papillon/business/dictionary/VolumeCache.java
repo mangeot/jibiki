@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2007/01/16 13:28:31  serasset
+ * Added cache reinitialization when a metadata is modified.
+ *
  * Revision 1.2  2007/01/05 13:57:25  serasset
  * multiple code cleanup.
  * separation of XMLServices from the Utility class
@@ -69,8 +72,8 @@ public class VolumeCache {
     /** 
         * Put volume in caches
         *
-        * @param volume name
-        * @param xsl sheet
+        * @param volumeName name
+        * @param vol sheet
         *
         * @exception PapillonBusinessException
         * 
