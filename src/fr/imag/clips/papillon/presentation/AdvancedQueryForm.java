@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.11  2007/02/07 13:58:57  fbrunet
+ * added message before axies are merged and undo process if the merge is not correct.
+ *
  * Revision 1.10  2006/08/10 22:17:13  fbrunet
  * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
  * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
@@ -492,7 +495,7 @@ public class AdvancedQueryForm {
         XHTMLSelectElement facet = queryDoc.getElementFacet();
         XHTMLSelectElement oper = queryDoc.getElementOperator();
         XHTMLInputElement valuefield = queryDoc.getElementValueField();
-        Element sourceLangSelectArea = queryDoc.getElementSourceLanguageSelection();
+        //Element sourceLangSelectArea = queryDoc.getElementSourceLanguageSelection();
         //XHTMLLabelElement sourceLangLabel = queryDoc.getElementSourceLangLabel();
         XHTMLSelectElement sourceLang = queryDoc.getElementSourceLang();
         XHTMLOptionElement sourceOption = queryDoc.getElementSourceOptionTemplate();
@@ -506,7 +509,7 @@ public class AdvancedQueryForm {
         facet.removeAttribute("id");
         oper.removeAttribute("id");
         valuefield.removeAttribute("id");
-        sourceLangSelectArea.removeAttribute("id");
+        //sourceLangSelectArea.removeAttribute("id");
         //sourceLangLabel.removeAttribute("id");
         sourceLang.removeAttribute("id");
         sourceOption.removeAttribute("id");
@@ -581,9 +584,9 @@ public class AdvancedQueryForm {
                 // Specify what cdm-element appears in advanced lookup and if it needs language selector !
                 // see below "create table to show/hide parameters"
 				if (fr.imag.clips.papillon.business.dictionary.AvailableLanguages.getCdmElementsWithDefaultLanguage().contains(key[0])) {
-					sourceLang.setAttribute("style", "visibility: hidden;");
+					((Element)sourceLang.getParentNode()).setAttribute("style", "visibility: hidden;");
 				} else {
-					sourceLang.setAttribute("style", "visibility: visible;");
+					((Element)sourceLang.getParentNode()).setAttribute("style", "visibility: visible;");
 				}
                 
                 //

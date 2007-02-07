@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.42  2007/02/07 13:58:57  fbrunet
+ * added message before axies are merged and undo process if the merge is not correct.
+ *
  * Revision 1.41  2007/01/05 13:57:25  serasset
  * multiple code cleanup.
  * separation of XMLServices from the Utility class
@@ -946,5 +949,54 @@ public class ParseVolume {
 				eltNode.appendChild(textNode);
 			}
 		}
+    
+    public static void initCdmElement(IAnswer myEntry, String CdmElement) 
+		throws PapillonBusinessException {
+			initCdmElement(myEntry, CdmElement, Volume.DEFAULT_LANG);
+		}
+    
+    public static void initCdmElement(IAnswer myEntry, String CdmElement, String lang) 
+		throws PapillonBusinessException {
+            org.w3c.dom.NodeList myList = getCdmElements(myEntry, CdmElement, lang);
+			if (myList != null && myList.getLength()>0) {
+                org.w3c.dom.Node currentEltNode = (org.w3c.dom.Node)myList.item(0);
+                org.w3c.dom.Node parentNode = currentEltNode.getParentNode();
+                if (currentEltNode.hasChildNodes()) {
+					org.w3c.dom.NodeList childNodes = currentEltNode.getChildNodes();
+					for (int i=0; i<childNodes.getLength(); i++) {
+						currentEltNode.removeChild(childNodes.item(i));
+					}
+				}
+                for (int i=0; i<myList.getLength(); i++) {
+                    parentNode.removeChild(myList.item(i));
+                }
+                parentNode.appendChild(currentEltNode);
+			}            
+		}
+    
+    public static void addCdmElement(IAnswer myEntry, String CdmElement, String value) 
+		throws PapillonBusinessException {
+			addCdmElement(myEntry, CdmElement, value, Volume.DEFAULT_LANG);
+		}
+    
+    public static void addCdmElement(IAnswer myEntry, String CdmElement, String value, String lang) 
+		throws PapillonBusinessException {
+			//fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("addCdmElement: " + CdmElement + " value: " + value);
+            org.w3c.dom.NodeList myList = getCdmElements(myEntry, CdmElement, lang);
+			if (myList != null && myList.getLength()>0) {
+                org.w3c.dom.Node eltNode = (org.w3c.dom.Node)myList.item(0);
+                org.w3c.dom.Node currentEltNode = (org.w3c.dom.Node)eltNode.cloneNode(true);
+				org.w3c.dom.Node textNode = currentEltNode.getOwnerDocument().createTextNode(value);
+				if (currentEltNode.hasChildNodes()) {
+					org.w3c.dom.NodeList childNodes = currentEltNode.getChildNodes();
+					for (int i=0; i<childNodes.getLength(); i++) {
+						currentEltNode.removeChild(childNodes.item(i));
+					}
+				}
+				currentEltNode.appendChild(textNode);
+                eltNode.getParentNode().appendChild(currentEltNode);
+			}
+        }
+    
 	
 }

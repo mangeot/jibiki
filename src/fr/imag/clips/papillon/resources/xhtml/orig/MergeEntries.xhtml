@@ -6,18 +6,22 @@
   <title></title>
 </head>
 <body>
-    <div id="ConfirmEntryContent" class="editEntry" xml:lang="en" lang="en">
-            <h1 class="editingResultTitle" >Editing result</h1>
-            <div id="Message" class="messageConfirm" />
-            <div id="EditingResultView" class="editingResultView" />
+    <div id="MergeEntriesContent" class="editEntry" xml:lang="en" lang="en">
+            <h1 class="mergingResultTitle" >Some axies were merged to your edited axie. Result is:</h1>
+            <div id="MergingResultView" class="editingResultView" />
             <form method="get" action="LaunchAction.po" class="editingResultTitle" >
                 <div>
                     <input id="Value1" name="" type="hidden" value="" />
                     <input id="Value2" name="" type="hidden" value="" />
-                    <input id="edit" name="action" type="submit" value="Re-Edit" />
-                    <input type="reset" value="Close windows" onclick="javascript:top.window.close();"/>
+                    <input name="action" type="submit" value="Undo" />
+                    <input type="reset" value="Confirm" onclick="top.window.close();"/>
                 </div>
             </form>
+            <h1 class="mergingResultTitle" >Merged axies:</h1>
+            <div>
+                <div id="EntriesView" class="editingResultView"/>
+            </div>
+            
     </div>
 </body>
 </html>

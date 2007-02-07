@@ -10,6 +10,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.10  2007/02/07 13:58:57  fbrunet
+ * added message before axies are merged and undo process if the merge is not correct.
+ *
  * Revision 1.9  2006/11/21 22:51:55  fbrunet
  * Correct UIGenerator bug and another minor bugs
  *
@@ -216,8 +219,8 @@ public class EditEntryInitFactory {
             newEntry.setOriginalContributionId(myEntry.getContributionId());
             newEntry.setStatus(VolumeEntry.NOT_FINISHED_STATUS);
             newEntry.setModification(user.getLogin(), "duplicate");
-            newEntry.setClassifiedFinishedContribution();
-            newEntry.setClassifiedNotFinishedContribution();
+            newEntry.initClassifiedFinishedContribution();
+            newEntry.initClassifiedNotFinishedContribution();
             newEntry.setNextContributionAuthor("");
             newEntry.save();
             
@@ -250,41 +253,18 @@ public class EditEntryInitFactory {
              
             // Create contribution base on myEntry with status Delete !
             VolumeEntry newEntry = VolumeEntriesFactory.newEntryFromExisting(myEntry);
-            newEntry.setClassifiedFinishedContribution(myEntry);
-            newEntry.setClassifiedNotFinishedContribution();
+            newEntry.initClassifiedFinishedContribution();
+            newEntry.addClassifiedFinishedContribution(myEntry);
+            newEntry.initClassifiedNotFinishedContribution();
             newEntry.setModification(user.getLogin(), "delete");
             newEntry.setStatus(VolumeEntry.DELETED_STATUS);
             newEntry.save();
             
             // Change myEntry status
+            // FIXME: If entry is not finished ?
             myEntry.setStatus(VolumeEntry.CLASSIFIED_FINISHED_STATUS);
             myEntry.save();
             
-            
-        /* } else if (myEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS) && myEntry.getModificationAuthor().equals(user.getLogin())) {
-            
-            //
-            String lastFinishEntryId = myEntry.getClassifiedFinishedContributionId(); 
-            if ((lastFinishEntryId != null) && (!lastFinishEntryId.equals(""))) {
-                
-                // Change status of last finish contribution
-                VolumeEntry lastFinishEntry = VolumeEntriesFactory.findEntryByEntryId(user, myEntry.getVolume(), lastFinishEntryId);
-                lastFinishEntry.setStatus(VolumeEntry.CLASSIFIED_FINISHED_STATUS);  // MODIFIED_STATUS -> CLASSIFIED_FINISHED_STATUS
-                lastFinishEntry.save();
-            }
-            
-            // Create contribution base on myEntry with status Delete !
-            VolumeEntry newEntry = VolumeEntriesFactory.newEntryFromExisting(myEntry);
-            if (lastFinishEntryId != null) newEntry.setClassifiedFinishedContribution(lastFinishEntryId);
-            newEntry.setClassifiedNotFinishedContribution(myEntry);
-            newEntry.setModification(user.getLogin(), "delete");
-            newEntry.setStatus(VolumeEntry.DELETED_STATUS);
-            newEntry.save();
-            
-            // Change myEntry status
-            myEntry.setStatus(VolumeEntry.CLASSIFIED_NOT_FINISHED_STATUS);
-            myEntry.save();
-            */
         }  else {
             
             // Error message
@@ -321,7 +301,8 @@ public class EditEntryInitFactory {
         
             // Keep entry deleted !
             VolumeEntry newEntry = VolumeEntriesFactory.newEntryFromExisting(myEntry);
-            newEntry.setClassifiedFinishedContribution(myEntry);
+            newEntry.initClassifiedFinishedContribution();
+            newEntry.addClassifiedFinishedContribution(myEntry);
             newEntry.setModification(user.getLogin(), "undelete");
             newEntry.setStatus(VolumeEntry.NOT_FINISHED_STATUS);
             myEntry.setStatus(VolumeEntry.CLASSIFIED_FINISHED_STATUS);

@@ -3,12 +3,15 @@
  *
  * Enhydra super-servlet
  * 
- * © Mathieu Mangeot & Gilles Sérasset - GETA CLIPS IMAG
+ * © Francis Brunet-Manquat, Mathieu Mangeot & Gilles Sérasset - GETA CLIPS IMAG
  * Projet Papillon
  *-----------------------------------------------
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.8  2007/02/07 13:58:57  fbrunet
+ * added message before axies are merged and undo process if the merge is not correct.
+ *
  * Revision 1.7  2007/01/08 15:13:42  fbrunet
  * Correction of th xml attribut bug in ContributionHeader (VolumeEntry class)
  *
@@ -34,10 +37,13 @@
  *
  *
  *-----------------------------------------------
- * Papillon Login page.
  */
 
 package fr.imag.clips.papillon.presentation;
+
+//
+import java.util.Iterator;
+import java.util.Collection;
 
 // Enhydra SuperServlet imports
 import com.lutris.appserver.server.httpPresentation.HttpPresentation;
@@ -64,11 +70,16 @@ import fr.imag.clips.papillon.business.PapillonLogger;
 
 public class ConfirmEntry extends EditingBasePO {
     
+    //
+    private final boolean DEBUG = true;
+    
+    //
     public static String EntryHandle_PARAMETER = EditEntry.EntryHandle_PARAMETER;
     public static String VolumeName_PARAMETER = EditEntry.VolumeName_PARAMETER;  
     public static String Message_PARAMETER = "message";
     public static String Button_PARAMETER = "button";
     
+    //
     protected final static String EditEntryURL = "EditEntry.po";
     public static String EditingErrorURL = EditEntry.EditingErrorURL; 
 	
@@ -89,7 +100,7 @@ public class ConfirmEntry extends EditingBasePO {
 		HttpPresentationException {
 			
             //
-            PapillonLogger.writeDebugMsg ("ConfirmEntry : getContent");   
+            if (DEBUG) PapillonLogger.writeDebugMsg ("ConfirmEntry : getContent");   
             
 			// Management of the parameters
 			String volumeName = myGetParameter(VolumeName_PARAMETER);
@@ -104,6 +115,13 @@ public class ConfirmEntry extends EditingBasePO {
                 
 				// VolumeEntry
 				myVolumeEntry = VolumeEntriesFactory.findEntryByHandle(volumeName, entryHandle);
+                if (DEBUG) {
+                    PapillonLogger.writeDebugMsg ("ConfirmEntry : Contribution ID " + myVolumeEntry.getContributionId());
+                    Collection collection = myVolumeEntry.getClassifiedFinishedContributionIdCollection();
+                    for (Iterator iter = collection.iterator(); iter.hasNext();) {
+                        PapillonLogger.writeDebugMsg ("ConfirmEntry : Previous ID " + (String)iter.next());
+                    }
+                }
                 
 				// Verification 
 				if ( !(myVolumeEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS) 
@@ -130,11 +148,15 @@ public class ConfirmEntry extends EditingBasePO {
             if (message!=null) {
                 content.setTextMessage(message);
             }
-			
+            
+            //
+            // ACTION
+			// undo, redit ...
+            
             // Re-edit button 
-            XHTMLElement reEditForm = content.getElementReEditForm();
-            reEditForm.setAttribute("action", EditEntryURL);
-            reEditForm.removeAttribute("id");
+            //XHTMLElement reEditForm = content.getElementReEditForm();
+            //reEditForm.setAttribute("action", EditEntryURL);
+            //reEditForm.removeAttribute("id");
             XHTMLElement value1 = content.getElementValue1();
             value1.setAttribute("name", EditEntry.VolumeName_PARAMETER);
             value1.setAttribute("value", myVolumeEntry.getVolumeName());

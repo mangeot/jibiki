@@ -10,6 +10,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2007/02/07 13:58:57  fbrunet
+ * added message before axies are merged and undo process if the merge is not correct.
+ *
  * Revision 1.3  2006/03/13 08:48:00  fbrunet
  * bug corrections before merge
  *
@@ -39,6 +42,9 @@ import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
 public class EditingError extends EditingBasePO {
  
+    // URL
+    protected final static String EditingErrorURL = "EditingError.po";
+    
     //
     protected boolean loggedInUserRequired() {
         return true;

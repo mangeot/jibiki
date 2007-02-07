@@ -5,9 +5,12 @@
  * Francis Brunet-Manquat, Mathieu Mangeot & Gilles Sérasset
  * Projet Papillon
  *-----------------------------------------------
- * $Id:
+ * $Id$
  *-----------------------------------------------
- * $Log:
+ * $Log$
+ * Revision 1.4  2007/02/07 13:58:57  fbrunet
+ * added message before axies are merged and undo process if the merge is not correct.
+ *
  *
  */
 

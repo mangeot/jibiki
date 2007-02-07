@@ -1,15 +1,18 @@
 /*
- *  papillon
+ *  Jibiki
  *
  *  Enhydra super-servlet presentation object
  *
- * © Mathieu Mangeot - GETA CLIPS IMAG
+ * © Francis Brunet-Manquat et Mathieu Mangeot - GETA CLIPS IMAG
  * Projet Papillon
  *
  *-----------------------------------------------
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.13  2007/02/07 13:58:57  fbrunet
+ * added message before axies are merged and undo process if the merge is not correct.
+ *
  * Revision 1.12  2007/01/08 15:13:42  fbrunet
  * Correction of th xml attribut bug in ContributionHeader (VolumeEntry class)
  *

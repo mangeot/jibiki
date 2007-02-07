@@ -8,6 +8,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.17  2007/02/07 13:58:57  fbrunet
+ * added message before axies are merged and undo process if the merge is not correct.
+ *
  * Revision 1.16  2007/01/12 13:08:51  fbrunet
  * Bug correction : undo error in HandleEntryModifications class
  *
@@ -74,7 +77,10 @@ import com.lutris.appserver.server.httpPresentation.ClientPageRedirectException;
 import org.enhydra.xml.xhtml.dom.*;
 import org.w3c.dom.*;
 
+//
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 
 // Internal imports
 import fr.imag.clips.papillon.business.PapillonBusinessException;
@@ -105,6 +111,9 @@ import org.w3c.dom.Element;
 
 
 public class HandleEntryModifications extends EditingBasePO {
+    
+    //
+    private final boolean DEBUG = false;
     
     // Public parameters
     public static String EntryHandle_PARAMETER = "EntryHandle";
@@ -154,7 +163,7 @@ public class HandleEntryModifications extends EditingBasePO {
 		HttpPresentationException {
 			
             //
-            PapillonLogger.writeDebugMsg ("HandleEntryModifications : getContent");   
+            if (DEBUG) PapillonLogger.writeDebugMsg ("HandleEntryModifications : getContent");   
             
 			// Management of the parameters
 			String submitAdd = myGetParameter(AddCall_PARAMETER);
@@ -177,7 +186,6 @@ public class HandleEntryModifications extends EditingBasePO {
 				entryHandle==null || entryHandle.equals("")) {
 				                
                 // FIXME: Add a user error message !!!
-                PapillonLogger.writeDebugMsg("volumeName==null || ...");
 				throw new ClientPageRedirectException(EditEntryInitURL);
 			}
 		
@@ -193,7 +201,6 @@ public class HandleEntryModifications extends EditingBasePO {
                 //      || this.getUser().isInGroup(Group.ADMIN_GROUP))) {
                 
                 // FIXME: Add a user error message !!!
-                PapillonLogger.writeDebugMsg("oldVolumeEntry==null || ...");
 				throw new ClientPageRedirectException(EditEntryInitURL);
 			
             } else if (submitUndoUpdate!=null && !submitUndoUpdate.equals("")) {
@@ -223,16 +230,16 @@ public class HandleEntryModifications extends EditingBasePO {
                 // CREATE DRAFT
                 newVolumeEntry = VolumeEntriesFactory.newEntryFromExisting(oldVolumeEntry);
                 newVolumeEntry.setHeadword(oldVolumeEntry.getCdmHeadword());
-                newVolumeEntry.setClassifiedFinishedContribution(oldVolumeEntry);
-                newVolumeEntry.setClassifiedNotFinishedContribution();
+                newVolumeEntry.initClassifiedFinishedContribution();
+                newVolumeEntry.addClassifiedFinishedContribution(oldVolumeEntry);
+                newVolumeEntry.initClassifiedNotFinishedContribution();
                 newVolumeEntry.setStatus(VolumeEntry.NOT_FINISHED_STATUS);
                 newVolumeEntry.save();
             
             } else {
              
                 //
-                PapillonLogger.writeDebugMsg("else");
-				throw new ClientPageRedirectException(EditEntryInitURL);
+                throw new ClientPageRedirectException(EditEntryInitURL);
             }
 			
 			// Call PreProcessor
@@ -357,7 +364,7 @@ public class HandleEntryModifications extends EditingBasePO {
 	private void updateDraftEntry(VolumeEntry newVolumeEntry, String referrer)
 		throws java.io.UnsupportedEncodingException,
         com.lutris.appserver.server.httpPresentation.HttpPresentationException {
-            PapillonLogger.writeDebugMsg("HandleEntryModifications : updateDraftEntry");
+            if (DEBUG) PapillonLogger.writeDebugMsg("HandleEntryModifications : updateDraftEntry");
 			
             // Update draft
             newVolumeEntry.setModification(this.getUser().getLogin(), "update");
@@ -365,7 +372,7 @@ public class HandleEntryModifications extends EditingBasePO {
             newVolumeEntry.save();
             
             //
-            PapillonLogger.writeDebugMsg("HandleEntryModifications : myVolumeEntry.ContributionId " + newVolumeEntry.getContributionId() + "-> NFVolumeEntry.ContributionId " + newVolumeEntry.getClassifiedNotFinishedContributionId());
+            if (DEBUG) PapillonLogger.writeDebugMsg("HandleEntryModifications : myVolumeEntry.ContributionId " + newVolumeEntry.getContributionId() + "-> NFVolumeEntry.ContributionId " + newVolumeEntry.getClassifiedNotFinishedContributionId());
             
             // Call PostUpdateProcessor
             ResultPostUpdateProcessor postUpdateProcessor = ResultPostUpdateProcessorFactory.getPostUpdateProcessor(newVolumeEntry);
@@ -382,7 +389,7 @@ public class HandleEntryModifications extends EditingBasePO {
     //
 	private void saveDraftEntry(VolumeEntry newVolumeEntry, String referrer) 
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
-            PapillonLogger.writeDebugMsg("HandleEntryModifications : saveDraftEntry");
+            if (DEBUG) PapillonLogger.writeDebugMsg("HandleEntryModifications : saveDraftEntry");
             
             // Save draft
             newVolumeEntry.setModification(this.getUser().getLogin(), "finish");
@@ -390,15 +397,18 @@ public class HandleEntryModifications extends EditingBasePO {
             newVolumeEntry.save();
             
             // Change status of the last finished contribution : MODIFIED_STATUS to CLASSIFIED_FINISHED_STATUS
-            String cfcid = newVolumeEntry.getClassifiedFinishedContributionId();
-            if ( cfcid != null && !cfcid.equals("") ) {
+            Collection classifiedFinishedContributionIdCollection = newVolumeEntry.getClassifiedFinishedContributionIdCollection();
+            for (Iterator iter = classifiedFinishedContributionIdCollection.iterator(); iter.hasNext();) {
                 
                 //
-                VolumeEntry oldVolumeEntry = VolumeEntriesFactory.findEntryByContributionId(newVolumeEntry.getVolumeName(), cfcid);
+                String tmp = (String)iter.next();
+                VolumeEntry oldVolumeEntry = VolumeEntriesFactory.findEntryByContributionId(newVolumeEntry.getVolumeName(), tmp);
                 
                 //
-                oldVolumeEntry.setStatus(VolumeEntry.CLASSIFIED_FINISHED_STATUS);
-                oldVolumeEntry.save();
+                if ((oldVolumeEntry != null) && oldVolumeEntry.getStatus().equals(VolumeEntry.MODIFIED_STATUS)) {
+                    oldVolumeEntry.setStatus(VolumeEntry.CLASSIFIED_FINISHED_STATUS);
+                    oldVolumeEntry.save();
+                }
             }
             
             // FIXME: This shoudl be handled by a post processing class or something like this, still to be defined...
@@ -408,7 +418,7 @@ public class HandleEntryModifications extends EditingBasePO {
             //myVolumeEntry.setValidated(this.getUser());
             
             //
-            PapillonLogger.writeDebugMsg("HandleEntryModifications : myVolumeEntry.ContributionId" + newVolumeEntry.getContributionId() + "-> NFVolumeEntry.ContributionId : " + newVolumeEntry.getClassifiedNotFinishedContributionId());
+            if (DEBUG) PapillonLogger.writeDebugMsg("HandleEntryModifications : myVolumeEntry.ContributionId" + newVolumeEntry.getContributionId() + "-> NFVolumeEntry.ContributionId : " + newVolumeEntry.getClassifiedNotFinishedContributionId());
             
             // Call PostProcessor
             ResultPostSaveProcessor postSaveProcessor = ResultPostSaveProcessorFactory.getPostSaveProcessor(newVolumeEntry);
@@ -425,21 +435,9 @@ public class HandleEntryModifications extends EditingBasePO {
     //
 	private void undoDraftEntry(VolumeEntry newVolumeEntry, String referrer) 
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
-            PapillonLogger.writeDebugMsg("HandleEntryModifications : undoDraftEntry");
-            
+            if (DEBUG) PapillonLogger.writeDebugMsg("HandleEntryModifications : undoDraftEntry");
+                        
             /*
-            // TEST
-            System.out.println("previousContributionId : " + newVolumeEntry.getContributionId());
-            String previousContributionId2 = newVolumeEntry.getClassifiedNotFinishedContributionId();
-            while ((previousContributionId2 != null) && (!previousContributionId2.equals(""))) {
-                System.out.println("previousContributionId : " + previousContributionId2);
-                
-                //
-                VolumeEntry previousEntry2 = VolumeEntriesFactory.findEntryByContributionId(newVolumeEntry.getVolume().getName(), previousContributionId2);
-                previousContributionId2 = previousEntry2.getClassifiedNotFinishedContributionId();
-            }
-            */
-            
             //
             String previousNFContributionId = newVolumeEntry.getClassifiedNotFinishedContributionId();
             String previousFContributionId = newVolumeEntry.getClassifiedFinishedContributionId();
@@ -489,7 +487,28 @@ public class HandleEntryModifications extends EditingBasePO {
                 PapillonLogger.writeDebugMsg("HandleEntryModifications : Error undoDraftEntry method");
                 throw new ClientPageRedirectException(EditingErrorURL);
             }
-    
+             */
+            
+            // Get previous entry
+            VolumeEntry previousEntry = newVolumeEntry.undoNotFinish();
+            if (previousEntry == null) previousEntry = newVolumeEntry.undoFinish();
+
+            //
+            if (previousEntry != null) {
+                
+                // Edit previous entry
+                throw new ClientPageRedirectException(
+                                                      EditEntryURL + "?" + 
+                                                      EditEntry.VolumeName_PARAMETER + "=" + previousEntry.getVolumeName() + "&" + 
+                                                      EditEntry.EntryHandle_PARAMETER + "=" + previousEntry.getHandle() + "&" +
+                                                      EditEntry.Referrer_PARAMETER + "=" + myUrlEncode(referrer));
+            
+            } else {
+                
+                // Error page
+                PapillonLogger.writeDebugMsg("HandleEntryModifications : Error undoDraftEntry method");
+                throw new ClientPageRedirectException(EditingErrorURL);
+            }
         }
     
 	

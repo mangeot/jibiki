@@ -545,16 +545,18 @@ import java.util.Iterator;
                 query.addCriteria(criteria);
                 
                 result = query.findLexie(user); 
-                
+                /*
                 if (result.size() == 1) {
                     QueryResult qr = (QueryResult) result.get(0);
-                    
+                    Collection classifiedFinishedContributionIdCollection = qr.getSourceEntry().getClassifiedFinishedContributionIdCollection();
+
                     //
-                    while (     (!qr.getSourceEntry().getClassifiedFinishedContributionId().equals("")) 
-                                && (qr.getSourceEntry().getClassifiedFinishedContributionId() != null) ) {
-                        String newEntryId = qr.getSourceEntry().getClassifiedFinishedContributionId();
-                        //String newEntryId = qr.getSourceEntry().getClassifiedNotFinishedContributionId();
-                        
+                    while ( classifiedFinishedContributionIdCollection.size() != 0 ) {
+                                             
+                        //
+                        for (Iterator iter = classifiedFinishedContributionIdCollection.iterator(); iter.hasNext();) {
+                            String newEntryId = qr.getSourceEntry().getClassifiedFinishedContributionId();
+                            
                         QueryRequest newQuery = new QueryRequest(volume);
                                                 
                         QueryCriteria newCriteria = new QueryCriteria();
@@ -568,7 +570,7 @@ import java.util.Iterator;
                 } else {
                     throw new PapillonBusinessException("Exception in findLexieHistory() : none or several entries find");
                 }
-                
+                */
                 
                 return result;
                 

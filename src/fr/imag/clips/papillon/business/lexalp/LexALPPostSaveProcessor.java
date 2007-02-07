@@ -7,6 +7,9 @@
  * $Id$
  *------------------------
  * $Log$
+ * Revision 1.5  2007/02/07 13:58:57  fbrunet
+ * added message before axies are merged and undo process if the merge is not correct.
+ *
  * Revision 1.4  2006/08/10 22:17:13  fbrunet
  * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
  * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
@@ -53,6 +56,7 @@ import fr.imag.clips.papillon.business.dictionary.QueryCriteria;
 import fr.imag.clips.papillon.business.dictionary.QueryResult;
 import fr.imag.clips.papillon.business.user.User;
 import fr.imag.clips.papillon.presentation.ConfirmEntry;
+import fr.imag.clips.papillon.presentation.MergeEntries;
 
 import fr.imag.clips.papillon.business.transformation.ResultPostSaveProcessor;
 
@@ -71,10 +75,13 @@ public class LexALPPostSaveProcessor implements ResultPostSaveProcessor {
             
             //
             if (volumeEntry != null) {
-                
+                                              
+                ///////////////////////////////////////////////////
+                // ADD JIBIKI DATA TO ENTRY DATA 
+
                 //
                 Document dom = volumeEntry.getDom();
-                
+
                 // FIXME: use another method !!!!!!!!!!!!!
                 // d:metadata and admin
                 NodeList dMetadataList = dom.getElementsByTagName("d:metadata");
@@ -311,9 +318,9 @@ public class LexALPPostSaveProcessor implements ResultPostSaveProcessor {
                 // only axi with referenced lexies !
                 if (volumeEntry.getVolumeName().equals("LexALP_axi") && getReferencedLexieIds(volumeEntry).size()!=0) {
                     
-                    //// - Search referenced lexies link with axi
-                    //// - Search referenced axies link with axi
-                    //// - Search axies to merge
+                    // - Search referenced lexies link with axi
+                    // - Search referenced axies link with axi
+                    // - Search axies to merge
                     ArrayList referencedLexieList = new ArrayList();
                     ArrayList referencedAxieList = new ArrayList();
                     ArrayList AxieList = new ArrayList();
@@ -325,17 +332,12 @@ public class LexALPPostSaveProcessor implements ResultPostSaveProcessor {
                         // Create new contribution with NOT_FINISHED_STATUS
                         // FIXME: create methods in VolumeEntriesFactory class to manage contributions !
                         VolumeEntry newAxi = VolumeEntriesFactory.newEntryFromExisting(volumeEntry);
-                        newAxi.setClassifiedFinishedContribution(volumeEntry);
-                        String modifMessage = "merge with ";
+                        newAxi.initClassifiedFinishedContribution();
+                        newAxi.addClassifiedFinishedContribution(volumeEntry);
                         for ( int i=0; i < AxieList.size(); i++) {
-                            if ( i==0 ) {
-                                modifMessage = modifMessage + (String)AxieList.get(i);
-                            } else {
-                                modifMessage = modifMessage + " and " + (String)AxieList.get(i);   
-                            }
+                            newAxi.addClassifiedFinishedContribution((String)AxieList.get(i));
                         }
-                        //System.out.println("Message : " + modifMessage);
-                        newAxi.setModification(user.getLogin(), modifMessage);
+                        newAxi.setModification(user.getLogin(), "Merge");
                         newAxi.setStatus(VolumeEntry.NOT_FINISHED_STATUS);
                         newAxi.save();
                         
@@ -413,16 +415,13 @@ public class LexALPPostSaveProcessor implements ResultPostSaveProcessor {
                         newAxi.save();
                         volumeEntry.setStatus(VolumeEntry.CLASSIFIED_FINISHED_STATUS);
                         volumeEntry.save();
+                    
                         
-                        //
-                        String message = "Some axies were merged to your edited axie. Result is:";
-                        
-                        //
+                        // FIXME : action UNDO MERGE ! enlever Re-edit ...
                         throw new ClientPageRedirectException(
-                                                              ConfirmEntryURL + "?" + 
-                                                              ConfirmEntry.VolumeName_PARAMETER + "=" + newAxi.getVolumeName() + "&" + 
-                                                              ConfirmEntry.EntryHandle_PARAMETER + "=" + newAxi.getHandle() + "&" +
-                                                              ConfirmEntry.Message_PARAMETER + "=" + message);
+                                                              MergeEntries.MergeEntriesURL + "?" + 
+                                                              MergeEntries.VolumeName_PARAMETER + "=" + newAxi.getVolumeName() + "&" + 
+                                                              MergeEntries.EntryHandle_PARAMETER + "=" + newAxi.getHandle());
                         
                     }
                 }
@@ -636,7 +635,8 @@ public class LexALPPostSaveProcessor implements ResultPostSaveProcessor {
                     // Delete axi
                     // FIXME: create methods in VolumeEntriesFactory class to manage contributions !
                     VolumeEntry newAxi = VolumeEntriesFactory.newEntryFromExisting(axiTmp);
-                    newAxi.setClassifiedFinishedContribution(axiTmp);
+                    newAxi.initClassifiedFinishedContribution();
+                    newAxi.addClassifiedFinishedContribution(axiTmp);
                     newAxi.setModification(user.getLogin(), "deleted");
                     newAxi.setStatus(VolumeEntry.DELETED_STATUS);
                     newAxi.save();
@@ -647,7 +647,7 @@ public class LexALPPostSaveProcessor implements ResultPostSaveProcessor {
                     axiTmp.save();
                     
                     // Add axi
-                    axieList.add(newAxi.getId());
+                    axieList.add(newAxi.getContributionId());
                     
                     //
                     mergeReferencedLexie(newAxi, referencedLexieList, newReferencedAxieList, axieList, user);

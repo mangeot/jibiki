@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.53  2007/02/07 13:58:57  fbrunet
+ * added message before axies are merged and undo process if the merge is not correct.
+ *
  * Revision 1.52  2007/01/16 13:28:31  serasset
  * Added cache reinitialization when a metadata is modified.
  *
@@ -297,7 +300,7 @@ public class VolumesFactory {
 		
 			Hashtable cdmElements = null;
             
-			// Cette m�thode d�pend du sch�ma des volumes.
+			// Cette méthode dépend du schéma des volumes.
             String name = volume.getAttribute("name");
             String dbname = volume.getAttribute("dbname");
             String location = volume.getAttribute(LOCATION_ATTRIBUTE);
@@ -855,7 +858,7 @@ public class VolumesFactory {
 	public static String getSymetricVolumeName(String myVolumeName) 
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 		String resName = "";
-			/* FIXME à recoder proprement en utilsant les language-link des metadonnées du dictionnaire 
+			/* FIXME √† recoder proprement en utilsant les language-link des metadonn√©es du dictionnaire 
 		Volume myVolume = getVolumeByName(myVolumeName);
 		if (myVolume != null && !myVolume.isEmpty()) {
 			Volume resVolume = getSymetricVolume(myVolume);
@@ -1463,15 +1466,16 @@ public class VolumesFactory {
                         
                         if (ve.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS)) {
                             
-                            if ( (ve.getClassifiedFinishedContributionId() != null) 
-                                 && !ve.getClassifiedFinishedContributionId().equals("")) {
+                            Collection classifiedFinishedContributionIdCollection = ve.getClassifiedFinishedContributionIdCollection();
+                            for (Iterator iter2 = classifiedFinishedContributionIdCollection.iterator(); iter2.hasNext();) {
+                                VolumeEntry finishedVe = VolumeEntriesFactory.findEntryByContributionId(ve.getVolumeName(), (String)iter2.next());
                                 
-                                VolumeEntry finishedVe = VolumeEntriesFactory.findEntryByContributionId(ve.getVolumeName(), ve.getClassifiedFinishedContributionId());
-                                finishedVe.setStatus(VolumeEntry.MODIFIED_STATUS);
-                                finishedVe.setNextContributionAuthor(ve.getModificationAuthor());
-                                finishedVe.save();
+                                if (finishedVe.getStatus().equals(VolumeEntry.CLASSIFIED_FINISHED_STATUS)) {
+                                    finishedVe.setStatus(VolumeEntry.MODIFIED_STATUS);
+                                    finishedVe.setNextContributionAuthor(ve.getModificationAuthor());
+                                    finishedVe.save();
+                                }
                             }
-                            
                         }
                         
                     }

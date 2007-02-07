@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.38  2007/02/07 13:58:57  fbrunet
+ * added message before axies are merged and undo process if the merge is not correct.
+ *
  * Revision 1.37  2007/01/12 13:08:51  fbrunet
  * Bug correction : undo error in HandleEntryModifications class
  *
@@ -74,9 +77,12 @@ import fr.imag.clips.papillon.business.user.User;
 import fr.imag.clips.papillon.business.user.Group;
 
 import fr.imag.clips.papillon.presentation.xhtml.orig.*;
-
+import java.util.Collection;
 
 public class EditEntry extends EditingBasePO {
+    
+    //
+    private final boolean DEBUG = true; 
     
     // Public parameters
     public static String VolumeName_PARAMETER = EditEntryXHTML.NAME_VolumeName;  
@@ -84,6 +90,7 @@ public class EditEntry extends EditingBasePO {
 	public static String Referrer_PARAMETER = EditEntryXHTML.NAME_Referrer; 
 	
     // URL
+    protected final static String EditEntryURL = "EditEntry.po";
 	protected final static String EditEntryInitURL = "LexalpEditEntryInit.po";
     protected final static String EditingErrorURL = "EditingError.po";
 		
@@ -104,7 +111,7 @@ public class EditEntry extends EditingBasePO {
 			HttpPresentationException {
         
         //
-        PapillonLogger.writeDebugMsg ("EditEntry : getContent");        
+        if (DEBUG) PapillonLogger.writeDebugMsg ("EditEntry : getContent");        
                 
         // Management of the parameters
 	    String volumeName = myGetParameter(EditEntryXHTML.NAME_VolumeName);
@@ -126,7 +133,7 @@ public class EditEntry extends EditingBasePO {
 			
 			// VolumeEntry
 			myVolumeEntry = VolumeEntriesFactory.findEntryByHandle(volumeName, entryHandle);
-			PapillonLogger.writeDebugMsg("EditEntry : myVolumeEntry.ContributionId " + myVolumeEntry.getContributionId());
+			if (DEBUG) PapillonLogger.writeDebugMsg("EditEntry : myVolumeEntry.ContributionId " + myVolumeEntry.getContributionId());
             
             /*
 			// Verification 
@@ -169,14 +176,13 @@ public class EditEntry extends EditingBasePO {
         XHTMLInputElement referrerElement = content.getElementReferrer();
 		referrerElement.setValue(referrer);
         
-        // Enable undo update button
+        // Enable undo update button            
         String previousNFContributionId = myVolumeEntry.getClassifiedNotFinishedContributionId();
-        String previousFContributionId = myVolumeEntry.getClassifiedFinishedContributionId();
+        Collection classifiedFinishedContributionIdCollection = myVolumeEntry.getClassifiedFinishedContributionIdCollection();
         if (myVolumeEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS) 
             && (    ((previousNFContributionId != null)
                     && (!previousNFContributionId.equals("")))
-                ||  ((previousFContributionId != null)
-                    && (!previousFContributionId.equals(""))))){
+                ||  (classifiedFinishedContributionIdCollection.size() != 0))){
             XHTMLInputElement undoUpdateElement = content.getElementUndoUpdate();
             undoUpdateElement.setDisabled(false);	
         }

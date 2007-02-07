@@ -4,6 +4,9 @@
  * $Id$
  *------------------------
  * $Log$
+ * Revision 1.14  2007/02/07 13:58:57  fbrunet
+ * added message before axies are merged and undo process if the merge is not correct.
+ *
  * Revision 1.13  2007/01/15 17:12:18  serasset
  * Several notes added, suppressed the HTMLDOM_CACHE stuff.
  *
@@ -185,7 +188,7 @@ public class LexALPFormatter implements ResultFormatter {
             //
             if (null != dictXsl && !dictXsl.isEmpty()) {
 
-                System.out.println(dictXsl.getCode());
+                //System.out.println(dictXsl.getCode());
 
                 // Format document source
                 Node resultNode = formatResult(docSource, dictXsl, usr);
@@ -254,10 +257,13 @@ public class LexALPFormatter implements ResultFormatter {
                     //
                     Node termRefAttribut = node.getAttributes().getNamedItem("termReference");
                     String termRef = termRefAttribut.getNodeValue();
+                    if (DEBUG) System.out.println("LexALPFormatter: " + termRef);
                     Node langAttribut = node.getAttributes().getNamedItem("lang");
                     String lang = langAttribut.getNodeValue();
+                    if (DEBUG) System.out.println("LexALPFormatter: " + lang);
                     Node xpathAttribut = node.getAttributes().getNamedItem("xpath");
                     String xpath = xpathAttribut.getNodeValue();
+                    if (DEBUG) System.out.println("LexALPFormatter: " + xpath);
                     Node xslNameAttribut = node.getAttributes().getNamedItem("xslName");
                     Node dictionaryNameAttribut = node.getAttributes().getNamedItem("dictionaryName");
                     Node volumeNameAttribut = node.getAttributes().getNamedItem("volumeName");
@@ -355,6 +361,7 @@ public class LexALPFormatter implements ResultFormatter {
                             }
                             
                             //
+                            if (DEBUG) System.out.println("LexALPFormatter: " +  fr.imag.clips.papillon.business.xml.XMLServices.NodeToString(result));
                             parentNode.insertBefore(docCible.importNode(result, true), node);
                         }
                     }

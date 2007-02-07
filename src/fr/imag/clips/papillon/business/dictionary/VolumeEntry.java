@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.50  2007/02/07 13:58:57  fbrunet
+ * added message before axies are merged and undo process if the merge is not correct.
+ *
  * Revision 1.49  2007/01/15 17:12:18  serasset
  * Several notes added, suppressed the HTMLDOM_CACHE stuff.
  *
@@ -283,6 +286,10 @@ import fr.imag.clips.papillon.data.VolumeEntryDO;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
+
+import java.util.Collection;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.StringReader;
@@ -1270,20 +1277,30 @@ public class VolumeEntry implements IAnswer {
         return IAnswer.LocalEntry;
     }
 
-    public String getClassifiedFinishedContributionId() throws PapillonBusinessException {
-        return ParseVolume.getCdmString(this, Volume.CDM_previousClassifiedFinishedContribution);
+    public Collection getClassifiedFinishedContributionIdCollection() throws PapillonBusinessException {
+        String[] list = ParseVolume.getCdmStrings(this, Volume.CDM_previousClassifiedFinishedContribution);
+        ArrayList arrayList = new ArrayList();
+        if (list != null) {
+            for (int i = 0; i < list.length; i++) {
+                String tmp = (String)list[i];
+                if ( (tmp != null) && !tmp.equals("")) {
+                    arrayList.add(tmp);
+                }
+            }
+        }
+        return arrayList;
+    }
+    
+    public void initClassifiedFinishedContribution() throws PapillonBusinessException {
+        ParseVolume.initCdmElement(this, Volume.CDM_previousClassifiedFinishedContributionElement);
+    }
+    
+    public void addClassifiedFinishedContribution(VolumeEntry contribution) throws PapillonBusinessException {
+        addClassifiedFinishedContribution(contribution.getContributionId());
     }
 
-    public void setClassifiedFinishedContribution(VolumeEntry contribution) throws PapillonBusinessException {
-        ParseVolume.setCdmElement(this, Volume.CDM_previousClassifiedFinishedContributionElement, contribution.getContributionId());
-    }
-
-    public void setClassifiedFinishedContribution(String contributionId) throws PapillonBusinessException {
-        ParseVolume.setCdmElement(this, Volume.CDM_previousClassifiedFinishedContributionElement, contributionId);
-    }
-
-    public void setClassifiedFinishedContribution() throws PapillonBusinessException {
-        ParseVolume.setCdmElement(this, Volume.CDM_previousClassifiedFinishedContributionElement, "");
+    public void addClassifiedFinishedContribution(String contributionId) throws PapillonBusinessException {
+        ParseVolume.addCdmElement(this, Volume.CDM_previousClassifiedFinishedContributionElement, contributionId);
     }
 
     public String getClassifiedNotFinishedContributionId() throws PapillonBusinessException {
@@ -1298,7 +1315,7 @@ public class VolumeEntry implements IAnswer {
         ParseVolume.setCdmElement(this, Volume.CDM_previousClassifiedNotFinishedContributionElement, contributionId);
     }
 
-    public void setClassifiedNotFinishedContribution() throws PapillonBusinessException {
+    public void initClassifiedNotFinishedContribution() throws PapillonBusinessException {
         ParseVolume.setCdmElement(this, Volume.CDM_previousClassifiedNotFinishedContributionElement, "");
     }
 
@@ -1553,5 +1570,70 @@ public class VolumeEntry implements IAnswer {
 		}
     }
     
-
+    
+    /**
+     * Undo the entry with the last classified finished contribution.
+     *
+     * @throws PapillonBusinessException 
+     *
+     */
+    public VolumeEntry undoFinish() throws PapillonBusinessException {
+        VolumeEntry previousVolumeEntry = null;
+        
+        //
+        Collection previousFContributionIdCollection = getClassifiedFinishedContributionIdCollection();
+        for (Iterator iter = previousFContributionIdCollection.iterator(); iter.hasNext();) {
+            String contributionId = (String)iter.next();
+            
+            //
+            VolumeEntry volumeEntry = VolumeEntriesFactory.findEntryByContributionId(getVolumeName(), contributionId);
+            PapillonLogger.writeDebugMsg("undoFinish : " + volumeEntry.getContributionId());
+            
+            //
+            if (volumeEntry.getStatus().equals(VolumeEntry.CLASSIFIED_FINISHED_STATUS)) {
+                previousVolumeEntry = volumeEntry;
+                volumeEntry.setStatus(VolumeEntry.NOT_FINISHED_STATUS);
+                volumeEntry.save(); 
+                
+            } else if (volumeEntry.getStatus().equals(VolumeEntry.DELETED_STATUS)) {
+                volumeEntry.setStatus(VolumeEntry.FINISHED_STATUS);
+                volumeEntry.save();
+            
+            } else {
+                throw new PapillonBusinessException("Error in undoFinish()");
+            }
+        }
+        
+        // Delete contribution
+        delete();
+        
+        //
+        return previousVolumeEntry;
+    }
+    
+    /**
+     * Undo the entry with the last classified not finished contribution.
+     *
+     * @throws PapillonBusinessException 
+     *
+     */
+    public VolumeEntry undoNotFinish() throws PapillonBusinessException {
+        VolumeEntry previousVolumeEntry = null;
+        
+        //
+        String previousNFContributionId = getClassifiedNotFinishedContributionId();
+        if ((previousNFContributionId != null) && (!previousNFContributionId.equals(""))) {
+            
+            //
+            previousVolumeEntry = VolumeEntriesFactory.findEntryByContributionId(getVolumeName(), previousNFContributionId);
+            previousVolumeEntry.setStatus(VolumeEntry.NOT_FINISHED_STATUS);
+            previousVolumeEntry.save(); 
+            
+            // Delete contribution
+            delete();
+        }
+        
+        //
+        return previousVolumeEntry;
+    }
 }

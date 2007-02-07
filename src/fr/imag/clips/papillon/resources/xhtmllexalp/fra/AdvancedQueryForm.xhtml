@@ -15,15 +15,15 @@
     </script>
   </head>
   <body>
-   <script type="text/javascript">
-                     </script>
+    <script type="text/javascript">
+    </script>
     <div id="AdvancedSearchForm" lang="en" xml:lang="en">
-      <form id="SearchForm" action="">
-        <div style="display:block; padding:5px;">
-          <table border="0" cellpadding="0" cellspacing="0" summary="Search Form" width="100%">
+        <form id="SearchForm" action="">
+            <div style="display:block; padding:5px;">
+            <table border="0" cellpadding="0" cellspacing="0" summary="Search Form" width="100%">
             <tr valign="top">
               <td>
-                <div id="DictionarySelection" style="padding:5px; ">
+                <div id="DictionarySelection" style="padding:5px; display: none;">
                   <b>Find entries in: </b>
                   <br/>
                   <!-- MULTIPLE VALUES: TARGETS, DICTIONARIES -->
@@ -55,11 +55,11 @@
                         while ( i != tableRows.length ) {
                             var thisRow = tableRows[i];
                             if (thisRow.cells[0].childNodes[0].nodeValue == value) {
-                                document.getElementById('SourceLang.' + result[1]).style.visibility = "hidden";
+                                document.getElementById('SourceLang.' + result[1]).parentNode.style.visibility = "hidden";
                                 document.getElementById('SourceLang.' + result[1]).value = "All";
                                 i = tableRows.length;
                             } else {
-                                document.getElementById('SourceLang.' + result[1]).style.visibility = "visible";
+                                document.getElementById('SourceLang.' + result[1]).parentNode.style.visibility = "visible";
                             }
                             i++;
                         }
@@ -74,30 +74,35 @@
                     function show(id) {
                         document.getElementById(id).style.visibility = "visible";
                     }
+                    
 
                    //-->
                 </script>
                   <input type="hidden" id="Action" name="ACTION" value=""/>
-                  <b>where:</b>
-                  <br/>
                     <table id="tableShowHideElement" style="display: none;" >
                         <tr id="rowShowHideTemplate" ><td>cdm-headword</td></tr>
                     </table>
                   <input type="hidden" id="NumberOfCriteria" name="CRITERIA_NB"/>
-                  <div id="criterion" style="display:block; margin-left: 10px;">
+                  <div id="criterion" style="display:block; margin-left: 0px;">
                     <img id="minus" onclick="addOrRemoveCriterion(this.id, '-');" src="media/minus.jpg" alt="-" width="15"/>
                     <img id="plus" onclick="addOrRemoveCriterion(this.id, '+');" src="media/plus.jpg" alt="+" width="15"/>
                     <select id="Facet" name="FACET" onchange="hideOrNotSourceLang(value, name);" >
                       <option value="cdm-headword" label="Headword">Terme</option>
                       <option value="cdm-definition" label="Definition">Définition</option>
+                      <option value="cdm-pos" label="Grammar">Grammaire</option>
                       <option value="cdm-context" label="Context">Contexte</option>
                       <option value="cdm-note" label="Note">Note</option>
                       <option value="lexalp-source" label="Source">Source</option>
+                      <option value="lexalp-legal-system" label="Legal system">Système légal</option>
                       <option value="lexalp-domain" label="Domain number">Numéro de domaine</option>
+                      <option value="lexalp-usage" label="Geographical usage">Zone géographique d'emploi</option>
                       <option value="axi-reflexie" label="Axie">Axie</option>
-                      <option value="cdm-modification-author" label="Author">Auteur</option>
+                      <option value="cdm-modification-author" label="Modified by">Modifié par</option>
+                      <option value="cdm-contribution-author" label="Created by">Crée par</option>
                       <option value="cdm-modification-date" label="Date">Date</option>
-                      <option value="cdm-contribution-status" label="status">Status</option>
+                      <option value="lexalp-harmonising-status" label="Harmonising status">Status de l'harmonisation</option>
+                      <option value="lexalp-process-status" label="Process status">Status du processus</option>
+                      <option value="cdm-contribution-status" label="Entry status">Status de l'entrée</option>
                       <option value="cdm-entry-id" label="Entry Id">Id de l'entrée</option>
                       <option value="cdm-contribution-id" label="Entry Id">Id de la contribution</option>
                     </select>
@@ -109,40 +114,41 @@
                         <option value="10" label="greater than">est supérieur à</option>
                         <option value="11" label="lower than">est inférieur à</option>
                     </select>
-                    <input type="text" id="ValueField" name="FACETVALUE" size="14" maxlength="128"/>
-                    <span id="SourceLanguageSelection" class="SourceLanguageSelection" >
-                      <!--
-                      <label id="SourceLangLabel" for="SourceLang" accesskey="i" >
-                      <span class="accesskey">I</span>n:</label>
-                      -->
-                    <select id="SourceLang" name="SOURCE" style="visibility: visible;" >
-                        <option value="All" label="All">Toutes les langues</option>
-                        <option id="SourceOptionTemplate" value="NONE" label="NONE">NONE</option>
-                    </select>
+                    <input type="text" id="ValueField" name="FACETVALUE" size="20" maxlength="128"/>
+                    <span style="visibility: visible;">
+                        <!--
+                        <label id="SourceLangLabel" for="SourceLang" accesskey="i" >
+                        <span class="accesskey">I</span>n:</label>
+                        -->
+                        <label style="padding-left: 1em;">source language:</label>
+                        <select id="SourceLang" name="SOURCE">
+                            <option value="All" label="All">Toutes les langues</option>
+                            <option id="SourceOptionTemplate" value="NONE" label="NONE">NONE</option>
+                        </select>
                     </span>
                   </div>
                 </div>
               </td>
               <td>
-                <div id="TargetLanguagesSelection" style="padding: 5px">
-                  <b>Show target languages :</b><br/>
-                  <select id="Targets" name="TARGETS" multiple="multiple">
+                <div id="TargetLanguagesSelection" class="quick_search">
+                  <b>Selectionner les Langues cibles :</b><br/>
+                  <select id="Targets" name="TARGETS" multiple="multiple" style="width: 120px;" >
                     <option id="TargetTmpl" label="All languages" value="*All*">All languages</option>
                   </select>
                 </div>
               </td>
                <td>
                     <div id="QuickLink" class="quick_search">
-                        <b>Quick search :</b><br/>
-                        <a id="MyFinishedContributions" class="quick_link" href="">My finished contributions</a><br/>
-                        <a id="MyNotFinishedContributions" class="quick_link" href="">My unfinished contributions</a>
+                        <b>Recherche rapide :</b><br/>
+                        <a id="MyFinishedContributions" class="quick_link" href="">Mes contributions finies</a><br/>
+                        <a id="MyNotFinishedContributions" class="quick_link" href="">Mes contributions non finies</a>
                     </div>
                 </td>
             </tr>
           </table>
           </div>
           <div style="display:block; padding: 5px;">
-            <b>Display </b>
+            <b>Afficher </b>
             <select id="NumberOfResultPerPage" name="NB_RESULT_PER_PAGE">
               <option label="10" value="5">5</option>
               <option label="10" value="10">10</option>
@@ -151,7 +157,7 @@
               <option label="100" value="100">100</option>
               <option label="all" value="0">all</option>
             </select>
-            <b>results per page using form:</b>
+            <b>résultats par page en utilisant la forme:</b>
             <select id="Xsl" name="XSL">
               <option label="Default" value="">Default</option>
               <option id="XslTmpl" label="Default" value="">Default</option>
