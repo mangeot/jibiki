@@ -7,6 +7,9 @@
  * $Id$
  *------------------------
  * $Log$
+ * Revision 1.7  2007/02/08 15:52:47  fbrunet
+ * *** empty log message ***
+ *
  * Revision 1.6  2007/02/08 15:24:07  fbrunet
  * *** empty log message ***
  *
@@ -335,6 +338,7 @@ public class LexALPPostSaveProcessor implements ResultPostSaveProcessor {
                         // Create new contribution with NOT_FINISHED_STATUS
                         // FIXME: create methods in VolumeEntriesFactory class to manage contributions !
                         VolumeEntry newAxi = VolumeEntriesFactory.newEntryFromExisting(volumeEntry);
+                        newAxi.initClassifiedNotFinishedContribution();
                         newAxi.initClassifiedFinishedContribution();
                         newAxi.addClassifiedFinishedContribution(volumeEntry);
                         for ( int i=0; i < AxieList.size(); i++) {
