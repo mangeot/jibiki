@@ -7,6 +7,9 @@
  * $Id$
  *------------------------
  * $Log$
+ * Revision 1.6  2007/02/08 15:24:07  fbrunet
+ * *** empty log message ***
+ *
  * Revision 1.5  2007/02/07 13:58:57  fbrunet
  * added message before axies are merged and undo process if the merge is not correct.
  *
@@ -565,9 +568,16 @@ public class LexALPPostSaveProcessor implements ResultPostSaveProcessor {
     
 
 
-
-    // find axies link with axi by their referenced lexies 
-    // deleted them and add the new referenced lexies to list referencedLexieList
+    /**
+     * Find axies Ai link with axi by their referenced lexies, deleted them and add the new referenced lexies to list referencedLexieList
+     * 
+     * @param axi                   
+     * @param referencedLexieList   list of lexies contains in Ai
+     * @param referencedAxieList    list of axies Ai
+     * @param axieList              list of axies Ai
+     * @param user
+     *
+     */
     private void mergeReferencedLexie(VolumeEntry axi, ArrayList referencedLexieList, ArrayList referencedAxieList, ArrayList axieList, User user) throws PapillonBusinessException {
             
         //
@@ -635,6 +645,7 @@ public class LexALPPostSaveProcessor implements ResultPostSaveProcessor {
                     // Delete axi
                     // FIXME: create methods in VolumeEntriesFactory class to manage contributions !
                     VolumeEntry newAxi = VolumeEntriesFactory.newEntryFromExisting(axiTmp);
+                    newAxi.initClassifiedNotFinishedContribution();
                     newAxi.initClassifiedFinishedContribution();
                     newAxi.addClassifiedFinishedContribution(axiTmp);
                     newAxi.setModification(user.getLogin(), "deleted");

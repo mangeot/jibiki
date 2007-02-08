@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.51  2007/02/08 15:24:07  fbrunet
+ * *** empty log message ***
+ *
  * Revision 1.50  2007/02/07 13:58:57  fbrunet
  * added message before axies are merged and undo process if the merge is not correct.
  *
@@ -1594,6 +1597,19 @@ public class VolumeEntry implements IAnswer {
                 previousVolumeEntry = volumeEntry;
                 volumeEntry.setStatus(VolumeEntry.NOT_FINISHED_STATUS);
                 volumeEntry.save(); 
+                
+                //
+                Collection contributionIdCollection = volumeEntry.getClassifiedFinishedContributionIdCollection();
+                for (Iterator iter2 = contributionIdCollection.iterator(); iter2.hasNext();) {
+                    String contributionId2 = (String)iter2.next();
+                    
+                    //
+                    VolumeEntry volumeEntry2 = VolumeEntriesFactory.findEntryByContributionId(getVolumeName(), contributionId2);
+                    if (volumeEntry2.getStatus().equals(VolumeEntry.CLASSIFIED_FINISHED_STATUS)) {
+                        volumeEntry2.setStatus(VolumeEntry.MODIFIED_STATUS);
+                        volumeEntry2.save(); 
+                    }
+                }
                 
             } else if (volumeEntry.getStatus().equals(VolumeEntry.DELETED_STATUS)) {
                 volumeEntry.setStatus(VolumeEntry.FINISHED_STATUS);
