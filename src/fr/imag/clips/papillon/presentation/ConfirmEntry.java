@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.9  2007/02/09 08:49:10  fbrunet
+ * *** empty log message ***
+ *
  * Revision 1.8  2007/02/07 13:58:57  fbrunet
  * added message before axies are merged and undo process if the merge is not correct.
  *
@@ -158,11 +161,11 @@ public class ConfirmEntry extends EditingBasePO {
             //reEditForm.setAttribute("action", EditEntryURL);
             //reEditForm.removeAttribute("id");
             XHTMLElement value1 = content.getElementValue1();
-            value1.setAttribute("name", EditEntry.VolumeName_PARAMETER);
+            value1.setAttribute("name", LaunchAction.VOLUME_NAME_PARAMETER);
             value1.setAttribute("value", myVolumeEntry.getVolumeName());
             value1.removeAttribute("id");
             XHTMLElement value2 = content.getElementValue2();
-            value2.setAttribute("name", EditEntry.EntryHandle_PARAMETER);
+            value2.setAttribute("name", LaunchAction.HANDLE_PARAMETER);
             value2.setAttribute("value", myVolumeEntry.getHandle());
             value2.removeAttribute("id");
             

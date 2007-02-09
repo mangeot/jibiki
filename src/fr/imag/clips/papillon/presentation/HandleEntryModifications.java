@@ -8,6 +8,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.18  2007/02/09 08:49:10  fbrunet
+ * *** empty log message ***
+ *
  * Revision 1.17  2007/02/07 13:58:57  fbrunet
  * added message before axies are merged and undo process if the merge is not correct.
  *
@@ -394,6 +397,7 @@ public class HandleEntryModifications extends EditingBasePO {
             // Save draft
             newVolumeEntry.setModification(this.getUser().getLogin(), "finish");
             newVolumeEntry.setStatus(VolumeEntry.FINISHED_STATUS);
+            newVolumeEntry.initClassifiedNotFinishedContribution(); // FIXME: remove draft !
             newVolumeEntry.save();
             
             // Change status of the last finished contribution : MODIFIED_STATUS to CLASSIFIED_FINISHED_STATUS
@@ -491,7 +495,7 @@ public class HandleEntryModifications extends EditingBasePO {
             
             // Get previous entry
             VolumeEntry previousEntry = newVolumeEntry.undoNotFinish();
-            if (previousEntry == null) previousEntry = newVolumeEntry.undoFinish();
+            //if (previousEntry == null) previousEntry = newVolumeEntry.undoFinish();
 
             //
             if (previousEntry != null) {

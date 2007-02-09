@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.52  2007/02/09 08:49:10  fbrunet
+ * *** empty log message ***
+ *
  * Revision 1.51  2007/02/08 15:24:07  fbrunet
  * *** empty log message ***
  *
@@ -1580,6 +1583,7 @@ public class VolumeEntry implements IAnswer {
      * @throws PapillonBusinessException 
      *
      */
+    // FIXME: call undoMerge ????
     public VolumeEntry undoFinish() throws PapillonBusinessException {
         VolumeEntry previousVolumeEntry = null;
         
@@ -1590,9 +1594,6 @@ public class VolumeEntry implements IAnswer {
             
             //
             VolumeEntry volumeEntry = VolumeEntriesFactory.findEntryByContributionId(getVolumeName(), contributionId);
-            PapillonLogger.writeDebugMsg("undoFinish : " + volumeEntry.getContributionId());
-            
-            //
             if (volumeEntry.getStatus().equals(VolumeEntry.CLASSIFIED_FINISHED_STATUS)) {
                 previousVolumeEntry = volumeEntry;
                 volumeEntry.setStatus(VolumeEntry.NOT_FINISHED_STATUS);
@@ -1611,7 +1612,7 @@ public class VolumeEntry implements IAnswer {
                     }
                 }
                 
-            } else if (volumeEntry.getStatus().equals(VolumeEntry.DELETED_STATUS)) {
+            } else if (volumeEntry.getStatus().equals(VolumeEntry.DELETED_STATUS)) { // FIXME: specific to the merge !!
                 volumeEntry.setStatus(VolumeEntry.FINISHED_STATUS);
                 volumeEntry.save();
             
@@ -1645,9 +1646,23 @@ public class VolumeEntry implements IAnswer {
             previousVolumeEntry.setStatus(VolumeEntry.NOT_FINISHED_STATUS);
             previousVolumeEntry.save(); 
             
-            // Delete contribution
-            delete();
+        } else {
+            Collection previousFContributionIdCollection = getClassifiedFinishedContributionIdCollection();
+            for (Iterator iter = previousFContributionIdCollection.iterator(); iter.hasNext();) {
+                String contributionId = (String)iter.next();
+            
+                //
+                previousVolumeEntry = VolumeEntriesFactory.findEntryByContributionId(getVolumeName(), contributionId);
+                if (previousVolumeEntry.getStatus().equals(VolumeEntry.MODIFIED_STATUS) ) {
+                    previousVolumeEntry.setStatus(VolumeEntry.FINISHED_STATUS);
+                    previousVolumeEntry.save(); 
+                }                    
+            }
+            
         }
+        
+        // Delete contribution
+        delete();
         
         //
         return previousVolumeEntry;
