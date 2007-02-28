@@ -12,9 +12,22 @@
     <meta name="robots" content="index, follow"/>
     <title>LexALP Information System</title>
     <script id="Script" type="text/javascript">
-      <!--
-        // Used in some classes
+       <!--
+        //
         function init() {
+        
+            //// Launch ajax function to get select elements depending on cdm elements
+            
+            // Get all select elements
+            var selectCollection = document.getElementsByTagName('select');
+            for(var i=0; i < selectCollection.length; i++){
+                
+                // Launch ajax function only for select cdm element (name=FACET.*)
+                if (selectCollection[i].name.match(/FACET\./)) {
+                    getSelector(selectCollection[i].value, selectCollection[i].name);
+                }
+            }
+            
         }
         //-->
     </script>

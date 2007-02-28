@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.12  2007/02/28 09:27:07  fbrunet
+ * Added ajax method to AdvancedQueryForm page
+ *
  * Revision 1.11  2007/02/07 13:58:57  fbrunet
  * added message before axies are merged and undo process if the merge is not correct.
  *
@@ -508,7 +511,7 @@ public class AdvancedQueryForm {
         plus.removeAttribute("id");
         facet.removeAttribute("id");
         oper.removeAttribute("id");
-        valuefield.removeAttribute("id");
+        //valuefield.removeAttribute("id");
         //sourceLangSelectArea.removeAttribute("id");
         //sourceLangLabel.removeAttribute("id");
         sourceLang.removeAttribute("id");
@@ -553,6 +556,7 @@ public class AdvancedQueryForm {
             facet.setAttribute("name", AdvancedQueryFormXHTML.NAME_FACET + ".0");
             oper.setAttribute("name", AdvancedQueryFormXHTML.NAME_OPERATOR + ".0");
             valuefield.setAttribute("name", AdvancedQueryFormXHTML.NAME_FACETVALUE + ".0");
+            valuefield.setAttribute("id", "ValueField.0");
             sourceLang.setAttribute("name", AdvancedQueryFormXHTML.NAME_SOURCE + ".0");
             minus.getParentNode().removeChild(minus);
             plus.setAttribute("id", "plus.0");
@@ -575,6 +579,7 @@ public class AdvancedQueryForm {
                 facet.setAttribute("name", AdvancedQueryFormXHTML.NAME_FACET + "." + istr);
                 oper.setAttribute("name", AdvancedQueryFormXHTML.NAME_OPERATOR + "." + istr);
                 valuefield.setAttribute("name", AdvancedQueryFormXHTML.NAME_FACETVALUE + "." + istr);
+                valuefield.setAttribute("id", "ValueField." + istr);
                 sourceLang.setAttribute("name", AdvancedQueryFormXHTML.NAME_SOURCE + "." + istr);
                 minus.setAttribute("id", "minus." + istr);
                 plus.setAttribute("id", "plus." + istr);

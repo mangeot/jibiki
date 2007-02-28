@@ -12,19 +12,22 @@
         // Open a new window 
         function exportVolume() {
             href = 'Export.po?VOLUME=' + document.getElementById('VOLUME').value + '&EXPORT=go';
-            window.open(href,'Export');
+            //window.open(href,'Export');
+            window.location.href = href;
         }
         
         // Open a new window 
         function exportMyFinished() {
             href = 'Export.po?VOLUME=' + document.getElementById('VOLUME').value + '&EXPORTMYFINISHED=go';
-            window.open(href,'Export');
+            //window.open(href,'Export');
+            window.location.href = href;
         }
         
         // Open a new window 
         function exportMyUnfinished() {
             href = 'Export.po?VOLUME=' + document.getElementById('VOLUME').value + '&EXPORTMYUNFINISHED=go';
-            window.open(href,'Export');
+            //window.open(href,'Export');
+            window.location.href = href;
         }
     //-->
     </script>
@@ -36,6 +39,7 @@
 	<td>
         <b>Volume: </b>
 		<select id='VOLUME' name="VOLUME">
+            <option value="*ALL*" label="*ALL*">ALL</option>
             <option id="VolumeOptionTemplate" value="NONE" label="NONE">NONE</option>
         </select>
 	</td>

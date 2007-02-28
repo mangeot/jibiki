@@ -34,57 +34,19 @@
               </td>
               <td>
                 <div id="CriteriaZone" style=" padding:5px;">
-                  <script type="text/javascript">
-                    <!-- 
-                    //
-                    function addOrRemoveCriterion(caller, action) {
-                        document.getElementById('Action').value = action + caller;
-                        document.getElementById("SearchForm").submit();
-                    }
-                    
-                    // Hide or show source lang according to the tableData element
-                    function hideOrNotSourceLang(value, name) {
-                        // Search number with regular expression
-                        var regexp = /.*\.(.*)/i;
-                        var result = regexp.exec(name);
-                        
-                        // Search if source lang node must hide or not in the tableData
-                        table = document.getElementById('tableShowHideElement');
-                        var tableRows = table.rows;
-                        var i = 0;
-                        while ( i != tableRows.length ) {
-                            var thisRow = tableRows[i];
-                            if (thisRow.cells[0].childNodes[0].nodeValue == value) {
-                                document.getElementById('SourceLang.' + result[1]).parentNode.style.visibility = "hidden";
-                                document.getElementById('SourceLang.' + result[1]).value = "All";
-                                i = tableRows.length;
-                            } else {
-                                document.getElementById('SourceLang.' + result[1]).parentNode.style.visibility = "visible";
-                            }
-                            i++;
-                        }
-                    }
-                    
-                    // Hide element
-                    function hide(id) {
-                        document.getElementById(id).style.visibility = "hidden";
-                    }
-                
-                    // Show element
-                    function show(id) {
-                        document.getElementById(id).style.visibility = "visible";
-                    }
-
-                   //-->
-                </script>
+                  <!-- ADVANCEDQUERYFORM SCRIPT  -->
+                <script src="javascript/AdvancedQueryFormAjax.js" type="text/javascript"></script>
+                <!-- HIDDEN ELEMENTS  -->
                     <table id="tableShowHideElement" style="display: none;" >
                         <tr id="rowShowHideTemplate" ><td>cdm-headword</td></tr>
                     </table>
+                    <div id="tmp" style="display: none;" >
+                    </div>
                   <input type="hidden" id="NumberOfCriteria" name="CRITERIA_NB"/>
                   <div id="criterion" style="display:block; margin-left: 0px;">
                     <img id="minus" onclick="addOrRemoveCriterion(this.id, '-');" src="media/minus.jpg" alt="-" width="15"/>
                     <img id="plus" onclick="addOrRemoveCriterion(this.id, '+');" src="media/plus.jpg" alt="+" width="15"/>
-                    <select id="Facet" name="FACET" onchange="hideOrNotSourceLang(value, name);" >
+                    <select id="Facet" name="FACET" onchange="hideOrNotSourceLang(value, name); getSelector(value, name);" >
                       <option value="cdm-headword" label="Headword">Headword</option>
                       <option value="cdm-definition" label="Definition">Definition</option>
                       <option value="cdm-pos" label="Grammar">Grammar</option>
@@ -112,7 +74,9 @@
                         <option value="10" label="greater than">greater than</option>
                         <option value="11" label="lower than">lower than</option>
                     </select>
-                    <input type="text" id="ValueField" name="FACETVALUE" size="20" maxlength="128"/>   
+                    <span>
+                        <input type="text" id="ValueField" name="FACETVALUE" size="20" maxlength="128"/>   
+                    </span>
                     <span style="visibility: visible;">
                         <!--
                         <label id="SourceLangLabel" for="SourceLang" accesskey="i" >

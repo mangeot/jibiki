@@ -8,6 +8,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.19  2007/02/28 09:27:07  fbrunet
+ * Added ajax method to AdvancedQueryForm page
+ *
  * Revision 1.18  2007/02/09 08:49:10  fbrunet
  * *** empty log message ***
  *
@@ -397,7 +400,7 @@ public class HandleEntryModifications extends EditingBasePO {
             // Save draft
             newVolumeEntry.setModification(this.getUser().getLogin(), "finish");
             newVolumeEntry.setStatus(VolumeEntry.FINISHED_STATUS);
-            newVolumeEntry.initClassifiedNotFinishedContribution(); // FIXME: remove draft !
+            newVolumeEntry.initClassifiedNotFinishedContribution(); // FIXME: remove draft !!!!
             newVolumeEntry.save();
             
             // Change status of the last finished contribution : MODIFIED_STATUS to CLASSIFIED_FINISHED_STATUS

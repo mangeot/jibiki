@@ -8,6 +8,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.5  2007/02/28 09:27:07  fbrunet
+ * Added ajax method to AdvancedQueryForm page
+ *
  * Revision 1.4  2007/02/07 13:58:57  fbrunet
  * added message before axies are merged and undo process if the merge is not correct.
  *
@@ -39,6 +42,7 @@ import fr.imag.clips.papillon.presentation.PapillonSessionData;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Collection;
 import java.text.DateFormat;
 import java.io.*;
 
@@ -284,51 +288,65 @@ public class Export extends PapillonBasePO {
 		PapillonPresentationException {
             
             //
-            java.io.File fileDir = new java.io.File(getExportAbsoluteDir());
-            fileDir.mkdirs();
-            String filename = createFileName(volume, exportType);
-            
-            // -> XML
-            String xmlFilename = filename + ".xml";
-            java.io.File xmlFile = new java.io.File(fileDir.getCanonicalPath() + File.separator + xmlFilename);
-            xmlFile.createNewFile();
-            FileOutputStream xmlFileOutStream = new FileOutputStream(xmlFile.getCanonicalFile());
-            fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory.exportVolume(volume, myKeys, myClauses, FORMAT_XML, xmlFileOutStream);
-            
-            /*
-             // Compress -> GZ
-            java.util.zip.GZIPOutputStream myGZipOutStream = new java.util.zip.GZIPOutputStream(fileOutStream);
-            fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory.exportVolume(volume, myKeys, myClauses, FORMAT_XML, myGZipOutStream);
-            PapillonLogger.writeDebugMsg("Compressing volume");
-            myGZipOutStream.close();
-            */
-            
-            // XML -> FO
-            String foFilename = filename + ".fo";
-            Saxon8bTransformer.doSaxonTransformation(getAbsoluteXslFo(), fileDir.getCanonicalPath() + File.separator + xmlFilename, fileDir.getCanonicalPath() + File.separator + foFilename);
-            
-            // FO -> PDF
-            String pdfFilename = filename + ".pdf";
-            FOPTransformer.doFOPTransformation(fileDir.getCanonicalPath() + File.separator + foFilename, fileDir.getCanonicalPath() + File.separator + pdfFilename);
-            
-            // Delete files
-            //xmlFile.delete();
-            //java.io.File foFile = new java.io.File(fileDir.getCanonicalPath() + File.separator + foFilename);
-            //foFile.delete();
-            
-        
-            //
-            String userMessage = "Volume " + volume + " exported";
-            
-            //
-            if (userMessage != null) {
-                //this.getSessionData().writeUserMessage(userMessage);
-                PapillonLogger.writeDebugMsg(userMessage);
+            if (!volume.equals("*ALL*")) {  
+                
+                //
+                java.io.File fileDir = new java.io.File(getExportAbsoluteDir());
+                fileDir.mkdirs();
+                String filename = createFileName(volume, exportType);
+                
+                // -> XML
+                String xmlFilename = filename + ".xml";
+                java.io.File xmlFile = new java.io.File(fileDir.getCanonicalPath() + File.separator + xmlFilename);
+                xmlFile.createNewFile();
+                FileOutputStream xmlFileOutStream = new FileOutputStream(xmlFile.getCanonicalFile());
+                fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory.exportVolume(volume, myKeys, myClauses, FORMAT_XML, xmlFileOutStream);
+                
+                /*
+                 // Compress -> GZ
+                 java.util.zip.GZIPOutputStream myGZipOutStream = new java.util.zip.GZIPOutputStream(fileOutStream);
+                 fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory.exportVolume(volume, myKeys, myClauses, FORMAT_XML, myGZipOutStream);
+                 PapillonLogger.writeDebugMsg("Compressing volume");
+                 myGZipOutStream.close();
+                 */
+                /*
+                 // XML -> FO
+                 String foFilename = filename + ".fo";
+                 Saxon8bTransformer.doSaxonTransformation(getAbsoluteXslFo(), fileDir.getCanonicalPath() + File.separator + xmlFilename, fileDir.getCanonicalPath() + File.separator + foFilename);
+                 
+                 // FO -> PDF
+                 String pdfFilename = filename + ".pdf";
+                 FOPTransformer.doFOPTransformation(fileDir.getCanonicalPath() + File.separator + foFilename, fileDir.getCanonicalPath() + File.separator + pdfFilename);
+                 
+                 // Delete files
+                 //xmlFile.delete();
+                 //java.io.File foFile = new java.io.File(fileDir.getCanonicalPath() + File.separator + foFilename);
+                 //foFile.delete();
+                 */
+                
+                //
+                String userMessage = "Volume " + volume + " exported";
+                
+                //
+                if (userMessage != null) {
+                    this.getSessionData().writeUserMessage(userMessage);
+                    PapillonLogger.writeDebugMsg(userMessage);
+                }
+                
+                /*
+                 //
+                 PapillonLogger.writeDebugMsg("ClientPageRedirectException: " + getExportRelativeDir() + pdfFilename);			
+                 throw new ClientPageRedirectException(getExportRelativeDir() + pdfFilename); 
+                 */
+                
+            } else {
+             
+                for (Iterator iter = ((Collection)VolumesFactory.getVolumes()).iterator(); iter.hasNext();) {
+                    Volume vol = (Volume)iter.next();
+                    exportVolume(vol.getName(), myKeys, myClauses, exportType);
+                }
             }
-            
-            //
-            PapillonLogger.writeDebugMsg("ClientPageRedirectException: " + getExportRelativeDir() + pdfFilename);			
-            throw new ClientPageRedirectException(getExportRelativeDir() + pdfFilename); 
+           
         }
     
         protected String getAbsoluteXslFo() throws PapillonPresentationException {            
