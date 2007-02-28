@@ -10,6 +10,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.2  2007/02/28 16:19:51  fbrunet
+ * *** empty log message ***
+ *
  * Revision 1.1  2007/02/28 09:27:07  fbrunet
  * Added ajax method to AdvancedQueryForm page
  *
@@ -20,7 +23,7 @@ package fr.imag.clips.papillon.presentation;
 //
 import java.util.Iterator;
 import java.util.Collection;
-import java.util.LinkedHashSet;
+import java.util.TreeSet;
 
 // Enhydra SuperServlet imports
 import com.lutris.appserver.server.httpPresentation.HttpPresentation;
@@ -120,7 +123,7 @@ public class AdvancedQueryFormAjax extends AbstractPO {
         //
         DBConnection myDBConnection = null;
         ResultSet myResultSet = null;
-        LinkedHashSet myLinkedHashSet = new LinkedHashSet();
+        TreeSet myTreeSet = new TreeSet();
         
         try {
 
@@ -132,7 +135,7 @@ public class AdvancedQueryFormAjax extends AbstractPO {
                 
                 myResultSet = myDBConnection.executeQuery(sqlQuery);
                 while(myResultSet.next()){
-                    myLinkedHashSet.add(myResultSet.getString(1));
+                    myTreeSet.add(myResultSet.getString(1));
                 }
                 myResultSet.close();
             }
@@ -156,7 +159,7 @@ public class AdvancedQueryFormAjax extends AbstractPO {
         }
         
         //
-        return myLinkedHashSet;
+        return myTreeSet;
     }
     
 }
