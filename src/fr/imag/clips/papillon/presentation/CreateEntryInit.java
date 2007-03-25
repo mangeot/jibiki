@@ -9,6 +9,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.10  2007/03/25 22:00:57  fbrunet
+ * improved avancedqueryform javascript
+ * bug correction: in ViewQueryResult class, encode url criteria in UTF-8
+ *
  * Revision 1.9  2007/01/05 12:57:49  fbrunet
  * Add undo draft method (bug in EditEntry.java : undo after last finish contribution)
  * Modify transformation method
@@ -228,7 +232,7 @@ public class CreateEntryInit extends PapillonBasePO {
                            && entryHandle!=null && !entryHandle.equals("")) {
                     
                     //
-                    VolumeEntry myEntry = VolumeEntriesFactory.findEntryByEntryId(this.getUser(), VolumesFactory.getVolumeByName(volumeName), entryHandle);
+                    VolumeEntry myEntry = VolumeEntriesFactory.findEntryByHandle(volumeName, entryHandle);
                     EditEntryInitFactory.editEntry(myEntry, this.getUser());
                     
                     // DUPLICATE
@@ -236,7 +240,7 @@ public class CreateEntryInit extends PapillonBasePO {
                            && entryHandle!=null && !entryHandle.equals("")) {
                     
                     //
-                    VolumeEntry myEntry = VolumeEntriesFactory.findEntryByEntryId(this.getUser(), VolumesFactory.getVolumeByName(volumeName), entryHandle);
+                    VolumeEntry myEntry = VolumeEntriesFactory.findEntryByHandle(volumeName, entryHandle);
                     EditEntryInitFactory.duplicateEntry(myEntry, this.getUser());                    
                     
                     // DELETE
@@ -246,10 +250,9 @@ public class CreateEntryInit extends PapillonBasePO {
                            && headword!=null && !headword.equals("")) {
                     
                     //
-                    Volume volume = VolumesFactory.getVolumeByName(volumeName);
-                    VolumeEntry myEntry = VolumeEntriesFactory.findEntryByEntryId(this.getUser(), volume, entryHandle);
+                    VolumeEntry myEntry = VolumeEntriesFactory.findEntryByHandle(volumeName, entryHandle);
                     EditEntryInitFactory.deleteEntry(myEntry, this.getUser()); 
-                    displayLookupResultsAndCreate(volume, headword);
+                    displayLookupResultsAndCreate(VolumesFactory.getVolumeByName(volumeName), headword);
                     
                     // UNDELETE
                 } else if (action.equals("undelete")
@@ -258,10 +261,9 @@ public class CreateEntryInit extends PapillonBasePO {
                            && headword!=null && !headword.equals("")) {
                     
                     //
-                    Volume volume = VolumesFactory.getVolumeByName(volumeName);
-                    VolumeEntry myEntry = VolumeEntriesFactory.findEntryByEntryId(this.getUser(), volume, entryHandle);
+                    VolumeEntry myEntry = VolumeEntriesFactory.findEntryByHandle(volumeName, entryHandle);
                     EditEntryInitFactory.undeleteEntry(myEntry, this.getUser());
-                    displayLookupResultsAndCreate(volume, headword);
+                    displayLookupResultsAndCreate(VolumesFactory.getVolumeByName(volumeName), headword);
                 }      
                 
             } else {

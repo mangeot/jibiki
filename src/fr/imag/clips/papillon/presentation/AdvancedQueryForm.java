@@ -9,6 +9,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.13  2007/03/25 22:00:57  fbrunet
+ * improved avancedqueryform javascript
+ * bug correction: in ViewQueryResult class, encode url criteria in UTF-8
+ *
  * Revision 1.12  2007/02/28 09:27:07  fbrunet
  * Added ajax method to AdvancedQueryForm page
  *
@@ -680,7 +684,7 @@ public class AdvancedQueryForm {
             url += "&" + AdvancedQueryFormXHTML.NAME_FACET + "." + Integer.toString(i) + "=" + key[0];
             if (null != key[1])
                 url += "&" + AdvancedQueryFormXHTML.NAME_SOURCE + "." + Integer.toString(i) + "=" + key[1];
-            url += "&" + AdvancedQueryFormXHTML.NAME_FACETVALUE + "." + Integer.toString(i) + "=" + key[2];
+            url += "&" + AdvancedQueryFormXHTML.NAME_FACETVALUE + "." + Integer.toString(i) + "=" + AbstractPO.myUrlEncode(key[2]);
             //int operValue = index(IQuery.QueryBuilderStrategy, key[3]);
             //url += "&" + AdvancedQueryFormXHTML.NAME_OPERATOR + "." + Integer.toString(i) + "=" + Integer.toString(operValue); 
             url += "&" + AdvancedQueryFormXHTML.NAME_OPERATOR + "." + Integer.toString(i) + "=" + key[3]; 

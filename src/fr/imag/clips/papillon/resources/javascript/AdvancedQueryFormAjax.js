@@ -6,15 +6,10 @@ var xmlHttpList
 // view function stateChanged
 function getSelector(value, name) {
     
-    if (value=="cdm-pos" 
-        || value=="lexalp-legal-system"
-        || value=="lexalp-domain"
-        || value=="lexalp-usage"
-        || value=="cdm-modification-author"
+    if (value=="cdm-modification-author"
         || value=="cdm-contribution-author"
-        || value=="lexalp-harmonising-status"
-        || value=="lexalp-process-status"
-        || value=="cdm-contribution-status") {
+        || value=="cdm-contribution-status"
+        || value=="lexalp-domain") {
         
         // Search number with regular expression
         var regexp = /.*\.(.*)/i;
@@ -47,23 +42,128 @@ function getSelector(value, name) {
         var regexp = /.*\.(.*)/i;
         var result = regexp.exec(name);
         
-        // Create the node A in tmp node
-        var container = document.getElementById('tmp');
-        container.innerHTML = "<input type=\"text\" id=\"ValueFieldTMP\" name=\"FACETVALUETMP\" size=\"20\" maxlength=\"128\"\/>";
-        var newNode = document.getElementById('ValueFieldTMP');
-        
+               
         // Make ID and name value
         var ValueFieldId = 'ValueField.' + result[1];
         var FACETVALUEName = 'FACETVALUE.' + result[1];
             
-        // Replace node B by node A
-        var oldNode = document.getElementById(ValueFieldId);
-        var parentNode = oldNode.parentNode;
-        parentNode.replaceChild(newNode, oldNode);
-        
         //
-        newNode.id = ValueFieldId;
-        newNode.setAttribute('name', FACETVALUEName);
+        var oldNode = document.getElementById(ValueFieldId);
+        if (value=="cdm-pos" 
+            || value=="lexalp-legal-system"
+            || value=="lexalp-usage"
+            || value=="lexalp-harmonising-status"
+            || value=="lexalp-process-status") {
+            
+            // Create the node A in tmp node
+            var container = document.getElementById('tmp');
+            switch(value)
+            {
+                case "cdm-pos":
+                    container.innerHTML = "<select id=\"ValueFieldTMP\" name=\"FACETVALUETMP\">"
+                                                + "<option value=\"n.\"> n. </option>"
+                                                + "<option value=\"n.m.\"> n.m. </option>"
+                                                + "<option value=\"n.m. sg.\"> n.m. sg. </option>"
+                                                + "<option value=\"n.m. pl.\"> n.m. pl. </option>"
+                                                + "<option value=\"n.m. dual.\"> n.m. dual. </option>"
+                                                + "<option value=\"n.f.\"> n.f. </option>"
+                                                + "<option value=\"n.f. sg.\"> n.f. sg. </option>"
+                                                + "<option value=\"n.f. pl.\"> n.f. pl. </option>"
+                                                + "<option value=\"n.f. dual.\"> n.f. dual. </option>"
+                                                + "<option value=\"n.n.\"> n.n. </option>"
+                                                + "<option value=\"n.n. sg.\"> n.n. sg. </option>"
+                                                + "<option value=\"n.n. pl.\"> n.n. pl. </option>"
+                                                + "<option value=\"n.n. dual.\"> n.n. dual. </option>"
+                                                + "<option value=\"v.\"> v. </option>"
+                                                + "<option value=\"adj.\"> adj. </option>"
+                                                + "<option value=\"adj.\"> adv. </option>"
+                                                + "<option value=\"UNKNOWN\"> UNKNOWN </option>"
+                                            + "</select>";
+                    break
+                
+                case "lexalp-legal-system":
+                    container.innerHTML = "<select id=\"ValueFieldTMP\" name=\"FACETVALUETMP\">"
+                                                + "<option value=\"AC\">Alpine Convention</option>"
+                                                + "<option value=\"EU\">EU</option>"
+                                                + "<option value=\"INT\">INT</option>"
+                                                + "<option value=\"IT\">Italia</option>"
+                                                + "<option value=\"FR\">France</option>"
+                                                + "<option value=\"DE\">Germany</option>"
+                                                + "<option value=\"CH\">Switzerland</option>"
+                                                + "<option value=\"SL\">Slovenia</option>"
+                                                + "<option value=\"AT\">Austria</option>"
+                                                + "<option value=\"UNKNOWN\"> UNKNOWN </option>"
+                                            + "</select>";
+                    break 
+                
+                case "lexalp-usage":
+                    container.innerHTML = "<select id=\"ValueFieldTMP\" name=\"FACETVALUETMP\">"
+                                            + "<option value=\"AC\">Alpine Convention</option>"
+                                            + "<option value=\"EU\">EU</option>"
+                                            + "<option value=\"INT\">INT</option>"
+                                            + "<option value=\"IT\">Italia</option>"
+                                            + "<option value=\"FVG\" class=\"option1\" >Friuli Venezia Giulia</option>"
+                                            + "<option value=\"FR\">France</option>"
+                                            + "<option value=\"DE\">Germany</option>"
+                                            + "<option value=\"BAY\" class=\"option1\" >Bayern</option>"
+                                            + "<option value=\"CH\">Switzerland</option>"
+                                            + "<option value=\"SL\">Slovenia</option>"
+                                            + "<option value=\"AT\">Austria</option>"
+                                            + "<option value=\"K\" class=\"option1\" >Kärnten</option>"
+                                            + "<option value=\"N\" class=\"option1\" >Niederösterreich</option>"
+                                            + "<option value=\"O\" class=\"option1\" >Oberösterreich</option>"
+                                            + "<option value=\"S\" class=\"option1\" >Salzburg</option>"
+                                            + "<option value=\"St\" class=\"option1\" >Steiermark</option>"
+                                            + "<option value=\"T\" class=\"option1\" >Tirol</option>"
+                                            + "<option value=\"V\" class=\"option1\" >Vorarlberg</option>"
+                                            + "<option value=\"UNKNOWN\">UNKNOWN</option>"
+                                    + "</select>";
+                    break
+                                
+                case "lexalp-process-status":
+                    container.innerHTML = "<select id=\"ValueFieldTMP\" name=\"FACETVALUETMP\">"
+                                                + "<option value=\"HARMONISED\"> HARMONISED </option>"
+                                                + "<option value=\"REJECTED\"> REJECTED </option>"
+                                                + "<option value=\"UNKNOWN\"> UNKNOWN </option>"
+                                            + "</select>";
+                    break    
+                       
+                case "lexalp-harmonising-status":
+                    container.innerHTML = "<select id=\"ValueFieldTMP\" name=\"FACETVALUETMP\">"
+                                                    + "<option value=\"UNPROCESSED\"> UNPROCESSED </option>"
+                                                    + "<option value=\"PROVISIONALLY_PROCESSED\"> PROVISIONALLY_PROCESSED </option>"
+                                                    + "<option value=\"FINALISED\"> FINALISED </option>"
+                                                    + "<option value=\"NOT_TO_BE_HARMONISED\"> NOT TO BE HARMONISED </option>"
+                                                + "</select>";
+                    break        
+                        
+                default:
+            }
+            var newNode = document.getElementById('ValueFieldTMP');
+            
+            // Replace node B by node A
+            var parentNode = oldNode.parentNode;
+            parentNode.replaceChild(newNode, oldNode);
+            
+            //
+            newNode.id = ValueFieldId;
+            newNode.setAttribute('name', FACETVALUEName);
+            
+        } else if (oldNode.tagName!="input" && oldNode.tagName!="INPUT") {
+        
+            // Create the node A in tmp node
+            var container = document.getElementById('tmp');
+            container.innerHTML = "<input type=\"text\" id=\"ValueFieldTMP\" name=\"FACETVALUETMP\" size=\"20\" maxlength=\"128\"\/>";
+            var newNode = document.getElementById('ValueFieldTMP');
+
+            // Replace node B by node A
+            var parentNode = oldNode.parentNode;
+            parentNode.replaceChild(newNode, oldNode);
+            
+            //
+            newNode.id = ValueFieldId;
+            newNode.setAttribute('name', FACETVALUEName);
+        }
     }
 }
 

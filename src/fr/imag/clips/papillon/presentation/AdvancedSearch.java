@@ -9,6 +9,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.10  2007/03/25 22:00:57  fbrunet
+ * improved avancedqueryform javascript
+ * bug correction: in ViewQueryResult class, encode url criteria in UTF-8
+ *
  * Revision 1.9  2006/08/10 22:17:13  fbrunet
  * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
  * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
@@ -165,8 +169,8 @@ public class AdvancedSearch extends PapillonBasePO {
             entryHandle!=null && !entryHandle.equals("")) {
             
             // Search last contribution corresponding to entryId
-            VolumeEntry myEntry = VolumeEntriesFactory.findEntryByEntryId(this.getUser(), VolumesFactory.getVolumeByName(volumeName), entryHandle);
-            
+            VolumeEntry myEntry = VolumeEntriesFactory.findEntryByHandle(volumeName, entryHandle);
+             
             // EDIT
             if (action.equals("edit")) {
                 EditEntryInitFactory.editEntry(myEntry, this.getUser());

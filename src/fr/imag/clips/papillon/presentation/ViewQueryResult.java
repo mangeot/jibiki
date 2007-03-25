@@ -9,6 +9,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.11  2007/03/25 22:00:57  fbrunet
+ * improved avancedqueryform javascript
+ * bug correction: in ViewQueryResult class, encode url criteria in UTF-8
+ *
  * Revision 1.10  2007/01/05 12:57:49  fbrunet
  * Add undo draft method (bug in EditEntry.java : undo after last finish contribution)
  * Modify transformation method
@@ -257,7 +261,7 @@ public class ViewQueryResult {
                     + EditEntryInitFactory.VOLUME_PARAMETER + "="
                     + myEntry.getVolumeName() + "&"
                     + EditEntryInitFactory.HANDLE_PARAMETER + "="
-                    + myEntry.getEntryId() + "&"
+                    + myEntry.getHandle() + "&"
                     + EditEntryInitFactory.ACTION_PARAMETER + "=";
                     
                     // Actions

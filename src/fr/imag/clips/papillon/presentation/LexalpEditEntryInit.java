@@ -10,6 +10,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.14  2007/03/25 22:00:57  fbrunet
+ * improved avancedqueryform javascript
+ * bug correction: in ViewQueryResult class, encode url criteria in UTF-8
+ *
  * Revision 1.13  2007/02/07 13:58:57  fbrunet
  * added message before axies are merged and undo process if the merge is not correct.
  *
@@ -197,17 +201,15 @@ public class LexalpEditEntryInit extends PapillonBasePO {
                 volumeName!=null && !volumeName.equals("") &&
                 entryHandle!=null && !entryHandle.equals("")) {
                 
-                // Search last contribution corresponding to entryId
-                Volume volume = VolumesFactory.getVolumeByName(volumeName);
-                VolumeEntry myEntry = VolumeEntriesFactory.findEntryByEntryId(this.getUser(), volume, entryHandle);
-                //VolumeEntry myEntry = VolumeEntriesFactory.findEntryByHandle(volume, entryHandle);
+                // Search last contribution corresponding to entry handle
+                VolumeEntry myEntry = VolumeEntriesFactory.findEntryByHandle(volumeName, entryHandle);
                 
                 // CREATE NEW ENTRY
                 if (action.equals("createAnyway")) {
                     if (headword!=null && !headword.equals("")) {
                         
                         //
-                        EditEntryInitFactory.createEntry(volume.getName(), headword, this.getUser());
+                        EditEntryInitFactory.createEntry(volumeName, headword, this.getUser());
                         
                     } else {
                         
