@@ -8,14 +8,14 @@
   <body>
     <div id="QueryMenu" lang="en" xml:lang="en" class="menuBlock">
       <h2 class="menuTitle">
-      	<a title="Traduction d&rsquo;un mot"  onclick="javascript:alert('Traduction d&rsquo;un mot')" href="javascript:void(0)">Consultation&nbsp;:</a>
+        <a title="Lookup a word in online dictionaries" href="javascript:void(0)">Lookup:</a>
       </h2>
       <form  id="ConsultForm" method="get" action="Home.po" >
         <div>
                 <div>
                     <div class="menuColumnSize">
                         <div class="menuVariableName">
-                            <label for="ValueField" accesskey="m" ><span class="accesskey">M</span>ot&nbsp;:</label>
+                            <label for="ValueField" accesskey="t" ><span class="accesskey">T</span>erm:</label>
                         </div>
                         <div class="menuVariableValue" >
                             <input type="hidden" id="Facet" name="FACET.0" value="cdm-headword"/>
@@ -25,7 +25,7 @@
                     </div>
                     <div class="menuColumnSize">
                         <div class="menuVariableName">
-                            <label for="SourceLang" accesskey="s"><span class="accesskey">S</span>ource&nbsp;:</label>
+                            <label for="SourceLang" accesskey="s"><span class="accesskey">S</span>ource:</label>
                         </div>
                         <div class="menuVariableValue" >
                             <select id="SourceLang" name="SOURCE.0" class="menuVariableValueWidth" >
@@ -35,11 +35,11 @@
                     </div>
                     <div class="menuColumnSize">
                         <div class="menuVariableName">
-                            <label for="Targets" accesskey="c"><span class="accesskey">C</span>ible&nbsp;:</label>
+                            <label for="Targets" accesskey="a">T<span class="accesskey">a</span>rget:</label>
                          </div>
                         <div class="menuVariableValue" >
                             <select id="Targets" name="TARGETS" class="menuVariableValueWidth">
-                            	<option label="All languages" value="*ALL*">toutes les langues</option>
+                                <option label="All languages" value="*ALL*">All languages</option>
                                 <option id="TargetTmpl" label="NONE" value="NONE">NONE</option>
                             </select>
                         </div>
@@ -56,9 +56,9 @@
             </form>
 
       <br />
-      <a title="Fonction de recherche avancée d'un mot" href="AdvancedSearch.po">Recherche avancée</a>
+      <a title="Advanced Lookup of a Word" href="AdvancedSearch.po">Advanced Lookup</a>
       <br />
-      <a title="Liste des dictionnaires" href="ViewDictionaries.po">Liste des dictionnaires</a>
+      <a title="Dictionary List" href="ViewDictionaries.po">Dictionary List</a>
     </div>
   </body>
 </html>
