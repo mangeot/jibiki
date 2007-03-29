@@ -6,16 +6,16 @@
     <title>Menu</title>
   </head>
   <body>
-    <div id="QueryMenu" lang="en" xml:lang="en" class="menuBlock">
+    <div id="QueryMenu" lang="it" xml:lang="it" class="menuBlock">
       <h2 class="menuTitle">
-      	<a title="Traduction d&rsquo;un mot"  onclick="javascript:alert('Traduction d&rsquo;un mot')" href="javascript:void(0)">Consultation&nbsp;:</a>
+        <a title="Cerca un termine nella banca dati" href="javascript:void(0)">Ricerca semplice:</a>
       </h2>
       <form  id="ConsultForm" method="get" action="Home.po" >
         <div>
                 <div>
                     <div class="menuColumnSize">
                         <div class="menuVariableName">
-                            <label for="ValueField" accesskey="m" ><span class="accesskey">M</span>ot&nbsp;:</label>
+                            <label for="ValueField" accesskey="t" ><span class="accesskey">T</span>ermine:</label>
                         </div>
                         <div class="menuVariableValue" >
                             <input type="hidden" id="Facet" name="FACET.0" value="cdm-headword"/>
@@ -25,22 +25,22 @@
                     </div>
                     <div class="menuColumnSize">
                         <div class="menuVariableName">
-                            <label for="SourceLang" accesskey="s"><span class="accesskey">S</span>ource&nbsp;:</label>
+                            <label for="SourceLang" accesskey="l"><span class="accesskey">L</span>ingua di partenza:</label>
                         </div>
                         <div class="menuVariableValue" >
                             <select id="SourceLang" name="SOURCE.0" class="menuVariableValueWidth" >
-                                <option id="SourceOptionTemplate" value="NONE" label="NONE">NONE</option>
+                                <option id="SourceOptionTemplate" value="NONE" label="NONE">NESSUNA</option>
                             </select>
                         </div>
                     </div>
                     <div class="menuColumnSize">
                         <div class="menuVariableName">
-                            <label for="Targets" accesskey="c"><span class="accesskey">C</span>ible&nbsp;:</label>
+                            <label for="Targets" accesskey="a">Lingua di <span class="accesskey">a</span>rrivo:</label>
                          </div>
                         <div class="menuVariableValue" >
                             <select id="Targets" name="TARGETS" class="menuVariableValueWidth">
-                            	<option label="All languages" value="*ALL*">toutes les langues</option>
-                                <option id="TargetTmpl" label="NONE" value="NONE">NONE</option>
+                                <option value="*ALL*">Tutte le lingue</option>
+                                <option id="TargetTmpl" value="NONE" label="NONE">NESSUNA</option>
                             </select>
                         </div>
                     </div>
@@ -55,10 +55,10 @@
                 </div>
             </form>
 
-      <br />
-      <a title="Fonction de recherche avancée d'un mot" href="AdvancedSearch.po">Recherche avancée</a>
-      <br />
-      <a title="Liste des dictionnaires" href="ViewDictionaries.po">Liste des dictionnaires</a>
+      <br/>
+      <a title="Cerca un termine definendo più parametri" href="AdvancedSearch.po">Ricerca avanzata</a>
+      <br/>
+      <a title="Numero di schede per ogni lingua" href="ViewDictionaries.po">Lista schede per lingua</a>
     </div>
   </body>
 </html>
