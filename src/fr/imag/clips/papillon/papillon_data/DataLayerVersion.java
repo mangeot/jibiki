@@ -4,6 +4,9 @@
  * $Id$
  *-----------------------------------------------------------------------------
  * $Log$
+ * Revision 1.3  2007/04/05 13:56:23  serasset
+ * Corrected UserLanguage (slo -> slv)
+ *
  * Revision 1.2  2007/04/05 12:55:54  serasset
  * Added a DBLayer Version management with an auto-update of db layer.
  *
@@ -103,7 +106,7 @@ public class DataLayerVersion {
     public static void upgradeDB() throws PapillonBusinessException {
         int currentDBVersion = getDBVersion();
         int currentApplicationVersion = getApplicationVersion();
-        if (currentDBVersion != currentApplicationVersion) {
+        if (currentDBVersion < currentApplicationVersion) {
             PapillonLogger.writeDebugMsg("Upgrading database from version " + currentDBVersion + " to version " + currentApplicationVersion);
             if (currentDBVersion <= 0) {
                 // Check if the version column do exist and create it if necessary
