@@ -84,7 +84,6 @@ echo APPCP = $APPCP
 $EXEC ${JAVA} \
 	-cp "${APPCP}" \
 	-Denhydra.home=@ENHYDRA_PATH@ \
-	-Djbiki.dblayer.version=@DB_LAYER_VERSION@ \
 	com.lutris.multiServer.MultiServer \
 	"${MULTISERVER_CONF}"
 
