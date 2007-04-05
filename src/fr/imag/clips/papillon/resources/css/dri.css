@@ -4,12 +4,9 @@
  * $Id$
  *------
  * $Log$
- * Revision 1.12  2007/04/05 11:29:36  serasset
+ * Revision 1.1  2007/04/05 11:29:36  serasset
  * Modified appearence of the Layout and Home of lexalp application.
  * Added a download firefox link.
- *
- * Revision 1.11  2007/02/07 13:58:57  fbrunet
- * added message before axies are merged and undo process if the merge is not correct.
  *
  * Revision 1.10  2007/01/08 15:13:42  fbrunet
  * Correction of th xml attribut bug in ContributionHeader (VolumeEntry class)
@@ -145,20 +142,18 @@ body {
 
 .menuColumnSize {
 	width: 150px;
-    display: table;
 }
 
 .menuVariableName {
     float: left; 
-    width: 50px;
+    width: 40px;
     }
     
 .menuVariableValue {
-    margin-right: 7px;
-    float: right; 
-    width: 90px;
+    float: left; 
+    width: 100px;
     }
-        
+    
 .menuVariableValueWidth {
     width: 100%;
     }
@@ -229,7 +224,7 @@ body {
 }
 
 .menuBlock p, .menuBlock div {
-   text-indent: 0.0em;
+   text-indent: 0.3em;
 }
 
 .menuBlock form {
@@ -258,38 +253,8 @@ body {
    text-decoration: none;
 }
 
-.menuBlock input, textarea, select { font-size: 8pt; color: #000000; background-color: white; border: 1px solid #808080; }
+.menuBlock input, textarea, select { font-size: 8pt; color: #000000; background-color: white; }
 	
-/*</group>*/
-
-/*<group=GetFirefox>*/
-
-div#firefox {
-   float:right;
-   background-color: #e0e0e0;
-   margin-right: 12px;
-   font-size: x-small;
-   padding-top: 3px;
-   padding-bottom: 3px;
-   padding-left: 3px;
-   padding-right:3px;
-   text-align: right;
-   width:300px;
-}
-
-div#firefox span {
-
-}
-
-div#firefox a {
-   float:right;
-   padding-left:5px;
-}
-
-div#firefox img {
-   border: none;
-}
-
 /*</group>*/
 
 .mainColumn {
@@ -321,12 +286,6 @@ div#firefox img {
     text-align: center; 
     margin-top: 60px; 
     margin-bottom: 60px;
-}
-
-.mergingResultTitle {
-    text-align: center; 
-    margin-top: 40px; 
-    margin-bottom: 40px;
 }
 
 .editingResultView {
@@ -602,7 +561,7 @@ margin-right:10px;
 
 .entry {
 	border: 1px solid #898989;
-	padding: 5px 5px 5px 5px;
+	padding: 2px 2px 2px 2px;
 	background: #F0F0F0;
 }
 
@@ -640,8 +599,8 @@ margin-right:10px;
 	border: 1px dashed #898989;
     margin-left:20px;
     margin-right:20px;
-    margin-top:20px;
-    padding: 5px 5px 5px 5px;
+    margin-top:5px;
+    padding: 2px 2px 2px 2px;
 }
 
 .relatedAxie {
