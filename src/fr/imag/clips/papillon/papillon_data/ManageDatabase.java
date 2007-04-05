@@ -2,6 +2,9 @@
  * $Id$
  *-----------------------------------------------------------------------------
  * $Log$
+ * Revision 1.12  2007/04/05 12:55:54  serasset
+ * Added a DBLayer Version management with an auto-update of db layer.
+ *
  * Revision 1.11  2007/01/15 17:12:18  serasset
  * Several notes added, suppressed the HTMLDOM_CACHE stuff.
  *
@@ -28,7 +31,10 @@ import java.sql.*;
 
 import com.lutris.appserver.server.*;
 import com.lutris.appserver.server.sql.*;
-import com.lutris.dods.builder.generator.query.DataObjectException; 
+import com.lutris.dods.builder.generator.query.DataObjectException;
+import com.lutris.dods.builder.generator.query.RDBTable;
+import com.lutris.dods.builder.generator.query.QueryBuilder;
+import com.lutris.dods.builder.generator.query.RDBColumn;
 
 import org.enhydra.dods.DODS;
 
@@ -209,7 +215,7 @@ public class ManageDatabase implements Query {
 		return result;
     }
 
-    private static void executeSql (String sql) throws PapillonBusinessException {
+    public static void executeSql (String sql) throws PapillonBusinessException {
 		DBTransaction transaction = CurrentDBTransaction.get();
         ManageDatabase req = new ManageDatabase(transaction, sql);
         
@@ -305,8 +311,61 @@ public class ManageDatabase implements Query {
             }
 			return TableNames;
         }
-	
-	    /*
+
+        public static java.util.Vector getColumnNames(String table)
+        throws PapillonBusinessException {
+			//select attname from pg_attribute, pg_class where pg_class.relname='lexalpfra'
+            //   and pg_class.oid=pg_attribute.attrelid and pg_attribute.attnum > 0;
+
+			java.util.Vector columnNames = new java.util.Vector();
+            DBConnection myDbConnection = null;
+            try {
+                myDbConnection = Enhydra.getDatabaseManager().allocateConnection();
+
+				QueryBuilder myQueryBuilder = new QueryBuilder("pg_attribute", "attname");
+				RDBTable pg_attribute = new RDBTable("pg_attribute");
+                RDBTable pg_class = new RDBTable("pg_class");
+                RDBColumn relname = new RDBColumn(pg_class,"relname");
+                RDBColumn classoid = new RDBColumn(pg_class,"oid");
+                RDBColumn attrelid = new RDBColumn(pg_attribute,"attrelid");
+                RDBColumn attnum = new RDBColumn(pg_attribute,"attnum");
+				myQueryBuilder.addWhere(relname, table);
+                myQueryBuilder.addWhere(classoid,attrelid);
+                myQueryBuilder.addWhere(attnum,0,QueryBuilder.GREATER_THAN);
+                java.sql.ResultSet myResultSet = myQueryBuilder.executeQuery(myDbConnection);
+               while (myResultSet.next()) {
+				   columnNames.addElement(myResultSet.getString("attname"));
+			   }
+            }  catch(SQLException se) {
+                //very important to throw out bad connections
+                PapillonLogger.writeErrorMsg("SQL exception: ");
+				// System.out.println("SQL exception: ");
+				se.printStackTrace();
+                if(myDbConnection != null && myDbConnection.handleException(se)) myDbConnection=null;
+            } catch(Exception e) {
+				String err = "ERROR DatabaseConnexion: Exception while querying the table names";
+                PapillonLogger.writeErrorMsg(err);
+                // System.out.println(err);
+				e.printStackTrace();
+				//throw new PapillonBusinessException( err, e );
+            } finally {
+                if(myDbConnection!=null) {
+					try {
+						myDbConnection.reset();
+						myDbConnection.release();
+					}
+					catch ( SQLException e ) {
+						String err = "ERROR DatabaseConnexion2: Exception while releasing transaction after querying the table names";
+                        PapillonLogger.writeErrorMsg(err);
+						// System.out.println(err);
+						e.printStackTrace();
+//						throw new PapillonBusinessException( err, e );
+					}
+                }
+            }
+			return columnNames;
+        }
+        /*
 		I keep this function because the other one (executeSql) use a transaction and thus, I cannot retrieve the results because
 		 the resultSet is closed.
 		*/

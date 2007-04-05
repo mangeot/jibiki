@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4  2007/04/05 12:55:54  serasset
+ * Added a DBLayer Version management with an auto-update of db layer.
+ *
  * Revision 1.3  2007/01/16 13:28:31  serasset
  * Added cache reinitialization when a metadata is modified.
  *
@@ -51,21 +54,12 @@ public class VolumeCache {
     * @exception PapillonBusinessException
     * 
     */
-    public static void volumeCacheInit() 
-        throws PapillonBusinessException {
-            
-            try {
-                
-                //
+    public static void volumeCacheInit() {            
                 volumeCache = new Hashtable();
                 volumeCacheByHandle = new Hashtable();
                 volumeCacheByDictionaryName = new Hashtable();
                 volumeCacheBySource = new Hashtable();
                 volumeCacheByTarget = new Hashtable();
-                              
-            } catch(Exception ex) {
-                throw new PapillonBusinessException("Exception in volumeCacheInit()", ex);
-            }
         }
     
     

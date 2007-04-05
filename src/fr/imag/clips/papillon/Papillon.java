@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.12  2007/04/05 12:55:54  serasset
+ * Added a DBLayer Version management with an auto-update of db layer.
+ *
  * Revision 1.11  2007/01/16 13:28:31  serasset
  * Added cache reinitialization when a metadata is modified.
  *
@@ -77,6 +80,7 @@ import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
 import fr.imag.clips.papillon.business.dictionary.AvailableLanguages;
 import fr.imag.clips.papillon.business.xsl.XslSheetFactory;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
+import fr.imag.clips.papillon.business.PapillonLogger;
 
 /* For JDictd */
 import fr.imag.clips.papillon.dict.server.JDictd;
@@ -112,18 +116,15 @@ public class Papillon extends StandardApplication {
         //  your config file.
         
         // Look at the Xerces version that is currently loaded and display it...
-        Enhydra.getLogChannel().write(Logger.INFO, org.apache.xerces.impl.Version.getVersion());
+        PapillonLogger.writeInfoMsg(org.apache.xerces.impl.Version.getVersion());
 		
         // Look at the local file encoding
-        Enhydra.getLogChannel().write(Logger.INFO, "Local system file encoding: "+System.getProperty ("file.encoding"));
+        PapillonLogger.writeInfoMsg("Local system file encoding: "+System.getProperty ("file.encoding"));
 		// Available only in java 1.5
 		//java.nio.charset.Charset defaultCharset = java.nio.charset.Charset.defaultCharset();
 		java.io.InputStreamReader myInputStreamReader = new java.io.InputStreamReader(System.in);
-        Enhydra.getLogChannel().write(Logger.INFO, "Local system default charset: "+myInputStreamReader.getEncoding());
+        PapillonLogger.writeInfoMsg("Local system default charset: "+myInputStreamReader.getEncoding());
 
-        // Check the version of the data layer
-        Enhydra.getLogChannel().write(Logger.INFO, "Database uses Data Layer Version n°: " + DataLayerVersion.getDBVersion());
-        
         //  Dictd specific settings.
         boolean listen = false; 
         try {
@@ -184,6 +185,16 @@ public class Papillon extends StandardApplication {
             Papillon.initializeAllCaches();
         } catch (PapillonBusinessException e) {
             throw new ApplicationException("Initialize caches error", e);
+        }
+
+        // Upgrade the DB layer to a correct version
+        // Problem is: the cache initialization has to be done in order to get all available volumes
+        // hence, layer modifications should not break the cache mecanism...
+        PapillonLogger.writeInfoMsg("Database uses Data Layer Version n°: " + DataLayerVersion.getDBVersion());
+        try {
+            DataLayerVersion.upgradeDB();
+        } catch (PapillonBusinessException e) {
+            throw new ApplicationException("Could not upgrade DB Layer.", e);
         }
 
     }

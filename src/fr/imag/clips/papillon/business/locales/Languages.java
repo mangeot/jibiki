@@ -9,6 +9,9 @@
  * $Id$
  *---------------------------------------------------------
  * $Log$
+ * Revision 1.6  2007/04/05 12:55:54  serasset
+ * Added a DBLayer Version management with an auto-update of db layer.
+ *
  * Revision 1.5  2006/08/10 19:21:45  mangeot
  * *** empty log message ***
  *
@@ -72,7 +75,7 @@ public class Languages {
 			if (myBundle==null) {
 				/* if not in the cache, create */
 				try {
-				myBundle = ResourceBundle.getBundle(PropertiesPath + LanguagesFile + "-" + langLoc, defaultLocale);
+                    myBundle = ResourceBundle.getBundle(PropertiesPath + LanguagesFile + "-" + langLoc, defaultLocale);
 				}
 				catch (Exception e) {
 					/* language bundle was not found */

@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.6  2007/04/05 12:55:54  serasset
+ * Added a DBLayer Version management with an auto-update of db layer.
+ *
  * Revision 1.5  2005/06/15 16:48:27  mangeot
  * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
  *
@@ -92,7 +95,13 @@ public class PapillonLogger {
 
     public static void writeErrorMsg(String msg) {
         if (null != msg) {
-            Enhydra.getLogChannel().write(Logger.ERROR,"null");
+            Enhydra.getLogChannel().write(Logger.ERROR, msg);
+        }
+    }
+
+    public static void writeInfoMsg(String msg) {
+        if (null != msg) {
+            Enhydra.getLogChannel().write(Logger.INFO, msg);
         }
     }
 //import java.io.UnsupportedEncodingException;

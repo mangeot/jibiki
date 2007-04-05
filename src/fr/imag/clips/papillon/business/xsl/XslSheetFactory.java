@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.16  2007/04/05 12:55:54  serasset
+ * Added a DBLayer Version management with an auto-update of db layer.
+ *
  * Revision 1.15  2007/01/05 13:57:26  serasset
  * multiple code cleanup.
  * separation of XMLServices from the Utility class
@@ -202,7 +205,7 @@ public class XslSheetFactory {
                 
                 // FIXME: for Xalan 2_4_1
                 jibikiXslXMLtoXML = getXslSheet("", "", "XML");
-                if (jibikiXslXMLtoXML == null) new Exception("jibiki XML to XML internal xsl is not in cache");
+                if (jibikiXslXMLtoXML == null) new PapillonBusinessException("jibiki XML to XML internal xsl is not in cache");
                 jibikiXslXMLtoText = getXslSheet("", "", "TEXT");
                 jibikiXslXMLtoFO = getXslSheet("", "", "FO");
                 
@@ -212,7 +215,9 @@ public class XslSheetFactory {
                 //jibikiXslXMLtoXML = translet.getTemplates();
                 
                 
-            } catch(Exception ex) {
+            } catch (PapillonBusinessException ex) {
+                  throw ex;
+            } catch (Exception ex) {
                 throw new PapillonBusinessException("Exception in initializeJibikiXslSheet()", ex);
             }
         }

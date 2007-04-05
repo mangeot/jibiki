@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.3  2007/04/05 12:55:54  serasset
+ * Added a DBLayer Version management with an auto-update of db layer.
+ *
  * Revision 1.2  2007/01/05 13:57:25  serasset
  * multiple code cleanup.
  * separation of XMLServices from the Utility class
@@ -47,19 +50,10 @@ public class DictionaryCache {
     * @exception PapillonBusinessException
     * 
     */
-    public static void dictionaryCacheInit() 
-        throws PapillonBusinessException {
-            
-            try {
-                
-                //
-                dictionaryCache = new Hashtable();
-                dictionaryCacheByHandle = new Hashtable();
-                
-            } catch(Exception ex) {
-                throw new PapillonBusinessException("Exception in dictionaryCacheInit()", ex);
-            }
-        }
+    public static void dictionaryCacheInit() {
+        dictionaryCache = new Hashtable();
+        dictionaryCacheByHandle = new Hashtable();
+    }
     
     
     /** 

@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.2  2007/04/05 12:55:54  serasset
+ * Added a DBLayer Version management with an auto-update of db layer.
+ *
  * Revision 1.1  2006/08/10 22:17:13  fbrunet
  * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
  * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
@@ -41,19 +44,12 @@ public class XslSheetCache {
     * @exception PapillonBusinessException
     * 
     */
-    public static void xslSheetCacheInit() 
-        throws PapillonBusinessException {
-            
-            try {
-                
-                //
-                xslSheetCache = new Hashtable();
-                xslSheetCacheByHandle = new Hashtable();
-                               
-            } catch(Exception ex) {
-                throw new PapillonBusinessException("Exception in xslSheetCacheinit()", ex);
-            }
-        }
+    public static void xslSheetCacheInit() {
+
+        xslSheetCache = new Hashtable();
+        xslSheetCacheByHandle = new Hashtable();
+
+    }
     
     
     /** 

@@ -336,6 +336,9 @@ DatabaseManager.DB.dribiki.ObjectId.MinValue = 1000000
 # ???? c'est pas moi qui ai mis ca ? GS
 #DatabaseManager.DB.dribiki.DbCharSet = "UTF-8"
 
+# Version of the DB Layer used in this application.
+jibiki.dblayer.version=@DBLAYER_VERSION@
+
 #
 # Following two lines must be added for PostgreSQL,
 # since oID can't be used for column name

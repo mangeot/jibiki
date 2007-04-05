@@ -11,6 +11,9 @@ Id:
   
 Log:
    $Log$
+   Revision 1.23  2007/04/05 12:55:54  serasset
+   Added a DBLayer Version management with an auto-update of db layer.
+
    Revision 1.22  2007/01/05 13:57:25  serasset
    multiple code cleanup.
    separation of XMLServices from the Utility class
@@ -443,7 +446,7 @@ For Lexalp, call ant using -Dapplication.name=Lexalp
      <filter token="DEPLOY_PATH"  value="${dir.output}" />
      <filter token="PROJECT_PATH" value="${dir.project}" />
      <filter token="ENHYDRA_DIR" value="${enhydra.dir}" />
-     <filter token="DB_LAYER_VERSION" value="${jibiki.dblayer.version}" />
+     <filter token="DBLAYER_VERSION" value="${jibiki.dblayer.version}" />
      <!-- Papillon-specific filters -->
      <filter token="XALAN_LIB"    value="${papillon.xalan.jar}" />
      <filter token="XERCES_LIB"  value="${papillon.xerces.jar}" />
