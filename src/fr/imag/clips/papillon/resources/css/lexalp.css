@@ -4,6 +4,9 @@
  * $Id$
  *------
  * $Log$
+ * Revision 1.13  2007/04/05 13:07:53  serasset
+ * *** empty log message ***
+ *
  * Revision 1.12  2007/04/05 11:29:36  serasset
  * Modified appearence of the Layout and Home of lexalp application.
  * Added a download firefox link.
@@ -738,6 +741,10 @@ h1.title {
    width: 100%;
    padding-top: 5px;
    padding-bottom: 5px;
+}
+
+#ProjectDescription a {
+    text-decoration: underline;
 }
 
 .pagination {
