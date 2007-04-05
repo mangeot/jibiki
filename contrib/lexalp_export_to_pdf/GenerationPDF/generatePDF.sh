@@ -1,19 +1,22 @@
 #! /bin/sh
 
 # Variables d'environnement
-JAVA=/System/Library/Frameworks/JavaVM.framework/Versions/1.4.2/Home/bin/java
+#JAVA=/System/Library/Frameworks/JavaVM.framework/Versions/1.4.2/Home/bin/java
+JAVA=/usr/local/java/j2sdk1.4.2_11/bin/java
 SAXON=net.sf.saxon.Transform
-SAXON_CP=/Library/Java/Extensions/saxonb8-7-3j/saxon8.jar
+SAXON_CP=/usr/local/saxonb8-9j/saxon8.jar
 
 #For 0.20.5 
 #FOP=org.apache.fop.apps.Fop
 #FOP_CP=/Library/Java/Extensions/fop-0.20.5/build/fop.jar:/Library/Java/Extensions/fop-0.20.5/lib/batik.jar:/Library/Java/Extensions/xalan-j_2_4_1/bin/xalan.jar:/Library/Java/Extensions/xalan-j_2_4_1/bin/xercesImpl.jar:/Library/Java/Extensions/fop-0.20.5/lib/avalon-framework-cvs-20020806.jar:/Library/Java/Extensions/xalan-j_2_4_1/bin/xml-apis.jar
 #FOP_CONF=fop-0.20.5-conf/userconfig.xml
 
+FOP_HOME=/usr/local/fop-0.93
+
 #For 0.93
 FOP=org.apache.fop.cli.Main
-FOP_CP=/Library/Java/Extensions/fop-0.93/lib/xmlgraphics-commons-1.1.jar:/Library/Java/Extensions/fop-0.93/lib/xml-apis-1.3.02.jar:/Library/Java/Extensions/fop-0.93/lib/xercesImpl-2.7.1.jar:/Library/Java/Extensions/fop-0.93/lib/xalan-2.7.0.jar:/Library/Java/Extensions/fop-0.93/lib/serializer-2.7.0.jar:/Library/Java/Extensions/fop-0.93/lib/commons-logging-1.0.4.jar:/Library/Java/Extensions/fop-0.93/lib/commons-io-1.1.jar:/Library/Java/Extensions/fop-0.93/lib/batik-all-1.6.jar:/Library/Java/Extensions/fop-0.93/lib/avalon-framework-4.2.0.jar:/Library/Java/Extensions/fop-0.93/build/fop.jar:/Library/Java/Extensions/fop-0.93/build/fop-sandbox.jar:/Library/Java/Extensions/fop-0.93/build/fop-hyph.jar:/usr/local/antlr-2.7.4/antlr.jar
-FOP_CONF=fop-0.93-conf/fop.xconf
+FOP_CP=$FOP_HOME/lib/xmlgraphics-commons-1.1.jar:$FOP_HOME/lib/xml-apis-1.3.02.jar:$FOP_HOME/lib/xercesImpl-2.7.1.jar:$FOP_HOME/lib/xalan-2.7.0.jar:$FOP_HOME/lib/serializer-2.7.0.jar:$FOP_HOME/lib/commons-logging-1.0.4.jar:$FOP_HOME/lib/commons-io-1.1.jar:$FOP_HOME/lib/batik-all-1.6.jar:$FOP_HOME/lib/avalon-framework-4.2.0.jar:$FOP_HOME/build/fop.jar:$FOP_HOME/build/fop-sandbox.jar:$FOP_HOME/build/fop-hyph.jar:/usr/local/antlr-2.7.4/antlr.jar
+FOP_CONF=conf-fop093/fop.xconf
 
 
 # Liste des domaines présents dans LexALP
@@ -101,6 +104,8 @@ elif [ "$NB_DOMAINS" == "1" ]; then
 	SUP_TEST="false"
 	TEST="true"
 fi
+
+mkdir temp
 
 ## $4 : Numéro de domaine
 DOMAIN_NUMBER=$5
