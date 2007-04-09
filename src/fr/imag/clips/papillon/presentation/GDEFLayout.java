@@ -9,6 +9,12 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.10  2007/04/09 15:27:19  serasset
+ *  Modified xhtml files and applications layout, because the "Targets" id was duplicated
+ *  between QueryMenu and AdvancedSearch.
+ *  Corrected problems with the Lexalp italian home page and advanced query form.
+ *  Added a link to axie when searching for a lexie and user is logged in.
+ *
  *  Revision 1.9  2006/08/10 22:17:13  fbrunet
  *  - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
  *  - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
@@ -325,7 +331,7 @@ public class GDEFLayout implements StdLayout {
             }
             targetSelect.removeChild(targetOptionTemplate);
             //PapillonBasePO.setSelected(queryMenu.getElementTarget(), prefTrgLang);
-            PapillonBasePO.setSelected(queryMenu.getElementTargets(), prefTrgLang);
+            PapillonBasePO.setSelected(queryMenu.getElementQMTargets(), prefTrgLang);
             
             // Add the menu to the Page
             layout.getElementMenuColumn().appendChild(layout.importNode(queryMenu.getElementQueryMenu(), true));

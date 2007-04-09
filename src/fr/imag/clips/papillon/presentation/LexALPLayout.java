@@ -9,6 +9,12 @@
  *  $Id $
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.8  2007/04/09 15:27:19  serasset
+ *  Modified xhtml files and applications layout, because the "Targets" id was duplicated
+ *  between QueryMenu and AdvancedSearch.
+ *  Corrected problems with the Lexalp italian home page and advanced query form.
+ *  Added a link to axie when searching for a lexie and user is logged in.
+ *
  *  Revision 1.7  2007/01/15 17:24:28  serasset
  *  Merged Modification made for the DRI instance with main trunk modifications.
  *
@@ -341,7 +347,7 @@ public class LexALPLayout implements StdLayout {
             }
             targetSelect.removeChild(targetOptionTemplate);
             //PapillonBasePO.setSelected(queryMenu.getElementTarget(), prefTrgLang);
-            PapillonBasePO.setSelected(queryMenu.getElementTargets(), prefTrgLang);
+            PapillonBasePO.setSelected(queryMenu.getElementQMTargets(), prefTrgLang);
             
             // Add the menu to the Page
             Node placeHolder = layout.getElementMenuBlockPlaceHolder();

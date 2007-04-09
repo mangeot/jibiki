@@ -40,10 +40,11 @@
 		<b>in cui:</b>
                   <br/>
 		-->
+                  <input type="hidden" id="Action" name="ACTION" value=""/>
                     <table id="tableShowHideElement" style="display: none;" >
                         <tr id="rowShowHideTemplate" ><td>cdm-headword</td></tr>
                     </table>
-                    <div id="tmp" style="display: none;" ></div>
+                    <div id="tmp" style="display: none;" ><!-- --></div>
 
                   <input type="hidden" id="NumberOfCriteria" name="CRITERIA_NB"/>
                   <div id="criterion" style="display:block; margin-left: 0px;">
@@ -128,7 +129,7 @@
               <option id="XslTmpl" label="Default" value="">standard</option>
             </select>
             <input type="hidden" id="Offset" name="OFFSET" />
-            <input type="hidden" id="Action" name="ACTION" value=""/>
+            <input type="hidden" name="action" value="lookup" />
             <input type="submit" value="Go" />
           </div>
       </form>
