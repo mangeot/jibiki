@@ -34,7 +34,7 @@ import java.util.Iterator;
         protected String offset; 
         protected String limit; 
         protected String xsl;
-        protected ArrayList targets;
+        protected ArrayList targets = new ArrayList();
         
         //
         private final boolean DEBUG = false;

@@ -10,6 +10,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.15  2007/04/10 14:51:14  serasset
+ * LexalpEditentryInit now searches for lexies AND translation, with NO TARGET LANGUAGE selected.
+ * This way, the axie is retrieved in the result and may be linked from the lexie.
+ *
  * Revision 1.14  2007/03/25 22:00:57  fbrunet
  * improved avancedqueryform javascript
  * bug correction: in ViewQueryResult class, encode url criteria in UTF-8
@@ -341,7 +345,7 @@ public class LexalpEditEntryInit extends PapillonBasePO {
                     //Collection qrset = queryReq.findLexieForEdition(this.getUser());
                     queryReq.setLimit(qp.getLimitString());
                     queryReq.setOffset(qp.getOffsetString());
-                    Collection qrset = queryReq.findLexie(this.getUser());
+                    Collection qrset = queryReq.findLexieAndTranslation(this.getUser());
                     //Collection qrset = DictionariesFactory.doQuery(qp, this.getUser());
                     
                     /*
