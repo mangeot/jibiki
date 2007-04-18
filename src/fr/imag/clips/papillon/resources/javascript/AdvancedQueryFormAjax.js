@@ -76,7 +76,7 @@ function getSelector(value, name) {
                                                 + "<option value=\"n.n. dual.\"> n.n. dual. </option>"
                                                 + "<option value=\"v.\"> v. </option>"
                                                 + "<option value=\"adj.\"> adj. </option>"
-                                                + "<option value=\"adj.\"> adv. </option>"
+                                                + "<option value=\"adv.\"> adv. </option>"
                                                 + "<option value=\"UNKNOWN\"> UNKNOWN </option>"
                                             + "</select>";
                     break
