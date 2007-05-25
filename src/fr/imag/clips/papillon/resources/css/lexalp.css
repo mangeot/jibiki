@@ -4,6 +4,10 @@
  * $Id$
  *------
  * $Log$
+ * Revision 1.14  2007/05/25 16:03:26  serasset
+ * Slightly reduced the size of notes/harmonisation notes.
+ * Removed the top margin of the flag/language/kwic link in entry display.
+ *
  * Revision 1.13  2007/04/05 13:07:53  serasset
  * *** empty log message ***
  *
@@ -581,7 +585,7 @@ margin-right:10px;
     text-align: justify;
 	margin-left: 10px;
 	//display: block;
-	//font-size: smaller;
+	font-size: smaller;
 }
 
 .historyColumn {
@@ -690,7 +694,7 @@ margin-right:10px;
 	font-size:xx-small;
 	text-transform: uppercase;
     margin-left:5px;
-    margin-top:15px;
+//    margin-top:15px;
 }
 
 .entry_information_flag {
@@ -698,7 +702,7 @@ margin-right:10px;
 	//font-size:xx-small;
 	//text-transform: uppercase;
     margin-left:5px;
-    margin-top:12px;
+//    margin-top:12px;
     //border: 1px solid #898989;
 }
 
