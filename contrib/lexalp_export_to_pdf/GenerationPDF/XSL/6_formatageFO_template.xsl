@@ -668,6 +668,16 @@
                 </fo:block>
             </xsl:if>
 
+            <!--HARMONISATION NOTE-->
+            <xsl:if test="string(harmonisation-note/text/text()) ">
+                <fo:block text-align="justify" margin-left="1em" space-before="1pt">
+                    <fo:inline font-variant="small-caps">Harmonisation Note: </fo:inline>
+                    <xsl:value-of select="harmonisation-note/text/text()"/>
+                    <fo:inline font-size="10pt">
+                        <xsl:apply-templates select="harmonisation-note/source"/>
+                    </fo:inline>
+                </fo:block>
+            </xsl:if>
             <!-- Eurovoc 
                 <xsl:apply-templates select="eurovoc"/>-->
 
