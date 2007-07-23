@@ -4,6 +4,14 @@
  * $Id$
  *------
  * $Log$
+ * Revision 1.14.2.1  2007/07/23 14:23:50  serasset
+ * Commiting most changes done for the XALAN27_NEWDISPLAY on the branch
+ *  - Added XSL extensions callable during xsl transformations
+ *  - Implemented new display of query results as requested by EURAC team
+ *  - Modified edition interface generator to adapt it to xalan 2.7.0
+ *  - Added autocompletion feature to simple search fields
+ *  - Moved some old pages to "deprecated" folder (this will forbid direct use of this code for papillon/GDEF)
+ *
  * Revision 1.14  2007/05/25 16:03:26  serasset
  * Slightly reduced the size of notes/harmonisation notes.
  * Removed the top margin of the flag/language/kwic link in entry display.
@@ -446,8 +454,10 @@ A:hover {
 /*<group=LexALP entries>*/
 
 .axie {
-	//border: 1pt solid #3b63b5;
-	display: block;
+    background-color:#E0E0E0;
+    border:1px solid #898989;
+    display:block;
+    margin-top:-1px;
 }
 
 .axieList {
@@ -585,7 +595,7 @@ margin-right:10px;
     text-align: justify;
 	margin-left: 10px;
 	//display: block;
-	font-size: smaller;
+	//font-size: smaller;
 }
 
 .historyColumn {
@@ -614,41 +624,45 @@ margin-right:10px;
 }
 
 .finishedEntry {
-	border: 1px solid #898989;
-	padding: 5px 5px 5px 5px;
 	background: #F0F0F0;
 }
 
 .myFinishedEntry {
-	border: 1px solid #898989;
-	padding: 5px 5px 5px 5px;
 	background: #66CCFF;
 }
 
 .modifiedEntry {
-	border: 1px solid #898989;
-	padding: 5px 5px 5px 5px;
 	background: #F0F0F0;
 }
 
 .myNotFinishedEntry {
-	border: 1px solid #898989;
-	padding: 5px 5px 5px 5px;
 	background: #99CCCC;
 }
 
 .notFinishedEntry {
-    border: 1px solid #898989;
-	padding: 5px 5px 5px 5px;
 	background: #F0F0F0;
 }
 
+.lexalp-lsgroup {
+    border:1px dotted #898989;
+    margin-bottom:5px;
+    padding-bottom:2px;
+}
+
+.lexalp-entry {
+    border:1px solid #898989;
+    margin-bottom:5px;
+    padding-bottom:2px;
+    margin-top:-1px;
+    padding-right: 3px;
+}
+
 .translation {
-	border: 1px dashed #898989;
+	/* border: 1px dashed #898989; */
     margin-left:20px;
-    margin-right:20px;
-    margin-top:20px;
-    padding: 5px 5px 5px 5px;
+    margin-right:2px;
+    margin-top:3px;
+    padding: 2px 2px 2px 2px;
 }
 
 .relatedAxie {
@@ -694,7 +708,7 @@ margin-right:10px;
 	font-size:xx-small;
 	text-transform: uppercase;
     margin-left:5px;
-//    margin-top:15px;
+    margin-top:2px;
 }
 
 .entry_information_flag {
@@ -702,7 +716,7 @@ margin-right:10px;
 	//font-size:xx-small;
 	//text-transform: uppercase;
     margin-left:5px;
-//    margin-top:12px;
+    margin-top:1px;
     //border: 1px solid #898989;
 }
 
@@ -715,6 +729,7 @@ margin-right:10px;
 	border-right: 1px solid #898989;
 	border-left: 1px solid #898989;
 	font-size:x-small;
+    background-color: #E0E0E0;
 }
 
 .action {

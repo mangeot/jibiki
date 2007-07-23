@@ -9,6 +9,14 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.12.2.1  2007/07/23 14:23:50  serasset
+ * Commiting most changes done for the XALAN27_NEWDISPLAY on the branch
+ *  - Added XSL extensions callable during xsl transformations
+ *  - Implemented new display of query results as requested by EURAC team
+ *  - Modified edition interface generator to adapt it to xalan 2.7.0
+ *  - Added autocompletion feature to simple search fields
+ *  - Moved some old pages to "deprecated" folder (this will forbid direct use of this code for papillon/GDEF)
+ *
  * Revision 1.12  2007/04/09 15:27:19  serasset
  * Modified xhtml files and applications layout, because the "Targets" id was duplicated
  * between QueryMenu and AdvancedSearch.
@@ -61,115 +69,63 @@ package fr.imag.clips.papillon.presentation;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Vector;
-import java.util.ArrayList;
 
 // DOM imports
-import org.w3c.dom.html.*;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
 import org.enhydra.xml.xhtml.dom.*;
 
 // Enhydra SuperServlet imports
 import fr.imag.clips.papillon.presentation.xhtml.orig.ViewQueryResultXHTML;
-import com.lutris.appserver.server.httpPresentation.HttpPresentation;
-import com.lutris.appserver.server.httpPresentation.HttpPresentationRequest;
 import com.lutris.appserver.server.httpPresentation.HttpPresentationException;
 import com.lutris.appserver.server.httpPresentation.HttpPresentationComms;
-import com.lutris.appserver.server.httpPresentation.ClientPageRedirectException;
-
-import javax.servlet.http.HttpServletRequest;
 
 //local imports
-import fr.imag.clips.papillon.business.PapillonBusinessException;
-import fr.imag.clips.papillon.business.PapillonLogger;
-import fr.imag.clips.papillon.business.dictionary.Volume;
-import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
-import fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory;
 import fr.imag.clips.papillon.business.dictionary.QueryResult;
-import fr.imag.clips.papillon.business.dictionary.QueryRequest;
-import fr.imag.clips.papillon.business.dictionary.QueryCriteria;
 import fr.imag.clips.papillon.business.dictionary.QueryParameter;
 import fr.imag.clips.papillon.business.user.User;
-import fr.imag.clips.papillon.business.user.Group;
 import fr.imag.clips.papillon.business.utility.Utility;
-import fr.imag.clips.papillon.business.xsl.XslSheet;
-import fr.imag.clips.papillon.business.xsl.XslSheetFactory;
 import fr.imag.clips.papillon.business.transformation.ResultFormatter;
 import fr.imag.clips.papillon.business.transformation.ResultFormatterFactory;
+import fr.imag.clips.papillon.business.xml.XMLServices;
+import fr.imag.clips.papillon.CurrentRequestContext;
 
 
 public class ViewQueryResult {
 
     protected final static String EditEntryInitURL = "LexalpEditEntryInit.po";
     protected final static String HistoryURL = "History.po";
-    protected final static String Action = "action";
+    // protected final static String Action = "action";
 
-    protected static Node createNodeResult(HttpPresentationComms comms, PapillonSessionData sessionData, String url, User user, Collection qrset, QueryParameter qp, boolean viewActions)
-            throws HttpPresentationException,
-            java.io.UnsupportedEncodingException,
-            java.io.IOException,
-            fr.imag.clips.papillon.business.PapillonBusinessException {
+    protected static Node createNodeResult(HttpPresentationComms comms, PapillonSessionData sessionData, String url,
+                                           User user, Collection qrset, QueryParameter qp, boolean viewActions)
+            throws HttpPresentationException, java.io.UnsupportedEncodingException, java.io.IOException,
+                   fr.imag.clips.papillon.business.PapillonBusinessException {
 
         //
-        ViewQueryResultXHTML content = (ViewQueryResultXHTML) MultilingualXHtmlTemplateFactory.createTemplate("ViewQueryResultXHTML", comms, sessionData);
+        ViewQueryResultXHTML content = (ViewQueryResultXHTML) MultilingualXHtmlTemplateFactory.createTemplate(
+                "ViewQueryResultXHTML", comms, sessionData);
 
         // Entry
-        XHTMLElement entryNode = content.getElementEntryNode();
         XHTMLElement contributionNode = content.getElementContributionNode();
-        XHTMLElement actionsNode = content.getElementActionsNode();
-
-        // Actions
-        XHTMLAnchorElement editAnchor = content.getElementEditEntryAnchor();
-        XHTMLAnchorElement duplicateAnchor = content.getElementDuplicateEntryAnchor();
-        XHTMLAnchorElement deleteAnchor = content.getElementDeleteEntryAnchor();
-        XHTMLAnchorElement undeleteAnchor = content.getElementUndeleteEntryAnchor();
-        XHTMLAnchorElement viewAxieAnchor = content.getElementViewAxieAnchor();
-        XHTMLAnchorElement viewHistoryEntryAnchor = content.getElementViewHistoryEntryAnchor();
-        XHTMLAnchorElement viewXmlAnchor = content.getElementViewXmlAnchor();
 
         //
         XHTMLAnchorElement previousAnchorTop = content.getElementPreviousAnchorTop();
         XHTMLAnchorElement nextAnchorTop = content.getElementNextAnchorTop();
         XHTMLAnchorElement previousAnchorBottom = content.getElementPreviousAnchorBottom();
         XHTMLAnchorElement nextAnchorBottom = content.getElementNextAnchorBottom();
-        XHTMLSpanElement entryAuthor = content.getElementEntryAuthor();
-        XHTMLSpanElement entryStatus = content.getElementEntryStatus();
 
         // remove ID
-        entryNode.removeAttribute("id");
         contributionNode.removeAttribute("id");
-        actionsNode.removeAttribute("id");
-        editAnchor.removeAttribute("id");
-        duplicateAnchor.removeAttribute("id");
-        deleteAnchor.removeAttribute("id");
-        undeleteAnchor.removeAttribute("id");
-        viewAxieAnchor.removeAttribute("id");
-        viewHistoryEntryAnchor.removeAttribute("id");
-        viewXmlAnchor.removeAttribute("id");
         previousAnchorTop.removeAttribute("id");
         nextAnchorTop.removeAttribute("id");
         previousAnchorBottom.removeAttribute("id");
         nextAnchorBottom.removeAttribute("id");
-        entryAuthor.removeAttribute("id");
-        entryStatus.removeAttribute("id");
-
-        // init
-        Text textAuthor = content.createTextNode("unknown");
-        entryAuthor.appendChild(textAuthor);
-        Text textStatus = content.createTextNode("unknown");
-        entryStatus.appendChild(textStatus);
-
-        // remove action list
-        if (!viewActions) {
-            actionsNode.getParentNode().removeChild(actionsNode);
-        }
 
         // Set result number
         content.setTextNbResults(Integer.toString(qrset.size()));
+
+        // post the result size in the current context
+        CurrentRequestContext.get().set("result_size", new Integer(qrset.size()));
 
         // Create display
         Node parentNode = contributionNode.getParentNode();
@@ -181,227 +137,15 @@ public class ViewQueryResult {
 
             //
             QueryResult qr = (QueryResult) iter.next();
-            VolumeEntry myEntry = qr.getSourceEntry();
-            VolumeEntry myAxie = qr.getResultAxie();
 
             //System.out.println("ViewQueryResult : " + qp.getXsl());
-            ResultFormatter rf = ResultFormatterFactory.getFormatter(qr, qp.getXsl(), ResultFormatterFactory.XHTML_DIALECT, null);
-            Utility.removeChildNodes(entryNode);
+            ResultFormatter rf = ResultFormatterFactory.getFormatter(qr, qp.getXsl(),
+                    ResultFormatterFactory.XHTML_DIALECT, null);
+
             Node entryDOM = (Node) rf.getFormattedResult(qr, user);
-            entryNode.appendChild(content.importNode(entryDOM, true));
-            entryNode.setAttribute("class", "entry");
-
-            //
-            if (viewActions) {
-                textAuthor.setNodeValue(myEntry.getModificationAuthor());
-
-                // Status
-                if (myEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS)) {
-                    textStatus.setNodeValue(VolumeEntry.FINISHED_STATUS);
-
-                    if (myEntry.getModificationAuthor().equals(user.getLogin())) {
-                        entryNode.setAttribute("class", "myFinishedEntry");
-                    } else {
-                        entryNode.setAttribute("class", "finishedEntry");
-                    }
-
-                } else if (myEntry.getStatus().equals(VolumeEntry.MODIFIED_STATUS)) {
-                    textStatus.setNodeValue("under edition");
-                    entryNode.setAttribute("class", "modifiedEntry");
-
-                } else if (myEntry.getStatus().equals(VolumeEntry.DELETED_STATUS)) {
-                    textStatus.setNodeValue(VolumeEntry.DELETED_STATUS);
-                    entryNode.setAttribute("class", "modifiedEntry");
-
-                } else if (myEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS)) {
-
-                    if (myEntry.getModificationAuthor().equals(user.getLogin())) {
-                        textStatus.setNodeValue("proceed edition");
-                        entryNode.setAttribute("class", "myNotFinishedEntry");
-                    } else {
-                        textStatus.setNodeValue("under edition");
-                        entryNode.setAttribute("class", "notFinishedEntry");
-                    }
-
-                }
-
-                /*
-                // The status
-                if ( !myEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS)
-                     && !myEntry.getStatus().equals(VolumeEntry.MODIFIED_STATUS) ) {
-                    // view status : finished, deleted
-                    content.setTextEntryStatusList(myEntry.getStatus());
-                    underEdition.setAttribute("style","display: none;");
-                    proceedEdition.setAttribute("style","display: none;");
-                    if ( myEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS)
-                         && myEntry.getModificationAuthor().equals(user.getLogin()) ) {
-                        entryListRow.setAttribute("class", "myContributionTR");
-                    } else {
-                        entryListRow.setAttribute("class", "contributionTR");
-                    }
-
-                } else if ( myEntry.getStatus().equals(VolumeEntry.MODIFIED_STATUS) ) {
-                    // view modified status like under edition
-                    content.setTextEntryStatusList("");
-                    underEdition.setAttribute("style","display: block;");
-                    proceedEdition.setAttribute("style","display: none;");
-                    entryListRow.setAttribute("class", "contributionTR");
-
-                } else if ( myEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS) ) {
-                    // view not-finished status
-                    // like proceed edition if my contribution
-                    // like under edition if not
-                    if ( myEntry.getModificationAuthor().equals(user.getLogin()) ) {
-                        content.setTextEntryStatusList("");
-                        underEdition.setAttribute("style","display: none;");
-                        proceedEdition.setAttribute("style","display: block;");
-                        entryListRow.setAttribute("class", "myProceedContributionTR");
-                    } else {
-                        content.setTextEntryStatusList("");
-                        underEdition.setAttribute("style","display: block;");
-                        proceedEdition.setAttribute("style","display: none;");
-                        entryListRow.setAttribute("class", "contributionTR");
-                    }
-                }*/
-
-                //
-                String href = url + "?"
-                        + EditEntryInitFactory.VOLUME_PARAMETER + "="
-                        + myEntry.getVolumeName() + "&"
-                        + EditEntryInitFactory.HANDLE_PARAMETER + "="
-                        + myEntry.getHandle() + "&"
-                        + EditEntryInitFactory.ACTION_PARAMETER + "=";
-
-                // Actions
-                if (((!myEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS))
-                        && (!myEntry.getStatus().equals(VolumeEntry.MODIFIED_STATUS)))
-
-                        || (myEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS)
-                        && (myEntry.getModificationAuthor().equals(user.getLogin())
-                        || user.isInGroup(Group.ADMIN_GROUP)))
-                        ) {
-
-                    // Edit button
-                    if (!myEntry.getStatus().equals(VolumeEntry.DELETED_STATUS)) {
-                        editAnchor.setHref(href + "edit");
-                        editAnchor.setAttribute("target", "_blank");
-                        editAnchor.setAttribute("class", "action");
-                    } else {
-                        editAnchor.setHref("");
-                        editAnchor.setAttribute("class", "hidden");
-                    }
-
-                    // Duplicate button
-                    if (!myEntry.getStatus().equals(VolumeEntry.DELETED_STATUS)
-                            && !myEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS)) {
-                        duplicateAnchor.setHref(href + "duplicate");
-                        duplicateAnchor.setAttribute("target", "_blank");
-                        duplicateAnchor.setAttribute("class", "action");
-                    } else {
-                        duplicateAnchor.setHref("");
-                        duplicateAnchor.setAttribute("class", "hidden");
-                    }
-
-                    // Delete button
-                    if (!myEntry.getStatus().equals(VolumeEntry.DELETED_STATUS)) {
-                        //&& !myEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS)) {
-
-                        // action delete and refresh query with last parameters
-                        deleteAnchor.setHref(href + "delete" + "&" + AdvancedQueryForm.getEncodedUrlForParameter(qp));
-                        deleteAnchor.setAttribute("class", "action");
-                    } else {
-                        deleteAnchor.setHref("");
-                        deleteAnchor.setAttribute("class", "hidden");
-                    }
-
-                    // Undelete button
-                    if (myEntry.getStatus().equals(VolumeEntry.DELETED_STATUS)) {
-
-                        // action undelete and refresh query with last parameters
-                        undeleteAnchor.setHref(href + "undelete" + "&" + AdvancedQueryForm.getEncodedUrlForParameter(qp));
-                        undeleteAnchor.setAttribute("class", "action");
-                        undeleteAnchor.setAttribute("target", "_blank");
-                    } else {
-                        undeleteAnchor.setHref("");
-                        undeleteAnchor.setAttribute("class", "hidden");
-                    }
-
-                } else {
-                    // Edit button
-                    editAnchor.setHref("");
-                    editAnchor.setAttribute("class", "hidden");
-
-                    // Duplicate button
-                    duplicateAnchor.setHref("");
-                    duplicateAnchor.setAttribute("class", "hidden");
-
-                    // Delete button
-                    deleteAnchor.setHref("");
-                    deleteAnchor.setAttribute("class", "hidden");
-
-                    // Undelete button
-                    undeleteAnchor.setHref("");
-                    undeleteAnchor.setAttribute("class", "hidden");
-                }
-
-                // History view
-                // FIXME: Create static variable ... VolumeName and EntryHandle ...
-                viewHistoryEntryAnchor.setHref(HistoryURL + "?" + "VolumeName" + "=" + myEntry.getVolumeName() + "&" + "EntryHandle" + "=" + myEntry.getHandle());
-                viewHistoryEntryAnchor.setAttribute("class", "action");
-
-                if (null != myAxie) {
-                    // View axie
-                    QueryParameter qpaxie = new QueryParameter();
-                    qpaxie.setXsl("Default");
-                    ArrayList adicts = new ArrayList();
-                    adicts.add(myEntry.getDictionary());
-                    qpaxie.setDictionaries(adicts);
-                    ArrayList acrit = new ArrayList();
-                    String[] axiec = new String[4];
-                    axiec[0] = Volume.CDM_entryId;
-                    axiec[1] = null;
-                    axiec[2] = myAxie.getEntryId();
-                    axiec[3] = QueryCriteria.EQUAL;
-                    acrit.add(axiec);
-                    qpaxie.setCriteria(acrit);
-                    viewAxieAnchor.setHref(url + "?" + EditEntryInitFactory.ACTION_PARAMETER + "=lookup&" + AdvancedQueryForm.getEncodedUrlForParameter(qpaxie));
-                    viewAxieAnchor.setAttribute("class", "action");
-                } else {
-                    viewAxieAnchor.setHref("");
-                    viewAxieAnchor.setAttribute("class", "hidden");
-                }
-                
-                // XML view
-                if (user.isInGroup(Group.ADMIN_GROUP)) {
-
-                    // FIXME : create new page.po like history
-                    QueryParameter qpxml = new QueryParameter();
-                    qpxml.setXsl("XML");
-                    ArrayList dicts = new ArrayList();
-                    dicts.add(myEntry.getDictionary());
-                    qpxml.setDictionaries(dicts);
-                    ArrayList crit = new ArrayList();
-                    String[] idc = new String[4];
-                    idc[0] = Volume.CDM_entryId;
-                    idc[1] = null;
-                    idc[2] = myEntry.getEntryId();
-                    idc[3] = QueryCriteria.EQUAL;
-                    crit.add(idc);
-                    qpxml.setCriteria(crit);
-
-                    //
-                    viewXmlAnchor.setHref(url + "?" + EditEntryInitFactory.ACTION_PARAMETER + "=lookup&" + AdvancedQueryForm.getEncodedUrlForParameter(qpxml));
-                    viewXmlAnchor.setAttribute("class", "action");
-
-                } else {
-                    viewXmlAnchor.setAttribute("class", "hidden");
-                }
-            }
-
-            //
             XHTMLElement cloneContribution = (XHTMLElement) contributionNode.cloneNode(true);
-            // we have to take off the id attribute because we did not take it off the original
-            cloneContribution.removeAttribute("id");
+            cloneContribution.appendChild(content.importNode(entryDOM, true));
+
             parentNode.appendChild(cloneContribution);
             //entryNode.getParentNode().insertBefore(entryNode.cloneNode(true), entryNode);
         }
@@ -413,10 +157,14 @@ public class ViewQueryResult {
             QueryParameter previousQp = (QueryParameter) qp.duplicate();
             previousQp.setOffset(qp.getOffset() - qp.getLimit());
             // Top
-            previousAnchorTop.setHref(url + "?" + EditEntryInitFactory.ACTION_PARAMETER + "=lookup&" + AdvancedQueryForm.getEncodedUrlForParameter(previousQp));
+            previousAnchorTop.setHref(
+                    url + "?" + EditEntryInitFactory.ACTION_PARAMETER + "=lookup&" + AdvancedQueryForm.getEncodedUrlForParameter(
+                            previousQp));
             previousAnchorTop.setAttribute("class", "pagination");
             // Bottom
-            previousAnchorBottom.setHref(url + "?" + EditEntryInitFactory.ACTION_PARAMETER + "=lookup&" + AdvancedQueryForm.getEncodedUrlForParameter(previousQp));
+            previousAnchorBottom.setHref(
+                    url + "?" + EditEntryInitFactory.ACTION_PARAMETER + "=lookup&" + AdvancedQueryForm.getEncodedUrlForParameter(
+                            previousQp));
             previousAnchorBottom.setAttribute("class", "pagination");
 
         } else {
@@ -435,10 +183,14 @@ public class ViewQueryResult {
             QueryParameter nextQp = (QueryParameter) qp.duplicate();
             nextQp.setOffset(qp.getOffset() + qp.getLimit());
             // Top
-            nextAnchorTop.setHref(url + "?" + EditEntryInitFactory.ACTION_PARAMETER + "=lookup&" + AdvancedQueryForm.getEncodedUrlForParameter(nextQp));
+            nextAnchorTop.setHref(
+                    url + "?" + EditEntryInitFactory.ACTION_PARAMETER + "=lookup&" + AdvancedQueryForm.getEncodedUrlForParameter(
+                            nextQp));
             nextAnchorTop.setAttribute("class", "pagination");
             // Bottom
-            nextAnchorBottom.setHref(url + "?" + EditEntryInitFactory.ACTION_PARAMETER + "=lookup&" + AdvancedQueryForm.getEncodedUrlForParameter(nextQp));
+            nextAnchorBottom.setHref(
+                    url + "?" + EditEntryInitFactory.ACTION_PARAMETER + "=lookup&" + AdvancedQueryForm.getEncodedUrlForParameter(
+                            nextQp));
             nextAnchorBottom.setAttribute("class", "pagination");
 
         } else {

@@ -9,6 +9,14 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.1.2.1  2007/07/23 14:23:50  serasset
+ * Commiting most changes done for the XALAN27_NEWDISPLAY on the branch
+ *  - Added XSL extensions callable during xsl transformations
+ *  - Implemented new display of query results as requested by EURAC team
+ *  - Modified edition interface generator to adapt it to xalan 2.7.0
+ *  - Added autocompletion feature to simple search fields
+ *  - Moved some old pages to "deprecated" folder (this will forbid direct use of this code for papillon/GDEF)
+ *
  * Revision 1.7  2007/01/15 17:12:18  serasset
  * Several notes added, suppressed the HTMLDOM_CACHE stuff.
  *
@@ -43,7 +51,7 @@
  * Papillon Admin page.
  */
 
-package fr.imag.clips.papillon.presentation;
+package fr.imag.clips.papillon.presentation.deprecated;
 
 // Enhydra SuperServlet imports
 import com.lutris.appserver.server.httpPresentation.HttpPresentation;
@@ -80,6 +88,8 @@ import fr.imag.clips.papillon.business.locales.Languages;
 
 
 import fr.imag.clips.papillon.presentation.xhtml.orig.*;
+import fr.imag.clips.papillon.presentation.PapillonBasePO;
+import fr.imag.clips.papillon.presentation.MultilingualXHtmlTemplateFactory;
 
 // Imported JAVA API for XML Parsing classes
 import javax.xml.parsers.DocumentBuilder;
@@ -96,9 +106,11 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.dom.DOMResult;
 
-
+/**
+ * @deprecated This page is specific to papillon, it should be replaced if necessary
+ */
 public class LookupAxies extends PapillonBasePO {
-
+    
     protected final static int MaxDisplayedEntries= 5;
 
     protected final static String VIEW_AXIE_PARAMETER="ViewAxie";
@@ -131,7 +143,7 @@ public class LookupAxies extends PapillonBasePO {
         PapillonBusinessException {
 
             // Création du contenu
-            content = (LookupAxiesTmplXHTML)MultilingualXHtmlTemplateFactory.createTemplate("LookupAxiesTmplXHTML", this.getComms(), this.getSessionData());
+            content = (LookupAxiesTmplXHTML) MultilingualXHtmlTemplateFactory.createTemplate("LookupAxiesTmplXHTML", this.getComms(), this.getSessionData());
 
             HttpPresentationRequest req = this.getComms().request;
 

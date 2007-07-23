@@ -10,6 +10,14 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.10.2.1  2007/07/23 14:23:50  serasset
+ * Commiting most changes done for the XALAN27_NEWDISPLAY on the branch
+ *  - Added XSL extensions callable during xsl transformations
+ *  - Implemented new display of query results as requested by EURAC team
+ *  - Modified edition interface generator to adapt it to xalan 2.7.0
+ *  - Added autocompletion feature to simple search fields
+ *  - Moved some old pages to "deprecated" folder (this will forbid direct use of this code for papillon/GDEF)
+ *
  * Revision 1.10  2007/02/07 13:58:57  fbrunet
  * added message before axies are merged and undo process if the merge is not correct.
  *
@@ -90,12 +98,12 @@ public class EditEntryInitFactory {
     protected final static String EditingErrorURL = "EditingError.po";
     
     // URL parameters
-    protected final static String HANDLE_PARAMETER = "handle";
-    protected final static String FORMATTER_PARAMETER = "formatter";
-    protected final static String ACTION_PARAMETER = "action";
-    protected final static String VOLUME_PARAMETER = "VOLUME";
-    protected final static String VOLUME_ANYWAY_PARAMETER = "volumeanyway";
-    protected final static String HEADWORD_ANYWAY_PARAMETER = "headwordanyway";
+    public final static String HANDLE_PARAMETER = "handle";
+    public final static String FORMATTER_PARAMETER = "formatter";
+    public final static String ACTION_PARAMETER = "action";
+    public final static String VOLUME_PARAMETER = "VOLUME";
+    public final static String VOLUME_ANYWAY_PARAMETER = "volumeanyway";
+    public final static String HEADWORD_ANYWAY_PARAMETER = "headwordanyway";
     
     /*
     // Key for contentParameters hastable (addEntriesTable method)

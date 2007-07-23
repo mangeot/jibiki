@@ -6,6 +6,14 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.1.2.1  2007/07/23 14:23:50  serasset
+ * Commiting most changes done for the XALAN27_NEWDISPLAY on the branch
+ *  - Added XSL extensions callable during xsl transformations
+ *  - Implemented new display of query results as requested by EURAC team
+ *  - Modified edition interface generator to adapt it to xalan 2.7.0
+ *  - Added autocompletion feature to simple search fields
+ *  - Moved some old pages to "deprecated" folder (this will forbid direct use of this code for papillon/GDEF)
+ *
  * Revision 1.1  2007/01/05 13:57:26  serasset
  * multiple code cleanup.
  * separation of XMLServices from the Utility class
@@ -44,6 +52,7 @@ public class XMLParsersPool {
 
     static {
         myDocumentBuilderFactory = DocumentBuilderFactory.newInstance();
+        System.out.println(myDocumentBuilderFactory.getClass().toString());
     }
 
     public static void initializeXMLParsersPool() throws PapillonBusinessException {

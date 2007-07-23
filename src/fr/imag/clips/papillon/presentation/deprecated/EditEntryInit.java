@@ -10,6 +10,14 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.1.2.1  2007/07/23 14:23:50  serasset
+ * Commiting most changes done for the XALAN27_NEWDISPLAY on the branch
+ *  - Added XSL extensions callable during xsl transformations
+ *  - Implemented new display of query results as requested by EURAC team
+ *  - Modified edition interface generator to adapt it to xalan 2.7.0
+ *  - Added autocompletion feature to simple search fields
+ *  - Moved some old pages to "deprecated" folder (this will forbid direct use of this code for papillon/GDEF)
+ *
  * Revision 1.25  2006/08/10 22:17:13  fbrunet
  * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
  * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
@@ -132,7 +140,7 @@
  *
  */
 
-package fr.imag.clips.papillon.presentation;
+package fr.imag.clips.papillon.presentation.deprecated;
 
 
 //General java imports
@@ -157,6 +165,9 @@ import com.lutris.appserver.server.httpPresentation.ClientPageRedirectException;
 
 // HTML source import
 import fr.imag.clips.papillon.presentation.xhtml.orig.*;
+import fr.imag.clips.papillon.presentation.PapillonBasePO;
+import fr.imag.clips.papillon.presentation.MultilingualXHtmlTemplateFactory;
+import fr.imag.clips.papillon.presentation.EditEntry;
 
 //local imports
 import fr.imag.clips.papillon.business.PapillonBusinessException;
@@ -168,7 +179,9 @@ import fr.imag.clips.papillon.business.xsl.XslSheet;
 import fr.imag.clips.papillon.business.xsl.XslSheetFactory;
 
 
-
+/**
+ * @deprecated This page has been superseded by CreateEntryInit and LexalpEditEntryInit
+ */
 public class EditEntryInit extends PapillonBasePO {
 
     protected final static String HANDLE_PARAMETER = "handle";
@@ -209,7 +222,7 @@ public class EditEntryInit extends PapillonBasePO {
 	fr.imag.clips.papillon.business.PapillonBusinessException {
 
 	    // Content creation
-	    content = (EditEntryInitXHTML)MultilingualXHtmlTemplateFactory.createTemplate("EditEntryInitXHTML", this.getComms(), this.getSessionData());
+	    content = (EditEntryInitXHTML) MultilingualXHtmlTemplateFactory.createTemplate("EditEntryInitXHTML", this.getComms(), this.getSessionData());
 
 	    // On regarde d'abord les parametres qui nous sont demandes.
 		String submitLookupEdit = myGetParameter(content.NAME_LookupEdit);
@@ -287,7 +300,7 @@ public class EditEntryInit extends PapillonBasePO {
 			if (myEntry.getAuthor().equals(this.getUser().getLogin()) &&
 				!myEntry.getStatus().equals(VolumeEntry.VALIDATED_STATUS) &&
 				!myEntry.getStatus().equals(VolumeEntry.DELETED_STATUS)) {
-				throw new ClientPageRedirectException(EditEntryURL + "?" + EditEntry.VolumeName_PARAMETER + "=" + myEntry.getVolumeName() + 
+				throw new ClientPageRedirectException(EditEntryURL + "?" + EditEntry.VolumeName_PARAMETER + "=" + myEntry.getVolumeName() +
 				"&" + EditEntry.EntryHandle_PARAMETER + "=" + myEntry.getHandle());
 			}
 			else {

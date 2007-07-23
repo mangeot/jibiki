@@ -3,6 +3,14 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.34.2.1  2007/07/23 14:23:50  serasset
+ * Commiting most changes done for the XALAN27_NEWDISPLAY on the branch
+ *  - Added XSL extensions callable during xsl transformations
+ *  - Implemented new display of query results as requested by EURAC team
+ *  - Modified edition interface generator to adapt it to xalan 2.7.0
+ *  - Added autocompletion feature to simple search fields
+ *  - Moved some old pages to "deprecated" folder (this will forbid direct use of this code for papillon/GDEF)
+ *
  * Revision 1.34  2007/01/15 17:12:18  serasset
  * Several notes added, suppressed the HTMLDOM_CACHE stuff.
  *
@@ -253,7 +261,7 @@ public class DictionariesFactory {
     protected final static String EXTERNAL_ATTRIBUTE="external";
     
     public final static String PAPILLONAXI="Papillon_axi";
-	
+
     /** 
         * The initializeDictionaryCache method performs a database query to
         * initialize the dictionary cache
@@ -299,7 +307,7 @@ public class DictionariesFactory {
     public static Dictionary newDictionary(Element dictionary)
         throws fr.imag.clips.papillon.business.PapillonBusinessException, java.io.IOException {
 			
-            // Cette mŽthode dŽpend du schŽma des dictionnaires.
+            // Cette mÃ©thode dÃ©pend du schÃ©ma des dictionnaires.
             String fullname = dictionary.getAttribute("fullname");
             String name = dictionary.getAttribute("name");
             String category = dictionary.getAttribute("category");
@@ -734,28 +742,28 @@ public class DictionariesFactory {
         *
         * @exception PapillonBusinessException
         */ 
-    protected static Collection getAllDictionariesReverseEntriesCollection(Vector Keys1,
-																 Vector Keys2,
-																 String anyContains,
-																 User user)
-        throws PapillonBusinessException {
-            Vector entries = new Vector();
-            Collection resources = getDictionariesArray();
-            for (Iterator iter = resources.iterator(); iter.hasNext();) {
-                Dictionary dict = (Dictionary)iter.next();
-                entries.addAll(getDictionaryReverseEntriesCollection(dict,
-                                                                     null,
-                                                                     null,
-                                                                     Keys1,
-                                                                     Keys2,
-                                                                     anyContains,
-                                                                     user,
-                                                                     0));
-            }
-            
-            //
-            return entries;
-        }
+//    protected static Collection getAllDictionariesReverseEntriesCollection(Vector Keys1,
+//																 Vector Keys2,
+//																 String anyContains,
+//																 User user)
+//        throws PapillonBusinessException {
+//            Vector entries = new Vector();
+//            Collection resources = getDictionariesArray();
+//            for (Iterator iter = resources.iterator(); iter.hasNext();) {
+//                Dictionary dict = (Dictionary)iter.next();
+//                entries.addAll(getDictionaryReverseEntriesCollection(dict,
+//                                                                     null,
+//                                                                     null,
+//                                                                     Keys1,
+//                                                                     Keys2,
+//                                                                     anyContains,
+//                                                                     user,
+//                                                                     0));
+//            }
+//
+//            //
+//            return entries;
+//        }
 	
     
     /** 
@@ -773,6 +781,7 @@ public class DictionariesFactory {
         * @return Collection
         *
         * @exception PapillonBusinessException
+     * @deprecated 
         */  
     // used only in ConsultExpert
     public static Collection getDictionariesReverseEntriesCollection(Collection resources,
@@ -919,6 +928,7 @@ public class DictionariesFactory {
         * @return Collection
         *
         * @exception PapillonBusinessException
+     * @deprecated 
         */ 
     // FIXME: used in EditAxie and old EditEntry ... remove ?
 	public static Collection getVolumeEntriesCollection(String volumeName, User user, Vector Keys) throws PapillonBusinessException {
@@ -1061,6 +1071,7 @@ public class DictionariesFactory {
      * @return Collection
      *
      * @exception PapillonBusinessException
+     * @deprecated use expand results with a collection of QueryResults
      */      
     public static Collection expandResult(VolumeEntry ve, Collection targets, User user) 
         throws PapillonBusinessException {
@@ -1068,7 +1079,7 @@ public class DictionariesFactory {
         //    
         Collection myVector = new Vector();
         QueryResult qr = new QueryResult();
-        qr.setSourceEntry(ve);
+        qr.addSourceEntry(ve);
         
         //
 		String category = ve.getDictionary().getCategory();
@@ -1089,7 +1100,7 @@ public class DictionariesFactory {
                 //
                 Collection realTargets = Utility.ArrayIntersection(ve.getVolume().getTargetLanguagesArray(), targets);
                 qr.setResultKind(QueryResult.DIRECT_TRANSLATIONS_RESULT);
-				myVector = getDirectResults(qr, ve.getSourceLanguage(), realTargets, user);
+				myVector.add(getDirectResults(qr, ve.getSourceLanguage(), realTargets, user));
 			
             //
             } else {
@@ -1110,7 +1121,112 @@ public class DictionariesFactory {
 		return myVector;
     }
     
+     /** 
+     * Create a query result collection that contains all translations of the passed entries, for the requested target languages.
+     * If merge is true, it does not duplicate axies, hence if several entries do share the same axie, it will result in only one queryResult.
+     *
+     * @param ves
+     * @param targets
+     * @param user
+     * @param mergeAxies
+     *
+     * @return Collection of QueryResult
+     *
+     * @exception PapillonBusinessException
+     */      
+     public static Collection expandResults(Collection ves, Collection targets, User user, boolean mergeAxies) 
+     throws PapillonBusinessException {
+
+         // Add axies and remove duplicates entries
+         Collection resultsWithAxies = addAxiesAndTranslations(ves, targets, user, mergeAxies);
+         
+         //
+         return resultsWithAxies;
+     }
      
+     public static Collection addAxiesAndTranslations(Collection ves, Collection targets, User user, boolean mergeAxies) 
+     throws PapillonBusinessException {
+         Collection result = new ArrayList();
+         QueryResult qr;
+         Iterator itve = ves.iterator();
+         while (itve.hasNext()) {
+             qr = (QueryResult) itve.next() ;
+             VolumeEntry ve = qr.getSourceEntry();
+             String type = ve.getDictionary().getType();
+             
+             if (type.equals("pivot")) {
+                 // qr.setResultKind(QueryResult.AXIE_COLLECTION_RESULT);
+                 // myVector = getPivotResults(qr, ve.getSourceLanguage(), realTargets, user);
+                 
+                 Collection axies = PapillonPivotFactory.findAxiesByLexie(ve, user);
+                 if (axies != null && axies.size() > 0) {
+                     // WARN: Here, we assume that a lexie is refered by ONE AND ONLY ONE axie... 
+                     // well at least we just take one into account. 
+                     Iterator it = axies.iterator();
+                     VolumeEntry axie = (VolumeEntry) it.next();
+                     qr.setResultAxie(axie);
+                     qr.setResultKind(QueryResult.AXIE_COLLECTION_RESULT);
+                     // Add it to the result if it is not already here
+                     if (mergeAxies) {
+                         String axieid = qr.getResultAxie().getEntryId();
+                         QueryResult originalQr;
+                         if ((originalQr = findQueryResultWithAxieId(result, axieid)) == null) {
+                             addPivotTranslations(qr, targets);
+                             result.add(qr);
+                         } else {
+                             originalQr.addSourceEntry(qr.getSourceEntry());
+                         }
+                     } else {
+                         addPivotTranslations(qr, targets);
+                         result.add(qr);
+                     }
+                 } else {
+                     result.add(qr);
+                 }
+                 //
+             } else if (type.equals("direct")) {
+                 Collection realTargets = Utility.ArrayIntersection(ve.getVolume().getTargetLanguagesArray(), targets);
+                 qr.setResultKind(QueryResult.DIRECT_TRANSLATIONS_RESULT);
+                 qr = getDirectResults(qr, ve.getSourceLanguage(), realTargets, user);
+                 result.add(qr);
+             } else {
+                 // type monovolume: bilingual in the same file
+                 // type monodirectional: bilingual in the same file
+                 qr.setResultKind(QueryResult.UNIQUE_RESULT);
+                 result.add(qr);
+             }
+         }
+         //
+         return result;
+     }
+     
+     private static QueryResult findQueryResultWithAxieId(Collection res, String aid) throws PapillonBusinessException {
+         Iterator it = res.iterator();
+         while (it.hasNext()) {
+             QueryResult cr = (QueryResult) it.next();
+             if (cr.getResultKind() == QueryResult.AXIE_COLLECTION_RESULT &&
+                     cr.getResultAxie().getEntryId().equals(aid)) return cr;
+         }
+         return null;
+     }
+
+     private static void addPivotTranslations(QueryResult qr, Collection targets) throws PapillonBusinessException {
+         
+         VolumeEntry myAxie = qr.getResultAxie();
+         Hashtable resLexies = new Hashtable();
+         
+         for (Iterator iter2 = targets.iterator(); iter2.hasNext();) {
+             String target = (String)iter2.next();
+             
+             Collection tempCollection = PapillonPivotFactory.findLexiesByAxie(myAxie, target);
+             for (Iterator iterTarget = tempCollection.iterator(); iterTarget.hasNext();) {
+                 VolumeEntry myTargetLexie = (VolumeEntry) iterTarget.next();
+                 resLexies.put(myTargetLexie.getEntryId(), myTargetLexie);
+             }
+         }
+         qr.setLexiesHashtable(resLexies);
+     }
+
      /** 
      * Find entry by their handle
      *
@@ -1171,7 +1287,7 @@ public class DictionariesFactory {
              // get all axies pointing to the entries
              VolumeEntry mySourceEntry = proto.getSourceEntry();
              //String xmlCode = mySourceEntry.getXmlCode();
-            Collection axies = PapillonPivotFactory.findAxiesByLexie(mySourceEntry, myUser);
+             Collection axies = PapillonPivotFactory.findAxiesByLexie(mySourceEntry, myUser);
              
              // If the entry is not connected to an axie, return the proto
              if (axies == null || axies.size() == 0) {
@@ -1231,11 +1347,10 @@ public class DictionariesFactory {
      *
      * @exception PapillonBusinessException
      */   
-    protected static Collection getDirectResults(QueryResult proto, String source, Collection targets, User myUser) throws PapillonBusinessException {
+    protected static QueryResult getDirectResults(QueryResult qr, String source, Collection targets, User myUser) throws PapillonBusinessException {
         //Collection qrset = new HashSet();
-        Collection qrset = new Vector();
-        if (null != proto && null != proto.getSourceEntry()) {
-            VolumeEntry mySourceEntry = proto.getSourceEntry();
+        if (null != qr && null != qr.getSourceEntry()) {
+            VolumeEntry mySourceEntry = qr.getSourceEntry();
             Hashtable resLexies = new Hashtable();
 
             for (Iterator iter = targets.iterator(); iter.hasNext();) {
@@ -1258,182 +1373,10 @@ public class DictionariesFactory {
                     }
                 }
             }
-            
-            QueryResult qr = new QueryResult(proto);
             qr.setLexiesHashtable(resLexies);
-            
-            qrset.add(qr);
-            
         }
-        return qrset;
-        
+        return qr;
     }
 
-    /*
-    // FIXME: DEAD CODE !!!
-	protected static Collection oldaddDirectTranslations(Collection entries, String source, String[] targets, User myUser)
-		throws PapillonBusinessException {
-			// FIXME: do not modify the current DOM! We have to make a copy! 
-			if (null != entries && entries.size() > 0) {
-				VolumeEntry myAnswer = null;
-				if	(null != targets && targets.length > 0) {
-					for (Iterator myIterator = entries.iterator();myIterator.hasNext();) {
-						myAnswer = (VolumeEntry) myIterator.next();	
-						// FIXME caching the html dom
-						if (myAnswer.getHtmlDom() == null) {					
-							Volume myVolume = myAnswer.getVolume();
-							Dictionary myDictionary = myAnswer.getDictionary();
-							for (int j=0;j<targets.length;j++) {
-								NodeList myNodeList = ParseVolume.getCdmElements(myAnswer, Volume.CDM_translationReflexie, targets[j]);
-								if ((myNodeList != null) && (myNodeList.getLength()>0)) {
-									for (int i=0; i<myNodeList.getLength();i++) {
-										Node myNode = myNodeList.item(i);
-										String word = myNode.getNodeValue();
-										if (word !=null && !word.equals("")) {
-											Volume[] volumes = VolumesFactory.getVolumesArray(myDictionary.getName(), targets[j], null);
-											if (volumes!=null && volumes.length>0) {
-												VolumeEntry myEntry = VolumeEntriesFactory.findEntryByEntryId(myDictionary, volumes[0], word);
-												Vector myTable = new Vector();
-												if (myEntry!=null && !myEntry.isEmpty()) {
-													myTable.add(myEntry);
-												}
-												if (myTable.size()>0) {
-													if (myNode.getNodeType()==Node.TEXT_NODE) {
-														Node textNode = myNode;
-														myNode = myNode.getParentNode();
-															myNode.removeChild(textNode);
-													}
-													for (Enumeration myElements = myTable.elements();myElements.hasMoreElements();) {
-														VolumeEntry newEntry = (VolumeEntry) myElements.nextElement();
-														Node tempNode = myAnswer.getDom().importNode((Node)newEntry.getDom().getDocumentElement(),true);
-														myNode.appendChild(tempNode);
-													}
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-			return entries;
-		}
-       
-	protected static String purgeXmlEncodingFlag(String xmlCode) {
-		// Suppress the <?xml version="1.0" encoding="UTF-8"?> from the xml if necessary
-		String flag = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
-		if (xmlCode.startsWith(flag.substring(0,6))) {
-			return xmlCode.substring(flag.length());
-		} else {
-			return xmlCode;
-		}
-	}
-     */
-    /*
-     // Used to initialize hastable in the papillon class 
-     public static Dictionary[] getDictionaries()
-     throws PapillonBusinessException {
-         Dictionary[] theDictArray = null;
-         
-         try {
-             DictionaryQuery query = new DictionaryQuery(CurrentDBTransaction.get());
-             
-             query.addOrderByName(true);
-             DictionaryDO[] DOarray = query.getDOArray();
-             theDictArray = new Dictionary[ DOarray.length ];
-             for ( int i = 0; i < DOarray.length; i++ )
-                 theDictArray[i] = new Dictionary(DOarray[i]);
-             
-         }catch(Exception ex) {
-             throw new PapillonBusinessException("Exception in getDictionariesArray()", ex);
-         }
-         
-         return theDictArray;
-     }
-     */
-    
-	/*
-     public static String[] getDictionariesNamesArray()
-     throws PapillonBusinessException {
-         Dictionary[] dictionaries = getDictionariesArray();
-         String[] names;
-         
-         // FIXME: The foksEdict dicitonary is particular. It cannot be queried
-         // FIXME: Foks is not a dictionary, it should not be treated as the other dictionaries.
-         Dictionary foksDict = getDictionaryByName("FoksEdict");
-         if (foksDict != null && !foksDict.isEmpty()) {
-             names = new String[ dictionaries.length -1];
-             int j = 0;
-             for (int i=0; i < dictionaries.length; i++) {
-                 if (!dictionaries[i].getName().equals("FoksEdict")) {
-                     names[j++] = dictionaries[i].getName();
-                 }
-             }
-         }
-         else {
-             names = new String[ dictionaries.length];
-             
-             for (int i=0; i < dictionaries.length; i++) {
-                 names[i] = dictionaries[i].getName();
-             }
-         }
-         
-         /*
-          String[] names = new String[ dictionaries.length];
-          
-          for (int i=0; i < dictionaries.length; i++) {
-              names[i] = dictionaries[i].getName();
-          }			 
-          +/
-          return names;
-     }
-          */
-         
-         /*public static Dictionary findDictionaryByID(String id)
-             throws PapillonBusinessException {
-                 Dictionary theDictionary = null;
-                 
-                 if (id != null && !id.equals("")) {
-                     try {
-                         DictionaryQuery query = new DictionaryQuery(CurrentDBTransaction.get());
-                         //set query
-                         query.setQueryOId(new ObjectId(id));
-                         // Throw an exception if more than one message is found
-                         query.requireUniqueInstance();
-                         DictionaryDO theDictionaryDO = query.getNextDO();
-                         theDictionary = new Dictionary(theDictionaryDO);
-                     }
-                     catch(Exception ex) {
-                         throw new PapillonBusinessException("Exception in findDictionaryByID()", ex);
-                     }
-                 }
-                 return theDictionary;
-             }*/
-         
-         
-         /*
-          public static Dictionary[] getDictionariesArray()
-          throws PapillonBusinessException {
-              Dictionary[] theDictArray = null;
-              
-              try {
-                  
-                  DictionaryQuery query = new DictionaryQuery(CurrentDBTransaction.get());
-                  
-                  query.addOrderByName(true);
-                  DictionaryDO[] DOarray = query.getDOArray();
-                  theDictArray = new Dictionary[ DOarray.length ];
-                  for ( int i = 0; i < DOarray.length; i++ )
-                      theDictArray[i] = new Dictionary(DOarray[i]);
-                  
-              }catch(Exception ex) {
-                  throw new PapillonBusinessException("Exception in getDictionariesArray()", ex);
-              }
-              
-              return theDictArray;
-          }
-          */
 }
 

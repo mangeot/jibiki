@@ -3,6 +3,14 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.58.2.1  2007/07/23 14:23:50  serasset
+ * Commiting most changes done for the XALAN27_NEWDISPLAY on the branch
+ *  - Added XSL extensions callable during xsl transformations
+ *  - Implemented new display of query results as requested by EURAC team
+ *  - Modified edition interface generator to adapt it to xalan 2.7.0
+ *  - Added autocompletion feature to simple search fields
+ *  - Moved some old pages to "deprecated" folder (this will forbid direct use of this code for papillon/GDEF)
+ *
  * Revision 1.58  2007/02/07 13:58:57  fbrunet
  * added message before axies are merged and undo process if the merge is not correct.
  *
@@ -329,6 +337,7 @@ package fr.imag.clips.papillon.business.dictionary;
 import com.lutris.appserver.server.sql.ObjectId;
 import com.lutris.dods.builder.generator.query.QueryBuilder;
 import fr.imag.clips.papillon.CurrentDBTransaction;
+import fr.imag.clips.papillon.CurrentRequestContext;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.user.User;
@@ -1109,89 +1118,92 @@ public class VolumeEntriesFactory {
     //
 	protected static VolumeEntry findEntryByEntryId(Dictionary myDict, Volume myVolume, String entryId)
         throws PapillonBusinessException {
-			//FIXME: should use queries as used in findEntryByEntryId(User user, String entryid)
-			VolumeEntry resultEntry = null;
-			if (entryId != null && !entryId.equals("")) {
-				
-				
-				Vector answersVector = null;
-				
-				Vector myKeys = new Vector();
-				/*			String[] statusReplaced = new String[4];
-				statusReplaced[0] = Volume.CDM_contributionStatus;
-				statusReplaced[1] = Volume.DEFAULT_LANG;
-				statusReplaced[2] = VolumeEntry.REPLACED_STATUS;
-				statusReplaced[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_NOT_EQUAL+1];
-				myKeys.add(statusReplaced);
-				
-				String[] statusDeleted = new String[4];
-				statusDeleted[0] = Volume.CDM_contributionStatus;
-				statusDeleted[1] = Volume.DEFAULT_LANG;
-				statusDeleted[2] = VolumeEntry.DELETED_STATUS;
-				statusDeleted[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_NOT_EQUAL+1];
-				myKeys.add(statusDeleted); */
-				
-				String[] entryIdArray = new String[4];
-				entryIdArray[0] = Volume.CDM_entryId;
-				entryIdArray[1] = Volume.DEFAULT_LANG;
-				entryIdArray[2] = entryId;
-				entryIdArray[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_EXACT+1];
-				myKeys.add(entryIdArray);
-				
-				answersVector = getDbTableEntriesVector(myDict, myVolume, myKeys, null , null, 0, 0);
-				
-				if (answersVector.size()>0) {
-					if (answersVector.size()==1) {
-						resultEntry = (VolumeEntry) answersVector.firstElement();
-					}
-					else if (answersVector.size()>1) {
-						VolumeEntry tempEntry = null;
-						VolumeEntry reviewedEntry = null;
-						VolumeEntry finishedEntry = null;
-						VolumeEntry notFinishedEntry = null;
-                        VolumeEntry modifiedEntry = null;
-						for (java.util.Enumeration enumEntries = answersVector.elements(); enumEntries.hasMoreElements();) {
-							tempEntry = (VolumeEntry) enumEntries.nextElement();
-							if (tempEntry.getStatus().equals(VolumeEntry.VALIDATED_STATUS)) {
-								resultEntry = tempEntry;
-							}
-							if (tempEntry.getStatus().equals(VolumeEntry.REVIEWED_STATUS)) {
-								reviewedEntry = tempEntry;
-							}
-							if (tempEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS)) {
-								finishedEntry = tempEntry;
-							}
-                            // add by Francis to use correctly expandResult !
-							if (tempEntry.getStatus().equals(VolumeEntry.MODIFIED_STATUS)) {
-								modifiedEntry = tempEntry;
-							}
-                             if (tempEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS)) {
-                                 notFinishedEntry = tempEntry;
-                             }
-						}
-						if (resultEntry == null) {
-							if (reviewedEntry !=null) {
-								resultEntry = reviewedEntry;
-							}
-							else if (finishedEntry !=null) {
-								resultEntry = finishedEntry;
-							}
-                            else if (modifiedEntry !=null) {
-								resultEntry = modifiedEntry;
-							}
-							else if (notFinishedEntry !=null) {
-								resultEntry = notFinishedEntry;
-							}
-						}
-					}
-				}
-			}
-			
-			//if (resultEntry != null) {
-			//	PapillonLogger.writeDebugMsg("findEntryByEntryId selected entry: " + resultEntry.getHeadword() + " status: " + resultEntry.getStatus());
-			//}
-			return resultEntry;
+        // FIXME: should use queries as used in findEntryByEntryId(User user, String entryid)
+        // FIXME: Moreover, this is duplicate code...
+        PapillonLogger.writeDebugMsg("Looking for " + entryId + "in volume " + myVolume.getName());
+
+
+        VolumeEntry resultEntry = (VolumeEntry) CurrentRequestContext.get().get(entryId);
+        if (null == resultEntry && null != entryId && !entryId.equals("")) {
+
+
+            Vector answersVector = null;
+
+            Vector myKeys = new Vector();
+            /*			String[] statusReplaced = new String[4];
+                   statusReplaced[0] = Volume.CDM_contributionStatus;
+                   statusReplaced[1] = Volume.DEFAULT_LANG;
+                   statusReplaced[2] = VolumeEntry.REPLACED_STATUS;
+                   statusReplaced[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_NOT_EQUAL+1];
+                   myKeys.add(statusReplaced);
+
+                   String[] statusDeleted = new String[4];
+                   statusDeleted[0] = Volume.CDM_contributionStatus;
+                   statusDeleted[1] = Volume.DEFAULT_LANG;
+                   statusDeleted[2] = VolumeEntry.DELETED_STATUS;
+                   statusDeleted[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_NOT_EQUAL+1];
+                   myKeys.add(statusDeleted); */
+
+            String[] entryIdArray = new String[4];
+            entryIdArray[0] = Volume.CDM_entryId;
+            entryIdArray[1] = Volume.DEFAULT_LANG;
+            entryIdArray[2] = entryId;
+            entryIdArray[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_EXACT + 1];
+            myKeys.add(entryIdArray);
+
+            answersVector = getDbTableEntriesVector(myDict, myVolume, myKeys, null, null, 0, 0);
+
+            if (answersVector.size() > 0) {
+                if (answersVector.size() == 1) {
+                    resultEntry = (VolumeEntry) answersVector.firstElement();
+                } else if (answersVector.size() > 1) {
+                    VolumeEntry tempEntry = null;
+                    VolumeEntry reviewedEntry = null;
+                    VolumeEntry finishedEntry = null;
+                    VolumeEntry notFinishedEntry = null;
+                    VolumeEntry modifiedEntry = null;
+                    for (java.util.Enumeration enumEntries = answersVector.elements(); enumEntries.hasMoreElements();) {
+                        tempEntry = (VolumeEntry) enumEntries.nextElement();
+                        if (tempEntry.getStatus().equals(VolumeEntry.VALIDATED_STATUS)) {
+                            resultEntry = tempEntry;
+                        }
+                        if (tempEntry.getStatus().equals(VolumeEntry.REVIEWED_STATUS)) {
+                            reviewedEntry = tempEntry;
+                        }
+                        if (tempEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS)) {
+                            finishedEntry = tempEntry;
+                        }
+                        // add by Francis to use correctly expandResult !
+                        if (tempEntry.getStatus().equals(VolumeEntry.MODIFIED_STATUS)) {
+                            modifiedEntry = tempEntry;
+                        }
+                        if (tempEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS)) {
+                            notFinishedEntry = tempEntry;
+                        }
+                    }
+                    if (resultEntry == null) {
+                        if (reviewedEntry != null) {
+                            resultEntry = reviewedEntry;
+                        } else if (finishedEntry != null) {
+                            resultEntry = finishedEntry;
+                        } else if (modifiedEntry != null) {
+                            resultEntry = modifiedEntry;
+                        } else if (notFinishedEntry != null) {
+                            resultEntry = notFinishedEntry;
+                        }
+                    }
+                }
+            }
+            CurrentRequestContext.get().set(entryId, resultEntry);
+        } else {
+            PapillonLogger.writeDebugMsg("Found it in request context.");
         }
+
+        //if (resultEntry != null) {
+        //	PapillonLogger.writeDebugMsg("findEntryByEntryId selected entry: " + resultEntry.getHeadword() + " status: " + resultEntry.getStatus());
+        //}
+        return resultEntry;
+    }
 
 
 /**
@@ -1223,11 +1235,11 @@ throws PapillonBusinessException {
  */
 public static VolumeEntry findEntryByEntryId(User user, Collection volumes, String entryId)
 throws PapillonBusinessException {
-    
+    PapillonLogger.writeDebugMsg("Looking for " + entryId + " in " + volumes.size() + "volumes for user " + user );
     //FIXME: an entry id may not be unique externally to a dictionary so the dict must be specified
-    VolumeEntry resultEntry = null;
-    
-    if (entryId != null && !entryId.equals("")) {
+    VolumeEntry resultEntry = (VolumeEntry) CurrentRequestContext.get().get(entryId);
+
+    if (null == resultEntry && entryId != null && !entryId.equals("")) {
 		
         // FIXME ... Add dictionary in QueryRequest class
         QueryRequest queryReq = new QueryRequest(volumes);
@@ -1264,12 +1276,15 @@ throws PapillonBusinessException {
             PapillonLogger.writeDebugMsg("Error, 0 entry found");
         } else if (qrset.size() > 1) {
             PapillonLogger.writeDebugMsg("Error, too much entry found");
-        }       
+        }
+
+        CurrentRequestContext.get().set(entryId, resultEntry);            
+    } else {
+        PapillonLogger.writeDebugMsg("Found it in request context.");
     }
     
     //FIXME: exception when Qrest < 1 or > 1
     
-    //
     return resultEntry;
 }
 

@@ -10,6 +10,14 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.1.2.1  2007/07/23 14:23:50  serasset
+ *  Commiting most changes done for the XALAN27_NEWDISPLAY on the branch
+ *   - Added XSL extensions callable during xsl transformations
+ *   - Implemented new display of query results as requested by EURAC team
+ *   - Modified edition interface generator to adapt it to xalan 2.7.0
+ *   - Added autocompletion feature to simple search fields
+ *   - Moved some old pages to "deprecated" folder (this will forbid direct use of this code for papillon/GDEF)
+ *
  *  Revision 1.32  2006/08/10 22:17:13  fbrunet
  *  - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
  *  - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
@@ -161,12 +169,10 @@
  *
  *
  */
-package fr.imag.clips.papillon.presentation;
+package fr.imag.clips.papillon.presentation.deprecated;
 
 // Enhydra SuperServlet imports
-import com.lutris.appserver.server.httpPresentation.HttpPresentation;
 //import com.lutris.appserver.server.httpPresentation.HttpPresentationComms;
-import com.lutris.appserver.server.httpPresentation.HttpPresentationRequest;
 import com.lutris.appserver.server.httpPresentation.HttpPresentationException;
 //import org.enhydra.xml.xmlc.XMLObject;
 import org.enhydra.xml.xhtml.dom.*;
@@ -183,50 +189,38 @@ import java.util.List;
 import java.util.Arrays;
 import java.util.Vector;
 import java.util.Iterator;
-import java.util.Date;
-import java.text.DateFormat;
 
 // Imported TraX classes
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.dom.DOMResult;
-import org.xml.sax.InputSource;
+        import javax.xml.transform.TransformerConfigurationException;
 
 // Imported DOM classes
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
-import org.w3c.dom.NodeList;
 import org.w3c.dom.Element;
 
 // Imported JAVA API for XML Parsing classes
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 //for debug
 import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 
 import fr.imag.clips.papillon.business.dictionary.*;
 import fr.imag.clips.papillon.business.user.*;
-import fr.imag.clips.papillon.business.xsl.XslSheet;
-import fr.imag.clips.papillon.business.xsl.XslSheetFactory;
 import fr.imag.clips.papillon.business.transformation.*;
 import fr.imag.clips.papillon.business.utility.*;
 import fr.imag.clips.papillon.business.locales.Languages;
 
 import fr.imag.clips.papillon.presentation.xhtml.orig.*;
+import fr.imag.clips.papillon.presentation.PapillonBasePO;
+import fr.imag.clips.papillon.presentation.deprecated.ReviewContributions;
+import fr.imag.clips.papillon.presentation.MultilingualXHtmlTemplateFactory;
 
 /**
  *  Description of the Class
  *
  * @author     serasset
  * @created    December 17, 2004
+ * @deprecated Specific page that depends on the application
  */
 public class ConsultExpert extends PapillonBasePO {
 

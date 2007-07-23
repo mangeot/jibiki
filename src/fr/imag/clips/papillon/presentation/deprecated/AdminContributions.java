@@ -9,6 +9,14 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.1.2.1  2007/07/23 14:23:50  serasset
+ * Commiting most changes done for the XALAN27_NEWDISPLAY on the branch
+ *  - Added XSL extensions callable during xsl transformations
+ *  - Implemented new display of query results as requested by EURAC team
+ *  - Modified edition interface generator to adapt it to xalan 2.7.0
+ *  - Added autocompletion feature to simple search fields
+ *  - Moved some old pages to "deprecated" folder (this will forbid direct use of this code for papillon/GDEF)
+ *
  * Revision 1.35  2006/08/10 22:17:13  fbrunet
  * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
  * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
@@ -178,7 +186,7 @@
  * Papillon AdminContributions page.
  */
 
-package fr.imag.clips.papillon.presentation;
+package fr.imag.clips.papillon.presentation.deprecated;
 
 // Enhydra SuperServlet imports
 import com.lutris.appserver.server.httpPresentation.HttpPresentation;
@@ -213,6 +221,9 @@ import fr.imag.clips.papillon.business.xsl.*;
 
 
 import fr.imag.clips.papillon.presentation.xhtml.orig.*;
+import fr.imag.clips.papillon.presentation.PapillonBasePO;
+import fr.imag.clips.papillon.presentation.EditEntry;
+import fr.imag.clips.papillon.presentation.MultilingualXHtmlTemplateFactory;
 
 // Imported JAVA API for XML Parsing classes
 import javax.xml.parsers.DocumentBuilder;
@@ -229,7 +240,9 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.dom.DOMResult;
 
-
+/**
+ * @deprecated Page is specific to an application. Needs refactoring.
+ */
 public class AdminContributions extends PapillonBasePO {
 	
     protected final static int MaxDisplayedEntries= 5;
@@ -242,7 +255,7 @@ public class AdminContributions extends PapillonBasePO {
 	protected final static int STEP_RESET = 8;	
 	
 	protected final static String EditURL="EditEntry.po";
-	protected final static String EditVolumeParameter=EditEntry.VolumeName_PARAMETER;
+	protected final static String EditVolumeParameter= EditEntry.VolumeName_PARAMETER;
 	protected final static String EditHandleParameter=EditEntry.EntryHandle_PARAMETER;
 	protected final static String XML_FORMATTER = fr.imag.clips.papillon.business.transformation.XslTransformation.XML_FORMATTER; 
 	
@@ -282,7 +295,7 @@ public class AdminContributions extends PapillonBasePO {
         PapillonBusinessException {
 			
 			// Création du contenu
-			AdminContributionsTmplXHTML content = (AdminContributionsTmplXHTML)MultilingualXHtmlTemplateFactory.createTemplate("AdminContributionsTmplXHTML", this.getComms(), this.getSessionData());
+			AdminContributionsTmplXHTML content = (AdminContributionsTmplXHTML) MultilingualXHtmlTemplateFactory.createTemplate("AdminContributionsTmplXHTML", this.getComms(), this.getSessionData());
 			
 			HttpPresentationRequest req = this.getComms().request;
 						

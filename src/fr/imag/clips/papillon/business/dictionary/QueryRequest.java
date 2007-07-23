@@ -13,6 +13,7 @@ import com.lutris.dods.builder.generator.query.QueryBuilder;
 import com.lutris.dods.builder.generator.query.RDBColumn;
 import com.lutris.dods.builder.generator.query.RDBTable;
 import fr.imag.clips.papillon.CurrentDBTransaction;
+import fr.imag.clips.papillon.CurrentRequestContext;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.user.User;
 import fr.imag.clips.papillon.data.VolumeEntryDO;
@@ -333,160 +334,57 @@ import java.util.Iterator;
         public ArrayList findLexie(User user)  throws PapillonBusinessException {
             try {
                 ArrayList result = new ArrayList();
-                
-                //
+
                 for (Iterator iter = volumes.iterator(); iter.hasNext();) {
                     Volume volume = (Volume)iter.next();
-                    
+
                     //
                     VolumeEntryQuery veQuery = new VolumeEntryQuery(volume.getDbname(), CurrentDBTransaction.get());
                     findLexie(veQuery.getQueryBuilder(), volume.getDbname(), volume.getIndexDbname());
-                     
+
                     // limit/offset and sort
                     if ((limit != null) && (offset != null) && ((!limit.equals("0")) || (!offset.equals("0")))) {
                         veQuery.getQueryBuilder().addEndClause(" LIMIT " + limit + " OFFSET " + offset);
                     }
                     veQuery.getQueryBuilder().addOrderByColumn("multilingual_sort('" + volume.getSourceLanguage() + "',headword)","");
-                    
+
                     // Debug
                     if (DEBUG) veQuery.getQueryBuilder().debug();
-                    
+
                     //
                     VolumeEntryDO[] DOarray = veQuery.getDOArray();
                     if (null != DOarray) {
                         for (int j=0; j < DOarray.length; j++) {
                             VolumeEntry tempEntry = new VolumeEntry(DictionariesFactory.getDictionaryByName(volume.getDictname()), volume, DOarray[j]);
+                            // Add the volume entry in the request context.
+                            CurrentRequestContext.get().set(tempEntry.getEntryId(), tempEntry);
+
                             QueryResult queryResult = new QueryResult(QueryResult.UNIQUE_RESULT, tempEntry);
                             result.add(queryResult);
                         }
-                    } 
-                }
-                return result;
-                
-            } catch(Exception ex) {
-                throw new PapillonBusinessException("Exception in findLexie() ", ex);
-            }
-        }
-        
-        /**
-         * Find lexies for edition web page. Find lexies with additional constraints :
-         *  - Supress contribution linked to another contribution (by CDM_previousClassifiedFinishedContribution)
-         *
-         * @param user      add contraints to find lexies FIXME: not use actually 
-         *
-         * @return QueryResult arraylist
-         * @exception PapillonBusinessException if database error
-         */
-/*
-        public ArrayList findLexieForEdition(User user)  throws PapillonBusinessException {
-            try {
-                ArrayList result = new ArrayList();
-                
-                //
-                for (int i=0; i< volumeNames.length; i++) {
-                    
-                    // init
-                    Volume volume = VolumesFactory.getVolumeByName((String)volumeNames[i]);
-                    VolumeEntryQuery veQuery = new VolumeEntryQuery(volume.getDbname(), CurrentDBTransaction.get());
-                    RDBTable table = new RDBTable(volume.getDbname());
-                    RDBColumn objectidRDB = new RDBColumn( table, "objectid", false );
-                    RDBTable tableIndex = new RDBTable(volume.getIndexDbname());
-                    RDBColumn keyRDB = new RDBColumn( tableIndex, "key", false );
-                    RDBColumn valueRDB = new RDBColumn( tableIndex, "value", false );
-                    RDBColumn entryidRDB = new RDBColumn( tableIndex, "entryid", false );
-                    
-                    // Add constraint to veQuery
-                    findLexie(veQuery.getQueryBuilder(), volume.getDbname(), volume.getIndexDbname());
-                    
-                    // Search CDM_previousClassifiedFinishedContribution value 
-                    RDBColumn[] valueRDBList = new RDBColumn[1];
-                    valueRDBList[0] = valueRDB;
-                    QueryBuilder qbValue = new QueryBuilder(valueRDBList);
-                    qbValue.addWhere(keyRDB, Volume.CDM_previousClassifiedFinishedContribution, QueryBuilder.EQUAL);
-                    
-                    // Search CDM_contributionId
-                    RDBColumn[] contribRDBList = new RDBColumn[1];
-                    contribRDBList[0] = entryidRDB;
-                    QueryBuilder qbContrib = new QueryBuilder(contribRDBList);
-                    qbContrib.addWhere(keyRDB, Volume.CDM_contributionId, QueryBuilder.EQUAL);
-                    qbContrib.addWhereIn(valueRDB, qbValue);
-                    
-                    // Constrain veQuery with previousClassifiedFinishedContribution Id
-                    veQuery.getQueryBuilder().addWhereNotIn(objectidRDB, qbContrib);
-                    
-                    // sort
-                    veQuery.getQueryBuilder().addOrderByColumn("multilingual_sort('" + volume.getSourceLanguage() + "',headword)","");
-                    
-                    // debug
-                    //veQuery.getQueryBuilder().debug();
-                    
-                    //
-                    VolumeEntryDO[] DOarray = veQuery.getDOArray();
-                    if (null != DOarray) {
-                        for (int j=0; j < DOarray.length; j++) {
-                            VolumeEntry tempEntry = new VolumeEntry(DictionariesFactory.getDictionaryByName(volume.getDictname()), volume, DOarray[j]);
-                            QueryResult queryResult = new QueryResult(QueryResult.UNIQUE_RESULT, tempEntry);
-                            result.add(queryResult);
-                        }
-                    } 
-                }
-                return result;
-                
-            } catch(Exception ex) {
-                throw new PapillonBusinessException("Exception in findLexie() ", ex);
-            }
-        }
-        
-    */
-        
-        /**
-            * Find lexies and their translations
-         * @param user      add contraints to find lexies FIXME: not use actually 
-         *
-         * @return QueryResult arraylist
-         * @exception PapillonBusinessException if database error
-         */
-        public ArrayList findLexieAndTranslation(User user)  throws PapillonBusinessException {
-            try {
-                ArrayList result = new ArrayList();
-                
-                //
-                for (Iterator iter = volumes.iterator(); iter.hasNext();) {
-                    Volume volume = (Volume)iter.next();
-                    
-                    // Create query
-                    VolumeEntryQuery veQuery = new VolumeEntryQuery(volume.getDbname(), CurrentDBTransaction.get());
-                    findLexie(veQuery.getQueryBuilder(), volume.getDbname(), volume.getIndexDbname());
-                    
-                    // limit/offset
-                    if ( (limit != null) && (offset != null) 
-                         && ((!limit.equals("0")) || (!offset.equals("0")))) {
-                        veQuery.getQueryBuilder().addEndClause(" LIMIT " + limit + " OFFSET " + offset);
                     }
-                    
-                    // Order by
-                    veQuery.getQueryBuilder().addOrderByColumn("multilingual_sort('" + volume.getSourceLanguage() + "',headword)","");
-                    
-                    // debug
-                    if (DEBUG) veQuery.getQueryBuilder().debug();
-                    
-                    //
-                    VolumeEntryDO[] DOarray = veQuery.getDOArray();
-                    if (null != DOarray) {
-                        for (int j=0; j < DOarray.length; j++) {
-                            
-                            //
-                            VolumeEntry tempEntry = new VolumeEntry(DictionariesFactory.getDictionaryByName(volume.getDictname()), volume, DOarray[j]);
-                            
-                            // FIXME : replace expandResult by QueryRequest MethodS !
-                            result.addAll(DictionariesFactory.expandResult(tempEntry, targets, user));
-                            //QueryResult queryResult = new QueryResult(QueryResult.AXIE_COLLECTION_RESULT, tempEntry, axie, transEntries);
-                            //result.add(queryResult);  
-                        }
-                    } 
                 }
                 return result;
+
+            } catch(Exception ex) {
+                throw new PapillonBusinessException("Exception in findLexie() ", ex);
+            }
+        }
                 
+        /**
+         * Find lexies and their translations
+         * @param user      add contraints to find lexies FIXME: not use actually 
+         *
+         * @return QueryResult arraylist
+         * @exception PapillonBusinessException if database error
+         */
+        public Collection findLexieAndTranslation(User user)  throws PapillonBusinessException {
+            try {
+                Collection lexies = findLexie(user);
+                
+                // If no target languages, do not merge axies.
+                return DictionariesFactory.expandResults(lexies, targets, user, this.getTargets().size() > 0); 
+                                
             } catch(Exception ex) {
                 throw new PapillonBusinessException("Exception in findLexieAndTranslation() ", ex);
             }
@@ -496,7 +394,7 @@ import java.util.Iterator;
         /**
          * Find all lexies in one volume
          * @param volumeName
-         * @param user      add contraints to find lexies FIXME: not use actually 
+         * @param user      add contraints to find lexies FIXME: not use currently 
          *
          * @return QueryResult arraylist
          * @exception PapillonBusinessException if database error
@@ -525,7 +423,7 @@ import java.util.Iterator;
             * Find lexie history
          * @param handle
          * @param volumeName
-         * @param user      add contraints to find lexies FIXME: not use actually 
+         * @param user      add contraints to find lexies FIXME: not use currently 
          *
          * @return QueryResult arraylist
          * @exception PapillonBusinessException if database error

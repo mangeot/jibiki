@@ -3,6 +3,14 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.43.2.1  2007/07/23 14:23:50  serasset
+ * Commiting most changes done for the XALAN27_NEWDISPLAY on the branch
+ *  - Added XSL extensions callable during xsl transformations
+ *  - Implemented new display of query results as requested by EURAC team
+ *  - Modified edition interface generator to adapt it to xalan 2.7.0
+ *  - Added autocompletion feature to simple search fields
+ *  - Moved some old pages to "deprecated" folder (this will forbid direct use of this code for papillon/GDEF)
+ *
  * Revision 1.43  2007/02/08 15:24:07  fbrunet
  * *** empty log message ***
  *
@@ -817,21 +825,21 @@ public class ParseVolume {
 		return result;
 	}
 	
-	/**
-		* Gets a CDM element of the VolumeEntry
-	 *
-	 * @param the name of the CDM element as a String.
-	 * @param the language of the CDM element as a ISO 639-2/T 3 letters String.
-	 * @return the CDM volume as a String.
-	 * @exception PapillonBusinessException if an error occurs
-	 *   retrieving data (usually due to an underlying data layer
-						  *   error).
-	 */
-	public static org.w3c.dom.NodeList getCdmElements(IAnswer myEntry, String CdmElement) 
+	public static org.w3c.dom.NodeList getCdmElements(IAnswer myEntry, String CdmElement)
 		throws PapillonBusinessException {
 			return getCdmElements(myEntry, CdmElement, Volume.DEFAULT_LANG);
 		}
 	
+    /**
+        * Gets a CDM element of the VolumeEntry
+     *
+     * @param CdmElement the name of the CDM element as a String.
+     * @param lang the language of the CDM element as a ISO 639-2/T 3 letters String.
+     * @return the CDM volume as a String.
+     * @exception PapillonBusinessException if an error occurs
+     *   retrieving data (usually due to an underlying data layer
+                          *   error).
+     */
 	public static org.w3c.dom.NodeList getCdmElements(IAnswer myEntry, String CdmElement, String lang) 
 		throws PapillonBusinessException {
 			return getCdmElements(myEntry.getDom(), CdmElement, lang, myEntry.getVolume().getCdmElements());

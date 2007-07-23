@@ -9,6 +9,14 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.8.4.1  2007/07/23 14:23:50  serasset
+ *  Commiting most changes done for the XALAN27_NEWDISPLAY on the branch
+ *   - Added XSL extensions callable during xsl transformations
+ *   - Implemented new display of query results as requested by EURAC team
+ *   - Modified edition interface generator to adapt it to xalan 2.7.0
+ *   - Added autocompletion feature to simple search fields
+ *   - Moved some old pages to "deprecated" folder (this will forbid direct use of this code for papillon/GDEF)
+ *
  *  Revision 1.8  2006/06/06 09:15:10  fbrunet
  *  Bug correction : view action in advanced search page if user is registered.
  *
@@ -186,7 +194,7 @@ public abstract class PapillonBasePO extends AbstractPO {
     /**
         *  Not register user !
      */
-    protected static String notRegisterLogin = "Not registered";
+    protected static String notRegisterLogin = "guest";
     
     
     /**

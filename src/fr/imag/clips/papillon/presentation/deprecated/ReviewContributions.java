@@ -9,6 +9,14 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.1.2.1  2007/07/23 14:23:50  serasset
+ * Commiting most changes done for the XALAN27_NEWDISPLAY on the branch
+ *  - Added XSL extensions callable during xsl transformations
+ *  - Implemented new display of query results as requested by EURAC team
+ *  - Modified edition interface generator to adapt it to xalan 2.7.0
+ *  - Added autocompletion feature to simple search fields
+ *  - Moved some old pages to "deprecated" folder (this will forbid direct use of this code for papillon/GDEF)
+ *
  * Revision 1.35  2007/01/05 13:57:26  serasset
  * multiple code cleanup.
  * separation of XMLServices from the Utility class
@@ -199,10 +207,9 @@
  *-----------------------------------------------
  */
 
-package fr.imag.clips.papillon.presentation;
+package fr.imag.clips.papillon.presentation.deprecated;
 
 // Enhydra SuperServlet imports
-import com.lutris.appserver.server.httpPresentation.HttpPresentation;
 import com.lutris.appserver.server.httpPresentation.HttpPresentationRequest;
 import com.lutris.appserver.server.httpPresentation.HttpPresentationException;
 //import org.enhydra.xml.xmlc.XMLObject;
@@ -211,45 +218,34 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
 
-import fr.imag.clips.papillon.business.message.MessageDBLoader;
-
 // Standard imports
 import java.io.IOException;
 import java.util.*;
-import java.text.DateFormat;
-import java.io.*;
-
 
 //pour le dictionary
 import fr.imag.clips.papillon.business.dictionary.*;
 
-import fr.imag.clips.papillon.data.*;
 import fr.imag.clips.papillon.business.utility.Utility;
 import fr.imag.clips.papillon.business.user.*;
 import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.transformation.*;
-import fr.imag.clips.papillon.business.xsl.*;
 
 
 import fr.imag.clips.papillon.presentation.xhtml.orig.*;
+import fr.imag.clips.papillon.presentation.PapillonBasePO;
+import fr.imag.clips.papillon.presentation.EditEntry;
+import fr.imag.clips.papillon.presentation.deprecated.AdminContributions;
+import fr.imag.clips.papillon.presentation.MultilingualXHtmlTemplateFactory;
 
 // Imported JAVA API for XML Parsing classes
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 // Imported TraX classes
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.dom.DOMResult;
 
-
+/**
+ * @deprecated Page is specific to an application. Refactoring is necessary.
+ */
 public class ReviewContributions extends PapillonBasePO {
 
 	
@@ -266,11 +262,11 @@ public class ReviewContributions extends PapillonBasePO {
 	
 	protected final static String ALL="*ALL*";
 	protected final static String EditURL="EditEntry.po";
-	protected final static String EditVolumeParameter=EditEntry.VolumeName_PARAMETER;
+	protected final static String EditVolumeParameter= EditEntry.VolumeName_PARAMETER;
 	protected final static String EditHandleParameter=EditEntry.EntryHandle_PARAMETER;
 	protected final static String XML_FORMATTER = fr.imag.clips.papillon.business.transformation.XslTransformation.XML_FORMATTER; 
 
-	protected final static String VIEW_CONTRIB_PARAMETER=AdminContributions.VIEW_CONTRIB_PARAMETER;
+	protected final static String VIEW_CONTRIB_PARAMETER= AdminContributions.VIEW_CONTRIB_PARAMETER;
 	protected final static String AnyContains_PARAMETER="AnyContains";
 	protected final static String OFFSET_PARAMETER="OFFSET";
 	protected final static String REMOVE_CONTRIB_PARAMETER="RemoveContrib";
@@ -306,7 +302,7 @@ public class ReviewContributions extends PapillonBasePO {
         PapillonBusinessException {
         
         // Création du contenu
-        ReviewContributionsTmplXHTML content = (ReviewContributionsTmplXHTML)MultilingualXHtmlTemplateFactory.createTemplate("ReviewContributionsTmplXHTML", this.getComms(), this.getSessionData());
+        ReviewContributionsTmplXHTML content = (ReviewContributionsTmplXHTML) MultilingualXHtmlTemplateFactory.createTemplate("ReviewContributionsTmplXHTML", this.getComms(), this.getSessionData());
 
         HttpPresentationRequest req = this.getComms().request;
         

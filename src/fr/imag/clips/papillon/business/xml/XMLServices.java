@@ -1,11 +1,19 @@
 /*
  * Jibiki project
  *
- * © Gilles SŽrasset and Jibiki development team - GETA CLIPS IMAG
+ * ï¿½ Gilles Sï¿½rasset and Jibiki development team - GETA CLIPS IMAG
  *-----------------------------------------------
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.2.2.1  2007/07/23 14:23:50  serasset
+ * Commiting most changes done for the XALAN27_NEWDISPLAY on the branch
+ *  - Added XSL extensions callable during xsl transformations
+ *  - Implemented new display of query results as requested by EURAC team
+ *  - Modified edition interface generator to adapt it to xalan 2.7.0
+ *  - Added autocompletion feature to simple search fields
+ *  - Moved some old pages to "deprecated" folder (this will forbid direct use of this code for papillon/GDEF)
+ *
  * Revision 1.2  2007/01/15 17:12:18  serasset
  * Several notes added, suppressed the HTMLDOM_CACHE stuff.
  *

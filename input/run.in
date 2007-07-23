@@ -83,6 +83,7 @@ echo APPCP = $APPCP
 
 $EXEC ${JAVA} \
 	-cp "${APPCP}" \
+	-Dfile.encoding=UTF8 \
 	-Denhydra.home=@ENHYDRA_PATH@ \
 	com.lutris.multiServer.MultiServer \
 	"${MULTISERVER_CONF}"
