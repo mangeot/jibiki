@@ -4,6 +4,11 @@
  * $Id$
  *------------------------
  * $Log$
+ * Revision 1.14.2.2  2007/07/25 15:15:43  serasset
+ * BUGFIX: process and harmo status values were inverted in advanced search
+ * BUGFIX: the source language is now added to the set of target language in simple
+ *         search so that synonyms of the source entries are retreived in the result.
+ *
  * Revision 1.14.2.1  2007/07/23 14:23:50  serasset
  * Commiting most changes done for the XALAN27_NEWDISPLAY on the branch
  *  - Added XSL extensions callable during xsl transformations
@@ -265,7 +270,7 @@ public class LexALPFormatter
                 }
             }
         }
-        // TODO : Test if there are associated elements in the lsgroup. If not, skip the lxgroup...
+        // Test if there are associated elements in the lsgroup. If not, skip the lxgroup...
         Node firstChild = lsdiv.getFirstChild();
         if (null != firstChild && null != resultNode) {
             lsdiv.insertBefore(res.importNode(resultNode, true), firstChild);
@@ -301,69 +306,6 @@ public class LexALPFormatter
         }
         return results;
     }
-
-    //
-    private Node getFormattedResultOld(QueryResult qr, User usr) throws PapillonBusinessException {
-        try {
-            //
-            if (DEBUG) {
-                PapillonLogger.writeDebugMsg("LexALPFormatter : begin getFormattedResult");
-            }
-
-            // Get document source
-            Document docSource = qr.getSourceEntry().getDom();
-
-            // Create document result
-            Document res = myDocumentBuilder.newDocument();
-            Element div = res.createElement("div");
-            res.appendChild(div);
-
-            //
-            if (null != dictXsl && !dictXsl.isEmpty()) {
-
-                //System.out.println(dictXsl.getCode());
-
-                // Format document source
-                Node resultNode = formatResult(docSource, dictXsl, usr);
-                div.appendChild(res.importNode(resultNode, true));
-            }
-
-            // Add 
-            // FIXME : supress, find another solution ()
-            if (qr.getResultKind() == QueryResult.AXIE_COLLECTION_RESULT) {
-
-                // Then append each translation
-                Iterator iter = qr.getLexiesCollection().iterator();
-                while (iter.hasNext()) {
-                    VolumeEntry ve = (VolumeEntry) iter.next();
-
-                    //
-                    if (!ve.getHandle().equals(qr.getSourceEntry().getHandle())) {
-                        Document doc = ve.getDom();
-
-                        //
-                        if (null != dictXsl && !dictXsl.isEmpty()) {
-
-                            //
-                            Element resultNode = (Element) formatResult(doc, dictXsl, usr);
-                            resultNode.setAttribute("class", "translation");
-                            div.appendChild(res.importNode(resultNode, true));
-                        }
-                    }
-                }
-            }
-
-            //
-            if (DEBUG) {
-                PapillonLogger.writeDebugMsg("LexALPFormatter : end getFormattedResult");
-            }
-            return (Node) res.getDocumentElement();
-
-        } catch (Exception ex) {
-            throw new PapillonBusinessException("Exception in getFormattedResult()", ex);
-        }
-    }
-
 
     /**
      * ...

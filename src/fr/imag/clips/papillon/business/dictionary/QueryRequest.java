@@ -381,9 +381,9 @@ import java.util.Iterator;
         public Collection findLexieAndTranslation(User user)  throws PapillonBusinessException {
             try {
                 Collection lexies = findLexie(user);
-                
+
                 // If no target languages, do not merge axies.
-                return DictionariesFactory.expandResults(lexies, targets, user, this.getTargets().size() > 0); 
+                return DictionariesFactory.expandResults(lexies, this.getTargets(), user, this.getTargets().size() > 0);
                                 
             } catch(Exception ex) {
                 throw new PapillonBusinessException("Exception in findLexieAndTranslation() ", ex);
@@ -422,7 +422,7 @@ import java.util.Iterator;
         /**
             * Find lexie history
          * @param handle
-         * @param volumeName
+         * @param volume
          * @param user      add contraints to find lexies FIXME: not use currently 
          *
          * @return QueryResult arraylist

@@ -95,7 +95,7 @@ function getSelector(value, name) {
                                                 + "<option value=\"UNKNOWN\"> UNKNOWN </option>"
                                             + "</select>";
                     break 
-                
+                // FIXME: This should be localized to the user language...
                 case "lexalp-usage":
                     container.innerHTML = "<select id=\"ValueFieldTMP\" name=\"FACETVALUETMP\">"
                                             + "<option value=\"AC\">Alpine Convention</option>"
@@ -120,7 +120,7 @@ function getSelector(value, name) {
                                     + "</select>";
                     break
                                 
-                case "lexalp-process-status":
+                case "lexalp-harmonising-status":
                     container.innerHTML = "<select id=\"ValueFieldTMP\" name=\"FACETVALUETMP\">"
                                                 + "<option value=\"HARMONISED\"> HARMONISED </option>"
                                                 + "<option value=\"REJECTED\"> REJECTED </option>"
@@ -128,7 +128,7 @@ function getSelector(value, name) {
                                             + "</select>";
                     break    
                        
-                case "lexalp-harmonising-status":
+                case "lexalp-process-status":
                     container.innerHTML = "<select id=\"ValueFieldTMP\" name=\"FACETVALUETMP\">"
                                                     + "<option value=\"UNPROCESSED\"> UNPROCESSED </option>"
                                                     + "<option value=\"PROVISIONALLY_PROCESSED\"> PROVISIONALLY_PROCESSED </option>"

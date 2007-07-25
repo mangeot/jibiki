@@ -10,6 +10,11 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.24.2.2  2007/07/25 15:15:44  serasset
+ *  BUGFIX: process and harmo status values were inverted in advanced search
+ *  BUGFIX: the source language is now added to the set of target language in simple
+ *          search so that synonyms of the source entries are retreived in the result.
+ *
  *  Revision 1.24.2.1  2007/07/23 14:23:50  serasset
  *  Commiting most changes done for the XALAN27_NEWDISPLAY on the branch
  *   - Added XSL extensions callable during xsl transformations
@@ -498,6 +503,13 @@ public class Home
 
             // Display query result if query request have criteria
             if (!queryReq.isEmpty()) {
+
+                // Add the source language to the targets in order to get synonyms of matching source entries in the
+                // result set
+                String language = myGetParameter(AdvancedQueryFormXHTML.NAME_SOURCE + ".0");
+                if (! queryReq.getTargets().contains(language)) {
+                    queryReq.getTargets().add(language);
+                }
 
                 // Add status criteria
                 ArrayList listStatus = new ArrayList();
