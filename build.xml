@@ -11,6 +11,9 @@ Id:
   
 Log:
    $Log$
+   Revision 1.23.2.1  2007/09/05 15:25:09  serasset
+   modified javac target so that asserts may be used in the project.
+
    Revision 1.23  2007/04/05 12:55:54  serasset
    Added a DBLayer Version management with an auto-update of db layer.
 
@@ -402,14 +405,15 @@ For Lexalp, call ant using -Dapplication.name=Lexalp
 <!--  <property name="compile_classpath" refid="javac.classpath"/>
   <echo message="Classpath is ${compile_classpath}"/> -->
      <!-- compile XMLC generated java -->
-    <javac srcdir="${dir.src}"
+    <javac  srcdir="${dir.src}"
             destdir="${dir.classes}"
+            source="1.4"
             excludes="**/StartServer.java"
-				    classpathref="javac.classpath"
-	    			debug="${debug}">
-        		<classpath>
-            	<pathelement location="${library.dir}/build/dods.jar" />
-        		</classpath>
+            classpathref="javac.classpath"
+            debug="${debug}">
+        <classpath>
+            <pathelement location="${library.dir}/build/dods.jar" />
+        </classpath>
      </javac>
 
      <!-- copy resource files -->
