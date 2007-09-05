@@ -4,6 +4,10 @@
  * $Id$
  *------
  * $Log$
+ * Revision 1.14.2.2  2007/09/05 15:24:13  serasset
+ * Created a page to browse the dictionary index
+ * Lexalp formatter now sorts entries correctly within a legal sysem/language group
+ *
  * Revision 1.14.2.1  2007/07/23 14:23:50  serasset
  * Commiting most changes done for the XALAN27_NEWDISPLAY on the branch
  *  - Added XSL extensions callable during xsl transformations
@@ -778,4 +782,21 @@ h1.title {
 	padding: 5px 5px 5px 5px; 
 	width: 80%; 
 	text-align: center;
+}
+
+ul.commaList {
+list-style-image:none;
+list-style-position:outside;
+list-style-type:none;
+margin:0pt;
+padding:0pt;
+}
+ul.commaList li {
+display:inline;
+}
+ul.commaList li:after {
+content:", ";
+}
+ul.commaList li:last-child:after {
+content:"";
 }

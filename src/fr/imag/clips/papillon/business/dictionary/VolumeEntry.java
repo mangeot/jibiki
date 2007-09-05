@@ -9,6 +9,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.52.2.2  2007/09/05 15:24:13  serasset
+ * Created a page to browse the dictionary index
+ * Lexalp formatter now sorts entries correctly within a legal sysem/language group
+ *
  * Revision 1.52.2.1  2007/07/23 14:23:50  serasset
  * Commiting most changes done for the XALAN27_NEWDISPLAY on the branch
  *  - Added XSL extensions callable during xsl transformations
@@ -299,22 +303,19 @@ import fr.imag.clips.papillon.business.xml.XMLServices;
 import fr.imag.clips.papillon.data.VolumeEntryDO;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
 
-import java.util.Collection;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.StringReader;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Locale;
+import java.text.Collator;
 
 /**
  * Represents a Dictionary Entry.
  */
 // FIXME: All CDM field access should be realized in a superclass to simplify this class.
-public class VolumeEntry implements IAnswer {
+public class VolumeEntry
+        implements IAnswer, Comparable {
 
     public final static String ORIGINAL_STATUS = "original";    // FIXME: in use ?
     public final static String NOT_FINISHED_STATUS = "not finished";
@@ -359,38 +360,37 @@ public class VolumeEntry implements IAnswer {
     public final static String previousClassifiedNotFinishedContributionTag = DML_PREFIX_COLON + "previous-classified-not-finished-contribution";
     public final static String nextContributionAuthorTag = DML_PREFIX_COLON + "next-contribution-author";
 
-    public final static String ContributionHeader = "<" + contributionTag
-            + " xmlns:" + DmlPrefixResolver.DML_PREFIX + "=\"" + DmlPrefixResolver.DML_URI + "\""
-            + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-            + " xsi:schemaLocation=\"http://www-clips.imag.fr/geta/services/dml "
-            + " http://www-clips.imag.fr/geta/services/dml/dml.xsd\""
-            + " " + contributionIdAttr + "=\"\" " + originalContributionIdAttr + "=\"\">"
-            + "<" + metadataTag + ">"
-            + "<" + authorTag + "/>"
-            + "<" + groupsTag + "/>"
-            + "<" + creationDateTag + "/>"
-            + "<" + finitionDateTag + "/>"
-            + "<" + reviewDateTag + "/>"
-            + "<" + reviewerTag + "/>"
-            + "<" + validationDateTag + "/>"
-            + "<" + validatorTag + "/>"
-            + "<" + statusTag + "/>"
-            + "<" + historyTag + ">"
-            + "<" + modificationTag + ">"
-            + "<" + authorTag + "/>"
-            + "<" + dateTag + "/>"
-            + "<" + commentTag + "/>"
-            + "</" + modificationTag + ">"
-            + "</" + historyTag + ">"
-            + "<" + previousClassifiedFinishedContributionTag + "/>"
-            + "<" + previousClassifiedNotFinishedContributionTag + "/>"
-            + "<" + nextContributionAuthorTag + "/>"
-            + "</" + metadataTag + ">"
-            + "<" + dataTag + ">";
+    public final static String ContributionHeader = "<" + contributionTag +
+            " xmlns:" + DmlPrefixResolver.DML_PREFIX + "=\"" + DmlPrefixResolver.DML_URI + "\"" +
+            " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"" +
+            " xsi:schemaLocation=\"http://www-clips.imag.fr/geta/services/dml " +
+            " http://www-clips.imag.fr/geta/services/dml/dml.xsd\"" + " " +
+            contributionIdAttr + "=\"\" " + originalContributionIdAttr + "=\"\">" +
+            "<" + metadataTag + ">" +
+            "<" + authorTag + "/>" +
+            "<" + groupsTag + "/>" +
+            "<" + creationDateTag + "/>" +
+            "<" + finitionDateTag + "/>" +
+            "<" + reviewDateTag + "/>" +
+            "<" + reviewerTag + "/>" +
+            "<" + validationDateTag + "/>" +
+            "<" + validatorTag + "/>" +
+            "<" + statusTag + "/>" +
+            "<" + historyTag + ">" +
+            "<" + modificationTag + ">" +
+            "<" + authorTag + "/>" +
+            "<" + dateTag + "/>" +
+            "<" + commentTag + "/>" +
+            "</" + modificationTag + ">" +
+            "</" + historyTag + ">" +
+            "<" + previousClassifiedFinishedContributionTag + "/>" +
+            "<" + previousClassifiedNotFinishedContributionTag + "/>" +
+            "<" + nextContributionAuthorTag + "/>" +
+            "</" + metadataTag + ">" +
+            "<" + dataTag + ">";
 
 
-    public final static String ContributionFooter = "</" + dataTag + ">"
-            + "</" + contributionTag + ">";
+    public final static String ContributionFooter = "</" + dataTag + ">" + "</" + contributionTag + ">";
 
     protected static final String ENTRY_ID_SUFFIX = ".e";
     protected static final String CONTRIBUTION_ID_SUFFIX = ".c";
@@ -398,9 +398,6 @@ public class VolumeEntry implements IAnswer {
     // by default, the HTML DOM is not cached
     //public static boolean CACHE_HTMLDOM = false;
 
-    /**
-     * The DO of the Dictionary.
-     */
     protected org.w3c.dom.Document dom = null;
     // protected org.w3c.dom.Document htmldom = null;
     protected Dictionary theDictionary;
@@ -408,19 +405,38 @@ public class VolumeEntry implements IAnswer {
 
     protected VolumeEntryDO myDO = null;
 
+
+    private Collator collator = null;
+
+    private Collator getCollator() {
+        if (null == collator) {
+            try {
+                String lang = this.getSourceLanguage();
+                if (null != lang && ! "".equals(lang)) {
+                    collator = Collator.getInstance(new Locale(lang));
+                } else {
+                    collator = Collator.getInstance();
+                }
+            } catch (PapillonBusinessException e) {
+                collator = Collator.getInstance();
+            }
+        }
+        return collator;
+    }
+
     /**
      * The public constructor.
      * Should find a better method instead of these if elsif elsif
      * How to do it ?
      */
 
-    public VolumeEntry(Dictionary newDict, Volume newVolume) throws PapillonBusinessException {
+    public VolumeEntry(Dictionary newDict, Volume newVolume)
+            throws PapillonBusinessException {
         try {
             this.myDO = VolumeEntryDO.createVirgin(newVolume.getDbname(), CurrentDBTransaction.get());
             this.setVolume(newVolume);
             this.setDictionary(newDict);
-        }
-        catch (DatabaseManagerException ex) {
+        } catch (DatabaseManagerException ex) {
             throw new PapillonBusinessException("Error creating VolumeEntry", ex);
         } catch (ObjectIdException ex) {
             throw new PapillonBusinessException("Error creating VolumeEntry", ex);
@@ -478,8 +494,7 @@ public class VolumeEntry implements IAnswer {
             throws PapillonBusinessException {
         try {
             return this.myDO.getHandle();
-        }
-        catch (DatabaseManagerException ex) {
+        } catch (DatabaseManagerException ex) {
             throw new PapillonBusinessException("Error getting Volume's handle", ex);
         }
     }
@@ -506,7 +521,8 @@ public class VolumeEntry implements IAnswer {
      */
     // FIXME: Should not be stored in a column, but should be extracted from the xml using CDM...
     // FIXME: Moreover, an entry may have more than one headword.
-    public String getHeadword() throws PapillonBusinessException {
+    public String getHeadword()
+            throws PapillonBusinessException {
         String headword = null;
         try {
             headword = this.myDO.getHeadword();
@@ -527,7 +543,8 @@ public class VolumeEntry implements IAnswer {
      *                                   retrieving data (usually due to an underlying data layer
      *                                   error).
      */
-    public String getCompleteHeadword() throws PapillonBusinessException {
+    public String getCompleteHeadword()
+            throws PapillonBusinessException {
         String headword = this.getHeadword();
         String particule = this.getParticule();
         if (particule != null && !particule.equals("")) {
@@ -549,11 +566,13 @@ public class VolumeEntry implements IAnswer {
      *                                   retrieving data (usually due to an underlying data layer
      *                                   error).
      */
-    public String getCdmHeadword() throws PapillonBusinessException {
+    public String getCdmHeadword()
+            throws PapillonBusinessException {
         return ParseVolume.getCdmString(this, Volume.CDM_headword, this.getSourceLanguage());
     }
 
-    public void setHeadword() throws PapillonBusinessException {
+    public void setHeadword()
+            throws PapillonBusinessException {
         String word = ParseVolume.getCdmString(this, Volume.CDM_headword, this.getSourceLanguage());
         if (word != null) {
             word = word.trim();
@@ -583,7 +602,8 @@ public class VolumeEntry implements IAnswer {
      *                                   retrieving data (usually due to an underlying data layer
      *                                   error).
      */
-    public String getHomographNumber() throws PapillonBusinessException {
+    public String getHomographNumber()
+            throws PapillonBusinessException {
         String hn = "";
         hn = ParseVolume.getCdmString(this, Volume.CDM_homographNumber, this.getSourceLanguage());
         return hn;
@@ -604,7 +624,6 @@ public class VolumeEntry implements IAnswer {
     public void setDom(org.w3c.dom.Document myDoc) {
         this.dom = myDoc;
     }
-
 
 //    /**
 //     * Gets the html dom of the entry
@@ -669,15 +688,18 @@ public class VolumeEntry implements IAnswer {
      *                                   replacing data (usually due to an underlying data layer
      *                                   error).
      */
-    public void setId() throws PapillonBusinessException {
+    public void setId()
+            throws PapillonBusinessException {
         this.setEntryIdIfNull();
     }
 
-    public void setEntryId() throws PapillonBusinessException {
+    public void setEntryId()
+            throws PapillonBusinessException {
         this.setEntryId(this.createNewId() + ENTRY_ID_SUFFIX);
     }
 
-    protected void setEntryId(String newId) throws PapillonBusinessException {
+    protected void setEntryId(String newId)
+            throws PapillonBusinessException {
         ParseVolume.setCdmElement(this, Volume.CDM_entryIdElement, newId);
     }
 
@@ -690,7 +712,8 @@ public class VolumeEntry implements IAnswer {
      *                                   replacing data (usually due to an underlying data layer
      *                                   error).
      */
-    protected void setEntryIdIfNull() throws PapillonBusinessException {
+    protected void setEntryIdIfNull()
+            throws PapillonBusinessException {
         if (this.getEntryId() == null || this.getEntryId().equals("")) {
             this.setEntryId(this.createNewId() + ENTRY_ID_SUFFIX);
         }
@@ -704,11 +727,13 @@ public class VolumeEntry implements IAnswer {
      *                                   getting data (usually due to an underlying data layer
      *                                   error).
      */
-    public String getId() throws PapillonBusinessException {
+    public String getId()
+            throws PapillonBusinessException {
         return getEntryId();
     }
 
-    public String getEntryId() throws PapillonBusinessException {
+    public String getEntryId()
+            throws PapillonBusinessException {
         return ParseVolume.getCdmString(this, Volume.CDM_entryId);
     }
 
@@ -721,7 +746,8 @@ public class VolumeEntry implements IAnswer {
      *                                   replacing data (usually due to an underlying data layer
      *                                   error).
      */
-    public void setContributionId() throws PapillonBusinessException {
+    public void setContributionId()
+            throws PapillonBusinessException {
         this.setContributionId(this.createNewId() + CONTRIBUTION_ID_SUFFIX);
     }
 
@@ -733,14 +759,16 @@ public class VolumeEntry implements IAnswer {
      *                                   replacing data (usually due to an underlying data layer
      *                                   error).
      */
-    protected void setContributionIdIfNull() throws PapillonBusinessException {
+    protected void setContributionIdIfNull()
+            throws PapillonBusinessException {
         if (this.getContributionId() == null || this.getContributionId().equals("")) {
             this.setContributionId(this.createNewId() + CONTRIBUTION_ID_SUFFIX);
         }
     }
 
     // FIXME: public method, use to commute id whenever one save a draft contribution
-    public void setContributionId(String newId) throws PapillonBusinessException {
+    public void setContributionId(String newId)
+            throws PapillonBusinessException {
         ParseVolume.setCdmElement(this, Volume.CDM_contributionId, newId);
     }
 
@@ -752,7 +780,8 @@ public class VolumeEntry implements IAnswer {
      *                                   getting data (usually due to an underlying data layer
      *                                   error).
      */
-    public String getContributionId() throws PapillonBusinessException {
+    public String getContributionId()
+            throws PapillonBusinessException {
         return ParseVolume.getCdmString(this, Volume.CDM_contributionId);
     }
 
@@ -764,7 +793,8 @@ public class VolumeEntry implements IAnswer {
      *                                   replacing data (usually due to an underlying data layer
      *                                   error).
      */
-    public void setOriginalContributionId(String newId) throws PapillonBusinessException {
+    public void setOriginalContributionId(String newId)
+            throws PapillonBusinessException {
         ParseVolume.setCdmElement(this, Volume.CDM_originalContributionId, newId);
     }
 
@@ -776,7 +806,8 @@ public class VolumeEntry implements IAnswer {
      *                                   getting data (usually due to an underlying data layer
      *                                   error).
      */
-    public String getOriginalContributionId() throws PapillonBusinessException {
+    public String getOriginalContributionId()
+            throws PapillonBusinessException {
         return ParseVolume.getCdmString(this, Volume.CDM_originalContributionId);
     }
 
@@ -785,21 +816,24 @@ public class VolumeEntry implements IAnswer {
     /**
      * returns ids of the lexies that are pointed by this by an axi-reflink, for lang
      */
-    public String[] getReferencedLexieIds(String lang) throws PapillonBusinessException {
+    public String[] getReferencedLexieIds(String lang)
+            throws PapillonBusinessException {
         return ParseVolume.getCdmStrings(this, Volume.CDM_axiReflexie, lang);
     }
 
     /**
      * returns ids of the lexies that are pointed by this by an axi-reflink, for lang
      */
-    public String[] getTranslationsLexieIds(String lang) throws PapillonBusinessException {
+    public String[] getTranslationsLexieIds(String lang)
+            throws PapillonBusinessException {
         return ParseVolume.getCdmStrings(this, Volume.CDM_translationReflexie, lang);
     }
 
     /**
      * returns ids of the axies that are pointed by this by an axi-reflink
      */
-    public String[] getReferencedAxieIds() throws PapillonBusinessException {
+    public String[] getReferencedAxieIds()
+            throws PapillonBusinessException {
         return ParseVolume.getCdmStrings(this, Volume.CDM_axiRefaxie);
     }
 
@@ -813,7 +847,8 @@ public class VolumeEntry implements IAnswer {
      *                                   getting data (usually due to an underlying data layer
      *                                   error).
      */
-    public String getAuthor() throws PapillonBusinessException {
+    public String getAuthor()
+            throws PapillonBusinessException {
         return ParseVolume.getCdmString(this, Volume.CDM_contributionAuthor);
     }
 
@@ -826,11 +861,13 @@ public class VolumeEntry implements IAnswer {
      *                                   replacing data (usually due to an underlying data layer
      *                                   error).
      */
-    public void setAuthor(String author) throws PapillonBusinessException {
+    public void setAuthor(String author)
+            throws PapillonBusinessException {
         ParseVolume.setCdmElement(this, Volume.CDM_contributionAuthorElement, author);
     }
 
-    public void setAuthor() throws PapillonBusinessException {
+    public void setAuthor()
+            throws PapillonBusinessException {
         String author = ParseVolume.getCdmString(this, Volume.CDM_contributionAuthor);
         if (author == null || author.equals("")) {
             setAuthor("automatic");
@@ -845,14 +882,14 @@ public class VolumeEntry implements IAnswer {
      *                                   getting data (usually due to an underlying data layer
      *                                   error).
      */
-    public java.util.Date getCreationDate() throws PapillonBusinessException {
+    public java.util.Date getCreationDate()
+            throws PapillonBusinessException {
         java.util.Date resDate = null;
         String dateString = ParseVolume.getCdmString(this, Volume.CDM_contributionCreationDate);
         if (dateString != null && !dateString.equals("")) {
             try {
                 resDate = Utility.PapillonCDMDateFormat.parse(dateString);
-            }
-            catch (java.text.ParseException ex) {
+            } catch (java.text.ParseException ex) {
                 throw new PapillonBusinessException("Error parsing a date String", ex);
             }
         }
@@ -866,20 +903,23 @@ public class VolumeEntry implements IAnswer {
      *                                   replacing data (usually due to an underlying data layer
      *                                   error).
      */
-    public void setCreationDate() throws PapillonBusinessException {
+    public void setCreationDate()
+            throws PapillonBusinessException {
         String dateString = ParseVolume.getCdmString(this, Volume.CDM_contributionCreationDate);
         if (dateString == null || dateString.equals("")) {
             setCreationDate(Utility.PapillonCDMDateFormat.format(new java.util.Date()));
         }
     }
 
-    public void setCreationDate(java.util.Date myDate) throws PapillonBusinessException {
+    public void setCreationDate(java.util.Date myDate)
+            throws PapillonBusinessException {
         if (myDate != null) {
             setCreationDate(Utility.PapillonCDMDateFormat.format(myDate));
         }
     }
 
-    protected void setCreationDate(String date) throws PapillonBusinessException {
+    protected void setCreationDate(String date)
+            throws PapillonBusinessException {
         ParseVolume.setCdmElement(this, Volume.CDM_contributionCreationDateElement, date);
     }
 
@@ -890,20 +930,23 @@ public class VolumeEntry implements IAnswer {
      *                                   replacing data (usually due to an underlying data layer
      *                                   error).
      */
-    public void setFinitionDate() throws PapillonBusinessException {
+    public void setFinitionDate()
+            throws PapillonBusinessException {
         String dateString = ParseVolume.getCdmString(this, Volume.CDM_contributionFinitionDate);
         if (dateString == null || dateString.equals("")) {
             setFinitionDate(Utility.PapillonCDMDateFormat.format(new java.util.Date()));
         }
     }
 
-    public void setFinitionDate(java.util.Date myDate) throws PapillonBusinessException {
+    public void setFinitionDate(java.util.Date myDate)
+            throws PapillonBusinessException {
         if (myDate != null) {
             setFinitionDate(Utility.PapillonCDMDateFormat.format(myDate));
         }
     }
 
-    protected void setFinitionDate(String date) throws PapillonBusinessException {
+    protected void setFinitionDate(String date)
+            throws PapillonBusinessException {
         ParseVolume.setCdmElement(this, Volume.CDM_contributionFinitionDateElement, date);
     }
 
@@ -915,14 +958,14 @@ public class VolumeEntry implements IAnswer {
      *                                   getting data (usually due to an underlying data layer
      *                                   error).
      */
-    public java.util.Date getFinitionDate() throws PapillonBusinessException {
+    public java.util.Date getFinitionDate()
+            throws PapillonBusinessException {
         java.util.Date resDate = null;
         String dateString = ParseVolume.getCdmString(this, Volume.CDM_contributionFinitionDate);
         if (dateString != null && !dateString.equals("")) {
             try {
                 resDate = Utility.PapillonCDMDateFormat.parse(dateString);
-            }
-            catch (java.text.ParseException ex) {
+            } catch (java.text.ParseException ex) {
                 throw new PapillonBusinessException("Error parsing a date String", ex);
             }
         }
@@ -936,17 +979,20 @@ public class VolumeEntry implements IAnswer {
      *                                   replacing data (usually due to an underlying data layer
      *                                   error).
      */
-    public void setReviewDate() throws PapillonBusinessException {
+    public void setReviewDate()
+            throws PapillonBusinessException {
         setReviewDate(Utility.PapillonCDMDateFormat.format(new java.util.Date()));
     }
 
-    public void setReviewDate(java.util.Date myDate) throws PapillonBusinessException {
+    public void setReviewDate(java.util.Date myDate)
+            throws PapillonBusinessException {
         if (myDate != null) {
             setReviewDate(Utility.PapillonCDMDateFormat.format(myDate));
         }
     }
 
-    protected void setReviewDate(String date) throws PapillonBusinessException {
+    protected void setReviewDate(String date)
+            throws PapillonBusinessException {
         ParseVolume.setCdmElement(this, Volume.CDM_contributionReviewDateElement, date);
     }
 
@@ -959,14 +1005,14 @@ public class VolumeEntry implements IAnswer {
      *                                   getting data (usually due to an underlying data layer
      *                                   error).
      */
-    public java.util.Date getReviewDate() throws PapillonBusinessException {
+    public java.util.Date getReviewDate()
+            throws PapillonBusinessException {
         java.util.Date resDate = null;
         String dateString = ParseVolume.getCdmString(this, Volume.CDM_contributionReviewDate);
         if (dateString != null && !dateString.equals("")) {
             try {
                 resDate = Utility.PapillonCDMDateFormat.parse(dateString);
-            }
-            catch (java.text.ParseException ex) {
+            } catch (java.text.ParseException ex) {
                 throw new PapillonBusinessException("Error parsing a date String", ex);
             }
         }
@@ -981,7 +1027,8 @@ public class VolumeEntry implements IAnswer {
      *                                   getting data (usually due to an underlying data layer
      *                                   error).
      */
-    public String getReviewer() throws PapillonBusinessException {
+    public String getReviewer()
+            throws PapillonBusinessException {
         return ParseVolume.getCdmString(this, Volume.CDM_contributionReviewer);
     }
 
@@ -993,7 +1040,8 @@ public class VolumeEntry implements IAnswer {
      *                                   replacing data (usually due to an underlying data layer
      *                                   error).
      */
-    public void setReviewer(String reviewer) throws PapillonBusinessException {
+    public void setReviewer(String reviewer)
+            throws PapillonBusinessException {
         ParseVolume.setCdmElement(this, Volume.CDM_contributionReviewerElement, reviewer);
     }
 
@@ -1005,14 +1053,14 @@ public class VolumeEntry implements IAnswer {
      *                                   getting data (usually due to an underlying data layer
      *                                   error).
      */
-    public java.util.Date getValidationDate() throws PapillonBusinessException {
+    public java.util.Date getValidationDate()
+            throws PapillonBusinessException {
         java.util.Date resDate = null;
         String dateString = ParseVolume.getCdmString(this, Volume.CDM_contributionValidationDate);
         if (dateString != null && !dateString.equals("")) {
             try {
                 resDate = Utility.PapillonCDMDateFormat.parse(dateString);
-            }
-            catch (java.text.ParseException ex) {
+            } catch (java.text.ParseException ex) {
                 throw new PapillonBusinessException("Error parsing a date String", ex);
             }
         }
@@ -1026,17 +1074,20 @@ public class VolumeEntry implements IAnswer {
      *                                   replacing data (usually due to an underlying data layer
      *                                   error).
      */
-    public void setValidationDate() throws PapillonBusinessException {
+    public void setValidationDate()
+            throws PapillonBusinessException {
         setValidationDate(Utility.PapillonCDMDateFormat.format(new java.util.Date()));
     }
 
-    public void setValidationDate(java.util.Date myDate) throws PapillonBusinessException {
+    public void setValidationDate(java.util.Date myDate)
+            throws PapillonBusinessException {
         if (myDate != null) {
             setValidationDate(Utility.PapillonCDMDateFormat.format(myDate));
         }
     }
 
-    protected void setValidationDate(String date) throws PapillonBusinessException {
+    protected void setValidationDate(String date)
+            throws PapillonBusinessException {
         ParseVolume.setCdmElement(this, Volume.CDM_contributionValidationDateElement, date);
     }
 
@@ -1048,7 +1099,8 @@ public class VolumeEntry implements IAnswer {
      *                                   getting data (usually due to an underlying data layer
      *                                   error).
      */
-    public String getValidator() throws PapillonBusinessException {
+    public String getValidator()
+            throws PapillonBusinessException {
         return ParseVolume.getCdmString(this, Volume.CDM_contributionValidator);
     }
 
@@ -1060,7 +1112,8 @@ public class VolumeEntry implements IAnswer {
      *                                   replacing data (usually due to an underlying data layer
      *                                   error).
      */
-    public void setValidator(String validator) throws PapillonBusinessException {
+    public void setValidator(String validator)
+            throws PapillonBusinessException {
         ParseVolume.setCdmElement(this, Volume.CDM_contributionValidatorElement, validator);
     }
 
@@ -1072,7 +1125,8 @@ public class VolumeEntry implements IAnswer {
      *                                   getting data (usually due to an underlying data layer
      *                                   error).
      */
-    public String getStatus() throws PapillonBusinessException {
+    public String getStatus()
+            throws PapillonBusinessException {
         return ParseVolume.getCdmString(this, Volume.CDM_contributionStatus);
     }
 
@@ -1084,11 +1138,13 @@ public class VolumeEntry implements IAnswer {
      *                                   replacing data (usually due to an underlying data layer
      *                                   error).
      */
-    public void setStatus(String status) throws PapillonBusinessException {
+    public void setStatus(String status)
+            throws PapillonBusinessException {
         ParseVolume.setCdmElement(this, Volume.CDM_contributionStatusElement, status);
     }
 
-    public void setStatusIfNotNull(String defaultStatus) throws PapillonBusinessException {
+    public void setStatusIfNotNull(String defaultStatus)
+            throws PapillonBusinessException {
         String status = ParseVolume.getCdmString(this, Volume.CDM_contributionStatus);
         if (status == null || status.equals("")) {
             setStatus(defaultStatus);
@@ -1211,7 +1267,8 @@ public class VolumeEntry implements IAnswer {
      *                                   getting data (usually due to an underlying data layer
      *                                   error).
      */
-    public String[] getGroups() throws PapillonBusinessException {
+    public String[] getGroups()
+            throws PapillonBusinessException {
         return ParseVolume.getCdmStrings(this, Volume.CDM_contributionGroup);
     }
 
@@ -1223,7 +1280,8 @@ public class VolumeEntry implements IAnswer {
      *                                   replacing data (usually due to an underlying data layer
      *                                   error).
      */
-    public void setGroups(String[] groups) throws PapillonBusinessException {
+    public void setGroups(String[] groups)
+            throws PapillonBusinessException {
         if (groups != null && groups.length > 0) {
             org.w3c.dom.Document myDocument = this.getDom();
             org.w3c.dom.Node groupsNode = ParseVolume.getCdmElement(this, Volume.CDM_contributionGroups);
@@ -1234,7 +1292,8 @@ public class VolumeEntry implements IAnswer {
                 for (int i = 0; i < groups.length; i++) {
                     String group = groups[i];
                     if (group != null && !group.equals("")) {
-                        org.w3c.dom.Element myGroup = myDocument.createElement(this.getVolume().getCdmContributionGroup());
+                        org.w3c.dom.Element myGroup = myDocument.createElement(
+                                this.getVolume().getCdmContributionGroup());
                         Utility.setText(myGroup, group);
                         groupsNode.appendChild(myGroup);
                     }
@@ -1251,7 +1310,8 @@ public class VolumeEntry implements IAnswer {
      *                                   getting data (usually due to an underlying data layer
      *                                   error).
      */
-    public String getPos() throws PapillonBusinessException {
+    public String getPos()
+            throws PapillonBusinessException {
         return ParseVolume.getCdmString(this, Volume.CDM_pos, this.getSourceLanguage());
     }
 
@@ -1271,19 +1331,23 @@ public class VolumeEntry implements IAnswer {
         theVolume = volume;
     }
 
-    public String getDictionaryName() throws PapillonBusinessException {
+    public String getDictionaryName()
+            throws PapillonBusinessException {
         return theDictionary.getName();
     }
 
-    public String getDictionaryFullName() throws PapillonBusinessException {
+    public String getDictionaryFullName()
+            throws PapillonBusinessException {
         return theDictionary.getFullName();
     }
 
-    public String getVolumeName() throws PapillonBusinessException {
+    public String getVolumeName()
+            throws PapillonBusinessException {
         return theVolume.getName();
     }
 
-    public String getSourceLanguage() throws PapillonBusinessException {
+    public String getSourceLanguage()
+            throws PapillonBusinessException {
         return theVolume.getSourceLanguage();
     }
 
@@ -1291,70 +1355,82 @@ public class VolumeEntry implements IAnswer {
         return IAnswer.LocalEntry;
     }
 
-    public Collection getClassifiedFinishedContributionIdCollection() throws PapillonBusinessException {
+    public Collection getClassifiedFinishedContributionIdCollection()
+            throws PapillonBusinessException {
         String[] list = ParseVolume.getCdmStrings(this, Volume.CDM_previousClassifiedFinishedContribution);
         ArrayList arrayList = new ArrayList();
         if (list != null) {
             for (int i = 0; i < list.length; i++) {
-                String tmp = (String)list[i];
-                if ( (tmp != null) && !tmp.equals("")) {
+                String tmp = (String) list[i];
+                if ((tmp != null) && !tmp.equals("")) {
                     arrayList.add(tmp);
                 }
             }
         }
         return arrayList;
     }
-    
-    public void initClassifiedFinishedContribution() throws PapillonBusinessException {
+
+    public void initClassifiedFinishedContribution()
+            throws PapillonBusinessException {
         ParseVolume.initCdmElement(this, Volume.CDM_previousClassifiedFinishedContributionElement);
     }
-    
-    public void addClassifiedFinishedContribution(VolumeEntry contribution) throws PapillonBusinessException {
+
+    public void addClassifiedFinishedContribution(VolumeEntry contribution)
+            throws PapillonBusinessException {
         addClassifiedFinishedContribution(contribution.getContributionId());
     }
 
-    public void addClassifiedFinishedContribution(String contributionId) throws PapillonBusinessException {
+    public void addClassifiedFinishedContribution(String contributionId)
+            throws PapillonBusinessException {
         ParseVolume.addCdmElement(this, Volume.CDM_previousClassifiedFinishedContributionElement, contributionId);
     }
 
-    public String getClassifiedNotFinishedContributionId() throws PapillonBusinessException {
+    public String getClassifiedNotFinishedContributionId()
+            throws PapillonBusinessException {
         return ParseVolume.getCdmString(this, Volume.CDM_previousClassifiedNotFinishedContribution);
     }
 
-    public void setClassifiedNotFinishedContribution(VolumeEntry contribution) throws PapillonBusinessException {
-        ParseVolume.setCdmElement(this, Volume.CDM_previousClassifiedNotFinishedContributionElement, contribution.getContributionId());
+    public void setClassifiedNotFinishedContribution(VolumeEntry contribution)
+            throws PapillonBusinessException {
+        ParseVolume.setCdmElement(this, Volume.CDM_previousClassifiedNotFinishedContributionElement,
+                contribution.getContributionId());
     }
 
-    public void setClassifiedNotFinishedContribution(String contributionId) throws PapillonBusinessException {
+    public void setClassifiedNotFinishedContribution(String contributionId)
+            throws PapillonBusinessException {
         ParseVolume.setCdmElement(this, Volume.CDM_previousClassifiedNotFinishedContributionElement, contributionId);
     }
 
-    public void initClassifiedNotFinishedContribution() throws PapillonBusinessException {
+    public void initClassifiedNotFinishedContribution()
+            throws PapillonBusinessException {
         ParseVolume.setCdmElement(this, Volume.CDM_previousClassifiedNotFinishedContributionElement, "");
     }
 
-    public String getNextContributionAuthor() throws PapillonBusinessException {
+    public String getNextContributionAuthor()
+            throws PapillonBusinessException {
         return ParseVolume.getCdmString(this, Volume.CDM_nextContributionAuthor);
     }
 
-    public void setNextContributionAuthor(String author) throws PapillonBusinessException {
+    public void setNextContributionAuthor(String author)
+            throws PapillonBusinessException {
         ParseVolume.setCdmElement(this, Volume.CDM_nextContributionAuthorElement, author);
     }
 
 
-    protected String createNewId(String headword) throws PapillonBusinessException {
+    protected String createNewId(String headword)
+            throws PapillonBusinessException {
         if (headword != null) {
             headword = headword.trim();
         }
-        String entryId = this.getSourceLanguage() + "." +
-                headword + "." + this.getHandle();
+        String entryId = this.getSourceLanguage() + "." + headword + "." + this.getHandle();
         entryId = entryId.replace(' ', '_');
         entryId = entryId.replace('\'', '_');
         //System.out.println("getSourceLanguage = " + this.getSourceLanguage() + " headword = " + headword + " getHandle = " + this.getHandle());
         return Utility.encodeXMLEntities(entryId);
     }
 
-    protected String createNewId() throws PapillonBusinessException {
+    protected String createNewId()
+            throws PapillonBusinessException {
         return createNewId(ParseVolume.getCdmString(this, Volume.CDM_headword, this.getSourceLanguage()));
     }
 
@@ -1366,24 +1442,29 @@ public class VolumeEntry implements IAnswer {
      *                                   getting data (usually due to an underlying data layer
      *                                   error).
      */
-    public String getModificationAuthor() throws PapillonBusinessException {
+    public String getModificationAuthor()
+            throws PapillonBusinessException {
         return ParseVolume.getCdmString(this, Volume.CDM_modificationAuthor);
     }
 
-    public String getModificationDate() throws PapillonBusinessException {
+    public String getModificationDate()
+            throws PapillonBusinessException {
         return ParseVolume.getCdmString(this, Volume.CDM_modificationDate);
     }
 
-    public String getModificationComment() throws PapillonBusinessException {
+    public String getModificationComment()
+            throws PapillonBusinessException {
         return ParseVolume.getCdmString(this, Volume.CDM_modificationComment);
     }
 
 
-    public void setModification(String author, String comment) throws PapillonBusinessException {
+    public void setModification(String author, String comment)
+            throws PapillonBusinessException {
         setModification(author, new java.util.Date(), comment);
     }
 
-    private void setModification(String author, java.util.Date date, String comment) throws PapillonBusinessException {
+    private void setModification(String author, java.util.Date date, String comment)
+            throws PapillonBusinessException {
 
         /*
 		Volume myVolume = this.getVolume();
@@ -1429,7 +1510,8 @@ public class VolumeEntry implements IAnswer {
      *                                   replacing data (usually due to an underlying data layer
      *                                   error).
      */
-    public String getDefinition() throws PapillonBusinessException {
+    public String getDefinition()
+            throws PapillonBusinessException {
         return "   " + ParseVolume.getCdmString(this, Volume.CDM_definition);
     }
 
@@ -1467,7 +1549,8 @@ public class VolumeEntry implements IAnswer {
      *                                   replacing data (usually due to an underlying data layer
      *                                   error).
      */
-    public String getParticule() throws fr.imag.clips.papillon.business.PapillonBusinessException {
+    public String getParticule()
+            throws fr.imag.clips.papillon.business.PapillonBusinessException {
         return ParseVolume.getCdmString(this, Volume.CDM_gdefEstParticule, this.getSourceLanguage());
     }
 
@@ -1513,7 +1596,6 @@ public class VolumeEntry implements IAnswer {
         //
         return res;
     }
-
 
 //    public boolean saveHTML()
 //            throws PapillonBusinessException {
@@ -1573,106 +1655,132 @@ public class VolumeEntry implements IAnswer {
      *                                   deleting data (usually due to an underlying data layer
      *                                   error).
      */
-    public NodeList getNodes(String xpathString) throws PapillonBusinessException {
+    public NodeList getNodes(String xpathString)
+            throws PapillonBusinessException {
         try {
             Element myRoot = getDom().getDocumentElement();
 
             return org.apache.xpath.XPathAPI.selectNodeList(getDom(), xpathString);
-        }
-        catch (javax.xml.transform.TransformerException e) {
+        } catch (javax.xml.transform.TransformerException e) {
             throw new PapillonBusinessException("javax.xml.transform.TransformerException: ", e);
-		}
+        }
     }
-    
-    
+
+
     /**
      * Undo the entry with the last classified finished contribution.
      *
-     * @throws PapillonBusinessException 
-     *
+     * @throws PapillonBusinessException
      */
     // FIXME: call undoMerge ????
-    public VolumeEntry undoFinish() throws PapillonBusinessException {
+    public VolumeEntry undoFinish()
+            throws PapillonBusinessException {
         VolumeEntry previousVolumeEntry = null;
-        
+
         //
         Collection previousFContributionIdCollection = getClassifiedFinishedContributionIdCollection();
         for (Iterator iter = previousFContributionIdCollection.iterator(); iter.hasNext();) {
-            String contributionId = (String)iter.next();
-            
+            String contributionId = (String) iter.next();
+
             //
             VolumeEntry volumeEntry = VolumeEntriesFactory.findEntryByContributionId(getVolumeName(), contributionId);
             if (volumeEntry.getStatus().equals(VolumeEntry.CLASSIFIED_FINISHED_STATUS)) {
                 previousVolumeEntry = volumeEntry;
                 volumeEntry.setStatus(VolumeEntry.NOT_FINISHED_STATUS);
-                volumeEntry.save(); 
-                
+                volumeEntry.save();
+
                 //
                 Collection contributionIdCollection = volumeEntry.getClassifiedFinishedContributionIdCollection();
                 for (Iterator iter2 = contributionIdCollection.iterator(); iter2.hasNext();) {
-                    String contributionId2 = (String)iter2.next();
-                    
+                    String contributionId2 = (String) iter2.next();
+
                     //
-                    VolumeEntry volumeEntry2 = VolumeEntriesFactory.findEntryByContributionId(getVolumeName(), contributionId2);
+                    VolumeEntry volumeEntry2 = VolumeEntriesFactory.findEntryByContributionId(getVolumeName(),
+                            contributionId2);
                     if (volumeEntry2.getStatus().equals(VolumeEntry.CLASSIFIED_FINISHED_STATUS)) {
                         volumeEntry2.setStatus(VolumeEntry.MODIFIED_STATUS);
-                        volumeEntry2.save(); 
+                        volumeEntry2.save();
                     }
                 }
-                
+
             } else if (volumeEntry.getStatus().equals(VolumeEntry.DELETED_STATUS)) { // FIXME: specific to the merge !!
                 volumeEntry.setStatus(VolumeEntry.FINISHED_STATUS);
                 volumeEntry.save();
-            
+
             } else {
                 throw new PapillonBusinessException("Error in undoFinish()");
             }
         }
-        
+
         // Delete contribution
         delete();
-        
+
         //
         return previousVolumeEntry;
     }
-    
+
     /**
      * Undo the entry with the last classified not finished contribution.
      *
-     * @throws PapillonBusinessException 
-     *
+     * @throws PapillonBusinessException
      */
-    public VolumeEntry undoNotFinish() throws PapillonBusinessException {
+    public VolumeEntry undoNotFinish()
+            throws PapillonBusinessException {
         VolumeEntry previousVolumeEntry = null;
-        
+
         //
         String previousNFContributionId = getClassifiedNotFinishedContributionId();
         if ((previousNFContributionId != null) && (!previousNFContributionId.equals(""))) {
-            
+
             //
-            previousVolumeEntry = VolumeEntriesFactory.findEntryByContributionId(getVolumeName(), previousNFContributionId);
+            previousVolumeEntry = VolumeEntriesFactory.findEntryByContributionId(getVolumeName(),
+                    previousNFContributionId);
             previousVolumeEntry.setStatus(VolumeEntry.NOT_FINISHED_STATUS);
-            previousVolumeEntry.save(); 
-            
+            previousVolumeEntry.save();
+
         } else {
             Collection previousFContributionIdCollection = getClassifiedFinishedContributionIdCollection();
             for (Iterator iter = previousFContributionIdCollection.iterator(); iter.hasNext();) {
-                String contributionId = (String)iter.next();
-            
+                String contributionId = (String) iter.next();
+
                 //
                 previousVolumeEntry = VolumeEntriesFactory.findEntryByContributionId(getVolumeName(), contributionId);
-                if (previousVolumeEntry.getStatus().equals(VolumeEntry.MODIFIED_STATUS) ) {
+                if (previousVolumeEntry.getStatus().equals(VolumeEntry.MODIFIED_STATUS)) {
                     previousVolumeEntry.setStatus(VolumeEntry.FINISHED_STATUS);
-                    previousVolumeEntry.save(); 
-                }                    
+                    previousVolumeEntry.save();
+                }
             }
-            
+
         }
-        
+
         // Delete contribution
         delete();
-        
+
         //
         return previousVolumeEntry;
+    }
+
+    /**
+     * Compares this object with the specified object for order. Returns a negative integer, zero, or a positive integer as this object is less than, equal to, or greater than the specified object.
+     *
+     * @param o
+     * @return a negative integer, zero, or a positive integer as this object is less than, equal to, or greater than the specified object.
+     * @see java.lang.Comparable#compareTo(Object)
+     */
+    public int compareTo(Object o) {
+        try {
+            return this.getCollator().compare(this.getCompleteHeadword(), ((VolumeEntry) o).getCompleteHeadword());
+        } catch (PapillonBusinessException e) {
+            throw new NullPointerException("Could not access to headword elements");
+        }
+    }
+
+    public String toString() {
+        try {
+            return this.getCompleteHeadword();
+        } catch (PapillonBusinessException e) {
+            PapillonLogger.writeErrorMsg("Could not convert VolumeEntry to String: " + e.getLocalizedMessage());
+            return "";
+        }
     }
 }

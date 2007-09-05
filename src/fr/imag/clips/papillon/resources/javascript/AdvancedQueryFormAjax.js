@@ -169,7 +169,7 @@ function getSelector(value, name) {
 
 // Get select element depending on cdm element (Ajax function)
 // view function getSelector
-function stateChanged() { 
+function stateChanged() {
     
     //
     for (var i=0; i<xmlHttpList.length; i=i+1) {

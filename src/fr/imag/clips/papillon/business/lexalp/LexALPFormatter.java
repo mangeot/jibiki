@@ -4,6 +4,10 @@
  * $Id$
  *------------------------
  * $Log$
+ * Revision 1.14.2.3  2007/09/05 15:24:13  serasset
+ * Created a page to browse the dictionary index
+ * Lexalp formatter now sorts entries correctly within a legal sysem/language group
+ *
  * Revision 1.14.2.2  2007/07/25 15:15:43  serasset
  * BUGFIX: process and harmo status values were inverted in advanced search
  * BUGFIX: the source language is now added to the set of target language in simple
@@ -127,7 +131,7 @@ public class LexALPFormatter
     // bit slow
     protected static Hashtable XslSheetCache = new Hashtable();
 
-    //outils pour les transformation
+    // outils pour les transformation
     protected static final TransformerFactory myTransformerFactory = TransformerFactory.newInstance();
     protected static final DocumentBuilderFactory myDocumentBuilderFactory = DocumentBuilderFactory.newInstance();
     protected static DocumentBuilder myDocumentBuilder;
@@ -208,11 +212,12 @@ public class LexALPFormatter
             String[] lss = new String[]{"AC", "INT", "EU", "DE", "AT", "FR", "IT", "SL", "CH"};
             for (int i = 0; i < lss.length; i++) {
                 Node lsn;
-                if (null != (lsn = (Node) matchingGroups.get(lss[i]))) {
+                if (null != (lsn = (Node) matchingGroups.remove(lss[i]))) {
                     rootdiv.appendChild(res.importNode(lsn, true));
                 }
             }
-            // Then display remaining entries
+            assert matchingGroups.isEmpty();
+            // Then display other lexies
             String[] langs = new String[]{"deu", "fra", "ita", "slv"};
             for (int j = 0; j < lss.length; j++) {
                 for (int i = 0; i < langs.length; i++) {
@@ -284,7 +289,7 @@ public class LexALPFormatter
         Collection lexies = qr.getLexiesCollection();
         Iterator it = lexies.iterator();
 
-        Collection results = new ArrayList();
+        TreeSet results = new TreeSet();
         while (it.hasNext()) {
             VolumeEntry ve = (VolumeEntry) it.next();
             try {
@@ -325,8 +330,8 @@ public class LexALPFormatter
             //
             while (isTransform) {
 
-                // System.out.println("Transforming with " + xsl.getName() + "/" + xsl.getVolumeName() + " :");
-                // System.out.println(XMLServices.xmlCodePrettyPrinted(docSource));
+                 // System.out.println("Transforming with " + xsl.getName() + "/" + xsl.getVolumeName() + " :");
+                 // System.out.println(XMLServices.xmlCodePrettyPrinted(docSource));
                 // Transform
                 docCible = Transform(docSource, xsl);
 
