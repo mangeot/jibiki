@@ -9,6 +9,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.52.2.3  2007/09/06 14:54:11  serasset
+ * in lexalp view, non matching entries are now gathered by legal systems and
+ * query language now appears first.
+ *
  * Revision 1.52.2.2  2007/09/05 15:24:13  serasset
  * Created a page to browse the dictionary index
  * Lexalp formatter now sorts entries correctly within a legal sysem/language group
@@ -447,7 +451,9 @@ public class VolumeEntry
     /**
      * The protected constructor
      *
-     * @param theDisc. The data object of the Volume.
+     * @param newDict
+     * @param newVolume
+     * @param theVolumeEntryDO
      */
     protected VolumeEntry(Dictionary newDict, Volume newVolume, VolumeEntryDO theVolumeEntryDO)
             throws PapillonBusinessException {

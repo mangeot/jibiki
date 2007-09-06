@@ -4,6 +4,10 @@
  * $Id$
  *------------------------
  * $Log$
+ * Revision 1.14.2.4  2007/09/06 14:54:11  serasset
+ * in lexalp view, non matching entries are now gathered by legal systems and
+ * query language now appears first.
+ *
  * Revision 1.14.2.3  2007/09/05 15:24:13  serasset
  * Created a page to browse the dictionary index
  * Lexalp formatter now sorts entries correctly within a legal sysem/language group
@@ -101,7 +105,6 @@ package fr.imag.clips.papillon.business.lexalp;
 
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.PapillonLogger;
-import fr.imag.clips.papillon.business.xml.XMLServices;
 import fr.imag.clips.papillon.business.dictionary.*;
 import fr.imag.clips.papillon.business.dictionary.Dictionary;
 import fr.imag.clips.papillon.business.transformation.ResultFormatter;
@@ -206,7 +209,7 @@ public class LexALPFormatter
                 qr.getLexiesHashtable().remove(ve.getEntryId());
                 // Then format the group of related entries...
                 String ls = ParseVolume.getCdmString(ve, "lexalp-legal-system");
-                matchingGroups.put(ls, getResultGroup(res, qr, ve, usr));
+                matchingGroups.put(ls, getMatchingResultGroup(res, qr, ve, usr));
             }
 
             String[] lss = new String[]{"AC", "INT", "EU", "DE", "AT", "FR", "IT", "SL", "CH"};
@@ -217,37 +220,79 @@ public class LexALPFormatter
                 }
             }
             assert matchingGroups.isEmpty();
-            // Then display other lexies
-            String[] langs = new String[]{"deu", "fra", "ita", "slv"};
-            for (int j = 0; j < lss.length; j++) {
-                for (int i = 0; i < langs.length; i++) {
-                    Collection trads = getAndRemoveResultEntriesFor(qr, lss[j], langs[i]);
-                    for (Iterator ittrad = trads.iterator(); ittrad.hasNext();) {
-                        VolumeEntry trad = (VolumeEntry) ittrad.next();
-                        if (null != dictXsl && !dictXsl.isEmpty()) {
-                            // Format document source
-                            Element resultNode = (Element) formatResult(trad.getDom(), dictXsl, usr);
-                            resultNode.setAttribute("class", "translation");
-                            rootdiv.appendChild(res.importNode(resultNode, true));
-                        }
-                    }
+            String lg = qr.getFirstSourceEntry().getVolume().getSourceLanguage();
+            // now dsplay unmatching groups
+            for (int i = 0; i < lss.length; i++) {
+                Node lsn = this.getResultGroup(res, qr, usr, lg, lss[i]);
+                if (null != lsn) {
+                    rootdiv.appendChild(res.importNode(lsn, true));
                 }
             }
+//            // Then display other lexies
+//            String[] langs = new String[]{"deu", "fra", "ita", "slv"};
+//            for (int j = 0; j < lss.length; j++) {
+//                for (int i = 0; i < langs.length; i++) {
+//                    Collection trads = getAndRemoveResultEntriesFor(qr, lss[j], langs[i]);
+//                    for (Iterator ittrad = trads.iterator(); ittrad.hasNext();) {
+//                        VolumeEntry trad = (VolumeEntry) ittrad.next();
+//                        if (null != dictXsl && !dictXsl.isEmpty()) {
+//                            // Format document source
+//                            Element resultNode = (Element) formatResult(trad.getDom(), dictXsl, usr);
+//                            resultNode.setAttribute("class", "translation");
+//                            rootdiv.appendChild(res.importNode(resultNode, true));
+//                        }
+//                    }
+//                }
+//            }
         }
         return rootdiv;
     }
 
-    private Node getResultGroup(Document res, QueryResult qr, VolumeEntry ve, User user)
+    private Node getMatchingResultGroup(Document res, QueryResult qr, VolumeEntry ve, User user)
+            throws PapillonBusinessException {
+        return this.getMatchingResultGroup(res, qr, ve, user, ve.getVolume().getSourceLanguage());
+    }
+
+
+    private Node getMatchingResultGroup(Document res, QueryResult qr, VolumeEntry ve, User user, String lg)
             throws PapillonBusinessException {
         Element lsdiv = res.createElement("div");
         lsdiv.setAttribute("class", "lexalp-lsgroup");
         String ls = ParseVolume.getCdmString(ve, "lexalp-legal-system");
-        String lg = ve.getVolume().getSourceLanguage();
         Node resultNode = null;
         if (null != dictXsl && !dictXsl.isEmpty()) {
             // Format document source
             resultNode = formatResult(ve.getDom(), dictXsl, user);
         }
+        this.addLegalSystemGroup(lsdiv, res, qr, user, lg, ls);
+        // Test if there are associated elements in the lsgroup. If not, skip the lxgroup...
+        Node firstChild = lsdiv.getFirstChild();
+        if (null != firstChild && null != resultNode) {
+            lsdiv.insertBefore(res.importNode(resultNode, true), firstChild);
+            return lsdiv;            
+        } else {
+            return res.importNode(resultNode, true);
+        }
+    }
+
+    private Node getResultGroup(Document res, QueryResult qr, User user, String lg, String ls)
+            throws PapillonBusinessException {
+        Element lsdiv = res.createElement("div");
+        lsdiv.setAttribute("class", "lexalp-lsgroup");
+        this.addLegalSystemGroup(lsdiv, res, qr, user, lg, ls);
+        if (lsdiv.hasChildNodes()) {
+            if (null != lsdiv.getFirstChild().getNextSibling()) {
+                return lsdiv;
+            } else {
+                return lsdiv.getFirstChild();
+            }
+        } else {
+            return null;
+        }
+    }
+
+    private void addLegalSystemGroup(Element lsdiv, Document res, QueryResult qr, User user, String lg, String ls)
+            throws PapillonBusinessException {
         String[] langs = new String[]{"deu", "fra", "ita", "slv"};
         { // FIXME: Duplicate code everywhere....
             Collection trads = getAndRemoveResultEntriesFor(qr, ls, lg);
@@ -275,16 +320,7 @@ public class LexALPFormatter
                 }
             }
         }
-        // Test if there are associated elements in the lsgroup. If not, skip the lxgroup...
-        Node firstChild = lsdiv.getFirstChild();
-        if (null != firstChild && null != resultNode) {
-            lsdiv.insertBefore(res.importNode(resultNode, true), firstChild);
-            return lsdiv;            
-        } else {
-            return res.importNode(resultNode, true);
-        }
     }
-
     private Collection getAndRemoveResultEntriesFor(QueryResult qr, String legalSystem, String lang) {
         Collection lexies = qr.getLexiesCollection();
         Iterator it = lexies.iterator();
