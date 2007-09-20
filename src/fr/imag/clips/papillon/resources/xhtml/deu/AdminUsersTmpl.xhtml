@@ -6,9 +6,9 @@
    <title>Papillon</title>
 </head>
 <body>
-<div id="Formulaire" lang="en">
+<div id="Formulaire" lang="de">
 
-<h1>Administrate Users</h1>
+<h1>Verwaltung der Benutzer</h1>
 
 
 <span id="LoggedUsers">0</span> user(s) currently logged:
@@ -19,9 +19,9 @@
 	<th>Email</th>
 </tr>
 <tr id="LoggedTemplateRow">
-	<td><b><span id="LoggedName">name</span></b></td>
-	<td><span id="LoggedLogin">login</span></td>
-	<td><span id="LoggedEmail">email</span></td>
+	<td><b><span id="LoggedName">Name</span></b></td>
+	<td><span id="LoggedLogin">Login-Name</span></td>
+	<td><span id="LoggedEmail">E-Mail</span></td>
 </tr>
 </table>
 
@@ -29,14 +29,14 @@
 <table summary="Existing Users">
 <tr>
 	<th><a href="AdminUsers.po?SortBy=name">Name</a></th>
-	<th><a href="AdminUsers.po?SortBy=login">Login</a></th>
-	<th><a href="AdminUsers.po?SortBy=email">Email</a></th>
-	<th>Groups</th>
+	<th><a href="AdminUsers.po?SortBy=login">Login-Name</a></th>
+	<th><a href="AdminUsers.po?SortBy=email">E-Mail</a></th>
+	<th>Gruppen</th>
     <th>make admin</th>
     <th>reset pass</th>
 	<th>make specialist</th>
-	<th>see</th>
-	<th>remove</th>
+	<th>sehen</th>
+	<th>l&ouml;schen</th>
 </tr>
 <tr id="TemplateRow">
 	<td><b><span id="Name">name</span></b></td>
@@ -46,7 +46,7 @@
 	<td><a href="" id="MakeAdminAnchor">make admin</a></td>
 	<td><a href="" id="ResetPasswordAnchor">reset pass</a></td>
 	<td><a href="" id="MakeSpecialistAnchor">make specialist</a></td>
-	<td><a href="" id="SeeAnchor">See</a></td>
+	<td><a href="" id="SeeAnchor">sehen</a></td>
 	<td><a href="" id="RemoveAnchor" onclick="return confirm('Are you sure you want to remove the user?')">rm</a></td>
 </tr>
 </table>

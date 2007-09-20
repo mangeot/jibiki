@@ -6,8 +6,8 @@
    <title>Papillon</title>
 </head>
 <body>
-<div id="Formulaire" lang="en">
-<h1>Verwaltung der XML-Bände</h1>
+<div id="Formulaire" lang="de">
+<h1>Verwaltung der XML-Volumes</h1>
 
 	<script type="text/javascript">
     <!--
@@ -38,7 +38,7 @@
 	</td>
 </tr>
 <tr>	
-	<td colspan="2"><b>datei oder URL:&nbsp;</b>
+	<td colspan="2"><b>Datei oder URL:&nbsp;</b>
 	<input type="button" name="upload" onclick="javascript:openUploader('URL')" value="hochladen"/> oder
 	<input name="URL" id="URL" type="text" size="64" value=""/></td>
 </tr>
@@ -60,7 +60,7 @@
 <form action="AdminVolumes.po" method="get">
 <table width="600" border="0" cellspacing="0" cellpadding="10" summary="Upload XML File">
 <tr>
-	<td><b>Band:</b></td>
+	<td><b>Volume:</b></td>
         <td>
             <select name="Volume">
             <option id="VolumeOptionTemplate" value="NONE" label="NONE">NONE</option>
@@ -70,7 +70,7 @@
             <select name="Object">
             <option value="Metadata" label="Metadata File">Metadatendatei</option>
             <option value="Schema" label="XML Schema">XML-Schema</option>
-            <option value="Template" label="Template Entry">Template Entry</option>
+            <option value="Template" label="Template Entry">Template Eintrag</option>
             <option value="Interface" label="Interface">Schnittstelledatei</option>
         </select></td>
 				</tr>
@@ -94,7 +94,7 @@
 	<td><b>Volume:</b></td>
     <td>
         <select name="VolumeTransformation">
-            <option value="All" label="All">Alle B&auml;nde</option>
+            <option value="All" label="All">Alle Volumes</option>
             <option id="VolumeOptionTemplateTransformation" value="NONE" label="NONE">NONE</option>
         </select>
     </td>
@@ -116,15 +116,15 @@ derzeitig in der Datenbank gespeicherte W&ouml;rterb&uuml;cher:
 <table summary="Existing Volumes">
 <tr>
 	<th>WB</th>
-	<th>Band</th>
+	<th>Volume</th>
 	<th>Db table</th>
-	<th>Src</th>
-	<th>Entries</th>
+	<th>Quelle</th>
+	<th>Eintr&auml;ge</th>
 	<th>Schema</th>
 	<th>Template</th>
 	<th>Schnittstelle</th>
 	<th>&nbsp;|&nbsp;</th>
-	<th>Metataden</th>
+	<th>Metadaten</th>
   <th>Alles</th>
 </tr>
 <tr id="TemplateRow">
