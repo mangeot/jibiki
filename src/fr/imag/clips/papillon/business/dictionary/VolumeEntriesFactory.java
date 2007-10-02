@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.58.2.2  2007/10/02 10:31:21  serasset
+ * Modified export of volume to speed up this task.
+ *
  * Revision 1.58.2.1  2007/07/23 14:23:50  serasset
  * Commiting most changes done for the XALAN27_NEWDISPLAY on the branch
  *  - Added XSL extensions callable during xsl transformations
@@ -757,6 +760,10 @@ public class VolumeEntriesFactory {
 	
     // FIXME: Should the query building code be factorized ?
     protected static void processVolume(Dictionary dict, Volume volume, Vector myKeys, Vector myClauses, IVolumeEntryProcessor myProcessor) throws PapillonBusinessException {
+        processVolume(dict, volume, myKeys, myClauses, myProcessor, true);    
+    }
+
+    protected static void processVolume(Dictionary dict, Volume volume, Vector myKeys, Vector myClauses, IVolumeEntryProcessor myProcessor, boolean andClauses) throws PapillonBusinessException {
 		final int MaxRetrievedEntries = 500;
 		int offset = 0;
 		boolean stop = false;
@@ -796,7 +803,10 @@ public class VolumeEntriesFactory {
 								myQueryBuilder.resetSelectedFields();
 								myQueryBuilder.select(entryidColumn);
 								query.getQueryBuilder().addWhereIn(objectidColumn, myQueryBuilder);
-							}
+                                if (! andClauses) {
+                                    query.getQueryBuilder().addWhereOr();
+                                }
+                            }
 						}
 					}
 					
@@ -814,7 +824,10 @@ public class VolumeEntriesFactory {
 								myQueryBuilder.resetSelectedFields();
 								myQueryBuilder.select(entryidColumn);
 								query.getQueryBuilder().addWhereIn(objectidColumn, myQueryBuilder);
-							}
+                                if (! andClauses) {
+                                    query.getQueryBuilder().addWhereOr();
+                                }
+                            }
 						}
 					}
 					
@@ -822,7 +835,11 @@ public class VolumeEntriesFactory {
 					query.getQueryBuilder().addEndClause("OFFSET " + offset);
 					//query.getQueryBuilder().distinct();
 					query.getQueryBuilder().addOrderByColumn("multilingual_sort('" + volume.getSourceLanguage() + "',headword)","");
-					VolumeEntryDO[] DOarray = query.getDOArray();
+
+                    //debug
+                     //System.out.println(query.getQueryBuilder().getSQLwithParms()); // System.exit(2);
+
+                    VolumeEntryDO[] DOarray = query.getDOArray();
 					if (null != DOarray) {
 						for (int j=0; j < DOarray.length; j++) {
 							myProcessor.process(new VolumeEntry(dict, volume,DOarray[j]));
@@ -855,8 +872,12 @@ public class VolumeEntriesFactory {
 			}
 		}
     
-    
-	public static void exportVolume(String volumeName, Vector myKeys, Vector clauseVector, String outputFormat, java.io.OutputStream myOutStream) 
+    public static void exportVolume(String volumeName, Vector myKeys, Vector clauseVector, String outputFormat, java.io.OutputStream myOutStream)
+        throws fr.imag.clips.papillon.business.PapillonBusinessException {
+        exportVolume(volumeName, myKeys, clauseVector, true, outputFormat, myOutStream);
+    }
+
+    public static void exportVolume(String volumeName, Vector myKeys, Vector clauseVector, boolean andClause, String outputFormat, java.io.OutputStream myOutStream)
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 			
 			Volume myVolume = VolumesFactory.getVolumeByName(volumeName);
@@ -896,7 +917,7 @@ public class VolumeEntriesFactory {
 						fr.imag.clips.papillon.business.dictionary.IVolumeEntryProcessor myProcessor = new fr.imag.clips.papillon.business.dictionary.ExportVolumeEntryProcessor(outputFormat, myOutStream);
 						PapillonLogger.writeDebugMsg("Processor created");
                         
-						fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory.processVolume(myDict, myVolume, myKeys, clauseVector, myProcessor);
+						fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory.processVolume(myDict, myVolume, myKeys, clauseVector, myProcessor, andClause);
 						PapillonLogger.writeDebugMsg("Volume processed");
 						
 						

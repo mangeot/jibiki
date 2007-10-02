@@ -8,6 +8,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.5.2.1  2007/10/02 10:31:21  serasset
+ * Modified export of volume to speed up this task.
+ *
  * Revision 1.5  2007/02/28 09:27:07  fbrunet
  * Added ajax method to AdvancedQueryForm page
  *
@@ -133,37 +136,50 @@ public class Export extends PapillonBasePO {
                 */
                 
                 // STATUS
+//                String[] CNFS = new String[4];
+//                CNFS[0] = Volume.CDM_contributionStatus;
+//                CNFS[1] = Volume.DEFAULT_LANG;
+//                CNFS[2] = VolumeEntry.CLASSIFIED_NOT_FINISHED_STATUS;
+//                CNFS[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_NOT_EQUAL+1];
+//                myKeys.add(CNFS);
+//
+//                String[] CFS = new String[4];
+//                CFS[0] = Volume.CDM_contributionStatus;
+//                CFS[1] = Volume.DEFAULT_LANG;
+//                CFS[2] = VolumeEntry.CLASSIFIED_FINISHED_STATUS;
+//                CFS[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_NOT_EQUAL+1];
+//                myKeys.add(CFS);
+//
+//                String[] DS = new String[4];
+//                DS[0] = Volume.CDM_contributionStatus;
+//                DS[1] = Volume.DEFAULT_LANG;
+//                DS[2] = VolumeEntry.DELETED_STATUS;
+//                DS[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_NOT_EQUAL+1];
+//                myKeys.add(DS);
+//
+//                String[] NFS = new String[4];
+//                NFS[0] = Volume.CDM_contributionStatus;
+//                NFS[1] = Volume.DEFAULT_LANG;
+//                NFS[2] = VolumeEntry.NOT_FINISHED_STATUS;
+//                NFS[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_NOT_EQUAL+1];
+//                myKeys.add(NFS);
+
                 String[] CNFS = new String[4];
                 CNFS[0] = Volume.CDM_contributionStatus;
                 CNFS[1] = Volume.DEFAULT_LANG;
-                CNFS[2] = VolumeEntry.CLASSIFIED_NOT_FINISHED_STATUS;
-                CNFS[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_NOT_EQUAL+1];			
+                CNFS[2] = VolumeEntry.FINISHED_STATUS;
+                CNFS[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_EQUAL+1];
                 myKeys.add(CNFS);
-                
+
                 String[] CFS = new String[4];
                 CFS[0] = Volume.CDM_contributionStatus;
                 CFS[1] = Volume.DEFAULT_LANG;
-                CFS[2] = VolumeEntry.CLASSIFIED_FINISHED_STATUS;
-                CFS[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_NOT_EQUAL+1];	
+                CFS[2] = VolumeEntry.MODIFIED_STATUS;
+                CFS[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_EQUAL+1];	
                 myKeys.add(CFS);
-                
-                String[] DS = new String[4];
-                DS[0] = Volume.CDM_contributionStatus;
-                DS[1] = Volume.DEFAULT_LANG;
-                DS[2] = VolumeEntry.DELETED_STATUS;
-                DS[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_NOT_EQUAL+1];	
-                myKeys.add(DS);
-                
-                String[] NFS = new String[4];
-                NFS[0] = Volume.CDM_contributionStatus;
-                NFS[1] = Volume.DEFAULT_LANG;
-                NFS[2] = VolumeEntry.NOT_FINISHED_STATUS;
-                NFS[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_NOT_EQUAL+1];	
-                myKeys.add(NFS);
-                
                 //
                 exportType = "complete";
-                exportVolume(volume, myKeys, myClauses, exportType);
+                exportVolume(volume, myKeys, myClauses, false, exportType);
 
             } else if (export_myfinished != null && volume != null) {
                 
@@ -281,8 +297,15 @@ public class Export extends PapillonBasePO {
             xslSelect.removeChild(xslOptionTemplate); */
             
         }
-	
-	protected void exportVolume(String volume, java.util.Vector myKeys, java.util.Vector myClauses, String exportType) 
+
+    protected void exportVolume(String volume, java.util.Vector myKeys, java.util.Vector myClauses, String exportType)
+        throws fr.imag.clips.papillon.business.PapillonBusinessException,
+        java.io.IOException,
+        PapillonPresentationException {
+        exportVolume(volume, myKeys, myClauses, true, exportType);
+    }
+    
+    protected void exportVolume(String volume, java.util.Vector myKeys, java.util.Vector myClauses, boolean andClauses, String exportType)
 		throws fr.imag.clips.papillon.business.PapillonBusinessException,
 		java.io.IOException,
 		PapillonPresentationException {
@@ -300,7 +323,7 @@ public class Export extends PapillonBasePO {
                 java.io.File xmlFile = new java.io.File(fileDir.getCanonicalPath() + File.separator + xmlFilename);
                 xmlFile.createNewFile();
                 FileOutputStream xmlFileOutStream = new FileOutputStream(xmlFile.getCanonicalFile());
-                fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory.exportVolume(volume, myKeys, myClauses, FORMAT_XML, xmlFileOutStream);
+                fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory.exportVolume(volume, myKeys, myClauses, andClauses, FORMAT_XML, xmlFileOutStream);
                 
                 /*
                  // Compress -> GZ
@@ -343,7 +366,7 @@ public class Export extends PapillonBasePO {
              
                 for (Iterator iter = ((Collection)VolumesFactory.getVolumes()).iterator(); iter.hasNext();) {
                     Volume vol = (Volume)iter.next();
-                    exportVolume(vol.getName(), myKeys, myClauses, exportType);
+                    exportVolume(vol.getName(), myKeys, myClauses, andClauses, exportType);
                 }
             }
            
