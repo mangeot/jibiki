@@ -11,6 +11,9 @@ Id:
   
 Log:
    $Log$
+   Revision 1.23.2.2  2007/10/19 17:19:00  serasset
+   Modified build setup so that user/password is not in the conf anymore, but in the property file.
+
    Revision 1.23.2.1  2007/09/05 15:25:09  serasset
    modified javac target so that asserts may be used in the project.
 
@@ -119,6 +122,10 @@ Most useful targets:
   <!-- =================================================================== -->
   <!-- Initialize the properties                                           -->
   <!-- =================================================================== -->
+  <!-- PAPILLON-SPECIFIC -->
+  <!-- Load the properties that are specific to the papillon conf -->
+  <property file="papillon.properties"/>
+  <property file="dblayer.version"/>
 
   <!-- Set up application values -->
   <property name="project.name"    value="Papillon"/>
@@ -127,10 +134,6 @@ Most useful targets:
   <property name="project.version" value="1.7"/>
   <property name="project.year"    value="2006"/>
 
-  <!-- PAPILLON-SPECIFIC -->
-  <!-- Load the properties that are specific to the papillon conf -->
-  <property file="papillon.properties"/>
-  <property file="dblayer.version"/>
 
   <!-- directory locations -->
   <property name="dir.package"   value="fr/imag/clips/papillon"/>
@@ -460,6 +463,10 @@ For Lexalp, call ant using -Dapplication.name=Lexalp
      <filter token="FOP_LIB" value="${papillon.fop.jar}" />
      <filter token="AVALON_LIB" value="${papillon.avalon.jar}" />
      <filter token="BATIK_LIB" value="${papillon.batik.jar}" />
+
+      <filter token="PGSQL_SERVER_URL" value="${lexalpdb.server.url}" />
+      <filter token="DB_USER" value="${lexalpdb.user}" />
+      <filter token="DB_PASSWD" value="${lexalpdb.password}" />
 
      <!--filter token="OBSERVATEUR_LIB" value="${papillon.observateur.jar}" /-->
      <filter token="FO_PATH" value="${papillon.fo.xsl}" />
