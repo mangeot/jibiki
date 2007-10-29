@@ -10,6 +10,11 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.24.2.3  2007/10/29 15:11:03  serasset
+ *  NEW: lexalp css now defines different forms for HARMONISED/REJECTED entries
+ *  NEW: added new db url/user/password configuration keys in papillon.properties file
+ *  BUG158: headwords are now harmonised at edition and search time, added a "normalise headword" admin action
+ *
  *  Revision 1.24.2.2  2007/07/25 15:15:44  serasset
  *  BUGFIX: process and harmo status values were inverted in advanced search
  *  BUGFIX: the source language is now added to the set of target language in simple
@@ -593,14 +598,15 @@ public class Home
                     this.setPreference(HEADWORD_PARAMETER, headword, false);
                 }
 
+                removeProjectDescription();
+
             } else {
 
-                //
-                this.getSessionData().writeUserMessage("Sorry, parameter errors !");
+                
+                // Display project description
+                removeQueryResult();
+                removeQueryFuzzyResult();
             }
-
-            //
-            removeProjectDescription();
 
         } else {
 

@@ -6,7 +6,7 @@
  *
  * Enjoy!
  *
- * Adapted for jibiki use by Gilles SŽrasset
+ * Adapted for jibiki use by Gilles SÃ©rasset
  *
  * @author fromvega
  *

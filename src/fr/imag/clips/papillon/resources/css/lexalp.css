@@ -4,6 +4,11 @@
  * $Id$
  *------
  * $Log$
+ * Revision 1.14.2.3  2007/10/29 15:11:03  serasset
+ * NEW: lexalp css now defines different forms for HARMONISED/REJECTED entries
+ * NEW: added new db url/user/password configuration keys in papillon.properties file
+ * BUG158: headwords are now harmonised at edition and search time, added a "normalise headword" admin action
+ *
  * Revision 1.14.2.2  2007/09/05 15:24:13  serasset
  * Created a page to browse the dictionary index
  * Lexalp formatter now sorts entries correctly within a legal sysem/language group
@@ -645,6 +650,20 @@ margin-right:10px;
 
 .notFinishedEntry {
 	background: #F0F0F0;
+}
+
+.HARMONISED {
+    background:#80FFA0;
+}
+
+.REJECTED {
+    background:#FFC0C0;
+    border-left:red;
+    border-left-width:2px;
+}
+
+.REJECTED .term {
+    border-bottom: 1px dotted red;
 }
 
 .lexalp-lsgroup {

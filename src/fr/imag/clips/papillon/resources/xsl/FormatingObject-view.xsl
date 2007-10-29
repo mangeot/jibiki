@@ -7,6 +7,11 @@
  *  $Id$
  *  
  *  $Log$
+ *  Revision 1.2.8.1  2007/10/29 15:11:03  serasset
+ *  NEW: lexalp css now defines different forms for HARMONISED/REJECTED entries
+ *  NEW: added new db url/user/password configuration keys in papillon.properties file
+ *  BUG158: headwords are now harmonised at edition and search time, added a "normalise headword" admin action
+ *
  *  Revision 1.2  2005/08/02 14:41:49  mangeot
  *  Work on stylesheets and
  *  added a reset button for Review and AdminContrib forms

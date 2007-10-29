@@ -11,6 +11,11 @@ Id:
   
 Log:
    $Log$
+   Revision 1.23.2.3  2007/10/29 15:11:03  serasset
+   NEW: lexalp css now defines different forms for HARMONISED/REJECTED entries
+   NEW: added new db url/user/password configuration keys in papillon.properties file
+   BUG158: headwords are now harmonised at edition and search time, added a "normalise headword" admin action
+
    Revision 1.23.2.2  2007/10/19 17:19:00  serasset
    Modified build setup so that user/password is not in the conf anymore, but in the property file.
 
@@ -412,6 +417,7 @@ For Lexalp, call ant using -Dapplication.name=Lexalp
             destdir="${dir.classes}"
             source="1.4"
             excludes="**/StartServer.java"
+            encoding="UTF-8"
             classpathref="javac.classpath"
             debug="${debug}">
         <classpath>

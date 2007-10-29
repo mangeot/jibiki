@@ -1,8 +1,8 @@
-
 WGET="wget --save-cookies=cookies.txt --load-cookies=cookies.txt --keep-session-cookies"
 SERVER=tokyo.imag.fr
 #SERVER=localhost
 BASEURL=http://${SERVER}:8999/
+#BASEURL=http://localhost:8080/termbank/
 LOGIN_URL=${BASEURL}LoginUser.po
 POST_DATA=--post-data="Login=serasset&Password=sylvie38&Submit=Submit"
 #METADATA_DIR="file%3A%2Fhome%2Fserasset%2Fdevelopment%2FJibiki%2Flexalp%2Flexalp%2Fmetadata%2F"

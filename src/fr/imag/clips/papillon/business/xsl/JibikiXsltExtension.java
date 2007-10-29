@@ -7,6 +7,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.1.2.2  2007/10/29 15:11:03  serasset
+ * NEW: lexalp css now defines different forms for HARMONISED/REJECTED entries
+ * NEW: added new db url/user/password configuration keys in papillon.properties file
+ * BUG158: headwords are now harmonised at edition and search time, added a "normalise headword" admin action
+ *
  * Revision 1.1.2.1  2007/07/23 14:23:50  serasset
  * Commiting most changes done for the XALAN27_NEWDISPLAY on the branch
  *  - Added XSL extensions callable during xsl transformations
@@ -24,6 +29,8 @@ import fr.imag.clips.papillon.facelets.xhtml.Actions;
 import fr.imag.clips.papillon.facelets.util.JibikiContext;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory;
+import fr.imag.clips.papillon.business.dictionary.ParseVolume;
+import fr.imag.clips.papillon.business.dictionary.Volume;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.user.User;
 import fr.imag.clips.papillon.CurrentRequestContext;

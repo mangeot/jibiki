@@ -7,6 +7,11 @@
  * $Id$
  *------------------------
  * $Log$
+ * Revision 1.2.4.1  2007/10/29 15:11:03  serasset
+ * NEW: lexalp css now defines different forms for HARMONISED/REJECTED entries
+ * NEW: added new db url/user/password configuration keys in papillon.properties file
+ * BUG158: headwords are now harmonised at edition and search time, added a "normalise headword" admin action
+ *
  * Revision 1.2  2006/06/01 22:05:05  fbrunet
  * New interface, quick search, new contribution management (the first edition not create new contribution. New contribution is created after add, remove element, update, save, etc. in the interface window)
  *
@@ -20,29 +25,18 @@
 
 package fr.imag.clips.papillon.business.lexalp;
 
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.StringReader;
-import java.util.ArrayList;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
-import fr.imag.clips.papillon.business.dictionary.Dictionary;
-import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
-import fr.imag.clips.papillon.business.dictionary.Volume;
-import fr.imag.clips.papillon.business.dictionary.QueryRequest;
-import fr.imag.clips.papillon.business.dictionary.QueryCriteria;
-import fr.imag.clips.papillon.business.dictionary.QueryResult;
 import fr.imag.clips.papillon.business.user.User;
 
 import fr.imag.clips.papillon.business.transformation.ResultPostUpdateProcessor;
 
-import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
+import fr.imag.clips.papillon.business.utility.StringNormalizer;
 
 
 public class LexALPPostUpdateProcessor implements ResultPostUpdateProcessor {
@@ -180,7 +174,21 @@ public class LexALPPostUpdateProcessor implements ResultPostUpdateProcessor {
                         }
                     }
                 }
-                
+
+                // Normalise headword
+                NodeList hwList = dom.getElementsByTagName("term");
+                if ((null != hwList) && (hwList.getLength() > 0)) {
+                    for (int i=0; i < hwList.getLength(); i++) {
+
+                        //
+                        Node termNode = (Node)hwList.item(i);
+                        Node termValue = termNode.getFirstChild(); // term node contains text node
+                        String term = termValue.getNodeValue();
+                        termValue.setNodeValue(StringNormalizer.normalize(term));
+                        
+                    }
+                }
+
                 // Source:  add http:// if no http:// or ftp:// in url source
                 NodeList sourceList = dom.getElementsByTagName("source");
                 if ((null != sourceList) && (sourceList.getLength() > 0)) {
@@ -295,6 +303,8 @@ public class LexALPPostUpdateProcessor implements ResultPostUpdateProcessor {
         
         
     }
+
+
     
 }
 

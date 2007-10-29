@@ -9,6 +9,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.15.2.1  2007/10/29 15:11:03  serasset
+ * NEW: lexalp css now defines different forms for HARMONISED/REJECTED entries
+ * NEW: added new db url/user/password configuration keys in papillon.properties file
+ * BUG158: headwords are now harmonised at edition and search time, added a "normalise headword" admin action
+ *
  * Revision 1.15  2007/01/15 19:44:33  serasset
  * Corrected an error due to HTMLDOM removal.
  *
@@ -199,11 +204,16 @@ public class Admin extends PapillonBasePO {
                 
             // FIXME: supress    
             } else if (null != myGetParameter(content.NAME_ModifiedStatus)) {
-				fr.imag.clips.papillon.business.dictionary.VolumesFactory.modifiedStatus(this.getUser());
+                this.getSessionData().writeUserMessage("Status modification has been desactivated...");				
+                //fr.imag.clips.papillon.business.dictionary.VolumesFactory.modifiedStatus(this.getUser());
             
             } else if (null != myGetParameter(content.NAME_Standardization)) {
-				fr.imag.clips.papillon.business.dictionary.VolumesFactory.standardization();
+                this.getSessionData().writeUserMessage("Standardization of xml data has been desactivated...");
+                //fr.imag.clips.papillon.business.dictionary.VolumesFactory.standardization();
                 
+            } else if (null != myGetParameter(content.NAME_NormalizeHeadword)) {
+                fr.imag.clips.papillon.business.dictionary.VolumesFactory.normalizeHeadwords();
+
             }
         }
 		
