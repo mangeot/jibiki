@@ -17,7 +17,7 @@
   <body>
    <script type="text/javascript">
                      </script>
-    <div id="AdvancedSearchForm" lang="en" xml:lang="en">
+    <div id="AdvancedSearchForm" lang="de" xml:lang="de">
       <form id="SearchForm" action="">
         <div style="display:block; padding:5px;">
           <table border="0" cellpadding="0" cellspacing="0" summary="Search Form" width="100%">
@@ -49,28 +49,28 @@
                       <option value="cdm-definition" label="Definition">Definition</option>
                       <option value="cdm-pos" label="Grammar">Grammatik</option>
                       <option value="cdm-context" label="Context">Kontext</option>
-                      <option value="cdm-note" label="Note">Notiz</option>
+                      <option value="cdm-note" label="Note">Kommentar</option>
                       <option value="lexalp-source" label="Source">Quelle</option>
                       <option value="lexalp-legal-system" label="Legal system">Rechtssystem</option>
-                      <option value="lexalp-domain" label="Domain number">Gebietsummer</option>
-                      <option value="lexalp-usage" label="Geographical usage">Geographischer Gebrauch</option>
+                      <option value="lexalp-domain" label="Domain number">Fachgebiet</option>
+                      <option value="lexalp-usage" label="Geographical usage">territorialer Gebrauch</option>
                       <option value="axi-reflexie" label="Axie">Axie</option>
-                      <option value="cdm-modification-author" label="Modified by">Revisor</option>
+                      <option value="cdm-modification-author" label="Modified by">Autor letzte &Auml;nderung</option>
                       <option value="cdm-contribution-author" label="Created by">Autor</option>
                       <option value="cdm-modification-date" label="Date">Datum</option>
                       <option value="lexalp-harmonising-status" label="Harmonising status">Harmonisierungsstatus</option>
-                      <option value="lexalp-process-status" label="Process status">Verfahrensstatus</option>
+                      <option value="lexalp-process-status" label="Process status">Bearbeitungsstatus</option>
                       <option value="cdm-contribution-status" label="Entry status">Eintragsstatus</option>
                       <option value="cdm-entry-id" label="Entry Id">Eintragsnummer</option>
                       <!--<option value="cdm-contribution-id" label="Entry Id">Contribution Id</option>-->
                     </select>
                     <select id="Operator" name="OPERATOR" >
                         <option value="4" label="contains">enth&auml;lt</option>
-                        <option value="2" label="lautet">is</option>
-                        <option value="6" label="beginnt mit">starts with</option>
-                        <option value="5" label="endet auf">ends with</option>
-                        <option value="10" label="gr&ouml;&szlig;er als">greater than</option>
-                        <option value="11" label="kleiner als">lower than</option>
+                        <option value="2" label="is">ist</option>
+                        <option value="6" label="starts with">beginnt mit</option>
+                        <option value="5" label="ends with">endet auf</option>
+                        <option value="10" label="greater than">gr&ouml;&szlig;er als</option>
+                        <option value="11" label="lower than">kleiner als</option>
                     </select>
                     <span>
                         <input type="text" id="ValueField" name="FACETVALUE" size="20" maxlength="128"/>   
@@ -80,7 +80,7 @@
                         <label id="SourceLangLabel" for="SourceLang" accesskey="i" >
                         <span class="accesskey">I</span>n:</label>
                         -->
-                        <label style="padding-left: 1em;">Quellsprache :</label>
+                        <label style="padding-left: 1em;">Ausgangssprache:</label>
                         <select id="SourceLang" name="SOURCE">
                             <option value="All" label="All">alle Sprachen</option>
                             <option id="SourceOptionTemplate" value="NONE" label="NONE">NONE</option>
@@ -101,7 +101,7 @@
                     <div id="QuickLink" class="quick_search">
                         <b>Schnellsuche :</b><br/>
                         <a id="MyFinishedContributions" class="quick_link" href="">Meine vollst&auml;ndigen Eintr&auml;ge</a><br/>
-                        <a id="MyNotFinishedContributions" class="quick_link" href="">Meine unvollst&auml;ndigen Eintr&auml;ge</a>
+                        <a id="MyNotFinishedContributions" class="quick_link" href="">Meine tempor&auml;ren Eintr&auml;ge</a>
                     </div>
                 </td>
             </tr>
@@ -117,14 +117,14 @@
               <option label="100" value="100">100</option>
               <option label="all" value="0">all</option>
             </select>
-            <b>Ergebnisse; Ausgabe-Dateiformat :</b>
+            <b>Ergebnisse im Dateiformat:</b>
             <select id="Xsl" name="XSL">
-              <option label="Default" value="">Default</option>
-              <option id="XslTmpl" label="Default" value="">Default</option>
-            </select>
+              <option label="Default" value="">Standard</option>
+              <option id="XslTmpl" label="Default" value="">Standard</option>
+            </select> <b>anzeigen</b>
             <input type="hidden" id="Offset" name="OFFSET" />
             <input type="hidden" id="Action" name="ACTION" value=""/>
-            <input type="submit" value="Los" />
+            <input type="submit" value="Suche" />
           </div>
       </form>
     </div>

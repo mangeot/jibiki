@@ -14,7 +14,7 @@
 <FORM NAME="MainForm" ACTION="AdminContributions.po" METHOD="GET">
 <table WIDTH="600" BORDER="0" CELLSPACING="0" CELLPADDING="10" Summary="Formulaire">
 	<TR>
-        <TD><B><label for="VOLUME">Band:</label></B></TD>
+        <TD><B><label for="VOLUME">Volume:</label></B></TD>
         <TD>
             <SELECT id="VOLUME" NAME="VOLUME" onChange="document.MainForm.submit()">
             <OPTION ID="VolumeOptionTemplate" VALUE="NONE" LABEL="NONE">Nichts</OPTION>
@@ -39,7 +39,7 @@
      </TD>
 </TR>
 <!--TR>	
-	<TD colspan="2"><b>Hochladen existierender Beiträge zum ausgewählten Band</b></TD>
+	<TD colspan="2"><b>Hochladen existierender Beiträge zum ausgewählten Volume</b></TD>
 </TR>
 <TR>	
         <TD><B><label for="URL">Url:</label></B></TD>
@@ -53,7 +53,7 @@
 <!--FORM NAME="RemoveContribForm" ACTION="AdminContributions.po" METHOD="GET" onsubmit="return confirm('Are you sure you want to remove your contributions on selected volume?')">
 <table WIDTH="600" BORDER="0" CELLSPACING="0" CELLPADDING="10" Summary="RemoveContrib">
 <TR>
-<TD><b><label for="EMPTY">Entfernen der Beiträge vom ausgewählten Band</label></b></TD>
+<TD><b><label for="EMPTY">Entfernen der Beiträge vom ausgewählten Volume</label></b></TD>
         <TD>
         <INPUT id="EMPTY" NAME="EMPTY" TYPE="submit" VALUE="Remove">
         </TD>

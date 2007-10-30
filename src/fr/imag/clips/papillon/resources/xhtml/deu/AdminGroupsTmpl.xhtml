@@ -6,7 +6,7 @@
    <title>Papillon</title>
 </head>
 <body>
-<div id="Formulaire" lang="en">
+<div id="Formulaire" lang="de">
 
 <h1>Administrate Groups</h1>
 
@@ -14,38 +14,38 @@
 <form action="AdminGroups.po" method="get">
 <table width="600" border="0" cellspacing="0" cellpadding="10" summary="Add new group">
 <tr>
-	<th colspan="2">Add a new group</th>
+	<th colspan="2">Eine neue Gruppe hinzuf&uuml;gen</th>
 </tr>
 <tr>	
 	<td><b>Name:</b></td>
 	<td><input name="GroupName" type="text" size="30" value=""/></td>
 </tr>
 <tr>
-    <td><b>Password:</b></td>     
+    <td><b>Passwort:</b></td>     
     <td><input name="GroupPassword" type="password" size="10" value=""/></td>
 </tr>
 <tr>
-    <td><b>Retype Password:</b></td>     
+    <td><b>Pa&szlig;wort best&auml;tigen:</b></td>     
     <td><input name="GroupPasswordConfirm" type="password" size="10" value=""/></td>
 </tr>
 <tr>
-	<td colspan="2"><input name="AddGroup" type="submit" value="Add"/></td>
+	<td colspan="2"><input name="AddGroup" type="submit" value="Hinzuf&uuml;gen"/></td>
 </tr>
 </table>
 </form>
 
 
-<span id="ExistingGroups">0</span> groups currently in the database:
+<span id="ExistingGroups">0</span> derzeitig registrierte Gruppen:
 <table summary="Existing Users">
 <tr>
 	<th>Name</th>
 	<th>Admin</th>
-	<th>remove</th>
+	<th>l&ouml;schen</th>
 </tr>
 <tr id="GrpTemplateRow">
 	<td><b><span id="GrpName">name</span></b></td>
 	<td><span id="GrpAdmins">admins</span></td>
-	<td><a href="" id="GrpRemoveAnchor" onclick="return confirm('Are you sure you want to remove the group?')">rm</a></td>
+	<td><a href="" id="GrpRemoveAnchor" onclick="return confirm('Sind Sie sicher, da&szlig; Sie die Gruppe l&ouml;schen wollen?')">rm</a></td>
 </tr>
 </table>
 </div>

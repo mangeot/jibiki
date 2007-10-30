@@ -6,7 +6,7 @@
    <title>Papillon</title>
 </head>
 <body>
-<div id="Formulaire" xml:lang="en" lang="en">    
+<div id="Formulaire" xml:lang="de" lang="de">    
 <script type="text/javascript">
  <!-- 
         // Open a new window 
@@ -31,26 +31,26 @@
         }
     //-->
     </script>
-   <h1 style="text-align:center">Band exportieren</h1>
-    <p>Sch&ouml;n ruhig abwarten :&nbsp; der Proze&szlig; kann einige Minuten dauern...</p>
+   <h1 style="text-align:center">Volume exportieren</h1>
+    <p>Bitte warten. Der Vorgang kann einige Minuten dauern</p>
 
 <table width="600" border="0" cellspacing="0" cellpadding="10" summary="Formulaire">
 <tr>
 	<td>
-        <b>Band: </b>
+        <b>Volume: </b>
 		<select id='VOLUME' name="VOLUME">
             <option value="*ALL*" label="*ALL*">ALLES</option>
             <option id="VolumeOptionTemplate" value="NONE" label="NONE">NONE</option>
         </select>
 	</td>
 	<td>
-        <input name="EXPORT" type="submit" value="Band exportieren (vollständige Einträge)" onclick="exportVolume()"/>
+        <input name="EXPORT" type="submit" value="Volume exportieren (vollständige Einträge)" onclick="exportVolume()"/>
         <input name="EXPORTMYFINISHED" type="submit" value="Meine vollständigen Einträge exportieren" onclick="exportMyFinished()"/>
-        <input name="EXPORTMYUNFINISHED" type="submit" value="Meine unvollständigen Einträge exportieren" onclick="exportMyUnfinished()"/>
+        <input name="EXPORTMYUNFINISHED" type="submit" value="Meine tempor&auml;ren Eintr&auml;ge exportieren" onclick="exportMyUnfinished()"/>
     </td>
 </tr>
 </table>
-<p>Siehe den <a id="RepositoryAnchor" href="">Export-Repository</a> </p>
+<p>Siehe <a id="RepositoryAnchor" href="">Export-Repository</a> </p>
 </div>
 </body>
 </html>
