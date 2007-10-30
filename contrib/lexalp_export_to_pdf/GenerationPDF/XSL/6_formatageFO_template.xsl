@@ -783,7 +783,7 @@
                             <xsl:when test="text()='5.1'">5.1 Städteplanung</xsl:when>
                             <xsl:when test="text()='5.2'">5.2 Stadtgebiete</xsl:when>
                             <xsl:when test="text()='5.3'">5.3 Bauwesen</xsl:when>
-                            <xsl:when test="text()='6'">6 Allgemeine termini</xsl:when>
+                            <xsl:when test="text()='6'">6 Allgemeine Termini</xsl:when>
                             <xsl:otherwise>domain error</xsl:otherwise>
                         </xsl:choose>
                     </xsl:when>
