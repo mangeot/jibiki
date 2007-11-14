@@ -4,6 +4,9 @@
  * $Id$
  *------------------------
  * $Log$
+ * Revision 1.14.2.5  2007/11/14 16:02:21  serasset
+ * Suppressed debug messages.
+ *
  * Revision 1.14.2.4  2007/09/06 14:54:11  serasset
  * in lexalp view, non matching entries are now gathered by legal systems and
  * query language now appears first.
@@ -152,7 +155,6 @@ public class LexALPFormatter
             throws PapillonBusinessException {
 
         try {
-
             //
             String dictionaryName = dictionary.getName();
             String volumeName = volume.getName();
@@ -164,6 +166,11 @@ public class LexALPFormatter
 
             //
             dictXsl = getXslSheet(dictionaryName, volumeName, (String) parameter);
+
+            //System.out.println("Document Builder Factory is: " + myDocumentBuilderFactory.getClass());
+            //System.out.println("Transformer Factory is: " + myTransformerFactory.getClass());
+            //System.out.println("Document Builder is: " + myDocumentBuilder.getClass());
+
 
         } catch (javax.xml.parsers.ParserConfigurationException e) {
             throw new PapillonBusinessException("CRITICAL: error initializing document builder !", e);
