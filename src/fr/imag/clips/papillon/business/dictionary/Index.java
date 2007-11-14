@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.6.2.1  2007/11/14 16:11:02  serasset
+ * removed deprecate call, added save without osmrt key (to avoid unnecessary connections to the DB).
+ *
  * Revision 1.6  2007/01/05 13:57:25  serasset
  * multiple code cleanup.
  * separation of XMLServices from the Utility class
@@ -272,12 +275,29 @@ public class Index {
         try {
 			String msort = fr.imag.clips.papillon.papillon_data.ManageDatabase.multilingual_sort(this.getLang(), this.getValue());
 			myDO.setMsort(msort);
-            this.myDO.commit();
+            this.myDO.save();
         } catch(Exception ex) {
             throw new PapillonBusinessException("Error saving index", ex);
         }
     }
-    
+
+        /**
+        * Saves the index to the database.
+     *
+     * @exception PapillonBusinessException if an error occurs
+     *   deleting data (usually due to an underlying data layer
+                        *   error).
+     */
+    public void saveWithoutMSort()
+        throws PapillonBusinessException {
+        try {
+			myDO.setMsort("");
+            this.myDO.save();
+        } catch(Exception ex) {
+            throw new PapillonBusinessException("Error saving index", ex);
+        }
+    }
+
     /**
      * Deletes the volume entry from the database.
      *
