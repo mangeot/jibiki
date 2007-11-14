@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.58.2.3  2007/11/14 15:43:40  serasset
+ * Suppressed some debugging traces.
+ *
  * Revision 1.58.2.2  2007/10/02 10:31:21  serasset
  * Modified export of volume to speed up this task.
  *
@@ -1141,7 +1144,7 @@ public class VolumeEntriesFactory {
         throws PapillonBusinessException {
         // FIXME: should use queries as used in findEntryByEntryId(User user, String entryid)
         // FIXME: Moreover, this is duplicate code...
-        PapillonLogger.writeDebugMsg("Looking for " + entryId + "in volume " + myVolume.getName());
+        // PapillonLogger.writeDebugMsg("Looking for " + entryId + "in volume " + myVolume.getName());
 
 
         VolumeEntry resultEntry = (VolumeEntry) CurrentRequestContext.get().get(entryId);
@@ -1256,7 +1259,7 @@ throws PapillonBusinessException {
  */
 public static VolumeEntry findEntryByEntryId(User user, Collection volumes, String entryId)
 throws PapillonBusinessException {
-    PapillonLogger.writeDebugMsg("Looking for " + entryId + " in " + volumes.size() + "volumes for user " + user );
+    // PapillonLogger.writeDebugMsg("Looking for " + entryId + " in " + volumes.size() + "volumes for user " + user );
     //FIXME: an entry id may not be unique externally to a dictionary so the dict must be specified
     VolumeEntry resultEntry = (VolumeEntry) CurrentRequestContext.get().get(entryId);
 
@@ -1301,7 +1304,7 @@ throws PapillonBusinessException {
 
         CurrentRequestContext.get().set(entryId, resultEntry);            
     } else {
-        PapillonLogger.writeDebugMsg("Found it in request context.");
+        // PapillonLogger.writeDebugMsg("Found it in request context.");
     }
     
     //FIXME: exception when Qrest < 1 or > 1
