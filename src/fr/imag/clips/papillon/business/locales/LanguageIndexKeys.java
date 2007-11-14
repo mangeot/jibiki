@@ -48,9 +48,9 @@ public class LanguageIndexKeys {
             keys = new String[] {
                 "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"
             };
-        } else if ("slo".equals(isoLang) ) {
+        } else if ("slv".equals(isoLang) ) {
             keys = new String[] {
-                "A", "B", "C", "?", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "R", "S", "?", "T", "U", "V", "Z", "?"
+                "A", "B", "C", "Č", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "R", "S", "Š", "T", "U", "V", "Z", "Ž"
             };
         } else {
             keys = new String[] {
