@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.58.2.5  2007/11/15 14:35:08  serasset
+ * BUG163: Deleted entries were sometimes wrongly returned by findEntryByEntryId.
+ *
  * Revision 1.58.2.4  2007/11/15 13:07:49  serasset
  * Re-implemented reindexing feature to allow later optimization
  * Updated database layer version to 2: add new views for headword listing, add indexes and analyze idx tables
@@ -1181,7 +1184,16 @@ public class VolumeEntriesFactory {
 
             if (answersVector.size() > 0) {
                 if (answersVector.size() == 1) {
-                    resultEntry = (VolumeEntry) answersVector.firstElement();
+                    // Do not return this entry if it is deleted.
+                    VolumeEntry tempEntry = (VolumeEntry) answersVector.firstElement();
+                    String status = tempEntry.getStatus();
+                    if (    status.equals(VolumeEntry.VALIDATED_STATUS) ||
+                            status.equals(VolumeEntry.REVIEWED_STATUS) ||
+                            status.equals(VolumeEntry.FINISHED_STATUS) ||
+                            status.equals(VolumeEntry.MODIFIED_STATUS) ||
+                            status.equals(VolumeEntry.NOT_FINISHED_STATUS)) {
+                        resultEntry = tempEntry;
+                    }
                 } else if (answersVector.size() > 1) {
                     VolumeEntry tempEntry = null;
                     VolumeEntry reviewedEntry = null;
@@ -1192,18 +1204,13 @@ public class VolumeEntriesFactory {
                         tempEntry = (VolumeEntry) enumEntries.nextElement();
                         if (tempEntry.getStatus().equals(VolumeEntry.VALIDATED_STATUS)) {
                             resultEntry = tempEntry;
-                        }
-                        if (tempEntry.getStatus().equals(VolumeEntry.REVIEWED_STATUS)) {
+                        } else if (tempEntry.getStatus().equals(VolumeEntry.REVIEWED_STATUS)) {
                             reviewedEntry = tempEntry;
-                        }
-                        if (tempEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS)) {
+                        } else if (tempEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS)) {
                             finishedEntry = tempEntry;
-                        }
-                        // add by Francis to use correctly expandResult !
-                        if (tempEntry.getStatus().equals(VolumeEntry.MODIFIED_STATUS)) {
+                        } else if (tempEntry.getStatus().equals(VolumeEntry.MODIFIED_STATUS)) { // add by Francis to use correctly expandResult !
                             modifiedEntry = tempEntry;
-                        }
-                        if (tempEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS)) {
+                        } else if (tempEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS)) {
                             notFinishedEntry = tempEntry;
                         }
                     }
