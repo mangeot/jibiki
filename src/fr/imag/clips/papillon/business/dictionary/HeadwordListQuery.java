@@ -2,6 +2,7 @@ package fr.imag.clips.papillon.business.dictionary;
 
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.PapillonLogger;
+import fr.imag.clips.papillon.business.utility.StringNormalizer;
 
 import java.util.*;
 import java.sql.SQLException;
@@ -29,12 +30,11 @@ public class HeadwordListQuery {
             myDBConnection = Enhydra.getDatabaseManager().allocateConnection();
 
             Collection volumes = VolumesFactory.getVolumesArray(null, sourceLanguage, null);
-
+            
             for (Iterator iter = volumes.iterator(); iter.hasNext();) {
                 Volume volume = (Volume)iter.next();
-                String sqlQuery = "SELECT DISTINCT value FROM " + volume.getIndexDbname() +
-                        " WHERE key='" + Volume.CDM_headword +
-                        "' AND value ilike '"+ prefix + "%' " +
+                String sqlQuery = "SELECT value FROM " + volume.getHeadwordViewName() +
+                        " WHERE value ilike '"+ escapeForSql(prefix) + "%' " +
                         "LIMIT "+ limit + ";";
 
                 // System.out.println(sqlQuery);
@@ -68,6 +68,10 @@ public class HeadwordListQuery {
         return myTreeSet;
     }
 
+    public static String escapeForSql(String str) {
+        return str == null ? null : StringNormalizer.normalize(str).replaceAll("'", "''");
+    }
+    
        public static Collection getHeadwordListForLanguageIgnoringAccents(String sourceLanguage, String prefix, int limit) throws SQLException {
 
         // FIXME: This gives all headword, even the one that have been deleted...

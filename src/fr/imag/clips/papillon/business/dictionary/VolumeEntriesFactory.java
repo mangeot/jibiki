@@ -3,6 +3,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.58.2.4  2007/11/15 13:07:49  serasset
+ * Re-implemented reindexing feature to allow later optimization
+ * Updated database layer version to 2: add new views for headword listing, add indexes and analyze idx tables
+ * BUG165: Autocomplete now uses headword list view and does not return obsolete headwords
+ *
  * Revision 1.58.2.3  2007/11/14 15:43:40  serasset
  * Suppressed some debugging traces.
  *
@@ -352,10 +357,7 @@ import fr.imag.clips.papillon.business.xml.XMLServices;
 import fr.imag.clips.papillon.data.*;
 import fr.imag.clips.papillon.papillon_data.ManageDatabase;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Vector;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -1388,7 +1390,7 @@ public static void createVolumeTables(Volume volume)
 throws fr.imag.clips.papillon.business.PapillonBusinessException {
 	/* Added a sorted index on headword field necessary for order by statements */
 	try {
-		java.util.Vector TableNames = ManageDatabase.getTableNames();
+		List TableNames = ManageDatabase.getTableNames();
 		if (!TableNames.contains(volume.getDbname())) {
 			ManageDatabase.createVolumeTable(volume.getDbname());
 			ManageDatabase.createSortIndexForVolumeTable(volume.getDbname(), volume.getSourceLanguage());
@@ -1408,7 +1410,7 @@ throws fr.imag.clips.papillon.business.PapillonBusinessException {
 public static void dropVolumeTables(Volume volume)
 throws fr.imag.clips.papillon.business.PapillonBusinessException {
 	try {
-		java.util.Vector TableNames = ManageDatabase.getTableNames();
+		List TableNames = ManageDatabase.getTableNames();
 		if (TableNames.contains(volume.getDbname())) {
 			ManageDatabase.dropTable(volume.getDbname());
 		}

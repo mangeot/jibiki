@@ -4,6 +4,11 @@
  * $Id$
  *-----------------------------------------------------------------------------
  * $Log$
+ * Revision 1.3.2.1  2007/11/15 13:07:49  serasset
+ * Re-implemented reindexing feature to allow later optimization
+ * Updated database layer version to 2: add new views for headword listing, add indexes and analyze idx tables
+ * BUG165: Autocomplete now uses headword list view and does not return obsolete headwords
+ *
  * Revision 1.3  2007/04/05 13:56:23  serasset
  * Corrected UserLanguage (slo -> slv)
  *
@@ -138,13 +143,60 @@ public class DataLayerVersion {
                     if (ManageDatabase.getColumnNames(vol.getDbname()).contains("dom")) {
                         ManageDatabase.executeSql(
                                 "alter TABLE " + vol.getDbname() + " drop COLUMN dom ;\n");
-                        PapillonLogger.writeDebugMsg("'dom' column dropped in table " + vol.getDbname());                        
+                        PapillonLogger.writeDebugMsg("'dom' column dropped in table " + vol.getDbname());
                     }
                 }
             }
 
+            if (currentDBVersion <= 1) {
+                Collection vols = VolumesFactory.getVolumes();
+                Iterator volsIter = vols.iterator();
+                // Create headword view for all volumes, except axi.
+                while (volsIter.hasNext()) {
+                    Volume vol = (Volume) volsIter.next();
+                    if (!vol.getSourceLanguage().equals("axi")) {
+                        if (!ManageDatabase.getViewNames().contains(vol.getHeadwordViewName())) {
+                            // CREATE VIEW hw_lexalpfra
+                            // AS SELECT DISTINCT i.value FROM idxlexalpfra AS i
+                            //     INNER JOIN idxlexalpfra AS status ON status.entryid=i.entryid
+                            //   WHERE status.key='cdm-contribution-status' AND (status.value='finished' OR status.value='modified') AND i.key='cdm-headword';
+
+                            ManageDatabase.executeSql(
+                                    "CREATE VIEW " + vol.getHeadwordViewName() +
+                                            " AS SELECT DISTINCT i.value FROM " + vol.getIndexDbname() + " AS i " +
+                                            " INNER JOIN " + vol.getIndexDbname() + " AS status ON status.entryid=i.entryid " +
+                                            " WHERE status.key='cdm-contribution-status' AND (status.value='finished' OR status.value='modified') AND i.key='cdm-headword';\n");
+                            PapillonLogger.writeDebugMsg("Created headword view for volume " + vol.getName());
+
+                        }
+                    }
+                }
+                volsIter = vols.iterator();
+                // Create indexes on value and msort.
+                while (volsIter.hasNext()) {
+                    Volume vol = (Volume) volsIter.next();
+                    String idxval = vol.getIndexDbname() + "_value_idx";
+                    String idxmsort = vol.getIndexDbname() + "_msort_idx";
+                    if (!ManageDatabase.getIndexes(vol.getIndexDbname()).contains(idxval)) {
+                        ManageDatabase.executeSql(
+                                "CREATE INDEX " + idxval + " ON " + vol.getIndexDbname() + " (value);\n");
+                        PapillonLogger.writeDebugMsg("Created index on value for volume " + vol.getName());
+
+                    }
+                    if (!ManageDatabase.getIndexes(vol.getIndexDbname()).contains(idxmsort)) {
+                        ManageDatabase.executeSql(
+                                "CREATE INDEX " + idxmsort + " ON " + vol.getIndexDbname() + " (msort);\n");
+                        PapillonLogger.writeDebugMsg("Created index on msort for volume " + vol.getName());
+
+                    }
+                    ManageDatabase.executeSql(
+                                "ANALYZE " + vol.getIndexDbname() + ";\n");
+                    PapillonLogger.writeDebugMsg("Analyzing index for volume " + vol.getName());
+                }
+            }
+
             setDBVersion(currentApplicationVersion);
-            PapillonLogger.writeDebugMsg("jibikiversion value incremented.");            
+            PapillonLogger.writeDebugMsg("jibikiversion value incremented.");
         }
     }
 }

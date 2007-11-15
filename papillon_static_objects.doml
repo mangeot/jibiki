@@ -7,6 +7,11 @@
  * $Id$
  *************************************************
  * $Log$
+ * Revision 1.10.2.2  2007/11/15 13:07:49  serasset
+ * Re-implemented reindexing feature to allow later optimization
+ * Updated database layer version to 2: add new views for headword listing, add indexes and analyze idx tables
+ * BUG165: Autocomplete now uses headword list view and does not return obsolete headwords
+ *
  * Revision 1.10.2.1  2007/10/29 15:11:03  serasset
  * NEW: lexalp css now defines different forms for HARMONISED/REJECTED entries
  * NEW: added new db url/user/password configuration keys in papillon.properties file
@@ -134,7 +139,7 @@
           <indexColumn id="msgid"/>
         </index>
         </table>
-        <table dbTableName="xslsheets" id="fr.imag.clips.papillon.data.XslSheet">
+        <table dbTableName="xslsheets" id="fr.imag.clips.papillon.data.XslSheet"> <!--massUpdates="true"-->
           <column id="name" usedForQuery="true">
             <type dbType="VARCHAR" javaType="String" size="255"/>
           </column>
