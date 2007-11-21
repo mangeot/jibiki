@@ -4,6 +4,12 @@
  * $Id$
  *-----------------------------------------------------------------------------
  * $Log$
+ * Revision 1.3.2.2  2007/11/21 18:25:46  serasset
+ * Created new code to reinex the volumes. This will allow for further speed improvements.
+ * New DB layer version that creates a view containing current available headwords.
+ * New DB layer also introduce new indexes in the db to drastically accelerate headword queries.
+ * New page to browse the entries of a dictionary (an index) that uses this new layer.
+ *
  * Revision 1.3.2.1  2007/11/15 13:07:49  serasset
  * Re-implemented reindexing feature to allow later optimization
  * Updated database layer version to 2: add new views for headword listing, add indexes and analyze idx tables
@@ -163,7 +169,7 @@ public class DataLayerVersion {
 
                             ManageDatabase.executeSql(
                                     "CREATE VIEW " + vol.getHeadwordViewName() +
-                                            " AS SELECT DISTINCT i.value FROM " + vol.getIndexDbname() + " AS i " +
+                                            " AS SELECT DISTINCT i.value, i.msort FROM " + vol.getIndexDbname() + " AS i " +
                                             " INNER JOIN " + vol.getIndexDbname() + " AS status ON status.entryid=i.entryid " +
                                             " WHERE status.key='cdm-contribution-status' AND (status.value='finished' OR status.value='modified') AND i.key='cdm-headword';\n");
                             PapillonLogger.writeDebugMsg("Created headword view for volume " + vol.getName());
