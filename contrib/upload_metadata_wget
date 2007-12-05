@@ -1,5 +1,6 @@
 WGET="wget --save-cookies=cookies.txt --load-cookies=cookies.txt --keep-session-cookies"
-SERVER=217.199.4.188
+SERVER=lexalp.eurac.edu
+#SERVER=217.199.4.152
 #SERVER=tokyo.imag.fr
 #SERVER=localhost
 #BASEURL=http://${SERVER}:8999/

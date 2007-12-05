@@ -208,6 +208,11 @@ public class DictionaryIndexBrowser extends PapillonBasePO {
                     currentCell.appendChild(indexForKey);
                 }
             }
+            Node indexForKey = getIndexDataForLanguage(content, language, "*", params.sampleSize);
+            if (null != indexForKey) {
+                hasAnIndex = true;
+                currentCell.appendChild(indexForKey);
+            }
         } else {
             Node indexForKey = getIndexDataForLanguage(content, language, params.key, params.sampleSize);
             if (null != indexForKey) {
