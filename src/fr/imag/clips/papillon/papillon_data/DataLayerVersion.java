@@ -4,6 +4,9 @@
  * $Id$
  *-----------------------------------------------------------------------------
  * $Log$
+ * Revision 1.3.2.3  2008/01/09 19:29:59  serasset
+ * Updated layer version transition to allow the creation of correctly structured new dictionaries databases.
+ *
  * Revision 1.3.2.2  2007/11/21 18:25:46  serasset
  * Created new code to reinex the volumes. This will allow for further speed improvements.
  * New DB layer version that creates a view containing current available headwords.
@@ -154,55 +157,53 @@ public class DataLayerVersion {
                 }
             }
 
-            if (currentDBVersion <= 1) {
-                Collection vols = VolumesFactory.getVolumes();
-                Iterator volsIter = vols.iterator();
-                // Create headword view for all volumes, except axi.
-                while (volsIter.hasNext()) {
-                    Volume vol = (Volume) volsIter.next();
-                    if (!vol.getSourceLanguage().equals("axi")) {
-                        if (!ManageDatabase.getViewNames().contains(vol.getHeadwordViewName())) {
-                            // CREATE VIEW hw_lexalpfra
-                            // AS SELECT DISTINCT i.value FROM idxlexalpfra AS i
-                            //     INNER JOIN idxlexalpfra AS status ON status.entryid=i.entryid
-                            //   WHERE status.key='cdm-contribution-status' AND (status.value='finished' OR status.value='modified') AND i.key='cdm-headword';
-
-                            ManageDatabase.executeSql(
-                                    "CREATE VIEW " + vol.getHeadwordViewName() +
-                                            " AS SELECT DISTINCT i.value, i.msort FROM " + vol.getIndexDbname() + " AS i " +
-                                            " INNER JOIN " + vol.getIndexDbname() + " AS status ON status.entryid=i.entryid " +
-                                            " WHERE status.key='cdm-contribution-status' AND (status.value='finished' OR status.value='modified') AND i.key='cdm-headword';\n");
-                            PapillonLogger.writeDebugMsg("Created headword view for volume " + vol.getName());
-
-                        }
-                    }
-                }
-                volsIter = vols.iterator();
-                // Create indexes on value and msort.
-                while (volsIter.hasNext()) {
-                    Volume vol = (Volume) volsIter.next();
-                    String idxval = vol.getIndexDbname() + "_value_idx";
-                    String idxmsort = vol.getIndexDbname() + "_msort_idx";
-                    if (!ManageDatabase.getIndexes(vol.getIndexDbname()).contains(idxval)) {
-                        ManageDatabase.executeSql(
-                                "CREATE INDEX " + idxval + " ON " + vol.getIndexDbname() + " (value);\n");
-                        PapillonLogger.writeDebugMsg("Created index on value for volume " + vol.getName());
-
-                    }
-                    if (!ManageDatabase.getIndexes(vol.getIndexDbname()).contains(idxmsort)) {
-                        ManageDatabase.executeSql(
-                                "CREATE INDEX " + idxmsort + " ON " + vol.getIndexDbname() + " (msort);\n");
-                        PapillonLogger.writeDebugMsg("Created index on msort for volume " + vol.getName());
-
-                    }
-                    ManageDatabase.executeSql(
-                                "ANALYZE " + vol.getIndexDbname() + ";\n");
-                    PapillonLogger.writeDebugMsg("Analyzing index for volume " + vol.getName());
-                }
-            }
+            if (currentDBVersion <= 1) addHeadwordViewsAndIndex();
 
             setDBVersion(currentApplicationVersion);
             PapillonLogger.writeDebugMsg("jibikiversion value incremented.");
+        }
+    }
+
+    public static void addHeadwordViewsAndIndex() throws PapillonBusinessException {
+        Collection vols = VolumesFactory.getVolumes();
+        Iterator volsIter = vols.iterator();
+        // Create headword view for all volumes, except axi.
+        while (volsIter.hasNext()) {
+            Volume vol = (Volume) volsIter.next();
+            if (!vol.getSourceLanguage().equals("axi")) {
+                if (!ManageDatabase.getViewNames().contains(vol.getHeadwordViewName())) {
+                    // CREATE VIEW hw_lexalpfra
+                    // AS SELECT DISTINCT i.value FROM idxlexalpfra AS i
+                    //     INNER JOIN idxlexalpfra AS status ON status.entryid=i.entryid
+                    //   WHERE status.key='cdm-contribution-status' AND (status.value='finished' OR status.value='modified') AND i.key='cdm-headword';
+
+                    ManageDatabase.createHeadwordView(vol.getHeadwordViewName(), vol.getIndexDbname());
+                    PapillonLogger.writeDebugMsg("Created headword view for volume " + vol.getName());
+
+                }
+            }
+        }
+        volsIter = vols.iterator();
+        // Create indexes on value and msort.
+        while (volsIter.hasNext()) {
+            Volume vol = (Volume) volsIter.next();
+            String idxval = vol.getIndexDbname() + "_value_idx";
+            String idxmsort = vol.getIndexDbname() + "_msort_idx";
+            if (!ManageDatabase.getIndexes(vol.getIndexDbname()).contains(idxval)) {
+                ManageDatabase.executeSql(
+                        "CREATE INDEX " + idxval + " ON " + vol.getIndexDbname() + " (value);\n");
+                PapillonLogger.writeDebugMsg("Created index on value for volume " + vol.getName());
+
+            }
+            if (!ManageDatabase.getIndexes(vol.getIndexDbname()).contains(idxmsort)) {
+                ManageDatabase.executeSql(
+                        "CREATE INDEX " + idxmsort + " ON " + vol.getIndexDbname() + " (msort);\n");
+                PapillonLogger.writeDebugMsg("Created index on msort for volume " + vol.getName());
+
+            }
+            ManageDatabase.executeSql(
+                    "ANALYZE " + vol.getIndexDbname() + ";\n");
+            PapillonLogger.writeDebugMsg("Analyzing index for volume " + vol.getName());
         }
     }
 }

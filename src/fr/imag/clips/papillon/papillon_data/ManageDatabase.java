@@ -2,6 +2,9 @@
  * $Id$
  *-----------------------------------------------------------------------------
  * $Log$
+ * Revision 1.12.2.2  2008/01/09 19:29:59  serasset
+ * Updated layer version transition to allow the creation of correctly structured new dictionaries databases.
+ *
  * Revision 1.12.2.1  2007/11/15 13:07:49  serasset
  * Re-implemented reindexing feature to allow later optimization
  * Updated database layer version to 2: add new views for headword listing, add indexes and analyze idx tables
@@ -55,6 +58,7 @@ public class ManageDatabase implements Query {
     protected static final String truncateTableSql = "TRUNCATE TABLE ";
     protected static final String dropTableSql = "DROP TABLE ";
     protected static final String dropIndexSql = "DROP INDEX ";
+    protected static final String dropViewSql = "DROP VIEW ";
 
     protected static final String DatabaseUserString = "DatabaseManager.DB.papillon.Connection.User";
 
@@ -62,7 +66,8 @@ public class ManageDatabase implements Query {
 
     protected String currentSQL = "";
     protected DBTransaction transaction;
-
+    protected boolean isQuery;
+    protected ResultSet resultSet = null;
 
     /**
      * @param trans
@@ -71,6 +76,13 @@ public class ManageDatabase implements Query {
     public ManageDatabase(DBTransaction trans, String sql) {
         this.transaction = trans;
         this.currentSQL = sql;
+        this.isQuery = false;
+    }
+
+    public ManageDatabase(DBTransaction trans, String sql, boolean isQuery) {
+        this.transaction = trans;
+        this.currentSQL = sql;
+        this.isQuery = isQuery;
     }
 
     /**
@@ -199,7 +211,11 @@ public class ManageDatabase implements Query {
     public static void dropTable(String table) throws PapillonBusinessException {
         executeSql(dropTableSql + table);
         //fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Table: " + table + " dropped");
+    }
 
+    public static void dropView(String view) throws PapillonBusinessException {
+        executeSql(dropViewSql + view);
+        //fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("View: " + view + " dropped");
     }
 
     public static String multilingual_sort(String lang, String value) throws PapillonBusinessException {
@@ -265,8 +281,13 @@ public class ManageDatabase implements Query {
 
 
     public ResultSet executeQuery(DBConnection conn) throws SQLException {
-        conn.execute(currentSQL);
-        return null;
+        if (!isQuery) {
+            conn.execute(currentSQL);
+            return null;
+        } else {
+            resultSet = conn.executeQuery(currentSQL);
+            return null;
+        }
     }
 
     public static List getViewNames() throws PapillonBusinessException {
@@ -296,45 +317,48 @@ public class ManageDatabase implements Query {
     }
 
     public static List selectFromWhere(String col, String tbl, String whereCol, String whereValue) throws PapillonBusinessException {
-        //String sql = "SELECT viewname FROM pg_views where viewowner='lexalp'";
+        DBTransaction transaction = CurrentDBTransaction.get();
+        String sql = "SELECT " + col + " FROM " + tbl + " WHERE " + whereCol + "='" + whereValue + "';";
+        ManageDatabase req = new ManageDatabase(transaction, sql, true);
         List result = new ArrayList();
-        DBConnection myDbConnection = null;
-        try {
-            myDbConnection = Enhydra.getDatabaseManager().allocateConnection();
 
-            com.lutris.dods.builder.generator.query.QueryBuilder myQueryBuilder = new com.lutris.dods.builder.generator.query.QueryBuilder(tbl);
-            com.lutris.dods.builder.generator.query.RDBTable rdbTable = new com.lutris.dods.builder.generator.query.RDBTable(tbl);
-            com.lutris.dods.builder.generator.query.RDBColumn whereColumn = new com.lutris.dods.builder.generator.query.RDBColumn(rdbTable, whereCol);
-            myQueryBuilder.addWhere(whereColumn, whereValue);
-            java.sql.ResultSet myResultSet = myQueryBuilder.executeQuery(myDbConnection);
-            while (myResultSet.next()) {
-                result.add(myResultSet.getString(col));
+        //Flush the current transaction (?)
+        // Is this really usefull ?
+        if ((transaction != null) &&
+                (transaction instanceof com.lutris.appserver.server.sql.CachedDBTransaction)) {
+
+            if (((com.lutris.appserver.server.sql.CachedDBTransaction) transaction).getAutoWrite()) try {
+                transaction.write();
+            } catch (SQLException sqle) {
+                sqle.printStackTrace();
+                throw new PapillonBusinessException("Couldn't write transaction: " + sqle);
             }
-        } catch (SQLException se) {
-            //very important to throw out bad connections
-            PapillonLogger.writeErrorMsg("SQL exception: ");
-            // System.out.println("SQL exception: ");
-            se.printStackTrace();
-            if (myDbConnection != null && myDbConnection.handleException(se)) myDbConnection = null;
-        } catch (Exception e) {
-            String err = "ERROR DatabaseConnexion: Exception while querying the table/view names";
-            PapillonLogger.writeErrorMsg(err);
-            // System.out.println(err);
-            e.printStackTrace();
-            //throw new PapillonBusinessException( err, e );
+        }
+
+        // Create the DB Query Object
+        DBQuery dbQuery = null;
+
+        try {
+            if (transaction == null) {
+                dbQuery = DODS.getDatabaseManager().createQuery();
+            } else {
+                dbQuery = transaction.createQuery();
+            }
+
+            dbQuery.query(req);      // invokes executeQuery
+
+            while (req.resultSet.next()) {
+                result.add(req.resultSet.getString(col));
+            }
+        } catch (DatabaseManagerException e) {
+            String err = "ERROR SpecialDatabaseRequest: Could not create a DBQuery.  ";
+            throw new PapillonBusinessException(err, e);
+        } catch (SQLException e) {
+            String err = "ERROR SpecialDatabaseRequest: Exception while running the query: " + sql;
+            throw new PapillonBusinessException(err, e);
         } finally {
-            if (myDbConnection != null) {
-                try {
-                    myDbConnection.reset();
-                    myDbConnection.release();
-                }
-                catch (SQLException e) {
-                    String err = "ERROR DatabaseConnexion2: Exception while releasing transaction after querying the table/view names";
-                    PapillonLogger.writeErrorMsg(err);
-                    // System.out.println(err);
-                    e.printStackTrace();
-//						throw new PapillonBusinessException( err, e );
-                }
+            if (null != dbQuery) {
+                dbQuery.release();
             }
         }
         return result;
@@ -491,4 +515,13 @@ throws PapillonBusinessException {
 //                }
 //            }
 //        }
+
+    public static void createHeadwordView(String headwordViewName, String onIndexDbName) throws PapillonBusinessException {
+        String sql = "CREATE VIEW " + headwordViewName +
+                " AS SELECT DISTINCT i.value, i.msort FROM " + onIndexDbName + " AS i " +
+                " INNER JOIN " + onIndexDbName + " AS status ON status.entryid=i.entryid " +
+                " WHERE status.key='cdm-contribution-status' AND (status.value='finished' OR status.value='modified') " +
+                " AND i.key='cdm-headword';";
+        ManageDatabase.executeSql(sql);
+    }
 }
