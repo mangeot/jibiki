@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.34.2.2  2008/01/09 19:09:50  serasset
+ * Recomputes and store Serialized Hash Table in case of JVM update and serialization incompatibility
+ *
  * Revision 1.34.2.1  2007/11/15 13:07:49  serasset
  * Re-implemented reindexing feature to allow later optimization
  * Updated database layer version to 2: add new views for headword listing, add indexes and analyze idx tables
@@ -443,21 +446,33 @@ public class Volume {
     }
 
     /**
-     *
      * @param theVolumeDO data object of the new Volume
      * @throws PapillonBusinessException if there is a data object exception
      */
     protected Volume(VolumeDO theVolumeDO)
             throws PapillonBusinessException {
-        try {
-            if (theVolumeDO != null) {
+
+        this.myDO = theVolumeDO;
+        if (theVolumeDO != null) {
+            try {
                 this.CDM_elements = Utility.deSerializeHashtable(theVolumeDO.getCdmElements());
+            } catch (Exception e) {
+                Document docXml = XMLServices.buildDOMTree(this.getXmlCode());
+
+                //on recupere le dictionnaire
+                Element volume;
+                volume = (Element) docXml.getElementsByTagName(VolumesFactory.VOLUME_TAG).item(0);
+                // Try to recompute the cdm elements
+                NodeList cdmElts = volume.getElementsByTagName(VolumesFactory.CDM_ELEMENTS_TAG);
+                if (null != cdmElts && cdmElts.getLength() > 0) {
+                    Element cdmElt = (Element) cdmElts.item(0);
+                    this.CDM_elements = VolumesFactory.buildCdmElementsTable(cdmElt, this.getSourceLanguage());
+                } else {
+                    PapillonLogger.writeDebugMsg("No cdm-elements tag");
+                }
             }
-            this.myDO = theVolumeDO;
         }
-        catch (DataObjectException ex) {
-            throw new PapillonBusinessException("Error creating volume ", ex);
-        }
+
     }
 
     public boolean isEmpty() {
@@ -1275,7 +1290,7 @@ public class Volume {
             this.myDO.delete();
         } catch (Exception ex) {
             throw new PapillonBusinessException("Error deleting Volume", ex);
-			}
-		}
+        }
+    }
 
 }
