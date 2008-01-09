@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.52.2.4  2008/01/09 19:13:07  serasset
+ * contrib metadata gives a default status
+ *
  * Revision 1.52.2.3  2007/09/06 14:54:11  serasset
  * in lexalp view, non matching entries are now gathered by legal systems and
  * query language now appears first.
@@ -379,7 +382,7 @@ public class VolumeEntry
             "<" + reviewerTag + "/>" +
             "<" + validationDateTag + "/>" +
             "<" + validatorTag + "/>" +
-            "<" + statusTag + "/>" +
+            "<" + statusTag + ">finished</" + statusTag + ">" +
             "<" + historyTag + ">" +
             "<" + modificationTag + ">" +
             "<" + authorTag + "/>" +
