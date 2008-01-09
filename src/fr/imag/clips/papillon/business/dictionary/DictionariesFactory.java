@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.34.2.2  2008/01/09 19:05:23  serasset
+ * Update dictionary cache when uploading new metadata
+ *
  * Revision 1.34.2.1  2007/07/23 14:23:50  serasset
  * Commiting most changes done for the XALAN27_NEWDISPLAY on the branch
  *  - Added XSL extensions callable during xsl transformations
@@ -228,6 +231,7 @@
 package fr.imag.clips.papillon.business.dictionary;
 
 import fr.imag.clips.papillon.CurrentDBTransaction;
+import fr.imag.clips.papillon.papillon_data.DataLayerVersion;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.user.User;
@@ -461,8 +465,8 @@ public class DictionariesFactory {
                         if (null != stylesheet) {
                             String ref = stylesheet.getAttributeNS(XLINK_URI,HREF_ATTRIBUTE);
                             String name = stylesheet.getAttribute(NAME_ATTRIBUTE);
-							if (name == null || name.equals("")) {
-								name = myDict.getName() + "." + myDict.getHandle();
+							if (name == null) {
+								name = "";
 							}
                             String isDefault = stylesheet.getAttribute(DEFAULT_ATTRIBUTE);
                             boolean isDefaultXsl = (null != isDefault && isDefault.equals("true"));
@@ -483,6 +487,7 @@ public class DictionariesFactory {
                                 VolumesFactory.parseVolumeMetadata(myDict, resultURL, loadEntries, logContribs);
                             }
                         }
+                        DataLayerVersion.addHeadwordViewsAndIndex();                    
                     }
                 }
 				
