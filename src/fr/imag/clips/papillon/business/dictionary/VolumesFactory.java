@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.53.2.3  2008/01/09 19:14:57  serasset
+ * Views are now created and deleted when a new dictionary is created/deleted
+ *
  * Revision 1.53.2.2  2007/11/15 13:07:49  serasset
  * Re-implemented reindexing feature to allow later optimization
  * Updated database layer version to 2: add new views for headword listing, add indexes and analyze idx tables
@@ -241,8 +244,8 @@ public class VolumesFactory {
     protected final static String DML_URI = DmlPrefixResolver.DML_URI;
     protected final static String XLINK_URI = DmlPrefixResolver.XLINK_URI;
 
-    protected final static String VOLUME_TAG = "volume-metadata";
-    protected final static String CDM_ELEMENTS_TAG = "cdm-elements";
+    public final static String VOLUME_TAG = "volume-metadata";
+    public final static String CDM_ELEMENTS_TAG = "cdm-elements";
     protected final static String XSLSHEET_TAG = "xsl-stylesheet";
     protected final static String XMLSCHEMA_TAG = "xmlschema-ref";
     protected final static String TEMPLATE_INTERFACE_TAG = "template-interface-ref";
@@ -539,8 +542,8 @@ public class VolumesFactory {
                     if (null != stylesheet) {
                         String ref = stylesheet.getAttributeNS(XLINK_URI, HREF_ATTRIBUTE);
                         String name = stylesheet.getAttribute(NAME_ATTRIBUTE);
-                        if (name == null || name.equals("")) {
-                            name = resVolume.getName() + "." + resVolume.getHandle();
+                        if (name == null) {
+                            name = "";
                         }
 
                         //

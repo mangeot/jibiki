@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.58.2.6  2008/01/09 19:14:57  serasset
+ * Views are now created and deleted when a new dictionary is created/deleted
+ *
  * Revision 1.58.2.5  2007/11/15 14:35:08  serasset
  * BUG163: Deleted entries were sometimes wrongly returned by findEntryByEntryId.
  *
@@ -1405,7 +1408,11 @@ throws fr.imag.clips.papillon.business.PapillonBusinessException {
 		if (!TableNames.contains(volume.getIndexDbname())) {
 			IndexFactory.createIndexTable(volume);
 		}
-	}
+        List viewNames = ManageDatabase.getViewNames();
+        if (!viewNames.contains(volume.getHeadwordViewName())) {
+			ManageDatabase.createHeadwordView(volume.getHeadwordViewName(), volume.getIndexDbname());
+		}
+    }
 	catch (Exception e) {
 		throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in createVolumeTables with volume: " + volume.getName(), e);
 		//PapillonLogger.writeDebugMsg("createVolumeTables with volume: " + volume.getName() + ", probably the tables already exist.");
@@ -1417,11 +1424,15 @@ throws fr.imag.clips.papillon.business.PapillonBusinessException {
 public static void dropVolumeTables(Volume volume)
 throws fr.imag.clips.papillon.business.PapillonBusinessException {
 	try {
-		List TableNames = ManageDatabase.getTableNames();
-		if (TableNames.contains(volume.getDbname())) {
+        List viewNames = ManageDatabase.getViewNames();
+        if (viewNames.contains(volume.getHeadwordViewName())) {
+			ManageDatabase.dropView(volume.getHeadwordViewName());
+		}
+        List tableNames = ManageDatabase.getTableNames();
+		if (tableNames.contains(volume.getDbname())) {
 			ManageDatabase.dropTable(volume.getDbname());
 		}
-		if (TableNames.contains(volume.getIndexDbname())) {
+		if (tableNames.contains(volume.getIndexDbname())) {
 			IndexFactory.dropIndexTable(volume.getIndexDbname());
 		}
 	}
