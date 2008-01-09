@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.43.2.4  2008/01/09 19:07:44  serasset
+ * Better cdm entry detection when parsing volume
+ *
  * Revision 1.43.2.3  2007/11/14 15:41:20  serasset
  * Modified parseEntry to seperate index data extraction from index save.
  * This will allow for a more optimized version of reindexation.
@@ -273,9 +276,10 @@ public class ParseVolume {
                     res = str;
                     break;
                 }
-                if ((str.indexOf("<" + CDM_entry + " ") >= 0) || (str.indexOf(
-                        "<" + CDM_entry + "\t") >= 0) || (str.indexOf("<" + CDM_entry + "\n") >= 0) || (str.indexOf(
-                        "<" + CDM_entry + ">") >= 0)) {
+                if (    (str.indexOf("<" + CDM_entry + " ") >= 0) ||
+                        (str.indexOf("<" + CDM_entry + "\t") >= 0) ||
+                        (str.indexOf("<" + CDM_entry + "\n") >= 0) ||
+                        (str.indexOf("<" + CDM_entry + ">") >= 0)) {
                     break;
                 }
             }
@@ -375,7 +379,11 @@ public class ParseVolume {
             StringBuffer entryBuffer = new StringBuffer();
             entryBuffer.append(xmlHeaderBuffer);
             while (buffer.ready() && bufferLine.indexOf("</" + CDM_Volume + ">") < 0) {
-                int entryIndex = bufferLine.indexOf("<" + CDM_Entry);
+                int entryIndex = bufferLine.indexOf("<" + CDM_Entry + " ");
+                entryIndex = (entryIndex<0) ? bufferLine.indexOf("<" + CDM_Entry + "\t") : entryIndex;
+                entryIndex = (entryIndex<0) ? bufferLine.indexOf("<" + CDM_Entry + "\n") : entryIndex;
+                entryIndex = (entryIndex<0) ? bufferLine.indexOf("<" + CDM_Entry + ">") : entryIndex;
+                
                 while (entryIndex >= 0) {
                     if (entryIndex > 0) {
                         entryBuffer.append(bufferLine.substring(0, entryIndex));
@@ -554,9 +562,14 @@ public class ParseVolume {
 
     protected static class IndexData {
         String CdmElement, lang, value, handle;
+
         public IndexData(String cdme, String lang, String value, String handle) {
-            CdmElement = cdme; this.lang = lang; this.value = value; this.handle = handle;
+            CdmElement = cdme;
+            this.lang = lang;
+            this.value = value;
+            this.handle = handle;
         }
+
         public Index toIndex(String volumeidx) throws PapillonBusinessException {
             return IndexFactory.newIndex(volumeidx, CdmElement, lang, value, handle);
 
@@ -578,9 +591,9 @@ public class ParseVolume {
             throws PapillonBusinessException {
         org.w3c.dom.Document entryDoc = myEntry.getDom();
         boolean result = (entryDoc == null);
-        ArrayList indexes =  parseEntry(myEntry.getVolume(), entryDoc, myEntry.getHandle());
+        ArrayList indexes = parseEntry(myEntry.getVolume(), entryDoc, myEntry.getHandle());
         String volumeidx = myEntry.getVolume().getIndexDbname();
-        saveIndexes(indexes,volumeidx);
+        saveIndexes(indexes, volumeidx);
         return result;
     }
 
@@ -653,7 +666,6 @@ public class ParseVolume {
     }
 
     /**
-     *
      * @param myEntry the axie
      * @return true if axie has a valid xmldoc
      * @throws PapillonBusinessException if any exception is received
