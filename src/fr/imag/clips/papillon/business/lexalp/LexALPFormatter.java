@@ -4,6 +4,9 @@
  * $Id$
  *------------------------
  * $Log$
+ * Revision 1.14.2.6  2008/01/15 15:23:50  serasset
+ * BUG169: Entries from the same axie, with the SAME TERM and the SAME LEGAL SYSTEM are not displayed properly.
+ *
  * Revision 1.14.2.5  2007/11/14 16:02:21  serasset
  * Suppressed debug messages.
  *
@@ -216,7 +219,10 @@ public class LexALPFormatter
                 qr.getLexiesHashtable().remove(ve.getEntryId());
                 // Then format the group of related entries...
                 String ls = ParseVolume.getCdmString(ve, "lexalp-legal-system");
-                matchingGroups.put(ls, getMatchingResultGroup(res, qr, ve, usr));
+                if (! matchingGroups.containsKey(ls)) {
+                    // If the legal system has already been handled, this source entry should be disregarded. 
+                    matchingGroups.put(ls, getMatchingResultGroup(res, qr, ve, usr));
+                }
             }
 
             String[] lss = new String[]{"AC", "INT", "EU", "DE", "AT", "FR", "IT", "SL", "CH"};
