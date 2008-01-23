@@ -19,7 +19,8 @@ import java.util.Iterator;
 public class DictionaryIndexBrowser extends PapillonBasePO {
 
     private static final String ENTRY_URL = "Home.po?FACET.0=cdm-headword&OPERATOR.0=2&FACETVALUE.0={0}&SOURCE.0={1}&TARGETS=*ALL*&XSL=Default&NB_RESULT_PER_PAGE=5&OFFSET=&action=lookup";
-    private static final String INDEX_URL = "DictionaryIndexBrowser.po?SAMPLESIZE=0&KEY={0}&LANGUAGE={1}";
+    private static final String KEY_INDEX_URL = "DictionaryIndexBrowser.po?SAMPLESIZE=0&KEY={0}&LANGUAGE={1}";
+    private static final String LANG_INDEX_URL = "DictionaryIndexBrowser.po?LANGUAGE={0}";
 
     protected boolean loggedInUserRequired() {
         return false;
@@ -40,6 +41,7 @@ public class DictionaryIndexBrowser extends PapillonBasePO {
         protected String lang;
         protected String key;
         protected int sampleSize;
+        protected int nbChars; // Number of chars to be displayed for each volumes
     }
 
     public Node getContent()
@@ -63,7 +65,12 @@ public class DictionaryIndexBrowser extends PapillonBasePO {
                 // Do nothing
             }
         }
-
+        params.nbChars = 0;
+        if ((null == params.lang || "".equals(params.lang)) &&
+                ((null == params.vol) || "".equals(params.vol)) &&
+                ((null == params.key) || "".equals(params.key))) {
+            params.nbChars = 5;
+        }
 
         DictionaryIndexXHTML content = (DictionaryIndexXHTML) MultilingualXHtmlTemplateFactory.createTemplate("DictionaryIndexXHTML", this.getComms(), this.getSessionData());
 
@@ -153,7 +160,7 @@ public class DictionaryIndexBrowser extends PapillonBasePO {
     }
 
 
-    private Node getToc(DictionaryIndexXHTML content, LanguageIndexKeys indexKeys) {
+    private Node getToc(DictionaryIndexXHTML content, LanguageIndexKeys indexKeys, int climit) {
         String lang = indexKeys.getMyLanguage();
         XHTMLDivElement keyToc = content.getElementKeyToc();
         XHTMLSpanElement tocSeparator = content.getElementTocSeparator();
@@ -163,15 +170,22 @@ public class DictionaryIndexBrowser extends PapillonBasePO {
 
         String others = tocAnchorText.getNodeValue();
         String[] keys = indexKeys.getKeys();
-        for (int i = 0; i < keys.length; i++) {
+        int i;
+        for ( i = 0; i < keys.length && i < climit; i++) {
             String key = keys[i];
             content.setTextTocAnchorText(key);
             tocAnchor.setAttribute("href", "#" + lang + "_" + key);
             keyToc.appendChild(content.importNode(tocAnchor.cloneNode(true), true));
             keyToc.appendChild(content.importNode(tocSeparator.cloneNode(true), true));
         }
-        tocAnchorLast.setAttribute("href", "#" + lang + "_NA");
-        keyToc.appendChild(content.importNode(tocAnchorLast.cloneNode(true), true));
+        if (i == keys.length) {
+            tocAnchorLast.setAttribute("href", "#" + lang + "_NA");
+            keyToc.appendChild(content.importNode(tocAnchorLast.cloneNode(true), true));
+        } else {
+            tocAnchorLast.setAttribute("href", MessageFormat.format(LANG_INDEX_URL, new String[]{lang}));
+            content.setTextLastTocAnchorText("...");
+            keyToc.appendChild(content.importNode(tocAnchorLast.cloneNode(true), true));
+        }
 
         Node result = content.importNode(keyToc.cloneNode(true), true);
 
@@ -194,12 +208,15 @@ public class DictionaryIndexBrowser extends PapillonBasePO {
         if (null == params.key || params.key.equals("")) {
             LanguageIndexKeys indexKeys = new LanguageIndexKeys(language);
 
-            Node toc = getToc(content, indexKeys);
+            String[] keys = indexKeys.getKeys();
+            int climit = (params.nbChars == 0) ? keys.length + 1 : params.nbChars;
+
+            Node toc = getToc(content, indexKeys, climit);
             keyTocTop.appendChild(content.importNode(toc.cloneNode(true), true));
             keyTocBottom.appendChild(toc);
 
-            String[] keys = indexKeys.getKeys();
-            for (int i = 0; i < keys.length; i++) {
+            int i = 0;
+            for (i = 0; i < keys.length && i < climit; i++) {
                 String key = keys[i];
                 // size is the number of entries for this index key.
                 Node indexForKey = getIndexDataForLanguage(content, language, key, params.sampleSize);
@@ -208,10 +225,18 @@ public class DictionaryIndexBrowser extends PapillonBasePO {
                     currentCell.appendChild(indexForKey);
                 }
             }
-            Node indexForKey = getIndexDataForLanguage(content, language, "*", params.sampleSize);
-            if (null != indexForKey) {
-                hasAnIndex = true;
-                currentCell.appendChild(indexForKey);
+            if (i == keys.length) {
+                Node indexForKey = getIndexDataForLanguage(content, language, "*", params.sampleSize);
+                if (null != indexForKey) {
+                    hasAnIndex = true;
+                    currentCell.appendChild(indexForKey);
+                }
+            } else {
+                Node moreChars = createEmptySection(content, language);
+                if (null != moreChars) {
+                    hasAnIndex = true;
+                    currentCell.appendChild(moreChars);
+                }
             }
         } else {
             Node indexForKey = getIndexDataForLanguage(content, language, params.key, params.sampleSize);
@@ -261,7 +286,7 @@ public class DictionaryIndexBrowser extends PapillonBasePO {
                 String hw = (String) it.next();
                 if (limit > 0 & nb > limit) {
                     content.setTextHeadwordText("...");
-                    anchor.setHref(MessageFormat.format(INDEX_URL, new String[]{myUrlEncode(key), language}));
+                    anchor.setHref(MessageFormat.format(KEY_INDEX_URL, new String[]{myUrlEncode(key), language}));
                     // li.setAttribute("class", "alt_li" + nb%2);
                     ul.appendChild(content.importNode(li.cloneNode(true), true));
                 } else {
@@ -278,6 +303,28 @@ public class DictionaryIndexBrowser extends PapillonBasePO {
                 ul.removeChild(ul.getFirstChild());
             }
         }
+        return newSection;
+    }
+
+
+    public Node createEmptySection(DictionaryIndexXHTML content, String language)
+            throws SQLException {
+        XHTMLUListElement ul = content.getElementHeadwordList();
+        Node indexKey = content.getElementIndexKey();
+        XHTMLAnchorElement sectionAnchor = content.getElementSectionAnchor();
+
+        Node newSection = null;
+
+        content.setTextKeyTitle("...");
+        sectionAnchor.setHref(MessageFormat.format(LANG_INDEX_URL, new String[]{language}));
+
+
+        newSection = content.importNode(indexKey.cloneNode(true), true);
+        // Clean up the cell
+        while (ul.hasChildNodes()) {
+            ul.removeChild(ul.getFirstChild());
+        }
+
         return newSection;
     }
 
