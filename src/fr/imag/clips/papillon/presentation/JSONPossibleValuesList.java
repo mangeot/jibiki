@@ -2,7 +2,8 @@ package fr.imag.clips.papillon.presentation;
 
 import com.lutris.appserver.server.httpPresentation.HttpPresentationComms;
 import com.lutris.appserver.server.httpPresentation.HttpPresentationOutputStream;
-import fr.imag.clips.papillon.business.dictionary.HeadwordListQuery;
+import fr.imag.clips.papillon.business.PapillonLogger;
+import fr.imag.clips.papillon.business.dictionary.AvailableValuesQuery;
 import org.json.JSONArray;
 import org.w3c.dom.Node;
 
@@ -11,7 +12,7 @@ import java.util.Collection;
 /**
  *
  */
-public class JSONHeadwordList
+public class JSONPossibleValuesList
         extends AbstractPO {
 
 
@@ -32,22 +33,21 @@ public class JSONHeadwordList
         this.myComms = comms;
         initSessionData();
 
-        // Check if the user needs to be logged in for this request.
-        if (this.loggedInUserRequired()) {
-            checkForUserLogin();                  // This will redirect the user to the login page if necessary
-        }
-
-        // After this point, user is logged in if required...
-
-        if (!this.userMayUseThisPO()) {
-            userIsNotAuthorized();                // This will redirect the user to the login page if necessary
-        }
-
         // System.out.println(this.getComms().request.getQueryString());
-        String hw = this.myGetParameter("headword");
+        String field = this.myGetParameter("field");
+        String prefix = this.myGetParameter("value");
         String lang = this.myGetParameter("lang");
+        String limitString = this.myGetParameter("limit");
+        int limit = 0;
+        try {
+            if (limitString != null & !"".equals(limitString)) {
+                limit = Integer.parseInt(limitString);
+            }
+        } catch (NumberFormatException e) {
+            PapillonLogger.writeDebugMsg("JSONPossibleValuesList: limit variable is not a number.");
+        }
 
-        Collection hws = HeadwordListQuery.getHeadwordListForLanguage(lang, hw, 10);
+        Collection hws = AvailableValuesQuery.getAvailableValues(field, prefix, lang, limit);
         JSONArray ja = new JSONArray(hws);
 
         // System.out.println(ja.toString());
