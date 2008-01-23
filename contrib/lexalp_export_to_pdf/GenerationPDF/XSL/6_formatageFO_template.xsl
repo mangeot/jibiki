@@ -777,7 +777,7 @@
                             <xsl:when test="text()='3.8'">3.8 Energie</xsl:when>
                             <xsl:when test="text()='4.1'">4.1 Landwirtschaft</xsl:when>
                             <xsl:when test="text()='4.2'">4.2 Wälder</xsl:when>
-                            <xsl:when test="text()='4.3'">4.3 Zootechnik</xsl:when>
+                            <xsl:when test="text()='4.3'">4.3 Viehhaltung</xsl:when>
                             <xsl:when test="text()='4.4'">4.4 Jagd, Fischerei und Fischzucht</xsl:when>
                             <xsl:when test="text()='4.5'">4.5 Naturgefahren</xsl:when>
                             <xsl:when test="text()='5.1'">5.1 Städteplanung</xsl:when>
