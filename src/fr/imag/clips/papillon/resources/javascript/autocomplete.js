@@ -57,7 +57,9 @@ function setAutoComplete(search_field_id, lang_field_id, results_id, url, hw, la
 	acSearchField.keyup(function (e) {
 
 		// get keyCode (window.event is for IE)
-		var keyCode = e.keyCode || window.event.keyCode;
+        var evtobj=window.event? event : e //distinguish between IE's explicit event object (window.event) and Firefox's implicit.
+        var keyCode=evtobj.charCode? evtobj.charCode : evtobj.keyCode
+        // var  = e.keyCode || window.event.keyCode;
 		var lastVal = acSearchField.val();
 
 		// check an treat up and down arrows
