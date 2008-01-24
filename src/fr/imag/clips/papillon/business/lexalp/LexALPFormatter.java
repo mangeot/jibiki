@@ -4,6 +4,9 @@
  * $Id$
  *------------------------
  * $Log$
+ * Revision 1.14.2.7  2008/01/24 19:39:10  serasset
+ * BUG123: lexies without geographical usage are not displayed in axies
+ *
  * Revision 1.14.2.6  2008/01/15 15:23:50  serasset
  * BUG169: Entries from the same axie, with the SAME TERM and the SAME LEGAL SYSTEM are not displayed properly.
  *
@@ -232,7 +235,16 @@ public class LexALPFormatter
                     rootdiv.appendChild(res.importNode(lsn, true));
                 }
             }
-            assert matchingGroups.isEmpty();
+            // Add other legal system groups (UNKNOW and/or invalid legal system values).
+            if (!matchingGroups.isEmpty()) {
+                Node lsn;
+                Iterator keys = matchingGroups.keySet().iterator();
+                while (keys.hasNext()) {
+                    if (null != (lsn = (Node) matchingGroups.remove(keys.next()))) {
+                        rootdiv.appendChild(res.importNode(lsn, true));
+                    }
+                }
+            }
             String lg = qr.getFirstSourceEntry().getVolume().getSourceLanguage();
             // now dsplay unmatching groups
             for (int i = 0; i < lss.length; i++) {
@@ -241,22 +253,12 @@ public class LexALPFormatter
                     rootdiv.appendChild(res.importNode(lsn, true));
                 }
             }
-//            // Then display other lexies
-//            String[] langs = new String[]{"deu", "fra", "ita", "slv"};
-//            for (int j = 0; j < lss.length; j++) {
-//                for (int i = 0; i < langs.length; i++) {
-//                    Collection trads = getAndRemoveResultEntriesFor(qr, lss[j], langs[i]);
-//                    for (Iterator ittrad = trads.iterator(); ittrad.hasNext();) {
-//                        VolumeEntry trad = (VolumeEntry) ittrad.next();
-//                        if (null != dictXsl && !dictXsl.isEmpty()) {
-//                            // Format document source
-//                            Element resultNode = (Element) formatResult(trad.getDom(), dictXsl, usr);
-//                            resultNode.setAttribute("class", "translation");
-//                            rootdiv.appendChild(res.importNode(resultNode, true));
-//                        }
-//                    }
-//                }
-//            }
+            if (!qr.getLexiesCollection().isEmpty()) {
+                Node lsn = this.getResultGroup(res, qr, usr, lg, null);
+                if (null != lsn) {
+                    rootdiv.appendChild(res.importNode(lsn, true));
+                }
+            }
         }
         return rootdiv;
     }
@@ -334,6 +336,7 @@ public class LexALPFormatter
             }
         }
     }
+
     private Collection getAndRemoveResultEntriesFor(QueryResult qr, String legalSystem, String lang) {
         Collection lexies = qr.getLexiesCollection();
         Iterator it = lexies.iterator();
@@ -344,7 +347,7 @@ public class LexALPFormatter
             try {
                 String ls = ParseVolume.getCdmString(ve, "lexalp-legal-system");
                 String lg = ve.getVolume().getSourceLanguage();
-                if (legalSystem.equals(ls) && lang.equals(lg)) {
+                if ((legalSystem == null || legalSystem.equals(ls)) && lang.equals(lg)) {
                     results.add(ve);
                 }
             } catch (PapillonBusinessException e) {
