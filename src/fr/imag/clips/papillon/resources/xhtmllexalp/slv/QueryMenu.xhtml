@@ -6,16 +6,16 @@
     <title>Menu</title>
   </head>
   <body>
-    <div id="QueryMenu" lang="fr" xml:lang="fr" class="menuBlock">
+    <div id="QueryMenu" lang="slv" xml:lang="slv" class="menuBlock">
       <h2 class="menuTitle">
-      	<a title="Traduction d&rsquo;un mot" href="javascript:void(0)">Consultation&nbsp;:</a>
+      	<a title="Traduction d&rsquo;un mot" href="javascript:void(0)">Iskanje&nbsp;:</a>
       </h2>
       <form  id="ConsultForm" method="get" action="Home.po" >
         <div>
                 <div>
                     <div class="menuColumnSize">
                         <div class="menuVariableName">
-                            <label for="ValueField" accesskey="t" ><span class="accesskey">T</span>erme&nbsp;:</label>
+                            <label for="ValueField" accesskey="t" ><span class="accesskey">T</span>ermin&nbsp;:</label>
                         </div>
                         <div class="menuVariableValue" >
                             <input type="hidden" id="Facet" name="FACET.0" value="cdm-headword"/>
@@ -25,7 +25,7 @@
                     </div>
                     <div class="menuColumnSize">
                         <div class="menuVariableName">
-                            <label for="SourceLang" accesskey="s"><span class="accesskey">S</span>ource&nbsp;:</label>
+                            <label for="SourceLang" accesskey="I"><span class="accesskey">S</span>zvirni jezik&nbsp;:</label>
                         </div>
                         <div class="menuVariableValue" >
                             <select id="SourceLang" name="SOURCE.0" class="menuVariableValueWidth" >
@@ -35,11 +35,11 @@
                     </div>
                     <div class="menuColumnSize">
                         <div class="menuVariableName">
-                            <label for="QMTargets" accesskey="c"><span class="accesskey">C</span>ible&nbsp;:</label>
+                            <label for="QMTargets" accesskey="c"><span class="accesskey">C</span>iljni jezik&nbsp;:</label>
                          </div>
                         <div class="menuVariableValue" >
                             <select id="QMTargets" name="TARGETS" class="menuVariableValueWidth">
-                                <option label="All languages" value="*ALL*">toutes les langues</option>
+                                <option label="All languages" value="*ALL*">vsi jeziki</option>
                                 <option id="TargetTmpl" label="NONE" value="NONE">NONE</option>
                             </select>
                         </div>
@@ -49,18 +49,18 @@
                     <input type="hidden" name="XSL" value="Default"/>
                     <input type="hidden" name="NB_RESULT_PER_PAGE" value="5" />
                     <input type="hidden" name="OFFSET"/>
-                    <input type="hidden" name="action" value="rechercher" />
-                    <input type="submit" value="Go" class="menuGo" />
+                    <input type="hidden" name="action" value="iskanje" />
+                    <input type="submit" value="i&scaron;či" class="menuGo" />
                 </div>
                 </div>
             </form>
 
       <br/>
-      <a title="Fonction de recherche avancée d'un mot" href="AdvancedSearch.po">Recherche avancée</a>
+      <a title="Fonction de recherche avancée d'un mot" href="AdvancedSearch.po">Napredno iskanje</a>
       <br />
         <a title="Parcourir les entrées des dictionnaires" href="DictionaryIndexBrowser.po">Index des dictionnaires</a>
         <br />
-      <a title="Liste des dictionnaires" href="ViewDictionaries.po">Liste des dictionnaires</a>
+      <a title="Liste des dictionnaires" href="ViewDictionaries.po">Neznam slovarjev</a>
     </div>
   </body>
 </html>
