@@ -884,7 +884,7 @@ CREATE OR REPLACE FUNCTION msa_sort( varchar )
 -- slo Slovak
 --
 -- for the moment do nothing
--- todo: maybe slovene sort 
+-- todo: maybe slovak sort 
 CREATE OR REPLACE FUNCTION slo_sort( varchar ) 
  RETURNS varchar AS '
 
@@ -900,7 +900,6 @@ CREATE OR REPLACE FUNCTION slo_sort( varchar )
 -- slv Slovene
 --
 -- A B C Č D E F G H I J K L M N O P R S Š š T U V Z Ž ž
--- todo: maybe slovene sort
 CREATE OR REPLACE FUNCTION slv_sort( varchar )
  RETURNS varchar AS $PROC$
 
