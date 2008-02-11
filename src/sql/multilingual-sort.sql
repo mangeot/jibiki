@@ -959,7 +959,7 @@ CREATE OR REPLACE FUNCTION slv_sort( varchar )
   ELSIF tmp = 'K' THEN
     result:= result || '12';
   ELSIF tmp = 'k' THEN
-    result:= result || '11';
+    result:= result || '12';
   ELSIF tmp = 'L' THEN
     result:= result || '13';
   ELSIF tmp = 'l' THEN
