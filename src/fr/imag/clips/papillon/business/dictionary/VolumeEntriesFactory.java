@@ -3,6 +3,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.58.2.7  2008/02/14 17:09:27  serasset
+ * Created an export into a zip file.
+ * Cosmetic changes in other files.
+ *
  * Revision 1.58.2.6  2008/01/09 19:14:57  serasset
  * Views are now created and deleted when a new dictionary is created/deleted
  *
@@ -357,6 +361,7 @@ import fr.imag.clips.papillon.CurrentDBTransaction;
 import fr.imag.clips.papillon.CurrentRequestContext;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.PapillonLogger;
+import fr.imag.clips.papillon.business.transformation.ResultFormatterFactory;
 import fr.imag.clips.papillon.business.user.User;
 import fr.imag.clips.papillon.business.user.UsersFactory;
 import fr.imag.clips.papillon.business.xml.XMLServices;
@@ -384,10 +389,11 @@ public class VolumeEntriesFactory {
 	protected final static String MSORT_FIELD = "msort";
 	protected final static String ORDER_DESCENDING = "DESC";
 	
-	protected static final String XMLFormat = Integer.toString(fr.imag.clips.papillon.business.transformation.ResultFormatterFactory.XML_DIALECT);
-	protected static final String XHTMLFormat = Integer.toString(fr.imag.clips.papillon.business.transformation.ResultFormatterFactory.XHTML_DIALECT);
-	protected static final String TEXTFormat = Integer.toString(fr.imag.clips.papillon.business.transformation.ResultFormatterFactory.PLAINTEXT_DIALECT);
-	protected static final String PDFFormat = Integer.toString(fr.imag.clips.papillon.business.transformation.ResultFormatterFactory.PDF_DIALECT);
+	// TODO: the format already exists as an int, suppress these redundant formats
+	public static final String XMLFormat = Integer.toString(ResultFormatterFactory.XML_DIALECT);
+	public static final String XHTMLFormat = Integer.toString(ResultFormatterFactory.XHTML_DIALECT);
+	public static final String TEXTFormat = Integer.toString(ResultFormatterFactory.PLAINTEXT_DIALECT);
+	public static final String PDFFormat = Integer.toString(ResultFormatterFactory.PDF_DIALECT);
 	
 	protected static final String XhtmlHeader = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
 		+ "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n"
@@ -925,10 +931,10 @@ public class VolumeEntriesFactory {
 							myOutStream.write(xmlHeader.getBytes("UTF-8"));
 						}
                         
-						fr.imag.clips.papillon.business.dictionary.IVolumeEntryProcessor myProcessor = new fr.imag.clips.papillon.business.dictionary.ExportVolumeEntryProcessor(outputFormat, myOutStream);
+						IVolumeEntryProcessor myProcessor = new ExportVolumeEntryProcessor(outputFormat, myOutStream);
 						PapillonLogger.writeDebugMsg("Processor created");
                         
-						fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory.processVolume(myDict, myVolume, myKeys, clauseVector, myProcessor, andClause);
+						VolumeEntriesFactory.processVolume(myDict, myVolume, myKeys, clauseVector, myProcessor, andClause);
 						PapillonLogger.writeDebugMsg("Volume processed");
 						
 						

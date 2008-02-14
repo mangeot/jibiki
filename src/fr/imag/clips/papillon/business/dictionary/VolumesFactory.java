@@ -3,6 +3,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.53.2.4  2008/02/14 17:09:27  serasset
+ * Created an export into a zip file.
+ * Cosmetic changes in other files.
+ *
  * Revision 1.53.2.3  2008/01/09 19:14:57  serasset
  * Views are now created and deleted when a new dictionary is created/deleted
  *
@@ -218,7 +222,7 @@ import fr.imag.clips.papillon.CurrentDBTransaction;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.user.User;
-import fr.imag.clips.papillon.business.utility.OptimizedVolumeEntriesWalker;
+import fr.imag.clips.papillon.business.utility.OptimizedVolumeEntriesIndexer;
 import fr.imag.clips.papillon.business.xml.XMLServices;
 import fr.imag.clips.papillon.business.xsl.XslSheetFactory;
 import fr.imag.clips.papillon.data.VolumeDO;
@@ -1344,7 +1348,7 @@ public class VolumesFactory {
 
                 IndexFactory.emptyIndex(volume.getIndexDbname());
 
-                OptimizedVolumeEntriesWalker.rebuildIndexes(volume);
+                OptimizedVolumeEntriesIndexer.rebuildIndexes(volume);
         }
     }
 
