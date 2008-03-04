@@ -3,6 +3,10 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.58.2.8  2008/03/04 20:48:15  serasset
+ * Lazy DOM building in VolumeEntry.
+ * Export to Zip file now gives a correct filename.
+ *
  * Revision 1.58.2.7  2008/02/14 17:09:27  serasset
  * Created an export into a zip file.
  * Cosmetic changes in other files.
@@ -933,12 +937,15 @@ public class VolumeEntriesFactory {
                         
 						IVolumeEntryProcessor myProcessor = new ExportVolumeEntryProcessor(outputFormat, myOutStream);
 						PapillonLogger.writeDebugMsg("Processor created");
-                        
-						VolumeEntriesFactory.processVolume(myDict, myVolume, myKeys, clauseVector, myProcessor, andClause);
-						PapillonLogger.writeDebugMsg("Volume processed");
-						
-						
-						if (outputFormat != null && outputFormat.equals(XHTMLFormat)) {
+
+                        long stime = System.currentTimeMillis();
+                        VolumeEntriesFactory.processVolume(myDict, myVolume, myKeys, clauseVector, myProcessor, andClause);
+                        long etime = System.currentTimeMillis();
+                        PapillonLogger.writeDebugMsg("Volume processed in " + (etime - stime) + " ms.");
+
+
+
+                        if (outputFormat != null && outputFormat.equals(XHTMLFormat)) {
 							myOutStream.write(XhtmlFooter.getBytes("UTF-8"));
 						}
 						else if (outputFormat != null && outputFormat.equals(TEXTFormat)) {

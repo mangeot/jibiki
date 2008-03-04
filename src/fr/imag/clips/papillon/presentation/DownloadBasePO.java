@@ -7,6 +7,10 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.1.2.2  2008/03/04 20:48:15  serasset
+ *  Lazy DOM building in VolumeEntry.
+ *  Export to Zip file now gives a correct filename.
+ *
  *  Revision 1.1.2.1  2008/02/14 17:09:27  serasset
  *  Created an export into a zip file.
  *  Cosmetic changes in other files.
@@ -48,7 +52,7 @@ public abstract class DownloadBasePO
 	 * return the content disposition (e.g. attachment; filename="tagada")
 	 * @return content disposition
 	 */
-	public abstract String getContentDisposition(); // return filename
+	public abstract String getFilename(); // return filename
 	
 	/**
 	 * dump the requested data in the output stream
@@ -91,7 +95,7 @@ public abstract class DownloadBasePO
             initPresentationContext();
             prepareRequest();
             comms.response.setContentType( getContentType() );
-            comms.response.setHeader("Content-Disposition", "attachment; filename=\"" + getContentDisposition() + "\"");
+            comms.response.setHeader("Content-Disposition", "attachment; filename=\"" + getFilename() + "\"");
             // comms.response.setContentLength( buffer.length );
             // dump...
             

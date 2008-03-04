@@ -51,16 +51,16 @@ public class ExportRequestedEntries extends DownloadBasePO {
 
 	}
 
-	public String getContentDisposition() {
+	public String getContentType() {
 		return "content-type: application/zip";
 	}
 
-	public String getContentType() {
+	public String getFilename() {
 		Date now = new Date();
-		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_hh_mm_ss");
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH_mm_ss");
 		String dat = dateFormat.format(now);
 
-		return "attachment; filename=Lexalp-" + dat + ".zip";
+		return "Lexalp-" + dat + ".zip";
 	}
 
 	public void prepareRequest() throws HttpPresentationException, IOException,
