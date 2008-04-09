@@ -31,6 +31,7 @@ import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory;
 import fr.imag.clips.papillon.business.dictionary.ParseVolume;
 import fr.imag.clips.papillon.business.dictionary.Volume;
+import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.user.User;
 import fr.imag.clips.papillon.CurrentRequestContext;
@@ -41,7 +42,6 @@ import fr.imag.clips.papillon.presentation.PapillonSessionData;
 public class JibikiXsltExtension {
     
     public JibikiXsltExtension() {
-          
     }
 
     public static Node editingCommands(String entryid) throws PapillonBusinessException {

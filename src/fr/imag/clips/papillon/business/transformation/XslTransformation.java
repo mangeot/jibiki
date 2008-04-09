@@ -105,6 +105,7 @@ import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.dictionary.*;
 import fr.imag.clips.papillon.business.user.User;
 import fr.imag.clips.papillon.business.xml.XMLServices;
+import fr.imag.clips.papillon.business.xml.XMLParsersPool;
 import fr.imag.clips.papillon.business.xsl.XslSheet;
 import fr.imag.clips.papillon.business.xsl.XslSheetFactory;
 import org.w3c.dom.Document;
@@ -158,8 +159,13 @@ public class XslTransformation implements ResultFormatter {
         }
         // FIXME: How can the user specify a xsl if there is the choice between several...
         */
-
+		String defaultFormatter = formatter;
+		if (formatter == null || formatter.equals("")) {
+			formatter = dict.getName();
+		}
+        currentXslSheetSequence.add(XslSheetFactory.getXslSheet(dict.getName(), null, formatter));
         currentXslSheetSequence.add(XslSheetFactory.getXslSheet(dict.getName(), vol.getName(), formatter));
+        currentXslSheetSequence.add(XslSheetFactory.getXslSheet(null,null,defaultFormatter));
 
     }
 
@@ -172,7 +178,8 @@ public class XslTransformation implements ResultFormatter {
                 for (int i = 0; i < currentXslSheetSequence.size(); i++) {
                     XslSheet xsl = (XslSheet) currentXslSheetSequence.elementAt(i);
                     if (null != xsl && !xsl.isEmpty()) {
-                        doc = Transform(doc, xsl);
+						fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("STYLESHEET[" + i + "] : " + xsl.getHandle());
+						doc = Transform(doc, xsl);
                     }
                 }
             } else if (qr.getResultKind() == QueryResult.AXIE_COLLECTION_RESULT) {
@@ -233,7 +240,7 @@ public class XslTransformation implements ResultFormatter {
     //outils pour les transformation
     protected static final TransformerFactory myTransformerFactory = TransformerFactory.newInstance();
     // preparation du resultat//usine a document duilder
-    protected static final DocumentBuilderFactory myDocumentBuilderFactory = DocumentBuilderFactory.newInstance();
+   // protected static final DocumentBuilderFactory myDocumentBuilderFactory = DocumentBuilderFactory.newInstance();
     //on cree le constructeur de document
     protected static DocumentBuilder myDocumentBuilder = null;
 
@@ -252,9 +259,11 @@ public class XslTransformation implements ResultFormatter {
 
         //the result
         if (myDocumentBuilder == null) {
-            myDocumentBuilder = myDocumentBuilderFactory.newDocumentBuilder();
+            //myDocumentBuilder = myDocumentBuilderFactory.newDocumentBuilder();
         }
+		myDocumentBuilder = XMLParsersPool.allocateParser();
         Document newDocument = myDocumentBuilder.newDocument();
+		XMLParsersPool.releaseParser(myDocumentBuilder);
         //the transformation
         // is there a way to obtain a dom result which is a text string?
         myTransformer.transform(new DOMSource(xmlSource), new DOMResult(newDocument));
@@ -276,11 +285,13 @@ public class XslTransformation implements ResultFormatter {
 
         //the result
         if (myDocumentBuilder == null) {
-            myDocumentBuilder = myDocumentBuilderFactory.newDocumentBuilder();
+            //myDocumentBuilder = myDocumentBuilderFactory.newDocumentBuilder();
         }
 
         //
+ 		myDocumentBuilder = XMLParsersPool.allocateParser();
         Document newDocument = myDocumentBuilder.newDocument();
+		XMLParsersPool.releaseParser(myDocumentBuilder);
         //the transformation
         // is there a way to obtain a dom result which is a text string?
         //	myTransformer.transform (new DOMSource(xmlSource),new DOMResult(newDocument));
@@ -321,6 +332,7 @@ public class XslTransformation implements ResultFormatter {
             */
             XslSheet theXslSheet = XslSheetFactory.getXslSheet(answer.getDictionaryName(), answer.getVolumeName(), "");
             if (!theXslSheet.isEmpty()) {
+				fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("XSLSheet : "+ theXslSheet.getName());
                 result = XslTransformation.Transform((Node) result, theXslSheet);
             }
         }

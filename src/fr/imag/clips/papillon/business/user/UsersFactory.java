@@ -96,6 +96,25 @@ public class UsersFactory {
         }
     }
 
+    public static User findUserByEmail(String email)
+    throws PapillonBusinessException {
+        User theUser = null;
+		
+        try {
+            UserQuery query = new UserQuery(CurrentDBTransaction.get());
+            //set query
+            query.setQueryEmail(email);
+            // Throw an exception if more than one message is found
+            query.requireUniqueInstance();
+            UserDO theUserDO = query.getNextDO();
+            theUser = new User(theUserDO);
+            return theUser;
+        }catch(Exception ex) {
+            ex.printStackTrace();
+            throw new PapillonBusinessException("Exception in findUserByEmail()", ex);
+        }
+    }
+	
     public static UserAnswer createUniqueUser(String name,
                                               String login,
                                               String password,
@@ -350,7 +369,10 @@ public class UsersFactory {
 
 //fini 
    
-    
+    public static User findUserByHandle(String id) 
+        throws PapillonBusinessException {
+		return findUserById(id);
+	}
      
     public static User findUserById(String id) 
         throws PapillonBusinessException {
@@ -446,5 +468,18 @@ public class UsersFactory {
          
         return theDictArray;
     }
+
+	public static String generateRandomPassword () {
+		java.util.Random rand = Utility.getRandomGenerator();
+		int length = rand.nextInt(6) + 6;
+		char[] password = new char[length];
+		
+		for (int x = 0; x < length; x++) {
+			int randDecimalAsciiVal = rand.nextInt(93) + 33;
+			password[x] = (char) randDecimalAsciiVal;
+		}
+		return String.valueOf(password);
+	}
+
 
 }

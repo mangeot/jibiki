@@ -1,3 +1,17 @@
+- tester LookupVolume et LookupVolumePage
+
+- ajouter le code du GDEF
+	- tester exécuter une commande à distance
+	- tester passer le cookie dans l'URL
+	- tester la liste alphabétique
+	- tester la nouvelle interface
+	- tester le module d'envoi de courriels
+
+- voir pourquoi on ne peut pas éditer mais créer seulement
+- voir pourquoi les feuilles XSL ne marchent pas
+- voir pourquoi le menu quick search ne marche pas
+=================================================
+
 - traiter papillonaxi comme n'importe quelle autre volume pivot.
 - Revoir la partie XSLSheet pour des formes plus sympas...
 - Reporter localisation sur le xhtml et supprimer les fichiers html.

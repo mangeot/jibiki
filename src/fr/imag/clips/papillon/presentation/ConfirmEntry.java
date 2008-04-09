@@ -58,12 +58,15 @@ import org.enhydra.xml.xhtml.dom.*;
 import org.w3c.dom.*;
 
 // internal imports
+import fr.imag.clips.papillon.business.dictionary.ParseVolume;
+import fr.imag.clips.papillon.business.dictionary.Volume;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory;
 import fr.imag.clips.papillon.business.transformation.ResultFormatter;
 import fr.imag.clips.papillon.business.transformation.ResultFormatterFactory;
 import fr.imag.clips.papillon.business.dictionary.QueryResult;
 import fr.imag.clips.papillon.business.user.User;
+import fr.imag.clips.papillon.business.utility.Utility;
 import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
 import fr.imag.clips.papillon.business.PapillonBusinessException;
@@ -133,6 +136,41 @@ public class ConfirmEntry extends EditingBasePO {
 					// Error page
 					throw new ClientPageRedirectException(EditingErrorURL);
 				}
+				
+				// adding author groups in entry
+				myVolumeEntry.setGroups(Utility.ArrayUnion(myVolumeEntry.getGroups(),this.getUser().getGroupsArray()));
+				myVolumeEntry.save();
+				
+//[ifdef]				
+                        java.util.Vector params = new java.util.Vector();
+						
+     			String login = "";
+			String handle = "";
+			String groups = "";
+            if (this.getUser() != null) {
+				login = this.getUser().getLogin();				
+				handle = this.getUser().getHandle();				
+				groups = this.getUser().getGroups();				
+			}          
+			params.add(login);
+			params.add(handle);
+			params.add(groups);
+			params.add(myVolumeEntry.getDictionaryName());
+			params.add(myVolumeEntry.getVolumeName());
+			params.add(myVolumeEntry.getHeadword());
+			params.add(myVolumeEntry.getHandle());
+			params.add(myVolumeEntry.getContributionId());
+			params.add(myVolumeEntry.getEntryId());
+			params.add(myVolumeEntry.getSourceLanguage());
+			params.add(Utility.serializeStringArray(ParseVolume.getCdmStrings(myVolumeEntry, Volume.CDM_gdefEstDomaine, myVolumeEntry.getSourceLanguage()),fr.imag.clips.papillon.Papillon.OBSERVATEUR_STRING_SEP));
+			params.add(myVolumeEntry.getStatus());
+			params.add(myVolumeEntry.getAuthor());
+			params.add(Utility.serializeStringArray(myVolumeEntry.getGroups(),fr.imag.clips.papillon.Papillon.OBSERVATEUR_STRING_SEP));
+			params.add("UTF-8");
+			fr.imag.clips.papillon.Papillon.sendMsgToObservateur("Stop entry editing","Parameters: user-login, user-handle, user-groups (Strings separated by a #), dictionary-name, volume-name, entry-headword, entry-handle, entry-contribution-id, entry-entry-id, entry-source-lang (ISO 639-2/T 3 letter code), entry-domains (Strings separated by a #), entry-status, entry-author, entry-groups (Strings separated by a #), message-encoding", params);
+//[enddef]				
+
+				
 			}
 			
 			//

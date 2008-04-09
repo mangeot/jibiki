@@ -104,8 +104,13 @@ public class Papillon extends StandardApplication {
     protected String presentationPriorityPackage = null;
     protected String layoutClassName = "fr.imag.clips.papillon.presentation.PapillonLayout";
     protected String loginCookieName = "PapillonLoginCookie";
-
-        
+//[ifdef]
+	//protected static api.Api observateurApi = null;
+	public static String OBSERVATEUR_STRING_SEP = "#";
+	static {
+		System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
+	}
+//[enddef]        
     /*
      *  A few methods you might want to add to.
      *  See StandardApplication for more details.
@@ -118,13 +123,18 @@ public class Papillon extends StandardApplication {
         // Look at the Xerces version that is currently loaded and display it...
         PapillonLogger.writeInfoMsg(org.apache.xerces.impl.Version.getVersion());
 		
-        // Look at the local file encoding
+		// Look at the local file encoding
         PapillonLogger.writeInfoMsg("Local system file encoding: "+System.getProperty ("file.encoding"));
 		// Available only in java 1.5
 		//java.nio.charset.Charset defaultCharset = java.nio.charset.Charset.defaultCharset();
 		java.io.InputStreamReader myInputStreamReader = new java.io.InputStreamReader(System.in);
         PapillonLogger.writeInfoMsg("Local system default charset: "+myInputStreamReader.getEncoding());
-
+//[ifdef]
+		java.util.Vector params = new java.util.Vector();
+		params.add(this.appName);
+		params.add(this.defaultUrl);
+		sendMsgToObservateur("Jibiki server startup","Parameters: application-name, default-URL", params);
+//[enddef]        
         //  Dictd specific settings.
         boolean listen = false; 
         try {
@@ -182,7 +192,7 @@ public class Papillon extends StandardApplication {
         }
 
         try {
-            Papillon.initializeAllCaches();
+           Papillon.initializeAllCaches();
         } catch (PapillonBusinessException e) {
             throw new ApplicationException("Initialize caches error", e);
         }
@@ -207,9 +217,9 @@ public class Papillon extends StandardApplication {
         // Initialize volume cache
         VolumesFactory.initializeVolumeCache();
 
-        // Initialize transformer factory
+       // Initialize transformer factory
         // FIXME : For Xalan 2_7_0
-        //    XslSheetFactory.initializeTransformerFactory();
+        XslSheetFactory.initializeTransformerFactory();
 
         // Initialize xsl sheet cache
         XslSheetFactory.initializeXslSheetCache();
@@ -218,9 +228,41 @@ public class Papillon extends StandardApplication {
         XslSheetFactory.initializeJibikiXslSheet();
 
         AvailableLanguages.resetCache();
-
     }
 
+	//[ifdef]
+	// Observateur
+    public static void sendMsgToObservateur(String evt, String description) {
+		sendMsgToObservateur(evt, description, new java.util.Vector());
+	}
+	
+	public static void sendMsgToObservateur(String evt, String description, java.util.Vector param) {
+		// Observateur specific settings
+		String tool = "Jibiki platform";
+		String source = "application";
+		String version = "1.0";
+		api.Api observateurApi = null;
+		if (observateurApi==null) {
+			try {
+				observateurApi = new api.Api(tool, source, version);
+			}
+		    catch (api.ApiException APIe) {
+				fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Error with new observateurApi(): " + APIe.toString());
+			}
+	    }
+		try {
+			//        observateurApi.sendMsg(evt, description, param);
+			observateurApi.sendSignal(evt, description, param);
+			fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("sendMsgToObservateur: evt[" + evt + "] description:[" + description + "]");
+			//for (int i=0;i<param.size();i++) {
+			//	fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("param " + i + " : " + (String) param.get(i));
+			//}
+		}
+		catch (api.ApiException APIe) {
+			fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Error with observateurApi.sendSignal: " + APIe.toString());
+		}
+    }
+//[enddef]	
     public String getPriorityPackage() {
         return presentationPriorityPackage;
     }

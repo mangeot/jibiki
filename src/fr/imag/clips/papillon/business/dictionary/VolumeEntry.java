@@ -9,13 +9,6 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.52.2.5  2008/03/04 20:48:16  serasset
- * Lazy DOM building in VolumeEntry.
- * Export to Zip file now gives a correct filename.
- *
- * Revision 1.52.2.4  2008/01/09 19:13:07  serasset
- * contrib metadata gives a default status
- *
  * Revision 1.52.2.3  2007/09/06 14:54:11  serasset
  * in lexalp view, non matching entries are now gathered by legal systems and
  * query language now appears first.
@@ -386,7 +379,7 @@ public class VolumeEntry
             "<" + reviewerTag + "/>" +
             "<" + validationDateTag + "/>" +
             "<" + validatorTag + "/>" +
-            "<" + statusTag + ">finished</" + statusTag + ">" +
+            "<" + statusTag + "/>" +
             "<" + historyTag + ">" +
             "<" + modificationTag + ">" +
             "<" + authorTag + "/>" +
@@ -423,7 +416,7 @@ public class VolumeEntry
         if (null == collator) {
             try {
                 String lang = this.getSourceLanguage();
-                if (null != lang && !"".equals(lang)) {
+                if (null != lang && ! "".equals(lang)) {
                     collator = Collator.getInstance(new Locale(lang));
                 } else {
                     collator = Collator.getInstance();
@@ -464,11 +457,30 @@ public class VolumeEntry
      */
     protected VolumeEntry(Dictionary newDict, Volume newVolume, VolumeEntryDO theVolumeEntryDO)
             throws PapillonBusinessException {
+        try {
             this.myDO = theVolumeEntryDO;
-            // Lazy dom building
-            // this.dom = XMLServices.buildDOMTree(this.myDO.getXmlCode());
+            //this.dom = Utility.deSerializeDocument(theVolumeEntryDO.getDom());
+            this.dom = XMLServices.buildDOMTree(this.myDO.getXmlCode());
+            // this.htmldom = Utility.deSerializeDocument(theVolumeEntryDO.getHtmldom());
             this.setVolume(newVolume);
             this.setDictionary(newDict);
+
+            //String xc1 = XMLServices.xmlCode(this.dom);
+            //String xc2 = XMLServices.xmlCodePrettyPrinted(this.dom);
+
+//            if (xc1.equals(xc2)) {
+//                System.out.println("ok");
+//            } else {
+            //System.out.println("===================================================");
+            //System.out.println(xc1);
+            //System.out.println("---------------------------------------------------");
+            //System.out.println(xc2);
+            //System.out.println("===================================================");
+//            }
+
+        } catch (DataObjectException ex) {
+            throw new PapillonBusinessException("Error creating VolumeEntry", ex);
+        }
     }
 
     public boolean isEmpty() {
@@ -608,15 +620,7 @@ public class VolumeEntry
      *
      * @return the dom of the entry.
      */
-    public org.w3c.dom.Document getDom() throws PapillonBusinessException {
-        // Lazy dom building
-        if (this.dom == null) {
-            try {
-                this.dom = XMLServices.buildDOMTree(this.myDO.getXmlCode());
-            } catch (DataObjectException ex) {
-                throw new PapillonBusinessException("Error building DOM for VolumeEntry.", ex);
-            }
-        }
+    public org.w3c.dom.Document getDom() {
         return this.dom;
     }
 
@@ -626,6 +630,32 @@ public class VolumeEntry
     public void setDom(org.w3c.dom.Document myDoc) {
         this.dom = myDoc;
     }
+
+//    /**
+//     * Gets the html dom of the entry
+//     *
+//     * @return the html dom of the entry.
+//     */
+//    public org.w3c.dom.Document getHtmlDom() {
+//        if (CACHE_HTMLDOM) {
+//            return this.htmldom;
+//        } else {
+//            return null;
+//        }
+//    }
+//
+//    /**
+//     * Sets the html dom of the entry
+//     *
+//     */
+//    public void setHtmlDom(org.w3c.dom.Document myDoc) {
+//        if (CACHE_HTMLDOM) {
+//            this.htmldom = myDoc;
+//        } else {
+//            this.htmldom = null;
+//        }
+//    }
+
 
     /**
      * Gets the xmlCode of the volumeEntry
@@ -646,13 +676,10 @@ public class VolumeEntry
         }
     }
 
-    // setXmlCode is unused and should stay so...
     public void setXmlCode(String code)
             throws PapillonBusinessException {
         try {
             myDO.setXmlCode(code);
-            // discard all changes that could have been made to the dom
-            this.dom = null;
         } catch (DataObjectException ex) {
             throw new PapillonBusinessException("Error setting entry xmlcode", ex);
         }
@@ -767,7 +794,7 @@ public class VolumeEntry
     /**
      * setOriginalContributionId sets the entry id into the XML code of the entry.
      *
-     * @param newId as a String
+     * @param contribid as a String
      * @throws PapillonBusinessException if an error occurs
      *                                   replacing data (usually due to an underlying data layer
      *                                   error).
@@ -835,7 +862,7 @@ public class VolumeEntry
     /**
      * setAuthor sets the entry author into the XML code of the entry.
      *
-     * @param author the author as a String
+     * @param the author as a String
      * @throws PapillonBusinessException if an error occurs
      *                                   replacing data (usually due to an underlying data layer
      *                                   error).
@@ -1014,7 +1041,7 @@ public class VolumeEntry
     /**
      * setReviewer sets the entry reviewer into the XML code of the entry.
      *
-     * @param reviewer the reviewer as a String
+     * @param the reviewer as a String
      * @throws PapillonBusinessException if an error occurs
      *                                   replacing data (usually due to an underlying data layer
      *                                   error).
@@ -1086,7 +1113,7 @@ public class VolumeEntry
     /**
      * setValidator sets the entry reviewer into the XML code of the entry.
      *
-     * @param validator the reviewer as a String
+     * @param the reviewer as a String
      * @throws PapillonBusinessException if an error occurs
      *                                   replacing data (usually due to an underlying data layer
      *                                   error).
@@ -1112,7 +1139,7 @@ public class VolumeEntry
     /**
      * setStatus sets the entry id into the XML code of the entry.
      *
-     * @param status the status as a String
+     * @param the status as a String
      * @throws PapillonBusinessException if an error occurs
      *                                   replacing data (usually due to an underlying data layer
      *                                   error).
@@ -1563,12 +1590,11 @@ public class VolumeEntry
             res = ParseVolume.parseEntry(this);
 
             //
-            if (null != this.dom) {
-                // If this.dom is null, this means that the dom object has not be accessed nor modified...
-                this.myDO.setXmlCode(XMLServices.xmlCode(this.dom));
-            }
-
+            this.myDO.setXmlCode(XMLServices.xmlCode(this.dom));
+            //this.myDO.setDom(Utility.serializeDocument(this.dom));
+            // this.myDO.setHtmldom(Utility.serializeDocument(this.htmldom));  // FIXME: supress HTML Dom
             this.myDO.save();
+
         } catch (Exception ex) {
             throw new PapillonBusinessException("Error saving volumeEntry", ex);
         }

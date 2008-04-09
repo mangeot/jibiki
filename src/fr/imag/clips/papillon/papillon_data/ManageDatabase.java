@@ -2,14 +2,6 @@
  * $Id$
  *-----------------------------------------------------------------------------
  * $Log$
- * Revision 1.12.2.2  2008/01/09 19:29:59  serasset
- * Updated layer version transition to allow the creation of correctly structured new dictionaries databases.
- *
- * Revision 1.12.2.1  2007/11/15 13:07:49  serasset
- * Re-implemented reindexing feature to allow later optimization
- * Updated database layer version to 2: add new views for headword listing, add indexes and analyze idx tables
- * BUG165: Autocomplete now uses headword list view and does not return obsolete headwords
- *
  * Revision 1.12  2007/04/05 12:55:54  serasset
  * Added a DBLayer Version management with an auto-update of db layer.
  *
@@ -31,21 +23,20 @@
 
 package fr.imag.clips.papillon.papillon_data;
 
-import com.lutris.appserver.server.Enhydra;
-import com.lutris.appserver.server.sql.*;
-import com.lutris.dods.builder.generator.query.QueryBuilder;
-import com.lutris.dods.builder.generator.query.RDBColumn;
-import com.lutris.dods.builder.generator.query.RDBTable;
-import com.lutris.util.ConfigException;
 import fr.imag.clips.papillon.CurrentDBTransaction;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.PapillonLogger;
-import org.enhydra.dods.DODS;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.*;
+
+import com.lutris.appserver.server.*;
+import com.lutris.appserver.server.sql.*;
+import com.lutris.dods.builder.generator.query.DataObjectException;
+import com.lutris.dods.builder.generator.query.RDBTable;
+import com.lutris.dods.builder.generator.query.QueryBuilder;
+import com.lutris.dods.builder.generator.query.RDBColumn;
+
+import org.enhydra.dods.DODS;
 
 /* For debug messages */
 //import fr.imag.clips.papillon.business.PapillonLogger;
@@ -58,436 +49,393 @@ public class ManageDatabase implements Query {
     protected static final String truncateTableSql = "TRUNCATE TABLE ";
     protected static final String dropTableSql = "DROP TABLE ";
     protected static final String dropIndexSql = "DROP INDEX ";
-    protected static final String dropViewSql = "DROP VIEW ";
-
-    protected static final String DatabaseUserString = "DatabaseManager.DB.papillon.Connection.User";
-
-    protected static java.util.regex.Pattern quotePattern = java.util.regex.Pattern.compile("'");
-
+	
+	protected static final String DatabaseUserString = "DatabaseManager.DB.papillon.Connection.User";
+	
+	protected static java.util.regex.Pattern quotePattern = java.util.regex.Pattern.compile("'");
+    
     protected String currentSQL = "";
     protected DBTransaction transaction;
-    protected boolean isQuery;
-    protected ResultSet resultSet = null;
+	
 
     /**
+     *
      * @param trans
      * @param sql
      */
     public ManageDatabase(DBTransaction trans, String sql) {
         this.transaction = trans;
         this.currentSQL = sql;
-        this.isQuery = false;
     }
-
-    public ManageDatabase(DBTransaction trans, String sql, boolean isQuery) {
-        this.transaction = trans;
-        this.currentSQL = sql;
-        this.isQuery = isQuery;
-    }
-
-    /**
-     * WARNING!	 This method is	disabled.
+    
+   /**
+        * WARNING!	 This method is	disabled.
      * The reason is that this special set of Queries do not return any result.
      * Moreover, it is also disabled in Quries implementations.
-     *
-     * @deprecated use getNextDO() instead.
-     */
-    public Object next(ResultSet rs) throws SQLException, ObjectIdException {
+    * @deprecated use getNextDO() instead.
+	 */
+	public Object next(ResultSet rs) throws SQLException, ObjectIdException {
         // TODO: It	would be nice to throw an unchecked	exception here
         // (an exception that extends RuntimeException)
         // that	would be guaranteed	to appear during application testing.
-        throw new ObjectIdException("next()	should not be used.	 Use getNextDO() instead.");
+        throw new ObjectIdException("next()	should not be used.	 Use getNextDO() instead." );
         //return null;
     }
-
+    
     /*<table id="fr.imag.clips.papillon.data.VolumeEntry" dbTableName="volume">
-    <column id="headword" isIndex="true" usedForQuery="true">
-    <javadoc>
-    </javadoc>
-    <type canBeNull="true" dbType="LONGVARCHAR" javaType="String"/>
-    </column>
-    <column id="id" usedForQuery="true">
-    <javadoc>
-    </javadoc>
-    <type canBeNull="true" dbType="VARCHAR" javaType="String" size="255"/>
-    </column>
-    <column id="pos" usedForQuery="true">
-    <javadoc>
-    </javadoc>
-    <type canBeNull="true" dbType="VARCHAR" javaType="String" size="255"/>
-    </column>
-    <column id="pronunciation" isIndex="true" usedForQuery="true">
-    <javadoc>
-    </javadoc>
-    <type canBeNull="true" dbType="VARCHAR" javaType="String" size="255"/>
-    </column>
-    <column id="translation" isIndex="true" usedForQuery="true">
-    <javadoc>
-    </javadoc>
-    <type canBeNull="true" dbType="LONGVARCHAR" javaType="String"/>
-    </column>
-    <column id="key1" usedForQuery="true">
-    <javadoc>
-    </javadoc>
-    <type canBeNull="true" dbType="VARCHAR" javaType="String" size="255"/>
-    </column>
-    <column id="key2" usedForQuery="true">
-    <javadoc>
-     </javadoc>
-    <type canBeNull="true" dbType="VARCHAR" javaType="String" size="255"/>
-    </column>
-    <column id="xmlCode" usedForQuery="true">
-    <javadoc>
-     </javadoc>
-    <type dbType="LONGVARCHAR" javaType="String"/>
-    </column>
-    </table>*/
-
-
+        <column id="headword" isIndex="true" usedForQuery="true">
+        <javadoc>
+        </javadoc>
+        <type canBeNull="true" dbType="LONGVARCHAR" javaType="String"/>
+        </column>
+        <column id="id" usedForQuery="true">
+        <javadoc>
+        </javadoc>
+        <type canBeNull="true" dbType="VARCHAR" javaType="String" size="255"/>
+        </column>
+        <column id="pos" usedForQuery="true">
+        <javadoc>
+        </javadoc>
+        <type canBeNull="true" dbType="VARCHAR" javaType="String" size="255"/>
+        </column>
+        <column id="pronunciation" isIndex="true" usedForQuery="true">
+        <javadoc>
+        </javadoc>
+        <type canBeNull="true" dbType="VARCHAR" javaType="String" size="255"/>
+        </column>
+        <column id="translation" isIndex="true" usedForQuery="true">
+        <javadoc>
+        </javadoc>
+        <type canBeNull="true" dbType="LONGVARCHAR" javaType="String"/>
+        </column>
+        <column id="key1" usedForQuery="true">
+        <javadoc>
+        </javadoc>
+        <type canBeNull="true" dbType="VARCHAR" javaType="String" size="255"/>
+        </column>
+        <column id="key2" usedForQuery="true">
+        <javadoc>
+         </javadoc>
+        <type canBeNull="true" dbType="VARCHAR" javaType="String" size="255"/>
+        </column>
+        <column id="xmlCode" usedForQuery="true">
+        <javadoc>
+         </javadoc>
+        <type dbType="LONGVARCHAR" javaType="String"/>
+        </column>
+        </table>*/ 
+    
+    
     protected static String createVolumeTableParamsSql = " (" +
-            "headword TEXT DEFAULT '\'''\''    ," +
-            //"dom BYTEA NOT NULL   ," +
-            //"htmldom BYTEA NOT NULL   ," +
-            "xmlCode TEXT DEFAULT '\'''\'' NOT NULL   ," +
-
-            "ObjectId DECIMAL(19,0) NOT NULL PRIMARY KEY," +
-            "ObjectVersion INTEGER NOT NULL)";
-
+        "headword TEXT DEFAULT '\'''\''    ," +
+		//"dom BYTEA NOT NULL   ," +
+		//"htmldom BYTEA NOT NULL   ," +
+        "xmlCode TEXT DEFAULT '\'''\'' NOT NULL   ," +
+        
+        "ObjectId DECIMAL(19,0) NOT NULL PRIMARY KEY," +
+        "ObjectVersion INTEGER NOT NULL)";
+    
     protected static String createIndexTableParamsSql = " (" +
-            "key VARCHAR(255) DEFAULT '\'''\''    ," +
-            "lang VARCHAR(3) DEFAULT '\'''\''    ," +
-            "value VARCHAR(255) DEFAULT '\'''\''    ," +
-            "entryid VARCHAR(255) DEFAULT '\'''\''    ," +
-            "msort VARCHAR(255) DEFAULT '\'''\''    ," +
-
-            "ObjectId DECIMAL(19,0) NOT NULL PRIMARY KEY," +
-            "ObjectVersion INTEGER NOT NULL)";
-
-
-    public static void createVolumeTable(String table) throws PapillonBusinessException {
-        executeSql(createTableSql + table + createVolumeTableParamsSql);
-    }
-
-    public static void createIndexTable(String indexTable) throws PapillonBusinessException {
-        executeSql(createTableSql + indexTable + createIndexTableParamsSql);
-    }
-
-    public static void createIndexForTable(String table, String name, String field1, String field2, String field3) throws PapillonBusinessException {
-        String query = createIndexSql + table + "_" + name + "_idx" + " ON " + table + " ( " + field1 + "," + field2 + "," + field3 + " )";
-        executeSql(query);
-    }
-
+		"key VARCHAR(255) DEFAULT '\'''\''    ," +
+		"lang VARCHAR(3) DEFAULT '\'''\''    ," +
+		"value VARCHAR(255) DEFAULT '\'''\''    ," +
+        "entryid VARCHAR(255) DEFAULT '\'''\''    ," +
+        "msort VARCHAR(255) DEFAULT '\'''\''    ," +
+        
+        "ObjectId DECIMAL(19,0) NOT NULL PRIMARY KEY," +
+        "ObjectVersion INTEGER NOT NULL)";
+    
+    
+    public static void createVolumeTable(String table) throws  PapillonBusinessException {
+            executeSql(createTableSql + table + createVolumeTableParamsSql);
+        }
+    
+    public static void createIndexTable(String indexTable) throws  PapillonBusinessException {
+            executeSql(createTableSql + indexTable + createIndexTableParamsSql);
+        }
+    
+    public static void createIndexForTable(String table, String name, String field1, String field2, String field3) throws  PapillonBusinessException {
+            String query = createIndexSql + table + "_" + name  + "_idx" + " ON " + table + " ( " + field1 + "," + field2 + "," + field3 + " )";
+            executeSql(query);
+        }
+    
     public static void createIndexForTable(String table, String name) throws PapillonBusinessException {
-        String query = createIndexSql + table + "_" + name + "_idx" + " ON " + table + " ( " + name + " )";
-        executeSql(query);
-    }
-
+		String query = createIndexSql + table + "_" + name  + "_idx" + " ON " + table + " ( " + name + " )";
+		executeSql(query);
+	}
+    
     public static void createSortIndexForVolumeTable(String table, String lang) throws PapillonBusinessException {
-        String query = createIndexSql + table + "_msort_idx" + " ON " + table + " (multilingual_sort( '" + lang + "',headword ))";
-        executeSql(query);
-    }
-
-    public static void dropIndexForTable(String table, String name) throws PapillonBusinessException {
-        String query = dropIndexSql + table + "_" + name + "_idx";
-        executeSql(query);
-    }
-
-    public static void truncateIndexForTable(String table, String name) throws PapillonBusinessException {
+		String query = createIndexSql + table + "_msort_idx" + " ON " + table + " (multilingual_sort( '" + lang + "',headword ))";
+		executeSql(query);
+	}
+    
+    public static void dropIndexForTable(String table, String name) throws  PapillonBusinessException {
+            String query = dropIndexSql + table + "_" + name + "_idx";
+            executeSql(query);
+        }
+    
+    public static void truncateIndexForTable(String table, String name) throws  PapillonBusinessException {
         String query = truncateTableSql + table + "_" + name + "_idx";
         executeSql(query);
     }
-
-    public static void truncateTable(String table) throws PapillonBusinessException {
-        try {
+    
+    public static void truncateTable(String table) throws  PapillonBusinessException {
+        try {    
             executeSql(truncateTableSql + table);
             //((DBTransaction) CurrentDBTransaction.get()).commit();
             //fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Table: " + table + " truncated");
-
-        } catch (Exception e) {
-            throw new PapillonBusinessException("ManageDatabase.truncateTable: " + truncateTableSql + table);
+            
+             } catch (Exception e) {
+                 throw new PapillonBusinessException("ManageDatabase.truncateTable: " + truncateTableSql + table);
+             }
         }
-    }
-
-    public static void dropTable(String table) throws PapillonBusinessException {
+    
+    public static void dropTable(String table) throws  PapillonBusinessException {
         executeSql(dropTableSql + table);
         //fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Table: " + table + " dropped");
+        
+    }
+    
+    public static String multilingual_sort(String lang, String value) throws  PapillonBusinessException {
+		//FIXME: should be called getSortKey
+ 		String result = lang + value;
+		
+		java.util.regex.Matcher quoteMatcher = quotePattern.matcher(value);
+		String newValue = quoteMatcher.replaceAll("\\\\'");
+		
+		String sql = "SELECT multilingual_sort('"+ lang + "','" + newValue + "')";
+		java.util.Vector myResultVector = executeSqlQuery(sql,"multilingual_sort");
+		
+		if (myResultVector != null && myResultVector.size()>0) {
+			result = (String) myResultVector.elementAt(0);
+		}
+		if (result.length()>255) {
+			result = result.substring(0,254);
+		}
+		return result;
     }
 
-    public static void dropView(String view) throws PapillonBusinessException {
-        executeSql(dropViewSql + view);
-        //fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("View: " + view + " dropped");
-    }
-
-    public static String multilingual_sort(String lang, String value) throws PapillonBusinessException {
-        //FIXME: should be called getSortKey
-        String result = lang + value;
-
-        java.util.regex.Matcher quoteMatcher = quotePattern.matcher(value);
-        String newValue = quoteMatcher.replaceAll("\\\\'");
-
-        String sql = "SELECT multilingual_sort('" + lang + "','" + newValue + "')";
-        java.util.Vector myResultVector = executeSqlQuery(sql, "multilingual_sort");
-
-        if (myResultVector != null && myResultVector.size() > 0) {
-            result = (String) myResultVector.elementAt(0);
-        }
-        if (result.length() > 255) {
-            result = result.substring(0, 254);
-        }
-        return result;
-    }
-
-    public static void executeSql(String sql) throws PapillonBusinessException {
-        DBTransaction transaction = CurrentDBTransaction.get();
+    public static void executeSql (String sql) throws PapillonBusinessException {
+		DBTransaction transaction = CurrentDBTransaction.get();
         ManageDatabase req = new ManageDatabase(transaction, sql);
-
+        
         //Flush the current transaction (?)
         // Is this really usefull ?
-        if ((transaction != null) &&
-                (transaction instanceof com.lutris.appserver.server.sql.CachedDBTransaction)) {
-
-            if (((com.lutris.appserver.server.sql.CachedDBTransaction) transaction).getAutoWrite()) try {
+        if ((transaction!=null) &&
+            (transaction instanceof com.lutris.appserver.server.sql.CachedDBTransaction)) {
+            
+            if(((com.lutris.appserver.server.sql.CachedDBTransaction)transaction).getAutoWrite()) try {
                 transaction.write();
             } catch (SQLException sqle) {
                 sqle.printStackTrace();
-                throw new PapillonBusinessException("Couldn't write transaction: " + sqle);
+                throw new PapillonBusinessException("Couldn't write transaction: "+sqle);
             }
         }
-
+        
         // Create the DB Query Object
-        DBQuery dbQuery = null;
-
+        DBQuery	dbQuery = null;
+        
         try {
             if (transaction == null) {
-                dbQuery = DODS.getDatabaseManager().createQuery();
+                dbQuery	= DODS.getDatabaseManager().createQuery();
             } else {
-                dbQuery = transaction.createQuery();
+                dbQuery	= transaction.createQuery();
             }
-
-            dbQuery.query(req);      // invokes executeQuery
-
-        } catch (DatabaseManagerException e) {
+			
+            dbQuery.query( req	);	  // invokes executeQuery
+            
+        } catch ( DatabaseManagerException e ) { 
             String err = "ERROR SpecialDatabaseRequest: Could not create a DBQuery.  ";
-            throw new PapillonBusinessException(err, e);
-        } catch (SQLException e) {
+            throw new PapillonBusinessException( err, e );
+        } catch ( SQLException e ) { 
             String err = "ERROR SpecialDatabaseRequest: Exception while running the query: " + sql;
-            throw new PapillonBusinessException(err, e);
+            throw new PapillonBusinessException( err, e );
         } finally {
-            if (null != dbQuery) {
+            if ( null != dbQuery ) {
                 dbQuery.release();
             }
         }
     }
-
-
+    
+    
     public ResultSet executeQuery(DBConnection conn) throws SQLException {
-        if (!isQuery) {
-            conn.execute(currentSQL);
-            return null;
-        } else {
-            resultSet = conn.executeQuery(currentSQL);
-            return null;
-        }
+        conn.execute(currentSQL);
+        return null;
     }
+    
+    public static java.util.Vector getTableNames ()
+        throws PapillonBusinessException {
+			//String sql = "SELECT tablename FROM pg_tables where tableowner='papillon'";
+			
+			java.util.Vector TableNames = new java.util.Vector();
+            DBConnection myDbConnection = null;
+            try {
+                myDbConnection = Enhydra.getDatabaseManager().allocateConnection();
+                String dbUserStringConfig = "DatabaseManager.DB." + Enhydra.getDatabaseManager().getDefaultDB() + ".Connection.User";
+                String databaseUser = Enhydra.getApplication().getConfig().getString(dbUserStringConfig);
 
-    public static List getViewNames() throws PapillonBusinessException {
-        try {
-            String dbUserStringConfig = "DatabaseManager.DB." + Enhydra.getDatabaseManager().getDefaultDB() + ".Connection.User";
-            String databaseUser = Enhydra.getApplication().getConfig().getString(dbUserStringConfig);
-
-            return selectFromWhere("viewname", "pg_views", "viewowner", databaseUser);
-        } catch (ConfigException e) {
-            throw new PapillonBusinessException("ERROR ConfigException: Exception while looking for db username.", e);
-        }
-    }
-
-    public static List getTableNames() throws PapillonBusinessException {
-        try {
-            String dbUserStringConfig = "DatabaseManager.DB." + Enhydra.getDatabaseManager().getDefaultDB() + ".Connection.User";
-            String databaseUser = Enhydra.getApplication().getConfig().getString(dbUserStringConfig);
-
-            return selectFromWhere("tablename", "pg_tables", "tableowner", databaseUser);
-        } catch (ConfigException e) {
-            throw new PapillonBusinessException("ERROR ConfigException: Exception while looking for db username.", e);
-        }
-    }
-
-    public static List getIndexes(String tablename) throws PapillonBusinessException {
-        return selectFromWhere("indexname", "pg_indexes", "tablename", tablename);
-    }
-
-    public static List selectFromWhere(String col, String tbl, String whereCol, String whereValue) throws PapillonBusinessException {
-        DBTransaction transaction = CurrentDBTransaction.get();
-        String sql = "SELECT " + col + " FROM " + tbl + " WHERE " + whereCol + "='" + whereValue + "';";
-        ManageDatabase req = new ManageDatabase(transaction, sql, true);
-        List result = new ArrayList();
-
-        //Flush the current transaction (?)
-        // Is this really usefull ?
-        if ((transaction != null) &&
-                (transaction instanceof com.lutris.appserver.server.sql.CachedDBTransaction)) {
-
-            if (((com.lutris.appserver.server.sql.CachedDBTransaction) transaction).getAutoWrite()) try {
-                transaction.write();
-            } catch (SQLException sqle) {
-                sqle.printStackTrace();
-                throw new PapillonBusinessException("Couldn't write transaction: " + sqle);
-            }
-        }
-
-        // Create the DB Query Object
-        DBQuery dbQuery = null;
-
-        try {
-            if (transaction == null) {
-                dbQuery = DODS.getDatabaseManager().createQuery();
-            } else {
-                dbQuery = transaction.createQuery();
-            }
-
-            dbQuery.query(req);      // invokes executeQuery
-
-            while (req.resultSet.next()) {
-                result.add(req.resultSet.getString(col));
-            }
-        } catch (DatabaseManagerException e) {
-            String err = "ERROR SpecialDatabaseRequest: Could not create a DBQuery.  ";
-            throw new PapillonBusinessException(err, e);
-        } catch (SQLException e) {
-            String err = "ERROR SpecialDatabaseRequest: Exception while running the query: " + sql;
-            throw new PapillonBusinessException(err, e);
-        } finally {
-            if (null != dbQuery) {
-                dbQuery.release();
-            }
-        }
-        return result;
-    }
-
-
-    public static java.util.Vector getColumnNames(String table)
-            throws PapillonBusinessException {
-        //select attname from pg_attribute, pg_class where pg_class.relname='lexalpfra'
-        //   and pg_class.oid=pg_attribute.attrelid and pg_attribute.attnum > 0;
-
-        java.util.Vector columnNames = new java.util.Vector();
-        DBConnection myDbConnection = null;
-        try {
-            myDbConnection = Enhydra.getDatabaseManager().allocateConnection();
-
-            QueryBuilder myQueryBuilder = new QueryBuilder("pg_attribute", "attname");
-            RDBTable pg_attribute = new RDBTable("pg_attribute");
-            RDBTable pg_class = new RDBTable("pg_class");
-            RDBColumn relname = new RDBColumn(pg_class, "relname");
-            RDBColumn classoid = new RDBColumn(pg_class, "oid");
-            RDBColumn attrelid = new RDBColumn(pg_attribute, "attrelid");
-            RDBColumn attnum = new RDBColumn(pg_attribute, "attnum");
-            myQueryBuilder.addWhere(relname, table);
-            myQueryBuilder.addWhere(classoid, attrelid);
-            myQueryBuilder.addWhere(attnum, 0, QueryBuilder.GREATER_THAN);
-            java.sql.ResultSet myResultSet = myQueryBuilder.executeQuery(myDbConnection);
-            while (myResultSet.next()) {
-                columnNames.addElement(myResultSet.getString("attname"));
-            }
-        } catch (SQLException se) {
-            //very important to throw out bad connections
-            PapillonLogger.writeErrorMsg("SQL exception: ");
-            // System.out.println("SQL exception: ");
-            se.printStackTrace();
-            if (myDbConnection != null && myDbConnection.handleException(se)) myDbConnection = null;
-        } catch (Exception e) {
-            String err = "ERROR DatabaseConnexion: Exception while querying the table names";
-            PapillonLogger.writeErrorMsg(err);
-            // System.out.println(err);
-            e.printStackTrace();
-            //throw new PapillonBusinessException( err, e );
-        } finally {
-            if (myDbConnection != null) {
-                try {
-                    myDbConnection.reset();
-                    myDbConnection.release();
-                }
-                catch (SQLException e) {
-                    String err = "ERROR DatabaseConnexion2: Exception while releasing transaction after querying the table names";
-                    PapillonLogger.writeErrorMsg(err);
-                    // System.out.println(err);
-                    e.printStackTrace();
+				com.lutris.dods.builder.generator.query.QueryBuilder myQueryBuilder = new com.lutris.dods.builder.generator.query.QueryBuilder("pg_tables");
+				com.lutris.dods.builder.generator.query.RDBTable pg_tables = new com.lutris.dods.builder.generator.query.RDBTable("pg_tables");
+				com.lutris.dods.builder.generator.query.RDBColumn tableOwnerColumn = new com.lutris.dods.builder.generator.query.RDBColumn(pg_tables,"tableowner");
+				myQueryBuilder.addWhere(tableOwnerColumn, databaseUser);
+				java.sql.ResultSet myResultSet = myQueryBuilder.executeQuery(myDbConnection);
+               while (myResultSet.next()) {
+				   TableNames.addElement(myResultSet.getString("tablename"));
+			   }
+            }  catch(SQLException se) {
+                //very important to throw out bad connections
+                PapillonLogger.writeErrorMsg("SQL exception: ");
+				// System.out.println("SQL exception: ");
+				se.printStackTrace();
+                if(myDbConnection != null && myDbConnection.handleException(se)) myDbConnection=null;
+            } catch(Exception e) {
+				String err = "ERROR DatabaseConnexion: Exception while querying the table names";
+                PapillonLogger.writeErrorMsg(err);
+                // System.out.println(err);
+				e.printStackTrace();
+				//throw new PapillonBusinessException( err, e );
+            } finally {
+                if(myDbConnection!=null) {
+					try {
+						myDbConnection.reset();
+						myDbConnection.release();
+					}
+					catch ( SQLException e ) { 
+						String err = "ERROR DatabaseConnexion2: Exception while releasing transaction after querying the table names";
+                        PapillonLogger.writeErrorMsg(err);
+						// System.out.println(err);
+						e.printStackTrace();
 //						throw new PapillonBusinessException( err, e );
+					}
                 }
             }
+			return TableNames;
         }
-        return columnNames;
-    }
 
-    /*
-         I keep this function because the other one (executeSql) use a transaction and thus, I cannot retrieve the results because
-          the resultSet is closed.
-         */
-    protected static java.util.Vector executeSqlQuery(String sql, String columnName) {
-        DBConnection myDbConnection = null;
-        java.util.Vector resVector = new java.util.Vector();
-        try {
-            myDbConnection = Enhydra.getDatabaseManager().allocateConnection();
+        public static java.util.Vector getColumnNames(String table)
+        throws PapillonBusinessException {
+			//select attname from pg_attribute, pg_class where pg_class.relname='lexalpfra'
+            //   and pg_class.oid=pg_attribute.attrelid and pg_attribute.attnum > 0;
 
-            ResultSet myResultSet = myDbConnection.executeQuery(sql);
+			java.util.Vector columnNames = new java.util.Vector();
+            DBConnection myDbConnection = null;
+            try {
+                myDbConnection = Enhydra.getDatabaseManager().allocateConnection();
 
-            if (myResultSet != null) {
-                while (myResultSet.next() && columnName != null) {
-                    resVector.addElement(myResultSet.getString(columnName));
+				QueryBuilder myQueryBuilder = new QueryBuilder("pg_attribute", "attname");
+				RDBTable pg_attribute = new RDBTable("pg_attribute");
+                RDBTable pg_class = new RDBTable("pg_class");
+                RDBColumn relname = new RDBColumn(pg_class,"relname");
+                RDBColumn classoid = new RDBColumn(pg_class,"oid");
+                RDBColumn attrelid = new RDBColumn(pg_attribute,"attrelid");
+                RDBColumn attnum = new RDBColumn(pg_attribute,"attnum");
+				myQueryBuilder.addWhere(relname, table);
+                myQueryBuilder.addWhere(classoid,attrelid);
+                myQueryBuilder.addWhere(attnum,0,QueryBuilder.GREATER_THAN);
+                java.sql.ResultSet myResultSet = myQueryBuilder.executeQuery(myDbConnection);
+               while (myResultSet.next()) {
+				   columnNames.addElement(myResultSet.getString("attname"));
+			   }
+            }  catch(SQLException se) {
+                //very important to throw out bad connections
+                PapillonLogger.writeErrorMsg("SQL exception: ");
+				// System.out.println("SQL exception: ");
+				se.printStackTrace();
+                if(myDbConnection != null && myDbConnection.handleException(se)) myDbConnection=null;
+            } catch(Exception e) {
+				String err = "ERROR DatabaseConnexion: Exception while querying the table names";
+                PapillonLogger.writeErrorMsg(err);
+                // System.out.println(err);
+				e.printStackTrace();
+				//throw new PapillonBusinessException( err, e );
+            } finally {
+                if(myDbConnection!=null) {
+					try {
+						myDbConnection.reset();
+						myDbConnection.release();
+					}
+					catch ( SQLException e ) {
+						String err = "ERROR DatabaseConnexion2: Exception while releasing transaction after querying the table names";
+                        PapillonLogger.writeErrorMsg(err);
+						// System.out.println(err);
+						e.printStackTrace();
+//						throw new PapillonBusinessException( err, e );
+					}
                 }
-                myResultSet.close();
             }
-        } catch (SQLException se) {
-            se.printStackTrace();
-            //very important to throw out bad connections
-
-            if (myDbConnection.handleException(se)) myDbConnection = null;
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (myDbConnection != null) {
-                try {
-                    myDbConnection.reset();
-                    myDbConnection.release();
-                } catch (SQLException se) {
-                    se.printStackTrace();
-                    //very important to throw out bad connections
-                    if (myDbConnection.handleException(se)) myDbConnection = null;
-                }
-            }
+			return columnNames;
         }
-        return resVector;
-    }
+        /*
+		I keep this function because the other one (executeSql) use a transaction and thus, I cannot retrieve the results because
+		 the resultSet is closed.
+		*/
+	    protected static java.util.Vector executeSqlQuery (String sql, String columnName) {
+	            DBConnection myDbConnection = null;
+	            java.util.Vector resVector = new java.util.Vector();
+	            try {
+	                myDbConnection = Enhydra.getDatabaseManager().allocateConnection();
+	                
+	                ResultSet myResultSet = myDbConnection.executeQuery(sql);
+	                
+	                if(myResultSet != null) {
+						while (myResultSet.next() && columnName != null) {
+							resVector.addElement(myResultSet.getString(columnName));			
+						}
+	                    myResultSet.close();
+	                }
+	            }  catch(SQLException se) {
+	                se.printStackTrace();
+	                //very important to throw out bad connections
+	                
+	                if(myDbConnection.handleException(se)) myDbConnection=null;
+	            } catch(Exception e) {
+	                e.printStackTrace();
+	            } finally {
+	                if(myDbConnection!=null) {
+						try {
+							myDbConnection.reset();
+							myDbConnection.release();
+						}  catch(SQLException se) {
+							se.printStackTrace();
+							//very important to throw out bad connections
+						if(myDbConnection.handleException(se)) myDbConnection=null;
+						}
+	                }
+	            }
+				return resVector;
+	        }
+	
+
 
 /*
-protected static void simpleExecuteSql (String sql)
-throws PapillonBusinessException {
-   DBConnection myDbConnection = null;
-   try {
-       myDbConnection = Enhydra.getDatabaseManager().allocateConnection();
-
-       myDbConnection.execute(sql);
-
-   }  catch(SQLException se) {
-       //very important to throw out bad connections
-
-       if(myDbConnection.handleException(se)) myDbConnection=null;
-   } catch(Exception e) {
-       String err = "ERROR DatabaseConnexion: Exception while running the query: " + sql;
-       throw new PapillonBusinessException( err, e );
-   } finally {
-       if(myDbConnection!=null) {
-           try {
-               myDbConnection.reset();
-               myDbConnection.release();
-           }
-           catch ( SQLException e ) {
-               String err = "ERROR DatabaseConnexion: Exception while running the query: " + sql;
-               throw new PapillonBusinessException( err, e );
-           }
-       }
-   }
-} */
+    protected static void simpleExecuteSql (String sql)
+        throws PapillonBusinessException {
+            DBConnection myDbConnection = null;
+            try {
+                myDbConnection = Enhydra.getDatabaseManager().allocateConnection();
+                
+                myDbConnection.execute(sql);
+                
+            }  catch(SQLException se) {
+                //very important to throw out bad connections
+                
+                if(myDbConnection.handleException(se)) myDbConnection=null;
+            } catch(Exception e) {
+				String err = "ERROR DatabaseConnexion: Exception while running the query: " + sql;
+				throw new PapillonBusinessException( err, e );
+            } finally {
+                if(myDbConnection!=null) {
+					try {
+						myDbConnection.reset();
+						myDbConnection.release();
+					}
+					catch ( SQLException e ) { 
+						String err = "ERROR DatabaseConnexion: Exception while running the query: " + sql;
+						throw new PapillonBusinessException( err, e );
+					}
+                }
+            }
+        } */
 //    
 //    protected static void executeSqlQuery (String sql)
 //        throws java.sql.SQLException {
@@ -515,13 +463,4 @@ throws PapillonBusinessException {
 //                }
 //            }
 //        }
-
-    public static void createHeadwordView(String headwordViewName, String onIndexDbName) throws PapillonBusinessException {
-        String sql = "CREATE VIEW " + headwordViewName +
-                " AS SELECT DISTINCT i.value, i.msort FROM " + onIndexDbName + " AS i " +
-                " INNER JOIN " + onIndexDbName + " AS status ON status.entryid=i.entryid " +
-                " WHERE status.key='cdm-contribution-status' AND (status.value='finished' OR status.value='modified') " +
-                " AND i.key='cdm-headword';";
-        ManageDatabase.executeSql(sql);
-    }
 }

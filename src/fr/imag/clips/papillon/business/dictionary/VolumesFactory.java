@@ -3,18 +3,6 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.53.2.4  2008/02/14 17:09:27  serasset
- * Created an export into a zip file.
- * Cosmetic changes in other files.
- *
- * Revision 1.53.2.3  2008/01/09 19:14:57  serasset
- * Views are now created and deleted when a new dictionary is created/deleted
- *
- * Revision 1.53.2.2  2007/11/15 13:07:49  serasset
- * Re-implemented reindexing feature to allow later optimization
- * Updated database layer version to 2: add new views for headword listing, add indexes and analyze idx tables
- * BUG165: Autocomplete now uses headword list view and does not return obsolete headwords
- *
  * Revision 1.53.2.1  2007/10/29 15:11:03  serasset
  * NEW: lexalp css now defines different forms for HARMONISED/REJECTED entries
  * NEW: added new db url/user/password configuration keys in papillon.properties file
@@ -222,22 +210,21 @@ import fr.imag.clips.papillon.CurrentDBTransaction;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.user.User;
-import fr.imag.clips.papillon.business.utility.OptimizedVolumeEntriesIndexer;
 import fr.imag.clips.papillon.business.xml.XMLServices;
 import fr.imag.clips.papillon.business.xsl.XslSheetFactory;
 import fr.imag.clips.papillon.data.VolumeDO;
 import fr.imag.clips.papillon.data.VolumeQuery;
 import org.w3c.dom.*;
 
-import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.Transformer;
 import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.stream.StreamSource;
-import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
+import java.io.StringReader;
 
 /**
  * Used to find the instances of xslsheet.
@@ -248,8 +235,8 @@ public class VolumesFactory {
     protected final static String DML_URI = DmlPrefixResolver.DML_URI;
     protected final static String XLINK_URI = DmlPrefixResolver.XLINK_URI;
 
-    public final static String VOLUME_TAG = "volume-metadata";
-    public final static String CDM_ELEMENTS_TAG = "cdm-elements";
+    protected final static String VOLUME_TAG = "volume-metadata";
+    protected final static String CDM_ELEMENTS_TAG = "cdm-elements";
     protected final static String XSLSHEET_TAG = "xsl-stylesheet";
     protected final static String XMLSCHEMA_TAG = "xmlschema-ref";
     protected final static String TEMPLATE_INTERFACE_TAG = "template-interface-ref";
@@ -1315,13 +1302,10 @@ public class VolumesFactory {
 
 
     /**
-     * replaces all occurences of <param>search</param> by <param>replace</param> in <param>theString</param>.
-     *
-     * @param theString string to modify
-     * @param search    string to search
-     * @param replace   string to put instead of search occurences.
-     * @return a new String equals to <param>theString</param> where <param>search</param> has been replaced by
-     *         <param>replace</param>.
+     * @param String
+     * @param String
+     * @param String
+     * @return String
      */
     protected static String searchAndReplace(String theString, String search, String replace) {
         String searchedRegex = "\\Q" + search + "\\E";
@@ -1329,15 +1313,12 @@ public class VolumesFactory {
         return theString;
     }
 
-    private static long totaltime = 0;
-    private static int totaliterations = 0;
 
     /**
      * The reConstructionIndex rebuild the volume index.
      *
      * @throws PapillonBusinessException
      */
-
     public static void reConstructionIndex()
             throws fr.imag.clips.papillon.business.PapillonBusinessException {
 
@@ -1345,78 +1326,53 @@ public class VolumesFactory {
         for (Iterator iter = getVolumesArray().iterator(); iter.hasNext();) {
             Volume volume = (Volume) iter.next();
 
-
-                IndexFactory.emptyIndex(volume.getIndexDbname());
-
-                OptimizedVolumeEntriesIndexer.rebuildIndexes(volume);
-        }
-    }
-
-    public static void oldreConstructionIndex()
-            throws fr.imag.clips.papillon.business.PapillonBusinessException {
-
-        //
-        for (Iterator iter = getVolumesArray().iterator(); iter.hasNext();) {
-            Volume volume = (Volume) iter.next();
-
-            IndexFactory.emptyIndex(volume.getIndexDbname());
             //
             int count = volume.getCount();
             int delta = 20; // buffer limit
             PapillonLogger.writeDebugMsg("Volume : " + volume.getName() + " - " + count + " entries");
 
             //
-            try {
-                CurrentDBTransaction.registerNewDBTransaction();
+            for (int i = 0; i < count; i = i + delta) {
 
-                for (int i = 0; i < count; i = i + delta) {
+                try {
 
                     // Begin transaction
-                    long start = System.currentTimeMillis();
+                    CurrentDBTransaction.registerNewDBTransaction();
 
                     // Buffer volumeEntries
                     Collection bufferResults = VolumeEntriesFactory.getVolumeEntries(volume, i, delta);
 
-                    long mid = System.currentTimeMillis();
-
+                    //
                     Iterator buffer = bufferResults.iterator();
                     while (buffer.hasNext()) {
                         VolumeEntry ve = (VolumeEntry) buffer.next();
 
                         //
-                        // DONE: truncate the index db before reindexing.
-                        //IndexFactory.deleteIndexForEntryId(ve.getVolume().getIndexDbname(), ve.getHandle());                        
                         ParseVolume.parseEntry(ve);
 
                     }
 
                     // End transaction : a part was correct, commit the transaction ...
-                    ((DBTransaction) CurrentDBTransaction.get()).write();
-                    long end = System.currentTimeMillis();
-                    //PapillonLogger.writeDebugMsg(Integer.toString(i) + " to " + Integer.toString(i + delta - 1));
-                    totaltime += (end - start);
-                    totaliterations++;
-                    PapillonLogger.writeDebugMsg("batch took " + (mid - start) + " to fetch and " + (end - mid) + " to reindex (total: " + (end - start) + " / average: " + (totaltime / totaliterations) + ").");
+                    ((DBTransaction) CurrentDBTransaction.get()).commit();
+                    PapillonLogger.writeDebugMsg(Integer.toString(i) + " to " + Integer.toString(i + delta - 1));
 
+                } catch (Exception e) {
+                    String userMessage = "Problems when re-index entries.";
+                    PapillonLogger.writeDebugMsg(userMessage);
+                    e.printStackTrace();
 
+                    //
+                    try {
+                        ((DBTransaction) CurrentDBTransaction.get()).rollback();
+                    } catch (java.sql.SQLException sqle) {
+                        PapillonLogger.writeDebugMsg(
+                                "reConstructionIndex: SQLException while rolling back failed transaction.");
+                        sqle.printStackTrace();
+                    }
+
+                } finally {
+                    CurrentDBTransaction.releaseCurrentDBTransaction();
                 }
-            } catch (Exception e) {
-                String userMessage = "Problems when re-index entries.";
-                PapillonLogger.writeDebugMsg(userMessage);
-                e.printStackTrace();
-
-                //
-                try {
-                    DBTransaction dbt = ((DBTransaction) CurrentDBTransaction.get());
-                    if (null != dbt) dbt.rollback();
-                } catch (java.sql.SQLException sqle) {
-                    PapillonLogger.writeDebugMsg(
-                            "reConstructionIndex: SQLException while rolling back failed transaction.");
-                    sqle.printStackTrace();
-                }
-
-            } finally {
-                CurrentDBTransaction.releaseCurrentDBTransaction();
             }
 
             //
@@ -1428,23 +1384,6 @@ public class VolumesFactory {
         PapillonLogger.writeDebugMsg("Index re-construction process succeed !");
     }
 
-    public void reIndexAll() throws fr.imag.clips.papillon.business.PapillonBusinessException {
-        for (Iterator iter = getVolumesArray().iterator(); iter.hasNext();) {
-            Volume volume = (Volume) iter.next();
-
-            IndexFactory.emptyIndex(volume.getIndexDbname());
-            //
-            int count = volume.getCount();
-            int delta = 20; // buffer limit
-            PapillonLogger.writeDebugMsg("Volume : " + volume.getName() + " - " + count + " entries");
-
-            //
-
-            //
-            PapillonLogger.writeDebugMsg(volume.getName() + " index re-construction succeed !");
-
-        }
-    }
 
     /**
      * The modifiedStatus method modify the status of the contributions appearing "before" a not-finished contribution to modified status.
@@ -1610,8 +1549,8 @@ public class VolumesFactory {
      * Apply xsl transformation to all entries of the volume
      *
      * @param xslTransformation the xsl code
-     * @param volume            the volume on which to apply the transformation
-     * @param user              the user that is connected and applies the transformation
+     * @param volume the volume on which to apply the transformation
+     * @param user the user that is connected and applies the transformation
      * @throws PapillonBusinessException
      */
     public static void launchTransformation(String xslTransformation, Volume volume, User user)
@@ -1767,18 +1706,18 @@ public class VolumesFactory {
         //
         for (Iterator iter = (VolumesFactory.getVolumes()).iterator(); iter.hasNext();) {
             Volume myVolume = (Volume) iter.next();
-            if (myVolume != null && !myVolume.isEmpty()) {
-                Dictionary myDict = DictionariesFactory.getDictionaryByName(myVolume.getDictname());
-                if (myDict != null && !myDict.isEmpty()) {
+			if (myVolume !=null && !myVolume.isEmpty()) {
+				Dictionary myDict = DictionariesFactory.getDictionaryByName(myVolume.getDictname());
+				if (myDict !=null && !myDict.isEmpty()) {
 
-                    fr.imag.clips.papillon.business.dictionary.IVolumeEntryProcessor myProcessor = new fr.imag.clips.papillon.business.dictionary.NormalizeHeadwordProcessor();
-                    PapillonLogger.writeDebugMsg("Processor created");
+						fr.imag.clips.papillon.business.dictionary.IVolumeEntryProcessor myProcessor = new fr.imag.clips.papillon.business.dictionary.NormalizeHeadwordProcessor();
+						PapillonLogger.writeDebugMsg("Processor created");
 
-                    fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory.processVolume(myDict, myVolume, myKeys, myClauses, myProcessor, false);
-                    PapillonLogger.writeDebugMsg("Volume processed");
+						fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory.processVolume(myDict, myVolume, myKeys, myClauses, myProcessor, false);
+						PapillonLogger.writeDebugMsg("Volume processed");
 
-                }
-            }
+				}
+			}
         }
     }
 

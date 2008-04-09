@@ -9,10 +9,6 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.10.2.1  2008/02/14 17:09:27  serasset
- * Created an export into a zip file.
- * Cosmetic changes in other files.
- *
  * Revision 1.10  2007/03/25 22:00:57  fbrunet
  * improved avancedqueryform javascript
  * bug correction: in ViewQueryResult class, encode url criteria in UTF-8
@@ -161,7 +157,7 @@ public class AdvancedSearch extends PapillonBasePO {
     throws HttpPresentationException, IOException, SessionException {
         
         
-        // Handle action events (edit, duplicate, delete, undete)
+        ////// Handle action events (edit, duplicate, delete, undete)
         // Retrieve parameters 
         String action = myGetParameter(EditEntryInitFactory.ACTION_PARAMETER);
         String volumeName = myGetParameter(EditEntryInitFactory.VOLUME_PARAMETER);

@@ -9,9 +9,6 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.2.14.1  2007/11/14 16:28:59  serasset
- * *** empty log message ***
- *
  * Revision 1.2  2005/04/11 12:29:59  mangeot
  * Merge between the XPathAndMultipleKeys branch and the main trunk
  *
@@ -26,8 +23,9 @@
 
 package fr.imag.clips.papillon;
 
-import com.lutris.appserver.server.sql.DBTransaction;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
+
+import com.lutris.appserver.server.sql.DBTransaction;
 import org.enhydra.dods.DODS;
 
 /**

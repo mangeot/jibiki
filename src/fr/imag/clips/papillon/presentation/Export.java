@@ -8,10 +8,6 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.5.2.2  2008/02/14 17:09:27  serasset
- * Created an export into a zip file.
- * Cosmetic changes in other files.
- *
  * Revision 1.5.2.1  2007/10/02 10:31:21  serasset
  * Modified export of volume to speed up this task.
  *
@@ -125,6 +121,7 @@ public class Export extends PapillonBasePO {
                 // Initialize
                 java.util.Vector myKeys = new java.util.Vector();
                 java.util.Vector myClauses = new java.util.Vector();
+                Volume myVolume = VolumesFactory.getVolumeByName(volume);
                 
                 /*
                 // AUTHOR

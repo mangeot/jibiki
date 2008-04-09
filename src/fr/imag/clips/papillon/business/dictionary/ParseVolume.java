@@ -3,13 +3,6 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.43.2.4  2008/01/09 19:07:44  serasset
- * Better cdm entry detection when parsing volume
- *
- * Revision 1.43.2.3  2007/11/14 15:41:20  serasset
- * Modified parseEntry to seperate index data extraction from index save.
- * This will allow for a more optimized version of reindexation.
- *
  * Revision 1.43.2.2  2007/09/05 15:24:13  serasset
  * Created a page to browse the dictionary index
  * Lexalp formatter now sorts entries correctly within a legal sysem/language group
@@ -143,8 +136,6 @@ import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.xml.XMLServices;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Vector;
 
 public class ParseVolume {
@@ -276,11 +267,11 @@ public class ParseVolume {
                     res = str;
                     break;
                 }
-                if (    (str.indexOf("<" + CDM_entry + " ") >= 0) ||
-                        (str.indexOf("<" + CDM_entry + "\t") >= 0) ||
-                        (str.indexOf("<" + CDM_entry + "\n") >= 0) ||
-                        (str.indexOf("<" + CDM_entry + ">") >= 0)) {
-                    break;
+ 				if ((str.indexOf("<" + CDM_entry + " ")>=0) ||
+					(str.indexOf("<" + CDM_entry + "\t")>=0) ||
+					(str.indexOf("<" + CDM_entry + "\n")>=0) ||
+					(str.indexOf("<" + CDM_entry + ">")>=0)){
+					break;
                 }
             }
             inStream.close();
@@ -343,30 +334,40 @@ public class ParseVolume {
             PapillonLogger.writeDebugMsg("parseEntries, CDM_Contribution: [" + CDM_Contribution + "]");
             String bufferLine = "";
             int firstEntryIndex = -1;
-            while (buffer.ready() && firstEntryIndex < 0) {
-                bufferLine = buffer.readLine();
-                firstEntryIndex = bufferLine.indexOf("<" + CDM_Contribution);
-                isContributionVolume = (firstEntryIndex >= 0);
-                if (firstEntryIndex < 0) {
-                    firstEntryIndex = bufferLine.indexOf("<" + CDM_Entry + " ");
-                }
-                if (firstEntryIndex < 0) {
-                    firstEntryIndex = bufferLine.indexOf("<" + CDM_Entry + "\t");
-                }
-                if (firstEntryIndex < 0) {
-                    firstEntryIndex = bufferLine.indexOf("<" + CDM_Entry + ">");
-                }
-                if (firstEntryIndex >= 0) {
-                    if (firstEntryIndex > 0) {
-                        xmlHeaderBuffer.append(bufferLine.substring(0, firstEntryIndex));
-                        xmlHeaderBuffer.append("\n");
-                        bufferLine = bufferLine.substring(firstEntryIndex);
-                    }
-                } else {
-                    xmlHeaderBuffer.append(bufferLine);
-                    xmlHeaderBuffer.append("\n");
-                }
-            }
+			String testString = "<" + CDM_Entry;
+			while (buffer.ready() && firstEntryIndex <0) {
+				bufferLine = buffer.readLine();
+				firstEntryIndex = bufferLine.indexOf("<" + CDM_Contribution);
+				isContributionVolume = (firstEntryIndex >=0);
+				if (firstEntryIndex < 0) {
+					int tempIndex = bufferLine.indexOf(testString);
+					if (tempIndex >=0) {
+						String bufferLineCut = bufferLine.substring(tempIndex+testString.length());
+						if (bufferLineCut.length()==0 
+							|| (bufferLineCut.length()>0 
+								&& (bufferLineCut.charAt(0)==' ' 
+									|| bufferLineCut.charAt(0)=='\t'
+									|| bufferLineCut.charAt(0)=='>')
+								)
+							) {
+							firstEntryIndex = tempIndex;
+						}
+					}
+				}
+				if (firstEntryIndex >=0) {
+					if (firstEntryIndex>0) {
+						xmlHeaderBuffer.append(bufferLine.substring(0,firstEntryIndex));
+						xmlHeaderBuffer.append("\n");
+						bufferLine = bufferLine.substring(firstEntryIndex);
+					}
+				}
+				else {
+					xmlHeaderBuffer.append(bufferLine);
+					xmlHeaderBuffer.append("\n");
+				}
+				//PapillonLogger.writeDebugMsg("buffer line [" + bufferLine + "]");
+				//PapillonLogger.writeDebugMsg("firstEntryIndex [" + firstEntryIndex + "]");
+			}
             StringBuffer xmlFooterBuffer = new StringBuffer();
             if (isContributionVolume) {
                 CDM_Entry = CDM_Contribution;
@@ -379,11 +380,16 @@ public class ParseVolume {
             StringBuffer entryBuffer = new StringBuffer();
             entryBuffer.append(xmlHeaderBuffer);
             while (buffer.ready() && bufferLine.indexOf("</" + CDM_Volume + ">") < 0) {
-                int entryIndex = bufferLine.indexOf("<" + CDM_Entry + " ");
-                entryIndex = (entryIndex<0) ? bufferLine.indexOf("<" + CDM_Entry + "\t") : entryIndex;
-                entryIndex = (entryIndex<0) ? bufferLine.indexOf("<" + CDM_Entry + "\n") : entryIndex;
-                entryIndex = (entryIndex<0) ? bufferLine.indexOf("<" + CDM_Entry + ">") : entryIndex;
-                
+				int entryIndex = bufferLine.indexOf("<" + CDM_Entry + " ");
+				if (entryIndex<0) {
+					entryIndex = bufferLine.indexOf("<" + CDM_Entry + "\t");
+				}
+				if (entryIndex<0) {
+					entryIndex = bufferLine.indexOf("<" + CDM_Entry + "\n");
+				}
+				if (entryIndex<0) {
+					entryIndex = bufferLine.indexOf("<" + CDM_Entry + ">");
+				}
                 while (entryIndex >= 0) {
                     if (entryIndex > 0) {
                         entryBuffer.append(bufferLine.substring(0, entryIndex));
@@ -560,54 +566,19 @@ public class ParseVolume {
         return result;
     }
 
-    protected static class IndexData {
-        String CdmElement, lang, value, handle;
-
-        public IndexData(String cdme, String lang, String value, String handle) {
-            CdmElement = cdme;
-            this.lang = lang;
-            this.value = value;
-            this.handle = handle;
-        }
-
-        public Index toIndex(String volumeidx) throws PapillonBusinessException {
-            return IndexFactory.newIndex(volumeidx, CdmElement, lang, value, handle);
-
-        }
-    }
-
-    public static void saveIndexes(ArrayList indexes, String volumeidx) throws PapillonBusinessException {
-        Iterator i = indexes.iterator();
-        while (i.hasNext()) {
-            IndexData id = (IndexData) i.next();
-            Index myIndex = id.toIndex(volumeidx);
-            if (myIndex != null && !myIndex.isEmpty()) {
-                myIndex.save();
-            }
-        }
-    }
-
-    public static boolean parseEntry(VolumeEntry myEntry)
-            throws PapillonBusinessException {
-        org.w3c.dom.Document entryDoc = myEntry.getDom();
-        boolean result = (entryDoc == null);
-        ArrayList indexes = parseEntry(myEntry.getVolume(), entryDoc, myEntry.getHandle());
-        String volumeidx = myEntry.getVolume().getIndexDbname();
-        saveIndexes(indexes, volumeidx);
-        return result;
-    }
 
     // FIXME: should not be called parseEntry, but rather indexEntry...
     // FIXME: should be defined here ?
-    public static ArrayList parseEntry(Volume volume, org.w3c.dom.Document entryDoc, String handle)
+    public static boolean parseEntry(VolumeEntry myEntry)
             throws PapillonBusinessException {
-        ArrayList indexes = new ArrayList();
-
+        org.w3c.dom.Document entryDoc = myEntry.getDom();
+        boolean result = false;
         if (entryDoc != null) {
             org.w3c.dom.Element myRootElt = entryDoc.getDocumentElement();
             org.apache.xml.utils.PrefixResolver myPrefixResolver = new org.apache.xml.utils.PrefixResolverDefault(
                     myRootElt);
-            java.util.Hashtable CdmElementsTable = volume.getCdmElements();
+            java.util.Hashtable CdmElementsTable = myEntry.getVolume().getCdmElements();
+            result = true;
             for (java.util.Enumeration langKeys = CdmElementsTable.keys(); langKeys.hasMoreElements();) {
                 String lang = (String) langKeys.nextElement();
                 java.util.Hashtable tmpTable = (java.util.Hashtable) CdmElementsTable.get(lang);
@@ -651,7 +622,11 @@ public class ParseVolume {
                                     value = value.trim();
                                     if (!value.equals("")) {
                                         //PapillonLogger.writeDebugMsg("Parse entry, node value: " + value);
-                                        indexes.add(new IndexData(CdmElement, lang, value, handle));
+                                        Index myIndex = IndexFactory.newIndex(myEntry.getVolume().getIndexDbname(),
+                                                CdmElement, lang, value, myEntry.getHandle());
+                                        if (myIndex != null && !myIndex.isEmpty()) {
+                                            myIndex.save();
+                                        }
                                     }
                                 }
                             }
@@ -662,15 +637,91 @@ public class ParseVolume {
                 }
             }
         }
-        return indexes;
+        return result;
     }
 
-    /**
-     * @param myEntry the axie
-     * @return true if axie has a valid xmldoc
-     * @throws PapillonBusinessException if any exception is received
-     * @deprecated Axie should ot be used anymore
-     */
+    // FIXME: should not be called parseEntry, but rather indexEntry...
+    // FIXME: should be defined here ?
+    public static boolean indexEntry(VolumeEntry myEntry)
+            throws PapillonBusinessException {
+
+        //PapillonLogger.writeDebugMsg("INDEXENTRY");
+
+        org.w3c.dom.Document entryDoc = myEntry.getDom();
+        boolean result = false;
+
+        //
+        if (entryDoc != null) {
+            org.w3c.dom.Element myRootElt = entryDoc.getDocumentElement();
+            org.apache.xml.utils.PrefixResolver myPrefixResolver = new org.apache.xml.utils.PrefixResolverDefault(
+                    myRootElt);
+            java.util.Hashtable CdmElementsTable = myEntry.getVolume().getCdmElements();
+            result = true;
+
+            //
+            for (java.util.Enumeration langKeys = CdmElementsTable.keys(); langKeys.hasMoreElements();) {
+                String lang = (String) langKeys.nextElement();
+
+                //PapillonLogger.writeDebugMsg("INDEXENTRY, langKeys : " + lang);
+
+                java.util.Hashtable tmpTable = (java.util.Hashtable) CdmElementsTable.get(lang);
+                for (java.util.Enumeration keys = tmpTable.keys(); keys.hasMoreElements();) {
+                    String CdmElement = (String) keys.nextElement();
+
+                    //PapillonLogger.writeDebugMsg("INDEXENTRY, key " + CdmElement);
+
+                    java.util.Vector myVector = (java.util.Vector) tmpTable.get(CdmElement);
+                    org.apache.xpath.XPath myXPath = null;
+                    boolean isIndex = false;
+
+                    if (myVector != null) {
+
+                        //PapillonLogger.writeDebugMsg("INDEXENTRY, myVector.size: " + myVector.size());
+
+                        if (myVector.size() == 3) {
+                            isIndex = ((Boolean) myVector.elementAt(1)).booleanValue();
+                            if (isIndex) {
+                                myXPath = (org.apache.xpath.XPath) myVector.elementAt(2);
+                            }
+                        } else if (myVector.size() == 2) {
+                            isIndex = ((Boolean) myVector.elementAt(1)).booleanValue();
+                            if (isIndex) {
+                                String xpathString = (String) myVector.elementAt(0);
+                                myXPath = ParseVolume.compileXPath(xpathString, myRootElt);
+                                myVector.add(myXPath);
+                            }
+                        }
+                    }
+                    if (myXPath != null) {
+                        org.w3c.dom.NodeList resNodeList = null;
+                        try {
+                            org.apache.xpath.objects.XObject myXObject = myXPath.execute(
+                                    new org.apache.xpath.XPathContext(), myRootElt, myPrefixResolver);
+                            resNodeList = myXObject.nodelist();
+                        } catch (javax.xml.transform.TransformerException e) {
+                            throw new PapillonBusinessException("javax.xml.transform.TransformerException: ", e);
+                        }
+                        if (resNodeList != null) {
+                            for (int i = 0; i < resNodeList.getLength(); i++) {
+                                org.w3c.dom.Node myNode = resNodeList.item(i);
+                                String value = myNode.getNodeValue();
+                                if (value != null) {
+
+                                    //PapillonLogger.writeDebugMsg("INDEXENTRY, node value: " + value);
+
+                                    Index myIndex = IndexFactory.newIndex(myEntry.getVolume().getIndexDbname(),
+                                            CdmElement, lang, value, myEntry.getHandle());
+                                    myIndex.save();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
     public static boolean parseAxie(Axie myEntry)
             throws PapillonBusinessException {
         org.w3c.dom.Document entryDoc = myEntry.getDom();
@@ -1007,7 +1058,7 @@ public class ParseVolume {
             }
             currentEltNode.appendChild(textNode);
             eltNode.getParentNode().appendChild(currentEltNode);
+			}
         }
-    }
-
+    
 }

@@ -76,6 +76,7 @@
 package fr.imag.clips.papillon.business.user;
 
 import fr.imag.clips.papillon.data.*;
+import fr.imag.clips.papillon.business.utility.Utility;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.xml.XMLServices;
 import fr.imag.clips.papillon.CurrentDBTransaction;
@@ -121,6 +122,8 @@ public class User implements com.lutris.appserver.server.user.User {
 	protected final static String URL_ATTR = "href";
 	protected final static String NAME_ATTR = "name";
 	protected final static String VALUE_ATTR = "value";
+	
+	protected final static String STAR = "★";
 	
 	
 	
@@ -322,16 +325,7 @@ public class User implements com.lutris.appserver.server.user.User {
 	 */
 	public String[] getGroupsArray()
 		throws PapillonBusinessException {
-			String[] Groups = null;
-			String groups = getGroups();
-			if (null != groups && !groups.equals("")){
-			// delete the first separator in order to avoid an empty group
-				if (groups.indexOf(GROUPS_SEPARATOR_STRING) ==0) {
-					groups = groups.substring(GROUPS_SEPARATOR_STRING.length());
-				}
-				Groups = groups.split(GROUPS_SEPARATOR_STRING);
-			}
-			return Groups;
+			return Utility.deserializeStringIntoArray(getGroups(),GROUPS_SEPARATOR_STRING);
 		}
 	
 	public String getGroups()
@@ -354,14 +348,7 @@ public class User implements com.lutris.appserver.server.user.User {
 		}
 	public void setGroupsArray(String[] Groups)
 		throws PapillonBusinessException {
-			String groups = null;
-			if (null != groups && Groups.length >0) {
-				for (int i=0; i< Groups.length; i++) {
-					groups = groups + GROUPS_SEPARATOR_STRING + Groups[i];
-				}
-			}
-			groups.trim();
-			setGroups(groups);
+			setGroups(Utility.serializeStringArray(Groups,GROUPS_SEPARATOR_STRING));
 		}
 	
 	/**
@@ -713,6 +700,26 @@ public class User implements com.lutris.appserver.server.user.User {
 				this.save();
 			}
 			return found;
+		}
+		
+		public void levelUp()
+		throws PapillonBusinessException {
+			String stars = Utility.getStars(this.getGroupsArray());
+			if (stars==null || stars.length()<5) {
+				stars += STAR;
+				addNewGroup(stars);
+			}
+		}
+	
+		public void levelDown()
+		throws PapillonBusinessException {
+			String stars = Utility.getStars(this.getGroupsArray());
+			if (stars!=null) {
+				removeGroup(stars);
+				if (stars.length()>1) {
+					addGroup(stars.substring(0,stars.length()-1));
+				}
+			}
 		}
 	
 }

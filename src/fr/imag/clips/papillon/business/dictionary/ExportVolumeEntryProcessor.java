@@ -5,10 +5,6 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
- * Revision 1.5.2.1  2008/03/04 20:48:15  serasset
- * Lazy DOM building in VolumeEntry.
- * Export to Zip file now gives a correct filename.
- *
  * Revision 1.5  2007/01/05 13:57:25  serasset
  * multiple code cleanup.
  * separation of XMLServices from the Utility class
@@ -62,7 +58,7 @@ public class ExportVolumeEntryProcessor implements IVolumeEntryProcessor {
 	}
 	
 	public void process(VolumeEntry myEntry) throws PapillonBusinessException {
-        Volume myVolume = myEntry.getVolume();
+		Volume myVolume = myEntry.getVolume();
 		String resultString = "";
 		
 		if (outputFormat != null && outputFormat.equals(XHTMLFormat)) {
@@ -82,7 +78,7 @@ public class ExportVolumeEntryProcessor implements IVolumeEntryProcessor {
 				 xmlCode = XMLServices.NodeToString(myEntry.getDom(), false, true);
 			}
 			else {
-				xmlCode = myEntry.getXmlCode();
+				xmlCode = XMLServices.NodeToString(myEntry.getDom(), false, false);
 			}
 			if (xmlCode.indexOf("<" + contribString)>0) {
 				xmlCode= xmlCode.substring(xmlCode.indexOf("<" + contribString)); 
@@ -99,6 +95,6 @@ public class ExportVolumeEntryProcessor implements IVolumeEntryProcessor {
 		catch (Exception ex) {
 			throw new PapillonBusinessException("Error in writing an UTF-8 String: ", ex);
 		}
-    }
+	}
 
 }
