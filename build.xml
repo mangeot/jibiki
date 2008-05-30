@@ -470,9 +470,9 @@ For Lexalp, call ant using -Dapplication.name=Lexalp
      <filter token="AVALON_LIB" value="${papillon.avalon.jar}" />
      <filter token="BATIK_LIB" value="${papillon.batik.jar}" />
 
-      <filter token="PGSQL_SERVER_URL" value="${lexalpdb.server.url}" />
-      <filter token="DB_USER" value="${lexalpdb.user}" />
-      <filter token="DB_PASSWD" value="${lexalpdb.password}" />
+      <filter token="PGSQL_SERVER_URL" value="${jibiki.db.server.url}" />
+      <filter token="DB_USER" value="${jibiki.db.user}" />
+      <filter token="DB_PASSWD" value="${jibiki.db.password}" />
 
       <filter token="ADMIN_GROUP_PASWORD" value="${papillon.password.admin}" />
       <filter token="SPECIALIST_GROUP_PASSWORD" value="${papillon.password.specialist}" />

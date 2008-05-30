@@ -45,9 +45,9 @@ enhydra.dir=/usr/local/enhydra5.1
 
 # deployment setup
 application.name=Lexalp
-lexalpdb.server.url=jdbc:postgresql://localhost/lexalp
-lexalpdb.user=
-lexalpdb.password=
+jibiki.db.server.url=jdbc:postgresql://localhost/lexalp
+jibiki.db.user=
+jibiki.db.password=
 
 # group password setup
 papillon.password.admin=
