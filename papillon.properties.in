@@ -48,3 +48,8 @@ application.name=Lexalp
 lexalpdb.server.url=jdbc:postgresql://localhost/lexalp
 lexalpdb.user=
 lexalpdb.password=
+
+# group password setup
+papillon.password.admin=
+papillon.password.specialist=
+papillon.password.validator=

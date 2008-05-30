@@ -474,6 +474,10 @@ For Lexalp, call ant using -Dapplication.name=Lexalp
       <filter token="DB_USER" value="${lexalpdb.user}" />
       <filter token="DB_PASSWD" value="${lexalpdb.password}" />
 
+      <filter token="ADMIN_GROUP_PASWORD" value="${papillon.password.admin}" />
+      <filter token="SPECIALIST_GROUP_PASSWORD" value="${papillon.password.specialist}" />
+      <filter token="VALIDATOR_GROUP_PASSWORD" value="${papillon.password.validator}" />
+
      <!--filter token="OBSERVATEUR_LIB" value="${papillon.observateur.jar}" /-->
      <filter token="FO_PATH" value="${papillon.fo.xsl}" />
      <!-- /Papillon-specific filters -->

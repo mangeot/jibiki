@@ -268,9 +268,9 @@ Papillon.Informations.sections.jpn[] = "一般情報",
 #####
 # Groups passwords
 #
-Papillon.Users.Groups.Password.admin = "dbpap"
-Papillon.Users.Groups.Password.specialist = "butterfly"
-Papillon.Users.Groups.Password.validator = "farfalla"
+Papillon.Users.Groups.Password.admin = "@ADMIN_GROUP_PASWORD@"
+Papillon.Users.Groups.Password.specialist = "@SPECIALIST_GROUP_PASSWORD@"
+Papillon.Users.Groups.Password.validator = "@VALIDATOR_GROUP_PASSWORD@"
 
 # Class name of the layout for pages of the application
 Papillon.Presentation.PriorityPackage = "fr.imag.clips.papillon.presentation.xhtmllexalp"

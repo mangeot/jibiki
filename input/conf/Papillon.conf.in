@@ -188,7 +188,7 @@ Papillon.Informations.fileExtensionHandler.xsl     = "fr.imag.clips.papillon.bus
 Papillon.Informations.tmpDir = "/tmp/"
 # Absolute path to the information section base dir.
 Papillon.Informations.baseDir = "/home/papillon/informations/main/presentation/"
-Papillon.Informations.relativeDir = "/~jibiki/"
+Papillon.Informations.relativeDir = "/"
 # Relative path to the media directory (the directory that contains gifs, jpgs, etc. that are added 
 # while importing a file). This directory is relative to the server's information section base Dir. 
 Papillon.Informations.mediaDir = "info_media/"
@@ -259,9 +259,15 @@ Papillon.Informations.sections.jpn[] = "一般情報",
 #####
 # Groups passwords
 #
-Papillon.Users.Groups.Password.admin = "dbpap"
-Papillon.Users.Groups.Password.specialist = "butterfly"
-Papillon.Users.Groups.Password.validator = "farfalla"
+Papillon.Users.Groups.Password.admin = "@ADMIN_GROUP_PASWORD@"
+Papillon.Users.Groups.Password.specialist = "@SPECIALIST_GROUP_PASSWORD@"
+Papillon.Users.Groups.Password.validator = "@VALIDATOR_GROUP_PASSWORD@"
+
+# Class name of the layout for pages of the application
+#Papillon.Presentation.PriorityPackage = "fr.imag.clips.papillon.presentation.xhtml"
+#Papillon.LayoutClassName = "fr.imag.clips.papillon.presentation.LexALPLayout"
+Papillon.LoginCookieName = "PapillonLoginCookie"
+#Papillon.Presentation.PriorityPackage = "fr.imag.clips.papillon.presentation.xhtmllexalp"
 
 
 ###
@@ -272,6 +278,17 @@ Papillon.Logging.StoreQueryLogs = true
 # SAXON TRANSFORMATION HANDLER
 #+++++++++++++++++++++++++++++++++
 Papillon.Saxon.Classpath = "@SAXON8_LIB@"
+
+#+++++++++++++++++++++++++++++++++
+# FOP TRANSFORMATION HANDLER
+#+++++++++++++++++++++++++++++++++
+Papillon.Fop.Classpath = "@FOP_LIB@"
+Papillon.Batik.Classpath = "@BATIK_LIB@"
+Papillon.Xalan.Classpath = "@XALAN_LIB@"
+Papillon.Xerces.Classpath = "@XERCES_LIB@"
+Papillon.Avalon.Classpath = "@AVALON_LIB@"
+Papillon.XmlApi.Classpath = "@XMLAPI_LIB@"
+Papillon.Fo.Xsl = "@FO_PATH@"
 
 #-----------------------------------------------------------------------------
 #                   JDictd server Configuration (RFC 2229)
@@ -296,11 +313,9 @@ DatabaseManager.DefaultDatabase = "papillon"
 DatabaseManager.Debug = "false"
 DatabaseManager.DB.papillon.ClassType = "PostgreSQL"
 DatabaseManager.DB.papillon.JdbcDriver = "org.postgresql.Driver"
-DatabaseManager.DB.papillon.Connection.Url = "jdbc:postgresql://localhost/papillon"
-#DatabaseManager.DB.papillon.Connection.Url = "jdbc:postgresql://gohan.imag.fr/papillon"
-
-DatabaseManager.DB.papillon.Connection.User = "papillon"
-DatabaseManager.DB.papillon.Connection.Password = "dbpap"
+DatabaseManager.DB.papillon.Connection.Url = "@PGSQL_SERVER_URL@"
+DatabaseManager.DB.papillon.Connection.User = "@DB_USER@"
+DatabaseManager.DB.papillon.Connection.Password = "@DB_PASSWD@"
 
 DatabaseManager.DB.papillon.Connection.MaxPoolSize = 30
 DatabaseManager.DB.papillon.Connection.AllocationTimeout = 10000
