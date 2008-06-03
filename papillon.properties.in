@@ -45,6 +45,7 @@ enhydra.dir=/usr/local/enhydra5.1
 
 # deployment setup
 application.name=Lexalp
+application.prefix=/
 jibiki.db.server.url=jdbc:postgresql://localhost/lexalp
 jibiki.db.user=
 jibiki.db.password=
