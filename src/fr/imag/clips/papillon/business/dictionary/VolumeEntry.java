@@ -1545,9 +1545,13 @@ public class VolumeEntry
      *                                   deleting data (usually due to an underlying data layer
      *                                   error).
      */
-    public boolean save()
+    public boolean save() throws PapillonBusinessException {
+        return this.save(true);
+    }
+
+    public boolean save(boolean index)
             throws PapillonBusinessException {
-        boolean res = false;
+        boolean res = true;
         try {
             // Reset caches
             VolumeEntriesFactory.resetCountCache(this.getVolume().getName());
@@ -1560,7 +1564,7 @@ public class VolumeEntry
             this.setContributionIdIfNull();
 
             // New index
-            res = ParseVolume.parseEntry(this);
+            if (index) res = ParseVolume.indexEntry(this);
 
             //
             if (null != this.dom) {
