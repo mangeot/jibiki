@@ -1386,7 +1386,7 @@ public class VolumesFactory {
                         //
                         // DONE: truncate the index db before reindexing.
                         //IndexFactory.deleteIndexForEntryId(ve.getVolume().getIndexDbname(), ve.getHandle());                        
-                        ParseVolume.parseEntry(ve);
+                        ParseVolume.indexEntry(ve);
 
                     }
 

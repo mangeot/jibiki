@@ -7,7 +7,7 @@
  * Better cdm entry detection when parsing volume
  *
  * Revision 1.43.2.3  2007/11/14 15:41:20  serasset
- * Modified parseEntry to seperate index data extraction from index save.
+ * Modified indexEntry to seperate index data extraction from index save.
  * This will allow for a more optimized version of reindexation.
  *
  * Revision 1.43.2.2  2007/09/05 15:24:13  serasset
@@ -142,10 +142,12 @@ package fr.imag.clips.papillon.business.dictionary;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.xml.XMLServices;
+import fr.imag.clips.papillon.CurrentDBTransaction;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
+import java.sql.SQLException;
 
 public class ParseVolume {
 
@@ -422,7 +424,7 @@ public class ParseVolume {
 
         } catch (java.io.IOException exp) {
             throw new PapillonBusinessException("ParseVolume.parseEntries, error IOException", exp);
-        }
+        } 
         return message;
     }
 
@@ -445,13 +447,12 @@ public class ParseVolume {
         org.w3c.dom.Document myDoc = XMLServices.buildDOMTree(entryString);
         if (myDoc != null) {
             VolumeEntry newEntry = new VolumeEntry(myDict, myVolume);
-            // newEntry.setXmlCode(entryString) is called by myEntry.save();
             newEntry.setDom(myDoc);
             newEntry.setAuthor();
             newEntry.setCreationDate();
             newEntry.setHeadword();
             newEntry.setStatusIfNotNull(defaultStatus);
-            // parseEntry(newEntry) is called by myEntry.save();
+            // indexEntry(newEntry) is called by myEntry.save();
             String entryId = "";
             if (isContributionVolume) {
                 entryId = newEntry.getContributionId();
@@ -463,12 +464,12 @@ public class ParseVolume {
                             case ReplaceExistingContribution_Ignore:
                                 break;
                             case ReplaceExistingContribution_ReplaceAnyway:
-                                result = newEntry.save();
+                                result = newEntry.save(false);
                                 existingEntry.delete();
                                 break;
                             case ReplaceExistingContribution_ReplaceIfSameStatus:
                                 if (newEntry.getStatus().equals(existingEntry.getStatus())) {
-                                    result = newEntry.save();
+                                    result = newEntry.save(false);
                                     existingEntry.delete();
                                 }
                                 break;
@@ -476,7 +477,7 @@ public class ParseVolume {
                                 if (existingEntry.getStatus().equals(
                                         VolumeEntry.NOT_FINISHED_STATUS) && newEntry.getStatus().equals(
                                         VolumeEntry.FINISHED_STATUS)) {
-                                    result = newEntry.save();
+                                    result = newEntry.save(false);
                                     existingEntry.delete();
                                 }
                                 break;
@@ -484,10 +485,10 @@ public class ParseVolume {
                                 break;
                         }
                     } else {
-                        result = newEntry.save();
+                        result = newEntry.save(false);
                     }
                 } else {
-                    result = newEntry.save();
+                    result = newEntry.save(false);
                 }
             } else {
                 entryId = newEntry.getEntryId();
@@ -498,12 +499,12 @@ public class ParseVolume {
                             case ReplaceExistingEntry_Ignore:
                                 break;
                             case ReplaceExistingEntry_ReplaceAnyway:
-                                result = newEntry.save();
+                                result = newEntry.save(false);
                                 existingEntry.delete();
                                 break;
                             case ReplaceExistingEntry_ReplaceIfSameStatus:
                                 if (newEntry.getStatus().equals(existingEntry.getStatus())) {
-                                    result = newEntry.save();
+                                    result = newEntry.save(false);
                                     existingEntry.delete();
                                 }
                                 break;
@@ -511,18 +512,18 @@ public class ParseVolume {
                                 if (existingEntry.getStatus().equals(
                                         VolumeEntry.NOT_FINISHED_STATUS) && newEntry.getStatus().equals(
                                         VolumeEntry.FINISHED_STATUS)) {
-                                    result = newEntry.save();
+                                    result = newEntry.save(false);
                                     existingEntry.delete();
                                 }
                                 break;
                             case ReplaceExistingEntry_CopyAnyway:
                                 newEntry.setEntryId();
-                                result = newEntry.save();
+                                result = newEntry.save(false);
                                 break;
                             case ReplaceExistingEntry_CopyIfSameStatus:
                                 if (newEntry.getStatus().equals(existingEntry.getStatus())) {
                                     newEntry.setEntryId();
-                                    result = newEntry.save();
+                                    result = newEntry.save(false);
                                 }
                                 break;
                             case ReplaceExistingEntry_CopyIfFinished:
@@ -530,17 +531,17 @@ public class ParseVolume {
                                         VolumeEntry.NOT_FINISHED_STATUS) && newEntry.getStatus().equals(
                                         VolumeEntry.FINISHED_STATUS)) {
                                     newEntry.setEntryId();
-                                    result = newEntry.save();
+                                    result = newEntry.save(false);
                                 }
                                 break;
                             default:
                                 break;
                         }
                     } else {
-                        result = newEntry.save();
+                        result = newEntry.save(false);
                     }
                 } else {
-                    result = newEntry.save();
+                    result = newEntry.save(false);
                 }
             }
             if (result) {
@@ -587,11 +588,12 @@ public class ParseVolume {
         }
     }
 
-    public static boolean parseEntry(VolumeEntry myEntry)
+    // FIXME: que signifie ce booléen renvoyé ????
+    public static boolean indexEntry(VolumeEntry myEntry)
             throws PapillonBusinessException {
         org.w3c.dom.Document entryDoc = myEntry.getDom();
         boolean result = (entryDoc == null);
-        ArrayList indexes = parseEntry(myEntry.getVolume(), entryDoc, myEntry.getHandle());
+        ArrayList indexes = indexEntry(myEntry.getVolume(), entryDoc, myEntry.getHandle());
         String volumeidx = myEntry.getVolume().getIndexDbname();
         saveIndexes(indexes, volumeidx);
         return result;
@@ -599,7 +601,7 @@ public class ParseVolume {
 
     // FIXME: should not be called parseEntry, but rather indexEntry...
     // FIXME: should be defined here ?
-    public static ArrayList parseEntry(Volume volume, org.w3c.dom.Document entryDoc, String handle)
+    public static ArrayList indexEntry(Volume volume, org.w3c.dom.Document entryDoc, String handle)
             throws PapillonBusinessException {
         ArrayList indexes = new ArrayList();
 
@@ -669,7 +671,7 @@ public class ParseVolume {
      * @param myEntry the axie
      * @return true if axie has a valid xmldoc
      * @throws PapillonBusinessException if any exception is received
-     * @deprecated Axie should ot be used anymore
+     * @deprecated Axie should not be used anymore
      */
     public static boolean parseAxie(Axie myEntry)
             throws PapillonBusinessException {
