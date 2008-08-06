@@ -76,6 +76,8 @@ import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 public class LoginUser extends PapillonBasePO {
     protected final static String LOGIN_PARAMETER="Login";
     protected final static String REMEMBER_LOGIN_PARAMETER="RememberLogin";
+    protected final static String SESSION_WITHOUT_COOKIES_PARAMETER="WithoutCookie";
+    protected final static String NO_REDIRECTION_PARAMETER="NoRedirection";
     protected final static String PASSWORD_PARAMETER="Password";
     protected final static String LOGOUT_PARAMETER="Logout";
     // Now called DESTINATION_AFTER_LOGIN_PARAMETER and inherited from BasePO
@@ -112,12 +114,16 @@ public class LoginUser extends PapillonBasePO {
 
         String Login = myGetParameter(LOGIN_PARAMETER);
         String RememberLogin = myGetParameter(REMEMBER_LOGIN_PARAMETER);
+		String SessionWithoutCookies = myGetParameter(SESSION_WITHOUT_COOKIES_PARAMETER);
+		String NoRedirection = myGetParameter(NO_REDIRECTION_PARAMETER);
         String Logout = myGetParameter(LOGOUT_PARAMETER);
         String Password = myGetParameter(PASSWORD_PARAMETER);
         String Dest = myGetParameter(DESTINATION_AFTER_LOGIN_PARAMETER);
         // If there is no destination, just redirect the user to the home page after a succesfull log in.
-        Dest = (Dest != null) ? Dest : req.getAppFileURIPath("/");
-        
+		// This redirection does not work with the jessionid cookie in the URL
+        //Dest = (Dest != null) ? Dest : req.getAppFileURIPath("/");
+		Dest = (Dest != null) ? Dest : this.getUrl();
+       
         String userMessage = "";
         // If the page is called with parameters, take the requested action
         if (req.getParameterNames().hasMoreElements()) {
@@ -132,7 +138,21 @@ public class LoginUser extends PapillonBasePO {
                             this.setCookie(this.LOGIN_COOKIE,
                             myUser.getHandle());
                         }
-                        throw new ClientPageRedirectException(Dest);                  
+					if (SessionWithoutCookies != null && !SessionWithoutCookies.equals("") || !getComms().request.isRequestedSessionIdFromCookie()) {
+						try {
+							Dest = ((fr.imag.clips.papillon.Papillon)com.lutris.appserver.server.Enhydra.getApplication()).encodeUrl(Dest,this.getComms().session.getSessionKey());
+							PapillonLogger.writeDebugMsg("Url without cookies: " + Dest);
+						}
+						catch (com.lutris.appserver.server.ApplicationException ae) {
+							PapillonLogger.writeDebugMsg("Error in LoginUser.po: " + ae.toString());
+						}
+						if (SessionWithoutCookies != null && !SessionWithoutCookies.equals("")) {
+							getComms().response.setSessionIdEncodeUrlRequired(true);
+						}
+					}
+						if (NoRedirection == null || NoRedirection.equals("")) {
+                       		throw new ClientPageRedirectException(Dest);                  
+						}
                     } else {
                         userMessage = "Wrong password";
                     }

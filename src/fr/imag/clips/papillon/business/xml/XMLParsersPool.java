@@ -1,7 +1,7 @@
 /*
  * Jibiki project
  *
- * © Gilles SŽrasset and Jibiki development team - GETA CLIPS IMAG
+ *  Gilles SÃ©rasset and Jibiki development team - GETA CLIPS IMAG
  *-----------------------------------------------
  * $Id$
  *-----------------------------------------------

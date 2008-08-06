@@ -267,9 +267,9 @@ Papillon.Informations.sections.jpn[] = "一般情報",
 #####
 # Groups passwords
 #
-Papillon.Users.Groups.Password.admin = "@ADMIN_GROUP_PASWORD@"
-Papillon.Users.Groups.Password.specialist = "@SPECIALIST_GROUP_PASSWORD@"
-Papillon.Users.Groups.Password.validator = "@VALIDATOR_GROUP_PASSWORD@"
+Papillon.Users.Groups.Password.admin = "dbpap"
+Papillon.Users.Groups.Password.specialist = "butterfly"
+Papillon.Users.Groups.Password.validator = "farfalla"
 
 # Class name of the layout for pages of the application
 Papillon.Presentation.PriorityPackage = "fr.imag.clips.papillon.presentation.xhtmldri"
@@ -319,9 +319,11 @@ DatabaseManager.DefaultDatabase = "dribiki"
 DatabaseManager.Debug = "false"
 DatabaseManager.DB.dribiki.ClassType = "PostgreSQL"
 DatabaseManager.DB.dribiki.JdbcDriver = "org.postgresql.Driver"
-DatabaseManager.DB.dribiki.Connection.Url = "@PGSQL_SERVER_URL@"
-DatabaseManager.DB.dribiki.Connection.User = "@DB_USER@"
-DatabaseManager.DB.dribiki.Connection.Password = "@DB_PASSWD@"
+DatabaseManager.DB.dribiki.Connection.Url = "jdbc:postgresql://localhost/dribiki"
+#DatabaseManager.DB.dribiki.Connection.Url = "jdbc:postgresql://gohan.imag.fr/papillon"
+
+DatabaseManager.DB.dribiki.Connection.User = "jibiki"
+DatabaseManager.DB.dribiki.Connection.Password = "jbkdri"
 
 DatabaseManager.DB.dribiki.Connection.MaxPoolSize = 30
 DatabaseManager.DB.dribiki.Connection.AllocationTimeout = 10000

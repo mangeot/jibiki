@@ -48,7 +48,7 @@ public class OptimizedVolumeEntriesIndexer {
                         Document xmlDoc = XMLServices.buildDOMTree(xmlCode);
                         String handle = myResultSet.getString("objectid");
 
-                        indexes.addAll(ParseVolume.indexEntry(volume, xmlDoc, handle));
+                        indexes.addAll(ParseVolume.parseEntry(volume, xmlDoc, handle));
                         resultCount++;
                     }
                     myResultSet.close();

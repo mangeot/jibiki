@@ -516,7 +516,8 @@ public class Home
                     queryReq.getTargets().add(language);
                 }
 
-                // Add status criteria
+  
+                 // Add status criteria
                 ArrayList listStatus = new ArrayList();
 
                 QueryCriteria criteriaFinishedStatus = new QueryCriteria();
@@ -524,11 +525,11 @@ public class Home
                 criteriaFinishedStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.FINISHED_STATUS);
                 listStatus.add(criteriaFinishedStatus);
 
-                QueryCriteria criteriaModifiedStatus = new QueryCriteria();
+               QueryCriteria criteriaModifiedStatus = new QueryCriteria();
                 criteriaModifiedStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);
                 criteriaModifiedStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.MODIFIED_STATUS);
                 listStatus.add(criteriaModifiedStatus);
-
+ 
                 queryReq.addOrCriteriaList(listStatus);
 
                 if (searchKind.equals(EXACT_MATCH)) {
@@ -580,6 +581,7 @@ public class Home
                     queryFuzzyResultForm.appendChild(content.importNode(viewQueryFuzzyResultNode, true));
                     queryFuzzyResultForm.removeAttribute("id");
                     removeQueryResult();
+					
                 }
 
                 //// Initializing cache values for next query
