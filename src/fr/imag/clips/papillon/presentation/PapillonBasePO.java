@@ -390,17 +390,6 @@ public abstract class PapillonBasePO extends AbstractPO {
 				getSessionData().setUserPreferredLanguage(cookieUser.getLang());
 				getSessionData().setClientWithLabelDisplayProblems(getComms().request.getHeader("User-Agent"));
 				PapillonSessionManager.addNewSession(getComms().session, cookieUser);
-//[ifdef]
-				java.util.Vector params = new java.util.Vector();
-				params.add(cookieUser.getLogin());
-				params.add(cookieUser.getHandle());
-				params.add(cookieUser.getName());
-				params.add(getComms().request.getHeader("User-Agent"));
-				params.add(getComms().request.getRemoteHost());
-				params.add(cookieUser.getLang());
-				params.add("UTF-8");
-				fr.imag.clips.papillon.Papillon.sendMsgToObservateur("User login from cookie","Parameters: user-login, user-handle, user-name, User-Agent, user-host-address, user-preferred-lang (ISO 639-2/T 3 letter code), message-encoding", params);
-//[enddef]
 			}
             else {
 				cookieUser = (fr.imag.clips.papillon.business.user.User) getComms().session.getUser();
@@ -418,17 +407,6 @@ public abstract class PapillonBasePO extends AbstractPO {
 					getSessionData().setUserAcceptLanguages(userAcceptLanguage);
 					getSessionData().setClientWithLabelDisplayProblems(getComms().request.getHeader("User-Agent"));
 					PapillonSessionManager.addNewSession(getComms().session, cookieUser);
-//[ifdef]
-					java.util.Vector params = new java.util.Vector();
-					params.add(cookieUser.getLogin());
-					params.add(cookieUser.getHandle());
-					params.add(cookieUser.getName());
-					params.add(getComms().request.getHeader("User-Agent"));
-					params.add(getComms().request.getRemoteHost());
-					params.add(cookieUser.getLang());
-					params.add("UTF-8");
-					fr.imag.clips.papillon.Papillon.sendMsgToObservateur("Unregistered user login from cookie","Parameters: user-login, user-handle, user-name, User-Agent, user-host-address, user-preferred-lang (ISO 639-2/T 3 letter code), message-encoding", params);
-//[enddef]
 				}
             }
         }

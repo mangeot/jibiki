@@ -141,34 +141,6 @@ public class ViewQueryResult {
             //
             QueryResult qr = (QueryResult) iter.next();
 			
-//[ifdef]			
-            java.util.Vector params = new java.util.Vector();
-			VolumeEntry myVolumeEntry = qr.getSourceEntry();
-			String login = "";
-			String handle = "";
-			String groups = "";
-            if (user != null) {
-				login = user.getLogin();				
-				handle = user.getHandle();				
-				groups = user.getGroups();				
-			}          
-			params.add(login);
-			params.add(handle);
-			params.add(groups);
-			params.add(myVolumeEntry.getDictionaryName());
-			params.add(myVolumeEntry.getVolumeName());
-			params.add(myVolumeEntry.getHeadword());
-			params.add(myVolumeEntry.getHandle());
-			params.add(myVolumeEntry.getContributionId());
-			params.add(myVolumeEntry.getEntryId());
-			params.add(myVolumeEntry.getSourceLanguage());
-			params.add(Utility.serializeStringArray(ParseVolume.getCdmStrings(myVolumeEntry, Volume.CDM_gdefEstDomaine, myVolumeEntry.getSourceLanguage()),fr.imag.clips.papillon.Papillon.OBSERVATEUR_STRING_SEP));
-			params.add(myVolumeEntry.getStatus());
-			params.add(myVolumeEntry.getAuthor());
-			params.add(Utility.serializeStringArray(myVolumeEntry.getGroups(),fr.imag.clips.papillon.Papillon.OBSERVATEUR_STRING_SEP));
-			params.add("UTF-8");
-			fr.imag.clips.papillon.Papillon.sendMsgToObservateur("Lookup entry","Parameters: user-login, user-handle, user-groups (separated by separator), dictionary-name, volume-name, entry-headword, entry-handle, entry-contribution-id, entry-entry-id, entry-source-lang (ISO 639-2/T 3 letter code), entry-domains (separated by separator), entry-status, entry-author, entry-groups (separated by separator), message-encoding", params);
-//[enddef]			
 
 
             //System.out.println("ViewQueryResult : " + qp.getXsl());

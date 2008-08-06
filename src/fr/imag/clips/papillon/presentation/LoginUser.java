@@ -132,15 +132,6 @@ public class LoginUser extends PapillonBasePO {
                 null != Password && !Password.equals("")) {
                 User myUser = UsersFactory.findUserByLogin(Login);
                 if (null != myUser && !myUser.isEmpty()) { 
-//[ifdef]
-					java.util.Vector params = new java.util.Vector();
-					params.add(myUser.getLogin());
-					params.add(myUser.getHandle());
-					params.add(RememberLogin);
-					params.add(Dest);
-					params.add(SessionWithoutCookies);
-					params.add(NoRedirection);
-//[enddef]
                     if (myUser.HasCorrectPassword(Password)) {
                         setUser(myUser);
                         if (RememberLogin != null && !RememberLogin.equals("")) {
@@ -160,21 +151,11 @@ public class LoginUser extends PapillonBasePO {
 						}
 					}
 						if (NoRedirection == null || NoRedirection.equals("")) {
-//[ifdef]
-							params.add(userMessage);
-							params.add("UTF-8");
-							fr.imag.clips.papillon.Papillon.sendMsgToObservateur("User login","Parameters: user-login, user-handle, message-encoding, remember-login, destination, without-cookie, no-redirection, user-message", params); 
-//[enddef]
                        		throw new ClientPageRedirectException(Dest);                  
 						}
                     } else {
                         userMessage = "Wrong password";
                     }
-//[ifdef]
-					params.add(userMessage);
-					params.add("UTF-8");
-					fr.imag.clips.papillon.Papillon.sendMsgToObservateur("User login","Parameters: user-login, user-handle, message-encoding, remember-login, destination, without-cookie, no-redirection, user-message", params); 
-//[enddef]
                 } else {
                     userMessage = "User unknown";
                 }

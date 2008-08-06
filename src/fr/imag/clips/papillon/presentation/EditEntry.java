@@ -153,34 +153,6 @@ public class EditEntry extends EditingBasePO {
                 PapillonLogger.writeDebugMsg ("EditEntry : The dom entry is null.");
 				throw new ClientPageRedirectException(EditingErrorURL);
 			}
-//[ifdef]			
-                        java.util.Vector params = new java.util.Vector();
- 			String login = "";
-			String handle = "";
-			String groups = "";
-            if (this.getUser() != null) {
-				login = this.getUser().getLogin();				
-				handle = this.getUser().getHandle();				
-				groups = this.getUser().getGroups();				
-			}          
-			params.add(login);
-			params.add(handle);
-			params.add(groups);
-            params.add(myVolumeEntry.getDictionaryName());
-			params.add(myVolumeEntry.getVolumeName());
-			params.add(myVolumeEntry.getHeadword());
-			params.add(myVolumeEntry.getHandle());
-			params.add(myVolumeEntry.getContributionId());
-			params.add(myVolumeEntry.getEntryId());
-			params.add(myVolumeEntry.getSourceLanguage());
-			params.add(Utility.serializeStringArray(ParseVolume.getCdmStrings(myVolumeEntry, Volume.CDM_gdefEstDomaine, myVolumeEntry.getSourceLanguage()),fr.imag.clips.papillon.Papillon.OBSERVATEUR_STRING_SEP));
-			params.add(myVolumeEntry.getStatus());
-			params.add(myVolumeEntry.getAuthor());
-			params.add(Utility.serializeStringArray(myVolumeEntry.getGroups(),fr.imag.clips.papillon.Papillon.OBSERVATEUR_STRING_SEP));
-			params.add("UTF-8");
-			fr.imag.clips.papillon.Papillon.sendMsgToObservateur("Ongoing entry editing","Parameters: user-login, user-handle, user-groups (Strings separated by a #), dictionary-name, volume-name, entry-headword, entry-handle, entry-contribution-id, entry-entry-id, entry-source-lang (ISO 639-2/T 3 letter code), entry-domains (Strings separated by a #), entry-status, entry-author, entry-groups (Strings separated by a #), message-encoding", params);
-//[enddef]			
-			
 		}
 		// TODO answer if no arguments
 		else {

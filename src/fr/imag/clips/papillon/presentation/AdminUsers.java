@@ -127,12 +127,6 @@ public class AdminUsers extends PapillonBasePO {
 
         // If the page is called with parameters, take the requested action
         if (req.getParameterNames().hasMoreElements()) {
-//[ifdef]
-             java.util.Vector params = new java.util.Vector();
-             params.add(this.getUser().getLogin());
-             params.add(this.getUser().getHandle());
-             params.add("UTF-8");
-//[enddef]
 
             //TEMPORAIRE :avec l URL
             //AJOUT DE DICO
@@ -143,11 +137,6 @@ public class AdminUsers extends PapillonBasePO {
 									String userName = myUser.getName();
 									myUser.delete();
 									userMessage = "User "+  userName + " has been deleted";
-//[ifdef]
-             	params.add(REMOVE_PARAMETER);
-             	params.add(myUser.getLogin());
-             	params.add(myGetParameter(REMOVE_PARAMETER));
-//[enddef]
 								}
 								else {
                     userMessage = "User not in database";
@@ -159,11 +148,6 @@ public class AdminUsers extends PapillonBasePO {
                     myUser.addGroup(User.ADMIN_GROUP);
                     myUser.save();
                     userMessage = "User "+ myUser.getName() + " is admin";
-//[ifdef]
-            	    params.add(MAKEADMIN_PARAMETER);
-             	    params.add(myUser.getLogin());
-             	    params.add(myGetParameter(MAKEADMIN_PARAMETER));
-//[enddef]
                 } else {
                     userMessage = "Ignoring user";
                 }
@@ -174,11 +158,6 @@ public class AdminUsers extends PapillonBasePO {
                     myUser.setPassword(myUser.getLogin());
                     myUser.save();
                     userMessage = "User "+ myUser.getName() + " has a new password with the login " + myUser.getLogin() + " for value";
-//[ifdef]
-             	    params.add(RESETPASSWORD_PARAMETER);
-             	    params.add(myUser.getLogin());
-             	    params.add(myGetParameter(RESETPASSWORD_PARAMETER));
-//[enddef]
                 } else {
                     userMessage = "Ignoring user";
                 }
@@ -189,11 +168,6 @@ public class AdminUsers extends PapillonBasePO {
                     myUser.addGroup(User.SPECIALIST_GROUP);
                     myUser.save();
                     userMessage = "User "+ myUser.getName() + " is a specialist";
-//[ifdef]
-             	    params.add(MAKESPECIALIST_PARAMETER);
-             	    params.add(myUser.getLogin());
-             	    params.add(myGetParameter(MAKESPECIALIST_PARAMETER));
-//[enddef]
                 } else {
                     userMessage = "Ignoring user";
                 }
@@ -204,11 +178,6 @@ public class AdminUsers extends PapillonBasePO {
                     myUser.addGroup(User.VALIDATOR_GROUP);
                     myUser.save();
                     userMessage = "User "+ myUser.getName() + " is a validator";
-//[ifdef]
-             	    params.add(MAKEVALIDATOR_PARAMETER);
-             	    params.add(myUser.getLogin());
-             	    params.add(myGetParameter(MAKEVALIDATOR_PARAMETER));
-//[enddef]
                 } else {
                     userMessage = "Ignoring user";
                 }
@@ -219,12 +188,6 @@ public class AdminUsers extends PapillonBasePO {
                     myUser.addGroup(myGetParameter(GROUP_PARAMETER));
                     myUser.save();
                     userMessage = "User "+ myUser.getName() + " is in group " + myGetParameter(GROUP_PARAMETER);
-//[ifdef]
-             	    params.add(ADD_IN_GROUP_PARAMETER);
-             	    params.add(myUser.getLogin());
-             	    params.add(myGetParameter(ADD_IN_GROUP_PARAMETER));
-             	    params.add(myGetParameter(GROUP_PARAMETER));
-//[enddef]
                 } else {
                     userMessage = "Ignoring user";
                 }
@@ -235,12 +198,6 @@ public class AdminUsers extends PapillonBasePO {
                     myUser.removeGroup(myGetParameter(GROUP_PARAMETER));
                     myUser.save();
                     userMessage = "User "+ myUser.getName() + " has been removed from group " + myGetParameter(GROUP_PARAMETER);
-//[ifdef]
-             	    params.add(REMOVE_FROM_GROUP_PARAMETER);
-             	    params.add(myUser.getLogin());
-             	    params.add(myGetParameter(REMOVE_FROM_GROUP_PARAMETER));
-             	    params.add(myGetParameter(GROUP_PARAMETER));
-//[enddef]
                 } else {
                     userMessage = "Ignoring user";
                 }
@@ -251,11 +208,6 @@ public class AdminUsers extends PapillonBasePO {
                     myUser.levelUp();
                     myUser.save();
                     userMessage = "User "+ myUser.getName() + " has been levelled up";
-//[ifdef]
-             	    params.add(LEVEL_UP_PARAMETER);
-             	    params.add(myUser.getLogin());
-             	    params.add(myGetParameter(LEVEL_UP_PARAMETER));
-//[enddef]
                 } else {
                     userMessage = "Ignoring user";
                 }
@@ -266,11 +218,6 @@ public class AdminUsers extends PapillonBasePO {
                     myUser.levelDown();
                     myUser.save();
                     userMessage = "User "+ myUser.getName() + " has been levelled down";
-//[ifdef]
-             	    params.add(LEVEL_DOWN_PARAMETER);
-             	    params.add(myUser.getLogin());
-             	    params.add(myGetParameter(LEVEL_DOWN_PARAMETER));
-//[enddef]
                 } else {
                     userMessage = "Ignoring user";
                 }
@@ -280,9 +227,6 @@ public class AdminUsers extends PapillonBasePO {
 				this.getSessionData().writeUserMessage(userMessage);
 				PapillonLogger.writeDebugMsg(userMessage);
 			}
-//[ifdef]
-			fr.imag.clips.papillon.Papillon.sendMsgToObservateur("Admin User","Parameters: admin-login, admin-handle, message-encoding, command, user-login, user-handle [, group]", params); 
-//[enddef]
         }
 		String sortBy = myGetParameter(SORTBY_PARAMETER);
 		

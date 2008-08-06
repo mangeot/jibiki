@@ -123,65 +123,28 @@ public class DistributeWork extends PapillonBasePO {
 			   
 			   String userMessage = "";
 			   // If the page is called with parameters, take the requested action
-//[ifdef]
-             java.util.Vector params = new java.util.Vector();
-             params.add(this.getUser().getLogin());
-             params.add(this.getUser().getHandle());
-             params.add("UTF-8");
-//[enddef]
 			   if (sendDomain!= null && !sendDomain.equals("") &&
 					domain!= null && !domain.equals("") &&
 					userHandle!= null && !userHandle.equals("")
 				   	) {
-//[ifdef]
-             params.add(sendDomain);
-             params.add(domain);
-             params.add(userHandle);
-//[enddef]
 				   User theUser = UsersFactory.findUserByHandle(userHandle);
 				   if (theUser != null && !theUser.isEmpty()) {
-//[ifdef]
-						params.add(theUser.getLogin());
-						params.add(theUser.getEmail());
-//[enddef]
 						boolean sent = Email.send(theUser.getEmail(), SendDomainSubject_eng, Email.getFromAddress(), send_domain_header + domain + ".\n\n", true, true);
 						if (sent) {
 							userMessage += "An email has been sent to the following email address: " + theUser.getEmail();
-//[ifdef]
-							params.add("true");
-//[enddef]
 						}
 						else {
 							userMessage += "There was a problem sending the email";
-//[ifdef]
-							params.add("There was a problem sending the email");
-//[enddef]
 						}
 				   }
 				   else {
 					   userMessage += "The user account does not exist!";
-//[ifdef]
-							params.add("");
-							params.add("");
-							params.add("The user account does not exist!");
-//[enddef]
 				   }
 			   }
 			   else {
-//[ifdef]
-					params.add("");
-					params.add("");
-					params.add("");
-					params.add("");
-					params.add("");
-					params.add("command, domain or user handle null");
-//[enddef]
 			   }
 			   
 			   this.getSessionData().writeUserMessage(userMessage);
-//[ifdef]
-			fr.imag.clips.papillon.Papillon.sendMsgToObservateur("DistributeWork","Parameters: admin-login, admin-handle, message-encoding, command, domain, user-handle, user-login, user-email, result", params);
-//[enddef]
 			   PapillonLogger.writeDebugMsg(userMessage);
 			   return content.getElementFormulaire();
 		   }	

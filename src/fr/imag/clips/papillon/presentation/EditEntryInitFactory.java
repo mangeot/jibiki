@@ -145,33 +145,6 @@ public class EditEntryInitFactory {
         myEntry.setStatus(VolumeEntry.NOT_FINISHED_STATUS);
         myEntry.save();
 		
-//[ifdef]				
-                        java.util.Vector params = new java.util.Vector();
-			String login = "";
-			String handle = "";
-			String groups = "";
-            if (user != null) {
-				login = user.getLogin();				
-				handle = user.getHandle();				
-				groups = user.getGroups();				
-			}          
-                        params.add(login);
-                        params.add(handle);
-                        params.add(groups);
-                        params.add(myEntry.getDictionaryName());
-                        params.add(myEntry.getVolumeName());
-                        params.add(myEntry.getHeadword());
-                        params.add(myEntry.getHandle());
-                        params.add(myEntry.getContributionId());
-                        params.add(myEntry.getEntryId());
-                        params.add(myEntry.getSourceLanguage());
-                        params.add(Utility.serializeStringArray(ParseVolume.getCdmStrings(myEntry, Volume.CDM_gdefEstDomaine, myEntry.getSourceLanguage()),fr.imag.clips.papillon.Papillon.OBSERVATEUR_STRING_SEP));
-                        params.add(myEntry.getStatus());
-			params.add(myEntry.getAuthor());
-                        params.add(Utility.serializeStringArray(myEntry.getGroups(),fr.imag.clips.papillon.Papillon.OBSERVATEUR_STRING_SEP));
-                        params.add("UTF-8");
-                        fr.imag.clips.papillon.Papillon.sendMsgToObservateur("Create entry","Parameters: user-login, user-handle, user-groups (Strings separated by a #), dictionary-name, volume-name, entry-headword, entry-handle, entry-contribution-id, entry-entry-id, entry-source-lang (ISO 639-2/T 3 letter code), entry-domains (Strings separated by a #), entry-status, entry-author, entry-groups (Strings separated by a #), message-encoding", params);
-//[enddef]				
 
         
         //
