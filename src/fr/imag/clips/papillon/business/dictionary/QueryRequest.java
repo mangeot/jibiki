@@ -14,7 +14,6 @@ import com.lutris.dods.builder.generator.query.RDBColumn;
 import com.lutris.dods.builder.generator.query.RDBTable;
 import fr.imag.clips.papillon.CurrentDBTransaction;
 import fr.imag.clips.papillon.CurrentRequestContext;
-import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.user.User;
 import fr.imag.clips.papillon.data.VolumeEntryDO;
@@ -341,7 +340,7 @@ import java.util.Iterator;
 
                     //
                     VolumeEntryQuery veQuery = new VolumeEntryQuery(volume.getDbname(), CurrentDBTransaction.get());
-					findLexie(veQuery.getQueryBuilder(), volume.getDbname(), volume.getIndexDbname());
+                    findLexie(veQuery.getQueryBuilder(), volume.getDbname(), volume.getIndexDbname());
 
                     // limit/offset and sort
                     if ((limit != null) && (offset != null) && ((!limit.equals("0")) || (!offset.equals("0")))) {
@@ -385,6 +384,7 @@ import java.util.Iterator;
 
                 // If no target languages, do not merge axies.
                 return DictionariesFactory.expandResults(lexies, this.getTargets(), user, this.getTargets().size() > 0);
+                                
             } catch(Exception ex) {
                 throw new PapillonBusinessException("Exception in findLexieAndTranslation() ", ex);
             }

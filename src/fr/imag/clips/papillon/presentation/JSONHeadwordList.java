@@ -1,14 +1,12 @@
 package fr.imag.clips.papillon.presentation;
 
-import com.lutris.appserver.server.httpPresentation.HttpPresentation;
 import com.lutris.appserver.server.httpPresentation.HttpPresentationComms;
 import com.lutris.appserver.server.httpPresentation.HttpPresentationOutputStream;
-import org.w3c.dom.Node;
+import fr.imag.clips.papillon.business.dictionary.HeadwordListQuery;
 import org.json.JSONArray;
+import org.w3c.dom.Node;
 
 import java.util.Collection;
-
-import fr.imag.clips.papillon.business.dictionary.HeadwordListQuery;
 
 /**
  *
@@ -27,7 +25,7 @@ public class JSONHeadwordList
     }
 
     public Node getDocument() throws Exception {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 
     public void run(HttpPresentationComms comms) throws Exception {

@@ -3,6 +3,28 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.58.2.8  2008/03/04 20:48:15  serasset
+ * Lazy DOM building in VolumeEntry.
+ * Export to Zip file now gives a correct filename.
+ *
+ * Revision 1.58.2.7  2008/02/14 17:09:27  serasset
+ * Created an export into a zip file.
+ * Cosmetic changes in other files.
+ *
+ * Revision 1.58.2.6  2008/01/09 19:14:57  serasset
+ * Views are now created and deleted when a new dictionary is created/deleted
+ *
+ * Revision 1.58.2.5  2007/11/15 14:35:08  serasset
+ * BUG163: Deleted entries were sometimes wrongly returned by findEntryByEntryId.
+ *
+ * Revision 1.58.2.4  2007/11/15 13:07:49  serasset
+ * Re-implemented reindexing feature to allow later optimization
+ * Updated database layer version to 2: add new views for headword listing, add indexes and analyze idx tables
+ * BUG165: Autocomplete now uses headword list view and does not return obsolete headwords
+ *
+ * Revision 1.58.2.3  2007/11/14 15:43:40  serasset
+ * Suppressed some debugging traces.
+ *
  * Revision 1.58.2.2  2007/10/02 10:31:21  serasset
  * Modified export of volume to speed up this task.
  *
@@ -343,16 +365,14 @@ import fr.imag.clips.papillon.CurrentDBTransaction;
 import fr.imag.clips.papillon.CurrentRequestContext;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.PapillonLogger;
+import fr.imag.clips.papillon.business.transformation.ResultFormatterFactory;
 import fr.imag.clips.papillon.business.user.User;
 import fr.imag.clips.papillon.business.user.UsersFactory;
 import fr.imag.clips.papillon.business.xml.XMLServices;
 import fr.imag.clips.papillon.data.*;
 import fr.imag.clips.papillon.papillon_data.ManageDatabase;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Vector;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -373,10 +393,11 @@ public class VolumeEntriesFactory {
 	protected final static String MSORT_FIELD = "msort";
 	protected final static String ORDER_DESCENDING = "DESC";
 	
-	protected static final String XMLFormat = Integer.toString(fr.imag.clips.papillon.business.transformation.ResultFormatterFactory.XML_DIALECT);
-	protected static final String XHTMLFormat = Integer.toString(fr.imag.clips.papillon.business.transformation.ResultFormatterFactory.XHTML_DIALECT);
-	protected static final String TEXTFormat = Integer.toString(fr.imag.clips.papillon.business.transformation.ResultFormatterFactory.PLAINTEXT_DIALECT);
-	protected static final String PDFFormat = Integer.toString(fr.imag.clips.papillon.business.transformation.ResultFormatterFactory.PDF_DIALECT);
+	// TODO: the format already exists as an int, suppress these redundant formats
+	public static final String XMLFormat = Integer.toString(ResultFormatterFactory.XML_DIALECT);
+	public static final String XHTMLFormat = Integer.toString(ResultFormatterFactory.XHTML_DIALECT);
+	public static final String TEXTFormat = Integer.toString(ResultFormatterFactory.PLAINTEXT_DIALECT);
+	public static final String PDFFormat = Integer.toString(ResultFormatterFactory.PDF_DIALECT);
 	
 	protected static final String XhtmlHeader = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
 		+ "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n"
@@ -914,14 +935,17 @@ public class VolumeEntriesFactory {
 							myOutStream.write(xmlHeader.getBytes("UTF-8"));
 						}
                         
-						fr.imag.clips.papillon.business.dictionary.IVolumeEntryProcessor myProcessor = new fr.imag.clips.papillon.business.dictionary.ExportVolumeEntryProcessor(outputFormat, myOutStream);
+						IVolumeEntryProcessor myProcessor = new ExportVolumeEntryProcessor(outputFormat, myOutStream);
 						PapillonLogger.writeDebugMsg("Processor created");
-                        
-						fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory.processVolume(myDict, myVolume, myKeys, clauseVector, myProcessor, andClause);
-						PapillonLogger.writeDebugMsg("Volume processed");
-						
-						
-						if (outputFormat != null && outputFormat.equals(XHTMLFormat)) {
+
+                        long stime = System.currentTimeMillis();
+                        VolumeEntriesFactory.processVolume(myDict, myVolume, myKeys, clauseVector, myProcessor, andClause);
+                        long etime = System.currentTimeMillis();
+                        PapillonLogger.writeDebugMsg("Volume processed in " + (etime - stime) + " ms.");
+
+
+
+                        if (outputFormat != null && outputFormat.equals(XHTMLFormat)) {
 							myOutStream.write(XhtmlFooter.getBytes("UTF-8"));
 						}
 						else if (outputFormat != null && outputFormat.equals(TEXTFormat)) {
@@ -1141,7 +1165,7 @@ public class VolumeEntriesFactory {
         throws PapillonBusinessException {
         // FIXME: should use queries as used in findEntryByEntryId(User user, String entryid)
         // FIXME: Moreover, this is duplicate code...
-        PapillonLogger.writeDebugMsg("Looking for " + entryId + "in volume " + myVolume.getName());
+        // PapillonLogger.writeDebugMsg("Looking for " + entryId + "in volume " + myVolume.getName());
 
 
         VolumeEntry resultEntry = (VolumeEntry) CurrentRequestContext.get().get(entryId);
@@ -1176,7 +1200,16 @@ public class VolumeEntriesFactory {
 
             if (answersVector.size() > 0) {
                 if (answersVector.size() == 1) {
-                    resultEntry = (VolumeEntry) answersVector.firstElement();
+                    // Do not return this entry if it is deleted.
+                    VolumeEntry tempEntry = (VolumeEntry) answersVector.firstElement();
+                    String status = tempEntry.getStatus();
+                    if (    status.equals(VolumeEntry.VALIDATED_STATUS) ||
+                            status.equals(VolumeEntry.REVIEWED_STATUS) ||
+                            status.equals(VolumeEntry.FINISHED_STATUS) ||
+                            status.equals(VolumeEntry.MODIFIED_STATUS) ||
+                            status.equals(VolumeEntry.NOT_FINISHED_STATUS)) {
+                        resultEntry = tempEntry;
+                    }
                 } else if (answersVector.size() > 1) {
                     VolumeEntry tempEntry = null;
                     VolumeEntry reviewedEntry = null;
@@ -1187,18 +1220,13 @@ public class VolumeEntriesFactory {
                         tempEntry = (VolumeEntry) enumEntries.nextElement();
                         if (tempEntry.getStatus().equals(VolumeEntry.VALIDATED_STATUS)) {
                             resultEntry = tempEntry;
-                        }
-                        if (tempEntry.getStatus().equals(VolumeEntry.REVIEWED_STATUS)) {
+                        } else if (tempEntry.getStatus().equals(VolumeEntry.REVIEWED_STATUS)) {
                             reviewedEntry = tempEntry;
-                        }
-                        if (tempEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS)) {
+                        } else if (tempEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS)) {
                             finishedEntry = tempEntry;
-                        }
-                        // add by Francis to use correctly expandResult !
-                        if (tempEntry.getStatus().equals(VolumeEntry.MODIFIED_STATUS)) {
+                        } else if (tempEntry.getStatus().equals(VolumeEntry.MODIFIED_STATUS)) { // add by Francis to use correctly expandResult !
                             modifiedEntry = tempEntry;
-                        }
-                        if (tempEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS)) {
+                        } else if (tempEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS)) {
                             notFinishedEntry = tempEntry;
                         }
                     }
@@ -1256,7 +1284,7 @@ throws PapillonBusinessException {
  */
 public static VolumeEntry findEntryByEntryId(User user, Collection volumes, String entryId)
 throws PapillonBusinessException {
-    PapillonLogger.writeDebugMsg("Looking for " + entryId + " in " + volumes.size() + "volumes for user " + user );
+    // PapillonLogger.writeDebugMsg("Looking for " + entryId + " in " + volumes.size() + "volumes for user " + user );
     //FIXME: an entry id may not be unique externally to a dictionary so the dict must be specified
     VolumeEntry resultEntry = (VolumeEntry) CurrentRequestContext.get().get(entryId);
 
@@ -1301,7 +1329,7 @@ throws PapillonBusinessException {
 
         CurrentRequestContext.get().set(entryId, resultEntry);            
     } else {
-        PapillonLogger.writeDebugMsg("Found it in request context.");
+        // PapillonLogger.writeDebugMsg("Found it in request context.");
     }
     
     //FIXME: exception when Qrest < 1 or > 1
@@ -1385,7 +1413,7 @@ public static void createVolumeTables(Volume volume)
 throws fr.imag.clips.papillon.business.PapillonBusinessException {
 	/* Added a sorted index on headword field necessary for order by statements */
 	try {
-		java.util.Vector TableNames = ManageDatabase.getTableNames();
+		List TableNames = ManageDatabase.getTableNames();
 		if (!TableNames.contains(volume.getDbname())) {
 			ManageDatabase.createVolumeTable(volume.getDbname());
 			ManageDatabase.createSortIndexForVolumeTable(volume.getDbname(), volume.getSourceLanguage());
@@ -1393,7 +1421,11 @@ throws fr.imag.clips.papillon.business.PapillonBusinessException {
 		if (!TableNames.contains(volume.getIndexDbname())) {
 			IndexFactory.createIndexTable(volume);
 		}
-	}
+        List viewNames = ManageDatabase.getViewNames();
+        if (!viewNames.contains(volume.getHeadwordViewName())) {
+			ManageDatabase.createHeadwordView(volume.getHeadwordViewName(), volume.getIndexDbname());
+		}
+    }
 	catch (Exception e) {
 		throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in createVolumeTables with volume: " + volume.getName(), e);
 		//PapillonLogger.writeDebugMsg("createVolumeTables with volume: " + volume.getName() + ", probably the tables already exist.");
@@ -1405,11 +1437,15 @@ throws fr.imag.clips.papillon.business.PapillonBusinessException {
 public static void dropVolumeTables(Volume volume)
 throws fr.imag.clips.papillon.business.PapillonBusinessException {
 	try {
-		java.util.Vector TableNames = ManageDatabase.getTableNames();
-		if (TableNames.contains(volume.getDbname())) {
+        List viewNames = ManageDatabase.getViewNames();
+        if (viewNames.contains(volume.getHeadwordViewName())) {
+			ManageDatabase.dropView(volume.getHeadwordViewName());
+		}
+        List tableNames = ManageDatabase.getTableNames();
+		if (tableNames.contains(volume.getDbname())) {
 			ManageDatabase.dropTable(volume.getDbname());
 		}
-		if (TableNames.contains(volume.getIndexDbname())) {
+		if (tableNames.contains(volume.getIndexDbname())) {
 			IndexFactory.dropIndexTable(volume.getIndexDbname());
 		}
 	}

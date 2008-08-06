@@ -80,11 +80,8 @@ import com.lutris.appserver.server.httpPresentation.HttpPresentationException;
 import com.lutris.appserver.server.httpPresentation.HttpPresentationComms;
 
 //local imports
-import fr.imag.clips.papillon.business.dictionary.ParseVolume;
 import fr.imag.clips.papillon.business.dictionary.QueryResult;
 import fr.imag.clips.papillon.business.dictionary.QueryParameter;
-import fr.imag.clips.papillon.business.dictionary.Volume;
-import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
 import fr.imag.clips.papillon.business.user.User;
 import fr.imag.clips.papillon.business.utility.Utility;
 import fr.imag.clips.papillon.business.transformation.ResultFormatter;
@@ -140,8 +137,6 @@ public class ViewQueryResult {
 
             //
             QueryResult qr = (QueryResult) iter.next();
-			
-
 
             //System.out.println("ViewQueryResult : " + qp.getXsl());
             ResultFormatter rf = ResultFormatterFactory.getFormatter(qr, qp.getXsl(),

@@ -79,18 +79,14 @@ import com.lutris.appserver.server.httpPresentation.HttpPresentationException;
 import com.lutris.appserver.server.httpPresentation.ClientPageRedirectException;
 
 //local imports
-import fr.imag.clips.papillon.business.dictionary.ParseVolume;
-import fr.imag.clips.papillon.business.dictionary.Volume;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory;
 import fr.imag.clips.papillon.business.dictionary.QueryResult;
 import fr.imag.clips.papillon.business.dictionary.QueryRequest;
 import fr.imag.clips.papillon.business.dictionary.QueryCriteria;
 import fr.imag.clips.papillon.business.dictionary.QueryParameter;
-import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.user.User;
 import fr.imag.clips.papillon.business.user.Group;
-import fr.imag.clips.papillon.business.utility.Utility;
 import fr.imag.clips.papillon.presentation.EditEntry;
 
 
@@ -144,8 +140,6 @@ public class EditEntryInitFactory {
         myEntry.setGroups(user.getGroupsArray());
         myEntry.setStatus(VolumeEntry.NOT_FINISHED_STATUS);
         myEntry.save();
-		
-
         
         //
         throw new ClientPageRedirectException(EditEntryURL + "?" + 
@@ -262,7 +256,6 @@ public class EditEntryInitFactory {
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
         
         //
-		PapillonLogger.writeDebugMsg("deleteEntry status: " + myEntry.getStatus() + " modifauthor: " + myEntry.getModificationAuthor());
         if ( myEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS) ||
              (myEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS) && myEntry.getModificationAuthor().equals(user.getLogin())) ) {
              

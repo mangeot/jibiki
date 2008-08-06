@@ -155,7 +155,6 @@ import fr.imag.clips.papillon.business.utility.StringNormalizer;
 import fr.imag.clips.papillon.business.locales.Languages;
 import fr.imag.clips.papillon.business.xsl.XslSheet;
 import fr.imag.clips.papillon.business.xsl.XslSheetFactory;
-import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 
 
@@ -339,9 +338,7 @@ public class AdvancedQueryForm {
                 //
                 criteria.add("key", "=", key);
                 criteria.add("value", strategy, value);
-                if ( (language != null) && (!language.equals("")) && (!language.equals("All")) ) {
-					criteria.add("lang", "=", language);
-				}
+                if ( (language != null) && (!language.equals("")) && (!language.equals("All")) ) criteria.add("lang", "=", language);
                 
                 //
                 criteriaList.add(criteria);

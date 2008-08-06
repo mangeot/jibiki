@@ -234,9 +234,9 @@ Papillon.Informations.sections.jpn[] = "一般情報",
 #####
 # Groups passwords
 #
-Papillon.Users.Groups.Password.admin = "dbpap"
-Papillon.Users.Groups.Password.specialist = "butterfly"
-Papillon.Users.Groups.Password.validator = "farfalla"
+Papillon.Users.Groups.Password.admin = "@ADMIN_GROUP_PASWORD@"
+Papillon.Users.Groups.Password.specialist = "@SPECIALIST_GROUP_PASSWORD@"
+Papillon.Users.Groups.Password.validator = "@VALIDATOR_GROUP_PASSWORD@"
 
 # Class name of the layout for pages of the application
 Papillon.Presentation.PriorityPackage = "fr.imag.clips.papillon.presentation.xhtmlgdef"
@@ -276,11 +276,9 @@ DatabaseManager.DefaultDatabase = "papillon"
 DatabaseManager.Debug = "false"
 DatabaseManager.DB.papillon.ClassType = "PostgreSQL"
 DatabaseManager.DB.papillon.JdbcDriver = "org.postgresql.Driver"
-DatabaseManager.DB.papillon.Connection.Url = "jdbc:postgresql://localhost/papillon"
-#DatabaseManager.DB.papillon.Connection.Url = "jdbc:postgresql://gohan.imag.fr/papillon"
-
-DatabaseManager.DB.papillon.Connection.User = "papillon"
-DatabaseManager.DB.papillon.Connection.Password = "dbpap"
+DatabaseManager.DB.papillon.Connection.Url = "@PGSQL_SERVER_URL@"
+DatabaseManager.DB.papillon.Connection.User = "@DB_USER@"
+DatabaseManager.DB.papillon.Connection.Password = "@DB_PASSWD@"
 
 DatabaseManager.DB.papillon.Connection.MaxPoolSize = 30
 DatabaseManager.DB.papillon.Connection.AllocationTimeout = 10000

@@ -293,33 +293,7 @@ public abstract class PapillonBasePO extends AbstractPO {
             //Insertion du contenu dans le document vide.
             stdLayout.getContentPlaceHolder().appendChild(stdLayout.getLayout().importNode(finalContent, true));
             
-			org.w3c.dom.Document theDocument = stdLayout.getLayout();
-
-			// I encode every anchor with the session id if the user does not accept cookies
-			if (getComms().response.isSessionIdEncodeUrlRequired()) {
-				org.w3c.dom.NodeList theAlist = theDocument.getElementsByTagName("a");
-				if (theAlist != null && theAlist.getLength()>0) {
-					for (int i=0; i< theAlist.getLength();i++) {
-						org.w3c.dom.Element aElement = (org.w3c.dom.Element) theAlist.item(i);
-						if (aElement.hasAttribute("href")) {
-							String theHref = aElement.getAttribute("href");
-							if (!theHref.startsWith("http://") && 
-								!theHref.startsWith("https://") && 
-								!theHref.startsWith("javascript:") && 
-								!theHref.startsWith("mailto:") && 
-								!theHref.startsWith("#") && 
-								!theHref.startsWith("/")) {
-								theHref =  ((fr.imag.clips.papillon.Papillon)com.lutris.appserver.server.Enhydra.getApplication()).encodeUrl(theHref,this.getComms().session.getSessionKey());
-								aElement.setAttribute("href", theHref);
-							}
-						}
-					}
-				}
-				
-			}
-
-			
-            return (Node) theDocument;
+            return (Node) stdLayout.getLayout();
         }
     
     
@@ -390,12 +364,12 @@ public abstract class PapillonBasePO extends AbstractPO {
 				getSessionData().setUserPreferredLanguage(cookieUser.getLang());
 				getSessionData().setClientWithLabelDisplayProblems(getComms().request.getHeader("User-Agent"));
 				PapillonSessionManager.addNewSession(getComms().session, cookieUser);
-			}
+            }
             else {
 				cookieUser = (fr.imag.clips.papillon.business.user.User) getComms().session.getUser();
 				// if the user is unregistered but active in this session
 				if (cookieUser != null) {
-					// PapillonLogger.writeDebugMsg("Unregistered user from cookie: " + cookieUser.getName());
+					PapillonLogger.writeDebugMsg("Unregistered user from cookie: " + cookieUser.getName());
 				}
 				else {
 					// if the user is unregistered and not active in this session

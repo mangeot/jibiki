@@ -8,34 +8,25 @@ import java.util.Locale;
 
 public class LanguageIndexKeys {
 
-    private Locale myLocale;
+    private String isoLang;
 
     private String[] keys;
 
 
-    public Locale getMyLocale() {
-        return myLocale;
+    public String getMyLanguage() {
+        return isoLang;
     }
 
     public String[] getKeys() {
         return keys;
     }
 
-    public LanguageIndexKeys() {
-        this(Locale.getDefault());
-    }
-
-    public LanguageIndexKeys(Locale locale) {
-        myLocale = locale;
+    public LanguageIndexKeys(String language) {
+        isoLang = language;
         setup();
     }
 
-    public LanguageIndexKeys(String language) {
-        this(new Locale(LanguageFactory.getISO2LanguageCode(language)));
-    }
-
     protected void setup() {
-        String isoLang = myLocale.getISO3Language();
         if ("fra".equals(isoLang) ) {
             keys = new String[] {
                 "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"
@@ -48,9 +39,9 @@ public class LanguageIndexKeys {
             keys = new String[] {
                 "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"
             };
-        } else if ("slo".equals(isoLang) ) {
+        } else if ("slv".equals(isoLang) ) {
             keys = new String[] {
-                "A", "B", "C", "?", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "R", "S", "?", "T", "U", "V", "Z", "?"
+                "A", "B", "C", "Č", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "R", "S", "Š", "T", "U", "V", "Z", "Ž"
             };
         } else {
             keys = new String[] {

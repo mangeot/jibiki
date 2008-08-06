@@ -68,8 +68,6 @@ import org.w3c.dom.Element;
 
 // internal imports
 import fr.imag.clips.papillon.business.PapillonBusinessException;
-import fr.imag.clips.papillon.business.dictionary.ParseVolume;
-import fr.imag.clips.papillon.business.dictionary.Volume;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory;
 import fr.imag.clips.papillon.business.edition.UIGenerator;
@@ -77,7 +75,6 @@ import fr.imag.clips.papillon.business.edition.UITemplates;
 import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.user.User;
 import fr.imag.clips.papillon.business.user.Group;
-import fr.imag.clips.papillon.business.utility.Utility;
 
 import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 import java.util.Collection;

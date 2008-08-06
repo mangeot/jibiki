@@ -105,6 +105,7 @@ public class Papillon extends StandardApplication {
     protected String layoutClassName = "fr.imag.clips.papillon.presentation.PapillonLayout";
     protected String loginCookieName = "PapillonLoginCookie";
 
+        
     /*
      *  A few methods you might want to add to.
      *  See StandardApplication for more details.
@@ -117,7 +118,7 @@ public class Papillon extends StandardApplication {
         // Look at the Xerces version that is currently loaded and display it...
         PapillonLogger.writeInfoMsg(org.apache.xerces.impl.Version.getVersion());
 		
-		// Look at the local file encoding
+        // Look at the local file encoding
         PapillonLogger.writeInfoMsg("Local system file encoding: "+System.getProperty ("file.encoding"));
 		// Available only in java 1.5
 		//java.nio.charset.Charset defaultCharset = java.nio.charset.Charset.defaultCharset();
@@ -181,7 +182,7 @@ public class Papillon extends StandardApplication {
         }
 
         try {
-           Papillon.initializeAllCaches();
+            Papillon.initializeAllCaches();
         } catch (PapillonBusinessException e) {
             throw new ApplicationException("Initialize caches error", e);
         }
@@ -206,9 +207,9 @@ public class Papillon extends StandardApplication {
         // Initialize volume cache
         VolumesFactory.initializeVolumeCache();
 
-       // Initialize transformer factory
+        // Initialize transformer factory
         // FIXME : For Xalan 2_7_0
-        XslSheetFactory.initializeTransformerFactory();
+        //    XslSheetFactory.initializeTransformerFactory();
 
         // Initialize xsl sheet cache
         XslSheetFactory.initializeXslSheetCache();
@@ -217,6 +218,7 @@ public class Papillon extends StandardApplication {
         XslSheetFactory.initializeJibikiXslSheet();
 
         AvailableLanguages.resetCache();
+
     }
 
     public String getPriorityPackage() {

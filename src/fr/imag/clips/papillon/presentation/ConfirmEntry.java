@@ -58,15 +58,12 @@ import org.enhydra.xml.xhtml.dom.*;
 import org.w3c.dom.*;
 
 // internal imports
-import fr.imag.clips.papillon.business.dictionary.ParseVolume;
-import fr.imag.clips.papillon.business.dictionary.Volume;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory;
 import fr.imag.clips.papillon.business.transformation.ResultFormatter;
 import fr.imag.clips.papillon.business.transformation.ResultFormatterFactory;
 import fr.imag.clips.papillon.business.dictionary.QueryResult;
 import fr.imag.clips.papillon.business.user.User;
-import fr.imag.clips.papillon.business.utility.Utility;
 import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
 import fr.imag.clips.papillon.business.PapillonBusinessException;
@@ -136,13 +133,6 @@ public class ConfirmEntry extends EditingBasePO {
 					// Error page
 					throw new ClientPageRedirectException(EditingErrorURL);
 				}
-				
-				// adding author groups in entry
-				myVolumeEntry.setGroups(Utility.ArrayUnion(myVolumeEntry.getGroups(),this.getUser().getGroupsArray()));
-				myVolumeEntry.save();
-				
-
-				
 			}
 			
 			//

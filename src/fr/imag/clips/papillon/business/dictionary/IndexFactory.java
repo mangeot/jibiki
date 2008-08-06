@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.19.2.1  2007/11/14 16:10:01  serasset
+ * Code cleaning
+ *
  * Revision 1.19  2007/01/05 13:57:25  serasset
  * multiple code cleanup.
  * separation of XMLServices from the Utility class
@@ -394,10 +397,6 @@ public class IndexFactory {
 	
 	
 	protected static void deleteIndexForEntryId(String indexDbname, String entryId) throws 	PapillonBusinessException {
-		Vector theIndex = new Vector();
-		
-		String cmp_op = QueryBuilder.EQUAL;
-		
 		if (entryId != null && !entryId.equals("")) {
 			try {
 				IndexQuery query = new IndexQuery(indexDbname, CurrentDBTransaction.get());

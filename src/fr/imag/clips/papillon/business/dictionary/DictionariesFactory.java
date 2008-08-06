@@ -3,6 +3,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.34.2.2  2008/01/09 19:05:23  serasset
+ * Update dictionary cache when uploading new metadata
+ *
  * Revision 1.34.2.1  2007/07/23 14:23:50  serasset
  * Commiting most changes done for the XALAN27_NEWDISPLAY on the branch
  *  - Added XSL extensions callable during xsl transformations
@@ -228,6 +231,7 @@
 package fr.imag.clips.papillon.business.dictionary;
 
 import fr.imag.clips.papillon.CurrentDBTransaction;
+import fr.imag.clips.papillon.papillon_data.DataLayerVersion;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.user.User;
@@ -483,6 +487,7 @@ public class DictionariesFactory {
                                 VolumesFactory.parseVolumeMetadata(myDict, resultURL, loadEntries, logContribs);
                             }
                         }
+                        DataLayerVersion.addHeadwordViewsAndIndex();                    
                     }
                 }
 				
@@ -1149,12 +1154,11 @@ public class DictionariesFactory {
          Collection result = new ArrayList();
          QueryResult qr;
          Iterator itve = ves.iterator();
-		//PapillonLogger.writeDebugMsg("addAxiesAndTranslations : ");
-        while (itve.hasNext()) {
+         while (itve.hasNext()) {
              qr = (QueryResult) itve.next() ;
              VolumeEntry ve = qr.getSourceEntry();
              String type = ve.getDictionary().getType();
-             //PapillonLogger.writeDebugMsg("Lexie : " + ve.getHeadword() + ", type : " + type);
+             
              if (type.equals("pivot")) {
                  // qr.setResultKind(QueryResult.AXIE_COLLECTION_RESULT);
                  // myVector = getPivotResults(qr, ve.getSourceLanguage(), realTargets, user);

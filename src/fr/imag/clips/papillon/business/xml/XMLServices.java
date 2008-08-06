@@ -30,7 +30,7 @@ package fr.imag.clips.papillon.business.xml;
 
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.PapillonLogger;
-//import org.apache.xalan.serialize.SerializerToText;
+import org.apache.xalan.serialize.SerializerToText;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
 import org.w3c.dom.Document;
@@ -48,7 +48,7 @@ import java.net.URL;
  */
 public class XMLServices {
 
- //   private static SerializerToText mySerializerToText = new SerializerToText();
+    private static SerializerToText mySerializerToText = new SerializerToText();
     // FIXME: there may be an encoding problem because we use the default encoding here instead of UTF-8
     // in order to build the Outputformat("text","UTF-8",true);
     private static OutputFormat myOutputFormat = new OutputFormat();
@@ -267,26 +267,16 @@ or there is no accessible xml schema
     private static String NodeToString(Node N, boolean printXmlDeclaration) {
         String res = "";
         if (N != null) {
-  //          try {
- 				switch (N.getNodeType()) {
-					case org.w3c.dom.Node.DOCUMENT_NODE:               
-						res = NodeToString((org.w3c.dom.Document) N,printXmlDeclaration);
-						break;
-					case org.w3c.dom.Node.ELEMENT_NODE:
-						res = NodeToString((org.w3c.dom.Element) N,printXmlDeclaration);
-						break;
-					case org.w3c.dom.Node.DOCUMENT_FRAGMENT_NODE:
-						res = NodeToString((org.w3c.dom.DocumentFragment) N,printXmlDeclaration);
-						break;
-				}				
-/*                mySerializerToText.m_shouldNotWriteXMLHeader = (!printXmlDeclaration);
+            try {
+                StringWriter myStringWriter = new StringWriter();
+                mySerializerToText.m_shouldNotWriteXMLHeader = (!printXmlDeclaration);
                 mySerializerToText.setWriter(myStringWriter);
-                mySerializerToText.serialize(N); 
-                res = myStringWriter.toString();*/
-//            }
-  //          catch (java.io.IOException ioe) {
-    //            PapillonLogger.writeDebugMsg("NodeToString: java.io.IOException: " + ioe);
-      //      }
+                mySerializerToText.serialize(N);
+                res = myStringWriter.toString();
+            }
+            catch (java.io.IOException ioe) {
+                PapillonLogger.writeDebugMsg("NodeToString: java.io.IOException: " + ioe);
+            }
         }
         return res;
     }/*

@@ -560,7 +560,6 @@ public class UIGenerator {
         //PapillonLogger.writeDebugMsg(" itfelt: " + itfElt.getNodeName());
         //PapillonLogger.writeDebugMsg(" class: " + itfElt.getAttribute(ITF_ATTR_NAME));
 		Element resultElt = null;
-		if (entryElt != null && itfElt!= null) {
 		String entryEltName = entryElt.getNodeName();
 		NodeList myNodeList = itfElt.getElementsByTagName (ITF_ELT_DUPLICATE_NAME);
 		if (myNodeList != null &&myNodeList.getLength ()>0) {
@@ -614,8 +613,6 @@ public class UIGenerator {
 				}
 			}			
 		}
-		}
-
 		// if template is true, it means that if nothing is found, the result is null
 		// instead of the parent interface element.
 		if (resultElt==null && !template) {

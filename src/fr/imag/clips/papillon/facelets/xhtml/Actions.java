@@ -43,8 +43,6 @@ import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
 import fr.imag.clips.papillon.business.dictionary.QueryParameter;
 import fr.imag.clips.papillon.business.dictionary.QueryCriteria;
 
-import fr.imag.clips.papillon.business.utility.Utility;
-
 import fr.imag.clips.papillon.presentation.EditEntryInitFactory;
 import fr.imag.clips.papillon.presentation.AdvancedQueryForm;
 import fr.imag.clips.papillon.presentation.PapillonSessionData;
@@ -101,7 +99,6 @@ public class Actions implements fr.imag.clips.papillon.facelets.api.Actions {
         XHTMLAnchorElement viewXmlAnchor = content.getElementViewXmlAnchor();
         XHTMLSpanElement entryAuthor = content.getElementEntryAuthor();
         XHTMLSpanElement entryStatus = content.getElementEntryStatus();
-        XHTMLSpanElement entryGroups = content.getElementEntryGroups();
         
         actionsNode.removeAttribute("id");
         editAnchor.removeAttribute("id");
@@ -113,20 +110,15 @@ public class Actions implements fr.imag.clips.papillon.facelets.api.Actions {
         viewXmlAnchor.removeAttribute("id");
         entryAuthor.removeAttribute("id");
         entryStatus.removeAttribute("id");
-        entryGroups.removeAttribute("id");
         
         // init
-		String level = Utility.getStars(myEntry.getGroups());
-        Text textGroup = content.createTextNode(level);
-        entryGroups.appendChild(textGroup);
-
         Text textAuthor = content.createTextNode("unknown");
         entryAuthor.appendChild(textAuthor);
         Text textStatus = content.createTextNode("unknown");
         entryStatus.appendChild(textStatus);
-		
-        textAuthor.setNodeValue(myEntry.getModificationAuthor());
 
+        textAuthor.setNodeValue(myEntry.getModificationAuthor());
+        
         // Status
         if (myEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS)) {
             textStatus.setNodeValue(VolumeEntry.FINISHED_STATUS);
@@ -154,6 +146,7 @@ public class Actions implements fr.imag.clips.papillon.facelets.api.Actions {
                 textStatus.setNodeValue("under edition");
                 //                entryNode.setAttribute("class", "notFinishedEntry");
             }
+            
         }
         
         //

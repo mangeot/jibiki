@@ -9,6 +9,14 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.34.2.2  2008/01/09 19:09:50  serasset
+ * Recomputes and store Serialized Hash Table in case of JVM update and serialization incompatibility
+ *
+ * Revision 1.34.2.1  2007/11/15 13:07:49  serasset
+ * Re-implemented reindexing feature to allow later optimization
+ * Updated database layer version to 2: add new views for headword listing, add indexes and analyze idx tables
+ * BUG165: Autocomplete now uses headword list view and does not return obsolete headwords
+ *
  * Revision 1.34  2007/01/05 13:57:25  serasset
  * multiple code cleanup.
  * separation of XMLServices from the Utility class
@@ -229,412 +237,433 @@ import java.util.Collection;
 import java.util.Iterator;
 
 /**
- * Represents a Volume. 
+ * Represents a Volume.
  */
 public class Volume {
-	
-	public final static String LOCAL_LOCATION = "local";
-	public final static String REMOTE_LOCATION = "remote";
-	
-	// All CDM elements
+
+    public final static String LOCAL_LOCATION = "local";
+    public final static String REMOTE_LOCATION = "remote";
+
+    // All CDM elements
     public static final String CDM_volume = "cdm-volume";
-    public static final  String CDM_entry = "cdm-entry";
-    public static final  String CDM_entryId = "cdm-entry-id";
-    public static final  String CDM_headword = "cdm-headword";
-    public static final  String CDM_homographNumber = "cdm-homograph-number";
-    public static final  String CDM_headwordVariant = "cdm-headword-variant";
-    public static final  String CDM_reading = "cdm-reading";
-    public static final  String CDM_writing = "cdm-writing";
-    public static final  String CDM_pos = "cdm-pos";
-    public static final  String CDM_pronunciation = "cdm-pronunciation";
-    public static final  String CDM_definition = "cdm-definition";
-    public static final  String CDM_templateEntry = "cdm-template-entry";
-    public static final  String CDM_translation = "cdm-translation";
+    public static final String CDM_entry = "cdm-entry";
+    public static final String CDM_entryId = "cdm-entry-id";
+    public static final String CDM_headword = "cdm-headword";
+    public static final String CDM_homographNumber = "cdm-homograph-number";
+    public static final String CDM_headwordVariant = "cdm-headword-variant";
+    public static final String CDM_reading = "cdm-reading";
+    public static final String CDM_writing = "cdm-writing";
+    public static final String CDM_pos = "cdm-pos";
+    public static final String CDM_pronunciation = "cdm-pronunciation";
+    public static final String CDM_definition = "cdm-definition";
+    public static final String CDM_templateEntry = "cdm-template-entry";
+    public static final String CDM_translation = "cdm-translation";
     // FIXME: Added by Gilles for distinction between translations in a bilingual dictionary and
     // FIXME: translation links to target entries in another volume.
-    public static final  String CDM_translationReflexie = "cdm-translation-ref";
-    public static final  String CDM_example = "cdm-example";
-    public static final  String CDM_idiom = "cdm-idiom";
-	// xpaths calculated from previous ones
-    public static final  String CDM_headwordElement = "cdm-headword-element";
-	public static final  String CDM_entryIdElement = "cdm-entry-id-element";
-      
-	// history tags
-	public static final  String CDM_history = "cdm-history";
-	public static final  String CDM_modification = "cdm-modification";
-	public static final  String CDM_modificationAuthor = "cdm-modification-author";
-    public static final  String CDM_modificationAuthorElement = "cdm-modification-author-element";
-	public static final  String CDM_modificationDate = "cdm-modification-date";
-    public static final  String CDM_modificationDateElement = "cdm-modification-date-element";
-	public static final  String CDM_modificationComment = "cdm-modification-comment";
-    public static final  String CDM_modificationCommentElement = "cdm-modification-comment-element";
+    public static final String CDM_translationReflexie = "cdm-translation-ref";
+    public static final String CDM_example = "cdm-example";
+    public static final String CDM_idiom = "cdm-idiom";
+    // xpaths calculated from previous ones
+    public static final String CDM_headwordElement = "cdm-headword-element";
+    public static final String CDM_entryIdElement = "cdm-entry-id-element";
 
-	// contribution tags
-    public static final  String CDM_contribution = "cdm-contribution";
-    public static final  String CDM_contributionAuthor = "cdm-contribution-author";
-    public static final  String CDM_contributionAuthorElement = "cdm-contribution-author-element";
-    public static final  String CDM_contributionCreationDate = "cdm-contribution-creation-date";
-    public static final  String CDM_contributionCreationDateElement = "cdm-contribution-creation-date-element";
-    public static final  String CDM_contributionGroup = "cdm-contribution-group";
-    public static final  String CDM_contributionGroups = "cdm-contribution-groups";
-    public static final  String CDM_contributionId = "cdm-contribution-id";
-    public static final  String CDM_contributionFinitionDate = "cdm-contribution-finition-date";
-    public static final  String CDM_contributionFinitionDateElement = "cdm-contribution-finition-date-element";
-    public static final  String CDM_contributionReviewDate = "cdm-contribution-review-date";
-    public static final  String CDM_contributionReviewDateElement = "cdm-contribution-review-date-element";
-    public static final  String CDM_contributionReviewer = "cdm-contribution-reviewer";
-    public static final  String CDM_contributionReviewerElement = "cdm-contribution-reviewer-element";
-    public static final  String CDM_contributionValidationDate = "cdm-contribution-validation-date";
-    public static final  String CDM_contributionValidationDateElement = "cdm-contribution-validation-date-element";
-    public static final  String CDM_contributionValidator = "cdm-contribution-validator";
-    public static final  String CDM_contributionValidatorElement = "cdm-contribution-validator-element";
-    public static final  String CDM_contributionStatus = "cdm-contribution-status";
-    public static final  String CDM_contributionStatusElement = "cdm-contribution-status-element";
-    public static final  String CDM_contributionDataElement = "cdm-contribution-data-element";
-    public static final  String CDM_originalContributionId = "cdm-original-contribution-id";
+    // history tags
+    public static final String CDM_history = "cdm-history";
+    public static final String CDM_modification = "cdm-modification";
+    public static final String CDM_modificationAuthor = "cdm-modification-author";
+    public static final String CDM_modificationAuthorElement = "cdm-modification-author-element";
+    public static final String CDM_modificationDate = "cdm-modification-date";
+    public static final String CDM_modificationDateElement = "cdm-modification-date-element";
+    public static final String CDM_modificationComment = "cdm-modification-comment";
+    public static final String CDM_modificationCommentElement = "cdm-modification-comment-element";
+
+    // contribution tags
+    public static final String CDM_contribution = "cdm-contribution";
+    public static final String CDM_contributionAuthor = "cdm-contribution-author";
+    public static final String CDM_contributionAuthorElement = "cdm-contribution-author-element";
+    public static final String CDM_contributionCreationDate = "cdm-contribution-creation-date";
+    public static final String CDM_contributionCreationDateElement = "cdm-contribution-creation-date-element";
+    public static final String CDM_contributionGroup = "cdm-contribution-group";
+    public static final String CDM_contributionGroups = "cdm-contribution-groups";
+    public static final String CDM_contributionId = "cdm-contribution-id";
+    public static final String CDM_contributionFinitionDate = "cdm-contribution-finition-date";
+    public static final String CDM_contributionFinitionDateElement = "cdm-contribution-finition-date-element";
+    public static final String CDM_contributionReviewDate = "cdm-contribution-review-date";
+    public static final String CDM_contributionReviewDateElement = "cdm-contribution-review-date-element";
+    public static final String CDM_contributionReviewer = "cdm-contribution-reviewer";
+    public static final String CDM_contributionReviewerElement = "cdm-contribution-reviewer-element";
+    public static final String CDM_contributionValidationDate = "cdm-contribution-validation-date";
+    public static final String CDM_contributionValidationDateElement = "cdm-contribution-validation-date-element";
+    public static final String CDM_contributionValidator = "cdm-contribution-validator";
+    public static final String CDM_contributionValidatorElement = "cdm-contribution-validator-element";
+    public static final String CDM_contributionStatus = "cdm-contribution-status";
+    public static final String CDM_contributionStatusElement = "cdm-contribution-status-element";
+    public static final String CDM_contributionDataElement = "cdm-contribution-data-element";
+    public static final String CDM_originalContributionId = "cdm-original-contribution-id";
     // FBM: Added by francis
     // link to previous classified finished/not-finished contribution
-    public static final  String CDM_previousClassifiedFinishedContribution = "cdm-previous-classified-finished-contribution";
-    public static final  String CDM_previousClassifiedFinishedContributionElement = "cdm-previous-classified-finished-contribution-element";
-    public static final  String CDM_previousClassifiedNotFinishedContribution = "cdm-previous-classified-not-finished-contribution";
-    public static final  String CDM_previousClassifiedNotFinishedContributionElement = "cdm-previous-classified-not-finished-contribution-element";
+    public static final String CDM_previousClassifiedFinishedContribution = "cdm-previous-classified-finished-contribution";
+    public static final String CDM_previousClassifiedFinishedContributionElement = "cdm-previous-classified-finished-contribution-element";
+    public static final String CDM_previousClassifiedNotFinishedContribution = "cdm-previous-classified-not-finished-contribution";
+    public static final String CDM_previousClassifiedNotFinishedContributionElement = "cdm-previous-classified-not-finished-contribution-element";
     // link to next contribution author
-    public static final  String CDM_nextContributionAuthor = "cdm-next-contribution-author";
-    public static final  String CDM_nextContributionAuthorElement = "cdm-next-contribution-author-element";
+    public static final String CDM_nextContributionAuthor = "cdm-next-contribution-author";
+    public static final String CDM_nextContributionAuthorElement = "cdm-next-contribution-author-element";
 
-	
-	/* constants added to manage axies, it should be generic...*/
-    public static final  String CDM_axiSemanticCat = "axi-semantic-cat";
-    public static final  String CDM_axiSynonyms = "axi-synonyms";
-    public static final  String CDM_axiLanguage = "axi-language";
-    public static final  String CDM_axiLanguageAttribute = "axi-language-attribute";
-    public static final  String CDM_axiReflexie = "axi-reflexie";
-    public static final  String CDM_axiRefaxie = "axi-refaxie"; 
 
-	// gdef tags
-	public static final  String CDM_gdefEstParticule = "gdef-est-particule";
-	public static final  String CDM_gdefEstDomaine = "gdef-est-domaine";
-	public static final  String CDM_gdefEstFrequence = "gdef-est-frequence";
-  
-	// other constants
-	public final static String DEFAULT_LANG = "#NA";
-	
-	public final static String[] indexElements = { 
-		CDM_entryId, 
-		CDM_headword,
-		CDM_reading,
-		CDM_writing,
-		CDM_pronunciation,
-		CDM_pos,
-		CDM_example,
-		CDM_idiom,
-		CDM_translation,
-		CDM_translationReflexie,
-		
+    /* constants added to manage axies, it should be generic...*/
+    public static final String CDM_axiSemanticCat = "axi-semantic-cat";
+    public static final String CDM_axiSynonyms = "axi-synonyms";
+    public static final String CDM_axiLanguage = "axi-language";
+    public static final String CDM_axiLanguageAttribute = "axi-language-attribute";
+    public static final String CDM_axiReflexie = "axi-reflexie";
+    public static final String CDM_axiRefaxie = "axi-refaxie";
+
+    // gdef tags
+    public static final String CDM_gdefEstParticule = "gdef-est-particule";
+    public static final String CDM_gdefEstFrequence = "gdef-est-frequence";
+
+    // other constants
+    public final static String DEFAULT_LANG = "#NA";
+
+    public final static String[] indexElements = {
+            CDM_entryId,
+            CDM_headword,
+            CDM_reading,
+            CDM_writing,
+            CDM_pronunciation,
+            CDM_pos,
+            CDM_example,
+            CDM_idiom,
+            CDM_translation,
+            CDM_translationReflexie,
+
 // contribution CDM elements
-		CDM_contributionId,
-		CDM_originalContributionId,
-		CDM_contributionAuthor,
-		CDM_contributionGroup,
-		CDM_contributionGroups,
-		CDM_contributionCreationDate,
-		CDM_contributionFinitionDate,
-		CDM_contributionReviewDate,
-		CDM_contributionReviewer,
-		CDM_contributionValidationDate,
-		CDM_contributionValidator,
-		CDM_contributionStatus,
-		
+            CDM_contributionId,
+            CDM_originalContributionId,
+            CDM_contributionAuthor,
+            CDM_contributionGroup,
+            CDM_contributionGroups,
+            CDM_contributionCreationDate,
+            CDM_contributionFinitionDate,
+            CDM_contributionReviewDate,
+            CDM_contributionReviewer,
+            CDM_contributionValidationDate,
+            CDM_contributionValidator,
+            CDM_contributionStatus,
+
 // gdef-est elements
-		CDM_gdefEstParticule,
-		CDM_gdefEstFrequence
-		
-	};
-		
-	public final static String[] langElements = { 
-		CDM_headword,
-		CDM_homographNumber,
-		CDM_headwordVariant,
-		CDM_reading,
-		CDM_writing,
-		CDM_pronunciation,
-		CDM_pos,
-		CDM_example,
-		CDM_idiom,
-		CDM_translation,
-		CDM_translationReflexie,
-		// gdef-est elements
-		CDM_gdefEstParticule,
-		CDM_gdefEstFrequence
+            CDM_gdefEstParticule,
+            CDM_gdefEstFrequence
 
-	};
-	
-	public final static String[] defaultLangElements = { 
-		CDM_volume, 
-		CDM_entry, 
-		CDM_entryId, 
-		CDM_contributionId,
-		CDM_originalContributionId,
-		CDM_contributionAuthor,
-		CDM_contributionGroup,
-		CDM_contributionCreationDate,
-		CDM_contributionFinitionDate,
-		CDM_contributionReviewDate,
-		CDM_contributionReviewer,
-		CDM_contributionValidationDate,
-		CDM_contributionValidator,
-		CDM_contributionStatus,
-		CDM_previousClassifiedFinishedContribution,
-		CDM_previousClassifiedNotFinishedContribution,
-		CDM_nextContributionAuthor
-	};
-	
-	public final static String[] sourceLangElements = { 
-		CDM_headword,
-		CDM_homographNumber,
-		CDM_headwordVariant,
-		CDM_reading,
-		CDM_writing,
-		CDM_pronunciation,
-		CDM_pos,
-		CDM_example,
-		CDM_idiom,
-		// gdef-est elements
-		CDM_gdefEstParticule,
-		CDM_gdefEstFrequence
-	};
-	
-	// local variables
-	protected final static String XmlFooterSeparator = "$$$###$$$";
+    };
 
-/*
- * table schema:
- * String lang (ISO 639-2/T) -> CDM_element -> Vector (String xpath, boolean is_index, XPath xpath_compiled) 
- */
+    public final static String[] langElements = {
+            CDM_headword,
+            CDM_homographNumber,
+            CDM_headwordVariant,
+            CDM_reading,
+            CDM_writing,
+            CDM_pronunciation,
+            CDM_pos,
+            CDM_example,
+            CDM_idiom,
+            CDM_translation,
+            CDM_translationReflexie,
+            // gdef-est elements
+            CDM_gdefEstParticule,
+            CDM_gdefEstFrequence
+
+    };
+
+    public final static String[] defaultLangElements = {
+            CDM_volume,
+            CDM_entry,
+            CDM_entryId,
+            CDM_contributionId,
+            CDM_originalContributionId,
+            CDM_contributionAuthor,
+            CDM_contributionGroup,
+            CDM_contributionCreationDate,
+            CDM_contributionFinitionDate,
+            CDM_contributionReviewDate,
+            CDM_contributionReviewer,
+            CDM_contributionValidationDate,
+            CDM_contributionValidator,
+            CDM_contributionStatus,
+            CDM_previousClassifiedFinishedContribution,
+            CDM_previousClassifiedNotFinishedContribution,
+            CDM_nextContributionAuthor
+    };
+
+    public final static String[] sourceLangElements = {
+            CDM_headword,
+            CDM_homographNumber,
+            CDM_headwordVariant,
+            CDM_reading,
+            CDM_writing,
+            CDM_pronunciation,
+            CDM_pos,
+            CDM_example,
+            CDM_idiom,
+            // gdef-est elements
+            CDM_gdefEstParticule,
+            CDM_gdefEstFrequence
+    };
+
+    // local variables
+    protected final static String XmlFooterSeparator = "$$$###$$$";
+
+    /*
+    * table schema:
+    * String lang (ISO 639-2/T) -> CDM_element -> Vector (String xpath, boolean is_index, XPath xpath_compiled)
+    */
     /*
      * table schema:
      * Hastable with key [String lang (ISO 639-2/T)] 
      * OF Hastable with key [CDM_element] 
      * OF Vector (String xpath, boolean is_index, XPath xpath_compiled) 
      */
-	protected java.util.Hashtable CDM_elements =  null;
-	
+    protected java.util.Hashtable CDM_elements = null;
+
     /**
-	 * The DO of the Volume.
+     * The DO of the Volume.
      */
     protected VolumeDO myDO = null;
-	
+
     /**
-	 * The public constructor.
+     * The public constructor.
      */
     public Volume() throws PapillonBusinessException {
         try {
-		    this.CDM_elements = new java.util.Hashtable();
-            this.myDO = VolumeDO.createVirgin(CurrentDBTransaction.get());  
-        } catch(DatabaseManagerException ex) {
+            this.CDM_elements = new java.util.Hashtable();
+            this.myDO = VolumeDO.createVirgin(CurrentDBTransaction.get());
+        } catch (DatabaseManagerException ex) {
             throw new PapillonBusinessException("Error creating empty Volume", ex);
-        } catch(ObjectIdException ex) {
+        } catch (ObjectIdException ex) {
             throw new PapillonBusinessException("Error creating empty Volume", ex);
         }
     }
-	
-    /** The protected constructor
-		*
-		* @param theDisc. The data object of the Volume.
-		*/
-    protected Volume(VolumeDO theVolumeDO) 
-        throws PapillonBusinessException  {
-			try {
-				if (theVolumeDO != null) {
-					this.CDM_elements = Utility.deSerializeHashtable(theVolumeDO.getCdmElements());
-				}
-				this.myDO = theVolumeDO;
-			}
-			catch(DataObjectException ex) {
-				throw new PapillonBusinessException("Error creating volume ", ex);
-			}
-		}
-	
-    public boolean isEmpty() {
-        return (this.myDO==null) ;
-    }
-	
-	
+
     /**
-	 * Gets the object id for the Volume
+     * @param theVolumeDO data object of the new Volume
+     * @throws PapillonBusinessException if there is a data object exception
+     */
+    protected Volume(VolumeDO theVolumeDO)
+            throws PapillonBusinessException {
+
+        this.myDO = theVolumeDO;
+        if (theVolumeDO != null) {
+            try {
+                this.CDM_elements = Utility.deSerializeHashtable(theVolumeDO.getCdmElements());
+            } catch (Exception e) {
+                Document docXml = XMLServices.buildDOMTree(this.getXmlCode());
+
+                //on recupere le dictionnaire
+                Element volume;
+                volume = (Element) docXml.getElementsByTagName(VolumesFactory.VOLUME_TAG).item(0);
+                // Try to recompute the cdm elements
+                NodeList cdmElts = volume.getElementsByTagName(VolumesFactory.CDM_ELEMENTS_TAG);
+                if (null != cdmElts && cdmElts.getLength() > 0) {
+                    Element cdmElt = (Element) cdmElts.item(0);
+                    this.CDM_elements = VolumesFactory.buildCdmElementsTable(cdmElt, this.getSourceLanguage());
+                } else {
+                    PapillonLogger.writeDebugMsg("No cdm-elements tag");
+                }
+            }
+        }
+
+    }
+
+    public boolean isEmpty() {
+        return (this.myDO == null);
+    }
+
+
+    /**
+     * Gets the object id for the Volume
      *
      * @return the object id.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-	 *   error).
+     * @throws PapillonBusinessException if an error occurs
+     *                                   retrieving data (usually due to an underlying data layer
+     *                                   error).
      */
     public String getHandle()
-        throws PapillonBusinessException {
-			try {
-				return this.myDO.getHandle();
-			} catch(DatabaseManagerException ex) {
-				throw new PapillonBusinessException("Error getting Volumes's handle", ex);
-			}
-		}
-	
+            throws PapillonBusinessException {
+        try {
+            return this.myDO.getHandle();
+        } catch (DatabaseManagerException ex) {
+            throw new PapillonBusinessException("Error getting Volumes's handle", ex);
+        }
+    }
+
     /**
-	 * Gets the name of the Volume
+     * Gets the name of the Volume
      *
      * @return the name.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-	 *   error).
+     * @throws PapillonBusinessException if an error occurs
+     *                                   retrieving data (usually due to an underlying data layer
+     *                                   error).
      */
     public String getName()
-        throws PapillonBusinessException {
-            try {
-                return myDO.getName();
-            } catch(DataObjectException ex) {
-                throw new PapillonBusinessException("Error getting Volume's name", ex);
-            }
+            throws PapillonBusinessException {
+        try {
+            return myDO.getName();
+        } catch (DataObjectException ex) {
+            throw new PapillonBusinessException("Error getting Volume's name", ex);
         }
+    }
+
     public void setName(String volume)
-        throws PapillonBusinessException {
-            try {
-                myDO.setName(volume);
-            } catch(DataObjectException ex) {
-                throw new PapillonBusinessException("Error setting Volume's name", ex);
-            }
+            throws PapillonBusinessException {
+        try {
+            myDO.setName(volume);
+        } catch (DataObjectException ex) {
+            throw new PapillonBusinessException("Error setting Volume's name", ex);
         }
-    
-	
+    }
+
+
     /**
-	 * Gets the dictname of the Volume
+     * Gets the dictname of the Volume
      *
      * @return the dictname.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-	 *   error).
+     * @throws PapillonBusinessException if an error occurs
+     *                                   retrieving data (usually due to an underlying data layer
+     *                                   error).
      */
-    public String getDictname() 
-        throws PapillonBusinessException {
-			try {
-				return myDO.getDictname();   
-			} catch(DataObjectException ex) {
-				throw new PapillonBusinessException("Error getting Volume's dictname", ex);
-			}
-		}
-	public void setDictname(String dictname) 
-        throws PapillonBusinessException {
-			try {
-				myDO.setDictname(dictname);   
-			} catch(DataObjectException ex) {
-				throw new PapillonBusinessException("Error setting Volume's dictname", ex);
-			}
-		}
-	
-	
+    public String getDictname()
+            throws PapillonBusinessException {
+        try {
+            return myDO.getDictname();
+        } catch (DataObjectException ex) {
+            throw new PapillonBusinessException("Error getting Volume's dictname", ex);
+        }
+    }
+
+    public void setDictname(String dictname)
+            throws PapillonBusinessException {
+        try {
+            myDO.setDictname(dictname);
+        } catch (DataObjectException ex) {
+            throw new PapillonBusinessException("Error setting Volume's dictname", ex);
+        }
+    }
+
+
     /**
-	 * Gets the dbname of the Volume
+     * Gets the dbname of the Volume
      *
      * @return the dbname.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-     *   error).
+     * @throws PapillonBusinessException if an error occurs
+     *                                   retrieving data (usually due to an underlying data layer
+     *                                   error).
      */
     public String getDbname()
-        throws PapillonBusinessException {
-            try {
-                return myDO.getDbname();
-            } catch(DataObjectException ex) {
-                throw new PapillonBusinessException("Error getting Volume's Dbname", ex);
-            }
+            throws PapillonBusinessException {
+        try {
+            return myDO.getDbname();
+        } catch (DataObjectException ex) {
+            throw new PapillonBusinessException("Error getting Volume's Dbname", ex);
         }
+    }
+
     public void setDbname(String dbname)
-        throws PapillonBusinessException {
-            try {
-                myDO.setDbname(dbname);
-            } catch(DataObjectException ex) {
-                throw new PapillonBusinessException("Error setting Volume's dbname", ex);
-            }
+            throws PapillonBusinessException {
+        try {
+            myDO.setDbname(dbname);
+        } catch (DataObjectException ex) {
+            throw new PapillonBusinessException("Error setting Volume's dbname", ex);
         }
-	
-	
+    }
+
+
     public String getIndexDbname()
-        throws PapillonBusinessException {
-			return IndexFactory.INDEX_TABLE_PREFIX + getDbname();
-		}
-	
+            throws PapillonBusinessException {
+        return IndexFactory.INDEX_TABLE_PREFIX + getDbname();
+    }
+
+    public String getHeadwordViewName()
+            throws PapillonBusinessException {
+        return "hw_" + getDbname();
+    }
+
     /**
-	 * Gets the location of the Volume
+     * Gets the location of the Volume
      *
      * @return the dbname.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-     *   error).
+     * @throws PapillonBusinessException if an error occurs
+     *                                   retrieving data (usually due to an underlying data layer
+     *                                   error).
      */
     public String getLocation()
-        throws PapillonBusinessException {
-            try {
-                return myDO.getLocation();
-            } catch(DataObjectException ex) {
-                throw new PapillonBusinessException("Error getting Volume's location", ex);
-            }
+            throws PapillonBusinessException {
+        try {
+            return myDO.getLocation();
+        } catch (DataObjectException ex) {
+            throw new PapillonBusinessException("Error getting Volume's location", ex);
         }
+    }
+
     public void setLocation(String location)
-        throws PapillonBusinessException {
-            try {
-                myDO.setLocation(location);
-            } catch(DataObjectException ex) {
-                throw new PapillonBusinessException("Error setting Volume's location", ex);
-            }
+            throws PapillonBusinessException {
+        try {
+            myDO.setLocation(location);
+        } catch (DataObjectException ex) {
+            throw new PapillonBusinessException("Error setting Volume's location", ex);
         }
-	
-	
+    }
+
+
     /**
-	 * Gets the source language of the Volume
+     * Gets the source language of the Volume
      *
      * @return the source language.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-     *   error).
+     * @throws PapillonBusinessException if an error occurs
+     *                                   retrieving data (usually due to an underlying data layer
+     *                                   error).
      */
-    public String getSourceLanguage() 
-        throws PapillonBusinessException {
-			try {
-				return myDO.getSourceLanguage();   
-			} catch(DataObjectException ex) {
-				throw new PapillonBusinessException("Error getting Volume's source language", ex);
-			}
-		}
-    
+    public String getSourceLanguage()
+            throws PapillonBusinessException {
+        try {
+            return myDO.getSourceLanguage();
+        } catch (DataObjectException ex) {
+            throw new PapillonBusinessException("Error getting Volume's source language", ex);
+        }
+    }
+
     // FIXME: change String to Collection
-	public void setSourceLanguage(String lang) 
-        throws PapillonBusinessException {
-			try {
-				myDO.setSourceLanguage(lang);   
-			} catch(DataObjectException ex) {
-				throw new PapillonBusinessException("Error setting Volume's source language", ex);
-			}
-		}
-	
-	
+    public void setSourceLanguage(String lang)
+            throws PapillonBusinessException {
+        try {
+            myDO.setSourceLanguage(lang);
+        } catch (DataObjectException ex) {
+            throw new PapillonBusinessException("Error setting Volume's source language", ex);
+        }
+    }
+
+
     /**
-	 * Gets the target languages of the Volume
+     * Gets the target languages of the Volume
      *
      * @return the target languages.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-	 *   error).
+     * @throws PapillonBusinessException if an error occurs
+     *                                   retrieving data (usually due to an underlying data layer
+     *                                   error).
      */
     // FIXME: change String to Collection
     // FIXME: supress getTargetLanguagesArray ? or getTargetLanguages ?
-    public String getTargetLanguages() 
-        throws PapillonBusinessException {
-			try {
-				return myDO.getTargetLanguages();   
-			} catch(DataObjectException ex) {
-				throw new PapillonBusinessException("Error getting Volume's target languages", ex);
-			}
-		}
+    public String getTargetLanguages()
+            throws PapillonBusinessException {
+        try {
+            return myDO.getTargetLanguages();
+        } catch (DataObjectException ex) {
+            throw new PapillonBusinessException("Error getting Volume's target languages", ex);
+        }
+    }
 
-	public Collection getTargetLanguagesArray() throws PapillonBusinessException {
-			
+    public Collection getTargetLanguagesArray() throws PapillonBusinessException {
+
         //return getTargetLanguages().split("\\s");
         // FIXME: add target collection in volume
         String[] targetsString = getTargetLanguages().split("\\s");
@@ -642,323 +671,324 @@ public class Volume {
         for (int i = 0; i < targetsString.length; i++) {
             targets.add(targetsString[i]);
         }
-        
+
         return targets;
     }
 
     // FIXME: change String to Collection
-	public void setTargetLanguages(String langs) 
-        throws PapillonBusinessException {
-			try {
-				myDO.setTargetLanguages(langs);   
-			} catch(DataObjectException ex) {
-				throw new PapillonBusinessException("Error setting Volume's target languages", ex);
-			}
-		}
-	
-	
+    public void setTargetLanguages(String langs)
+            throws PapillonBusinessException {
+        try {
+            myDO.setTargetLanguages(langs);
+        } catch (DataObjectException ex) {
+            throw new PapillonBusinessException("Error setting Volume's target languages", ex);
+        }
+    }
+
+
     /**
-	 * Gets the href of the Volume
+     * Gets the href of the Volume
      *
      * @return the href.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-	 *   error).
+     * @throws PapillonBusinessException if an error occurs
+     *                                   retrieving data (usually due to an underlying data layer
+     *                                   error).
      */
-    public String getVolumeRef() 
-        throws PapillonBusinessException {
-			try {
-				return myDO.getVolumeRef();   
-			} catch(DataObjectException ex) {
-				throw new PapillonBusinessException("Error getting Volume's href", ex);
-			}
-		}
-	public void setVolumeRef(String href) 
-        throws PapillonBusinessException {
-			try {
-				myDO.setVolumeRef(href);   
-			} catch(DataObjectException ex) {
-				throw new PapillonBusinessException("Error setting Volume's href", ex);
-			}
-		}
-	
+    public String getVolumeRef()
+            throws PapillonBusinessException {
+        try {
+            return myDO.getVolumeRef();
+        } catch (DataObjectException ex) {
+            throw new PapillonBusinessException("Error getting Volume's href", ex);
+        }
+    }
+
+    public void setVolumeRef(String href)
+            throws PapillonBusinessException {
+        try {
+            myDO.setVolumeRef(href);
+        } catch (DataObjectException ex) {
+            throw new PapillonBusinessException("Error setting Volume's href", ex);
+        }
+    }
+
     /**
-	 * Gets the CDM elements Hashtable of the Volume
+     * Gets the CDM elements Hashtable of the Volume
      *
      * @return the  CDM elements Hashtable.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-	 *   error).
+     * @throws PapillonBusinessException if an error occurs
+     *                                   retrieving data (usually due to an underlying data layer
+     *                                   error).
      */
     public java.util.Hashtable getCdmElements() {
-		return this.CDM_elements;
-	}
-	
+        return this.CDM_elements;
+    }
+
     /**
-	 * Gets a CDM XPath of the Volume
+     * Gets a CDM XPath of the Volume
      *
      * @param the name of the CDM XPath as a String.
      * @return the CDM XPath as a String.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-	 *   error).
+     * @throws PapillonBusinessException if an error occurs
+     *                                   retrieving data (usually due to an underlying data layer
+     *                                   error).
      */
     protected String getCdmXPathString(String name) {
-		return getCdmXPathString(name,DEFAULT_LANG);
-	}
-	
+        return getCdmXPathString(name, DEFAULT_LANG);
+    }
+
     /**
-	 * Gets a CDM XPath of the Volume
+     * Gets a CDM XPath of the Volume
      *
      * @param the name of the CDM element as a String.
      * @param the language of the CDM element as a ISO 639-2/T 3 letters String.
      * @return the CDM XPath as a String.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-	 *   error).
+     * @throws PapillonBusinessException if an error occurs
+     *                                   retrieving data (usually due to an underlying data layer
+     *                                   error).
      */
     protected String getCdmXPathString(String name, String lang) {
-		String res = null;
-		java.util.Hashtable tmpTable = (java.util.Hashtable) this.CDM_elements.get(lang);
-		if (tmpTable != null) {
-			java.util.Vector myVector = (java.util.Vector) tmpTable.get(name);
-			if (myVector != null && myVector.size()>0) {
-				res = (String) myVector.elementAt(0);
-			}
-		}
-		else {
-			fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Error 1: CDM Element null for name: " + name + " " + lang + " Hashtable: " + this.CDM_elements.toString());
-		}
-		if (res == null || res.equals("")) {
-			fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Error 2: CDM Element null for name: " + name + " " + lang + " Hashtable: " + this.CDM_elements.toString());
-		}
-		// fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getCdmXPathString: " + name + " : " + res);
-		return res;
-	}
-	
-	public static String getTagNameFromXPath (String xPathString) {
-		return getTagNameFromXPath(xPathString, true);
-	}
-	
-	protected static String getTagNameFromXPath (String xPathString, boolean letNamespacePrefix) {
-		// fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getTagNameFromXPath: " + xPathString);
-		String res = xPathString;
-		if (res != null) {
-			int text = res.indexOf("/text()");
-			if (text>0) {
-				res = res.substring(0,text);
-			}
-			int index = res.lastIndexOf("/");
-			if (index>=0) {
-				res = res.substring(index+1);
-			}
-			if (!letNamespacePrefix) {
-				int colon = res.lastIndexOf(":");
-				if (colon>=0) {
-					res = res.substring(colon+1);
-				}
-			}
-		}
-		return res;
-	}
-	
+        String res = null;
+        java.util.Hashtable tmpTable = (java.util.Hashtable) this.CDM_elements.get(lang);
+        if (tmpTable != null) {
+            java.util.Vector myVector = (java.util.Vector) tmpTable.get(name);
+            if (myVector != null && myVector.size() > 0) {
+                res = (String) myVector.elementAt(0);
+            }
+        } else {
+            fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Error 1: CDM Element null for name: " + name + " " + lang + " Hashtable: " + this.CDM_elements.toString());
+        }
+        if (res == null || res.equals("")) {
+            fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Error 2: CDM Element null for name: " + name + " " + lang + " Hashtable: " + this.CDM_elements.toString());
+        }
+        // fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getCdmXPathString: " + name + " : " + res);
+        return res;
+    }
+
+    public static String getTagNameFromXPath(String xPathString) {
+        return getTagNameFromXPath(xPathString, true);
+    }
+
+    protected static String getTagNameFromXPath(String xPathString, boolean letNamespacePrefix) {
+        // fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getTagNameFromXPath: " + xPathString);
+        String res = xPathString;
+        if (res != null) {
+            int text = res.indexOf("/text()");
+            if (text > 0) {
+                res = res.substring(0, text);
+            }
+            int index = res.lastIndexOf("/");
+            if (index >= 0) {
+                res = res.substring(index + 1);
+            }
+            if (!letNamespacePrefix) {
+                int colon = res.lastIndexOf(":");
+                if (colon >= 0) {
+                    res = res.substring(colon + 1);
+                }
+            }
+        }
+        return res;
+    }
+
     /**
-	 * Gets the CDM volume of the Volume
+     * Gets the CDM volume of the Volume
      *
      * @return the CDM volume tag name as a String.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-	 *   error).
+     * @throws PapillonBusinessException if an error occurs
+     *                                   retrieving data (usually due to an underlying data layer
+     *                                   error).
      */
     public String getCdmVolume() {
-		return getTagNameFromXPath(getCdmXPathString(this.CDM_volume));
-	}
+        return getTagNameFromXPath(getCdmXPathString(this.CDM_volume));
+    }
 
     /**
-	 * Gets the CDM entry of the Volume
+     * Gets the CDM entry of the Volume
      *
      * @return the  CDM entry tag name as a String.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-	 *   error).
+     * @throws PapillonBusinessException if an error occurs
+     *                                   retrieving data (usually due to an underlying data layer
+     *                                   error).
      */
     public String getCdmEntry() {
-		return getTagNameFromXPath(getCdmXPathString(this.CDM_entry));
-	}
+        return getTagNameFromXPath(getCdmXPathString(this.CDM_entry));
+    }
 
     /**
-	 * Gets the local tag name of the CDM entry of the Volume
+     * Gets the local tag name of the CDM entry of the Volume
      *
      * @return the  CDM entry tag name as a String.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-	 *   error).
+     * @throws PapillonBusinessException if an error occurs
+     *                                   retrieving data (usually due to an underlying data layer
+     *                                   error).
      */
     public String getCdmLocalEntry() {
-		return Utility.getLocalTagName(getTagNameFromXPath(getCdmXPathString(this.CDM_entry)));
-	}
+        return Utility.getLocalTagName(getTagNameFromXPath(getCdmXPathString(this.CDM_entry)));
+    }
 
     public String getCdmContribution() {
-		return getTagNameFromXPath(getCdmXPathString(this.CDM_contribution));
-	}
+        return getTagNameFromXPath(getCdmXPathString(this.CDM_contribution));
+    }
 
     /**
-	 * Gets the CDM headword of the Volume
+     * Gets the CDM headword of the Volume
      *
      * @return the  CDM headword tag name as a String.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-	 *   error).
+     * @throws PapillonBusinessException if an error occurs
+     *                                   retrieving data (usually due to an underlying data layer
+     *                                   error).
      */
     public String getCdmHeadword() throws fr.imag.clips.papillon.business.PapillonBusinessException {
-		return getTagNameFromXPath(getCdmXPathString(this.CDM_headword, this.getSourceLanguage()));
-	}
+        return getTagNameFromXPath(getCdmXPathString(this.CDM_headword, this.getSourceLanguage()));
+    }
 
     /**
-	 * Gets the CDM history of the Volume
+     * Gets the CDM history of the Volume
      *
      * @return the  CDM history tag name as a String.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-	 *   error).
+     * @throws PapillonBusinessException if an error occurs
+     *                                   retrieving data (usually due to an underlying data layer
+     *                                   error).
      */
     public String getCdmHistory() {
-		return getTagNameFromXPath(getCdmXPathString(this.CDM_history));
-	}
+        return getTagNameFromXPath(getCdmXPathString(this.CDM_history));
+    }
 
     /**
-	 * Gets the CDM modification of the Volume
+     * Gets the CDM modification of the Volume
      *
      * @return the  CDM modification tag name as a String.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-	 *   error).
+     * @throws PapillonBusinessException if an error occurs
+     *                                   retrieving data (usually due to an underlying data layer
+     *                                   error).
      */
     public String getCdmModification() {
-		return getTagNameFromXPath(getCdmXPathString(this.CDM_modification));
-	}
+        return getTagNameFromXPath(getCdmXPathString(this.CDM_modification));
+    }
 
     /**
-	 * Gets the CDM author of the Volume
+     * Gets the CDM author of the Volume
      *
      * @return the  CDM author tag name as a String.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-	 *   error).
+     * @throws PapillonBusinessException if an error occurs
+     *                                   retrieving data (usually due to an underlying data layer
+     *                                   error).
      */
     public String getCdmModificationAuthor() {
-		return getTagNameFromXPath(getCdmXPathString(this.CDM_modificationAuthor));
-	}
-	
+        return getTagNameFromXPath(getCdmXPathString(this.CDM_modificationAuthor));
+    }
+
     public String getCdmModificationAuthorElement() {
-		return getTagNameFromXPath(getCdmXPathString(this.CDM_modificationAuthorElement));
-	}
-	
+        return getTagNameFromXPath(getCdmXPathString(this.CDM_modificationAuthorElement));
+    }
+
     /**
-	 * Gets the CDM date of the Volume
+     * Gets the CDM date of the Volume
      *
      * @return the  CDM date tag name as a String.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-	 *   error).
+     * @throws PapillonBusinessException if an error occurs
+     *                                   retrieving data (usually due to an underlying data layer
+     *                                   error).
      */
     public String getCdmModificationDate() {
-		return getTagNameFromXPath(getCdmXPathString(this.CDM_modificationDate));
-	}
+        return getTagNameFromXPath(getCdmXPathString(this.CDM_modificationDate));
+    }
 
     public String getCdmModificationDateElement() {
-		return getTagNameFromXPath(getCdmXPathString(this.CDM_modificationDateElement));
-	}
-	
+        return getTagNameFromXPath(getCdmXPathString(this.CDM_modificationDateElement));
+    }
+
     /**
-	 * Gets the CDM comment of the Volume
+     * Gets the CDM comment of the Volume
      *
      * @return the CDM comment tag name as a String.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-	 *   error).
+     * @throws PapillonBusinessException if an error occurs
+     *                                   retrieving data (usually due to an underlying data layer
+     *                                   error).
      */
     public String getCdmModificationComment() {
-		return getTagNameFromXPath(getCdmXPathString(this.CDM_modificationComment));
-	}
+        return getTagNameFromXPath(getCdmXPathString(this.CDM_modificationComment));
+    }
 
-	public String getCdmModificationCommentElement() {
-		return getTagNameFromXPath(getCdmXPathString(this.CDM_modificationCommentElement));
-	}
-	
+    public String getCdmModificationCommentElement() {
+        return getTagNameFromXPath(getCdmXPathString(this.CDM_modificationCommentElement));
+    }
+
     /**
-	 * Gets the CDM groups element of the Volume
+     * Gets the CDM groups element of the Volume
      *
      * @return the CDM comment tag name as a String.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-	 *   error).
+     * @throws PapillonBusinessException if an error occurs
+     *                                   retrieving data (usually due to an underlying data layer
+     *                                   error).
      */
     public String getCdmContributionGroups() {
-		return getTagNameFromXPath(getCdmXPathString(this.CDM_contributionGroups));
-	}
-	
+        return getTagNameFromXPath(getCdmXPathString(this.CDM_contributionGroups));
+    }
+
     /**
-	 * Gets the CDM group of the Volume
+     * Gets the CDM group of the Volume
      *
      * @return the CDM comment tag name as a String.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-	 *   error).
+     * @throws PapillonBusinessException if an error occurs
+     *                                   retrieving data (usually due to an underlying data layer
+     *                                   error).
      */
     public String getCdmContributionGroup() {
-		return getTagNameFromXPath(getCdmXPathString(this.CDM_contributionGroup));
-	}
-	
-	/**
-	 * Sets the CDM elements Hashtable of the Volume
+        return getTagNameFromXPath(getCdmXPathString(this.CDM_contributionGroup));
+    }
+
+    /**
+     * Sets the CDM elements Hashtable of the Volume
      *
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-	 *   error).
+     * @throws PapillonBusinessException if an error occurs
+     *                                   retrieving data (usually due to an underlying data layer
+     *                                   error).
      */
-	public void setCdmElements() 
-        throws PapillonBusinessException {
-			this.CDM_elements = VolumesFactory.buildCdmElementsTable(this.getXmlCode(), this.getTemplateEntry(), this.getSourceLanguage());
-	}
-	
-	/**
-	 * Sets the CDM elements Hashtable of the Volume
+    public void setCdmElements()
+            throws PapillonBusinessException {
+        this.CDM_elements = VolumesFactory.buildCdmElementsTable(this.getXmlCode(), this.getTemplateEntry(), this.getSourceLanguage());
+    }
+
+    /**
+     * Sets the CDM elements Hashtable of the Volume
      *
      * @param the CDM elements as an Hashtable.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-	 *   error).
+     * @throws PapillonBusinessException if an error occurs
+     *                                   retrieving data (usually due to an underlying data layer
+     *                                   error).
      */
-	public void setCdmElements(java.util.Hashtable elements) {
+    public void setCdmElements(java.util.Hashtable elements) {
         this.CDM_elements = elements;
-	}
-	
+    }
+
     /**
-	 * Gets the xml code of the volume metadata file
+     * Gets the xml code of the volume metadata file
      *
      * @return the xml code as a string.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-	 *   error).
+     * @throws PapillonBusinessException if an error occurs
+     *                                   retrieving data (usually due to an underlying data layer
+     *                                   error).
      */
     public String getXmlCode()
-        throws PapillonBusinessException {
-			try {
-				return this.myDO.getXmlCode();
-			} catch(DataObjectException ex) {
-				throw new PapillonBusinessException("Error getting Volume's xmlcode", ex);
-			} 
-		}
-	public void setXmlCode(String code)
-        throws PapillonBusinessException {
-			try {
-		  		myDO.setXmlCode(code);   
-			} catch(DataObjectException ex) {
-				throw new PapillonBusinessException("Error getting Volume's xmlcode", ex);
-			}
-		}	
-	
+            throws PapillonBusinessException {
+        try {
+            return this.myDO.getXmlCode();
+        } catch (DataObjectException ex) {
+            throw new PapillonBusinessException("Error getting Volume's xmlcode", ex);
+        }
+    }
+
+    public void setXmlCode(String code)
+            throws PapillonBusinessException {
+        try {
+            myDO.setXmlCode(code);
+        } catch (DataObjectException ex) {
+            throw new PapillonBusinessException("Error getting Volume's xmlcode", ex);
+        }
+    }
+
     public String getFormatterClassName() throws PapillonBusinessException {
         NodeList formatters = XMLServices.buildDOMTree(this.getXmlCode()).getElementsByTagName("result-formatter");
         String classname = null;
@@ -967,8 +997,8 @@ public class Volume {
             classname = ((Element) formatters.item(0).getFirstChild()).getAttribute("class-name");
         }
         return classname;
-	}
-   
+    }
+
     public String getPreProcessorClassName() throws PapillonBusinessException {
         NodeList preProcessor = XMLServices.buildDOMTree(this.getXmlCode()).getElementsByTagName("result-preprocessor");
         String classname = null;
@@ -977,8 +1007,8 @@ public class Volume {
             classname = ((Element) preProcessor.item(0).getFirstChild()).getAttribute("class-name");
         }
         return classname;
-	}
-    
+    }
+
     public String getPostUpdateProcessorClassName() throws PapillonBusinessException {
         NodeList postProcessor = XMLServices.buildDOMTree(this.getXmlCode()).getElementsByTagName("result-postupdateprocessor");
         String classname = null;
@@ -987,8 +1017,8 @@ public class Volume {
             classname = ((Element) postProcessor.item(0).getFirstChild()).getAttribute("class-name");
         }
         return classname;
-	}
-    
+    }
+
     public String getPostSaveProcessorClassName() throws PapillonBusinessException {
         NodeList postProcessor = XMLServices.buildDOMTree(this.getXmlCode()).getElementsByTagName("result-postsaveprocessor");
         String classname = null;
@@ -997,271 +1027,270 @@ public class Volume {
             classname = ((Element) postProcessor.item(0).getFirstChild()).getAttribute("class-name");
         }
         return classname;
-	}
-    
-    
+    }
+
+
     /**
-	 * Gets the xml code of the volume xml schema file
+     * Gets the xml code of the volume xml schema file
      *
      * @return the xml code as a string.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-	 *   error).
+     * @throws PapillonBusinessException if an error occurs
+     *                                   retrieving data (usually due to an underlying data layer
+     *                                   error).
      */
     public String getXmlSchema() throws PapillonBusinessException {
         try {
-			return this.myDO.getXmlSchema();
-        } catch(DataObjectException ex) {
+            return this.myDO.getXmlSchema();
+        } catch (DataObjectException ex) {
             throw new PapillonBusinessException("Error getting Volume's xmlschema code", ex);
-        } 
-	}
-    
-	public void setXmlSchema(String code)
-        throws PapillonBusinessException {
-			try {
-		  		myDO.setXmlSchema(code);   
-			} catch(DataObjectException ex) {
-				throw new PapillonBusinessException("Error getting Volume's xmlschema code", ex);
-			}
-		}
-	
-	/**
-	 * Gets the xml code of the edition interface template
+        }
+    }
+
+    public void setXmlSchema(String code)
+            throws PapillonBusinessException {
+        try {
+            myDO.setXmlSchema(code);
+        } catch (DataObjectException ex) {
+            throw new PapillonBusinessException("Error getting Volume's xmlschema code", ex);
+        }
+    }
+
+    /**
+     * Gets the xml code of the edition interface template
      *
      * @return the xml code as a string.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-	 *   error).
+     * @throws PapillonBusinessException if an error occurs
+     *                                   retrieving data (usually due to an underlying data layer
+     *                                   error).
      */
     public String getTemplateInterface()
-		throws PapillonBusinessException {
-			try {
-				return this.myDO.getTemplateItf();
-			} catch(DataObjectException ex) {
-				throw new PapillonBusinessException("Error getting volume TemplateItf", ex);
-			}
-		}
-    
-	/**
-	 * Sets the xml code of the edition interface template
+            throws PapillonBusinessException {
+        try {
+            return this.myDO.getTemplateItf();
+        } catch (DataObjectException ex) {
+            throw new PapillonBusinessException("Error getting volume TemplateItf", ex);
+        }
+    }
+
+    /**
+     * Sets the xml code of the edition interface template
      *
      * @param the xml code as a string.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-	 *   error).
+     * @throws PapillonBusinessException if an error occurs
+     *                                   retrieving data (usually due to an underlying data layer
+     *                                   error).
      */
-	public void setTemplateInterface(String code)
-        throws PapillonBusinessException {
-			try {
-		  		myDO.setTemplateItf(code);   
-			} catch(DataObjectException ex) {
-				throw new PapillonBusinessException("Error setting volume's TemplateItf code", ex);
-			}
-		}
-	
+    public void setTemplateInterface(String code)
+            throws PapillonBusinessException {
+        try {
+            myDO.setTemplateItf(code);
+        } catch (DataObjectException ex) {
+            throw new PapillonBusinessException("Error setting volume's TemplateItf code", ex);
+        }
+    }
+
     /**
-	 * Gets the xml code of  template entry of the volume
+     * Gets the xml code of  template entry of the volume
      *
      * @return the xml code as a string.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-	 *   error).
+     * @throws PapillonBusinessException if an error occurs
+     *                                   retrieving data (usually due to an underlying data layer
+     *                                   error).
      */
     public String getTemplateEntry()
-		throws PapillonBusinessException {
-			try {
-				return this.myDO.getTemplateEntry();
-			} catch(DataObjectException ex) {
-				throw new PapillonBusinessException("Error getting volume template entry code", ex);
-			}
-		}
-	
-	public void setTemplateEntry(String code)
-		throws PapillonBusinessException {
-			try {
-				myDO.setTemplateEntry(code);
-			} catch(DataObjectException ex) {
-				throw new PapillonBusinessException("Error getting volume template entry code", ex);
-			}
-		}
-	
+            throws PapillonBusinessException {
+        try {
+            return this.myDO.getTemplateEntry();
+        } catch (DataObjectException ex) {
+            throw new PapillonBusinessException("Error getting volume template entry code", ex);
+        }
+    }
+
+    public void setTemplateEntry(String code)
+            throws PapillonBusinessException {
+        try {
+            myDO.setTemplateEntry(code);
+        } catch (DataObjectException ex) {
+            throw new PapillonBusinessException("Error getting volume template entry code", ex);
+        }
+    }
+
     /**
-	 * Gets the xml code of  template entry of the volume
+     * Gets the xml code of  template entry of the volume
      *
      * @return the xml code as a string.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-	 *   error).
+     * @throws PapillonBusinessException if an error occurs
+     *                                   retrieving data (usually due to an underlying data layer
+     *                                   error).
      */
     public boolean IsReverseLookup()
-		throws PapillonBusinessException {
-			try {
-                String rev = this.myDO.getReverse();
-				return ((rev != null) && rev.equals("Y"));
-			} catch(DataObjectException ex) {
-				throw new PapillonBusinessException("Error getting volume reverse lookup", ex);
-			}
-		}
-		
-	public void setReverseLookup(boolean reverse)
-		throws PapillonBusinessException {
-			try {
-				myDO.setReverse(reverse ? "Y" : "N");
-			} catch(DataObjectException ex) {
-				throw new PapillonBusinessException("Error setting volume reverse lookup", ex);
-			}
-		}
-	
+            throws PapillonBusinessException {
+        try {
+            String rev = this.myDO.getReverse();
+            return ((rev != null) && rev.equals("Y"));
+        } catch (DataObjectException ex) {
+            throw new PapillonBusinessException("Error getting volume reverse lookup", ex);
+        }
+    }
+
+    public void setReverseLookup(boolean reverse)
+            throws PapillonBusinessException {
+        try {
+            myDO.setReverse(reverse ? "Y" : "N");
+        } catch (DataObjectException ex) {
+            throw new PapillonBusinessException("Error setting volume reverse lookup", ex);
+        }
+    }
+
     /**
-		* IsIndexCDMElement tells if the CDM element has to be indexed in the db
+     * IsIndexCDMElement tells if the CDM element has to be indexed in the db
      *
      * @return a boolean.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-						  *   error).
+     * @throws PapillonBusinessException if an error occurs
+     *                                   retrieving data (usually due to an underlying data layer
+     *                                   error).
      */
     public static boolean isIndexCDMElement(String eltName) {
-		return java.util.Arrays.asList(indexElements).contains(eltName);
-	}
-	
+        return java.util.Arrays.asList(indexElements).contains(eltName);
+    }
+
     /**
-		* IsLangCDMElement tells if the CDM element needs a language 
-	 * if yes, we will add the source languageif no one was specified
+     * IsLangCDMElement tells if the CDM element needs a language
+     * if yes, we will add the source languageif no one was specified
      *
      * @return a boolean.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-						  *   error).
+     * @throws PapillonBusinessException if an error occurs
+     *                                   retrieving data (usually due to an underlying data layer
+     *                                   error).
      */
     public static boolean isLangCDMElement(String eltName) {
-		return java.util.Arrays.asList(langElements).contains(eltName);
-	}
-	
+        return java.util.Arrays.asList(langElements).contains(eltName);
+    }
+
     /**
-		* IsSourceLangCDMElement tells if the CDM element needs a language 
-	 * if yes, we will add the source language if no one was specified
+     * IsSourceLangCDMElement tells if the CDM element needs a language
+     * if yes, we will add the source language if no one was specified
      *
      * @return a boolean.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-						  *   error).
+     * @throws PapillonBusinessException if an error occurs
+     *                                   retrieving data (usually due to an underlying data layer
+     *                                   error).
      */
     public static boolean isSourceLangCDMElement(String eltName) {
-		return java.util.Arrays.asList(sourceLangElements).contains(eltName);
-	}
-	
+        return java.util.Arrays.asList(sourceLangElements).contains(eltName);
+    }
+
     /**
-		* IsDefaultLangCDMElement tells if the CDM element needs a language 
-	 * if yes, we will add the source language if no one was specified
+     * IsDefaultLangCDMElement tells if the CDM element needs a language
+     * if yes, we will add the source language if no one was specified
      *
      * @return a boolean.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-						  *   error).
+     * @throws PapillonBusinessException if an error occurs
+     *                                   retrieving data (usually due to an underlying data layer
+     *                                   error).
      */
     public static boolean isDefaultLangCDMElement(String eltName) {
-		return java.util.Arrays.asList(defaultLangElements).contains(eltName);
-	}
-	
+        return java.util.Arrays.asList(defaultLangElements).contains(eltName);
+    }
+
     /**
-	 * Gets the xml code footer of the volume
+     * Gets the xml code footer of the volume
      *
      * @return the xml code as a string.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-	 *   error).
+     * @throws PapillonBusinessException if an error occurs
+     *                                   retrieving data (usually due to an underlying data layer
+     *                                   error).
      */
     public String getXmlFooter()
-		throws PapillonBusinessException {
-			
-			String xmlFooter = "</" + this.getCdmVolume() + ">";
-			
-			String templateEntry = this.getTemplateEntry();
-			
-			org.w3c.dom.Document templateDoc = XMLServices.buildDOMTree(templateEntry);
-			
-			org.w3c.dom.NodeList volumeNodes = ParseVolume.getCdmElements(templateDoc, Volume.CDM_volume, Volume.DEFAULT_LANG, this.getCdmElements()); 
+            throws PapillonBusinessException {
 
-			if (volumeNodes != null && volumeNodes.getLength() >0) {
-				org.w3c.dom.Node volumeNode = volumeNodes.item(0);
-				org.w3c.dom.Text myTextNode = templateDoc.createTextNode(Volume.XmlFooterSeparator);
-				volumeNode.appendChild(myTextNode);
-				templateEntry = XMLServices.xmlCode(templateDoc);
-				int XmlFooterSeparatorIndex = templateEntry.lastIndexOf(Volume.XmlFooterSeparator);
-				
-				xmlFooter = templateEntry.substring(XmlFooterSeparatorIndex+Volume.XmlFooterSeparator.length());
-			}
-			else {
-				fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getXmlFooter: volumesNodes null: " + xmlFooter);
-			}
-			fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getXmlFooter: " + xmlFooter);
-			return xmlFooter;
- 		}
+        String xmlFooter = "</" + this.getCdmVolume() + ">";
+
+        String templateEntry = this.getTemplateEntry();
+
+        org.w3c.dom.Document templateDoc = XMLServices.buildDOMTree(templateEntry);
+
+        org.w3c.dom.NodeList volumeNodes = ParseVolume.getCdmElements(templateDoc, Volume.CDM_volume, Volume.DEFAULT_LANG, this.getCdmElements());
+
+        if (volumeNodes != null && volumeNodes.getLength() > 0) {
+            org.w3c.dom.Node volumeNode = volumeNodes.item(0);
+            org.w3c.dom.Text myTextNode = templateDoc.createTextNode(Volume.XmlFooterSeparator);
+            volumeNode.appendChild(myTextNode);
+            templateEntry = XMLServices.xmlCode(templateDoc);
+            int XmlFooterSeparatorIndex = templateEntry.lastIndexOf(Volume.XmlFooterSeparator);
+
+            xmlFooter = templateEntry.substring(XmlFooterSeparatorIndex + Volume.XmlFooterSeparator.length());
+        } else {
+            fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getXmlFooter: volumesNodes null: " + xmlFooter);
+        }
+        fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getXmlFooter: " + xmlFooter);
+        return xmlFooter;
+    }
 
     /**
-	 * getCount get entries number of the volume
+     * getCount get entries number of the volume
      *
      * @return the number of entries as an integer.
-     * @exception PapillonBusinessException if an error occurs
-     *   retrieving data (usually due to an underlying data layer
-	 *   error).
+     * @throws PapillonBusinessException if an error occurs
+     *                                   retrieving data (usually due to an underlying data layer
+     *                                   error).
      */
-	public int getCount()  
-        throws fr.imag.clips.papillon.business.PapillonBusinessException {
-			return VolumeEntriesFactory.getVolumeEntriesCount(this);
-	}
+    public int getCount()
+            throws fr.imag.clips.papillon.business.PapillonBusinessException {
+        return VolumeEntriesFactory.getVolumeEntriesCount(this);
+    }
 
-	public int getCount(String status) 
-        throws fr.imag.clips.papillon.business.PapillonBusinessException {
-			return VolumeEntriesFactory.getVolumeEntriesCount(this, status);
-		}
-	
-	
+    public int getCount(String status)
+            throws fr.imag.clips.papillon.business.PapillonBusinessException {
+        return VolumeEntriesFactory.getVolumeEntriesCount(this, status);
+    }
+
+
     /**
-	 * Saves the Volume into the database.
+     * Saves the Volume into the database.
      *
-     * @exception PapillonBusinessException if an error occurs
-     *   deleting data (usually due to an underlying data layer
-	 *   error).
+     * @throws PapillonBusinessException if an error occurs
+     *                                   deleting data (usually due to an underlying data layer
+     *                                   error).
      */
-    public void save() 
-        throws PapillonBusinessException {
-			try {
-				// Reset AvailableLanguages caches before saving because it will be modified
-				fr.imag.clips.papillon.business.dictionary.AvailableLanguages.resetCache();
-				this.myDO.setCdmElements(Utility.serializeHashtable(this.CDM_elements));
-				this.myDO.commit();
-			} catch(Exception ex) {
-				throw new PapillonBusinessException("Error saving Volume", ex);
-			}
-		}
-    
+    public void save()
+            throws PapillonBusinessException {
+        try {
+            // Reset AvailableLanguages caches before saving because it will be modified
+            fr.imag.clips.papillon.business.dictionary.AvailableLanguages.resetCache();
+            this.myDO.setCdmElements(Utility.serializeHashtable(this.CDM_elements));
+            this.myDO.commit();
+        } catch (Exception ex) {
+            throw new PapillonBusinessException("Error saving Volume", ex);
+        }
+    }
+
     /**
-	 * Deletes the Volume from the database.
+     * Deletes the Volume from the database.
      *
-     * @exception PapillonBusinessException if an error occurs
-     *   deleting data (usually due to an underlying data layer
-	 *   error).
+     * @throws PapillonBusinessException if an error occurs
+     *                                   deleting data (usually due to an underlying data layer
+     *                                   error).
      */
-    public void deleteAll() 
-        throws PapillonBusinessException {
-			try {
-				if (this.getLocation().equals(LOCAL_LOCATION)) {
-					VolumeEntriesFactory.dropVolumeTables(this);
-				}
-				this.myDO.delete();
-			} catch(Exception ex) {
-				throw new PapillonBusinessException("Error deleting Volume", ex);
-			}
-		}
-	
-    public void delete() 
-        throws PapillonBusinessException {
-			try {
-				this.myDO.delete();
-			} catch(Exception ex) {
-				throw new PapillonBusinessException("Error deleting Volume", ex);
-			}
-		}
+    public void deleteAll()
+            throws PapillonBusinessException {
+        try {
+            if (this.getLocation().equals(LOCAL_LOCATION)) {
+                VolumeEntriesFactory.dropVolumeTables(this);
+            }
+            this.myDO.delete();
+        } catch (Exception ex) {
+            throw new PapillonBusinessException("Error deleting Volume", ex);
+        }
+    }
+
+    public void delete()
+            throws PapillonBusinessException {
+        try {
+            this.myDO.delete();
+        } catch (Exception ex) {
+            throw new PapillonBusinessException("Error deleting Volume", ex);
+        }
+    }
 
 }

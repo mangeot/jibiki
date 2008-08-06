@@ -145,10 +145,7 @@ public class XslSheetFactory {
     // FIXME: for Xalan 2_7_0
     // Transformer factory properties
     private static final String TransformerFactoryKey = "javax.xml.transform.TransformerFactory";
-     private static final String TransformerFactoryValue = "org.apache.xalan.processor.TransformerFactoryImpl";
-//   private static final String TransformerFactoryValue = "org.apache.xalan.xsltc.trax.TransformerFactoryImpl";
-    private static final String SAXParserFactoryKey = "javax.xml.parsers.SAXParserFactory";
-    private static final String SAXParserFactoryValue = "org.apache.xerces.jaxp.SAXParserFactoryImpl";
+    private static final String TransformerFactoryValue = "org.apache.xalan.xsltc.trax.TransformerFactoryImpl";
     
     // FIXME: for Xalan 2_7_0
     // Jibiki xsl translet URIs
@@ -188,28 +185,27 @@ public class XslSheetFactory {
                 // Note: For more flexibility, load properties from a properties file.
                 Properties props = System.getProperties();
                 props.put(TransformerFactoryKey, TransformerFactoryValue);
-                props.put(SAXParserFactoryKey, SAXParserFactoryValue);
                 System.setProperties(props);
                 
             } catch(Exception ex) {
                 throw new PapillonBusinessException("Exception in initializeTransformerFactory()", ex);
             }
          }
-
-     /** 
+    
+    
+    /** 
         * This method initialize the jibiki xsl.
         *
         * @exception PapillonBusinessException
         */
     public static void initializeJibikiXslSheet() 
         throws PapillonBusinessException {
+            
             try {
                 
                 // FIXME: for Xalan 2_4_1
                 jibikiXslXMLtoXML = getXslSheet("", "", "XML");
-                if (jibikiXslXMLtoXML == null) {
-					new PapillonBusinessException("jibiki XML to XML internal xsl is not in cache");
-				}
+                if (jibikiXslXMLtoXML == null) new PapillonBusinessException("jibiki XML to XML internal xsl is not in cache");
                 jibikiXslXMLtoText = getXslSheet("", "", "TEXT");
                 jibikiXslXMLtoFO = getXslSheet("", "", "FO");
                 
@@ -366,7 +362,7 @@ public class XslSheetFactory {
             if ( volumeName == null ) volumeName = "";
             
             //
-            //PapillonLogger.writeDebugMsg("getXslSheet " + dictionaryName + "/" + volumeName + "/" + Name);
+            //PapillonLogger.writeDebugMsg("getXslSheet " + dictionaryName + ", " + volumeName + ", " + Name);
             return XslSheetCache.getXslSheetInCache(dictionaryName, volumeName, Name);
 
         }

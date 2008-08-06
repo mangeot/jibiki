@@ -4,6 +4,15 @@
  * $Id$
  *------------------------
  * $Log$
+ * Revision 1.14.2.7  2008/01/24 19:39:10  serasset
+ * BUG123: lexies without geographical usage are not displayed in axies
+ *
+ * Revision 1.14.2.6  2008/01/15 15:23:50  serasset
+ * BUG169: Entries from the same axie, with the SAME TERM and the SAME LEGAL SYSTEM are not displayed properly.
+ *
+ * Revision 1.14.2.5  2007/11/14 16:02:21  serasset
+ * Suppressed debug messages.
+ *
  * Revision 1.14.2.4  2007/09/06 14:54:11  serasset
  * in lexalp view, non matching entries are now gathered by legal systems and
  * query language now appears first.
@@ -152,7 +161,6 @@ public class LexALPFormatter
             throws PapillonBusinessException {
 
         try {
-
             //
             String dictionaryName = dictionary.getName();
             String volumeName = volume.getName();
@@ -165,9 +173,15 @@ public class LexALPFormatter
             //
             dictXsl = getXslSheet(dictionaryName, volumeName, (String) parameter);
 
+            //System.out.println("Document Builder Factory is: " + myDocumentBuilderFactory.getClass());
+            //System.out.println("Transformer Factory is: " + myTransformerFactory.getClass());
+            //System.out.println("Document Builder is: " + myDocumentBuilder.getClass());
+
+
         } catch (javax.xml.parsers.ParserConfigurationException e) {
             throw new PapillonBusinessException("CRITICAL: error initializing document builder !", e);
         }
+
     }
 
     public Node getFormattedResult(QueryResult qr, User usr) throws PapillonBusinessException {
@@ -194,48 +208,8 @@ public class LexALPFormatter
                 Node resultNode = formatResult(qr.getSourceEntry().getDom(), dictXsl, usr);
                 rootdiv.appendChild(res.importNode(resultNode, true));
             }
-        } 
-        else if (qr.getResultKind() == QueryResult.DIRECT_TRANSLATIONS_RESULT) {
-            if (null != dictXsl && !dictXsl.isEmpty()) {
-			
-				VolumeEntry myAnswer = qr.getSourceEntry();
 
-                Volume myVolume = myAnswer.getVolume();
-                Dictionary myDictionary = myAnswer.getDictionary();
-
-                //
-                Collection targets = myVolume.getTargetLanguagesArray();
-                for (Iterator iter = targets.iterator(); iter.hasNext();) {
-                    String target = (String) iter.next();
-
-                    //
-                    if (target != null && !target.equals("")) {
-                        NodeList myNodeList = ParseVolume.getCdmElements(myAnswer, Volume.CDM_translationReflexie, target);
-                        if ((myNodeList != null) && (myNodeList.getLength() > 0)) {
-                            for (int i = 0; i < myNodeList.getLength(); i++) {
-                                Node myNode = myNodeList.item(i);
-                                String translationId = myNode.getNodeValue();
-                                if (myNode.getNodeType() == Node.TEXT_NODE) {
-                                    Node textNode = myNode;
-                                    myNode = myNode.getParentNode();
-                                    myNode.removeChild(textNode);
-                                }
-                                VolumeEntry newEntry = (VolumeEntry) qr.getLexiesHashtable().get(translationId);
-                                if (newEntry != null && !newEntry.isEmpty()) {
-                                    Node tempNode = myAnswer.getDom().importNode((Node) newEntry.getDom().getDocumentElement(), true);
-                                    myNode.appendChild(tempNode);
-                                }
-                            }
-                        }
-                    }
-                }
- 
-				// Format document source
-                Node resultNode = formatResult(myAnswer.getDom(), dictXsl, usr);
-                rootdiv.appendChild(res.importNode(resultNode, true));
-            }
-        } 
-		else if (qr.getResultKind() == QueryResult.AXIE_COLLECTION_RESULT) {
+        } else if (qr.getResultKind() == QueryResult.AXIE_COLLECTION_RESULT) {
 
             // Matching entries, legal system by legal system
             // First display the matching entries
@@ -248,7 +222,10 @@ public class LexALPFormatter
                 qr.getLexiesHashtable().remove(ve.getEntryId());
                 // Then format the group of related entries...
                 String ls = ParseVolume.getCdmString(ve, "lexalp-legal-system");
-                matchingGroups.put(ls, getMatchingResultGroup(res, qr, ve, usr));
+                if (! matchingGroups.containsKey(ls)) {
+                    // If the legal system has already been handled, this source entry should be disregarded. 
+                    matchingGroups.put(ls, getMatchingResultGroup(res, qr, ve, usr));
+                }
             }
 
             String[] lss = new String[]{"AC", "INT", "EU", "DE", "AT", "FR", "IT", "SL", "CH"};
@@ -258,7 +235,16 @@ public class LexALPFormatter
                     rootdiv.appendChild(res.importNode(lsn, true));
                 }
             }
-            assert matchingGroups.isEmpty();
+            // Add other legal system groups (UNKNOW and/or invalid legal system values).
+            if (!matchingGroups.isEmpty()) {
+                Node lsn;
+                Iterator keys = matchingGroups.keySet().iterator();
+                while (keys.hasNext()) {
+                    if (null != (lsn = (Node) matchingGroups.remove(keys.next()))) {
+                        rootdiv.appendChild(res.importNode(lsn, true));
+                    }
+                }
+            }
             String lg = qr.getFirstSourceEntry().getVolume().getSourceLanguage();
             // now dsplay unmatching groups
             for (int i = 0; i < lss.length; i++) {
@@ -267,30 +253,13 @@ public class LexALPFormatter
                     rootdiv.appendChild(res.importNode(lsn, true));
                 }
             }
-//            // Then display other lexies
-//            String[] langs = new String[]{"deu", "fra", "ita", "slv"};
-//            for (int j = 0; j < lss.length; j++) {
-//                for (int i = 0; i < langs.length; i++) {
-//                    Collection trads = getAndRemoveResultEntriesFor(qr, lss[j], langs[i]);
-//                    for (Iterator ittrad = trads.iterator(); ittrad.hasNext();) {
-//                        VolumeEntry trad = (VolumeEntry) ittrad.next();
-//                        if (null != dictXsl && !dictXsl.isEmpty()) {
-//                            // Format document source
-//                            Element resultNode = (Element) formatResult(trad.getDom(), dictXsl, usr);
-//                            resultNode.setAttribute("class", "translation");
-//                            rootdiv.appendChild(res.importNode(resultNode, true));
-//                        }
-//                    }
-//                }
-//            }
-        }
-		else {
-            if (null != dictXsl && !dictXsl.isEmpty()) {
-                // Format document source
-                Node resultNode = formatResult(qr.getSourceEntry().getDom(), dictXsl, usr);
-                rootdiv.appendChild(res.importNode(resultNode, true));
+            if (!qr.getLexiesCollection().isEmpty()) {
+                Node lsn = this.getResultGroup(res, qr, usr, lg, null);
+                if (null != lsn) {
+                    rootdiv.appendChild(res.importNode(lsn, true));
+                }
             }
-		}
+        }
         return rootdiv;
     }
 
@@ -367,6 +336,7 @@ public class LexALPFormatter
             }
         }
     }
+
     private Collection getAndRemoveResultEntriesFor(QueryResult qr, String legalSystem, String lang) {
         Collection lexies = qr.getLexiesCollection();
         Iterator it = lexies.iterator();
@@ -377,7 +347,7 @@ public class LexALPFormatter
             try {
                 String ls = ParseVolume.getCdmString(ve, "lexalp-legal-system");
                 String lg = ve.getVolume().getSourceLanguage();
-                if (legalSystem.equals(ls) && lang.equals(lg)) {
+                if ((legalSystem == null || legalSystem.equals(ls)) && lang.equals(lg)) {
                     results.add(ve);
                 }
             } catch (PapillonBusinessException e) {
@@ -682,8 +652,6 @@ public class LexALPFormatter
 
         XslSheet theXsl = null;
 
-		PapillonLogger.writeDebugMsg("getXslSheet : dictionaryName: " + dictionaryName + " volumeName: " + volumeName + " name: " +name);
-
         // find specific xsl
         theXsl = XslSheetFactory.getXslSheet(dictionaryName, volumeName, name);
 
@@ -711,11 +679,6 @@ public class LexALPFormatter
         if (theXsl == null) {
             theXsl = XslSheetFactory.getXslSheet("", "", "");
         }
-		if (theXsl != null) {
-			PapillonLogger.writeDebugMsg("getXslSheet : " + theXsl.getName() + "/" + theXsl.getDictionaryName() + "/" +theXsl.getVolumeName());
-		} else {
-			PapillonLogger.writeDebugMsg("Error: getXslSheet : xslSheet null!");
-		}
 
         //
         return theXsl;

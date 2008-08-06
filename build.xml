@@ -34,21 +34,21 @@ Log:
 
    Revision 1.21  2006/08/10 22:17:12  fbrunet
    - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
-	   - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
-	   - Bug correction : +/- in advanced search
+   - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+   - Bug correction : +/- in advanced search
 
-	   Revision 1.20  2006/07/10 10:44:40  serasset
-	   Compilation of xsl translets is done only if xsl changed. Morover, celanup now cleans the stamp files.
-	   Added a new property to be added to point to saxon 8b xsl transformer
+   Revision 1.20  2006/07/10 10:44:40  serasset
+   Compilation of xsl translets is done only if xsl changed. Morover, celanup now cleans the stamp files.
+   Added a new property to be added to point to saxon 8b xsl transformer
 
-	   Revision 1.19  2006/07/06 12:03:07  serasset
-	   Added a condition in order to avoid unnecessary xsltc compilation that are quite long...
+   Revision 1.19  2006/07/06 12:03:07  serasset
+   Added a condition in order to avoid unnecessary xsltc compilation that are quite long...
 
-	   Revision 1.18  2006/07/04 08:47:32  serasset
-	   Added an xsltc target to the build process in order to use compiled translets in the project.
+   Revision 1.18  2006/07/04 08:47:32  serasset
+   Added an xsltc target to the build process in order to use compiled translets in the project.
 
-	   Revision 1.17  2006/03/05 11:51:33  mangeot
-	   Added a property called application.prefix in papillon.properties for indicating the application prefix
+   Revision 1.17  2006/03/05 11:51:33  mangeot
+   Added a property called application.prefix in papillon.properties for indicating the application prefix
    in the multiserver.conf
    For lexalp, you must add in the papillon.properties file:
    application.prefix=/termbank
@@ -127,10 +127,8 @@ Most useful targets:
   <!-- =================================================================== -->
   <!-- Initialize the properties                                           -->
   <!-- =================================================================== -->
-
- <!-- PAPILLON-SPECIFIC -->
+  <!-- PAPILLON-SPECIFIC -->
   <!-- Load the properties that are specific to the papillon conf -->
-
   <property file="papillon.properties"/>
   <property file="dblayer.version"/>
 
@@ -156,10 +154,8 @@ Most useful targets:
   <property name="dir.javadocs"  location="${dir.output}/javadocs"/>
   <property name="dir.xmlc"      location="${dir.temp}/Generated_Source/"/>
   <property name="dodsbuild.dir" location="${dir.temp}/Dods_Generated_Sources"/>
-  <property name="postprocess.dir" location="${dir.temp}/Postprocessed_Java_Sources"/>
   <property name="dir.sql"       location="${dir.src}/dods_sql/"/>
-
-    
+   
   <!-- Local path to properties -->
   <property name="path.properties" value="${dir.package}/properties"/>
 
@@ -222,10 +218,10 @@ Most useful targets:
     <pathelement path="${papillon.xerces.jar}"/>
     <pathelement path="${papillon.xmlapi.jar}"/>
     <pathelement path="${papillon.xsltc.jar}"/>
+    <!--pathelement path="${papillon.regexp.jar}"/-->
     <pathelement path="${papillon.pgsql.jar}"/>
     <pathelement path="${papillon.fop.jar}"/>
-    <pathelement path="${papillon.javamail.jar}"/>
-    <pathelement path="${papillon.observateur.jar}"/>
+    <!--pathelement path="${papillon.observateur.jar}"/-->
   </path>
 
   <path id="enhydra.classpath">
@@ -408,45 +404,16 @@ For Lexalp, call ant using -Dapplication.name=Lexalp
       <touch file="${fname}.uptodate" />
   </target>
 
-
-  <!-- =================================================================== -->
-  <!-- preprocess the java source                                             -->
-  <!-- =================================================================== -->
-<target name="preprocess" depends="">
-		<condition property="ifdef.token" value="">
-            <equals arg1="${compile.to.version}" arg2="trace"/>
-        </condition>
-        <condition property="enddef.token" value="">
-            <equals arg1="${compile.to.version}" arg2="trace"/>
-        </condition>
-        <condition property="version" value="2">
-            <equals arg1="${compile.to.version}" arg2="trace"/>
-        </condition>
-        <!-- If not set already make sure that they are defined but empty -->
-        <property name="ifdef.token" value="/*"/>
-        <property name="enddef.token" value="*/"/>       
-        <property name="version" value="1"/>       
-		<copy todir="${postprocess.dir}/${version}">
-            <fileset dir="${dir.src}">
-                <include name="**/*.java"/>
-            </fileset>
-            <filterset begintoken="//[" endtoken="]">
-                <filter token="ifdef" value="${ifdef.token}"/>
-                <filter token="enddef" value="${enddef.token}"/>
-            </filterset>
-        </copy>
-</target>
-
   <!-- =================================================================== -->
   <!-- Compile the java source                                             -->
   <!-- =================================================================== -->
   <!-- target name="compile" depends="dods, xmlc, xsltc, compile_sources" /-->
-  <target name="compile_sources" depends="preprocess"> 
+  <target name="compile_sources" depends=""> 
 
 <!--  <property name="compile_classpath" refid="javac.classpath"/>
   <echo message="Classpath is ${compile_classpath}"/> -->
      <!-- compile XMLC generated java -->
-    <javac  srcdir="${postprocess.dir}/${version}"
+    <javac  srcdir="${dir.src}"
             destdir="${dir.classes}"
             source="1.4"
             excludes="**/StartServer.java"
@@ -498,29 +465,21 @@ For Lexalp, call ant using -Dapplication.name=Lexalp
      <filter token="XERCES_LIB"  value="${papillon.xerces.jar}" />
      <filter token="XMLAPI_LIB"  value="${papillon.xmlapi.jar}" />
      <filter token="PGSQL_JDBC_DRIVER" value="${papillon.pgsql.jar}" />
-     <filter token="XSLTC_LIB" value="${papillon.xsltc.jar}" />
      <filter token="SAXON8_LIB" value="${papillon.saxon8.jar}" />
      <filter token="FOP_LIB" value="${papillon.fop.jar}" />
      <filter token="AVALON_LIB" value="${papillon.avalon.jar}" />
      <filter token="BATIK_LIB" value="${papillon.batik.jar}" />
-     <filter token="OBSERVATEUR_LIB" value="${papillon.observateur.jar}" />
+
+      <filter token="PGSQL_SERVER_URL" value="${jibiki.db.server.url}" />
+      <filter token="DB_USER" value="${jibiki.db.user}" />
+      <filter token="DB_PASSWD" value="${jibiki.db.password}" />
+
+      <filter token="ADMIN_GROUP_PASWORD" value="${papillon.password.admin}" />
+      <filter token="SPECIALIST_GROUP_PASSWORD" value="${papillon.password.specialist}" />
+      <filter token="VALIDATOR_GROUP_PASSWORD" value="${papillon.password.validator}" />
+
+     <!--filter token="OBSERVATEUR_LIB" value="${papillon.observateur.jar}" /-->
      <filter token="FO_PATH" value="${papillon.fo.xsl}" />
-
-     <filter token="JAVAMAIL_LIB" value="${papillon.javamail.jar}" />
-     <filter token="TRUSTSTORE_PASSWORD" value="${papillon.truststore.password}" />
-     <filter token="MAILHOST_ADDRESS" value="${papillon.mailhost.address}" />
-     <filter token="MAILHOST_USER" value="${papillon.mailhost.user}" />
-     <filter token="MAILHOST_PASSWORD" value="${papillon.mailhost.password}" />
-
-     <filter token="JIBIKI_ADMIN_PASSWORD" value="${papillon.admin.password}" />
-     <filter token="JIBIKI_SPECIALIST_PASSWORD" value="${papillon.validator.password}" />
-     <filter token="JIBIKI_VALIDATOR_PASSWORD" value="${papillon.specialist.password}" />
-
-
-      <filter token="PGSQL_SERVER_URL" value="${motamotdb.server.url}" />
-      <filter token="DB_USER" value="${motamotdb.user}" />
-      <filter token="DB_PASSWD" value="${motamotdb.password}" />
-
      <!-- /Papillon-specific filters -->
 
      <copy todir="${dir.output}"
