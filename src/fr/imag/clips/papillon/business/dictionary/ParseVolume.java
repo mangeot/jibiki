@@ -355,6 +355,9 @@ public class ParseVolume {
                 if (firstEntryIndex < 0) {
                     firstEntryIndex = bufferLine.indexOf("<" + CDM_Entry + "\t");
                 }
+				if (firstEntryIndex<0) {
+					firstEntryIndex = bufferLine.indexOf("<" + CDM_Entry + "\n");
+				}
                 if (firstEntryIndex < 0) {
                     firstEntryIndex = bufferLine.indexOf("<" + CDM_Entry + ">");
                 }
@@ -404,8 +407,7 @@ public class ParseVolume {
                     entryIndex = bufferLine.indexOf("<" + CDM_Entry, entryIndex + CDM_Entry.length() + 1);
                 }
                 entryBuffer.append(bufferLine);
-                entryBuffer.append("\n");
-                bufferLine = buffer.readLine();
+                bufferLine = buffer.readLine() + "\n";
             }
             buffer.close();
             inStream.close();
