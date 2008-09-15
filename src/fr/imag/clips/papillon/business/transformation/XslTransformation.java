@@ -295,7 +295,7 @@ public class XslTransformation implements ResultFormatter {
     /**
      * Transform the xml source by processing it with an xsl sheet.
      */
-    protected static Document Transform(Node xmlSource, XslSheet xslSheet)
+    public static Document Transform(Node xmlSource, XslSheet xslSheet)
             throws PapillonBusinessException, javax.xml.parsers.ParserConfigurationException,
             javax.xml.transform.TransformerException, java.io.IOException {
 

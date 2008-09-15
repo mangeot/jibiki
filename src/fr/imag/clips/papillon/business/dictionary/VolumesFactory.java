@@ -1348,7 +1348,7 @@ public class VolumesFactory {
                         VolumeEntry ve = (VolumeEntry) buffer.next();
 
                         //
-                        ParseVolume.parseEntry(ve);
+                        ParseVolume.indexEntry(ve);
 
                     }
 
