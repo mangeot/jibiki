@@ -257,11 +257,34 @@ Papillon.Informations.sections.jpn[] = "一般情報",
                                        "その他"
 
 #####
+# Javamail
+#
+# in order to send emails with ssl, you must 
+# - 1 create an ssl-cert and import it:
+# > keytool -import -alias papillon-server -file papillon-server.cer
+# - 2 uncomment the following variables: 
+javax.net.ssl.trustStore = "/home/papillon/.keystore"
+javax.net.ssl.trustStorePassword = "@TRUSTSTORE_PASSWORD@"
+# - 3 set the following variables to true
+Papillon.javamail.mailhost.ssl = true
+Papillon.javamail.from = "papillon-server@papillon-dictionary.org"
+Papillon.javamail.mailhost.address = "@MAILHOST_ADDRESS@"
+# if the server needs auth, set the following variable to true and uncomment the following variables
+Papillon.javamail.mailhost.auth = true
+Papillon.javamail.mailhost.user = "@MAILHOST_USER@"
+Papillon.javamail.mailhost.password = "@MAILHOST_PASSWORD@"
+
+#####
 # Groups passwords
 #
-Papillon.Users.Groups.Password.admin = "dbpap"
-Papillon.Users.Groups.Password.specialist = "butterfly"
-Papillon.Users.Groups.Password.validator = "farfalla"
+Papillon.Users.Groups.Password.admin = "@JIBIKI_ADMIN_PASSWORD@"
+Papillon.Users.Groups.Password.specialist = "@JIBIKI_SPECIALIST_PASSWORD@"
+Papillon.Users.Groups.Password.validator = "@JIBIKI_VALIDATOR_PASSWORD@"
+
+# Class name of the layout for pages of the application
+Papillon.Presentation.PriorityPackage = "fr.imag.clips.papillon.presentation.xhtml"
+Papillon.LayoutClassName = "fr.imag.clips.papillon.presentation.Layout"
+Papillon.LoginCookieName = "PapillonLoginCookie"
 
 
 ###
@@ -273,13 +296,24 @@ Papillon.Logging.StoreQueryLogs = true
 #+++++++++++++++++++++++++++++++++
 Papillon.Saxon.Classpath = "@SAXON8_LIB@"
 
+#+++++++++++++++++++++++++++++++++
+# FOP TRANSFORMATION HANDLER
+#+++++++++++++++++++++++++++++++++
+Papillon.Fop.Classpath = "@FOP_LIB@"
+Papillon.Batik.Classpath = "@BATIK_LIB@"
+Papillon.Xalan.Classpath = "@XALAN_LIB@"
+Papillon.Xerces.Classpath = "@XERCES_LIB@"
+Papillon.Avalon.Classpath = "@AVALON_LIB@"
+Papillon.XmlApi.Classpath = "@XMLAPI_LIB@"
+Papillon.Fo.Xsl = "@FO_PATH@"
+
 #-----------------------------------------------------------------------------
 #                   JDictd server Configuration (RFC 2229)
 #-----------------------------------------------------------------------------
 #
 #
 # is dictd listening? 
-Dictd.Listen = true
+Dictd.Listen = false
 
 # dictd listening port
 Dictd.Port = 2628
@@ -296,11 +330,10 @@ DatabaseManager.DefaultDatabase = "papillon"
 DatabaseManager.Debug = "false"
 DatabaseManager.DB.papillon.ClassType = "PostgreSQL"
 DatabaseManager.DB.papillon.JdbcDriver = "org.postgresql.Driver"
-DatabaseManager.DB.papillon.Connection.Url = "jdbc:postgresql://localhost/papillon"
-#DatabaseManager.DB.papillon.Connection.Url = "jdbc:postgresql://gohan.imag.fr/papillon"
+DatabaseManager.DB.papillon.Connection.Url = "@PGSQL_SERVER_URL@"
 
-DatabaseManager.DB.papillon.Connection.User = "papillon"
-DatabaseManager.DB.papillon.Connection.Password = "dbpap"
+DatabaseManager.DB.papillon.Connection.User = "@DB_USER@"
+DatabaseManager.DB.papillon.Connection.Password = "@DB_PASSWD@"
 
 DatabaseManager.DB.papillon.Connection.MaxPoolSize = 30
 DatabaseManager.DB.papillon.Connection.AllocationTimeout = 10000
@@ -309,9 +342,6 @@ DatabaseManager.DB.papillon.Connection.Logging = false
 
 DatabaseManager.DB.papillon.ObjectId.CacheSize = 20
 DatabaseManager.DB.papillon.ObjectId.MinValue = 1000000
-
-# ???? c'est pas moi qui ai mis ca ? GS
-#DatabaseManager.DB.papillon.DbCharSet = "UTF-8"
 
 # Version of the DB Layer used in this application.
 jibiki.dblayer.version=@DBLAYER_VERSION@
@@ -322,85 +352,3 @@ jibiki.dblayer.version=@DBLAYER_VERSION@
 #
 DatabaseManager.ObjectIdColumnName = "ObjectId"
 DatabaseManager.VersionColumnName = "ObjectVersion"
-
-
-
-
-#-----------------------------------------------------------------------------
-#                   Database Manager Configuration
-#-----------------------------------------------------------------------------
-#
-#
-#DatabaseManager.Databases[] = "example"
-#
-# The default database used in this application.
-#
-#DatabaseManager.DefaultDatabase = "example"
-#
-# Turn on/off debugging for transactions or queries. Valid values
-# are "true" or "false".
-#
-#DatabaseManager.Debug = "false"
-#
-# The type of database. Normally this is "Standard".
-#
-#DatabaseManager.DB.example.ClassType = "Standard"
-#
-# The jdbc driver to use.
-#
-#DatabaseManager.DB.example.JdbcDriver = "sun.jdbc.odbc.JdbcOdbcDriver"
-#
-# Database url.
-#
-#DatabaseManager.DB.example.Connection.Url = "jdbc:odbc:example"
-#
-# Database user name.  All connection are allocated by this user.
-#
-#DatabaseManager.DB.example.Connection.User = "scott"
-#
-# Database user password.
-#
-#DatabaseManager.DB.example.Connection.Password = "tiger"
-#
-# The maximum number of connections that a connection
-# pool will hold.  If set to zero, then connections
-# are allocated indefinitly or until the database
-# refuses to allocate any new connections.
-#
-#DatabaseManager.DB.example.Connection.MaxPoolSize = 30
-#
-# Maximum amount of time that a thread will wait for
-# a connection from the connection pool before an
-# exception is thrown.  This will prevent possible dead
-# locks.  The time out is in milliseconds.  If the
-# time out is <= zero, the allocation of connections
-# will wait indefinitely.
-#
-#DatabaseManager.DB.example.Connection.AllocationTimeout = 10000
-#
-# Used to log database (SQL) activity.
-#
-#DatabaseManager.DB.example.Connection.Logging = false
-#
-# The number of object identifiers that are allocated
-# as a group and held in memory.  These identifiers
-# are assigned to new data objects that are inserted
-# into the database.
-#
-#DatabaseManager.DB.example.ObjectId.CacheSize = 20
-#DatabaseManager.DB.example.ObjectId.MinValue = 1000000
-
-#
-# Default cache configuration
-#
-#DatabaseManager.defaults.cache.maxCacheSize = 100
-#DatabaseManager.defaults.cache.maxSimpleCacheSize = 20
-#DatabaseManager.defaults.cache.maxComplexCacheSize = 5
-#DatabaseManager.defaults.cache.reserveFactor = 0.1
-
-#
-# Default table configuration
-#
-#DatabaseManager.defaults.readOnly = false
-#DatabaseManager.defaults.lazyLoading = true
-#DatabaseManager.defaults.maxExecuteTime = 200
