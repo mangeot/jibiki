@@ -10,17 +10,17 @@
 ###############################
 # Papillon jars
 ## iin the following paths, replace . by the directory full path
-papillon.xalan.jar=./tools/xalan-j_2_7_0/xalan.jar
-papillon.xerces.jar=./tools/xalan-j_2_7_0/xercesImpl.jar
-papillon.xmlapi.jar=./tools/xalan-j_2_7_0/xml-apis.jar
-papillon.xsltc.jar=./tools/xalan-j_2_7_0/xsltc.jar
+papillon.xalan.jar=@ToolsForJibiki/xalan-j_2_7_0/xalan.jar
+papillon.xerces.jar=@ToolsForJibiki/xalan-j_2_7_0/xercesImpl.jar
+papillon.xmlapi.jar=@ToolsForJibiki/xalan-j_2_7_0/xml-apis.jar
+papillon.xsltc.jar=@ToolsForJibiki/xalan-j_2_7_0/xsltc.jar
 papillon.pgsql.jar=/sw/share/java/postgresql-java/postgresql.jar
 #papillon.saxon8.jar=/Library/Java/Extensions/saxonb8-7-3j/saxon8.jar
-papillon.fop.jar=./tools/fop-0.20.5/build/fop.jar
-papillon.avalon.jar=./tools/fop-0.20.5/lib/avalon-framework-cvs-20020806.jar
-papillon.batik.jar=./tools/fop-0.20.5/lib/batik.jar
-papillon.javamail.jar=./tools/javamail-1.4/mail.jar
-papillon.observateur.jar=./tools/observateur/api.jar
+papillon.fop.jar=@ToolsForJibiki/fop-0.20.5/build/fop.jar
+papillon.avalon.jar=@ToolsForJibiki/fop-0.20.5/lib/avalon-framework-cvs-20020806.jar
+papillon.batik.jar=@ToolsForJibiki/fop-0.20.5/lib/batik.jar
+papillon.javamail.jar=@ToolsForJibiki/javamail-1.4/mail.jar
+papillon.observateur.jar=@ToolsForJibiki/observateur/api.jar
 #papillon.fo.xsl=/Users/fbm/Development/Jibiki/lexalp/xslfo/lexalp2fo.xsl
 
 # Enhydra dirs
@@ -30,7 +30,7 @@ enhydra.dir=/Library/Java/Extensions/enhydra5.1
 ###############################
 ## deployment setup
 ###############################
-application.name=Motamot
+application.name=Papillon
 
 # for sending emails
 papillon.truststore.password=foo
@@ -44,10 +44,7 @@ papillon.validator.password=butterfly
 papillon.specialist.password=farfalla
 
 # for the database
-motamotdb.server.url=jdbc:postgresql://localhost/motamot
-motamotdb.user=dbuser
-motamotdb.password=foo
-
-# if you use the Observateur tracing software
-#compile.to.version=trace
+papillondb.server.url=jdbc:postgresql://localhost/papillon
+papillondb.user=dbuser
+papillondb.password=foo
 
