@@ -9,6 +9,14 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.8.4.1  2007/07/23 14:23:50  serasset
+ * Commiting most changes done for the XALAN27_NEWDISPLAY on the branch
+ *  - Added XSL extensions callable during xsl transformations
+ *  - Implemented new display of query results as requested by EURAC team
+ *  - Modified edition interface generator to adapt it to xalan 2.7.0
+ *  - Added autocompletion feature to simple search fields
+ *  - Moved some old pages to "deprecated" folder (this will forbid direct use of this code for papillon/GDEF)
+ *
  * Revision 1.8  2006/08/10 22:17:13  fbrunet
  * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
  * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
@@ -68,6 +76,7 @@ package fr.imag.clips.papillon.business.xsl;
 
 import fr.imag.clips.papillon.data.*;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
+import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.CurrentDBTransaction;
 
 import java.io.StringReader;
@@ -93,7 +102,7 @@ public class XslSheet {
     
 	protected XslSheetDO myDO = null;
     protected Templates myTemplate = null;
-   
+
     
     /**
      * The public constructor.
@@ -119,7 +128,12 @@ public class XslSheet {
                 
                 //
                 this.myDO = theSheet;
-                
+                try {
+                    Thread currentThread = Thread.currentThread();
+                    currentThread.setContextClassLoader(JibikiXsltExtension.class.getClassLoader());
+                } catch (SecurityException e) {
+                    PapillonLogger.writeDebugMsg("Could not modify the context class loader.");
+                }
                 // Create template
                 TransformerFactory myTransformerFactory = TransformerFactory.newInstance();
                 myTemplate = myTransformerFactory.newTemplates(new StreamSource(new StringReader (this.getCode())));
@@ -444,6 +458,7 @@ public class XslSheet {
      * Get transformer of the xslsheets
      *
      * @return transformer of the xslsheets
+     * @throws PapillonBusinessException if any problem arise during transformer creation.
      */
     public Transformer getTransformer () 
         throws PapillonBusinessException {
@@ -456,7 +471,7 @@ public class XslSheet {
                 throw new PapillonBusinessException("Error getting transformer", ex);
             }
         }
-    
+
     
     
     // A FAIRE method transform !!

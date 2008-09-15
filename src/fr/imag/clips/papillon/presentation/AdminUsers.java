@@ -9,6 +9,14 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.5.6.1  2007/07/23 14:23:50  serasset
+ * Commiting most changes done for the XALAN27_NEWDISPLAY on the branch
+ *  - Added XSL extensions callable during xsl transformations
+ *  - Implemented new display of query results as requested by EURAC team
+ *  - Modified edition interface generator to adapt it to xalan 2.7.0
+ *  - Added autocompletion feature to simple search fields
+ *  - Moved some old pages to "deprecated" folder (this will forbid direct use of this code for papillon/GDEF)
+ *
  * Revision 1.5  2006/02/26 14:04:56  mangeot
  * Corrected a bug: the content was a static variable, thus there were problems when two users wanted to aces the same page at the same time
  *
@@ -80,6 +88,12 @@ public class AdminUsers extends PapillonBasePO {
     protected final static String MAKEADMIN_PARAMETER="MakeAdmin";
     protected final static String RESETPASSWORD_PARAMETER="ResetPassword";
     protected final static String MAKESPECIALIST_PARAMETER="MakeSpecialist";
+	protected final static String MAKEVALIDATOR_PARAMETER="MakeValidator";
+    protected final static String ADD_IN_GROUP_PARAMETER="AddInGroup";
+    protected final static String REMOVE_FROM_GROUP_PARAMETER="RemoveFromGroup";
+    protected final static String LEVEL_UP_PARAMETER="LevelUp";
+    protected final static String LEVEL_DOWN_PARAMETER="LevelDown";
+    protected final static String GROUP_PARAMETER="Group";
     protected final static String SORTBY_PARAMETER="SortBy";
 
     protected boolean loggedInUserRequired() {
@@ -113,7 +127,6 @@ public class AdminUsers extends PapillonBasePO {
 
         // If the page is called with parameters, take the requested action
         if (req.getParameterNames().hasMoreElements()) {
-
             //TEMPORAIRE :avec l URL
             //AJOUT DE DICO
             String userMessage = null;
@@ -158,12 +171,62 @@ public class AdminUsers extends PapillonBasePO {
                     userMessage = "Ignoring user";
                 }
             }
-			if (userMessage != null) {
+            else if (null != myGetParameter(MAKEVALIDATOR_PARAMETER)) {
+                User myUser = UsersFactory.findUserById(myGetParameter(MAKEVALIDATOR_PARAMETER));
+                if (null != myUser && !myUser.isEmpty()) {
+                    myUser.addGroup(User.VALIDATOR_GROUP);
+                    myUser.save();
+                    userMessage = "User "+ myUser.getName() + " is a validator";
+                } else {
+                    userMessage = "Ignoring user";
+                }
+            }
+            else if (null != myGetParameter(ADD_IN_GROUP_PARAMETER) && null != myGetParameter(GROUP_PARAMETER)) {
+                User myUser = UsersFactory.findUserById(myGetParameter(ADD_IN_GROUP_PARAMETER));
+                if (null != myUser && !myUser.isEmpty()) {
+                    myUser.addGroup(myGetParameter(GROUP_PARAMETER));
+                    myUser.save();
+                    userMessage = "User "+ myUser.getName() + " is in group " + myGetParameter(GROUP_PARAMETER);
+                } else {
+                    userMessage = "Ignoring user";
+                }
+            }
+            else if (null != myGetParameter(REMOVE_FROM_GROUP_PARAMETER) && null != myGetParameter(GROUP_PARAMETER)) {
+                User myUser = UsersFactory.findUserById(myGetParameter(REMOVE_FROM_GROUP_PARAMETER));
+                if (null != myUser && !myUser.isEmpty()) {
+                    myUser.removeGroup(myGetParameter(GROUP_PARAMETER));
+                    myUser.save();
+                    userMessage = "User "+ myUser.getName() + " has been removed from group " + myGetParameter(GROUP_PARAMETER);
+                } else {
+                    userMessage = "Ignoring user";
+                }
+            }
+            else if (null != myGetParameter(LEVEL_UP_PARAMETER)) {
+                User myUser = UsersFactory.findUserById(myGetParameter(LEVEL_UP_PARAMETER));
+                if (null != myUser && !myUser.isEmpty()) {
+                    myUser.levelUp();
+                    myUser.save();
+                    userMessage = "User "+ myUser.getName() + " has been levelled up";
+                } else {
+                    userMessage = "Ignoring user";
+                }
+            }
+            else if (null != myGetParameter(LEVEL_DOWN_PARAMETER)) {
+                User myUser = UsersFactory.findUserById(myGetParameter(LEVEL_DOWN_PARAMETER));
+                if (null != myUser && !myUser.isEmpty()) {
+                    myUser.levelDown();
+                    myUser.save();
+                    userMessage = "User "+ myUser.getName() + " has been levelled down";
+                } else {
+                    userMessage = "Ignoring user";
+                }
+            }
+		
+            if (userMessage != null) {
 				this.getSessionData().writeUserMessage(userMessage);
 				PapillonLogger.writeDebugMsg(userMessage);
 			}
         }
-		
 		String sortBy = myGetParameter(SORTBY_PARAMETER);
 		
         addLoggedUsersArray(content);
@@ -206,7 +269,7 @@ public class AdminUsers extends PapillonBasePO {
 				}
 				else {
 					content.setTextLoggedName("");
-					content.setTextLoggedLogin("Not registered");
+					content.setTextLoggedLogin("guest");
 					content.setTextLoggedEmail("");
 				} 
 				theRowParent.appendChild(theRow.cloneNode(true));

@@ -1,3 +1,9 @@
+TAG: XALAN27_NEWDISPLAY_NO_OPTIMIZED_STATUS
+  Tags the RC1 status of the newdisplay architecture.
+
+BRANCH: XALAN27_NEWDISPLAY
+  Branched used to change the architecture of the display of entries, base on xalan 2.7.1, with xslt extension functions.
+
 TAG: MERGED_LEXALP_DRI_20070115 2007/01/15
   Tag representing jibiki after merging of diffs from DRI instance and Lexalp instance.
 

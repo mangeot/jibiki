@@ -3,6 +3,14 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.8.2.1  2007/07/23 14:23:50  serasset
+ * Commiting most changes done for the XALAN27_NEWDISPLAY on the branch
+ *  - Added XSL extensions callable during xsl transformations
+ *  - Implemented new display of query results as requested by EURAC team
+ *  - Modified edition interface generator to adapt it to xalan 2.7.0
+ *  - Added autocompletion feature to simple search fields
+ *  - Moved some old pages to "deprecated" folder (this will forbid direct use of this code for papillon/GDEF)
+ *
  * Revision 1.8  2007/01/05 13:57:25  serasset
  * multiple code cleanup.
  * separation of XMLServices from the Utility class
@@ -61,6 +69,7 @@ package fr.imag.clips.papillon.business.dictionary;
 import com.lutris.appserver.server.sql.ObjectId;
 import com.lutris.dods.builder.generator.query.QueryBuilder;
 import fr.imag.clips.papillon.CurrentDBTransaction;
+import fr.imag.clips.papillon.CurrentRequestContext;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.user.User;
@@ -99,8 +108,11 @@ public class PapillonPivotFactory {
             }
             PapillonAxiDO[] DOarray = query.getDOArray();
 			theAxieVector = new Vector(); 
-            for ( int i = 0; i < DOarray.length; i++ )
-	    	theAxieVector.add(new Axie(dict, vol, DOarray[i]));
+            for ( int i = 0; i < DOarray.length; i++ ) {
+                Axie axie = new Axie(dict, vol, DOarray[i]);
+                CurrentRequestContext.get().set(axie.getId(), axie);
+                theAxieVector.add(axie);
+            }
 
         }catch(Exception ex) {
             throw new PapillonBusinessException("Exception in getAxiesCollection()", ex);
@@ -261,6 +273,7 @@ public class PapillonPivotFactory {
                 for (int i = 0; i < lexids.length; i++) {
                     IAnswer myEntry = DictionariesFactory.findEntryByEntryId(firstVolume.getName(), lexids[i]);
                     if (myEntry != null && ! myEntry.isEmpty()) {
+                        CurrentRequestContext.get().set(myEntry.getId(), myEntry);
                         myCollection.add(myEntry);
                     } 
                 }
@@ -273,175 +286,175 @@ public class PapillonPivotFactory {
     
 
     // FIXME: SOON: Should not be called anymore. As Papillon Axies should not be treated specialy.
-    public static Collection findLexiesByAxie(Axie axie, String lang) 
-        throws fr.imag.clips.papillon.business.PapillonBusinessException {
-            Hashtable myEntryTable = new Hashtable();
-            Collection myCollection = null;
-            
-            Vector lexids = axie.getLang(lang);
-            Collection Volumes = VolumesFactory.getVolumesArray(axie.getDictionaryName(),lang, null);
-            if (null != lexids && !Volumes.isEmpty()) {
-				
-                //
-                Iterator iter = Volumes.iterator();
-                Volume firstVolume = (Volume)iter.next();
-                for (int i = 0; i < lexids.size(); i++) {
-                    IAnswer myEntry = DictionariesFactory.findEntryByEntryId(firstVolume.getName(), (String) lexids.elementAt(i));
-                    if (myEntry != null && ! myEntry.isEmpty()) {
-                        myEntryTable.put(myEntry.getHandle(),myEntry);
-                    } 
-                }
-                
-            }
-			// Is it necessary to check if the user is authorized to see the lexie ?
-			//myCollection = ContributionsFactory.checkContributions(myUser, myEntryTable);
-            myCollection = myEntryTable.values();
-            return myCollection;
-        }
+//    public static Collection findLexiesByAxie(Axie axie, String lang)
+//        throws fr.imag.clips.papillon.business.PapillonBusinessException {
+//            Hashtable myEntryTable = new Hashtable();
+//            Collection myCollection = null;
+//
+//            Vector lexids = axie.getLang(lang);
+//            Collection Volumes = VolumesFactory.getVolumesArray(axie.getDictionaryName(),lang, null);
+//            if (null != lexids && !Volumes.isEmpty()) {
+//
+//                //
+//                Iterator iter = Volumes.iterator();
+//                Volume firstVolume = (Volume)iter.next();
+//                for (int i = 0; i < lexids.size(); i++) {
+//                    IAnswer myEntry = DictionariesFactory.findEntryByEntryId(firstVolume.getName(), (String) lexids.elementAt(i));
+//                    if (myEntry != null && ! myEntry.isEmpty()) {
+//                        myEntryTable.put(myEntry.getHandle(),myEntry);
+//                    }
+//                }
+//
+//            }
+//			// Is it necessary to check if the user is authorized to see the lexie ?
+//			//myCollection = ContributionsFactory.checkContributions(myUser, myEntryTable);
+//            myCollection = myEntryTable.values();
+//            return myCollection;
+//        }
 			            
-    public static Axie newAxie(Dictionary dict, Volume volume, String id, org.w3c.dom.Document docDom, String semanticCat, Vector synonyms, Hashtable lexies)
-        throws fr.imag.clips.papillon.business.PapillonBusinessException {
-        // 
-        Axie newAxie=new Axie(dict, volume);
-        // id
-         newAxie.setId(id);
-        //semanticCat 
-        newAxie.setSemanticCat(semanticCat.trim());
-        //synonyms 
-        newAxie.setSynonyms(synonyms);
-        //Key1 
-        newAxie.setLexies(lexies);
-        //dom 
-        newAxie.setDom(docDom);
-        return newAxie;
-    }
+//    public static Axie newAxie(Dictionary dict, Volume volume, String id, org.w3c.dom.Document docDom, String semanticCat, Vector synonyms, Hashtable lexies)
+//        throws fr.imag.clips.papillon.business.PapillonBusinessException {
+//        //
+//        Axie newAxie=new Axie(dict, volume);
+//        // id
+//         newAxie.setId(id);
+//        //semanticCat
+//        newAxie.setSemanticCat(semanticCat.trim());
+//        //synonyms
+//        newAxie.setSynonyms(synonyms);
+//        //Key1
+//        newAxie.setLexies(lexies);
+//        //dom
+//        newAxie.setDom(docDom);
+//        return newAxie;
+//    }
 
-	public static Axie newAxieFromExisting(Axie existingAxie) throws fr.imag.clips.papillon.business.PapillonBusinessException {
-		Axie newAxie = newAxie(existingAxie.getDictionary(), existingAxie.getVolume(), null, existingAxie.getDom(), existingAxie.getSemanticCat(), existingAxie.getSynonymsVector(), existingAxie.getLexies());
-		newAxie.setId();
-		return newAxie;
-	}
+//	public static Axie newAxieFromExisting(Axie existingAxie) throws fr.imag.clips.papillon.business.PapillonBusinessException {
+//		Axie newAxie = newAxie(existingAxie.getDictionary(), existingAxie.getVolume(), null, existingAxie.getDom(), existingAxie.getSemanticCat(), existingAxie.getSynonymsVector(), existingAxie.getLexies());
+//		newAxie.setId();
+//		return newAxie;
+//	}
+//
+//
+//	public static Axie createAndSaveAxie (Dictionary dict, Volume volume, String id, org.w3c.dom.Document docdom, String semanticCat, Vector synonyms, Hashtable lexies)
+//        throws fr.imag.clips.papillon.business.PapillonBusinessException {
+//			Axie myAxie = newAxie(dict, volume, id, docdom, semanticCat, synonyms, lexies);
+//			if (myAxie.isEmpty()) {
+//				myAxie = null;
+//			}
+//			else {
+//				// FIXME: small hack, only Papillon volume entries must have an id!
+//				if (dict.getName().equals(PapillonPivotFactory.DICTNAME)) {
+//					myAxie.setId();
+//				}
+//				myAxie.save();
+//			}
+//			return myAxie;
+//		}
+
+//	public static Axie createAxieFromLink(String semCat, IAnswer answer1,IAnswer answer2) throws fr.imag.clips.papillon.business.PapillonBusinessException {
+//		Vector Vector1 = new Vector();
+//		Vector Vector2 = new Vector();
+//		Hashtable lexies = new Hashtable();
+//
+//		Volume axieVolume = VolumesFactory.getVolumeByName(VOLUMENAME);
+//		Dictionary axieDict = null;
+//		if (axieVolume != null && !axieVolume.isEmpty()) {
+//			axieDict = DictionariesFactory.getDictionaryByName(axieVolume.getDictname());
+//		}
+//
+//		Vector1.add(answer1.getId());
+//		Vector2.add(answer2.getId());
+//
+//		lexies.put(answer1.getSourceLanguage(),Vector1);
+//		lexies.put(answer2.getSourceLanguage(),Vector2);
+//
+//		Document xmlDoc = createXmlCodeFromScratch (semCat);
+//		xmlDoc = Axie.addLanguageLink(xmlDoc,answer1.getSourceLanguage(),answer1.getId());
+//		xmlDoc = Axie.addLanguageLink(xmlDoc,answer2.getSourceLanguage(),answer2.getId());
+//
+//		Axie myAxie = createAndSaveAxie(axieDict,axieVolume, null, xmlDoc, semCat, null,lexies);
+//
+//		return myAxie;
+//	}
 	
-	
-	public static Axie createAndSaveAxie (Dictionary dict, Volume volume, String id, org.w3c.dom.Document docdom, String semanticCat, Vector synonyms, Hashtable lexies)
-        throws fr.imag.clips.papillon.business.PapillonBusinessException {
-			Axie myAxie = newAxie(dict, volume, id, docdom, semanticCat, synonyms, lexies);
-			if (myAxie.isEmpty()) {
-				myAxie = null;
-			}
-			else {
-				// FIXME: small hack, only Papillon volume entries must have an id!
-				if (dict.getName().equals(PapillonPivotFactory.DICTNAME)) {
-					myAxie.setId();
-				}
-				myAxie.save();
-			}
-			return myAxie;
-		}
-
-	public static Axie createAxieFromLink(String semCat, IAnswer answer1,IAnswer answer2) throws fr.imag.clips.papillon.business.PapillonBusinessException {
-		Vector Vector1 = new Vector();
-		Vector Vector2 = new Vector();
-		Hashtable lexies = new Hashtable();
-
-		Volume axieVolume = VolumesFactory.getVolumeByName(VOLUMENAME);
-		Dictionary axieDict = null;
-		if (axieVolume != null && !axieVolume.isEmpty()) {
-			axieDict = DictionariesFactory.getDictionaryByName(axieVolume.getDictname());
-		}
-		
-		Vector1.add(answer1.getId());
-		Vector2.add(answer2.getId());
-
-		lexies.put(answer1.getSourceLanguage(),Vector1);
-		lexies.put(answer2.getSourceLanguage(),Vector2);
-
-		Document xmlDoc = createXmlCodeFromScratch (semCat);
-		xmlDoc = Axie.addLanguageLink(xmlDoc,answer1.getSourceLanguage(),answer1.getId());
-		xmlDoc = Axie.addLanguageLink(xmlDoc,answer2.getSourceLanguage(),answer2.getId());
-		
-		Axie myAxie = createAndSaveAxie(axieDict,axieVolume, null, xmlDoc, semCat, null,lexies);
-
-		return myAxie;
-	}
-	
-		protected static Document createXmlCodeFromScratch (String semCat)  throws fr.imag.clips.papillon.business.PapillonBusinessException {
-		Volume papillonPivotVolume = VolumesFactory.getVolumeByName(VOLUMENAME);
-		Document myDoc = XMLServices.buildDOMTree(papillonPivotVolume.getTemplateEntry());
-
-			NodeList entryList = myDoc.getElementsByTagName(Axie.ENTRY_ELEMENT);
-			if (entryList != null && entryList.getLength()>0) {
-				Element myAxie = (Element) entryList.item(0);
-				NodeList semcatList = myAxie.getElementsByTagName(Axie.SEMANTIC_CAT_ELEMENT);
-				if (semcatList != null && semcatList.getLength()>0) {
-					Element mySemCat = (Element) semcatList.item(0);
-					Node myTextNode = myDoc.createTextNode(semCat);
-					mySemCat.appendChild(myTextNode);
-				}
-			}
-			return myDoc;
-		}
+//		protected static Document createXmlCodeFromScratch (String semCat)  throws fr.imag.clips.papillon.business.PapillonBusinessException {
+//		Volume papillonPivotVolume = VolumesFactory.getVolumeByName(VOLUMENAME);
+//		Document myDoc = XMLServices.buildDOMTree(papillonPivotVolume.getTemplateEntry());
+//
+//			NodeList entryList = myDoc.getElementsByTagName(Axie.ENTRY_ELEMENT);
+//			if (entryList != null && entryList.getLength()>0) {
+//				Element myAxie = (Element) entryList.item(0);
+//				NodeList semcatList = myAxie.getElementsByTagName(Axie.SEMANTIC_CAT_ELEMENT);
+//				if (semcatList != null && semcatList.getLength()>0) {
+//					Element mySemCat = (Element) semcatList.item(0);
+//					Node myTextNode = myDoc.createTextNode(semCat);
+//					mySemCat.appendChild(myTextNode);
+//				}
+//			}
+//			return myDoc;
+//		}
 
 
-	public static int deleteLinksInAxies(IAnswer myAnswer, User myUser)
-		throws fr.imag.clips.papillon.business.PapillonBusinessException {
-		int res = 0;
-			Collection TheAxies = null;
-			if (myAnswer != null && !myAnswer.isEmpty() && myAnswer.getVolumeName().equals(VOLUMENAME)) {
-			PapillonLogger.writeDebugMsg("Delete axie links to lexie: " + myAnswer.getHeadword());
-			TheAxies = findAxiesByLexie(myAnswer, myUser);
-			if (TheAxies!=null && TheAxies.size()>0) { 
-			res = TheAxies.size();
-			for (Iterator axies = TheAxies.iterator(); axies.hasNext(); ) {
-				Axie myAxie = (Axie)axies.next();
-				Hashtable lexies = myAxie.getLexies();
-				if (lexies!=null) {
-				// if the axie is linking only 2 lexies, we delete it anyway!
-					if (lexies.values().size()<3) {
-						PapillonLogger.writeDebugMsg("Delete axie: " + myAxie.getHandle());
-						myAxie.delete();
-					}
-					// if the axie is linking more than 2 lexies, we delete the link only!
-					else {
-						PapillonLogger.writeDebugMsg("Remove Language Link: " + myAnswer.getId());
-						myAxie.removeLanguageLink(myAnswer.getSourceLanguage(), myAnswer.getId());
-					}
-				}
-			}
-			}
-			}
-			return res;
-		}
-			
-	protected static int deleteVector(Vector TheAnswers)
-	throws fr.imag.clips.papillon.business.PapillonBusinessException {
-		for ( int i = 0; i < TheAnswers.size(); i++ ) {
-			((IAnswer)TheAnswers.elementAt(i)).delete();
-		}
-		return TheAnswers.size();
-	}
-
-
-	public static int emptyDatabase()
-		throws fr.imag.clips.papillon.business.PapillonBusinessException {
-			Volume axieVolume = VolumesFactory.getVolumeByName(VOLUMENAME);
-			Dictionary axieDict = null;
-			if (axieVolume != null && !axieVolume.isEmpty()) {
-				axieDict = DictionariesFactory.getDictionaryByName(axieVolume.getDictname());
-			}
-			Collection	TheAxies = getAxiesCollection(axieDict, axieVolume, null, null);
-			for (Iterator myIt = TheAxies.iterator(); myIt.hasNext();) {
-				((Axie)myIt.next()).delete();
-			}
-			return TheAxies.size();
-		}
-
-		
-		public static boolean addLanguageLink(Axie myAxie, String lang, String lexieID) throws PapillonBusinessException {
-			myAxie.addLanguageLink(lang, lexieID);
-			Index myIndex = IndexFactory.newIndex(myAxie.getVolume().getIndexDbname(), Volume.CDM_axiReflexie, lang, lexieID,myAxie.getHandle());
-			myIndex.save();
-			return true;
-		}
+//	public static int deleteLinksInAxies(IAnswer myAnswer, User myUser)
+//		throws fr.imag.clips.papillon.business.PapillonBusinessException {
+//		int res = 0;
+//			Collection TheAxies = null;
+//			if (myAnswer != null && !myAnswer.isEmpty() && myAnswer.getVolumeName().equals(VOLUMENAME)) {
+//			PapillonLogger.writeDebugMsg("Delete axie links to lexie: " + myAnswer.getHeadword());
+//			TheAxies = findAxiesByLexie(myAnswer, myUser);
+//			if (TheAxies!=null && TheAxies.size()>0) {
+//			res = TheAxies.size();
+//			for (Iterator axies = TheAxies.iterator(); axies.hasNext(); ) {
+//				Axie myAxie = (Axie)axies.next();
+//				Hashtable lexies = myAxie.getLexies();
+//				if (lexies!=null) {
+//				// if the axie is linking only 2 lexies, we delete it anyway!
+//					if (lexies.values().size()<3) {
+//						PapillonLogger.writeDebugMsg("Delete axie: " + myAxie.getHandle());
+//						myAxie.delete();
+//					}
+//					// if the axie is linking more than 2 lexies, we delete the link only!
+//					else {
+//						PapillonLogger.writeDebugMsg("Remove Language Link: " + myAnswer.getId());
+//						myAxie.removeLanguageLink(myAnswer.getSourceLanguage(), myAnswer.getId());
+//					}
+//				}
+//			}
+//			}
+//			}
+//			return res;
+//		}
+//
+//	protected static int deleteVector(Vector TheAnswers)
+//	throws fr.imag.clips.papillon.business.PapillonBusinessException {
+//		for ( int i = 0; i < TheAnswers.size(); i++ ) {
+//			((IAnswer)TheAnswers.elementAt(i)).delete();
+//		}
+//		return TheAnswers.size();
+//	}
+//
+//
+//	public static int emptyDatabase()
+//		throws fr.imag.clips.papillon.business.PapillonBusinessException {
+//			Volume axieVolume = VolumesFactory.getVolumeByName(VOLUMENAME);
+//			Dictionary axieDict = null;
+//			if (axieVolume != null && !axieVolume.isEmpty()) {
+//				axieDict = DictionariesFactory.getDictionaryByName(axieVolume.getDictname());
+//			}
+//			Collection	TheAxies = getAxiesCollection(axieDict, axieVolume, null, null);
+//			for (Iterator myIt = TheAxies.iterator(); myIt.hasNext();) {
+//				((Axie)myIt.next()).delete();
+//			}
+//			return TheAxies.size();
+//		}
+//
+//
+//		public static boolean addLanguageLink(Axie myAxie, String lang, String lexieID) throws PapillonBusinessException {
+//			myAxie.addLanguageLink(lang, lexieID);
+//			Index myIndex = IndexFactory.newIndex(myAxie.getVolume().getIndexDbname(), Volume.CDM_axiReflexie, lang, lexieID,myAxie.getHandle());
+//			myIndex.save();
+//			return true;
+//		}
 }
 

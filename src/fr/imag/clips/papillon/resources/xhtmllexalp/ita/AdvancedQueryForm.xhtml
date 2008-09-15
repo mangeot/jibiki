@@ -51,20 +51,19 @@
                     <select id="Facet" name="FACET" onchange="hideOrNotSourceLang(value, name); getSelector(value, name);" >
                       <option value="cdm-headword">termine</option>
                       <option value="cdm-definition">definizione</option>
-                      <option value="cdm-pos">GRAMMAR</option>
+                      <option value="cdm-pos">grammatica</option>
+                      <option value="lexalp-phraseological-unit">PHRASEOLOGICAL UNIT</option>
                       <option value="cdm-context">contesto</option>
                       <option value="cdm-note">nota</option>
                       <option value="lexalp-source">fonte</option>
-                      <option value="lexalp-legal-system">LEGAL SYSTEM</option>
+                      <option value="lexalp-legal-system">ordinamento</option>
                       <option value="lexalp-domain">numero dominio</option>
                       <option value="lexalp-usage">uso geografico</option>
                       <option value="axi-reflexie">axie</option>
-                      <option value="cdm-modification-author">MODIFIED BY</option>
-                      <option value="cdm-contribution-author">CREATED BY</option>
+                      <option value="cdm-modification-author">modificato da</option>
+                      <option value="cdm-contribution-author">creato da</option>
                       <option value="cdm-modification-date">data</option>
-                      <option value="lexalp-harmonising-status">HARMONISING STATUS</option>
-                      <option value="lexalp-process-status">PROCESS STATUS</option>
-                      <option value="cdm-contribution-status">ENTRY STATUS</option>
+                      <option value="lexalp-harmonising-status">status dell'armonizzazione</option>
                       <option value="cdm-entry-id">numero della scheda</option>
                       <!--<option value="cdm-contribution-id" label="Entry Id">Contribution Id</option>-->
                     </select>
@@ -84,7 +83,7 @@
                         <label id="SourceLangLabel" for="SourceLang" accesskey="i" >
                         <span class="accesskey">I</span>n:</label>
                         -->
-                        <label style="padding-left: 1em;">SOURCE LANGUAGE:</label>
+                        <label style="padding-left: 1em;">lingua di partenza:</label>
                         <select id="SourceLang" name="SOURCE">
                             <option value="All">tutte le lingue</option>
                             <option id="SourceOptionTemplate" value="NONE" label="NESSUNA">NESSUNA</option>

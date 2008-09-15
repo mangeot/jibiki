@@ -9,6 +9,9 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.10.2.1  2007/10/30 13:24:50  serasset
+ * BUG 161: delete action now works in CreateEntryInit page.
+ *
  * Revision 1.10  2007/03/25 22:00:57  fbrunet
  * improved avancedqueryform javascript
  * bug correction: in ViewQueryResult class, encode url criteria in UTF-8
@@ -177,19 +180,19 @@ public class CreateEntryInit extends PapillonBasePO {
             
             //
             if (action!=null && !action.equals("")) {
-                
+
                 //PapillonLogger.writeDebugMsg("action " + action);
-               
+
                     // LOOKUP
                 //if (action.equals("lookup")
                 //    && volume!=null && !volume.equals("")) {
-                    
+
                     //
                 //    displayLookupResults(volume);
-                    
+
                     // LOOKUP or CREATE
-                //} else 
-                    
+                //} else
+
                 if ( (action.equals("create") || action.equals("lookup"))
                            && volumeName!=null && !volumeName.equals("")
                            && headword!=null && !headword.equals("")) {
@@ -246,13 +249,17 @@ public class CreateEntryInit extends PapillonBasePO {
                     // DELETE
                 } else if (action.equals("delete")
                            && entryHandle!=null && !entryHandle.equals("")
-                           && volumeName!=null && !volumeName.equals("") 
-                           && headword!=null && !headword.equals("")) {
+                           && volumeName!=null && !volumeName.equals("")) {
                     
                     //
                     VolumeEntry myEntry = VolumeEntriesFactory.findEntryByHandle(volumeName, entryHandle);
                     EditEntryInitFactory.deleteEntry(myEntry, this.getUser()); 
-                    displayLookupResultsAndCreate(VolumesFactory.getVolumeByName(volumeName), headword);
+                    // FIXME: Here we would like to update the current view. For this we need the headword
+                    // But the headword is not needed for deletion. Hence we don't require it.
+                    // TODO: use javascript function for delete/undelete/edit/etc... This will allow different
+                    // TODO: urls to be used in different contexts (e.g. embed the headword in the url in CreateEntryInit page.
+                    // displayLookupResultsAndCreate(VolumesFactory.getVolumeByName(volumeName), headword);
+                    removeShowCreation();
                     
                     // UNDELETE
                 } else if (action.equals("undelete")

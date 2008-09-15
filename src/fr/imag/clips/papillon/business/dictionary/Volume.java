@@ -313,6 +313,7 @@ public class Volume {
 
 	// gdef tags
 	public static final  String CDM_gdefEstParticule = "gdef-est-particule";
+	public static final  String CDM_gdefEstDomaine = "gdef-est-domaine";
 	public static final  String CDM_gdefEstFrequence = "gdef-est-frequence";
   
 	// other constants

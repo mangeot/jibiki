@@ -9,6 +9,9 @@
  *  $Id$
  *  -----------------------------------------------
  *  $Log$
+ *  Revision 1.11.2.1  2007/10/30 13:24:50  serasset
+ *  BUG 161: delete action now works in CreateEntryInit page.
+ *
  *  Revision 1.11  2007/01/16 13:28:31  serasset
  *  Added cache reinitialization when a metadata is modified.
  *
@@ -205,7 +208,7 @@ public class AdminDictionaries extends PapillonBasePO {
             //TEMPORAIRE :avec l URL
             //AJOUT DE DICO
             String userMessage = "";
-            String urlString = req.getParameter(content.NAME_url);
+            String urlString = req.getParameter(AdminDictionariesXHTML.NAME_url);
             
             //
             if (null != urlString && !urlString.equals("")) {

@@ -1,11 +1,19 @@
 /*
  * Jibiki project
  *
- * © Gilles SŽrasset and Jibiki development team - GETA CLIPS IMAG
+ * ï¿½ Gilles Sï¿½rasset and Jibiki development team - GETA CLIPS IMAG
  *-----------------------------------------------
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.2.2.1  2007/07/23 14:23:50  serasset
+ * Commiting most changes done for the XALAN27_NEWDISPLAY on the branch
+ *  - Added XSL extensions callable during xsl transformations
+ *  - Implemented new display of query results as requested by EURAC team
+ *  - Modified edition interface generator to adapt it to xalan 2.7.0
+ *  - Added autocompletion feature to simple search fields
+ *  - Moved some old pages to "deprecated" folder (this will forbid direct use of this code for papillon/GDEF)
+ *
  * Revision 1.2  2007/01/15 17:12:18  serasset
  * Several notes added, suppressed the HTMLDOM_CACHE stuff.
  *
@@ -22,7 +30,7 @@ package fr.imag.clips.papillon.business.xml;
 
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.PapillonLogger;
-import org.apache.xalan.serialize.SerializerToText;
+//import org.apache.xalan.serialize.SerializerToText;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
 import org.w3c.dom.Document;
@@ -40,7 +48,7 @@ import java.net.URL;
  */
 public class XMLServices {
 
-    private static SerializerToText mySerializerToText = new SerializerToText();
+ //   private static SerializerToText mySerializerToText = new SerializerToText();
     // FIXME: there may be an encoding problem because we use the default encoding here instead of UTF-8
     // in order to build the Outputformat("text","UTF-8",true);
     private static OutputFormat myOutputFormat = new OutputFormat();
@@ -259,16 +267,26 @@ or there is no accessible xml schema
     private static String NodeToString(Node N, boolean printXmlDeclaration) {
         String res = "";
         if (N != null) {
-            try {
-                StringWriter myStringWriter = new StringWriter();
-                mySerializerToText.m_shouldNotWriteXMLHeader = (!printXmlDeclaration);
+  //          try {
+ 				switch (N.getNodeType()) {
+					case org.w3c.dom.Node.DOCUMENT_NODE:               
+						res = NodeToString((org.w3c.dom.Document) N,printXmlDeclaration);
+						break;
+					case org.w3c.dom.Node.ELEMENT_NODE:
+						res = NodeToString((org.w3c.dom.Element) N,printXmlDeclaration);
+						break;
+					case org.w3c.dom.Node.DOCUMENT_FRAGMENT_NODE:
+						res = NodeToString((org.w3c.dom.DocumentFragment) N,printXmlDeclaration);
+						break;
+				}				
+/*                mySerializerToText.m_shouldNotWriteXMLHeader = (!printXmlDeclaration);
                 mySerializerToText.setWriter(myStringWriter);
-                mySerializerToText.serialize(N);
-                res = myStringWriter.toString();
-            }
-            catch (java.io.IOException ioe) {
-                PapillonLogger.writeDebugMsg("NodeToString: java.io.IOException: " + ioe);
-            }
+                mySerializerToText.serialize(N); 
+                res = myStringWriter.toString();*/
+//            }
+  //          catch (java.io.IOException ioe) {
+    //            PapillonLogger.writeDebugMsg("NodeToString: java.io.IOException: " + ioe);
+      //      }
         }
         return res;
     }/*

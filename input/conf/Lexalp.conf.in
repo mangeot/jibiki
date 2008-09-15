@@ -321,11 +321,11 @@ DatabaseManager.DefaultDatabase = "lexalp"
 DatabaseManager.Debug = "false"
 DatabaseManager.DB.lexalp.ClassType = "PostgreSQL"
 DatabaseManager.DB.lexalp.JdbcDriver = "org.postgresql.Driver"
-DatabaseManager.DB.lexalp.Connection.Url = "jdbc:postgresql://localhost/lexalp"
+DatabaseManager.DB.lexalp.Connection.Url = "@PGSQL_SERVER_URL@"
 #DatabaseManager.DB.lexalp.Connection.Url = "jdbc:postgresql://gohan.imag.fr/papillon"
 
-DatabaseManager.DB.lexalp.Connection.User = "lexalp"
-DatabaseManager.DB.lexalp.Connection.Password = "alpinespace"
+DatabaseManager.DB.lexalp.Connection.User = "@DB_USER@"
+DatabaseManager.DB.lexalp.Connection.Password = "@DB_PASSWD@"
 
 DatabaseManager.DB.lexalp.Connection.MaxPoolSize = 30
 DatabaseManager.DB.lexalp.Connection.AllocationTimeout = 10000

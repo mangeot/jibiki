@@ -9,6 +9,14 @@
  *$Id$
  *------------------------
  *$Log$
+ *Revision 1.7.6.1  2007/07/23 14:23:50  serasset
+ *Commiting most changes done for the XALAN27_NEWDISPLAY on the branch
+ * - Added XSL extensions callable during xsl transformations
+ * - Implemented new display of query results as requested by EURAC team
+ * - Modified edition interface generator to adapt it to xalan 2.7.0
+ * - Added autocompletion feature to simple search fields
+ * - Moved some old pages to "deprecated" folder (this will forbid direct use of this code for papillon/GDEF)
+ *
  *Revision 1.7  2006/04/10 12:23:31  mangeot
  *Added a new dialect for XMl indented
  *
@@ -68,7 +76,7 @@ public class ResultFormatterFactory {
     public static ResultFormatter getFormatter(QueryResult qr, Object parameter, int dialect, String lang)
         throws PapillonBusinessException {
         // returns the formatter for the appropriate volume or dictionary.
-        return getFormatter(qr.getSourceEntry().getDictionary(), qr.getSourceEntry().getVolume(), parameter, dialect, lang);
+        return getFormatter(qr.getFirstSourceEntry().getDictionary(), qr.getFirstSourceEntry().getVolume(), parameter, dialect, lang);
     }
     
     public static ResultFormatter getFormatter(Dictionary dict, Volume vol, Object parameter, int dialect, String lang) 

@@ -8,6 +8,14 @@
  * $Id$
  *---------------------------------------------------------
  * $Log$
+ * Revision 1.20.6.1  2007/07/23 14:23:50  serasset
+ * Commiting most changes done for the XALAN27_NEWDISPLAY on the branch
+ *  - Added XSL extensions callable during xsl transformations
+ *  - Implemented new display of query results as requested by EURAC team
+ *  - Modified edition interface generator to adapt it to xalan 2.7.0
+ *  - Added autocompletion feature to simple search fields
+ *  - Moved some old pages to "deprecated" folder (this will forbid direct use of this code for papillon/GDEF)
+ *
  * Revision 1.20  2006/03/29 13:54:10  mangeot
  * Fixed a bug when managing a list with prefixed elements
  *
@@ -56,7 +64,8 @@ import fr.imag.clips.papillon.presentation.EditEntry;
 // to parse the XML schema
 import org.apache.xerces.xni.parser.XMLInputSource;
 import org.apache.xerces.impl.xs.*;
-import org.apache.xerces.impl.xs.psvi.*;
+import org.apache.xerces.xs.*;
+//import org.apache.xerces.impl.xs.psvi.*;
 
 // io imports
 import java.io.BufferedWriter;
@@ -158,7 +167,7 @@ public class GenerateTemplate {
 			
 			try {
 				interfaceBuffer.write(xmlHeader);
-				myDeclaration = schemaGrammar.getGlobalElementDecl(localRootName);
+				myDeclaration = schemaGrammar.getElementDeclaration(localRootName);
 				if (myDeclaration !=null) {
 					parseElementDeclaration(interfaceBuffer, volumeName, myDeclaration, prefix);
 				}
@@ -231,7 +240,7 @@ public class GenerateTemplate {
 				XSObjectList listObject = complexType.getAttributeUses ();
 				if (listObject != null) {
 					for (int i = 0; i < listObject.getLength (); i++) {
-						object = listObject.getItem (i);
+						object = listObject.item (i);
 						if ((object != null) && (object instanceof XSAttributeUse)) {
 							attributePSVI = ((XSAttributeUse) object).getAttrDeclaration ();
 							String attrName = attributePSVI.getName();
@@ -288,11 +297,11 @@ public class GenerateTemplate {
 									PapillonLogger.writeDebugMsg ("Compositor sequence");
 									XSObjectList myList = modelGroup.getParticles();
 									for (int j=0;j<myList.getLength();j++) {
-										XSParticle tempParticle = (XSParticle)myList.getItem(j);
+										XSParticle tempParticle = (XSParticle)myList.item(j);
 										term = tempParticle.getTerm();
 										int newTypeElement = DEFAULT_ELEMENT;
 										String termNameDisplay = term.getName();
-										if (tempParticle.getIsMaxOccursUnbounded() && termNameDisplay!=null) {
+										if (tempParticle.getMaxOccursUnbounded() && termNameDisplay!=null) {
 											String termName = prefix+termNameDisplay;
 											// list	
 											interfaceBuffer.write("<table border='0' cellpadding='5' cellspacing='2' summary='List of " + termNameDisplay + "s' width='100%'>\n");
@@ -326,7 +335,7 @@ public class GenerateTemplate {
 									interfaceBuffer.write("  <br />\n</span>\n");
 									XSObjectList myList = modelGroup.getParticles();
 									for (int j=0;j<myList.getLength();j++) {
-										XSParticle tempParticle = (XSParticle)myList.getItem(j);
+										XSParticle tempParticle = (XSParticle)myList.item(j);
 										term = tempParticle.getTerm();
 										if (term instanceof XSElementDeclaration) {
 											PapillonLogger.writeDebugMsg(" choice element: " + ((XSElementDeclaration) term).getName());
@@ -379,9 +388,9 @@ public class GenerateTemplate {
 			interfaceBuffer.write("  <label for='" + elementName + "' >" + elementNameDisplay + ":</label>\n");	
 			// we do not manage all the different types, we can only use a checkbox, a text box and a select
 			// for a closed list, we use a select with a list of options
-			if (simpleTypeDefinition.getIsDefinedFacet(XSSimpleTypeDefinition.FACET_ENUMERATION)) {
+			if (simpleTypeDefinition.isDefinedFacet(XSSimpleTypeDefinition.FACET_ENUMERATION)) {
 				interfaceBuffer.write("    <select name=\"" + elementName + "\" >" + "\n");			
-				StringList stringList = simpleTypeDefinition.getLexicalEnumerations ();
+				StringList stringList = simpleTypeDefinition.getLexicalEnumeration();
 				for (int i=0; i < stringList.getLength (); i++) {
 					interfaceBuffer.write("      <option value='" + stringList.item(i) + "'>" + stringList.item(i) + "</option>\n");		
 				}

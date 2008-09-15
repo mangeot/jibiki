@@ -9,6 +9,11 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.13.2.1  2007/10/29 15:11:03  serasset
+ * NEW: lexalp css now defines different forms for HARMONISED/REJECTED entries
+ * NEW: added new db url/user/password configuration keys in papillon.properties file
+ * BUG158: headwords are now harmonised at edition and search time, added a "normalise headword" admin action
+ *
  * Revision 1.13  2007/03/25 22:00:57  fbrunet
  * improved avancedqueryform javascript
  * bug correction: in ViewQueryResult class, encode url criteria in UTF-8
@@ -146,9 +151,11 @@ import fr.imag.clips.papillon.business.dictionary.Dictionary;
 import fr.imag.clips.papillon.business.dictionary.DictionariesFactory;
 import fr.imag.clips.papillon.business.dictionary.AvailableLanguages;
 import fr.imag.clips.papillon.business.utility.Utility;
+import fr.imag.clips.papillon.business.utility.StringNormalizer;
 import fr.imag.clips.papillon.business.locales.Languages;
 import fr.imag.clips.papillon.business.xsl.XslSheet;
 import fr.imag.clips.papillon.business.xsl.XslSheetFactory;
+import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 
 
@@ -318,7 +325,7 @@ public class AdvancedQueryForm {
         
         criteriaList = new ArrayList();
         for(int i=0; i < nbCriteria; i++) {
-            String value = AbstractPO.myGetParameter(req, AdvancedQueryFormXHTML.NAME_FACETVALUE + "." + Integer.toString(i));
+            String value = StringNormalizer.normalize(AbstractPO.myGetParameter(req, AdvancedQueryFormXHTML.NAME_FACETVALUE + "." + Integer.toString(i)));
             QueryCriteria criteria = new QueryCriteria();
             
             //
@@ -332,7 +339,9 @@ public class AdvancedQueryForm {
                 //
                 criteria.add("key", "=", key);
                 criteria.add("value", strategy, value);
-                if ( (language != null) && (!language.equals("")) && (!language.equals("All")) ) criteria.add("lang", "=", language);
+                if ( (language != null) && (!language.equals("")) && (!language.equals("All")) ) {
+					criteria.add("lang", "=", language);
+				}
                 
                 //
                 criteriaList.add(criteria);

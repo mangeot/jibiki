@@ -113,9 +113,7 @@ import java.text.DateFormat;
  */
 public class LexALPLayout implements StdLayout {
     LayoutXHTML layout;
-    
-    public static final String PACKAGE = "fr.imag.clips.papillon.presentation.xhtmllexalp";
-    // Constructeurs
+        // Constructeurs
     
     /**
         *  Constructor for the StdLayout object

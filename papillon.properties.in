@@ -9,36 +9,45 @@
 ## typical values for MacOs X.
 ###############################
 # Papillon jars
-#papillon.xalan.jar=/Library/Java/Extensions/xalan-j_2_4_1/bin/xalan.jar
-#papillon.xerces.jar=/Library/Java/Extensions/xalan-j_2_4_1/bin/xercesImpl.jar
-#papillon.xmlapi.jar=/Library/Java/Extensions/xalan-j_2_4_1/bin/xml-apis.jar
-#papillon.xsltc.jar=/Library/Java/Extensions/xalan-j_2_4_1/bin/xsltc.jar
-#UNUSED:papillon.ant.jar=/Library/Java/Extensions/jakarta-ant-1.5.1/lib/ant.jar
-#papillon.pgsql.jar=/usr/local/pgsql/share/java/postgresql.jar
+## iin the following paths, replace . by the directory full path
+papillon.xalan.jar=./tools/xalan-j_2_7_0/xalan.jar
+papillon.xerces.jar=./tools/xalan-j_2_7_0/xercesImpl.jar
+papillon.xmlapi.jar=./tools/xalan-j_2_7_0/xml-apis.jar
+papillon.xsltc.jar=./tools/xalan-j_2_7_0/xsltc.jar
+papillon.pgsql.jar=/sw/share/java/postgresql-java/postgresql.jar
 #papillon.saxon8.jar=/Library/Java/Extensions/saxonb8-7-3j/saxon8.jar
-#papillon.fop.jar=/Library/Java/Extensions/fop-0.20.5/build/fop.jar
-#papillon.avalon.jar=/Library/Java/Extensions/fop-0.20.5/lib/avalon-framework-cvs-20020806.jar
-#papillon.batik.jar=/Library/Java/Extensions/fop-0.20.5/lib/batik.jar
+papillon.fop.jar=./tools/fop-0.20.5/build/fop.jar
+papillon.avalon.jar=./tools/fop-0.20.5/lib/avalon-framework-cvs-20020806.jar
+papillon.batik.jar=./tools/fop-0.20.5/lib/batik.jar
+papillon.javamail.jar=./tools/javamail-1.4/mail.jar
+papillon.observateur.jar=./tools/observateur/api.jar
 #papillon.fo.xsl=/Users/fbm/Development/Jibiki/lexalp/xslfo/lexalp2fo.xsl
 
 # Enhydra dirs
-# enhydra.dir=/Library/Java/Extensions/enhydra5.1
+enhydra.dir=/Library/Java/Extensions/enhydra5.1
+
 
 ###############################
-## typical values for linux boxes (gohan & kome).
+## deployment setup
 ###############################
-# Papillon jars
-papillon.xalan.jar=/usr/local/src/xalan-j_2_4_1/bin/xalan.jar
-papillon.xerces.jar=/usr/local/src/xalan-j_2_4_1/bin/xercesImpl.jar
-papillon.xmlapi.jar=/usr/local/src/xalan-j_2_4_1/bin/xml-apis.jar
-papillon.xsltc.jar=/usr/local/src/xalan-j_2_4_1/bin/xsltc.jar
-#UNUSED: papillon.ant.jar=/usr/local/src/jakarta-ant-1.5.1/lib/ant.jar
-papillon.pgsql.jar=/usr/share/pgsql/pg73b1jdbc3.jar
-papillon.saxon8.jar=/usr/local/src/saxonb8-7-3j/saxon8.jar
-papillon.fop.jar=/usr/local/src/fop-0.20.5/build/fop.jar
-papillon.avalon.jar=/usr/local/src/fop-0.20.5/lib/avalon-framework-cvs-20020806.jar
-papillon.batik.jar=/usr/local/src/fop-0.20.5/lib/batik.jar
-papillon.fo.xsl=/Users/fbm/Development/Jibiki/lexalp/xslfo/lexalp2fo.xsl
+application.name=Motamot
 
-# Enhydra dirs
-enhydra.dir=/usr/local/enhydra5.0-for-papillon
+# for sending emails
+papillon.truststore.password=foo
+papillon.mailhost.address=mailhost.domain.tld
+papillon.mailhost.user=mailuser
+papillon.mailhost.password=foo
+
+# for the default groups passwords 
+papillon.admin.password=dbpap
+papillon.validator.password=butterfly
+papillon.specialist.password=farfalla
+
+# for the database
+motamotdb.server.url=jdbc:postgresql://localhost/motamot
+motamotdb.user=dbuser
+motamotdb.password=foo
+
+# if you use the Observateur tracing software
+#compile.to.version=trace
+

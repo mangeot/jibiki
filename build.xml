@@ -11,6 +11,17 @@ Id:
   
 Log:
    $Log$
+   Revision 1.23.2.3  2007/10/29 15:11:03  serasset
+   NEW: lexalp css now defines different forms for HARMONISED/REJECTED entries
+   NEW: added new db url/user/password configuration keys in papillon.properties file
+   BUG158: headwords are now harmonised at edition and search time, added a "normalise headword" admin action
+
+   Revision 1.23.2.2  2007/10/19 17:19:00  serasset
+   Modified build setup so that user/password is not in the conf anymore, but in the property file.
+
+   Revision 1.23.2.1  2007/09/05 15:25:09  serasset
+   modified javac target so that asserts may be used in the project.
+
    Revision 1.23  2007/04/05 12:55:54  serasset
    Added a DBLayer Version management with an auto-update of db layer.
 
@@ -23,21 +34,21 @@ Log:
 
    Revision 1.21  2006/08/10 22:17:12  fbrunet
    - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
-   - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
-   - Bug correction : +/- in advanced search
+	   - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
+	   - Bug correction : +/- in advanced search
 
-   Revision 1.20  2006/07/10 10:44:40  serasset
-   Compilation of xsl translets is done only if xsl changed. Morover, celanup now cleans the stamp files.
-   Added a new property to be added to point to saxon 8b xsl transformer
+	   Revision 1.20  2006/07/10 10:44:40  serasset
+	   Compilation of xsl translets is done only if xsl changed. Morover, celanup now cleans the stamp files.
+	   Added a new property to be added to point to saxon 8b xsl transformer
 
-   Revision 1.19  2006/07/06 12:03:07  serasset
-   Added a condition in order to avoid unnecessary xsltc compilation that are quite long...
+	   Revision 1.19  2006/07/06 12:03:07  serasset
+	   Added a condition in order to avoid unnecessary xsltc compilation that are quite long...
 
-   Revision 1.18  2006/07/04 08:47:32  serasset
-   Added an xsltc target to the build process in order to use compiled translets in the project.
+	   Revision 1.18  2006/07/04 08:47:32  serasset
+	   Added an xsltc target to the build process in order to use compiled translets in the project.
 
-   Revision 1.17  2006/03/05 11:51:33  mangeot
-   Added a property called application.prefix in papillon.properties for indicating the application prefix
+	   Revision 1.17  2006/03/05 11:51:33  mangeot
+	   Added a property called application.prefix in papillon.properties for indicating the application prefix
    in the multiserver.conf
    For lexalp, you must add in the papillon.properties file:
    application.prefix=/termbank
@@ -117,6 +128,12 @@ Most useful targets:
   <!-- Initialize the properties                                           -->
   <!-- =================================================================== -->
 
+ <!-- PAPILLON-SPECIFIC -->
+  <!-- Load the properties that are specific to the papillon conf -->
+
+  <property file="papillon.properties"/>
+  <property file="dblayer.version"/>
+
   <!-- Set up application values -->
   <property name="project.name"    value="Papillon"/>
   <property name="application.name"    value="Papillon"/>
@@ -124,10 +141,6 @@ Most useful targets:
   <property name="project.version" value="1.7"/>
   <property name="project.year"    value="2006"/>
 
-  <!-- PAPILLON-SPECIFIC -->
-  <!-- Load the properties that are specific to the papillon conf -->
-  <property file="papillon.properties"/>
-  <property file="dblayer.version"/>
 
   <!-- directory locations -->
   <property name="dir.package"   value="fr/imag/clips/papillon"/>
@@ -143,8 +156,10 @@ Most useful targets:
   <property name="dir.javadocs"  location="${dir.output}/javadocs"/>
   <property name="dir.xmlc"      location="${dir.temp}/Generated_Source/"/>
   <property name="dodsbuild.dir" location="${dir.temp}/Dods_Generated_Sources"/>
+  <property name="postprocess.dir" location="${dir.temp}/Postprocessed_Java_Sources"/>
   <property name="dir.sql"       location="${dir.src}/dods_sql/"/>
-   
+
+    
   <!-- Local path to properties -->
   <property name="path.properties" value="${dir.package}/properties"/>
 
@@ -207,10 +222,10 @@ Most useful targets:
     <pathelement path="${papillon.xerces.jar}"/>
     <pathelement path="${papillon.xmlapi.jar}"/>
     <pathelement path="${papillon.xsltc.jar}"/>
-    <!--pathelement path="${papillon.regexp.jar}"/-->
     <pathelement path="${papillon.pgsql.jar}"/>
     <pathelement path="${papillon.fop.jar}"/>
-    <!--pathelement path="${papillon.observateur.jar}"/-->
+    <pathelement path="${papillon.javamail.jar}"/>
+    <pathelement path="${papillon.observateur.jar}"/>
   </path>
 
   <path id="enhydra.classpath">
@@ -393,6 +408,7 @@ For Lexalp, call ant using -Dapplication.name=Lexalp
       <touch file="${fname}.uptodate" />
   </target>
 
+
   <!-- =================================================================== -->
   <!-- Compile the java source                                             -->
   <!-- =================================================================== -->
@@ -402,14 +418,16 @@ For Lexalp, call ant using -Dapplication.name=Lexalp
 <!--  <property name="compile_classpath" refid="javac.classpath"/>
   <echo message="Classpath is ${compile_classpath}"/> -->
      <!-- compile XMLC generated java -->
-    <javac srcdir="${dir.src}"
+     <javac  srcdir="${dir.src}"
             destdir="${dir.classes}"
+            source="1.4"
             excludes="**/StartServer.java"
-				    classpathref="javac.classpath"
-	    			debug="${debug}">
-        		<classpath>
-            	<pathelement location="${library.dir}/build/dods.jar" />
-        		</classpath>
+            encoding="UTF-8"
+            classpathref="javac.classpath"
+            debug="${debug}">
+        <classpath>
+            <pathelement location="${library.dir}/build/dods.jar" />
+        </classpath>
      </javac>
 
      <!-- copy resource files -->
@@ -452,13 +470,29 @@ For Lexalp, call ant using -Dapplication.name=Lexalp
      <filter token="XERCES_LIB"  value="${papillon.xerces.jar}" />
      <filter token="XMLAPI_LIB"  value="${papillon.xmlapi.jar}" />
      <filter token="PGSQL_JDBC_DRIVER" value="${papillon.pgsql.jar}" />
+     <filter token="XSLTC_LIB" value="${papillon.xsltc.jar}" />
      <filter token="SAXON8_LIB" value="${papillon.saxon8.jar}" />
      <filter token="FOP_LIB" value="${papillon.fop.jar}" />
      <filter token="AVALON_LIB" value="${papillon.avalon.jar}" />
      <filter token="BATIK_LIB" value="${papillon.batik.jar}" />
-
-     <!--filter token="OBSERVATEUR_LIB" value="${papillon.observateur.jar}" /-->
+     <filter token="OBSERVATEUR_LIB" value="${papillon.observateur.jar}" />
      <filter token="FO_PATH" value="${papillon.fo.xsl}" />
+
+     <filter token="JAVAMAIL_LIB" value="${papillon.javamail.jar}" />
+     <filter token="TRUSTSTORE_PASSWORD" value="${papillon.truststore.password}" />
+     <filter token="MAILHOST_ADDRESS" value="${papillon.mailhost.address}" />
+     <filter token="MAILHOST_USER" value="${papillon.mailhost.user}" />
+     <filter token="MAILHOST_PASSWORD" value="${papillon.mailhost.password}" />
+
+     <filter token="JIBIKI_ADMIN_PASSWORD" value="${papillon.admin.password}" />
+     <filter token="JIBIKI_SPECIALIST_PASSWORD" value="${papillon.validator.password}" />
+     <filter token="JIBIKI_VALIDATOR_PASSWORD" value="${papillon.specialist.password}" />
+
+
+      <filter token="PGSQL_SERVER_URL" value="${motamotdb.server.url}" />
+      <filter token="DB_USER" value="${motamotdb.user}" />
+      <filter token="DB_PASSWD" value="${motamotdb.password}" />
+
      <!-- /Papillon-specific filters -->
 
      <copy todir="${dir.output}"

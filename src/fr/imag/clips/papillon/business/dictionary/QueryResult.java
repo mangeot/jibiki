@@ -9,6 +9,14 @@
  * $Id$
  *-----------------------------------------------
  * $Log$
+ * Revision 1.4.2.1  2007/07/23 14:23:50  serasset
+ * Commiting most changes done for the XALAN27_NEWDISPLAY on the branch
+ *  - Added XSL extensions callable during xsl transformations
+ *  - Implemented new display of query results as requested by EURAC team
+ *  - Modified edition interface generator to adapt it to xalan 2.7.0
+ *  - Added autocompletion feature to simple search fields
+ *  - Moved some old pages to "deprecated" folder (this will forbid direct use of this code for papillon/GDEF)
+ *
  * Revision 1.4  2007/01/05 13:57:25  serasset
  * multiple code cleanup.
  * separation of XMLServices from the Utility class
@@ -47,6 +55,8 @@ package fr.imag.clips.papillon.business.dictionary;
 /* standards imports */
 
 import java.util.Hashtable;
+import java.util.ArrayList;
+import fr.imag.clips.papillon.business.PapillonBusinessException;
 
 /**
  * A QueryResult is a business object return when querying dictionaries.
@@ -69,9 +79,10 @@ public class QueryResult {
 	public static final int DIRECT_TRANSLATIONS_RESULT = 4; // FIXME: new Hashtable lexiesDirectHashtable
     
     protected int resultKind;
-	protected VolumeEntry sourceEntry = null;
+	//protected VolumeEntry sourceEntry = null;
+	protected ArrayList sourceEntries = new ArrayList();
     protected VolumeEntry resultAxie = null;
-    protected Hashtable lexiesHashtable = null;
+    protected Hashtable lexiesHashtable = new Hashtable();
 	
     public QueryResult() {
         this.resultKind = UNKNOWN;
@@ -80,7 +91,7 @@ public class QueryResult {
     // new QueryResult initialized from a prototype.
     public QueryResult(QueryResult qr) {
         this.resultKind = qr.getResultKind();
-        this.sourceEntry = qr.getSourceEntry();
+        this.sourceEntries = qr.getSourceEntries();
         this.resultAxie = qr.getResultAxie();
         this.lexiesHashtable = qr.getLexiesHashtable();
     }
@@ -88,7 +99,7 @@ public class QueryResult {
     
     public QueryResult(int kind, VolumeEntry source) {
         this.resultKind = kind;
-        this.sourceEntry = source;
+        this.sourceEntries.add(source);
     }
     
     public QueryResult(int kind, VolumeEntry source, VolumeEntry axie) {
@@ -101,12 +112,25 @@ public class QueryResult {
         this.lexiesHashtable = lexies;
     }
     
-    public void setSourceEntry(VolumeEntry ve) {
-        this.sourceEntry = ve;
+    public void addSourceEntry(VolumeEntry ve) {
+        this.sourceEntries.add(ve);
     }
     
-    public VolumeEntry getSourceEntry() {
-        return this.sourceEntry;
+    /**
+     * returns the unique source Entry of the Query Result.
+     * @throws PapillonBusinessException if there are more than one source entry. 
+     */
+    public VolumeEntry getSourceEntry() throws PapillonBusinessException {
+        if (this.sourceEntries.size() != 1) throw new PapillonBusinessException("Multiple source Entry in this query.");
+        return (VolumeEntry)this.sourceEntries.get(0);
+    }
+
+    public VolumeEntry getFirstSourceEntry() {
+        return (VolumeEntry)this.sourceEntries.get(0);
+    }
+
+    public ArrayList getSourceEntries() {
+        return this.sourceEntries;
     }
     
     public void setResultKind(int rk) {

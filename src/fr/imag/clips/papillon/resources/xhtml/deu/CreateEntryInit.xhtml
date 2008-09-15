@@ -26,6 +26,13 @@
                     var href = 'CreateEntryInit.po?action=showAndCreate&volumeanyway=' + encodeURI(volumeanyway.value) + '&headwordanyway=' +  encodeURI(headwordanyway.value);
                     location.replace(href,'CreateEntry');
                 }
+
+                function create() {
+                    var actionElement = document.getElementById('action');
+                    var formElement = document.getElementById('LookupForm');                    
+                    actionElement.value='create';
+                    formElement.submit()
+                }
             //-->
         </script>
         <div style="text-align:center;">
@@ -69,7 +76,8 @@
                     <input type="hidden" id="Xsl" name="XSL" value="Default" />
                     <input type="hidden" id="Limit" name="NB_RESULT_PER_PAGE" value="5" />
                     <input type="hidden" id="Offset" name="OFFSET" />
-                    <input name="action" id="CreateButton" type="submit" style="width:110px" value="erstellen" />
+                    <input type="hidden" id="action" name="action" />
+                    <input id="CreateButton" type="submit" style="width:110px" value="erstellen" onclick="create()"/>
                 </div>
             </form>
         </div>

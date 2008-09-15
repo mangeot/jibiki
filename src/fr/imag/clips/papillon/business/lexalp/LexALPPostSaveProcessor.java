@@ -7,6 +7,11 @@
  * $Id$
  *------------------------
  * $Log$
+ * Revision 1.7.2.1  2007/10/29 15:11:03  serasset
+ * NEW: lexalp css now defines different forms for HARMONISED/REJECTED entries
+ * NEW: added new db url/user/password configuration keys in papillon.properties file
+ * BUG158: headwords are now harmonised at edition and search time, added a "normalise headword" admin action
+ *
  * Revision 1.7  2007/02/08 15:52:47  fbrunet
  * *** empty log message ***
  *
@@ -40,12 +45,8 @@ package fr.imag.clips.papillon.business.lexalp;
 // Enhydra SuperServlet imports
 import com.lutris.appserver.server.httpPresentation.ClientPageRedirectException;
 
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.lang.Integer;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -53,7 +54,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
-import fr.imag.clips.papillon.business.dictionary.Dictionary;
 import fr.imag.clips.papillon.business.dictionary.Volume;
 import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory;
@@ -61,13 +61,12 @@ import fr.imag.clips.papillon.business.dictionary.QueryRequest;
 import fr.imag.clips.papillon.business.dictionary.QueryCriteria;
 import fr.imag.clips.papillon.business.dictionary.QueryResult;
 import fr.imag.clips.papillon.business.user.User;
-import fr.imag.clips.papillon.presentation.ConfirmEntry;
 import fr.imag.clips.papillon.presentation.MergeEntries;
 
 import fr.imag.clips.papillon.business.transformation.ResultPostSaveProcessor;
 
-import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
+import fr.imag.clips.papillon.business.utility.StringNormalizer;
 
 
 public class LexALPPostSaveProcessor implements ResultPostSaveProcessor {
@@ -75,7 +74,7 @@ public class LexALPPostSaveProcessor implements ResultPostSaveProcessor {
     //
     protected final static String ConfirmEntryURL = "ConfirmEntry.po";
     
-    
+    // FIXME: All this code is duplicate code... Can we call the post update processing before doing a post save ?
     public void transformation(VolumeEntry volumeEntry, User user) throws PapillonBusinessException {
         try {
             
@@ -211,7 +210,21 @@ public class LexALPPostSaveProcessor implements ResultPostSaveProcessor {
                         }
                     }
                 }
-                
+
+                // Normalise headword
+                NodeList hwList = dom.getElementsByTagName("term");
+                if ((null != hwList) && (hwList.getLength() > 0)) {
+                    for (int i=0; i < hwList.getLength(); i++) {
+
+                        //
+                        Node termNode = (Node)hwList.item(i);
+                        Node termValue = termNode.getFirstChild(); // term node contains text node
+                        String term = termValue.getNodeValue();
+                        termValue.setNodeValue(StringNormalizer.normalize(term));
+
+                    }
+                }
+
                 // Source:  add http:// if no http:// or ftp:// in url source
                 NodeList sourceList = dom.getElementsByTagName("source");
                 if ((null != sourceList) && (sourceList.getLength() > 0)) {
