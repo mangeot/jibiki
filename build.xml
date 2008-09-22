@@ -489,9 +489,9 @@ For Lexalp, call ant using -Dapplication.name=Lexalp
      <filter token="JIBIKI_VALIDATOR_PASSWORD" value="${papillon.specialist.password}" />
 
 
-      <filter token="PGSQL_SERVER_URL" value="${motamotdb.server.url}" />
-      <filter token="DB_USER" value="${motamotdb.user}" />
-      <filter token="DB_PASSWD" value="${motamotdb.password}" />
+      <filter token="PGSQL_SERVER_URL" value="${papillondb.server.url}" />
+      <filter token="DB_USER" value="${papillondb.user}" />
+      <filter token="DB_PASSWD" value="${papillondb.password}" />
 
      <!-- /Papillon-specific filters -->
 
