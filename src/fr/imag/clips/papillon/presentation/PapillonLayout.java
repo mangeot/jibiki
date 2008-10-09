@@ -186,7 +186,6 @@ public class PapillonLayout implements StdLayout {
             handleLangForm(comms, sessionData, url);
             handleConsultForm(comms, sessionData);
             handleLexieMenu(comms, sessionData);
-            handleAxieMenu(comms, sessionData);
             handleReviewerMenu(comms, sessionData);
             handleValidatorMenu(comms, sessionData);
             handleAdministratorMenu(comms, sessionData);

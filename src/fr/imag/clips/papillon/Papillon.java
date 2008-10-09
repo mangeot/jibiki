@@ -104,6 +104,10 @@ public class Papillon extends StandardApplication {
     protected String presentationPriorityPackage = null;
     protected String layoutClassName = "fr.imag.clips.papillon.presentation.PapillonLayout";
     protected String loginCookieName = "PapillonLoginCookie";
+	static {
+                System.setProperty("javax.xml.parsers.DocumentBuilderFactory", 
+				"org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
+        }
     /*
      *  A few methods you might want to add to.
      *  See StandardApplication for more details.

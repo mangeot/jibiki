@@ -262,6 +262,28 @@ div.popupMenu ul li:hover {
 /* MenuBlock (left) part of the page */
 /*-----------------------------------*/
 
+/*.menuVariableName {
+    float: left; 
+    width: 50px;
+    }
+    
+.menuVariableValue {
+    margin-right: 7px;
+    float: right; 
+    width: 90px;
+    }
+        
+.menuVariableValueWidth {
+    width: 100%;
+    }
+
+.menuGo {
+    width: 50px;
+    margin-left:auto; 
+    margin-right:auto;
+    margin-top: 5px;
+    } */
+	
 .menuBlock {
 	background: white url(/media/papillon-background-fuzzy-light.png) 0 0 no-repeat fixed;
     color: #000;
@@ -380,7 +402,11 @@ p.standard {
 
 .accesskey {text-decoration: underline; }
 
-.copyright {text-align:right; font-size: 11px;}
+.copyright {
+	font-size: xx-small;
+    margin-top: 20px;
+	margin-left: 170px;
+}
 
 .gray {
 	color:  gray;
@@ -394,26 +420,56 @@ p.standard {
 }
 
 
+
 /* Links general */
-A:link {
+a:link {
 	text-decoration: none; 
 	color: blue;
 	}
-A:visited {
+a:visited {
 	text-decoration: none; 
 	color: blue;
 	}
-A:active {
+a:active {
 	text-decoration: none; 
 	color: blue;
 	}
-A:hover {
+a:hover {
 	text-decoration: underline; 
 	color: blue;
 	}
 /* for anchors we do not want to see */
-A.hide {text-decoration: none}
+a.hide {text-decoration: none}
 
+/*<group=GetFirefox>*/
+
+div#firefox {
+   float:right;
+   background-color: #e0e0e0;
+   margin-right: 12px;
+   font-size: x-small;
+   padding-top: 3px;
+   padding-bottom: 3px;
+   padding-left: 3px;
+   padding-right:3px;
+   text-align: right;
+   width:300px;
+}
+
+div#firefox span {
+
+}
+
+div#firefox a {
+   float:right;
+   padding-left:5px;
+}
+
+div#firefox img {
+   border: none;
+}
+
+/*</group>*/
 
 /*--------------------------------------*/
 /* For DEC-like entries */
@@ -423,7 +479,7 @@ A.hide {text-decoration: none}
 }
 
 .separator {
-	font-wheight : bold;
+	font-weight : bold;
 	color : #69FF69; 
 
 }
@@ -461,13 +517,13 @@ h4.blockTitle {
 /* The lang attribute with CSS2 :lang function */
 :lang(ar)       {font-family: "Traditional Arabic", serif; font-size: 1.2em;}
 :lang(zh-Hant)  {font-family: PMingLiU,MingLiU, serif;}
-:lang(zh-Hans)  {font-family: SimSum-18030;SimHei, serif;}
+:lang(zh-Hans)  {font-family: SimSum-18030,SimHei, serif;}
 :lang(din)      {font-family: "Doulos SIL", serif;} 
 
 /* The lang attribute with lang|= selector */
 *[lang|="ar"]   {font-family: "Traditional Arabic", serif; font-size: 1.2em;}
 *[lang|="zh-Hant"]      {font-family: PMingLiU,MingLiU, serif;}
-*[lang|="zh-Hans"]      {font-family: SimSum-18030;SimHei, serif;}
+*[lang|="zh-Hans"]      {font-family: SimSum-18030,SimHei, serif;}
 *[lang|="din"]  {font-family: "Doulos SIL", serif;} 
 
 /* The ISO-639-2/T 3 letter codes */
@@ -557,7 +613,7 @@ h4.blockTitle {
 /* CDM elements */
 .entry {
 	display: block;
-    margin-left: 12 pt;
+    margin-left: 12px;
 }
 
 	/* I have to add a special rule because there is a conflict with the interface */
@@ -600,7 +656,7 @@ tr.sense {
 
 .translations {
         display: block;
-        margin-left: 30 pt;
+        margin-left: 30px;
 }
 .translation {
 	font-style : normal;
@@ -662,87 +718,6 @@ tr.sense {
 	background-color: yellow;
 }
 
-	
-/* Styles for Header links */
-	
-/* .header A:link {
-	font-size: 13px; 
-	font-weight: bold; 
-	text-decoration: none; 
-	color: #663300;
-	}
-.header A:visited {
-	font-size: 13px; 
-	font-weight: bold; 
-	text-decoration: none; 
-	color: #663300;
-	}
-.header A:active {
-	font-size: 13px; 
-	font-weight: bold; 
-	text-decoration: none; 
-	color: #663300;
-	}
-.header  A:hover {
-	font-size: 13px; 
-	font-weight: bold; 
-	font-style: italic; 
-	text-decoration: underline overline; 
-	color: #663300;
-	}
-*/
-	
-/* Styles for Menu titles links */
-	
-/* .menutitle A:link {
-	font-size: 13px; 
-	font-weight: bold; 
-	text-decoration: none; 
-	color: #663300;
-	}
-.menutitle A:visited {
-	font-size: 13px; 
-	font-weight: bold; 
-	text-decoration: none; 
-	color: #663300;
-	}
-.menutitle A:active {
-	font-size: 13px; 
-	font-weight: bold; 
-	text-decoration: none; 
-	color: #663300;
-	}
-.menutitle  A:hover {
-	font-size: 13px; 
-	font-weight: bold; 
-	text-decoration: underline; 
-	color: #663300;
-	}
-*/
-	
-/* Styles for Menu link links */
-	
-/* .menulink A:link {
-	font-size: 13px; 
-	text-decoration: none; 
-	color: blue;
-	}
-.menulink A:visited {
-	font-size: 13px; 
-	text-decoration: none; 
-	color: blue;
-	}
-.menulink A:active {
-	font-size: 13px; 
-	text-decoration: none; 
-	color: blue;
-	}
-.menulink  A:hover {
-	font-size: 13px; 
-	text-decoration: underline; 
-	color: blue;
-	}
-*/
 /* Styles for body links */
 	
 .bodylink A:link {
