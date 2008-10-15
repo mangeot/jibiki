@@ -499,7 +499,21 @@ public class Home
 
         //// Display query result, if action (QueryMenu search)
         if ((action != null) && !action.equals("")) {
+		/*
+		String source = myGetParameter(AdvancedQueryFormXHTML.NAME_SOURCE + ".0");
+		
+		Collection volumes = getVolumesInCacheBySourceLanguage(String source);
+		
+		 Iterator iterator = volumes.iterator();
+		 Vector resultEntries
+		while ( iterator.hasNext() ) {
+			Volume theVolume = (Volume) iterator.next();
+		}
+		 
+		
+	public static Vector getVolumeEntriesVector(Dictionary dict, Volume volume, Vector Keys1, Vector Keys2, String any, int offset, int limit) throws PapillonBusinessException {
 
+*/
             //  Retrieve parameters like AdvancedQueryForm object
             AdvancedQueryForm qf = new AdvancedQueryForm(this.getComms(), this.getSessionData(), true, false);
 
@@ -523,20 +537,21 @@ public class Home
                 QueryCriteria criteriaFinishedStatus = new QueryCriteria();
                 criteriaFinishedStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);
                 criteriaFinishedStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.FINISHED_STATUS);
+                criteriaFinishedStatus.add("lang", QueryCriteria.EQUAL, Volume.DEFAULT_LANG);
                 listStatus.add(criteriaFinishedStatus);
 
                QueryCriteria criteriaModifiedStatus = new QueryCriteria();
                 criteriaModifiedStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);
                 criteriaModifiedStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.MODIFIED_STATUS);
+                criteriaModifiedStatus.add("lang", QueryCriteria.EQUAL, Volume.DEFAULT_LANG);
                 listStatus.add(criteriaModifiedStatus);
  
-                queryReq.addOrCriteriaList(listStatus);
-
+               // queryReq.addOrCriteriaList(listStatus);
+				//queryReq.filterVolumes();
                 if (searchKind.equals(EXACT_MATCH)) {
                     //// CLASSIC SEARCH
                     // Perform the request
                     Collection qrset = queryReq.findLexieAndTranslation(this.getUser());
-
                     // Display classic search result
                     XHTMLElement queryResultForm = content.getElementQueryResultForm();
                     Node viewQueryResultNode = ViewQueryResult.createNodeResult(this.getComms(), this.getSessionData(),

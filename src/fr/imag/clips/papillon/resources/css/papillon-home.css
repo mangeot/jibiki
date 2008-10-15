@@ -471,6 +471,111 @@ div#firefox img {
 
 /*</group>*/
 
+/* import de lexalp */
+.lexalp-entry {
+    border:1px solid #898989;
+    margin-bottom:5px;
+    padding-bottom:2px;
+    margin-top:-1px;
+    padding-right: 3px;
+}
+
+.translation {
+	/* border: 1px dashed #898989; */
+    margin-left:20px;
+    margin-right:2px;
+    margin-top:3px;
+    padding: 2px 2px 2px 2px;
+}
+
+.relatedAxie {
+	border: 1px dashed #898989;
+    margin-left:20px;
+    margin-right:20px;
+    margin-top:20px;
+    padding: 5px 5px 5px 5px;
+}
+
+/* container contribution */
+
+.jibiki_groups {
+    border-right: 1px solid #898989;
+    padding-right:5px;
+	padding-left:5px;
+	font-weight: bold;
+	color: #DD390E;
+}
+
+.jibiki_status {
+	text-transform: uppercase;
+	font-weight: bold;
+	margin-left: 5px;
+}
+.jibiki_byAuthor {
+}
+
+.jibiki_author {
+	text-transform: uppercase;
+	font-weight: bold;
+	margin-right: 5px;
+}
+
+
+.contribution {
+	margin-bottom: 10px;
+}
+
+.option1 {
+	margin-left: 20px;
+}
+
+.option2 {
+	margin-left: 5px;
+}
+
+
+.entry_information {
+	float: right;
+	font-size:xx-small;
+	text-transform: uppercase;
+    margin-left:5px;
+    margin-top:2px;
+}
+
+.entry_information_flag {
+	float: right;
+	//font-size:xx-small;
+	//text-transform: uppercase;
+    margin-left:5px;
+    margin-top:1px;
+    //border: 1px solid #898989;
+}
+
+.action_list {
+    text-align: right;
+}
+
+.entry_actions {
+	border-top: 1px solid #898989;
+	border-right: 1px solid #898989;
+	border-left: 1px solid #898989;
+	font-size:x-small;
+    background-color: #E0E0E0;
+}
+
+.action {
+    border-left: 1px solid #898989;
+    padding-right:5px;
+	padding-left:5px;
+}
+
+.action:hover {
+	/*font-style: italic;
+    font-weight: bold;*/
+    color: red;
+}
+
+
 /*--------------------------------------*/
 /* For DEC-like entries */
 /*--------------------------------------*/

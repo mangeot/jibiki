@@ -1141,7 +1141,7 @@ public class VolumeEntriesFactory {
         throws PapillonBusinessException {
         // FIXME: should use queries as used in findEntryByEntryId(User user, String entryid)
         // FIXME: Moreover, this is duplicate code...
-        PapillonLogger.writeDebugMsg("Looking for " + entryId + "in volume " + myVolume.getName());
+        PapillonLogger.writeDebugMsg("Looking for " + entryId + " in volume " + myVolume.getName());
 
 
         VolumeEntry resultEntry = (VolumeEntry) CurrentRequestContext.get().get(entryId);
@@ -1256,7 +1256,7 @@ throws PapillonBusinessException {
  */
 public static VolumeEntry findEntryByEntryId(User user, Collection volumes, String entryId)
 throws PapillonBusinessException {
-    PapillonLogger.writeDebugMsg("Looking for " + entryId + " in " + volumes.size() + "volumes for user " + user );
+    PapillonLogger.writeDebugMsg("Looking for " + entryId + " in " + volumes.size() + " volumes for user " + user );
     //FIXME: an entry id may not be unique externally to a dictionary so the dict must be specified
     VolumeEntry resultEntry = (VolumeEntry) CurrentRequestContext.get().get(entryId);
 

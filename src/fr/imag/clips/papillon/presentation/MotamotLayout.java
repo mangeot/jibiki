@@ -293,8 +293,17 @@ public class MotamotLayout implements StdLayout {
                 sessionData.setPreference("Home.po", sourceSelect.getName(), prefSrcLang);
             }
             
-            for (Iterator iter = AvailableLanguages.getSourceLanguagesArray().iterator(); iter.hasNext();) {
+ 			XHTMLDivElement volumesDiv = queryMenu.getElementVolumesDiv();
+ 			XHTMLDivElement volumesLang = queryMenu.getElementVolumesLang();
+            XHTMLInputElement volumesInputTemplate = queryMenu.getElementVolumesInput();
+			volumesLang.removeChild(volumesInputTemplate);
+			volumesDiv.removeChild(volumesLang);
+			volumesInputTemplate.removeAttribute("id");
+           for (Iterator iter = AvailableLanguages.getSourceLanguagesArray().iterator(); iter.hasNext();) {
                 String langi = (String)iter.next();
+
+                volumesLang.setAttribute("id","Volumes_"+langi);
+				XHTMLDivElement volumeLang = (XHTMLDivElement) volumesLang.cloneNode(true);
                 
                 sourceOptionTemplate.setValue(langi);
                 // Certains navigateurs ne sont pas conformes aux specs
@@ -308,6 +317,17 @@ public class MotamotLayout implements StdLayout {
                 
                 sourceTextTemplate.setData(Languages.localizeName(langLoc, langi));
                 sourceSelect.appendChild(sourceOptionTemplate.cloneNode(true));
+				
+			for (Iterator viter = VolumesFactory.getVolumesArray(null,langi,null).iterator(); viter.hasNext();) {
+                Volume volume = (Volume)viter.next();
+                
+                //
+                volumesInputTemplate.setValue(volume.getName());
+                volumeLang.appendChild(volumesInputTemplate.cloneNode(true));
+            }
+                volumesDiv.appendChild(volumeLang);
+				
+				
             }
             sourceSelect.removeChild(sourceOptionTemplate);
             
@@ -347,7 +367,7 @@ public class MotamotLayout implements StdLayout {
             //PapillonBasePO.setSelected(queryMenu.getElementTarget(), prefTrgLang);
             PapillonBasePO.setSelected(queryMenu.getElementQMTargets(), prefTrgLang);
             
-            // Add the menu to the Page
+          // Add the menu to the Page
             Node placeHolder = layout.getElementMenuBlockPlaceHolder();
             Node placeHolderMother = placeHolder.getParentNode();
             placeHolderMother.insertBefore(layout.importNode(queryMenu.getElementQueryMenu(), true), placeHolder);

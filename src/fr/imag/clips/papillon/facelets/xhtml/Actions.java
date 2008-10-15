@@ -44,6 +44,7 @@ import fr.imag.clips.papillon.business.dictionary.QueryParameter;
 import fr.imag.clips.papillon.business.dictionary.QueryCriteria;
 
 import fr.imag.clips.papillon.business.utility.Utility;
+import fr.imag.clips.papillon.business.PapillonLogger;
 
 import fr.imag.clips.papillon.presentation.EditEntryInitFactory;
 import fr.imag.clips.papillon.presentation.AdvancedQueryForm;
@@ -67,7 +68,8 @@ public class Actions implements fr.imag.clips.papillon.facelets.api.Actions {
         JibikiContext context = CurrentRequestContext.get();
         
         // FIXME: This will be long enough... We really need to work on caching and multiple volume handling (maybe an explicit id...)
-        VolumeEntry ve = VolumeEntriesFactory.findEntryByEntryId(((PapillonSessionData) context.get("sessionData")).getUser(),entryid);
+       PapillonLogger.writeDebugMsg("Pourquoi on refait une requête pour chercher l'entrée ???");
+		 VolumeEntry ve = VolumeEntriesFactory.findEntryByEntryId(((PapillonSessionData) context.get("sessionData")).getUser(),entryid);
         return this.getActions(ve);
     }
     

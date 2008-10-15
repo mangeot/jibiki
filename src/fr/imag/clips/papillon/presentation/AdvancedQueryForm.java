@@ -204,6 +204,32 @@ public class AdvancedQueryForm {
         }
     }
     
+    public Collection getRequestedVolumes(HttpServletRequest req) 
+        throws java.io.UnsupportedEncodingException,
+        com.lutris.appserver.server.httpPresentation.HttpPresentationException
+    {
+        //
+        String[] d = AbstractPO.myGetParameterValues(req, AdvancedQueryFormXHTML.NAME_VOLUMES);
+        
+        //
+        if (null == d) {
+            
+            // return all Dictionaries
+            return VolumesFactory.getVolumesArray();
+        
+        } else {
+            ArrayList volumes = new ArrayList();
+            
+            //
+            for (int i = 0; i < d.length; i++) {
+                volumes.add(VolumesFactory.getVolumeByName(d[i]));
+            }
+            
+            //
+            return volumes;
+        }
+    }
+    
     public String getRequestedXsl(HttpServletRequest req) 
         throws java.io.UnsupportedEncodingException,
         com.lutris.appserver.server.httpPresentation.HttpPresentationException
@@ -339,6 +365,11 @@ public class AdvancedQueryForm {
                 //
                 criteria.add("key", "=", key);
                 criteria.add("value", strategy, value);
+				if (language==null) {
+					if (Volume.isDefaultLangCDMElement(key)) {
+						language=Volume.DEFAULT_LANG;
+					}
+				}
                 if ( (language != null) && (!language.equals("")) && (!language.equals("All")) ) {
 					criteria.add("lang", "=", language);
 				}
@@ -365,7 +396,7 @@ public class AdvancedQueryForm {
             // Get all the parameters
             // FIXME: Dictionaries or volumes search !!!
             // Modify advanced query form (volumes) and query request (dictionaries) for that ...
-            qrequest = new QueryRequest(VolumesFactory.getVolumesArray());
+            qrequest = new QueryRequest(getRequestedVolumes(comms.request.getHttpServletRequest()));
             Collection criteriaList = getRequestedCriteria2(comms.request.getHttpServletRequest());
             for (Iterator iter = criteriaList.iterator(); iter.hasNext();) {
                 qrequest.addCriteria((QueryCriteria)iter.next());

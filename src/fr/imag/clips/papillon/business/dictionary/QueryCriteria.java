@@ -19,6 +19,8 @@ import java.util.regex.Pattern;
 public class QueryCriteria {
 
     private ArrayList criteriaList;
+	private String key= null;
+	private String lang= null;
     
     public static final String EQUAL = "0";
     public static final String NOT_EQUAL = "1";
@@ -36,6 +38,17 @@ public class QueryCriteria {
     public QueryCriteria() {
         criteriaList = new ArrayList();
     }
+	
+	/*
+	key[0] = AbstractPO.myGetParameter(req, AdvancedQueryFormXHTML.NAME_FACET + "." + Integer.toString(i));
+            key[1] = AbstractPO.myGetParameter(req, AdvancedQueryFormXHTML.NAME_SOURCE + "." + Integer.toString(i));
+            String facetValue = AbstractPO.myGetParameter(req, AdvancedQueryFormXHTML.NAME_FACETVALUE + "." + Integer.toString(i));
+            key[2] = (null == facetValue) ? "" : facetValue;
+            String comparator = AbstractPO.myGetParameter(req, AdvancedQueryFormXHTML.NAME_OPERATOR + "." + Integer.toString(i));
+            //int comparisonOperator = (comparator != null) ? Integer.valueOf(comparator).intValue() : 0;
+            //key[3] = IQuery.QueryBuilderStrategy[comparisonOperator];
+            key[3] = comparator;
+*/
     
     // find words in string value to add into query : column=word[0] AND column=word[1] AND ...
     public void addAdvancedValue(String column, String strategie, String value) {
@@ -65,6 +78,13 @@ public class QueryCriteria {
     //
     public void add(String column, String strategie, String value) {
         
+		if (column.equals("key")) {
+			this.key=value;
+		}
+		else if (column.equals("lang")) {
+			this.lang=value;
+		}
+		
         //
         Pattern pat = Pattern.compile("^[ ]*([^ ]+([ ]+[^ ]+)*)[ ]*$");
         Matcher mat = pat.matcher(value);
@@ -162,6 +182,13 @@ public class QueryCriteria {
         return i;
     }
     
+	public String getLang() {
+		return lang;
+	}
+    
+	public String getKey() {
+		return key;
+	}
     
     // 
     public void remove(int i) {

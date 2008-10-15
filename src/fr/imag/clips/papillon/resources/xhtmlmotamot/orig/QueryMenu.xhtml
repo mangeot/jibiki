@@ -10,7 +10,7 @@
       <h2 class="menuTitle">
         <a title="Lookup a word in online dictionaries" href="javascript:void(0)">Lookup:</a>
       </h2>
-      <form  id="ConsultForm" method="get" action="Home.po" >
+      <form  id="ConsultForm" method="get" action="Home.po"  onsubmit="filterVolumes();">
         <div>
                 <div>
                     <div class="menuColumnSize">
@@ -46,6 +46,11 @@
                     </div>
                 </div>
                 <div>
+ 					<div id="VolumesDiv">
+						<div id="VolumesLang">
+							<input type="hidden" id="VolumesInput" name="VOLUMES" value="*ALL*"/>
+						</div>
+					</div>
                     <input type="hidden" name="XSL" value="Default"/>
                     <input type="hidden" name="NB_RESULT_PER_PAGE" value="5" />
                     <input type="hidden" name="OFFSET"/>

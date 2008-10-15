@@ -105,8 +105,10 @@ import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.dictionary.Dictionary;
 import fr.imag.clips.papillon.business.dictionary.IAnswer;
+import fr.imag.clips.papillon.business.dictionary.ParseVolume;
 import fr.imag.clips.papillon.business.dictionary.QueryResult;
 import fr.imag.clips.papillon.business.dictionary.Volume;
+import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
 import fr.imag.clips.papillon.business.user.User;
 import fr.imag.clips.papillon.business.xml.XMLServices;
 import fr.imag.clips.papillon.business.xsl.JibikiXsltExtension;
@@ -115,6 +117,7 @@ import fr.imag.clips.papillon.business.xsl.XslSheetFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -124,6 +127,8 @@ import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.ByteArrayOutputStream;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Hashtable;
 
 
@@ -184,6 +189,46 @@ public class XslTransformation implements ResultFormatter {
         Element rootdiv = res.createElement("div");
         rootdiv.setAttribute("class", "entry");
         res.appendChild(rootdiv);
+		
+		// FIXME: determine what to do for direct translation result:
+        // hint, use jibikiXsltExtensions to resolve the links and format everything...
+		// for the moment, old school way...
+		
+		if (qr.getResultKind() == QueryResult.DIRECT_TRANSLATIONS_RESULT) {
+                VolumeEntry myAnswer = qr.getSourceEntry();
+
+                Volume myVolume = myAnswer.getVolume();
+                Dictionary myDictionary = myAnswer.getDictionary();
+
+                //
+                Collection targets = myVolume.getTargetLanguagesArray();
+                for (Iterator iter = targets.iterator(); iter.hasNext();) {
+                    String target = (String) iter.next();
+
+                    //
+                    if (target != null && !target.equals("") && target!= myVolume.getSourceLanguage()) {
+						//PapillonLogger.writeDebugMsg("getFormattedResult: " + target);
+                        NodeList myNodeList = ParseVolume.getCdmElements(myAnswer, Volume.CDM_translationReflexie, target);
+                        if ((myNodeList != null) && (myNodeList.getLength() > 0)) {
+                            for (int i = 0; i < myNodeList.getLength(); i++) {
+                                Node myNode = myNodeList.item(i);
+                                String translationId = myNode.getNodeValue();
+                                if (myNode.getNodeType() == Node.TEXT_NODE) {
+                                    Node textNode = myNode;
+                                    myNode = myNode.getParentNode();
+                                    myNode.removeChild(textNode);
+                                }
+                                VolumeEntry newEntry = (VolumeEntry) qr.getLexiesHashtable().get(translationId);
+                                if (newEntry != null && !newEntry.isEmpty()) {
+                                    Node tempNode = myAnswer.getDom().importNode((Node) newEntry.getDom().getDocumentElement(), true);
+                                    myNode.appendChild(tempNode);
+                                }
+                            }
+                        }
+                    }
+                }
+			}
+
 
         // Is reverse unique result still in use ?
         if (qr.getResultKind() == QueryResult.UNIQUE_RESULT ||
@@ -195,11 +240,9 @@ public class XslTransformation implements ResultFormatter {
                 Node resultNode = formatResult(qr.getSourceEntry().getDom(), dictXsl, usr);
                 rootdiv.appendChild(res.importNode(resultNode, true));
             }
-        }
-        // FIXME: determine what to do for direct translation result:
-        // hint, use jibikiXsltExtensions to resolve the links and format everything...
-
-        return rootdiv;
+        } 
+		
+       return rootdiv;
     }
 
 //    public Node getFormattedResultOld(QueryResult qr, User usr) throws PapillonBusinessException {

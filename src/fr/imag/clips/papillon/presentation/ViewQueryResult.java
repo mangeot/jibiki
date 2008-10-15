@@ -141,7 +141,7 @@ public class ViewQueryResult {
             //
             QueryResult qr = (QueryResult) iter.next();
 
-            //System.out.println("ViewQueryResult : " + qp.getXsl());
+            System.out.println("ViewQueryResult : " + qp.getXsl());
             ResultFormatter rf = ResultFormatterFactory.getFormatter(qr, qp.getXsl(),
                     ResultFormatterFactory.XHTML_DIALECT, null);
 

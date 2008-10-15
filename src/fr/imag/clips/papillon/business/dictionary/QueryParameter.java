@@ -144,7 +144,7 @@ public class QueryParameter {
             targets = new ArrayList();
         }
     }
-        
+	
     public QueryParameter duplicate() {
             
         //

@@ -1197,7 +1197,7 @@ public class DictionariesFactory {
                  result.add(qr);
              }
          }
-         //
+		 //PapillonLogger.writeDebugMsg("end of addAxiesAndTranslations");
          return result;
      }
      
@@ -1350,14 +1350,16 @@ public class DictionariesFactory {
      */   
     protected static QueryResult getDirectResults(QueryResult qr, String source, Collection targets, User myUser) throws PapillonBusinessException {
         //Collection qrset = new HashSet();
+		//PapillonLogger.writeDebugMsg("getDirectResults:");
         if (null != qr && null != qr.getSourceEntry()) {
             VolumeEntry mySourceEntry = qr.getSourceEntry();
             Hashtable resLexies = new Hashtable();
 
             for (Iterator iter = targets.iterator(); iter.hasNext();) {
                 String target = (String)iter.next();
-                
-                // get all cdm elements pointing to target entries.
+				
+				if (target != source) {
+               // get all cdm elements pointing to target entries.
                 String[] transIds = mySourceEntry.getTranslationsLexieIds(target);
                 
                 //
@@ -1373,9 +1375,13 @@ public class DictionariesFactory {
                         } 
                     }
                 }
-            }
+				}
+                
+             }
             qr.setLexiesHashtable(resLexies);
         }
+				//PapillonLogger.writeDebugMsg("end of getDirectResults");
+
         return qr;
     }
 

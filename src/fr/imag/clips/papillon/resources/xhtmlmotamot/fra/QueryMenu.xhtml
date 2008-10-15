@@ -10,7 +10,7 @@
       <h2 class="menuTitle">
       	<a title="Traduction d&rsquo;un mot" href="javascript:void(0)">Consultation&nbsp;:</a>
       </h2>
-      <form  id="ConsultForm" method="get" action="Home.po" >
+      <form  id="ConsultForm" method="get" action="Home.po"   onsubmit="filterVolumes(); return true;">
         <div>
                 <div>
                     <div class="menuColumnSize">
@@ -46,7 +46,12 @@
                     </div>
                 </div>
                 <div>
-                    <input type="hidden" name="XSL" value="Default"/>
+ 					<div id="VolumesDiv">
+						<div id="VolumesLang">
+							<input type="hidden" id="VolumesInput" name="VOLUMES" value="*ALL*"/>
+						</div>
+					</div>
+                   <input type="hidden" name="XSL" value="Default"/>
                     <input type="hidden" name="NB_RESULT_PER_PAGE" value="5" />
                     <input type="hidden" name="OFFSET"/>
                     <input type="hidden" name="action" value="rechercher" />

@@ -22,7 +22,10 @@ import fr.imag.clips.papillon.data.VolumeEntryQuery;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Vector;
+
 
 /**
         * A Request is a business object passed when querying dictionaries.
@@ -357,10 +360,9 @@ import java.util.Iterator;
                     if (null != DOarray) {
                         for (int j=0; j < DOarray.length; j++) {
                             VolumeEntry tempEntry = new VolumeEntry(DictionariesFactory.getDictionaryByName(volume.getDictname()), volume, DOarray[j]);
-                            // Add the volume entry in the request context.
+							// Add the volume entry in the request context.
                             CurrentRequestContext.get().set(tempEntry.getEntryId(), tempEntry);
-
-                            QueryResult queryResult = new QueryResult(QueryResult.UNIQUE_RESULT, tempEntry);
+							QueryResult queryResult = new QueryResult(QueryResult.UNIQUE_RESULT, tempEntry);
                             result.add(queryResult);
                         }
                     }
@@ -476,6 +478,85 @@ import java.util.Iterator;
                 throw new PapillonBusinessException("Exception in findLexieHistory() ", ex);
             }
         }
-        
+		
+		public void filterVolumes() throws PapillonBusinessException {
+			int i=0;
+			while (i<volumes.size()) {
+				boolean keepVolume = true;
+				Volume volume = (Volume)volumes.get(i);
+				Hashtable CDMelements = volume.getCdmElements();
+				if (this.isAndTree) {
+					Iterator iterAnd = criteriaTree.iterator();
+					while (iterAnd.hasNext() && keepVolume) {
+                        ArrayList orNode = (ArrayList)iterAnd.next();
+						keepVolume	= keepVolume && filterOrCriteriaSubtree(CDMelements, orNode);
+					}
+				}
+				else {
+					keepVolume = false;
+					Iterator iterOr = criteriaTree.iterator();
+					while (iterOr.hasNext() && !keepVolume) {
+                        ArrayList AndNode = (ArrayList)iterOr.next();
+						if (filterOrCriteriaSubtree(CDMelements, AndNode)) {
+							keepVolume = true;
+						}
+					}
+			
+				}
+				//PapillonLogger.writeDebugMsg("filterVolume: " + volume.getName() + " kv: " + keepVolume);
+				if (!keepVolume) {
+					volumes.remove(i);
+				}
+				else {
+					i++;
+				}
+			}
+		}
+		
+		protected boolean filterAndCriteriaSubtree(Hashtable CDMelements, ArrayList subtree) {
+			boolean keepVolume = true;
+			if (subtree.size() >0) {
+				Iterator citer = subtree.iterator();
+				while ( citer.hasNext() && keepVolume) {
+					QueryCriteria criteria = (QueryCriteria)citer.next();
+					if (criteria.getLang() != null) {
+						Hashtable langElements = (Hashtable) CDMelements.get(criteria.getLang());
+						if (langElements != null) {
+							Vector element = (Vector) langElements.get(criteria.getKey());
+							keepVolume = (element != null);	
+						}
+						else {
+							keepVolume = false;
+						}
+					}
+				}
+			}	
+			return keepVolume;
+		}
+		
+		protected boolean filterOrCriteriaSubtree(Hashtable CDMelements, ArrayList subtree) {
+			boolean keepVolume = false;
+			if (subtree.size() >0) {
+					Iterator citer = subtree.iterator();
+					while ( citer.hasNext() && !keepVolume) {
+						QueryCriteria criteria = (QueryCriteria)citer.next();
+						//PapillonLogger.writeDebugMsg("filterOrCriteria: " + criteria.getKey() + " langue : " + criteria.getLang());
+						if (criteria.getLang() != null) {
+							Hashtable langElements = (Hashtable) CDMelements.get(criteria.getLang());
+							if (langElements != null) {
+								Vector element = (Vector) langElements.get(criteria.getKey());
+								if (element != null) {
+									keepVolume = true;
+								}	
+							}
+						}
+						else if (criteria.getLang() == null) {
+							keepVolume = true;
+						}
+					}
+				}
+				//PapillonLogger.writeDebugMsg("filterOrCriteriaTree: " + keepVolume);
+				return keepVolume;
+			}        
     }
     

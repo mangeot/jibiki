@@ -315,8 +315,17 @@ public class PapillonLayout implements StdLayout {
                 sessionData.setPreference("Home.po", sourceSelect.getName(), prefSrcLang);
             }
             
-            for (Iterator iter = AvailableLanguages.getSourceLanguagesArray().iterator(); iter.hasNext();) {
+			XHTMLDivElement volumesDiv = queryMenu.getElementVolumesDiv();
+ 			XHTMLDivElement volumesLang = queryMenu.getElementVolumesLang();
+            XHTMLInputElement volumesInputTemplate = queryMenu.getElementVolumesInput();
+			volumesLang.removeChild(volumesInputTemplate);
+			volumesDiv.removeChild(volumesLang);
+			volumesInputTemplate.removeAttribute("id");
+           for (Iterator iter = AvailableLanguages.getSourceLanguagesArray().iterator(); iter.hasNext();) {
                 String langi = (String)iter.next();
+
+                volumesLang.setAttribute("id","Volumes_"+langi);
+				XHTMLDivElement volumeLang = (XHTMLDivElement) volumesLang.cloneNode(true);
                 
                 sourceOptionTemplate.setValue(langi);
                 // Certains navigateurs ne sont pas conformes aux specs
@@ -330,9 +339,20 @@ public class PapillonLayout implements StdLayout {
                 
                 sourceTextTemplate.setData(Languages.localizeName(langLoc, langi));
                 sourceSelect.appendChild(sourceOptionTemplate.cloneNode(true));
+				
+			for (Iterator viter = VolumesFactory.getVolumesArray(null,langi,null).iterator(); viter.hasNext();) {
+                Volume volume = (Volume)viter.next();
+                
+                //
+                volumesInputTemplate.setValue(volume.getName());
+                volumeLang.appendChild(volumesInputTemplate.cloneNode(true));
+            }
+                volumesDiv.appendChild(volumeLang);
+				
+				
             }
             sourceSelect.removeChild(sourceOptionTemplate);
-            
+          
             // Adding the appropriate target languages to the target list
             //XHTMLOptionElement targetOptionTemplate = queryMenu.getElementTargetOptionTemplate();
             XHTMLOptionElement targetOptionTemplate = queryMenu.getElementTargetTmpl();
