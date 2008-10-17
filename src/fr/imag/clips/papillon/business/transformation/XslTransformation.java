@@ -325,7 +325,7 @@ public class XslTransformation implements ResultFormatter {
 
             // init
             Document docCible = null;
-
+			
             docCible = Transform(docSource, xsl);
 
             return docCible.getDocumentElement();
