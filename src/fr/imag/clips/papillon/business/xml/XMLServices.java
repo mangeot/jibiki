@@ -192,14 +192,14 @@ public class XMLServices {
      */
     /* prints XML declaration */
     public static String xmlCodeOld(Document doc) {
-        return NodeToString(doc.getDocumentElement(), true, false);
+        return ElementToString(doc.getDocumentElement(), true, false);
     }
 
-    public static String NodeToString(Document doc, boolean printXmlDeclaration, boolean setIndenting) {
-        return NodeToString(doc, printXmlDeclaration, setIndenting, false);
+    public static String DocumentToString(Document doc, boolean printXmlDeclaration, boolean setIndenting) {
+        return DocumentToString(doc, printXmlDeclaration, setIndenting, false);
     }
 
-    private static String NodeToString(Document doc, boolean printXmlDeclaration, boolean setIndenting, boolean printDoctype) {
+    private static String DocumentToString(Document doc, boolean printXmlDeclaration, boolean setIndenting, boolean printDoctype) {
         String res = "";
         if (doc != null) {
             try {
@@ -221,11 +221,11 @@ public class XMLServices {
         return res;
     }
 
-    public static String NodeToString(Element elt) {
-        return NodeToString(elt, true, true);
+    public static String ElementToString(Element elt) {
+        return ElementToString(elt, true, true);
     }
 
-    public static String NodeToString(Element elt, boolean printXmlDeclaration, boolean setIndenting) {
+    public static String ElementToString(Element elt, boolean printXmlDeclaration, boolean setIndenting) {
         String res = "";
         if (elt != null) {
             try {
@@ -236,6 +236,26 @@ public class XMLServices {
                 myOutputFormat.setOmitXMLDeclaration(!printXmlDeclaration);
                 XMLSerializer myXMLSerializer = new XMLSerializer(myStringWriter, myOutputFormat);
                 myXMLSerializer.serialize(elt);
+                res = myStringWriter.toString();
+            }
+            catch (java.io.IOException ioe) {
+                PapillonLogger.writeDebugMsg("NodeToString: java.io.IOException: " + ioe);
+            }
+        }
+        return res;
+    }
+
+   public static String DocumentFragmentToString(org.w3c.dom.DocumentFragment docfrag, boolean printXmlDeclaration, boolean setIndenting) {
+        String res = "";
+        if (docfrag != null) {
+            try {
+                StringWriter myStringWriter = new StringWriter();
+                myOutputFormat.setMethod("text");
+                myOutputFormat.setIndenting(setIndenting);
+                myOutputFormat.setOmitDocumentType(true);
+                myOutputFormat.setOmitXMLDeclaration(!printXmlDeclaration);
+                XMLSerializer myXMLSerializer = new XMLSerializer(myStringWriter, myOutputFormat);
+                myXMLSerializer.serialize(docfrag);
                 res = myStringWriter.toString();
             }
             catch (java.io.IOException ioe) {
@@ -270,13 +290,13 @@ or there is no accessible xml schema
   //          try {
  				switch (N.getNodeType()) {
 					case org.w3c.dom.Node.DOCUMENT_NODE:               
-						res = NodeToString((org.w3c.dom.Document) N,printXmlDeclaration);
+						res = DocumentToString((org.w3c.dom.Document) N,printXmlDeclaration, true, true);
 						break;
 					case org.w3c.dom.Node.ELEMENT_NODE:
-						res = NodeToString((org.w3c.dom.Element) N,printXmlDeclaration);
+						res = ElementToString((org.w3c.dom.Element) N,printXmlDeclaration, true);
 						break;
 					case org.w3c.dom.Node.DOCUMENT_FRAGMENT_NODE:
-						res = NodeToString((org.w3c.dom.DocumentFragment) N,printXmlDeclaration);
+						res = DocumentFragmentToString((org.w3c.dom.DocumentFragment) N,printXmlDeclaration, true);
 						break;
 				}				
 /*                mySerializerToText.m_shouldNotWriteXMLHeader = (!printXmlDeclaration);
@@ -342,7 +362,7 @@ or there is no accessible xml schema
         try {
             java.io.OutputStream outStream = new java.io.FileOutputStream(filePath);
             java.io.PrintStream myPrintStream = new java.io.PrintStream(outStream, true, "UTF-8");
-            myPrintStream.print(NodeToString(theDoc, true, true, true));
+            myPrintStream.print(DocumentToString(theDoc, true, true, true));
             myPrintStream.close();
             outStream.close();
         }
