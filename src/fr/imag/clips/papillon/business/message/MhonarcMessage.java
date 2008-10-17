@@ -206,7 +206,7 @@ public class MhonarcMessage {
 	} catch (NullPointerException n) { 
 	    // Cette exception ne peut survenir que si on n'a pas trouvé l'élément de fin du body
 	    throw new NotAMhonarcMessageException();
-	} catch (sun.io.MalformedInputException ex) {
+	} catch (java.io.CharConversionException ex) {
             throw new NotAValidUTF8Message();
         }
 
