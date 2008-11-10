@@ -69,16 +69,16 @@ public class ExportVolumeEntryProcessor implements IVolumeEntryProcessor {
 		}
 		else if (outputFormat != null && outputFormat.equals(PDFFormat)) {
 			org.w3c.dom.Element myElement = fr.imag.clips.papillon.business.transformation.XslTransformation.applyXslSheetsForFo((IAnswer) myEntry);
-			resultString = XMLServices.NodeToString(myElement, false, false);
+			resultString = XMLServices.ElementToString(myElement, false, false);
 		}
 		else { // (outputFormat == null || outputFormat.equals("") || outputFormat.equals(XMLFormat))
 			String contribString = myVolume.getCdmContribution();
 			String xmlCode;
 			if (outputFormat.equals(XMLIndentFormat)) {
-				 xmlCode = XMLServices.NodeToString(myEntry.getDom(), false, true);
+				 xmlCode = XMLServices.DocumentToString(myEntry.getDom(), false, true);
 			}
 			else {
-				xmlCode = XMLServices.NodeToString(myEntry.getDom(), false, false);
+				xmlCode = XMLServices.DocumentToString(myEntry.getDom(), false, false);
 			}
 			if (xmlCode.indexOf("<" + contribString)>0) {
 				xmlCode= xmlCode.substring(xmlCode.indexOf("<" + contribString)); 
