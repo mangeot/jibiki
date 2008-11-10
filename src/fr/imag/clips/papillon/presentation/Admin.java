@@ -120,6 +120,8 @@ import org.enhydra.xml.xhtml.dom.*;
 import org.w3c.dom.Node;
 
 import fr.imag.clips.papillon.business.message.MessageDBLoader;
+import fr.imag.clips.papillon.business.dictionary.Volume;
+import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
 
 // Standard imports
 import java.io.IOException;
@@ -133,6 +135,8 @@ public class Admin extends PapillonBasePO {
 	/* by default, data is editable */
 	public static boolean EDIT_DATA = true;
 	protected static String ALL_VOLUMES = "*all*";
+	
+	protected String selectedVolume = null;
 
     protected boolean loggedInUserRequired() {
         return false;
@@ -158,6 +162,8 @@ public class Admin extends PapillonBasePO {
 		
         // If the page is called with parameters, take the requested action
         if (this.getComms().request.getParameterNames().hasMoreElements()) {
+			
+			selectedVolume = myGetParameter(content.NAME_VOLUME);
             // Get the main parameters
             String mhonarcFolder = myGetParameter(content.NAME_Folder);
      //       String dbUrl= myGetParameter(DB_URL);
@@ -201,8 +207,8 @@ public class Admin extends PapillonBasePO {
                 this.getSessionData().writeUserMessage("EditData is set? " + EDIT_DATA);
             }
 			else if (null != myGetParameter(content.NAME_ReConstructionIndex) &&
-					 null != myGetParameter(content.NAME_VOLUME)) {
-				if (myGetParameter(content.NAME_VOLUME).equals(ALL_VOLUMES)) {
+					 null != selectedVolume) {
+				if (selectedVolume.equals(ALL_VOLUMES)) {
 					fr.imag.clips.papillon.business.dictionary.VolumesFactory.reConstructionIndex();
 				}
 				else {
@@ -223,14 +229,38 @@ public class Admin extends PapillonBasePO {
             }
         }
 		
-		addAdminForm(content, EDIT_DATA);
+		addAdminForm(content, EDIT_DATA, selectedVolume);
 
         //On rends le contenu correct
         return content.getElementHomeContent();
     }
 	
-	protected static void addAdminForm (AdminTmplXHTML content, boolean editData) {
+	protected static void addAdminForm (AdminTmplXHTML content, boolean editData, String selectedVolume) 
+		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 	
+		XHTMLOptionElement volumeOptionTemplate = content.getElementVolumeOptionTemplate();
+        Node volumeSelect = volumeOptionTemplate.getParentNode();
+        volumeOptionTemplate.removeAttribute("id");
+        // We assume that the option element has only one text child 
+        // (it should be this way if the HTML is valid...)
+         org.w3c.dom.Text volumeTextTemplate = ( org.w3c.dom.Text)volumeOptionTemplate.getFirstChild(); 
+		
+        //
+        for (java.util.Iterator iter = VolumesFactory.getVolumesArray().iterator(); iter.hasNext();) {
+            String volumeName = ((Volume)iter.next()).getName();
+            
+            //
+            volumeOptionTemplate.setValue(volumeName);
+            volumeOptionTemplate.setLabel(volumeName);
+            // Je dois ici mettre un text dans l'OPTION, car les browser PC ne sont pas conformes aux 
+            // specs W3C.
+            volumeTextTemplate.setData(volumeName);
+            volumeOptionTemplate.setSelected(volumeName.equals(selectedVolume));
+            volumeSelect.appendChild(volumeOptionTemplate.cloneNode(true));
+        }
+        volumeSelect.removeChild(volumeOptionTemplate);
+		
+		
 		//XHTMLInputElement cacheElement = content.getElementHTMLDomCaches();
 		//cacheElement.setChecked(cacheSet);
 		

@@ -3314,6 +3314,23 @@
 		};
 /* End PBXGroup section */
 
+/* Begin PBXLegacyTarget section */
+		A307277E0EC89C7000733910 /* Default */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = quick;
+			buildConfigurationList = A307278C0EC89C7F00733910 /* Build configuration list for PBXLegacyTarget "Default" */;
+			buildPhases = (
+			);
+			buildToolPath = /Library/Java/Extensions/enhydra5.1/bin/ant;
+			buildWorkingDirectory = /Projects/jibiki/trunk;
+			dependencies = (
+			);
+			name = Default;
+			passBuildSettingsInEnvironment = 1;
+			productName = Default;
+		};
+/* End PBXLegacyTarget section */
+
 /* Begin PBXProject section */
 		A348B7040E7EFB50003F6712 /* Project object */ = {
 			isa = PBXProject;
@@ -3324,11 +3341,29 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
+				A307277E0EC89C7000733910 /* Default */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin XCBuildConfiguration section */
+		A307277F0EC89C7100733910 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		A30727800EC89C7100733910 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				PRODUCT_NAME = Default;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
 		A348B7050E7EFB50003F6712 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -3346,6 +3381,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		A307278C0EC89C7F00733910 /* Build configuration list for PBXLegacyTarget "Default" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A307277F0EC89C7100733910 /* Debug */,
+				A30727800EC89C7100733910 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		A348B7070E7EFB50003F6712 /* Build configuration list for PBXProject "JibikiTrunk" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
