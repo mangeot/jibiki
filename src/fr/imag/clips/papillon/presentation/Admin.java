@@ -132,6 +132,7 @@ public class Admin extends PapillonBasePO {
 
 	/* by default, data is editable */
 	public static boolean EDIT_DATA = true;
+	protected static String ALL_VOLUMES = "*all*";
 
     protected boolean loggedInUserRequired() {
         return false;
@@ -199,12 +200,17 @@ public class Admin extends PapillonBasePO {
 				EDIT_DATA = (setEditDataString!=null && !setEditDataString.equals(""));
                 this.getSessionData().writeUserMessage("EditData is set? " + EDIT_DATA);
             }
-			else if (null != myGetParameter(content.NAME_ReConstructionIndex)) {
-				fr.imag.clips.papillon.business.dictionary.VolumesFactory.reConstructionIndex();
-                
-            // FIXME: supress    
-            } else if (null != myGetParameter(content.NAME_ModifiedStatus)) {
-                this.getSessionData().writeUserMessage("Status modification has been desactivated...");				
+			else if (null != myGetParameter(content.NAME_ReConstructionIndex) &&
+					 null != myGetParameter(content.NAME_VOLUME)) {
+				if (myGetParameter(content.NAME_VOLUME).equals(ALL_VOLUMES)) {
+					fr.imag.clips.papillon.business.dictionary.VolumesFactory.reConstructionIndex();
+				}
+				else {
+					fr.imag.clips.papillon.business.dictionary.VolumesFactory.volumeNameReConstructionIndex(myGetParameter(content.NAME_VOLUME));
+				}
+					// FIXME: supress    
+			} else if (null != myGetParameter(content.NAME_ModifiedStatus)) {
+					this.getSessionData().writeUserMessage("Status modification has been desactivated...");				
                 //fr.imag.clips.papillon.business.dictionary.VolumesFactory.modifiedStatus(this.getUser());
             
             } else if (null != myGetParameter(content.NAME_Standardization)) {

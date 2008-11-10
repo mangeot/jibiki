@@ -1313,6 +1313,82 @@ public class VolumesFactory {
         return theString;
     }
 
+    /**
+     * The reConstructionIndex rebuild the volume index.
+     *
+     * @throws PapillonBusinessException
+     */
+    protected static void volumeReConstructionIndex(Volume volume)
+	throws fr.imag.clips.papillon.business.PapillonBusinessException {
+
+		//
+		int count = volume.getCount();
+		int delta = 20; // buffer limit
+		PapillonLogger.writeDebugMsg("Volume : " + volume.getName() + " - " + count + " entries");
+		
+		//
+		for (int i = 0; i < count; i = i + delta) {
+			
+			try {
+				
+				// Begin transaction
+				CurrentDBTransaction.registerNewDBTransaction();
+				
+				// Buffer volumeEntries
+				Collection bufferResults = VolumeEntriesFactory.getVolumeEntries(volume, i, delta);
+				
+				//
+				Iterator buffer = bufferResults.iterator();
+				while (buffer.hasNext()) {
+					VolumeEntry ve = (VolumeEntry) buffer.next();
+					
+					//
+					ParseVolume.indexEntry(ve);
+					
+				}
+				
+				// End transaction : a part was correct, commit the transaction ...
+				((DBTransaction) CurrentDBTransaction.get()).commit();
+				PapillonLogger.writeDebugMsg(Integer.toString(i) + " to " + Integer.toString(i + delta - 1));
+				
+			} catch (Exception e) {
+				String userMessage = "Problems when re-index entries.";
+				PapillonLogger.writeDebugMsg(userMessage);
+				e.printStackTrace();
+				
+				//
+				try {
+					((DBTransaction) CurrentDBTransaction.get()).rollback();
+				} catch (java.sql.SQLException sqle) {
+					PapillonLogger.writeDebugMsg(
+												 "reConstructionIndex: SQLException while rolling back failed transaction.");
+					sqle.printStackTrace();
+				}
+				
+			} finally {
+				CurrentDBTransaction.releaseCurrentDBTransaction();
+			}
+		}
+		
+		//
+		PapillonLogger.writeDebugMsg(volume.getName() + " index re-construction succeed !");
+		
+	}
+	
+    /**
+     * The reConstructionIndex rebuild the volume index.
+     *
+     * @throws PapillonBusinessException
+     */
+    public static void volumeNameReConstructionIndex(String volumeName) 
+		throws fr.imag.clips.papillon.business.PapillonBusinessException {
+			if (volumeName != null && !volumeName.equals("")) {
+				Volume theVolume = VolumesFactory.getVolumeByName(volumeName);
+				if (theVolume != null && !theVolume.isEmpty()) {
+					volumeReConstructionIndex(theVolume);
+				}
+			}
+	}
 
     /**
      * The reConstructionIndex rebuild the volume index.
@@ -1325,61 +1401,8 @@ public class VolumesFactory {
         //
         for (Iterator iter = getVolumesArray().iterator(); iter.hasNext();) {
             Volume volume = (Volume) iter.next();
-
-            //
-            int count = volume.getCount();
-            int delta = 20; // buffer limit
-            PapillonLogger.writeDebugMsg("Volume : " + volume.getName() + " - " + count + " entries");
-
-            //
-            for (int i = 0; i < count; i = i + delta) {
-
-                try {
-
-                    // Begin transaction
-                    CurrentDBTransaction.registerNewDBTransaction();
-
-                    // Buffer volumeEntries
-                    Collection bufferResults = VolumeEntriesFactory.getVolumeEntries(volume, i, delta);
-
-                    //
-                    Iterator buffer = bufferResults.iterator();
-                    while (buffer.hasNext()) {
-                        VolumeEntry ve = (VolumeEntry) buffer.next();
-
-                        //
-                        ParseVolume.indexEntry(ve);
-
-                    }
-
-                    // End transaction : a part was correct, commit the transaction ...
-                    ((DBTransaction) CurrentDBTransaction.get()).commit();
-                    PapillonLogger.writeDebugMsg(Integer.toString(i) + " to " + Integer.toString(i + delta - 1));
-
-                } catch (Exception e) {
-                    String userMessage = "Problems when re-index entries.";
-                    PapillonLogger.writeDebugMsg(userMessage);
-                    e.printStackTrace();
-
-                    //
-                    try {
-                        ((DBTransaction) CurrentDBTransaction.get()).rollback();
-                    } catch (java.sql.SQLException sqle) {
-                        PapillonLogger.writeDebugMsg(
-                                "reConstructionIndex: SQLException while rolling back failed transaction.");
-                        sqle.printStackTrace();
-                    }
-
-                } finally {
-                    CurrentDBTransaction.releaseCurrentDBTransaction();
-                }
-            }
-
-            //
-            PapillonLogger.writeDebugMsg(volume.getName() + " index re-construction succeed !");
-
-        }
-
+			volumeReConstructionIndex(volume);
+		}
         //
         PapillonLogger.writeDebugMsg("Index re-construction process succeed !");
     }

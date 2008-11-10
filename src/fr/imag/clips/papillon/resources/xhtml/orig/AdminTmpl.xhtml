@@ -106,8 +106,15 @@
 <table width="600" border="0" cellspacing="0" cellpadding="0" summary="Formulaire">
   <tr>
     <td><b>&nbsp;Action:</b></td> 
-    <td><input id="ReConstructionIndex" name="ReConstructionIndex" type="submit" value="ReConstruction"/></td>  
-  </tr>
+ 	<td><b>Volume:</b>
+            <select name="VOLUME">
+            <option id="all" value="*all*" label="all">all</option>
+            <option id="VolumeOptionTemplate" value="NONE" label="NONE">NONE</option>
+        </select>
+		 <input id="ReConstructionIndex" name="ReConstructionIndex" type="submit" value="ReConstruction"/>
+	</td>  
+ </tr>
+
 </table>
 
 <h3 style="text-align:center">Status</h3>
