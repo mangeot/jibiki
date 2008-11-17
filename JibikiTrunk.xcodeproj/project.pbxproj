@@ -1271,7 +1271,7 @@
 		A30727420EC89B2C00733910 /* LangAndUser.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = LangAndUser.xhtml; sourceTree = "<group>"; };
 		A30727430EC89B2C00733910 /* LangAndUser.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LangAndUser.xmlc; sourceTree = "<group>"; };
 		A30727440EC89B2C00733910 /* Layout.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Layout.xhtml; sourceTree = "<group>"; };
-		A30727450EC89B2C00733910 /* LexalpEditEntryInit.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = LexalpEditEntryInit.xhtml; sourceTree = "<group>"; };
+		A30727450EC89B2C00733910 /* LexalpEditEntryInit.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = LexalpEditEntryInit.xhtml; path = ../../xhtml/orig/LexalpEditEntryInit.xhtml; sourceTree = "<group>"; };
 		A30727460EC89B2C00733910 /* LexiesManagement.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = LexiesManagement.xhtml; sourceTree = "<group>"; };
 		A30727470EC89B2C00733910 /* LexiesManagement.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LexiesManagement.xmlc; sourceTree = "<group>"; };
 		A30727480EC89B2C00733910 /* LinkerBrowserForm.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = LinkerBrowserForm.xhtml; sourceTree = "<group>"; };
@@ -1319,6 +1319,7 @@
 		A30727770EC89B2D00733910 /* dump_database */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = dump_database; sourceTree = "<group>"; };
 		A30727780EC89B2D00733910 /* multilingual-sort.sql */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "multilingual-sort.sql"; sourceTree = "<group>"; };
 		A30727790EC89B2D00733910 /* restore_database */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = restore_database; sourceTree = "<group>"; };
+		A3216DE90ED17C22009BC773 /* LexalpEditEntryInit.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = LexalpEditEntryInit.xhtml; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -2580,6 +2581,7 @@
 				A30725590EC89B2800733910 /* InformationTmpl.xhtml */,
 				A307255A0EC89B2800733910 /* LangAndUser.xhtml */,
 				A307255B0EC89B2800733910 /* Layout.xhtml */,
+				A3216DE90ED17C22009BC773 /* LexalpEditEntryInit.xhtml */,
 				A307255C0EC89B2800733910 /* LexiesManagement.xhtml */,
 				A307255D0EC89B2800733910 /* LinkerLayout.xhtml */,
 				A307255E0EC89B2800733910 /* LoginUserTmpl.xhtml */,

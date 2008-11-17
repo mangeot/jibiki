@@ -1,5 +1,12 @@
 // !$*UTF8*$!
 {
+	A307223C0EC89B1E00733910 /* QueryRequest.java */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {833, 10810}}";
+			sepNavSelRange = "{1452, 0}";
+			sepNavVisRange = "{164, 1496}";
+		};
+	};
 	A30722AD0EC89B2000733910 /* CurrentDBTransaction.java */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {833, 1335}}";
@@ -21,6 +28,13 @@
 			sepNavVisRange = "{7202, 2274}";
 		};
 	};
+	A30722FE0EC89B2200733910 /* LexalpEditEntryInit.java */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1732, 8196}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{18906, 2152}";
+		};
+	};
 	A307233F0EC89B2300733910 /* papillon-home.css */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1196, 15503}}";
@@ -33,6 +47,13 @@
 			sepNavIntBoundsRect = "{{0, 0}, {884, 2651}}";
 			sepNavSelRange = "{3537, 0}";
 			sepNavVisRange = "{3173, 1538}";
+		};
+	};
+	A30727460EC89B2C00733910 /* LexiesManagement.xhtml */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {884, 831}}";
+			sepNavSelRange = "{675, 22}";
+			sepNavVisRange = "{0, 929}";
 		};
 	};
 	A307277E0EC89C7000733910 /* Default */ = {
@@ -197,6 +218,7 @@
 		activeExecutable = A3108D7F0EC89DC500EEEF18 /* Executable */;
 		activeTarget = A307277E0EC89C7000733910 /* Default */;
 		addToTargets = (
+			A307277E0EC89C7000733910 /* Default */,
 		);
 		codeSenseManager = A348B7090E7EFB50003F6712 /* Code sense */;
 		executables = (
