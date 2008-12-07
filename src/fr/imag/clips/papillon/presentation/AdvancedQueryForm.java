@@ -524,7 +524,9 @@ public class AdvancedQueryForm {
        //
         for (Iterator iter = qp.getDictionaries().iterator(); iter.hasNext();) {
             Dictionary dict = (Dictionary)iter.next();
-            AbstractPO.setSelected(queryDoc.getElementDictionaries(), dict.getName());
+			if (dict !=null && !dict.isEmpty()) {
+				AbstractPO.setSelected(queryDoc.getElementDictionaries(), dict.getName());
+			}
         }
         
         //
