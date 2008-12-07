@@ -37,9 +37,9 @@
 	};
 	A307233F0EC89B2300733910 /* papillon-home.css */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1196, 15503}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1196, 15522}}";
 			sepNavSelRange = "{8864, 6}";
-			sepNavVisRange = "{10889, 1133}";
+			sepNavVisRange = "{10889, 1113}";
 		};
 	};
 	A30725370EC89B2700733910 /* AdminTmpl.xhtml */ = {
@@ -285,8 +285,8 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 248609193;
-			PBXWorkspaceStateSaveDate = 248609193;
+			PBXPerProjectTemplateStateSaveDate = 250319812;
+			PBXWorkspaceStateSaveDate = 250319812;
 		};
 		perUserProjectItems = {
 			A30727840EC89C7F00733910 = A30727840EC89C7F00733910 /* PBXTextBookmark */;
@@ -301,6 +301,7 @@
 			A3108DAD0EC8AD4F00EEEF18 = A3108DAD0EC8AD4F00EEEF18 /* PBXTextBookmark */;
 			A3108DAE0EC8AD4F00EEEF18 = A3108DAE0EC8AD4F00EEEF18 /* PBXTextBookmark */;
 			A3108DAF0EC8AD4F00EEEF18 = A3108DAF0EC8AD4F00EEEF18 /* PBXTextBookmark */;
+			A3DF488E0EEB93DE002B49CC /* PBXTextBookmark */ = A3DF488E0EEB93DE002B49CC /* PBXTextBookmark */;
 		};
 		sourceControlManager = A348B7080E7EFB50003F6712 /* Source Control */;
 		userBookmarkGroup = A39DAFCD0E9E380400BA22F4 /* PBXBookmarkGroup */;
@@ -343,5 +344,15 @@
 		rType = 0;
 		vrLen = 987;
 		vrLoc = 9552;
+	};
+	A3DF488E0EEB93DE002B49CC /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = A307233F0EC89B2300733910 /* papillon-home.css */;
+		name = "papillon-home.css: 474";
+		rLen = 6;
+		rLoc = 8864;
+		rType = 0;
+		vrLen = 1113;
+		vrLoc = 10889;
 	};
 }
