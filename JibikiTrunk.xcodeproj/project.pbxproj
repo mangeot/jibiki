@@ -671,46 +671,26 @@
 		A30724D00EC89B2700733910 /* ViewDictionaries.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ViewDictionaries.xhtml; sourceTree = "<group>"; };
 		A30724D10EC89B2700733910 /* ViewDictionaries.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ViewDictionaries.xmlc; sourceTree = "<group>"; };
 		A30724D30EC89B2700733910 /* AdminInformationsTmpl.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdminInformationsTmpl.xhtml; sourceTree = "<group>"; };
-		A30724D40EC89B2700733910 /* AdminInformationsTmpl.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AdminInformationsTmpl.xmlc; sourceTree = "<group>"; };
 		A30724D50EC89B2700733910 /* AdministrationMenu.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdministrationMenu.xhtml; sourceTree = "<group>"; };
-		A30724D60EC89B2700733910 /* AdministrationMenu.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AdministrationMenu.xmlc; sourceTree = "<group>"; };
 		A30724D70EC89B2700733910 /* Consult.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Consult.xhtml; sourceTree = "<group>"; };
-		A30724D80EC89B2700733910 /* Consult.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Consult.xmlc; sourceTree = "<group>"; };
 		A30724D90EC89B2700733910 /* ConsultInformationsTmpl.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ConsultInformationsTmpl.xhtml; sourceTree = "<group>"; };
-		A30724DA0EC89B2700733910 /* ConsultInformationsTmpl.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ConsultInformationsTmpl.xmlc; sourceTree = "<group>"; };
 		A30724DB0EC89B2700733910 /* EditEntryInit.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = EditEntryInit.xhtml; sourceTree = "<group>"; };
-		A30724DC0EC89B2700733910 /* EditEntryInit.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EditEntryInit.xmlc; sourceTree = "<group>"; };
 		A30724DD0EC89B2700733910 /* LoginUserTmpl.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = LoginUserTmpl.xhtml; sourceTree = "<group>"; };
-		A30724DE0EC89B2700733910 /* LoginUserTmpl.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LoginUserTmpl.xmlc; sourceTree = "<group>"; };
 		A30724DF0EC89B2700733910 /* options.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = options.xmlc; sourceTree = "<group>"; };
 		A30724E00EC89B2700733910 /* Register.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Register.xhtml; sourceTree = "<group>"; };
-		A30724E10EC89B2700733910 /* Register.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Register.xmlc; sourceTree = "<group>"; };
 		A30724E20EC89B2700733910 /* ReviewerMenu.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ReviewerMenu.xhtml; sourceTree = "<group>"; };
-		A30724E30EC89B2700733910 /* ReviewerMenu.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ReviewerMenu.xmlc; sourceTree = "<group>"; };
 		A30724E40EC89B2700733910 /* UserProfile.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = UserProfile.xhtml; sourceTree = "<group>"; };
-		A30724E50EC89B2700733910 /* UserProfile.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UserProfile.xmlc; sourceTree = "<group>"; };
 		A30724E60EC89B2700733910 /* ViewDictionaries.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ViewDictionaries.xhtml; sourceTree = "<group>"; };
-		A30724E70EC89B2700733910 /* ViewDictionaries.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ViewDictionaries.xmlc; sourceTree = "<group>"; };
 		A30724E90EC89B2700733910 /* AdminContributionsTmpl.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdminContributionsTmpl.xhtml; sourceTree = "<group>"; };
-		A30724EA0EC89B2700733910 /* AdminContributionsTmpl.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AdminContributionsTmpl.xmlc; sourceTree = "<group>"; };
 		A30724EB0EC89B2700733910 /* AdminDictionaries.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdminDictionaries.xhtml; sourceTree = "<group>"; };
-		A30724EC0EC89B2700733910 /* AdminDictionaries.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AdminDictionaries.xmlc; sourceTree = "<group>"; };
 		A30724ED0EC89B2700733910 /* AdminEntriesTmpl.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdminEntriesTmpl.xhtml; sourceTree = "<group>"; };
-		A30724EE0EC89B2700733910 /* AdminEntriesTmpl.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AdminEntriesTmpl.xmlc; sourceTree = "<group>"; };
 		A30724EF0EC89B2700733910 /* AdminGroupsTmpl.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdminGroupsTmpl.xhtml; sourceTree = "<group>"; };
-		A30724F00EC89B2700733910 /* AdminGroupsTmpl.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AdminGroupsTmpl.xmlc; sourceTree = "<group>"; };
 		A30724F10EC89B2700733910 /* AdminInformationsTmpl.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdminInformationsTmpl.xhtml; sourceTree = "<group>"; };
-		A30724F20EC89B2700733910 /* AdminInformationsTmpl.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AdminInformationsTmpl.xmlc; sourceTree = "<group>"; };
 		A30724F30EC89B2700733910 /* AdministrationMenu.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdministrationMenu.xhtml; sourceTree = "<group>"; };
-		A30724F40EC89B2700733910 /* AdministrationMenu.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AdministrationMenu.xmlc; sourceTree = "<group>"; };
 		A30724F50EC89B2700733910 /* AdminUsersTmpl.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdminUsersTmpl.xhtml; sourceTree = "<group>"; };
-		A30724F60EC89B2700733910 /* AdminUsersTmpl.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AdminUsersTmpl.xmlc; sourceTree = "<group>"; };
 		A30724F70EC89B2700733910 /* AdminVolumes.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdminVolumes.xhtml; sourceTree = "<group>"; };
-		A30724F80EC89B2700733910 /* AdminVolumes.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AdminVolumes.xmlc; sourceTree = "<group>"; };
 		A30724F90EC89B2700733910 /* AdminXslTmpl.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdminXslTmpl.xhtml; sourceTree = "<group>"; };
-		A30724FA0EC89B2700733910 /* AdminXslTmpl.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AdminXslTmpl.xmlc; sourceTree = "<group>"; };
 		A30724FB0EC89B2700733910 /* AdvancedSearch.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdvancedSearch.xhtml; sourceTree = "<group>"; };
-		A30724FC0EC89B2700733910 /* AdvancedSearch.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AdvancedSearch.xmlc; sourceTree = "<group>"; };
 		A30724FD0EC89B2700733910 /* Consult.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Consult.xhtml; sourceTree = "<group>"; };
 		A30724FE0EC89B2700733910 /* Consult.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Consult.xmlc; sourceTree = "<group>"; };
 		A30724FF0EC89B2700733910 /* ConsultExpert.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ConsultExpert.xhtml; sourceTree = "<group>"; };
@@ -2427,26 +2407,16 @@
 			isa = PBXGroup;
 			children = (
 				A30724D30EC89B2700733910 /* AdminInformationsTmpl.xhtml */,
-				A30724D40EC89B2700733910 /* AdminInformationsTmpl.xmlc */,
 				A30724D50EC89B2700733910 /* AdministrationMenu.xhtml */,
-				A30724D60EC89B2700733910 /* AdministrationMenu.xmlc */,
 				A30724D70EC89B2700733910 /* Consult.xhtml */,
-				A30724D80EC89B2700733910 /* Consult.xmlc */,
 				A30724D90EC89B2700733910 /* ConsultInformationsTmpl.xhtml */,
-				A30724DA0EC89B2700733910 /* ConsultInformationsTmpl.xmlc */,
 				A30724DB0EC89B2700733910 /* EditEntryInit.xhtml */,
-				A30724DC0EC89B2700733910 /* EditEntryInit.xmlc */,
 				A30724DD0EC89B2700733910 /* LoginUserTmpl.xhtml */,
-				A30724DE0EC89B2700733910 /* LoginUserTmpl.xmlc */,
 				A30724DF0EC89B2700733910 /* options.xmlc */,
 				A30724E00EC89B2700733910 /* Register.xhtml */,
-				A30724E10EC89B2700733910 /* Register.xmlc */,
 				A30724E20EC89B2700733910 /* ReviewerMenu.xhtml */,
-				A30724E30EC89B2700733910 /* ReviewerMenu.xmlc */,
 				A30724E40EC89B2700733910 /* UserProfile.xhtml */,
-				A30724E50EC89B2700733910 /* UserProfile.xmlc */,
 				A30724E60EC89B2700733910 /* ViewDictionaries.xhtml */,
-				A30724E70EC89B2700733910 /* ViewDictionaries.xmlc */,
 			);
 			path = est;
 			sourceTree = "<group>";
@@ -2455,25 +2425,15 @@
 			isa = PBXGroup;
 			children = (
 				A30724E90EC89B2700733910 /* AdminContributionsTmpl.xhtml */,
-				A30724EA0EC89B2700733910 /* AdminContributionsTmpl.xmlc */,
 				A30724EB0EC89B2700733910 /* AdminDictionaries.xhtml */,
-				A30724EC0EC89B2700733910 /* AdminDictionaries.xmlc */,
 				A30724ED0EC89B2700733910 /* AdminEntriesTmpl.xhtml */,
-				A30724EE0EC89B2700733910 /* AdminEntriesTmpl.xmlc */,
 				A30724EF0EC89B2700733910 /* AdminGroupsTmpl.xhtml */,
-				A30724F00EC89B2700733910 /* AdminGroupsTmpl.xmlc */,
 				A30724F10EC89B2700733910 /* AdminInformationsTmpl.xhtml */,
-				A30724F20EC89B2700733910 /* AdminInformationsTmpl.xmlc */,
 				A30724F30EC89B2700733910 /* AdministrationMenu.xhtml */,
-				A30724F40EC89B2700733910 /* AdministrationMenu.xmlc */,
 				A30724F50EC89B2700733910 /* AdminUsersTmpl.xhtml */,
-				A30724F60EC89B2700733910 /* AdminUsersTmpl.xmlc */,
 				A30724F70EC89B2700733910 /* AdminVolumes.xhtml */,
-				A30724F80EC89B2700733910 /* AdminVolumes.xmlc */,
 				A30724F90EC89B2700733910 /* AdminXslTmpl.xhtml */,
-				A30724FA0EC89B2700733910 /* AdminXslTmpl.xmlc */,
 				A30724FB0EC89B2700733910 /* AdvancedSearch.xhtml */,
-				A30724FC0EC89B2700733910 /* AdvancedSearch.xmlc */,
 				A30724FD0EC89B2700733910 /* Consult.xhtml */,
 				A30724FE0EC89B2700733910 /* Consult.xmlc */,
 				A30724FF0EC89B2700733910 /* ConsultExpert.xhtml */,

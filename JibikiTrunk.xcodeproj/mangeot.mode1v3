@@ -256,7 +256,7 @@
 							<key>PBXSmartGroupTreeModuleColumnWidthsKey</key>
 							<array>
 								<real>22</real>
-								<real>276</real>
+								<real>351</real>
 							</array>
 							<key>PBXSmartGroupTreeModuleColumnsKey_v4</key>
 							<array>
@@ -275,6 +275,8 @@
 								<string>A307221F0EC89B1E00733910</string>
 								<string>A30722200EC89B1E00733910</string>
 								<string>A30722210EC89B1E00733910</string>
+								<string>A30722220EC89B1E00733910</string>
+								<string>A30722C20EC89B2100733910</string>
 								<string>A30723380EC89B2300733910</string>
 								<string>A307247B0EC89B2600733910</string>
 								<string>A307252E0EC89B2700733910</string>
@@ -285,10 +287,8 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
+									<integer>80</integer>
 									<integer>70</integer>
-									<integer>49</integer>
-									<integer>43</integer>
-									<integer>37</integer>
 									<integer>7</integer>
 									<integer>6</integer>
 									<integer>5</integer>
@@ -298,7 +298,7 @@
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 339}, {298, 824}}</string>
+							<string>{{0, 1146}, {373, 824}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -310,13 +310,13 @@
 					<key>GeometryConfiguration</key>
 					<dict>
 						<key>Frame</key>
-						<string>{{0, 0}, {315, 842}}</string>
+						<string>{{0, 0}, {390, 842}}</string>
 						<key>GroupTreeTableConfiguration</key>
 						<array>
 							<string>SCMStatusColumn</string>
 							<real>22</real>
 							<string>MainColumn</string>
-							<real>276</real>
+							<real>351</real>
 						</array>
 						<key>RubberWindowFrame</key>
 						<string>157 55 1214 883 0 0 1440 938 </string>
@@ -324,7 +324,7 @@
 					<key>Module</key>
 					<string>PBXSmartGroupTreeModule</string>
 					<key>Proportion</key>
-					<string>315pt</string>
+					<string>390pt</string>
 				</dict>
 				<dict>
 					<key>Dock</key>
@@ -337,7 +337,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>papillon-home.css</string>
+								<string>AdvancedQueryForm.java</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -345,11 +345,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>papillon-home.css</string>
+										<string>AdvancedQueryForm.java</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>A3DF488E0EEB93DE002B49CC</string>
+										<string>A3DF489C0EEBEEE5002B49CC</string>
 										<key>history</key>
 										<array>
 											<string>A30727840EC89C7F00733910</string>
@@ -357,7 +357,8 @@
 											<string>A3108DA70EC8AD4F00EEEF18</string>
 											<string>A3108DA80EC8AD4F00EEEF18</string>
 											<string>A3108DA90EC8AD4F00EEEF18</string>
-											<string>A3108DAF0EC8AD4F00EEEF18</string>
+											<string>A3DF48990EEBEEE5002B49CC</string>
+											<string>A3DF489A0EEBEEE5002B49CC</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -366,6 +367,7 @@
 											<string>A3108DAC0EC8AD4F00EEEF18</string>
 											<string>A3108DAD0EC8AD4F00EEEF18</string>
 											<string>A3108DAE0EC8AD4F00EEEF18</string>
+											<string>A3DF489B0EEBEEE5002B49CC</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -377,7 +379,7 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {894, 837}}</string>
+								<string>{{0, 0}, {819, 837}}</string>
 								<key>RubberWindowFrame</key>
 								<string>157 55 1214 883 0 0 1440 938 </string>
 							</dict>
@@ -397,7 +399,7 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 868}, {894, 0}}</string>
+								<string>{{0, 842}, {819, 0}}</string>
 								<key>RubberWindowFrame</key>
 								<string>157 55 1214 883 0 0 1440 938 </string>
 							</dict>
@@ -408,7 +410,7 @@
 						</dict>
 					</array>
 					<key>Proportion</key>
-					<string>894pt</string>
+					<string>819pt</string>
 				</dict>
 			</array>
 			<key>Name</key>
