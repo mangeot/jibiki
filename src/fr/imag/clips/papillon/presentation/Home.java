@@ -547,7 +547,6 @@ public class Home
                 listStatus.add(criteriaModifiedStatus);
  
                // queryReq.addOrCriteriaList(listStatus);
-				//queryReq.filterVolumes();
                 if (searchKind.equals(EXACT_MATCH)) {
                     //// CLASSIC SEARCH
                     // Perform the request

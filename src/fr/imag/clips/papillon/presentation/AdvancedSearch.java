@@ -205,6 +205,8 @@ public class AdvancedSearch extends PapillonBasePO {
         // Create query request
         QueryRequest queryReq = qf.getQueryRequest();
         
+		
+		
         // Display query result if query request have criteria
         // Display query result if no action on form (add ou remove criteria)
         if (!queryReq.isEmpty() && !qf.actionOnFormRequested()) {

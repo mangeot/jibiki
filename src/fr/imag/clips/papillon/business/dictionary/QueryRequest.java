@@ -338,7 +338,7 @@ import java.util.Vector;
         public ArrayList findLexie(User user)  throws PapillonBusinessException {
             try {
                 ArrayList result = new ArrayList();
-
+				filterVolumes();
                 for (Iterator iter = volumes.iterator(); iter.hasNext();) {
                     Volume volume = (Volume)iter.next();
 
@@ -480,6 +480,7 @@ import java.util.Vector;
         }
 		
 		public void filterVolumes() throws PapillonBusinessException {
+			if (volumes.size()>1) {
 			int i=0;
 			while (i<volumes.size()) {
 				boolean keepVolume = true;
@@ -510,6 +511,7 @@ import java.util.Vector;
 				else {
 					i++;
 				}
+			}
 			}
 		}
 		
