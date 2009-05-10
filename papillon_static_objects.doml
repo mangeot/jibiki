@@ -105,6 +105,54 @@
               <initialValue>1</initialValue>
           </column>
         </table>
+		       <table id="fr.imag.clips.papillon.data.PapillonAxi" dbTableName="papillonaxi">
+          <column id="id" usedForQuery="true">
+            <javadoc>/**
+ * the external id
+ */</javadoc>
+            <type canBeNull="true" dbType="VARCHAR" javaType="String" size="255"/>
+          </column>
+          <column id="semanticCat" usedForQuery="true">
+            <javadoc>/**
+ * the semantic category
+ */</javadoc>
+            <type canBeNull="true" dbType="VARCHAR" javaType="String" size="255"/>
+          </column>
+          <column id="dom">
+            <javadoc>/**
+ * the entry as a dom document node
+ */</javadoc>
+            <type dbType="LONGVARBINARY" javaType="byte[]"/>
+          </column>
+          <column id="htmldom">
+            <javadoc>/**
+ * the entry formatted in html as a dom document node
+ */</javadoc>
+            <type canBeNull="true" dbType="LONGVARBINARY" javaType="byte[]"/>
+          </column>
+          <column id="xmlCode" usedForQuery="true">
+            <javadoc>/**
+ * The XML code of the axi.
+ */</javadoc>
+            <type dbType="LONGVARCHAR" javaType="String"/>
+          </column>
+          <column id="lexies">
+            <javadoc>/**
+ * the lexies in a hashtable with the ISO 639-2 lang 3 letter code as access key
+ */</javadoc>
+            <type dbType="LONGVARBINARY" javaType="byte[]"/>
+          </column>
+          <column id="synonyms" usedForQuery="true">
+            <javadoc>/**
+ * The synonym axies
+ */</javadoc>
+            <type canBeNull="true" dbType="VARCHAR" javaType="String" size="255"/>
+          </column>
+		  <index id="id_idx">
+          <indexColumn id="id"/>
+        </index>
+        </table>
+
         <table dbTableName="messages" id="fr.imag.clips.papillon.data.Message">
           <column id="date" usedForQuery="true">
             <javadoc>/**
