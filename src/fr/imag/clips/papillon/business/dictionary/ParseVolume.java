@@ -818,13 +818,11 @@ public class ParseVolume {
                     String xpathString = (String) eltVector.elementAt(0);
                     org.apache.xpath.XPath myXPath = compileXPath(xpathString, myRootElt);
                     if (myXPath != null) {
-                        PapillonLogger.writeDebugMsg(
-                                "compileXPathTable: CDM element: " + CDM_element + " xpath not null: " + xpathString);
+                       // PapillonLogger.writeDebugMsg("compileXPathTable: CDM element: " + CDM_element + " xpath not null: " + xpathString);
                         eltVector.add(myXPath);
                         result = true;
                     } else {
-                        PapillonLogger.writeDebugMsg(
-                                "compileXPathTable: CDM element: " + CDM_element + " xpath null: " + xpathString);
+                  //      PapillonLogger.writeDebugMsg("compileXPathTable: CDM element: " + CDM_element + " xpath null: " + xpathString);
                     }
                 }
             }

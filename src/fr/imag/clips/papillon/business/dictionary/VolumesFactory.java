@@ -279,6 +279,7 @@ public class VolumesFactory {
             // Add volumes in cache (keys are the volume names)
             for (int i = 0; i < DOarray.length; i++) {
                 Volume vol = new Volume(DOarray[i]);
+				updateCdmElementsTable(vol);
                 VolumeCache.putVolumeInCache(vol.getName(), vol);
             }
 
@@ -300,47 +301,33 @@ public class VolumesFactory {
     public static Volume newVolume(String dictname, Element volume, URL fileURL)
             throws fr.imag.clips.papillon.business.PapillonBusinessException, java.io.IOException {
 
-        Hashtable cdmElements = null;
+				String name = volume.getAttribute("name");
+				String dbname = volume.getAttribute("dbname");
+				String location = volume.getAttribute(LOCATION_ATTRIBUTE);
+				String source = volume.getAttribute("source-language");
+				String targets = volume.getAttribute("target-languages");
+				String reverseLookup = volume.getAttribute("reverse-lookup");
+				boolean reverse = (reverseLookup != null && reverseLookup.equals("true"));
+				
+				if (null == dbname || dbname.equals("")) {
+					dbname = name;
+				}
+				
+				NodeList refNodes = volume.getElementsByTagName("volume-ref");
+				String href = "";
+				if (null != refNodes && refNodes.getLength() > 0) {
+					Element tempElt = (Element) refNodes.item(0);
+					href = tempElt.getAttributeNS(XLINK_URI, "href");
+				} else {
+					PapillonLogger.writeDebugMsg("No volume-ref");
+				}
 
-        // Cette méthode dépend du schéma des volumes.
-        String name = volume.getAttribute("name");
-        String dbname = volume.getAttribute("dbname");
-        String location = volume.getAttribute(LOCATION_ATTRIBUTE);
-        String source = volume.getAttribute("source-language");
-        String targets = volume.getAttribute("target-languages");
-        String reverseLookup = volume.getAttribute("reverse-lookup");
-        boolean reverse = (reverseLookup != null && reverseLookup.equals("true"));
-
-        if (null == dbname || dbname.equals("")) {
-            dbname = name;
-        }
-
-        NodeList refNodes = volume.getElementsByTagName("volume-ref");
-        String href = "";
-        if (null != refNodes && refNodes.getLength() > 0) {
-            Element tempElt = (Element) refNodes.item(0);
-            href = tempElt.getAttributeNS(XLINK_URI, "href");
-        } else {
-            PapillonLogger.writeDebugMsg("No volume-ref");
-        }
-
-        NodeList cdmElts = volume.getElementsByTagName(CDM_ELEMENTS_TAG);
-        if (null != cdmElts && cdmElts.getLength() > 0) {
-            Element cdmElt = (Element) cdmElts.item(0);
-            cdmElements = buildCdmElementsTable(cdmElt, source);
-        } else {
-            PapillonLogger.writeDebugMsg("No cdm-elements tag");
-        }
-
-        String schema = getXmlCode(volume, XMLSCHEMA_TAG, fileURL);
+		String schema = getXmlCode(volume, XMLSCHEMA_TAG, fileURL);
         String tmplInterface = getXmlCode(volume, TEMPLATE_INTERFACE_TAG, fileURL);
         String tmplEntry = getXmlCode(volume, TEMPLATE_ENTRY_TAG, fileURL);
 
-        org.w3c.dom.Document myDoc = XMLServices.buildDOMTree(tmplEntry);
-        if (myDoc != null) {
-            ParseVolume.compileXPathTable(cdmElements, myDoc.getDocumentElement());
-        }
-
+		Hashtable cdmElements = createCdmElementsTable(volume, source, tmplEntry);
+				
         // Embedding the entry into a contribution element
         tmplEntry = updateTemplateEntry(tmplEntry, cdmElements);
 
@@ -359,6 +346,44 @@ public class VolumesFactory {
         //
         return newVolume;
     }
+	
+	protected static void updateCdmElementsTable(Volume theVolume) 
+		throws fr.imag.clips.papillon.business.PapillonBusinessException {
+	
+	Document docXml = XMLServices.buildDOMTree(theVolume.getXmlCode());
+	
+	//on recupere le dictionnaire
+	Element volume;
+	boolean virtual = false;
+	volume = (Element) docXml.getElementsByTagName(VOLUME_TAG).item(0);
+	if (volume != null) {
+		Hashtable cdmElements = createCdmElementsTable(volume, theVolume.getSourceLanguage(),theVolume.getTemplateEntry());
+		theVolume.setCdmElements(cdmElements);
+	}
+	}
+	
+	
+	
+	protected static Hashtable createCdmElementsTable(Element volume, String source, String tmplEntry) 
+	throws fr.imag.clips.papillon.business.PapillonBusinessException {
+		Hashtable cdmElements = null;
+		
+        // Cette méthode dépend du schéma des volumes.
+ 		
+        NodeList cdmElts = volume.getElementsByTagName(CDM_ELEMENTS_TAG);
+        if (null != cdmElts && cdmElts.getLength() > 0) {
+            Element cdmElt = (Element) cdmElts.item(0);
+            cdmElements = buildCdmElementsTable(cdmElt, source);
+        } else {
+            PapillonLogger.writeDebugMsg("No cdm-elements tag");
+        }
+				
+        org.w3c.dom.Document myDoc = XMLServices.buildDOMTree(tmplEntry);
+        if (myDoc != null) {
+            ParseVolume.compileXPathTable(cdmElements, myDoc.getDocumentElement());
+        }
+		return cdmElements;
+	}
 
 
     /**
@@ -957,8 +982,7 @@ public class VolumesFactory {
                 }
 
                 String xpath = myElt.getAttribute(XPATH_ATTRIBUTE);
-                PapillonLogger.writeDebugMsg(
-                        "addCdmElementInTable: " + eltName + " lang: " + lang + " index: " + isIndex + " xpath: " + xpath);
+               // PapillonLogger.writeDebugMsg("addCdmElementInTable: " + eltName + " lang: " + lang + " index: " + isIndex + " xpath: " + xpath);
                 addCdmElementInTable(cdmElements, eltName, lang, xpath, isIndex);
             }
         }

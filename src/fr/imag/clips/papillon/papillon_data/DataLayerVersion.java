@@ -121,6 +121,15 @@ public class DataLayerVersion {
                     PapillonLogger.writeDebugMsg("jibikiversion table was created in the database");
                 }
 
+				// check if dom column is present in all volumes
+				// delete it
+				if (ManageDatabase.getColumnNames("volumes").contains("cdmelements")) {
+					ManageDatabase.executeSql(
+											  "alter TABLE volumes drop COLUMN cdmelements ;\n");
+					PapillonLogger.writeDebugMsg("'cdmelements' column dropped in table volumes");                        
+				}
+				
+				
                 Collection vols = VolumesFactory.getVolumes();
                 Iterator volsIter = vols.iterator();
                 while (volsIter.hasNext()) {

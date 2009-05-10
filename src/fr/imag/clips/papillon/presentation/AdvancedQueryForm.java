@@ -189,7 +189,7 @@ public class AdvancedQueryForm {
         if (null == d) {
             
             // return all Dictionaries
-            return DictionariesFactory.getDictionariesArray();
+            return null;
         
         } else {
             ArrayList dictionaries = new ArrayList();
@@ -203,6 +203,18 @@ public class AdvancedQueryForm {
             return dictionaries;
         }
     }
+	
+	public Collection getDisplayableDictionaries(HttpServletRequest req) 
+	throws java.io.UnsupportedEncodingException,
+	com.lutris.appserver.server.httpPresentation.HttpPresentationException {
+		Collection dictionaries  = getRequestedDictionaries(req);
+		if (dictionaries == null) {
+			dictionaries = DictionariesFactory.getDictionariesArray();
+		}
+		return dictionaries;
+	}
+	
+	
     
     public Collection getRequestedVolumes(HttpServletRequest req) 
         throws java.io.UnsupportedEncodingException,
@@ -215,7 +227,8 @@ public class AdvancedQueryForm {
         if (null == d) {
             
             // return all Dictionaries
-            return VolumesFactory.getVolumesArray();
+           // return VolumesFactory.getVolumesArray();
+			return null;
         
         } else {
             ArrayList volumes = new ArrayList();
@@ -229,6 +242,27 @@ public class AdvancedQueryForm {
             return volumes;
         }
     }
+	
+	public Collection getRequestedDictionariesAndVolumes(HttpServletRequest req) 
+	throws java.io.UnsupportedEncodingException,
+	com.lutris.appserver.server.httpPresentation.HttpPresentationException {
+		Collection volumes  = getRequestedVolumes(req);
+			if (volumes == null) {
+				Collection dictionaries = getRequestedDictionaries(req);
+				if (dictionaries !=null && dictionaries.size()>0) {
+					volumes = new ArrayList();
+					Iterator iter = dictionaries.iterator();
+					while(iter.hasNext()) {
+						Dictionary myDict = (Dictionary) iter.next();
+						volumes.addAll(VolumesFactory.getVolumesArray(myDict.getName()));
+					}
+				}
+				else {
+					volumes = VolumesFactory.getVolumesArray();
+				}
+			}
+			return volumes;
+		}
     
     public String getRequestedXsl(HttpServletRequest req) 
         throws java.io.UnsupportedEncodingException,
@@ -394,9 +428,7 @@ public class AdvancedQueryForm {
         try {
             
             // Get all the parameters
-            // FIXME: Dictionaries or volumes search !!!
-            // Modify advanced query form (volumes) and query request (dictionaries) for that ...
-            qrequest = new QueryRequest(getRequestedVolumes(comms.request.getHttpServletRequest()));
+            qrequest = new QueryRequest(getRequestedDictionariesAndVolumes(comms.request.getHttpServletRequest()));
             Collection criteriaList = getRequestedCriteria2(comms.request.getHttpServletRequest());
             for (Iterator iter = criteriaList.iterator(); iter.hasNext();) {
                 qrequest.addCriteria((QueryCriteria)iter.next());
@@ -409,13 +441,13 @@ public class AdvancedQueryForm {
             //FIXME: replace by qrequest
             // Get all the parameters
             qparams = new QueryParameter();
-            qparams.setDictionaries(getRequestedDictionaries(comms.request.getHttpServletRequest()));
+            qparams.setDictionaries(getDisplayableDictionaries(comms.request.getHttpServletRequest()));
             qparams.setCriteria(getRequestedCriteria(comms.request.getHttpServletRequest()));
             qparams.setLimit(getRequestedNumberOfResultsPerPage(comms.request.getHttpServletRequest()));
             qparams.setOffset(getRequestedOffset(comms.request.getHttpServletRequest()));
             qparams.setXsl(getRequestedXsl(comms.request.getHttpServletRequest()));
             qparams.setTargets(getRequestedTargetLanguages(comms.request.getHttpServletRequest()));
-             
+             			
             // Did the user ask the addition or removal of a node ? 
             action = getRequestedAction(comms.request.getHttpServletRequest());
             if (actionOnFormRequested()) {

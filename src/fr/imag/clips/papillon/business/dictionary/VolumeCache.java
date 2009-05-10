@@ -91,13 +91,16 @@ public class VolumeCache {
                 
                 // Key is equal to target
                 Collection targets = vol.getTargetLanguagesArray();
-                String targetsList = new String("");
+                String targetsList = "";
                 for (Iterator iter = targets.iterator(); iter.hasNext();) {
                     String target = (String)iter.next();
                     
                     //
                     putVolumeInCache(volumeCacheByTarget, target, vol);
-                    targetsList = targetsList + target;
+                    targetsList += target;
+					if (iter.hasNext())  {
+						targetsList += ",";
+					}
                 }
                 
                 //

@@ -444,15 +444,7 @@ public class Volume {
 		*/
     protected Volume(VolumeDO theVolumeDO) 
         throws PapillonBusinessException  {
-			try {
-				if (theVolumeDO != null) {
-					this.CDM_elements = Utility.deSerializeHashtable(theVolumeDO.getCdmElements());
-				}
-				this.myDO = theVolumeDO;
-			}
-			catch(DataObjectException ex) {
-				throw new PapillonBusinessException("Error creating volume ", ex);
-			}
+			this.myDO = theVolumeDO;
 		}
 	
     public boolean isEmpty() {
@@ -1229,7 +1221,6 @@ public class Volume {
 			try {
 				// Reset AvailableLanguages caches before saving because it will be modified
 				fr.imag.clips.papillon.business.dictionary.AvailableLanguages.resetCache();
-				this.myDO.setCdmElements(Utility.serializeHashtable(this.CDM_elements));
 				this.myDO.commit();
 			} catch(Exception ex) {
 				throw new PapillonBusinessException("Error saving Volume", ex);
