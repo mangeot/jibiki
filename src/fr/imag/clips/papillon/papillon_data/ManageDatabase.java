@@ -405,7 +405,19 @@ public class ManageDatabase implements Query {
 				return resVector;
 	        }
 	
-
+	public static String getColumnType(String table, String column) {
+		String result = "";
+		
+		String sql = "select typname from pg_type where typelem in " +
+		"(select atttypid from pg_attribute where attname='" + column + "' "+
+		 "and attrelid in (select oid from pg_class where relname='" + table + "'));";
+		java.util.Vector resultVector = executeSqlQuery(sql, "typname");
+		
+		if (resultVector != null && resultVector.size()>0) {
+			result = (String) resultVector.elementAt(0);
+		}
+		return result;
+	}
 
 /*
     protected static void simpleExecuteSql (String sql)

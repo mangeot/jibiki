@@ -120,6 +120,8 @@ public class DataLayerVersion {
                                     ");\n");
                     PapillonLogger.writeDebugMsg("jibikiversion table was created in the database");
                 }
+			}
+
 				
 				/*
 				 BUG47
@@ -156,9 +158,36 @@ public class DataLayerVersion {
                                 "alter TABLE " + vol.getDbname() + " drop COLUMN dom ;\n");
                         PapillonLogger.writeDebugMsg("'dom' column dropped in table " + vol.getDbname());                        
                     }
+					
+					/*
+					 BUG310
+					 I recently found that the table field on where a join is performed must be of the same type.
+					 We had volume.objectid decimal (19,0) with idxvolume.entryid varchar 255.
+					 
+					 I changed this and run tests.
+					 It appears that the search is much faster on very bug dictionaries when:
+					 - all field of the criteria are filled (key, value, lang)
+					 - there is only one criterion.
+					 
+					 If there is more than one criterion and the lang field is missing, the query stucks (I stopped after 30 minutes).
+					 If there is more than one criterion and the lang field is filled, the query is just a little bit faster.
+					 
+					 More tests should be performed in order to ensure that the existing queries will not be stuck. */
+					
+					
+					//if entryid column type is different from objectid column type
+					if (!ManageDatabase.getColumnType(vol.getIndexDbname(),"entryid").equals("_numeric")) {
+                        PapillonLogger.writeDebugMsg("change entryid  column type in table " + vol.getDbname());                        
+                        PapillonLogger.writeDebugMsg("IT TAKES TIME, BE PATIENT.. ");                        
+						ManageDatabase.executeSql("alter table "+ vol.getIndexDbname() + " add column entryid2 numeric(19,0) not null default 0;\n");
+						ManageDatabase.executeSql("update "+ vol.getIndexDbname() + " set entryid2=int4(entryid);\n");
+						ManageDatabase.executeSql("alter table "+ vol.getIndexDbname() + " drop column entryid;\n");
+						ManageDatabase.executeSql("alter table "+ vol.getIndexDbname() + " rename column entryid2 to entryid;\n");
+						ManageDatabase.executeSql("create index "+ vol.getIndexDbname() + "_entryid_idx on "+vol.getIndexDbname() +"(entryid);\n");
+                        PapillonLogger.writeDebugMsg("entryid column type in table " + vol.getDbname() + " changed!");                        
+					}
                 }
-            }
-
+			PapillonLogger.writeDebugMsg("If columns were created or dropped, consider vacuum your database!");
             setDBVersion(currentApplicationVersion);
             PapillonLogger.writeDebugMsg("jibikiversion value incremented.");            
         }

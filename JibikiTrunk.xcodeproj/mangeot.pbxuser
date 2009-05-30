@@ -100,9 +100,9 @@
 	};
 	A30722410EC89B1E00733910 /* VolumeEntriesFactory.java */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1260, 29231}}";
-			sepNavSelRange = "{64816, 0}";
-			sepNavVisRange = "{64290, 875}";
+			sepNavIntBoundsRect = "{{0, 0}, {1236, 29387}}";
+			sepNavSelRange = "{65589, 0}";
+			sepNavVisRange = "{63793, 1035}";
 		};
 	};
 	A30722420EC89B1E00733910 /* VolumeEntry.java */ = {
