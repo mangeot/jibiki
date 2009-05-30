@@ -120,9 +120,16 @@ public class DataLayerVersion {
                                     ");\n");
                     PapillonLogger.writeDebugMsg("jibikiversion table was created in the database");
                 }
-
-				// check if dom column is present in all volumes
-				// delete it
+				
+				/*
+				 BUG47
+				 Deleted the field cdmelements from the volumes table.
+				 It was a serialization of an array, thus causing problems when
+				 changing the version of java.
+				 It is now built at server statup when adding a volume in cache.
+				 check if cdmelements column is present in all volumes
+				 delete it */
+				
 				if (ManageDatabase.getColumnNames("volumes").contains("cdmelements")) {
 					ManageDatabase.executeSql(
 											  "alter TABLE volumes drop COLUMN cdmelements ;\n");

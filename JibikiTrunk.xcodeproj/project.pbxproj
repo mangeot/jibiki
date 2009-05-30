@@ -53,7 +53,7 @@
 		A307223D0EC89B1E00733910 /* QueryResult.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = QueryResult.java; sourceTree = "<group>"; };
 		A307223E0EC89B1E00733910 /* RemoteEntry.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = RemoteEntry.java; sourceTree = "<group>"; };
 		A307223F0EC89B1E00733910 /* Volume.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = Volume.java; sourceTree = "<group>"; };
-		A30722400EC89B1E00733910 /* VolumeCache.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = VolumeCache.java; sourceTree = "<group>"; };
+		A30722400EC89B1E00733910 /* EntryCache.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = EntryCache.java; sourceTree = "<group>"; };
 		A30722410EC89B1E00733910 /* VolumeEntriesFactory.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = VolumeEntriesFactory.java; sourceTree = "<group>"; };
 		A30722420EC89B1E00733910 /* VolumeEntry.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = VolumeEntry.java; sourceTree = "<group>"; };
 		A30722430EC89B1E00733910 /* VolumesFactory.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = VolumesFactory.java; sourceTree = "<group>"; };
@@ -1300,6 +1300,9 @@
 		A30727780EC89B2D00733910 /* multilingual-sort.sql */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "multilingual-sort.sql"; sourceTree = "<group>"; };
 		A30727790EC89B2D00733910 /* restore_database */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = restore_database; sourceTree = "<group>"; };
 		A3216DE90ED17C22009BC773 /* LexalpEditEntryInit.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = LexalpEditEntryInit.xhtml; sourceTree = "<group>"; };
+		A3EE19D70FB6CB26001D2220 /* VolumeCache.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = VolumeCache.java; sourceTree = "<group>"; };
+		A3EE1A110FB6DE0D001D2220 /* papillon_dynamic_objects.doml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = papillon_dynamic_objects.doml; sourceTree = "<group>"; };
+		A3EE1A120FB6DE16001D2220 /* papillon_static_objects.doml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = papillon_static_objects.doml; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -1453,6 +1456,7 @@
 				A307222B0EC89B1E00733910 /* Dictionary.java */,
 				A307222C0EC89B1E00733910 /* DictionaryCache.java */,
 				A307222D0EC89B1E00733910 /* DmlPrefixResolver.java */,
+				A30722400EC89B1E00733910 /* EntryCache.java */,
 				A307222E0EC89B1E00733910 /* ErrorAnswer.java */,
 				A307222F0EC89B1E00733910 /* ExportVolumeEntryProcessor.java */,
 				A30722300EC89B1E00733910 /* FoksEntry.java */,
@@ -1471,7 +1475,7 @@
 				A307223D0EC89B1E00733910 /* QueryResult.java */,
 				A307223E0EC89B1E00733910 /* RemoteEntry.java */,
 				A307223F0EC89B1E00733910 /* Volume.java */,
-				A30722400EC89B1E00733910 /* VolumeCache.java */,
+				A3EE19D70FB6CB26001D2220 /* VolumeCache.java */,
 				A30722410EC89B1E00733910 /* VolumeEntriesFactory.java */,
 				A30722420EC89B1E00733910 /* VolumeEntry.java */,
 				A30722430EC89B1E00733910 /* VolumesFactory.java */,
@@ -3270,6 +3274,8 @@
 		A348B7020E7EFB50003F6712 = {
 			isa = PBXGroup;
 			children = (
+				A3EE1A110FB6DE0D001D2220 /* papillon_dynamic_objects.doml */,
+				A3EE1A120FB6DE16001D2220 /* papillon_static_objects.doml */,
 				A30722060EC89B1D00733910 /* src */,
 			);
 			sourceTree = "<group>";

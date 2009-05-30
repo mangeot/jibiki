@@ -244,7 +244,7 @@ public class IndexFactory {
 					if (null != DOarray) {
 						for (int j=0; j < DOarray.length; j++) {
 							Index myIndex = new Index(DOarray[j]);
-							myEntry = VolumeEntriesFactory.findEntryByHandle(dict, volume, myIndex.getEntryId());
+							myEntry = VolumeEntriesFactory.findEntryByHandle(dict, volume, ""+myIndex.getEntryId());
 							theEntries.add(myEntry);
 						}
 					}
@@ -277,7 +277,7 @@ public class IndexFactory {
 						Index myIndex = new Index(DOarray[j]);
                         // FIXME: this findAnswer stuff is just here to let a chance searchin g for the element in the axies tables.
                         // FIXME: soon, this will only be a findEntryByHandle...
-						IAnswer myAxie = DictionariesFactory.findAnswerByHandle(volume.getName(), myIndex.getEntryId());
+						IAnswer myAxie = DictionariesFactory.findAnswerByHandle(volume.getName(), ""+myIndex.getEntryId());
 						
                         // add by Francis
                         VolumeEntry ve = (VolumeEntry) myAxie;
@@ -299,9 +299,17 @@ public class IndexFactory {
 		Vector theIndex = new Vector();
 		
 		if (entryId != null && !entryId.equals("")) {
+			int intId = 0;
+			try {
+				intId = Integer.parseInt(entryId);
+			}
+			catch(Exception ex) {
+				throw new PapillonBusinessException("Exception in getIndexVectorByEntryId()", ex);
+			}
+			
 			try {
 				IndexQuery query = new IndexQuery(volume.getIndexDbname(), CurrentDBTransaction.get());
-				query.setQueryEntryId(entryId);
+				query.setQueryEntryId(intId);
 				IndexDO[] DOarray = query.getDOArray();
 				if (null != DOarray) {
 					for (int j=0; j < DOarray.length; j++) {
@@ -398,10 +406,19 @@ public class IndexFactory {
 		
 		String cmp_op = QueryBuilder.EQUAL;
 		
+		int intId = 0;
+		try {
+			intId = Integer.parseInt(entryId);
+		}
+		catch(Exception ex) {
+			throw new PapillonBusinessException("Exception in newIndex()", ex);
+		}
+		
+		
 		if (entryId != null && !entryId.equals("")) {
 			try {
 				IndexQuery query = new IndexQuery(indexDbname, CurrentDBTransaction.get());
-				query.setQueryEntryId(entryId);
+				query.setQueryEntryId(intId);
 				IndexDO[] DOarray = query.getDOArray();
 				if (null != DOarray) {
 					for (int j=0; j < DOarray.length; j++) {
@@ -419,6 +436,14 @@ public class IndexFactory {
 	public static Index newIndex(String table, String key, String lang, String value, String handle)
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 			//
+			int intId = 0;
+			try {
+				intId = Integer.parseInt(handle);
+			}
+			catch(Exception ex) {
+				throw new PapillonBusinessException("Exception in newIndex()", ex);
+			}
+			
 			Index newIndex = null;
 			if (value != null) {
 				value = value.trim();
@@ -436,7 +461,7 @@ public class IndexFactory {
 					// value of the key
 					newIndex.setValue(value);
 					// entry id
-					newIndex.setEntryId(handle);
+					newIndex.setEntryId(intId);
 				}
 			}
 			//fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("NEW INDEX : table=" + table + " key=" + key + " lang=" + lang + " value=" + value + " lang=" + handle);

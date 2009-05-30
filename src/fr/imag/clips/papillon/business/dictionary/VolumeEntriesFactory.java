@@ -1102,7 +1102,7 @@ public class VolumeEntriesFactory {
 				IndexDO[] DOarray = query.getDOArray();
 				if (null != DOarray && DOarray.length>0) {
 					Index myIndex = new Index(DOarray[0]);
-					resEntry = findEntryByHandle(myDict, myVolume, myIndex.getEntryId());
+					resEntry = findEntryByHandle(myDict, myVolume, ""+myIndex.getEntryId());
 				}
 			}
 			catch(Exception ex) {
@@ -1485,6 +1485,16 @@ public static Collection getVolumeEntries(Volume volume, int offset, int limit) 
     }
 }
 
+	
+	public static void initializeEntryCache() {
+		EntryCache.entryCacheInit();
+	}
+	
+	public static void cutEntryCache() {
+		EntryCache.cutEntryCaches();
+	}
+	
+	
 
 //
 public static String normalizeValue(String value) {

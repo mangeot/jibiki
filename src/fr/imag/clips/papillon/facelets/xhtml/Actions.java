@@ -67,8 +67,7 @@ public class Actions implements fr.imag.clips.papillon.facelets.api.Actions {
     public Node getActions(String entryid) throws PapillonBusinessException {
         JibikiContext context = CurrentRequestContext.get();
         
-        // FIXME: This will be long enough... We really need to work on caching and multiple volume handling (maybe an explicit id...)
-       PapillonLogger.writeDebugMsg("Pourquoi on refait une requête pour chercher l'entrée ???");
+        // BUG279: This will be long enough... We really need to work on caching and multiple volume handling (maybe an explicit id...)
 		 VolumeEntry ve = VolumeEntriesFactory.findEntryByEntryId(((PapillonSessionData) context.get("sessionData")).getUser(),entryid);
         return this.getActions(ve);
     }

@@ -234,7 +234,7 @@ public class Index {
      *   retrieving data (usually due to an underlying data layer
 	 *   error).
      */
-	public String getEntryId()
+	public int getEntryId()
         throws PapillonBusinessException {
 			try {
 				return myDO.getEntryId();
@@ -251,7 +251,7 @@ public class Index {
      *   retrieving data (usually due to an underlying data layer
 	 *   error).
      */
-     public void setEntryId(String entryId)
+     public void setEntryId(int entryId)
         throws PapillonBusinessException {
             try {
                 myDO.setEntryId(entryId);

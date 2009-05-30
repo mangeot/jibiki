@@ -14,6 +14,7 @@ import com.lutris.dods.builder.generator.query.RDBColumn;
 import com.lutris.dods.builder.generator.query.RDBTable;
 import fr.imag.clips.papillon.CurrentDBTransaction;
 import fr.imag.clips.papillon.CurrentRequestContext;
+import fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory;
 import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.user.User;
@@ -358,10 +359,12 @@ import java.util.Vector;
                     //
                     VolumeEntryDO[] DOarray = veQuery.getDOArray();
                     if (null != DOarray) {
+						VolumeEntriesFactory.cutEntryCache();
                         for (int j=0; j < DOarray.length; j++) {
                             VolumeEntry tempEntry = new VolumeEntry(DictionariesFactory.getDictionaryByName(volume.getDictname()), volume, DOarray[j]);
 							// Add the volume entry in the request context.
                             CurrentRequestContext.get().set(tempEntry.getEntryId(), tempEntry);
+							EntryCache.putEntryInCache(tempEntry);
 							QueryResult queryResult = new QueryResult(QueryResult.UNIQUE_RESULT, tempEntry);
                             result.add(queryResult);
                         }

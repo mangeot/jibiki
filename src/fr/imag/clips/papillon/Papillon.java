@@ -76,6 +76,7 @@ import com.lutris.util.*;
 import com.lutris.logging.Logger;
 
 import fr.imag.clips.papillon.business.dictionary.DictionariesFactory;
+import fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory;
 import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
 import fr.imag.clips.papillon.business.dictionary.AvailableLanguages;
 import fr.imag.clips.papillon.business.xsl.XslSheetFactory;
@@ -208,7 +209,10 @@ public class Papillon extends StandardApplication {
         // Initialize volume cache
         VolumesFactory.initializeVolumeCache();
 
-       // Initialize transformer factory
+        // Initialize volume cache
+        VolumeEntriesFactory.initializeEntryCache();
+
+		// Initialize transformer factory
         // FIXME : For Xalan 2_7_0
         XslSheetFactory.initializeTransformerFactory();
 

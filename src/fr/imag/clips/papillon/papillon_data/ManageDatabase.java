@@ -139,7 +139,7 @@ public class ManageDatabase implements Query {
 		"key VARCHAR(255) DEFAULT '\'''\''    ," +
 		"lang VARCHAR(3) DEFAULT '\'''\''    ," +
 		"value VARCHAR(255) DEFAULT '\'''\''    ," +
-        "entryid VARCHAR(255) DEFAULT '\'''\''    ," +
+        "entryid DECIMAL(19,0) NOT NULL    ," +
         "msort VARCHAR(255) DEFAULT '\'''\''    ," +
         
         "ObjectId DECIMAL(19,0) NOT NULL PRIMARY KEY," +

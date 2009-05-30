@@ -102,7 +102,7 @@
             <javadoc>/**
  * the entry id
  */</javadoc>
-            <type dbType="VARCHAR" javaType="String" size="255"/>
+            <type dbType="DECIMAL (19,0)" javaType="int" canBeNull="false"/>
           </column>
 		  <index id="key_idx">
           	<indexColumn id="key"/>
