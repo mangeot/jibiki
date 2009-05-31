@@ -34,7 +34,9 @@ public class HeadwordListQuery {
                 Volume volume = (Volume)iter.next();
                 String sqlQuery = "SELECT DISTINCT value FROM " + volume.getIndexDbname() +
                         " WHERE key='" + Volume.CDM_headword +
-                        "' AND value ilike '"+ prefix + "%' " +
+				// it seems that ilike takes much more time than like from 8.2 version
+				//       "' AND value ilike '"+ prefix + "%' " +
+				       "' AND value like '"+ prefix + "%' " +
                         "LIMIT "+ limit + ";";
 
                 // System.out.println(sqlQuery);
