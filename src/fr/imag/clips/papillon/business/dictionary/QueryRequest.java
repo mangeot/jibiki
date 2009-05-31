@@ -172,96 +172,73 @@ import java.util.Vector;
                                        )
             )))
         */
-        private void find(QueryBuilder query, String volumeDbName) throws PapillonBusinessException {
-            try {
-                
-                //
+		/*
+		 
+		 select distinct idxlexalpfra.entryId FROM idxlexalpfra WHERE 
+		 (	
+			(
+				(
+					idxlexalpfra.key = 'cdm-headword' 
+					AND  idxlexalpfra.value like 'VA'
+				)
+			)   
+			AND 
+			(
+				(
+					idxlexalpfra.key = 'cdm-contribution-status' 
+					AND  idxlexalpfra.value = 'finished' 
+				)
+				OR 
+				(  
+					idxlexalpfra.key = 'cdm-contribution-status' 
+					AND  idxlexalpfra.value = 'not finished' 
+				)
+			)
+		)
+		 */
+        private void find(QueryBuilder query, RDBTable table) throws PapillonBusinessException {
+            try {               
                 if (isAndTree) {    // AND(OR)
                     Iterator iterAnd = criteriaTree.iterator();
                     while (iterAnd.hasNext()) {
                         ArrayList orNode = (ArrayList)iterAnd.next();
-                        
-                        //
                         query.addWhereOpenParen();
-                        
-                        //
                         Iterator iterOr = orNode.iterator();
                         while (iterOr.hasNext()) {
+							query.addWhereOpenParen();
                             QueryCriteria criteria = (QueryCriteria)iterOr.next();
-                            
-                            // 
-                            RDBTable table = new RDBTable(volumeDbName);
-                            RDBColumn entryIdRDB = new RDBColumn( table, "entryId", false );
-                            RDBColumn[] RDBList = new RDBColumn[1];
-                            RDBList[0] = entryIdRDB;
-                            QueryBuilder queryIn = new QueryBuilder(RDBList);
-                            
-                            //
                             for (int i = 0; i < criteria.size(); i++) {      
-                                //
                                 RDBColumn columnRDB = new RDBColumn( table, criteria.getColumn(i), false );
-                                queryIn.addWhere(columnRDB, criteria.getValue(i), criteria.getStrategie(i));
+                                query.addWhere(columnRDB, criteria.getValue(i), criteria.getStrategie(i));
+								PapillonLogger.writeDebugMsg("value: " + criteria.getValue(i) + " Strategy: " + criteria.getStrategie(i));
                             }
-                            
-                            //
-                            query.addWhereIn(entryIdRDB, queryIn);
+							query.addWhereCloseParen();
                             if ( iterOr.hasNext() ) { query.addWhereOr(); }
                         }
-                        
-                        //
-                        //if (limit != 0) query.addEndClause("LIMIT " + Integer.toString(limit));
-                        //query.addEndClause("OFFSET 10");
-                        
-                        //
                         query.addWhereCloseParen();
                     }
-                    
                 } else {    // OR(AND)
                     Iterator iterOr = criteriaTree.iterator();
                     while (iterOr.hasNext()) {
                         ArrayList andNode = (ArrayList)iterOr.next();
-                        
-                        //
                         query.addWhereOpenParen();
-                        
-                        //
                         Iterator iterAnd = andNode.iterator();
                         while (iterAnd.hasNext()) {
                             QueryCriteria criteria = (QueryCriteria)iterAnd.next();
-                            
-                            // 
-                            RDBTable table = new RDBTable(volumeDbName);
-                            RDBColumn entryIdRDB = new RDBColumn( table, "entryId", false );
-                            RDBColumn[] RDBList = new RDBColumn[1];
-                            RDBList[0] = entryIdRDB;
-                            QueryBuilder queryIn = new QueryBuilder(RDBList);
-                            
-                            //
                             for (int i = 0; i < criteria.size(); i++) {      
-                                //
                                 RDBColumn columnRDB = new RDBColumn( table, criteria.getColumn(i), false );
-                                queryIn.addWhere(columnRDB, criteria.getValue(i), criteria.getStrategie(i));
+                                query.addWhere(columnRDB, criteria.getValue(i), criteria.getStrategie(i));
                             }
-                            
-                            //
-                            query.addWhereIn(entryIdRDB, queryIn);
                         }
-                        
-                        //
-                        //query.addEndClause("LIMIT 10 OFFSET 10");
-                        
-                        //
                         query.addWhereCloseParen();
                         query.addWhereOr();
                     }                    
                 }
-
             } catch(Exception ex) {
                 throw new PapillonBusinessException("Exception in find() ", ex);
             }
         }
         
-
         // find(QueryBuilder query, String volumeDbName, String volumeIndexDbName) 
         // - add to query new criteria
         // - find in volumeDbName and its index
@@ -272,27 +249,52 @@ import java.util.Vector;
          */
         private void findLexie(QueryBuilder query, String volumeDbName, String volumeIndexDbName)  throws PapillonBusinessException {
             try {
-                //
                 RDBTable table = new RDBTable(volumeDbName);
-                
-                //
                 if ( (criteriaTree.size() != 0) && (volumeIndexDbName != null) ) {
-                    
                     // Search in index table
                     RDBTable tableIndex = new RDBTable(volumeIndexDbName);
                     RDBColumn entryIdRDB = new RDBColumn( tableIndex, "entryId", false );
                     RDBColumn[] tableIndexRDBList = new RDBColumn[1];
                     tableIndexRDBList[0] = entryIdRDB;
-                    QueryBuilder querySearch = new QueryBuilder(tableIndexRDBList);
-                    querySearch.distinct();
-                    
-                    //
-                    find(querySearch, volumeIndexDbName);
-                    
-                    //
                     RDBColumn objectIdRDB = new RDBColumn( table, "ObjectId", false );
-                    query.addWhereIn(objectIdRDB, querySearch);
-                } 
+					//query.distinct();
+						if (isAndTree) {    // AND(OR)
+							Iterator iterAnd = criteriaTree.iterator();
+							while (iterAnd.hasNext()) {
+								QueryBuilder querySearch = new QueryBuilder(tableIndexRDBList);
+								ArrayList orNode = (ArrayList)iterAnd.next();
+								Iterator iterOr = orNode.iterator();
+								while (iterOr.hasNext()) {
+									querySearch.addWhereOpenParen();
+									QueryCriteria criteria = (QueryCriteria)iterOr.next();
+									for (int i = 0; i < criteria.size(); i++) {      
+										RDBColumn columnRDB = new RDBColumn( tableIndex, criteria.getColumn(i), false );
+										querySearch.addWhere(columnRDB, criteria.getValue(i), criteria.getStrategie(i));
+										PapillonLogger.writeDebugMsg("value: " + criteria.getValue(i) + " Strategy: " + criteria.getStrategie(i));
+									}
+									querySearch.addWhereCloseParen();
+									if ( iterOr.hasNext() ) { querySearch.addWhereOr(); }
+								}
+								query.addWhereIn(objectIdRDB, querySearch);
+							}
+						} else {    // OR(AND)
+							Iterator iterOr = criteriaTree.iterator();
+							while (iterOr.hasNext()) {
+								QueryBuilder querySearch = new QueryBuilder(tableIndexRDBList);
+								ArrayList andNode = (ArrayList)iterOr.next();
+								Iterator iterAnd = andNode.iterator();
+								while (iterAnd.hasNext()) {
+									QueryCriteria criteria = (QueryCriteria)iterAnd.next();
+									for (int i = 0; i < criteria.size(); i++) {      
+										RDBColumn columnRDB = new RDBColumn( tableIndex, criteria.getColumn(i), false );
+										querySearch.addWhere(columnRDB, criteria.getValue(i), criteria.getStrategie(i));
+									}
+								}
+								querySearch.addWhereOr();
+								query.addWhereIn(objectIdRDB, querySearch);
+							}                    
+						}
+					}                    
                 
             } catch(Exception ex) {
                 throw new PapillonBusinessException("Exception in findLexie() ", ex);
