@@ -249,7 +249,8 @@ import java.util.Vector;
          */
         private void findLexie(QueryBuilder query, String volumeDbName, String volumeIndexDbName)  throws PapillonBusinessException {
             try {
-                RDBTable table = new RDBTable(volumeDbName);
+ 				mergeCriteriaSubtrees();
+               RDBTable table = new RDBTable(volumeDbName);
                 if ( (criteriaTree.size() != 0) && (volumeIndexDbName != null) ) {
                     // Search in index table
                     RDBTable tableIndex = new RDBTable(volumeIndexDbName);
@@ -267,11 +268,8 @@ import java.util.Vector;
 								while (iterOr.hasNext()) {
 									querySearch.addWhereOpenParen();
 									QueryCriteria criteria = (QueryCriteria)iterOr.next();
-									for (int i = 0; i < criteria.size(); i++) {      
-										RDBColumn columnRDB = new RDBColumn( tableIndex, criteria.getColumn(i), false );
-										querySearch.addWhere(columnRDB, criteria.getValue(i), criteria.getStrategie(i));
-										PapillonLogger.writeDebugMsg("value: " + criteria.getValue(i) + " Strategy: " + criteria.getStrategie(i));
-									}
+									//PapillonLogger.writeDebugMsg("criteria: " + criteria.getFullClause());
+									querySearch.addWhere(criteria.getFullClause());
 									querySearch.addWhereCloseParen();
 									if ( iterOr.hasNext() ) { querySearch.addWhereOr(); }
 								}
@@ -284,11 +282,10 @@ import java.util.Vector;
 								ArrayList andNode = (ArrayList)iterOr.next();
 								Iterator iterAnd = andNode.iterator();
 								while (iterAnd.hasNext()) {
+									querySearch.addWhereOpenParen();
 									QueryCriteria criteria = (QueryCriteria)iterAnd.next();
-									for (int i = 0; i < criteria.size(); i++) {      
-										RDBColumn columnRDB = new RDBColumn( tableIndex, criteria.getColumn(i), false );
-										querySearch.addWhere(columnRDB, criteria.getValue(i), criteria.getStrategie(i));
-									}
+									querySearch.addWhere(criteria.getFullClause());
+									querySearch.addWhereCloseParen();
 								}
 								querySearch.addWhereOr();
 								query.addWhereIn(objectIdRDB, querySearch);
@@ -302,6 +299,8 @@ import java.util.Vector;
         }
         
 
+		
+		
 /*        
         //
         private void findAxieFromLexie(QueryBuilder query, String volumeDbName, VolumeEntry ve) throws PapillonBusinessException {
@@ -564,6 +563,140 @@ import java.util.Vector;
 				}
 				//PapillonLogger.writeDebugMsg("filterOrCriteriaTree: " + keepVolume);
 				return keepVolume;
-			}        
+			}  
+
+		// following BUG311
+		private void mergeCriteriaSubtrees()  throws PapillonBusinessException {
+            try {
+                if ( (criteriaTree.size() != 0)) {
+					PapillonLogger.writeDebugMsg("mergeCriteriaSubtrees avant mergeSameCriteria");
+					mergeSameCriteria();
+					PapillonLogger.writeDebugMsg("mergeCriteriaSubtrees apres mergeSameCriteria");
+					if (isAndTree) {    // AND(OR)
+						int i=0;
+						int treeSize = criteriaTree.size();
+						while (i<treeSize) {
+							ArrayList orNode = (ArrayList)criteriaTree.get(i);
+							if (orNode.size()==1) {
+								QueryCriteria criteria = (QueryCriteria)orNode.get(0);
+								treeSize -= mergeSubCriterias(criteriaTree, "AND", orNode,criteria);
+								PapillonLogger.writeDebugMsg("mergeCriteriaSubtrees apres mergeSubCriterias");
+							}
+							i++;
+						}
+					} else {    // OR(AND)
+						int i=0;
+						int treeSize = criteriaTree.size();
+						while (i<treeSize) {
+							ArrayList andNode = (ArrayList)criteriaTree.get(i);
+							if (andNode.size()==1) {
+								QueryCriteria criteria = (QueryCriteria)andNode.get(0);
+								treeSize -= mergeSubCriterias(criteriaTree, "OR", andNode,criteria);
+								PapillonLogger.writeDebugMsg("mergeCriteriaSubtrees apres mergeSubCriterias");
+							}
+							i++;
+						}                    
+					}
+				}                    
+                
+            } catch(Exception ex) {
+                throw new PapillonBusinessException("Exception in mergeCriteriaSubtrees() ", ex);
+            }
+        }
+		
+		// following BUG311		
+		private void mergeSameCriteria()  throws PapillonBusinessException {
+            try {
+                if ( (criteriaTree.size() != 0)) {
+					if (isAndTree) {    // AND(OR)
+						Iterator iterAnd = criteriaTree.iterator();
+						while (iterAnd.hasNext()) {
+							ArrayList orNode = (ArrayList)iterAnd.next();
+							int i = 0;
+							int nodeSize = orNode.size();
+							while (i<nodeSize-1) {
+								QueryCriteria criteria = (QueryCriteria)orNode.get(i);
+								nodeSize -= mergeCriterias(orNode,"OR", criteria);
+								i++;
+							}
+						}
+					} else {    // OR(AND)
+						Iterator iterOr = criteriaTree.iterator();
+						while (iterOr.hasNext()) {
+							ArrayList andNode = (ArrayList)iterOr.next();
+							int i = 0; 
+							int nodeSize = andNode.size();
+							while (i<nodeSize-1) {
+								QueryCriteria criteria = (QueryCriteria)andNode.get(i);
+								//nodeSize -= mergeCriterias(andNode,"AND", criteria);
+								i++;
+							}
+						}                    
+					}
+				}                    
+                
+            } catch(Exception ex) {
+                throw new PapillonBusinessException("Exception in mergeSameCriteria() ", ex);
+            }
+        }
+		
+		// following BUG311
+		private static int mergeCriterias(ArrayList node, String type, QueryCriteria firstCriteria)
+			throws PapillonBusinessException {
+			int res = 0;
+			try {
+			int i=node.indexOf(firstCriteria)+1;
+			int nodeSize = node.size();
+			while (i<nodeSize) {
+				QueryCriteria criteria = (QueryCriteria) node.get(i);
+				if (criteria.getKey() != null && firstCriteria.getKey() != null
+					&& criteria.getKey().equals(firstCriteria.getKey())
+					&& ((criteria.getLang()==null && firstCriteria.getLang() ==null)				
+						|| ( criteria.getLang() != null && firstCriteria.getLang() != null
+							&& criteria.getLang().equals(firstCriteria.getLang()))
+						)) {
+					firstCriteria.appendClause(" "+type+" " + criteria.getClause());
+					node.remove(i);
+					nodeSize--;
+					res++;
+				}	
+				i++;
+			}
+			} catch(Exception ex) {
+				throw new PapillonBusinessException("Exception in mergeCriterias() ", ex);
+			}
+			return res;
+		}
+				
+		// following BUG311
+		private static int mergeSubCriterias(ArrayList node, String type, ArrayList subNode, QueryCriteria firstCriteria)
+			throws PapillonBusinessException {
+				int res = 0;
+				try {
+			int i=node.indexOf(subNode)+1;
+			int nodeSize = node.size();
+			while (i<nodeSize) {
+				subNode = (ArrayList) node.get(i);
+				if (subNode.size()==1) {
+					QueryCriteria criteria = (QueryCriteria)subNode.get(0);
+					if (criteria.getKey() != null && firstCriteria.getKey() != null
+						&& criteria.getKey().equals(firstCriteria.getKey())
+						&& ((criteria.getLang()==null && firstCriteria.getLang() ==null)				
+							|| ( criteria.getLang() != null && firstCriteria.getLang() != null
+								&& criteria.getLang().equals(firstCriteria.getLang()))
+						)) {
+						firstCriteria.appendClause(" "+type+" " + criteria.getClause());
+						node.remove(i);
+						res++;
+						nodeSize--;
+					}	
+				}
+				i++;
+			}
+		} catch(Exception ex) {
+			throw new PapillonBusinessException("Exception in mergeSubCriterias() ", ex);
+		}
+				return res;
+		}
     }
     

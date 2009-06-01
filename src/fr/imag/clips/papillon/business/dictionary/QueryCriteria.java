@@ -21,6 +21,7 @@ public class QueryCriteria {
     private ArrayList criteriaList;
 	private String key= null;
 	private String lang= null;
+	private String clause= null;
     
     public static final String EQUAL = "0";
     public static final String NOT_EQUAL = "1";
@@ -147,7 +148,10 @@ public class QueryCriteria {
             criteria[1] = strategie;
             criteria[2] = value;
         }
-        
+		if (!column.equals("key") && !column.equals("lang"))  {
+			addClause(column + " " + criteria[1] + " '" + criteria[2] + "'");		
+		}
+		
         criteriaList.add(criteria);
     }
     
@@ -188,6 +192,41 @@ public class QueryCriteria {
     
 	public String getKey() {
 		return key;
+	}
+    
+	public String getClause() {
+		return clause;
+	}
+	public String getFullClause() {
+		String resClause = "";
+		if (this.key != null) {
+			resClause += "key='"+this.key+"'";
+		}
+		if (this.lang != null) {
+			if (this.key != null) {
+			resClause += " AND ";
+			}
+			resClause += "lang='"+this.lang+"'";
+		}
+		if (this.clause != null) {
+			resClause = this.clause + " AND " + resClause;
+		}
+		return resClause;
+	}
+	
+	// following BUG311, needed to create clauses
+	private void addClause(String theClause) {
+		if (this.clause != null) {
+			this.clause+= " AND " + theClause;		
+		}
+		else {
+			this.clause = theClause;		
+		}
+	}
+
+	// following BUG311, needed to create clauses
+	public void appendClause(String theClause) {
+		this.clause = "(" + this.clause + theClause + ")";
 	}
     
     // 
