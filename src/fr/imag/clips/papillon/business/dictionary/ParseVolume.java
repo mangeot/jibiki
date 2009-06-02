@@ -867,6 +867,7 @@ public class ParseVolume {
                     myXPath = (org.apache.xpath.XPath) myVector.elementAt(2);
                     if (myXPath != null && myEntryDOM != null) {
                         try {
+							//PapillonLogger.writeDebugMsg("executexPath: 0" + myVector.elementAt(0) + " 1"+ myVector.elementAt(1));
                             org.apache.xpath.objects.XObject myXObject = myXPath.execute(
                                     new org.apache.xpath.XPathContext(), myEntryDOM.getDocumentElement(),
                                     tmpPrefixResolver);
@@ -916,6 +917,7 @@ public class ParseVolume {
         if (myNode != null) {
             resString = myNode.getNodeValue();
         }
+		//PapillonLogger.writeDebugMsg("getCdmString: " + CdmElement + " "+ lang + "" + resString);
         return resString;
     }
 

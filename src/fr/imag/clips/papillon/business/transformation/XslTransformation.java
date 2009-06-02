@@ -238,6 +238,7 @@ public class XslTransformation implements ResultFormatter {
             if (null != dictXsl && !dictXsl.isEmpty()) {
                 // Format document source
                 Node resultNode = formatResult(qr.getSourceEntry().getDom(), dictXsl, usr);
+				//PapillonLogger.writeDebugMsg("ResultNode: " + qr.getSourceEntry().getHeadword() + " node: " + XMLServices.NodeToString(resultNode));
                 rootdiv.appendChild(res.importNode(resultNode, true));
             }
         } 

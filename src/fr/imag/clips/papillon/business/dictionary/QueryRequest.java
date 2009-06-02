@@ -569,9 +569,7 @@ import java.util.Vector;
 		private void mergeCriteriaSubtrees()  throws PapillonBusinessException {
             try {
                 if ( (criteriaTree.size() != 0)) {
-					PapillonLogger.writeDebugMsg("mergeCriteriaSubtrees avant mergeSameCriteria");
 					mergeSameCriteria();
-					PapillonLogger.writeDebugMsg("mergeCriteriaSubtrees apres mergeSameCriteria");
 					if (isAndTree) {    // AND(OR)
 						int i=0;
 						int treeSize = criteriaTree.size();
@@ -580,7 +578,6 @@ import java.util.Vector;
 							if (orNode.size()==1) {
 								QueryCriteria criteria = (QueryCriteria)orNode.get(0);
 								treeSize -= mergeSubCriterias(criteriaTree, "AND", orNode,criteria);
-								PapillonLogger.writeDebugMsg("mergeCriteriaSubtrees apres mergeSubCriterias");
 							}
 							i++;
 						}
