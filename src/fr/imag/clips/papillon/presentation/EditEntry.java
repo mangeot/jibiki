@@ -78,6 +78,8 @@ import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.user.User;
 import fr.imag.clips.papillon.business.user.Group;
 import fr.imag.clips.papillon.business.utility.Utility;
+import fr.imag.clips.papillon.CurrentRequestContext;
+import fr.imag.clips.papillon.facelets.util.JibikiContext;
 
 import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 import java.util.Collection;
@@ -113,6 +115,10 @@ public class EditEntry extends EditingBasePO {
 		throws java.io.UnsupportedEncodingException, 
 			HttpPresentationException {
         
+		
+		// FIXMe to be placed elsewhere, somewhere, I'm thinking about it...
+		this.getSessionData().setPreference("EditEntry.po","targetLanguage","jpn");
+				
         //
         if (DEBUG) PapillonLogger.writeDebugMsg ("EditEntry : getContent");        
                 

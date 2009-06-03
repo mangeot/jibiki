@@ -649,8 +649,8 @@ public class DictionariesFactory {
         *
         * @exception PapillonBusinessException
         */
-    // FIXME: Why Keys1 and Keys2 ? What are they ?
-    protected static Collection getDictionaryNameEntriesCollection(String resource,
+    // Keys1 = keys and Keys2=clauses (query written by hands)
+    public static Collection getDictionaryNameEntriesCollection(String resource,
 																String source,
 																Collection targets,
 																Vector Keys1,
@@ -694,7 +694,7 @@ public class DictionariesFactory {
                                                             User user,
                                                             int offset)
             throws PapillonBusinessException {
-        //	Collection qrset = new HashSet();
+        //	Collection qrset = new HashSet();				
         Collection qrset = new Vector();
         if ((null != dict)
                 && dict.getSourceLanguagesArray().contains(source)
@@ -713,10 +713,8 @@ public class DictionariesFactory {
                 if (targets == null) {
                     targets = myVolume.getTargetLanguagesArray();
                 }
-
                 //
                 for (Iterator iter2 = entriesVector.iterator(); iter2.hasNext();) {
-
                     //
                     VolumeEntry ve = (VolumeEntry) iter2.next();
                     qrset.addAll(expandResult(ve, targets, user));
