@@ -307,8 +307,8 @@ public class GenerateTemplate {
 											interfaceBuffer.write("<table border='0' cellpadding='5' cellspacing='2' summary='List of " + termNameDisplay + "s' width='100%'>\n");
 											interfaceBuffer.write("  <tr style='background-color: #fbbe78'>\n");
 											interfaceBuffer.write("    <td style='text-align:center' width='25'>\n");
-											interfaceBuffer.write("      <input name='" + elementName + "' onclick=\"this.form.AddCall.value='" + termName + UIGenerator.PARAMETERS_SEPARATOR + "' type='submit' value='+' />\n");
-											interfaceBuffer.write("      <input name='" + elementName + "' onclick=\"this.form.DelCall.value='" + termName + UIGenerator.PARAMETERS_SEPARATOR + "' type='submit' value='-' />\n");
+											interfaceBuffer.write("      <input name='" + elementName + "' onclick=\"this.form.AddCall.value='" + termName + UIGenerator.PARAMETERS_SEPARATOR + "'\" type='submit' value='+' />\n");
+											interfaceBuffer.write("      <input name='" + elementName + "' onclick=\"this.form.DelCall.value='" + termName + UIGenerator.PARAMETERS_SEPARATOR + "'\" type='submit' value='-' />\n");
 											interfaceBuffer.write("    </td>\n");
 											interfaceBuffer.write("    <th align='center'>List of " +  termNameDisplay + "s:</th>\n");
 											interfaceBuffer.write("  </tr>\n");
@@ -331,7 +331,7 @@ public class GenerateTemplate {
 														  UIGenerator.CHOICE_NODE_NAME + UIGenerator.PARAMETERS_SEPARATOR + elementName
 														  + "'>\n");
 									interfaceBuffer.write("  Choice for " +  elementNameDisplay + ":\n");
-									interfaceBuffer.write("  <input name='" + elementName + "' onclick=\"this.form.ChooseCall.value='" + elementName + UIGenerator.PARAMETERS_SEPARATOR + "\" type='submit' value='||' />\n");
+									interfaceBuffer.write("  <input name='" + elementName + "' onclick=\"this.form.ChooseCall.value='" + elementName + UIGenerator.PARAMETERS_SEPARATOR + "'\" type='submit' value='||' />\n");
 									interfaceBuffer.write("  <br />\n</span>\n");
 									XSObjectList myList = modelGroup.getParticles();
 									for (int j=0;j<myList.getLength();j++) {

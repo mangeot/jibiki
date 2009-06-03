@@ -31,6 +31,7 @@ import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory;
 import fr.imag.clips.papillon.business.dictionary.ParseVolume;
 import fr.imag.clips.papillon.business.dictionary.Volume;
+import fr.imag.clips.papillon.business.utility.Utility;
 import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.user.User;
@@ -54,6 +55,11 @@ public class JibikiXsltExtension {
         return act.getActions(entry);
     }
 
+    public static Node linkCommands(String linkId) throws PapillonBusinessException {
+        Actions act = new Actions();
+        return act.getLinkActions(linkId);
+    }
+
     public static String getUserLogin() throws PapillonBusinessException {
         try {
             JibikiContext context = CurrentRequestContext.get();
@@ -68,13 +74,35 @@ public class JibikiXsltExtension {
         try {
             JibikiContext context = CurrentRequestContext.get();
             VolumeEntry ve = VolumeEntriesFactory.findEntryByEntryId(((PapillonSessionData) context.get("sessionData")).getUser(),entryid);
-
+			
             return ve.getStatus();
         } catch (NullPointerException e) {
             return "finished";
         }
     }
-
+	
+	public static String getEntryGroups(String entryid) throws PapillonBusinessException {
+        try {
+            JibikiContext context = CurrentRequestContext.get();
+            VolumeEntry ve = VolumeEntriesFactory.findEntryByEntryId(((PapillonSessionData) context.get("sessionData")).getUser(),entryid);
+            return  Utility.getStars(ve.getGroups());
+        } catch (NullPointerException e) {
+            return "";
+        }
+    }
+	
+	
+	public static String getDictname(String entryid) throws PapillonBusinessException {
+        try {
+            JibikiContext context = CurrentRequestContext.get();
+            VolumeEntry ve = VolumeEntriesFactory.findEntryByEntryId(((PapillonSessionData) context.get("sessionData")).getUser(),entryid);
+			
+            return ve.getDictionary().getName();
+        } catch (NullPointerException e) {
+            return "";
+        }
+    }
+	
     public static String getEntryModificationAuthor(String entryid) throws PapillonBusinessException {
         try {
             JibikiContext context = CurrentRequestContext.get();

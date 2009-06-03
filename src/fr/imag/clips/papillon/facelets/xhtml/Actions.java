@@ -69,7 +69,7 @@ public class Actions implements fr.imag.clips.papillon.facelets.api.Actions {
         
         // BUG279: This will be long enough... We really need to work on caching and multiple volume handling (maybe an explicit id...)
 		 VolumeEntry ve = VolumeEntriesFactory.findEntryByEntryId(((PapillonSessionData) context.get("sessionData")).getUser(),entryid);
-        return this.getActions(ve);
+		return this.getActions(ve);
     }
     
     public Node getActions(VolumeEntry myEntry) throws PapillonBusinessException {
@@ -80,9 +80,8 @@ public class Actions implements fr.imag.clips.papillon.facelets.api.Actions {
         HttpPresentationComms scomms = (HttpPresentationComms) context.get("comms");
 
         User user = (null == sdata) ? null : sdata.getUser();
-
-        String url = (String) context.get("url");
-        
+		String url = (String) context.get("url");
+       
         ActionNodesXHTML content;
         try {
             content = (ActionNodesXHTML) 
@@ -92,78 +91,147 @@ public class Actions implements fr.imag.clips.papillon.facelets.api.Actions {
         }
         
         XHTMLElement actionsNode = content.getElementActionsNode();
-        // Actions
-        XHTMLAnchorElement editAnchor = content.getElementEditEntryAnchor();
-        XHTMLAnchorElement duplicateAnchor = content.getElementDuplicateEntryAnchor();
-        XHTMLAnchorElement deleteAnchor = content.getElementDeleteEntryAnchor();
-        XHTMLAnchorElement undeleteAnchor = content.getElementUndeleteEntryAnchor();
-        XHTMLAnchorElement viewAxieAnchor = content.getElementViewAxieAnchor();
-        XHTMLAnchorElement viewHistoryEntryAnchor = content.getElementViewHistoryEntryAnchor();
-        XHTMLAnchorElement viewXmlAnchor = content.getElementViewXmlAnchor();
-        XHTMLSpanElement entryAuthor = content.getElementEntryAuthor();
-        XHTMLSpanElement entryStatus = content.getElementEntryStatus();
-        XHTMLSpanElement entryGroups = content.getElementEntryGroups();
-        
         actionsNode.removeAttribute("id");
-        editAnchor.removeAttribute("id");
-        duplicateAnchor.removeAttribute("id");
-        deleteAnchor.removeAttribute("id");
-        undeleteAnchor.removeAttribute("id");
-        viewAxieAnchor.removeAttribute("id");
-        viewHistoryEntryAnchor.removeAttribute("id");
-        viewXmlAnchor.removeAttribute("id");
-        entryAuthor.removeAttribute("id");
-        entryStatus.removeAttribute("id");
-        entryGroups.removeAttribute("id");
-        
-        // init
-		String level = Utility.getStars(myEntry.getGroups());
-        Text textGroup = content.createTextNode(level);
-        entryGroups.appendChild(textGroup);
-
-        Text textAuthor = content.createTextNode("unknown");
-        entryAuthor.appendChild(textAuthor);
-        Text textStatus = content.createTextNode("unknown");
-        entryStatus.appendChild(textStatus);
+        // Actions
+		// (action.equals("AUTHOR"))
+					XHTMLSpanElement entryAuthor = content.getElementEntryAuthor();
+					entryAuthor.removeAttribute("id");
+					Text textAuthor = content.createTextNode("unknown");
+					textAuthor.setNodeValue(myEntry.getModificationAuthor());
+					entryAuthor.appendChild(textAuthor);
+				
+		//action.equals("AXIE"))
+					XHTMLAnchorElement viewAxieAnchor = content.getElementViewAxieAnchor();
+					viewAxieAnchor.removeAttribute("id");
+					axie(myEntry,url,user, viewAxieAnchor);
+				
+		// (action.equals("EDIT"))
+					XHTMLAnchorElement editAnchor = content.getElementEditEntryAnchor();
+					XHTMLAnchorElement duplicateAnchor = content.getElementDuplicateEntryAnchor();
+					XHTMLAnchorElement deleteAnchor = content.getElementDeleteEntryAnchor();
+					XHTMLAnchorElement undeleteAnchor = content.getElementUndeleteEntryAnchor();
+					editAnchor.removeAttribute("id");
+					duplicateAnchor.removeAttribute("id");
+					deleteAnchor.removeAttribute("id");
+					undeleteAnchor.removeAttribute("id");
+					edit(myEntry,url,user,editAnchor,duplicateAnchor,deleteAnchor,undeleteAnchor);
 		
-        textAuthor.setNodeValue(myEntry.getModificationAuthor());
+		// (action.equals("HISTORY"))
+					XHTMLAnchorElement viewHistoryEntryAnchor = content.getElementViewHistoryEntryAnchor();
+					viewHistoryEntryAnchor.removeAttribute("id");
+					// FIXME: Create static variable ... VolumeName and EntryHandle ...
+					viewHistoryEntryAnchor.setHref(HistoryURL + "?" + "VolumeName" + "=" + myEntry.getVolumeName() + "&" + "EntryHandle" + "=" + myEntry.getHandle());
+					viewHistoryEntryAnchor.setAttribute("class", "action");
 
-        // Status
-        if (myEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS)) {
-            textStatus.setNodeValue(VolumeEntry.FINISHED_STATUS);
-            
-            //            if (myEntry.getModificationAuthor().equals(user.getLogin())) {
-            //                entryNode.setAttribute("class", "myFinishedEntry");
-            //            } else {
-            //                entryNode.setAttribute("class", "finishedEntry");
-            //            }
-            
-        } else if (myEntry.getStatus().equals(VolumeEntry.MODIFIED_STATUS)) {
-            textStatus.setNodeValue("under edition");
-            //            entryNode.setAttribute("class", "modifiedEntry");
-            
-        } else if (myEntry.getStatus().equals(VolumeEntry.DELETED_STATUS)) {
-            textStatus.setNodeValue(VolumeEntry.DELETED_STATUS);
-            //            entryNode.setAttribute("class", "modifiedEntry");
-            
-        } else if (myEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS)) {
-            
-            if (myEntry.getModificationAuthor().equals(user.getLogin())) {
-                textStatus.setNodeValue("proceed edition");
-                //                entryNode.setAttribute("class", "myNotFinishedEntry");
+		// (action.equals("STATUS"))
+					XHTMLSpanElement entryStatus = content.getElementEntryStatus();
+					entryStatus.removeAttribute("id");
+					Text textStatus = content.createTextNode("unknown");
+					if (myEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS)) {
+						textStatus.setNodeValue(VolumeEntry.FINISHED_STATUS);
+						
+						//            if (myEntry.getModificationAuthor().equals(user.getLogin())) {
+						//                entryNode.setAttribute("class", "myFinishedEntry");
+						//            } else {
+						//                entryNode.setAttribute("class", "finishedEntry");
+						//            }
+						
+					} else if (myEntry.getStatus().equals(VolumeEntry.MODIFIED_STATUS)) {
+						textStatus.setNodeValue("under edition");
+						//            entryNode.setAttribute("class", "modifiedEntry");
+						
+					} else if (myEntry.getStatus().equals(VolumeEntry.DELETED_STATUS)) {
+						textStatus.setNodeValue(VolumeEntry.DELETED_STATUS);
+						//            entryNode.setAttribute("class", "modifiedEntry");
+						
+					} else if (myEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS)) {
+						
+						if (myEntry.getModificationAuthor().equals(user.getLogin())) {
+							textStatus.setNodeValue("proceed edition");
+							//                entryNode.setAttribute("class", "myNotFinishedEntry");
+						} else {
+							textStatus.setNodeValue("under edition");
+							//                entryNode.setAttribute("class", "notFinishedEntry");
+						}
+					}
+					entryStatus.appendChild(textStatus);
+
+		// (action.equals("XML"))
+					XHTMLAnchorElement viewXmlAnchor = content.getElementViewXmlAnchor();
+					viewXmlAnchor.removeAttribute("id");
+					if (user != null && user.isInGroup(Group.ADMIN_GROUP)) {
+						
+						// FIXME : create new page.po like history
+						QueryParameter qpxml = new QueryParameter();
+						qpxml.setXsl("XML");
+						ArrayList dicts = new ArrayList();
+						dicts.add(myEntry.getDictionary());
+						qpxml.setDictionaries(dicts);
+						ArrayList crit = new ArrayList();
+						String[] idc = new String[4];
+						idc[0] = Volume.CDM_entryId;
+						idc[1] = null;
+						idc[2] = myEntry.getEntryId();
+						idc[3] = QueryCriteria.EQUAL;
+						crit.add(idc);
+						qpxml.setCriteria(crit);
+						
+						viewXmlAnchor.setHref(url + "?" + EditEntryInitFactory.ACTION_PARAMETER + "=lookup&" + AdvancedQueryForm.getEncodedUrlForParameter(qpxml));
+						viewXmlAnchor.setAttribute("class", "action");
+						
+					} else {
+						viewXmlAnchor.setAttribute("class", "hidden");
+					}
+        return actionsNode;
+    }
+	
+	
+	private void axie(VolumeEntry myEntry, String url, User user, XHTMLAnchorElement viewAxieAnchor)
+	throws fr.imag.clips.papillon.business.PapillonBusinessException {
+		if (! "axi".equals(myEntry.getVolume().getSourceLanguage())) {
+            Collection axies = PapillonPivotFactory.findAxiesByLexie(myEntry, user);
+            if (axies != null && axies.size() > 0) {
+                // FIXME: Only view ONE axie... we should consider changing the API for it to return only one
+                VolumeEntry myAxie = (VolumeEntry) axies.iterator().next();
+				
+                // View axie
+                QueryParameter qpaxie = new QueryParameter();
+                qpaxie.setXsl("Default");
+                ArrayList adicts = new ArrayList();
+                adicts.add(myEntry.getDictionary());
+                qpaxie.setDictionaries(adicts);
+                ArrayList acrit = new ArrayList();
+                String[] axiec = new String[4];
+                axiec[0] = Volume.CDM_entryId;
+                axiec[1] = null;
+                axiec[2] = myAxie.getEntryId();
+                axiec[3] = QueryCriteria.EQUAL;
+                acrit.add(axiec);
+                qpaxie.setCriteria(acrit);
+                viewAxieAnchor.setHref(
+									   url + "?" + EditEntryInitFactory.ACTION_PARAMETER + "=lookup&" + AdvancedQueryForm.getEncodedUrlForParameter(
+																																					qpaxie));
+                viewAxieAnchor.setAttribute("class", "action");
             } else {
-                textStatus.setNodeValue("under edition");
-                //                entryNode.setAttribute("class", "notFinishedEntry");
+                viewAxieAnchor.setHref("");
+                viewAxieAnchor.setAttribute("class", "hidden");
             }
+        } else {
+			viewAxieAnchor.setHref("");
+			viewAxieAnchor.setAttribute("class", "hidden");
         }
+	}
         
-        //
+	private void edit(VolumeEntry myEntry,String url, User user, XHTMLAnchorElement editAnchor, XHTMLAnchorElement duplicateAnchor,
+	XHTMLAnchorElement deleteAnchor, XHTMLAnchorElement undeleteAnchor) 
+		throws fr.imag.clips.papillon.business.PapillonBusinessException {
+		//
         String href = url + "?"
-            + EditEntryInitFactory.VOLUME_PARAMETER + "="
-            + myEntry.getVolumeName() + "&"
-            + EditEntryInitFactory.HANDLE_PARAMETER + "="
-            + myEntry.getHandle() + "&"
-            + EditEntryInitFactory.ACTION_PARAMETER + "=";
+		+ EditEntryInitFactory.VOLUME_PARAMETER + "="
+		+ myEntry.getVolumeName() + "&"
+		+ EditEntryInitFactory.HANDLE_PARAMETER + "="
+		+ myEntry.getHandle() + "&"
+		+ EditEntryInitFactory.ACTION_PARAMETER + "=";
         
         // Actions
         if (((!myEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS))
@@ -175,16 +243,15 @@ public class Actions implements fr.imag.clips.papillon.facelets.api.Actions {
             ) 
         {
             
-            // Edit button
-            if (!myEntry.getStatus().equals(VolumeEntry.DELETED_STATUS)) {
-                editAnchor.setHref(href + "edit");
-                editAnchor.setAttribute("target", "_blank");
-                editAnchor.setAttribute("class", "action");
-            } else {
-                editAnchor.setHref("");
-                editAnchor.setAttribute("class", "hidden");
-            }
-            
+			// Edit button
+			if (!myEntry.getStatus().equals(VolumeEntry.DELETED_STATUS)) {
+				editAnchor.setHref(href + "edit");
+				editAnchor.setAttribute("target", "_blank");
+				editAnchor.setAttribute("class", "action");
+			} else {
+				editAnchor.setHref("");
+				editAnchor.setAttribute("class", "hidden");
+			}					
             // Duplicate button
             if (!myEntry.getStatus().equals(VolumeEntry.DELETED_STATUS)
                 && !myEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS)) {
@@ -203,10 +270,10 @@ public class Actions implements fr.imag.clips.papillon.facelets.api.Actions {
                 // action delete and refresh query with last parameters
                 deleteAnchor.setHref(href + "delete");
                 deleteAnchor.setAttribute("class", "action");
-                } else {
-                    deleteAnchor.setHref("");
-                    deleteAnchor.setAttribute("class", "hidden");
-                }
+			} else {
+				deleteAnchor.setHref("");
+				deleteAnchor.setAttribute("class", "hidden");
+			}
             
             // Undelete button
             if (myEntry.getStatus().equals(VolumeEntry.DELETED_STATUS)) {
@@ -236,20 +303,81 @@ public class Actions implements fr.imag.clips.papillon.facelets.api.Actions {
             // Undelete button
             undeleteAnchor.setHref("");
             undeleteAnchor.setAttribute("class", "hidden");
+        }		
+	} 
+	
+	public Node getLinkActions(String entryid) throws PapillonBusinessException {
+        JibikiContext context = CurrentRequestContext.get();
+        
+        // BUG279: This will be long enough... We really need to work on caching and multiple volume handling (maybe an explicit id...)
+		VolumeEntry ve = VolumeEntriesFactory.findEntryByEntryId(((PapillonSessionData) context.get("sessionData")).getUser(),entryid);
+		return this.getLinkActions(ve);
+    }
+    
+    public Node getLinkActions(VolumeEntry myEntry) throws PapillonBusinessException {
+        
+        // I need a context object that will contain the comms and sessionData...
+        JibikiContext context = CurrentRequestContext.get();
+        PapillonSessionData sdata = (PapillonSessionData) context.get("sessionData");
+        HttpPresentationComms scomms = (HttpPresentationComms) context.get("comms");
+		
+        User user = (null == sdata) ? null : sdata.getUser();
+		String url = (String) context.get("url");
+		
+        ActionNodesXHTML content;
+        try {
+            content = (ActionNodesXHTML) 
+            MultilingualXHtmlTemplateFactory.createTemplate("ActionNodesXHTML", scomms, sdata);
+        } catch (HttpPresentationException e) {
+            throw new PapillonBusinessException("Fail to instanciate XHTML Action Node Template.", e);
         }
         
-        // History view
-        // FIXME: Create static variable ... VolumeName and EntryHandle ...
-        viewHistoryEntryAnchor.setHref(HistoryURL + "?" + "VolumeName" + "=" + myEntry.getVolumeName() + "&" + "EntryHandle" + "=" + myEntry.getHandle());
-        viewHistoryEntryAnchor.setAttribute("class", "action");
+        XHTMLElement actionsNode = content.getElementActionsNode();
+        actionsNode.removeAttribute("id");
+        // Actions
+		// (action.equals("AUTHOR"))
+		XHTMLSpanElement entryAuthor = content.getElementEntryAuthor();
+		actionsNode.removeChild(entryAuthor);
+		
+		//action.equals("AXIE"))
+		XHTMLAnchorElement viewAxieAnchor = content.getElementViewAxieAnchor();
+		viewAxieAnchor.removeAttribute("id");
+		viewAxieAnchor.setHref(
+							   url + "?" + EditEntryInitFactory.ACTION_PARAMETER + "=lookup&VOLUME=" + myEntry.getVolume() + "&HANDLE=" + myEntry.getHandle());
+		
+		// (action.equals("EDIT"))
+		XHTMLAnchorElement editAnchor = content.getElementEditEntryAnchor();
+		XHTMLAnchorElement duplicateAnchor = content.getElementDuplicateEntryAnchor();
+		XHTMLAnchorElement deleteAnchor = content.getElementDeleteEntryAnchor();
+		XHTMLAnchorElement undeleteAnchor = content.getElementUndeleteEntryAnchor();
+		actionsNode.removeChild(editAnchor);
+		actionsNode.removeChild(duplicateAnchor);
+		actionsNode.removeChild(deleteAnchor);
+		actionsNode.removeChild(undeleteAnchor);
+		
+		// (action.equals("HISTORY"))
+		XHTMLAnchorElement viewHistoryEntryAnchor = content.getElementViewHistoryEntryAnchor();
+		actionsNode.removeChild(viewHistoryEntryAnchor);
 
-
-        if (! "axi".equals(myEntry.getVolume().getSourceLanguage())) {
-            Collection axies = PapillonPivotFactory.findAxiesByLexie(myEntry, user);
+		// (action.equals("STATUS"))
+		XHTMLSpanElement entryStatus = content.getElementEntryStatus();
+		actionsNode.removeChild(entryStatus);
+		
+		// (action.equals("XML"))
+		XHTMLAnchorElement viewXmlAnchor = content.getElementViewXmlAnchor();
+		actionsNode.removeChild(viewXmlAnchor);
+       return actionsNode;
+    }
+	
+	
+	private void target(VolumeEntry myEntry, String url, User user, XHTMLAnchorElement viewTargetAnchor)
+		throws fr.imag.clips.papillon.business.PapillonBusinessException {
+		if (! "axi".equals(myEntry.getVolume().getSourceLanguage())) {
+          Collection axies = PapillonPivotFactory.findAxiesByLexie(myEntry, user);
             if (axies != null && axies.size() > 0) {
                 // FIXME: Only view ONE axie... we should consider changing the API for it to return only one
                 VolumeEntry myAxie = (VolumeEntry) axies.iterator().next();
-
+				
                 // View axie
                 QueryParameter qpaxie = new QueryParameter();
                 qpaxie.setXsl("Default");
@@ -264,47 +392,19 @@ public class Actions implements fr.imag.clips.papillon.facelets.api.Actions {
                 axiec[3] = QueryCriteria.EQUAL;
                 acrit.add(axiec);
                 qpaxie.setCriteria(acrit);
-                viewAxieAnchor.setHref(
-                        url + "?" + EditEntryInitFactory.ACTION_PARAMETER + "=lookup&" + AdvancedQueryForm.getEncodedUrlForParameter(
-                                qpaxie));
-                viewAxieAnchor.setAttribute("class", "action");
+                viewTargetAnchor.setHref(
+									   url + "?" + EditEntryInitFactory.ACTION_PARAMETER + "=lookup&" + AdvancedQueryForm.getEncodedUrlForParameter(
+																																					qpaxie));
+                viewTargetAnchor.setAttribute("class", "action");
             } else {
-                viewAxieAnchor.setHref("");
-                viewAxieAnchor.setAttribute("class", "hidden");
+                viewTargetAnchor.setHref("");
+                viewTargetAnchor.setAttribute("class", "hidden");
             }
         } else {
-                viewAxieAnchor.setHref("");
-                viewAxieAnchor.setAttribute("class", "hidden");
+			viewTargetAnchor.setHref("");
+			viewTargetAnchor.setAttribute("class", "hidden");
         }
-        
-        // XML view
-        if (user != null && user.isInGroup(Group.ADMIN_GROUP)) {
-
-            // FIXME : create new page.po like history
-            QueryParameter qpxml = new QueryParameter();
-            qpxml.setXsl("XML");
-            ArrayList dicts = new ArrayList();
-            dicts.add(myEntry.getDictionary());
-            qpxml.setDictionaries(dicts);
-            ArrayList crit = new ArrayList();
-            String[] idc = new String[4];
-            idc[0] = Volume.CDM_entryId;
-            idc[1] = null;
-            idc[2] = myEntry.getEntryId();
-            idc[3] = QueryCriteria.EQUAL;
-            crit.add(idc);
-            qpxml.setCriteria(crit);
-            
-            //
-            viewXmlAnchor.setHref(url + "?" + EditEntryInitFactory.ACTION_PARAMETER + "=lookup&" + AdvancedQueryForm.getEncodedUrlForParameter(qpxml));
-            viewXmlAnchor.setAttribute("class", "action");
-            
-        } else {
-            viewXmlAnchor.setAttribute("class", "hidden");
-        }
-        
-        return actionsNode;
-    }
-        
+	}
+	
     
 }
