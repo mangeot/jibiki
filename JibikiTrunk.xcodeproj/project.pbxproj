@@ -204,7 +204,7 @@
 		A30722EC0EC89B2200733910 /* FacelessBasePO.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = FacelessBasePO.java; sourceTree = "<group>"; };
 		A30722ED0EC89B2200733910 /* favicon.ico */ = {isa = PBXFileReference; lastKnownFileType = image.ico; path = favicon.ico; sourceTree = "<group>"; };
 		A30722EE0EC89B2200733910 /* GDEFLayout.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = GDEFLayout.java; sourceTree = "<group>"; };
-		A30722EF0EC89B2200733910 /* GDEFLinker.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = GDEFLinker.java; sourceTree = "<group>"; };
+		A30722EF0EC89B2200733910 /* MotamotLinker.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = MotamotLinker.java; sourceTree = "<group>"; };
 		A30722F00EC89B2200733910 /* GetSystemProperties.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = GetSystemProperties.java; sourceTree = "<group>"; };
 		A30722F10EC89B2200733910 /* GetXmlDocument.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = GetXmlDocument.java; sourceTree = "<group>"; };
 		A30722F20EC89B2200733910 /* HandleEntryModifications.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = HandleEntryModifications.java; sourceTree = "<group>"; };
@@ -1779,7 +1779,7 @@
 				A30722EC0EC89B2200733910 /* FacelessBasePO.java */,
 				A30722ED0EC89B2200733910 /* favicon.ico */,
 				A30722EE0EC89B2200733910 /* GDEFLayout.java */,
-				A30722EF0EC89B2200733910 /* GDEFLinker.java */,
+				A30722EF0EC89B2200733910 /* MotamotLinker.java */,
 				A30722F00EC89B2200733910 /* GetSystemProperties.java */,
 				A30722F10EC89B2200733910 /* GetXmlDocument.java */,
 				A30722F20EC89B2200733910 /* HandleEntryModifications.java */,
