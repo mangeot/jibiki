@@ -190,6 +190,7 @@ public class HandleEntryModifications extends EditingBasePO {
             //
 			if (volumeName==null || volumeName.equals("") ||
 				entryHandle==null || entryHandle.equals("")) {
+				if (DEBUG) PapillonLogger.writeDebugMsg ("HandleEntryModifications : volumeName || entryHandle null");   
 				                
                 // FIXME: Add a user error message !!!
 				throw new ClientPageRedirectException(EditEntryInitURL);
@@ -207,6 +208,7 @@ public class HandleEntryModifications extends EditingBasePO {
                 //      || this.getUser().isInGroup(Group.ADMIN_GROUP))) {
                 
                 // FIXME: Add a user error message !!!
+				if (DEBUG) PapillonLogger.writeDebugMsg ("HandleEntryModifications : oldVolumeEntry null");   
 				throw new ClientPageRedirectException(EditEntryInitURL);
 			
             } else if (submitUndoUpdate!=null && !submitUndoUpdate.equals("")) {
@@ -249,7 +251,7 @@ public class HandleEntryModifications extends EditingBasePO {
             }
 			
 			// Call PreProcessor
-			// FIXME: Here ? TO BE ADDED TO ENDITENTRYINIT
+			// FIXME: Here ? TO BE ADDED TO EDITENTRYINIT
 			//ResultPreProcessor preProcessor = ResultPreProcessorFactory.getPreProcessor(newVolumeEntry);
 			//preProcessor.transformation(newVolumeEntry, this.getUser());
 			
@@ -264,13 +266,16 @@ public class HandleEntryModifications extends EditingBasePO {
 				FillDOMStructure(myEntry, this.getComms().request.getParameterNames());
 			}
 			
+			if (DEBUG) PapillonLogger.writeDebugMsg ("HandleEntryModifications : avant submitAdd ");   
 			// Add element
 			if (submitAdd!=null && !submitAdd.equals("")) {
+				if (DEBUG) PapillonLogger.writeDebugMsg ("HandleEntryModifications : submitAdd ");   
 				int plus =  submitAdd.indexOf(UIGenerator.PARAMETERS_SEPARATOR);
 				if (plus > 0) {
 					String elementName = submitAdd.substring(0,plus);
 					String parentElement = submitAdd.substring(plus+1);
 					String[] siblingElements = myGetParameterValues(Select_PARAMETER);
+					if (DEBUG) PapillonLogger.writeDebugMsg ("HandleEntryModifications : + " + elementName);   
 					UIGenerator.addElement(elementName, parentElement, myEntry, myTemplateEntry, siblingElements);
 				}
 			}

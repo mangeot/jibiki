@@ -546,7 +546,7 @@ public class Home
                 criteriaModifiedStatus.add("lang", QueryCriteria.EQUAL, Volume.DEFAULT_LANG);
                 listStatus.add(criteriaModifiedStatus);
  
-               // queryReq.addOrCriteriaList(listStatus);
+				queryReq.addOrCriteriaList(listStatus);
                 if (searchKind.equals(EXACT_MATCH)) {
                     //// CLASSIC SEARCH
                     // Perform the request

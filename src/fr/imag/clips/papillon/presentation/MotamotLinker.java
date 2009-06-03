@@ -3,10 +3,10 @@
  *
  *  Enhydra super-servlet
  *
- *  © Mathieu Mangeot & Gilles Sérasset - GETA CLIPS IMAG
+ *  © Mathieu Mangeot & Gilles Sérasset - GETALP-LIG
  *  Projet Papillon
  *  -----------------------------------------------
- *  $Id: GDEFLinker.java 508 2006-08-10 22:17:13Z fbrunet $
+ *  $Id: MotamotLinker.java 508 2006-08-10 22:17:13Z  $
  *  -----------------------------------------------
  *  $Log$
  *  Revision 1.7  2006/08/10 22:17:13  fbrunet
@@ -136,19 +136,12 @@ public class MotamotLinker extends LinkerBasePO {
                 volumes = po.myGetParameterValues(LinkerSearchFormXHTML.NAME_VOLUMES);
                 targets = po.myGetParameterValues(LinkerSearchFormXHTML.NAME_TARGETS);
                 dictionaries = po.myGetParameterValues(LinkerSearchFormXHTML.NAME_DICTIONARIES);
-				PapillonLogger.writeDebugMsg("dictionaries:" + dictionaries.length);
-
                 facetValue = po.myGetParameter(LinkerSearchFormXHTML.NAME_FACETVALUE);
                 facetValue = (null == facetValue) ? "" : facetValue;
                 sourceLang = po.myGetParameter(LinkerSearchFormXHTML.NAME_SOURCE);
-				PapillonLogger.writeDebugMsg("sourceLang:" + sourceLang);
                 facet = po.myGetParameter(LinkerSearchFormXHTML.NAME_FACET);
                 comparator = po.myGetParameter(LinkerSearchFormXHTML.NAME_OPERATOR);
                 comparisonOperator = (comparator != null) ? Integer.valueOf(comparator).intValue() : 0;
-				String volume = "";
-				if (volumes.length>0) {volume = volumes[0];}
-				PapillonLogger.writeDebugMsg("volumes:" + volumes.length);
-
                 xsl = po.myGetParameter(LinkerSearchFormXHTML.NAME_XSL);
                 
                 isInitialized = true;
@@ -195,11 +188,6 @@ public class MotamotLinker extends LinkerBasePO {
 
         // Parameter initialization is generic
         parameters.initializeSearchParameters(this);
-		String volume = "";
-		if (parameters.volumes.length>0) {
-			volume = parameters.volumes[0];
-		}
-		PapillonLogger.writeDebugMsg("volumes" + parameters.volumes.length + " 0: " + volume);
 		
         // update searchForm with requested parameters
         searchForm.getElementValueField().setValue(parameters.facetValue);
@@ -274,12 +262,12 @@ public class MotamotLinker extends LinkerBasePO {
         
         Collection results = new Vector();
 		
-
+		if (myGetParameter(LinkerSearchFormXHTML.NAME_lookup) != null &&
+				!myGetParameter(LinkerSearchFormXHTML.NAME_lookup).equals("")) {
 		if (parameters.volumes.length==0 && parameters.dictionaries.length>0)  {
 			for (int i=0; i < parameters.dictionaries.length; i++) {
 				String dictName = parameters.dictionaries[i];
 				if (dictName != null && dictName != "") {
-					PapillonLogger.writeDebugMsg("getDictName: " + dictName);
 					Dictionary dict = DictionariesFactory.getDictionaryByName(dictName);
 					for (Iterator iter = VolumesFactory.getVolumesArray(dict.getName(), parameters.sourceLang, null).iterator(); iter.hasNext();)
 					{
@@ -300,6 +288,7 @@ public class MotamotLinker extends LinkerBasePO {
 					}
 				}
 			}
+		}
 		}
          // Get the list of volumes in which to perform the request (filter the list by source language)
         // Perform the request.

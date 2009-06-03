@@ -55,8 +55,9 @@ public class UITemplates {
 	
 	// constants
 	protected final static String DML_URI = fr.imag.clips.papillon.business.dictionary.DmlPrefixResolver.DML_URI;
-	public static final String DEFAULT_FORM = "default";
-	public static final String DEFAULT_LANG = "default";
+	public static final String DEFAULT_TYPE = "defaultType";
+	public static final String DEFAULT_FORM = "defaultForm";
+	public static final String DEFAULT_LANG = "defaultLang";
 	public static final String EDIT_ENTRY_INTERFACE = "EditEntryInterface";
 	
 	protected static Hashtable defaultTypeTable = new Hashtable();
@@ -155,13 +156,16 @@ public class UITemplates {
 					String name = myForm.getAttribute("name");
 					if (name.equals(EDIT_ENTRY_INTERFACE)) {
 						String type = myForm.getAttribute("type");
+						if (null == type || type.equals("")) {
+							type = DEFAULT_TYPE;
+						}
 						Hashtable langTable = (Hashtable) typeTable.get(type);
 						if (langTable == null) {
 							langTable = new Hashtable();
 						}
 						String lang = myForm.getAttributeNS(DML_URI,"lang");
 						if (null == lang || lang.equals("")) {
-							lang = "default";
+							lang = DEFAULT_LANG;
 						}
 						langTable.put(lang, myForm);
 						typeTable.put(type,langTable);

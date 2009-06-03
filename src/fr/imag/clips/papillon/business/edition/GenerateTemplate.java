@@ -88,7 +88,7 @@ public class GenerateTemplate {
 		"<body>\n" +
 		"<form  action=\"HandleEntryModifications.po\" method=\"post\" accept-charset=\"utf-8\" enctype=\"application/x-www-form-urlencoded\" xml:lang=\"en\" lang=\"en\" d:lang=\"eng\">\n" +
 		"<h1 style=\"text-align:center\">Edition interface</h1>\n" +
-		"<div id=\"" + UITemplates.EDIT_ENTRY_INTERFACE + "\">\n";
+		"<div name=\"" + UITemplates.EDIT_ENTRY_INTERFACE + "\" id=\"" + UITemplates.DEFAULT_FORM  + "\"  type=\"" + UITemplates.DEFAULT_TYPE  + "\" >\n";
 	
 	protected final static String xmlFooter = "</div>\n" +
 		"</form>\n" +
@@ -307,8 +307,8 @@ public class GenerateTemplate {
 											interfaceBuffer.write("<table border='0' cellpadding='5' cellspacing='2' summary='List of " + termNameDisplay + "s' width='100%'>\n");
 											interfaceBuffer.write("  <tr style='background-color: #fbbe78'>\n");
 											interfaceBuffer.write("    <td style='text-align:center' width='25'>\n");
-											interfaceBuffer.write("      <input name='" + elementName + "' onclick=\"this.form.AddCall.value='" + termName + UIGenerator.PARAMETERS_SEPARATOR + "'\" type='submit' value='+' />\n");
-											interfaceBuffer.write("      <input name='" + elementName + "' onclick=\"this.form.DelCall.value='" + termName + UIGenerator.PARAMETERS_SEPARATOR + "'\" type='submit' value='-' />\n");
+											interfaceBuffer.write("      <input name='" + elementName + "' onclick=\"this.form.AddCall.value='" + termName + UIGenerator.PARAMETERS_SEPARATOR + "\" type='submit' value='+' />\n");
+											interfaceBuffer.write("      <input name='" + elementName + "' onclick=\"this.form.DelCall.value='" + termName + UIGenerator.PARAMETERS_SEPARATOR + "\" type='submit' value='-' />\n");
 											interfaceBuffer.write("    </td>\n");
 											interfaceBuffer.write("    <th align='center'>List of " +  termNameDisplay + "s:</th>\n");
 											interfaceBuffer.write("  </tr>\n");
