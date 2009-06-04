@@ -231,6 +231,8 @@
 			<key>Layout</key>
 			<array>
 				<dict>
+					<key>BecomeActive</key>
+					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -344,14 +346,12 @@
 					<key>Dock</key>
 					<array>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>User.java</string>
+								<string>Utility.java</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -359,11 +359,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>User.java</string>
+										<string>Utility.java</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>A3B93A340FD81FA400D3CA3B</string>
+										<string>A31AB1380FD838FF00319760</string>
 										<key>history</key>
 										<array>
 											<string>A31CC8CB0FD6D25A00FF6FA2</string>
@@ -378,26 +378,18 @@
 											<string>A3B939EE0FD7AB5C00D3CA3B</string>
 											<string>A3B939EF0FD7AB5C00D3CA3B</string>
 											<string>A3B93A050FD7C28E00D3CA3B</string>
-											<string>A3B93A060FD7C28E00D3CA3B</string>
 											<string>A3B93A070FD7C28E00D3CA3B</string>
 											<string>A3B93A080FD7C28E00D3CA3B</string>
 											<string>A3B93A090FD7C28E00D3CA3B</string>
 											<string>A3B93A0A0FD7C28E00D3CA3B</string>
 											<string>A3B93A0B0FD7C28E00D3CA3B</string>
-											<string>A3B93A0C0FD7C28E00D3CA3B</string>
 											<string>A3B93A0D0FD7C28E00D3CA3B</string>
 											<string>A3B93A1E0FD7C4B000D3CA3B</string>
-											<string>A3B93A230FD7CD9700D3CA3B</string>
 											<string>A3B93A240FD7CD9700D3CA3B</string>
 											<string>A3B93A250FD7CD9700D3CA3B</string>
 											<string>A3B93A260FD7CD9700D3CA3B</string>
 											<string>A3B93A270FD7CD9700D3CA3B</string>
 											<string>A3B93A280FD7CD9700D3CA3B</string>
-											<string>A3B93A290FD7CD9700D3CA3B</string>
-										</array>
-										<key>nextStack</key>
-										<array>
-											<string>A3B93A320FD7CD9700D3CA3B</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -416,29 +408,13 @@
 											<string>A3B939FA0FD7AB5C00D3CA3B</string>
 											<string>A3B939FB0FD7AB5C00D3CA3B</string>
 											<string>A3B939FC0FD7AB5C00D3CA3B</string>
-											<string>A3B939FD0FD7AB5C00D3CA3B</string>
-											<string>A3B93A000FD7B6AA00D3CA3B</string>
-											<string>A3B93A100FD7C28E00D3CA3B</string>
 											<string>A3B93A110FD7C28E00D3CA3B</string>
-											<string>A3B93A120FD7C28E00D3CA3B</string>
-											<string>A3B93A130FD7C28E00D3CA3B</string>
-											<string>A3B93A140FD7C28E00D3CA3B</string>
 											<string>A3B93A150FD7C28E00D3CA3B</string>
 											<string>A3B93A160FD7C28E00D3CA3B</string>
 											<string>A3B93A170FD7C28E00D3CA3B</string>
 											<string>A3B93A180FD7C28E00D3CA3B</string>
 											<string>A3B93A190FD7C28E00D3CA3B</string>
-											<string>A3B93A1A0FD7C28E00D3CA3B</string>
-											<string>A3B93A1B0FD7C28E00D3CA3B</string>
-											<string>A3B93A1F0FD7C4B000D3CA3B</string>
-											<string>A3B93A2A0FD7CD9700D3CA3B</string>
-											<string>A3B93A2B0FD7CD9700D3CA3B</string>
-											<string>A3B93A2C0FD7CD9700D3CA3B</string>
-											<string>A3B93A2D0FD7CD9700D3CA3B</string>
 											<string>A3B93A2E0FD7CD9700D3CA3B</string>
-											<string>A3B93A2F0FD7CD9700D3CA3B</string>
-											<string>A3B93A300FD7CD9700D3CA3B</string>
-											<string>A3B93A310FD7CD9700D3CA3B</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -496,9 +472,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>A3B939D60FD7A60D00D3CA3B</string>
+				<string>A31AB1390FD838FF00319760</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>A3B939D70FD7A60D00D3CA3B</string>
+				<string>A31AB13A0FD838FF00319760</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -632,9 +608,7 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>1CD10A99069EF8BA00B06720</string>
 		<string>/Projects/jibiki/trunk/JibikiTrunk.xcodeproj</string>
-		<string>1C530D57069F1CE1000CFCEE</string>
 	</array>
 	<key>WindowString</key>
 	<string>-40 296 1313 706 0 0 1280 1002 </string>

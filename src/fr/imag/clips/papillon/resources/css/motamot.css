@@ -174,12 +174,11 @@ body {
 
 .menuVariableName {
     float: left; 
-    width: 50px;
+    width: 45px;
     }
     
 .menuVariableValue {
-    margin-right: 7px;
-    float: right; 
+    margin-left: 50px;
     width: 90px;
     }
         
