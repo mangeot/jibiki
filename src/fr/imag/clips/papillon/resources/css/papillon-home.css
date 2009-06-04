@@ -497,7 +497,12 @@ div#firefox img {
 }
 
 /* container contribution */
-
+.level {
+	float:left;
+	background-color: yellow;
+	font-weight: bold;
+	color: #DD390E;
+}
 .jibiki_groups {
     border-right: 1px solid #898989;
     padding-right:5px;

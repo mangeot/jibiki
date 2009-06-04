@@ -307,7 +307,7 @@ public class MotamotLinker extends LinkerBasePO {
         if (results.size() == 1) {
 			VolumeEntry ve = (VolumeEntry) results.iterator().next();
 			String javascriptRedir = javascriptHeader 
-				+ "updateParent('" + ve.getEntryId() + "', '" + ve.getSourceLanguage() + "')"
+				+ "updateParent('" + ve.getEntryId() + "', '" + Utility.getStars(getUser().getGroupsArray()) + "')"
 				+ "\n"
 				+ javascriptFooter;
 			this.addToHeaderScript(javascriptRedir);

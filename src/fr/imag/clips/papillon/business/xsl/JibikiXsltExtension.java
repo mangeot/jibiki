@@ -92,12 +92,12 @@ public class JibikiXsltExtension {
     }
 	
 	
-	public static String getDictname(String entryid) throws PapillonBusinessException {
+	public static String getEntrySourceLanguage(String entryid) throws PapillonBusinessException {
         try {
             JibikiContext context = CurrentRequestContext.get();
             VolumeEntry ve = VolumeEntriesFactory.findEntryByEntryId(((PapillonSessionData) context.get("sessionData")).getUser(),entryid);
 			
-            return ve.getDictionary().getName();
+            return ve.getSourceLanguage();
         } catch (NullPointerException e) {
             return "";
         }
