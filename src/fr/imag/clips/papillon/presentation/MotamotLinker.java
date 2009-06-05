@@ -111,10 +111,12 @@ public class MotamotLinker extends LinkerBasePO {
 	protected final static String javascriptHeader = "function loadFunction () {\n";
 	protected final static String javascriptBody = "	return 0;\n";
 	protected final static String javascriptFooter = "}\n";
+	protected final static String LINK_XSL = "LINK";
 		
     // Search form Parameters
     public class SearchFormParameters {
-        public boolean isInitialized = false;
+		
+		public boolean isInitialized = false;
         
         public String [] volumes;
         public String [] dictionaries;
@@ -191,7 +193,7 @@ public class MotamotLinker extends LinkerBasePO {
 		
         // update searchForm with requested parameters
         searchForm.getElementValueField().setValue(parameters.facetValue);
-        searchForm.getElementXsl().setValue(parameters.xsl);
+        searchForm.getElementXsl().setValue(LINK_XSL);
         searchForm.getElementOneSourceLang().setValue(sourceLang);
 
         XHTMLInputElement volTemplate = searchForm.getElementVolumes();
@@ -304,7 +306,7 @@ public class MotamotLinker extends LinkerBasePO {
         action.removeAttribute("id");
         
 
-        if (results.size() == 1) {
+     /*   if (results.size() == 1) {
 			VolumeEntry ve = (VolumeEntry) results.iterator().next();
 			String javascriptRedir = javascriptHeader 
 				+ "updateParent('" + ve.getEntryId() + "', '" + Utility.getStars(getUser().getGroupsArray()) + "')"
@@ -313,7 +315,8 @@ public class MotamotLinker extends LinkerBasePO {
 			this.addToHeaderScript(javascriptRedir);
 			noResultsMessage.getParentNode().removeChild(noResultsMessage);			
 		} 
-        else if (results.size() > 1) {
+	  else if (results.size() > 1) {*/
+       if (results.size() > 0) {
 			this.addToHeaderScript(javascriptHeader + javascriptBody + javascriptFooter);
 			noResultsMessage.getParentNode().removeChild(noResultsMessage);
 		}

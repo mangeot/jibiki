@@ -134,8 +134,6 @@ import java.util.Hashtable;
 
 public class XslTransformation implements ResultFormatter {
 
-    public static final String XML_FORMATTER = "XML";
-
     // Constants
     // Note: I use constants extensively because the XSL transformations are a little
     // bit slow
@@ -171,9 +169,10 @@ public class XslTransformation implements ResultFormatter {
             //
             dictXsl = getXslSheet(dictionaryName, volumeName, (String) parameter);
 
-            //System.out.println("Document Builder Factory is: " + myDocumentBuilderFactory.getClass());
-            //System.out.println("Transformer Factory is: " + myTransformerFactory.getClass());
-            //System.out.println("Document Builder is: " + myDocumentBuilder.getClass());
+            System.out.println("Document Builder Factory is: " + myDocumentBuilderFactory.getClass());
+            System.out.println("Transformer Factory is: " + myTransformerFactory.getClass());
+            System.out.println("Document Builder is: " + myDocumentBuilder.getClass());
+            System.out.println("XSLSheet is: " + dictXsl.getName() + " " + dictXsl.getHandle());
 
 
         } catch (javax.xml.parsers.ParserConfigurationException e) {
