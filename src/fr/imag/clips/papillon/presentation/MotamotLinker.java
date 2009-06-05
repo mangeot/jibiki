@@ -180,13 +180,16 @@ public class MotamotLinker extends LinkerBasePO {
         LinkerSearchFormXHTML searchForm = (LinkerSearchFormXHTML) 
             MultilingualXHtmlTemplateFactory.createTemplate("fr.imag.clips.papillon.presentation.xhtmlmotamot", "LinkerSearchFormXHTML", this.myComms, this.sessionData);
 
-        String idFieldName = myGetParameter(LinkerSearchFormXHTML.NAME_idFieldName);
-        String langFieldName = myGetParameter(LinkerSearchFormXHTML.NAME_langFieldName);
+        String eidFieldName = myGetParameter(LinkerSearchFormXHTML.NAME_eidFieldName);
+        String sidFieldName = myGetParameter(LinkerSearchFormXHTML.NAME_sidFieldName);
+        String levelFieldName = myGetParameter(LinkerSearchFormXHTML.NAME_levelFieldName);
 		
 		String sourceLang = this.getSessionData().getPreference("EditEntry.po", "targetLanguage");
 		
-        searchForm.getElementIdFieldName().setValue(idFieldName);
-        searchForm.getElementLangFieldName().setValue(langFieldName);
+        searchForm.getElementEidFieldName().setValue(eidFieldName);
+        searchForm.getElementSidFieldName().setValue(sidFieldName);
+        searchForm.getElementLevelFieldName().setValue(levelFieldName);
+        searchForm.getElementLevelFieldValue().setValue(Utility.getStars(getUser().getGroupsArray()));
 
         // Parameter initialization is generic
         parameters.initializeSearchParameters(this);
@@ -341,7 +344,7 @@ public class MotamotLinker extends LinkerBasePO {
             Node entryDOM = (Node)rf.getFormattedResult(qr, this.getUser());
             //Utility.writeNodeToSystemOut(entryDOM);
             entryNode.appendChild(resultsListTmpl.importNode(entryDOM, true));
-            action.setAttribute("onClick", "updateParent('" + ve.getEntryId() + "', '" + ve.getSourceLanguage() + "')");
+            action.setAttribute("onclick", "updateParent('" + ve.getEntryId() + "', '')");
             resultLine.getParentNode().insertBefore(resultLine.cloneNode(true), resultLine);
         }
         
