@@ -14,15 +14,35 @@
     <script id="Script" type="text/javascript">
       <!--
       
-      funciton updateLevel(fieldName) {
-		var level = document.getElementById("levelFieldValue").value;	  
-        opener.updateFields(fieldName, level);
-	  }
-	  
-      function updateParent(fieldName, fieldValue) {
-        var field = document.getElementById(fieldName).value;
-        opener.updateFields(field, fieldValue);
-        window.close();
+       function updateParent(lang, eid, sid, aid) {
+		alert('lang: ' + lang + ',eid: ' + eid + ', sid: ' + sid + ',aid: ' + aid);
+        var fieldLang = document.getElementById('fieldLang').value;
+		alert('fieldLang:' + fieldLang + ' : ' + lang);
+        opener.updateFields(fieldLang, lang);
+        var fieldEid = document.getElementById('fieldEid').value;
+		alert('fieldEid:' + fieldEid + ' : ' + eid);
+        opener.updateFields(fieldEid, eid);
+        var fieldSid = document.getElementById('fieldSid').value;
+		alert('fieldSid:' + fieldSid + ' : ' + sid);
+        opener.updateFields(fieldSid, sid);
+        var fieldAid = document.getElementById('fieldAid').value;
+        opener.updateFields(fieldAid, aid);
+		if (aid != '') {
+			var fieldUpdateAxie = document.getElementById('fieldUpdateAxie').value;
+			alert('fieldUpdateAxie:' + fieldUpdateAxie + ' : true');
+			opener.updateFields(fieldUpdateAxie, 'true');
+		}
+		if (aid == '' && eid != '' && sid != '') {
+			var fieldCreateAxie = document.getElementById('fieldCreateAxie').value;
+			alert('fieldCreateAxie:' + fieldCreateAxie + ' : true');
+			opener.updateFields(fieldCreateAxie, 'true');
+		}
+ 		var fieldLevel = document.getElementById('fieldLevel').value;	  
+ 		var level = document.getElementById('fieldLevelValue').value;	  
+		alert('fieldLevel:' + fieldLevel + ' : ' + level);
+       opener.updateFields(fieldLevel, level);
+		
+       window.close();
       }
       
 //-->

@@ -180,25 +180,28 @@ public class MotamotLinker extends LinkerBasePO {
         LinkerSearchFormXHTML searchForm = (LinkerSearchFormXHTML) 
             MultilingualXHtmlTemplateFactory.createTemplate("fr.imag.clips.papillon.presentation.xhtmlmotamot", "LinkerSearchFormXHTML", this.myComms, this.sessionData);
 
-        String[] Fields = myGetParameterValues(LinkerSearchFormXHTML.NAME_FIELD);
+        String fieldLang = myGetParameter(LinkerSearchFormXHTML.NAME_FIELD_LANG);
+        String fieldEid = myGetParameter(LinkerSearchFormXHTML.NAME_FIELD_EID);
+        String fieldSid = myGetParameter(LinkerSearchFormXHTML.NAME_FIELD_SID);
+        String fieldAid = myGetParameter(LinkerSearchFormXHTML.NAME_FIELD_AID);
+        String fieldLevel = myGetParameter(LinkerSearchFormXHTML.NAME_FIELD_LEVEL);
+        String fieldLevelValue = myGetParameter(LinkerSearchFormXHTML.NAME_FIELD_LEVEL_VALUE);
+        String fieldUpdateAxie = myGetParameter(LinkerSearchFormXHTML.NAME_FIELD_UPDATE_AXIE);
+        String fieldCreateAxie = myGetParameter(LinkerSearchFormXHTML.NAME_FIELD_CREATE_AXIE);
 		
 		String sourceLang = this.getSessionData().getPreference("EditEntry.po", "targetLanguage");
 		
-        XHTMLInputElement fieldTemplate = searchForm.getElementField();
-        fieldTemplate.removeAttribute("id");
-        Node fieldParent = fieldTemplate.getParentNode();
-        for (int i=0; i < Fields.length; i++) {
-            fieldTemplate.setValue(Fields[i]);
-			if (Fields[i].equals("m:translation.@lang")) {
-				fieldTemplate.setValue(sourceLang);
-			}
-			else if (Fields[i].equals("m:sense.@level")) {
-				fieldTemplate.setValue(Utility.getStars(getUser().getGroupsArray()));
-			}
-            fieldParent.insertBefore(fieldTemplate.cloneNode(true), fieldTemplate);
-        }
-        fieldParent.removeChild(fieldTemplate);
+		searchForm.getElementFieldLang().setValue(fieldLang);
+		searchForm.getElementFieldEid().setValue(fieldEid);
+		searchForm.getElementFieldSid().setValue(fieldSid);
+		searchForm.getElementFieldAid().setValue(fieldAid);
+		searchForm.getElementFieldLevel().setValue(fieldLevel);
+		searchForm.getElementFieldLevelValue().setValue(Utility.getStars(this.getUser().getGroupsArray()));
+		searchForm.getElementFieldUpdateAxie().setValue(fieldUpdateAxie);
+		searchForm.getElementFieldCreateAxie().setValue(fieldCreateAxie);
 
+
+		
         // Parameter initialization is generic
         parameters.initializeSearchParameters(this);
 		
@@ -236,7 +239,8 @@ public class MotamotLinker extends LinkerBasePO {
     }
     
     public Node getResultList() throws Exception {
-        LinkerResultListXHTML resultsListTmpl = (LinkerResultListXHTML) MultilingualXHtmlTemplateFactory.createTemplate("fr.imag.clips.papillon.presentation.xhtmlmotamot", "LinkerResultListXHTML", this.myComms, this.sessionData);
+		
+		LinkerResultListXHTML resultsListTmpl = (LinkerResultListXHTML) MultilingualXHtmlTemplateFactory.createTemplate("fr.imag.clips.papillon.presentation.xhtmlmotamot", "LinkerResultListXHTML", this.myComms, this.sessionData);
 
         parameters.initializeSearchParameters(this);
 
@@ -352,7 +356,7 @@ public class MotamotLinker extends LinkerBasePO {
             Node entryDOM = (Node)rf.getFormattedResult(qr, this.getUser());
             //Utility.writeNodeToSystemOut(entryDOM);
             entryNode.appendChild(resultsListTmpl.importNode(entryDOM, true));
-            action.setAttribute("onclick", "updateParent('m:translation.@refentry'," + ve.getEntryId() + "');updateParent('m:translation.@lang','"+sourceLang+"');");
+            action.setAttribute("onclick", "updateParent('"+ parameters.sourceLang+"','" + ve.getEntryId() + "','','','');");
             resultLine.getParentNode().insertBefore(resultLine.cloneNode(true), resultLine);
         }
         
