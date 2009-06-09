@@ -14,17 +14,14 @@
     <script id="Script" type="text/javascript">
       <!--
       
-      
-      function updateParent(eidFieldValue, sidFieldValue) {
-        var eidField = document.getElementById("eidFieldName").value;
-        var sidField = document.getElementById("sidFieldName").value;
-        var levelField = document.getElementById("levelFieldName").value;
-        
-		var level = document.getElementById("levelFieldValue").value;
-		
-        opener.updateFields(eidField, eidFieldValue);
-        opener.updateFields(sidField, sidFieldValue);
-        opener.updateFields(levelField, level);
+      funciton updateLevel(fieldName) {
+		var level = document.getElementById("levelFieldValue").value;	  
+        opener.updateFields(fieldName, level);
+	  }
+	  
+      function updateParent(fieldName, fieldValue) {
+        var field = document.getElementById(fieldName).value;
+        opener.updateFields(field, fieldValue);
         window.close();
       }
       

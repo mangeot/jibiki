@@ -180,16 +180,24 @@ public class MotamotLinker extends LinkerBasePO {
         LinkerSearchFormXHTML searchForm = (LinkerSearchFormXHTML) 
             MultilingualXHtmlTemplateFactory.createTemplate("fr.imag.clips.papillon.presentation.xhtmlmotamot", "LinkerSearchFormXHTML", this.myComms, this.sessionData);
 
-        String eidFieldName = myGetParameter(LinkerSearchFormXHTML.NAME_eidFieldName);
-        String sidFieldName = myGetParameter(LinkerSearchFormXHTML.NAME_sidFieldName);
-        String levelFieldName = myGetParameter(LinkerSearchFormXHTML.NAME_levelFieldName);
+        String[] Fields = myGetParameterValues(LinkerSearchFormXHTML.NAME_FIELD);
 		
 		String sourceLang = this.getSessionData().getPreference("EditEntry.po", "targetLanguage");
 		
-        searchForm.getElementEidFieldName().setValue(eidFieldName);
-        searchForm.getElementSidFieldName().setValue(sidFieldName);
-        searchForm.getElementLevelFieldName().setValue(levelFieldName);
-        searchForm.getElementLevelFieldValue().setValue(Utility.getStars(getUser().getGroupsArray()));
+        XHTMLInputElement fieldTemplate = searchForm.getElementField();
+        fieldTemplate.removeAttribute("id");
+        Node fieldParent = fieldTemplate.getParentNode();
+        for (int i=0; i < Fields.length; i++) {
+            fieldTemplate.setValue(Fields[i]);
+			if (Fields[i].equals("m:translation.@lang")) {
+				fieldTemplate.setValue(sourceLang);
+			}
+			else if (Fields[i].equals("m:sense.@level")) {
+				fieldTemplate.setValue(Utility.getStars(getUser().getGroupsArray()));
+			}
+            fieldParent.insertBefore(fieldTemplate.cloneNode(true), fieldTemplate);
+        }
+        fieldParent.removeChild(fieldTemplate);
 
         // Parameter initialization is generic
         parameters.initializeSearchParameters(this);
@@ -344,7 +352,7 @@ public class MotamotLinker extends LinkerBasePO {
             Node entryDOM = (Node)rf.getFormattedResult(qr, this.getUser());
             //Utility.writeNodeToSystemOut(entryDOM);
             entryNode.appendChild(resultsListTmpl.importNode(entryDOM, true));
-            action.setAttribute("onclick", "updateParent('" + ve.getEntryId() + "', '')");
+            action.setAttribute("onclick", "updateParent('m:translation.@refentry'," + ve.getEntryId() + "');updateParent('m:translation.@lang','"+sourceLang+"');");
             resultLine.getParentNode().insertBefore(resultLine.cloneNode(true), resultLine);
         }
         
