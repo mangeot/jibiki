@@ -186,8 +186,6 @@ public class MotamotLinker extends LinkerBasePO {
         String fieldAid = myGetParameter(LinkerSearchFormXHTML.NAME_FIELD_AID);
         String fieldLevel = myGetParameter(LinkerSearchFormXHTML.NAME_FIELD_LEVEL);
         String fieldLevelValue = myGetParameter(LinkerSearchFormXHTML.NAME_FIELD_LEVEL_VALUE);
-        String fieldUpdateAxie = myGetParameter(LinkerSearchFormXHTML.NAME_FIELD_UPDATE_AXIE);
-        String fieldCreateAxie = myGetParameter(LinkerSearchFormXHTML.NAME_FIELD_CREATE_AXIE);
 		
 		String sourceLang = this.getSessionData().getPreference("EditEntry.po", "targetLanguage");
 		
@@ -197,8 +195,6 @@ public class MotamotLinker extends LinkerBasePO {
 		searchForm.getElementFieldAid().setValue(fieldAid);
 		searchForm.getElementFieldLevel().setValue(fieldLevel);
 		searchForm.getElementFieldLevelValue().setValue(Utility.getStars(this.getUser().getGroupsArray()));
-		searchForm.getElementFieldUpdateAxie().setValue(fieldUpdateAxie);
-		searchForm.getElementFieldCreateAxie().setValue(fieldCreateAxie);
 
 
 		
