@@ -88,7 +88,7 @@ import java.util.*;
  * Used to find the instances of xslsheet.
  */
 public class PapillonPivotFactory {
-
+/*
     public static final String DICTNAME = "Papillon";
     public static final String VOLUMENAME = "Papillon_axi"; 
 
@@ -119,7 +119,7 @@ public class PapillonPivotFactory {
         }
         return theAxieVector;
     }
-
+*/
     /**
     * The findAxieByHandle method performs a database query to
      * return a id object
@@ -130,7 +130,7 @@ public class PapillonPivotFactory {
      * @exception PapillonBusinessException
      *    if there is a problem retrieving message.
      */
-    public static Axie findAxieByHandle(String volumeName, String handle) throws PapillonBusinessException {
+/*    public static Axie findAxieByHandle(String volumeName, String handle) throws PapillonBusinessException {
 		Axie myAxie = null;
 			Volume myVolume = VolumesFactory.getVolumeByName(volumeName);
 			if (myVolume!=null && !myVolume.isEmpty()) {
@@ -173,7 +173,7 @@ public class PapillonPivotFactory {
                     //	throw new PapillonBusinessException("Exception in findAxieByHandle()", ex);
                 }
     }
-    
+ */   
 		    /**
         * The findAxieById method performs a database query to
      * return a id object
@@ -257,7 +257,7 @@ public class PapillonPivotFactory {
 //	}
 	
     
-    public static Collection findLexiesByAxie(VolumeEntry pivotEntry, String lang) 
+/*    public static Collection findLexiesByAxie(VolumeEntry pivotEntry, String lang) 
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
             Collection myCollection = new HashSet();
             
@@ -283,7 +283,7 @@ public class PapillonPivotFactory {
             return myCollection;
         }
     
-    
+  */ 
 
     // FIXME: SOON: Should not be called anymore. As Papillon Axies should not be treated specialy.
 //    public static Collection findLexiesByAxie(Axie axie, String lang)

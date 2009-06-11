@@ -1560,7 +1560,17 @@ public class VolumeEntry
         return ParseVolume.getCdmString(this, Volume.CDM_gdefEstParticule, this.getSourceLanguage());
     }
 
-    /**
+	public Volume getAxieVolume() 
+		throws fr.imag.clips.papillon.business.PapillonBusinessException {
+		Volume resVolume = null;
+		java.util.Collection axiVolCol = VolumesFactory.getVolumesArray(this.getDictionary().getName(),"axi",null);
+		if (axiVolCol.iterator().hasNext()) {
+			resVolume = (Volume) axiVolCol.iterator().next();
+		}
+		return resVolume;
+	}
+
+			/**
      * Saves the volume entry into the database.
      *
      * @throws PapillonBusinessException if an error occurs

@@ -324,17 +324,20 @@ public class HandleEntryModifications extends EditingBasePO {
 			}
 			
 			//
+			updateDraftEntry(newVolumeEntry, referrer);
+
             if (submitSave!=null && !submitSave.equals("")) {
-				// Save draft
+				// Save draft and redirect
                 saveDraftEntry(newVolumeEntry, referrer);
 			
-            } else {
-				// Update draft
-				updateDraftEntry(newVolumeEntry, referrer);
-			}
-			
-        return null;
-    }
+            }
+			// Edit current volume entry
+            throw new ClientPageRedirectException(
+                                                  EditEntryURL + "?" + 
+                                                  EditEntry.VolumeName_PARAMETER + "=" + newVolumeEntry.getVolumeName() + "&" + 
+                                                  EditEntry.EntryHandle_PARAMETER + "=" + newVolumeEntry.getHandle() + "&" +
+                                                  EditEntry.Referrer_PARAMETER + "=" + myUrlEncode(referrer));
+	}
 	
 	//
 	protected void updateBooleanElements(String[] booleanElements, String[] trueElements, Element myEntry) {
@@ -389,12 +392,6 @@ public class HandleEntryModifications extends EditingBasePO {
             ResultPostUpdateProcessor postUpdateProcessor = ResultPostUpdateProcessorFactory.getPostUpdateProcessor(newVolumeEntry);
             postUpdateProcessor.transformation(newVolumeEntry, this.getUser());
             
-            // Edit current volume entry
-            throw new ClientPageRedirectException(
-                                                  EditEntryURL + "?" + 
-                                                  EditEntry.VolumeName_PARAMETER + "=" + newVolumeEntry.getVolumeName() + "&" + 
-                                                  EditEntry.EntryHandle_PARAMETER + "=" + newVolumeEntry.getHandle() + "&" +
-                                                  EditEntry.Referrer_PARAMETER + "=" + myUrlEncode(referrer));
         }
 	
     //
