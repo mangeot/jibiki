@@ -29,10 +29,10 @@ cp papillon.properties.in papillon.properties
 # ./toolsforjibiki/enhydra5.1/bin/ant make -Dcompile.to.version=trace
 export LC_ALL=en_US.UTF-8
 ./toolsforjibiki/enhydra5.1/bin/ant make
-sudo -u postgres psql template1 -f src/sql/create_user_and_database.sql
-sudo -u postgres psql motamot -f src/sql/multilingual-sort.sql
-sudo -u postgres psql motamot -f build/Dods_Generated_Sources/static/SQLcreate.sql
-sudo -u postgres psql motamot -f src/sql/allow_dbuser.sql
+sudo -u postgres psql template1 -f src/sql/create_papillon_user.sql
+sudo -u postgres psql template1 papillon -f src/sql/create_papillon_database.sql
+sudo -u postgres psql papillon papillon -f src/sql/multilingual-sort.sql
+sudo -u postgres psql papillon papillon -f build/Dods_Generated_Sources/static/SQLcreate.sql
 cd output
 ./run --debug --exec
 ## for compiling only java classes
