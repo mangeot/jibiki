@@ -4,6 +4,7 @@
 -- select headword from gdefest order by est_sort(headword);
 -- or create an index:
 --
+CREATE LANGUAGE plpgsql;
 
 
 -- deu German
