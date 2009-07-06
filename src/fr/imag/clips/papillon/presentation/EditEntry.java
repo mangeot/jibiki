@@ -115,11 +115,7 @@ public class EditEntry extends EditingBasePO {
 		throws java.io.UnsupportedEncodingException, 
 			HttpPresentationException {
         
-		
-		// FIXMe to be placed elsewhere, somewhere, I'm thinking about it...
-		this.getSessionData().setPreference("EditEntry.po","targetLanguage","jpn");
-				
-        //
+		//
         if (DEBUG) PapillonLogger.writeDebugMsg ("EditEntry : getContent");        
                 
         // Management of the parameters

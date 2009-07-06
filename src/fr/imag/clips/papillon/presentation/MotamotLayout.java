@@ -372,7 +372,7 @@ public class MotamotLayout implements StdLayout {
             }
 			if (pairLanguages != null && pairLanguages.size() ==2 && !pairLanguages.contains(prefTrgLang)) {
 				prefTrgLang = (String) pairLanguages.get(1);
-				if (prefTrgLang == prefSrcLang) {
+				if (prefTrgLang.equals(prefSrcLang)) {
 					prefTrgLang = (String) pairLanguages.get(0);
 				}
 			}

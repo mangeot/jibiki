@@ -43,7 +43,7 @@ import java.util.Vector;
         protected ArrayList targets = new ArrayList();
         
         //
-        private final boolean DEBUG = true;
+        private final boolean DEBUG = false;
         
         //
         public QueryRequest(Volume volume) {

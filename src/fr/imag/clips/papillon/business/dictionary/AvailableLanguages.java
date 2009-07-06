@@ -136,7 +136,8 @@ public class AvailableLanguages {
             Dictionary myDict = DictionariesFactory.getDictionaryByName(dict);
             TreeSet mySet = new TreeSet();
             mySet.addAll(myDict.getSourceLanguagesArray());
-            mySet.remove("axi");
+			// FIXME: Do not remove "axi" any more for the Motamot project
+           // mySet.remove("axi");
             mySet.remove("");
 			return mySet;
         }
@@ -150,7 +151,8 @@ public class AvailableLanguages {
                     Dictionary dict = (Dictionary)iter.next();
 					mySet.addAll(dict.getTargetLanguagesArray());
 				}
-				mySet.remove("axi");
+				// FIXME: Do not remove "axi" any more for the Motamot project
+			//	mySet.remove("axi");
 				mySet.remove("");
 				TargetLanguagesArray = mySet;
 			}

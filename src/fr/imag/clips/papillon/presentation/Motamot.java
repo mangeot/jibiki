@@ -160,6 +160,7 @@ public class Motamot extends PapillonBasePO {
     protected final static String ContributionsVolumeParameter = "VOLUME";
 			
 	protected final static String SrcTrg_PARAMETER = "SrcTrg";
+	protected final static String SrcTrgAll_PARAMETER = "*all*";
 
     /*
      *  Parameters used for Sherlock plugin answer
@@ -283,10 +284,16 @@ public class Motamot extends PapillonBasePO {
         String entryHandle = myGetParameter(EditEntryInitFactory.HANDLE_PARAMETER);
 		String searchKind = myGetParameter(SEARCH_TYPE_PARAMETER);
 		String sourceLanguage = myGetParameter(SOURCE_PARAMETER);
+		String targetLanguages[] = myGetParameterValues(TARGETS_PARAMETER);
 		String languagePair = myGetParameter(SrcTrg_PARAMETER);		
 		String targetLanguage = null;
 										
 		if (languagePair != null && !languagePair.equals("")) {
+			if (languagePair.equals(SrcTrgAll_PARAMETER)) {
+				this.getSessionData().setPreference("EditEntry.po","sourceLanguage","");
+				this.getSessionData().setPreference("EditEntry.po","targetLanguage","");
+			}
+			else {
 			if (sourceLanguage==null || sourceLanguage.equals("")) {
 				sourceLanguage = languagePair.substring(0,3);
 			}
@@ -296,11 +303,15 @@ public class Motamot extends PapillonBasePO {
 			}
 			this.getSessionData().setPreference("EditEntry.po","sourceLanguage",sourceLanguage);
 			this.getSessionData().setPreference("EditEntry.po","targetLanguage",targetLanguage);
+			}
 		}
 		else {
-			// reset some preferences (for Motamot project), to be moved elsewhere...
-			this.getSessionData().setPreference("EditEntry.po","sourceLanguage",null);
-			this.getSessionData().setPreference("EditEntry.po","targetLanguage",null);
+			String sourcePref =  this.getSessionData().getPreference("EditEntry.po","sourceLanguage");
+			String targetPref =  this.getSessionData().getPreference("EditEntry.po","targetLanguage");
+			if (targetPref !=null && targetPref.equals(sourceLanguage)) {
+				this.getSessionData().setPreference("EditEntry.po","sourceLanguage",targetPref);
+				this.getSessionData().setPreference("EditEntry.po","targetLanguage",sourcePref);
+			}
 		}
 										
         if (null == searchKind || searchKind.equals("")) {
@@ -334,8 +345,7 @@ public class Motamot extends PapillonBasePO {
 
         ////// Create Home page
 		String page = "Motamot";
-		if (languagePair != null && !languagePair.equals("")) {
-			//page = languagePair.substring(0,1).toUpperCase()+languagePair.substring(1);
+		if (languagePair != null && !languagePair.equals("") && !languagePair.equals(SrcTrgAll_PARAMETER)) {
 			page = languagePair;
 		}
         content = (MotamotContentXHTML) MultilingualXHtmlTemplateFactory.createTemplate("fr.imag.clips.papillon.presentation.xhtmlmotamot",page + "ContentXHTML",
@@ -440,7 +450,7 @@ public class Motamot extends PapillonBasePO {
                 }
                 if (targetLanguage != null) {
                     this.setPreference(TARGETS_PARAMETER, targetLanguage);
-               } else if ((targetsLanguage != null) && (targetsLanguage.length > 1)) {
+               } else if ((targetLanguages != null) && (targetLanguages.length > 1)) {
                     this.setPreference(TARGETS_PARAMETER, ALL_TARGETS);
                 }
                 String headword = myGetParameter(HEADWORD_PARAMETER);

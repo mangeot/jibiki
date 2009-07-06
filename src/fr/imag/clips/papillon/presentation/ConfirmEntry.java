@@ -77,7 +77,7 @@ import fr.imag.clips.papillon.business.PapillonLogger;
 public class ConfirmEntry extends EditingBasePO {
     
     //
-    private final boolean DEBUG = true;
+    private final boolean DEBUG = false;
     
     //
     public static String EntryHandle_PARAMETER = EditEntry.EntryHandle_PARAMETER;

@@ -264,7 +264,7 @@ public class EditEntryInitFactory {
         if ( myEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS) ||
              (myEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS) && myEntry.getModificationAuthor().equals(user.getLogin())) ) {
              
-            // Create contribution base on myEntry with status Delete !
+            // Create contribution based on myEntry with status Delete !
             VolumeEntry newEntry = VolumeEntriesFactory.newEntryFromExisting(myEntry);
             newEntry.initClassifiedFinishedContribution();
             newEntry.addClassifiedFinishedContribution(myEntry);

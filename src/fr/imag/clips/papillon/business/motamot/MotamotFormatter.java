@@ -83,11 +83,12 @@ public class MotamotFormatter implements ResultFormatter {
             //
             dictXsl = getXslSheet(dictionaryName, volumeName, (String) parameter);
 
-            System.out.println("Document Builder Factory is: " + myDocumentBuilderFactory.getClass());
+            /*
+			 System.out.println("Document Builder Factory is: " + myDocumentBuilderFactory.getClass());
             System.out.println("Transformer Factory is: " + myTransformerFactory.getClass());
             System.out.println("Document Builder is: " + myDocumentBuilder.getClass());
             System.out.println("XSLSheet is: " + dictXsl.getName() + " " + dictXsl.getHandle());
-
+			 */
 
         } catch (javax.xml.parsers.ParserConfigurationException e) {
             throw new PapillonBusinessException("CRITICAL: error initializing document builder !", e);
@@ -126,7 +127,7 @@ public class MotamotFormatter implements ResultFormatter {
 
 					// DIRECT TRANSLATION RESULTS
                     if (target != null && !target.equals("") && target!= sourceLanguage) {
-						PapillonLogger.writeDebugMsg("getFormattedDirectResult: " + target);
+						//PapillonLogger.writeDebugMsg("getFormattedDirectResult: " + target);
                         NodeList myNodeList = ParseVolume.getCdmElements(myAnswer, Volume.CDM_translationReflexie, target);
                         if ((myNodeList != null) && (myNodeList.getLength() > 0)) {
                             for (int i = 0; i < myNodeList.getLength(); i++) {
@@ -166,7 +167,6 @@ public class MotamotFormatter implements ResultFormatter {
 														VolumeEntry myEntry = (VolumeEntry) qr.getLexiesHashtable().get(transIds[j]);
 														if (myEntry != null && ! myEntry.isEmpty()) {
 															Node tempNode = myAnswer.getDom().importNode((Node) myEntry.getDom().getDocumentElement(), true);
-															PapillonLogger.writeDebugMsg("tempNode: " + XMLServices.NodeToString(tempNode));
 															myNode.appendChild(tempNode);
 														} 
 													}
@@ -187,9 +187,9 @@ public class MotamotFormatter implements ResultFormatter {
 				
 				if (null != dictXsl && !dictXsl.isEmpty()) {
                 // Format document source
-				PapillonLogger.writeDebugMsg("ResultNode before format: " + qr.getSourceEntry().getHeadword() + " node: " + XMLServices.NodeToString(qr.getSourceEntry().getDom()));
+				//PapillonLogger.writeDebugMsg("ResultNode before format: " + qr.getSourceEntry().getHeadword() + " node: " + XMLServices.NodeToString(qr.getSourceEntry().getDom()));
                 Node resultNode = formatResult(qr.getSourceEntry().getDom(), dictXsl, usr);
-				PapillonLogger.writeDebugMsg("ResultNode after format: " + qr.getSourceEntry().getHeadword() + " node: " + XMLServices.NodeToString(resultNode));
+				//PapillonLogger.writeDebugMsg("ResultNode after format: " + qr.getSourceEntry().getHeadword() + " node: " + XMLServices.NodeToString(resultNode));
                 rootdiv.appendChild(res.importNode(resultNode, true));
             }
 		

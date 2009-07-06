@@ -18,7 +18,12 @@
                     function updateFields(idField, idFieldValue) {
                       if (idField != '') {
                         theIdField = document.getElementById(idField);
-                        theIdField.value = idFieldValue;
+						if (theIdField==null) {
+							alert('updateFields: idField null ' + idField);
+						}
+						else {
+							theIdField.value = idFieldValue;
+						}
                       }
                     }
 					

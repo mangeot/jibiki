@@ -331,22 +331,17 @@ public class AdvancedQueryForm {
         throws java.io.UnsupportedEncodingException,
         com.lutris.appserver.server.httpPresentation.HttpPresentationException
     {
-        
+        Collection result = new ArrayList();
         String[] t = AbstractPO.myGetParameterValues(req, AdvancedQueryFormXHTML.NAME_TARGETS);
         
-        if ((t != null) && t[0].equals(ALL_TARGETS)) {
-            
-            //
-            return AvailableLanguages.getTargetLanguagesArray();
-        
-        } else if (t != null) {
-            
-            //
-            return Arrays.asList(t) ;
-        }
-
-        //
-        return new ArrayList();
+        if (t != null) {
+            result = Arrays.asList(t);
+			if (result.contains(ALL_TARGETS)) {
+				result = AvailableLanguages.getTargetLanguagesArray();
+			}
+		}
+         //
+        return result;
     }
     
     public List getRequestedCriteria(HttpServletRequest req) 

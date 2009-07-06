@@ -188,6 +188,7 @@ public class MotamotLinker extends LinkerBasePO {
         String fieldLevelValue = myGetParameter(LinkerSearchFormXHTML.NAME_FIELD_LEVEL_VALUE);
 		
 		String sourceLang = this.getSessionData().getPreference("EditEntry.po", "targetLanguage");
+		PapillonLogger.writeDebugMsg("getPref EditEntry.po targetLanguage: " + sourceLang);
 		
 		searchForm.getElementFieldLang().setValue(fieldLang);
 		searchForm.getElementFieldEid().setValue(fieldEid);
