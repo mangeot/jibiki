@@ -114,6 +114,7 @@ public class MultilingualXHtmlTemplateFactory {
 				i++;
 			}
 		}
+		boolean tmpl = (template != null);
 		if (languages == null || languages.size()==0 || i == languages.size()) {
 			try {
 				template = comms.xmlcFactory.create(Class.forName(xhtmlPackage + ".orig." + xhtmlClass));

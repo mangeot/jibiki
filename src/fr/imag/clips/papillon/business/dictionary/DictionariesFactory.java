@@ -1157,7 +1157,8 @@ public class DictionariesFactory {
                  // qr.setResultKind(QueryResult.AXIE_COLLECTION_RESULT);
                  // myVector = getPivotResults(qr, ve.getSourceLanguage(), realTargets, user);
                  
-                 Collection axies = PapillonPivotFactory.findAxiesByLexie(ve, user);
+				 PapillonLogger.writeDebugMsg("addAxiesAndTranslations: findAxiesByLexie ");
+                Collection axies = PapillonPivotFactory.findAxiesByLexie(ve, user);
                  if (axies != null && axies.size() > 0) {
                      // WARN: Here, we assume that a lexie is refered by ONE AND ONLY ONE axie... 
                      // well at least we just take one into account. 
@@ -1183,12 +1184,15 @@ public class DictionariesFactory {
                      result.add(qr);
                  }
                  //
-             } else if (type.equals("direct")) {
-                 Collection realTargets = Utility.ArrayIntersection(ve.getVolume().getTargetLanguagesArray(), targets);
+             }
+			else if (type.equals("direct")) {
+				Collection realTargets = Utility.ArrayIntersection(ve.getVolume().getTargetLanguagesArray(), targets);
+				Iterator iter = realTargets.iterator();
                  qr.setResultKind(QueryResult.DIRECT_TRANSLATIONS_RESULT);
                  qr = getDirectResults(qr, ve.getSourceLanguage(), realTargets, user);
                  result.add(qr);
-             } else {
+             }
+			else {
                  // type monovolume: bilingual in the same file
                  // type monodirectional: bilingual in the same file
                  qr.setResultKind(QueryResult.UNIQUE_RESULT);
@@ -1351,32 +1355,62 @@ public class DictionariesFactory {
 		//PapillonLogger.writeDebugMsg("getDirectResults:");
         if (null != qr && null != qr.getSourceEntry()) {
             VolumeEntry mySourceEntry = qr.getSourceEntry();
+			String dictName = mySourceEntry.getDictionaryName();
             Hashtable resLexies = new Hashtable();
-
-            for (Iterator iter = targets.iterator(); iter.hasNext();) {
+			
+ 			// DIRECT TRANSLATION RESULTS + AXIES
+           for (Iterator iter = targets.iterator(); iter.hasNext();) {
                 String target = (String)iter.next();
 				
 				if (target != source) {
-               // get all cdm elements pointing to target entries.
-                String[] transIds = mySourceEntry.getTranslationsLexieIds(target);
-                
-                //
-                Collection Volumes = VolumesFactory.getVolumesArray(mySourceEntry.getDictionaryName(), target, null);
-                if (null != transIds && !Volumes.isEmpty()) {
-
-                    //
-                    Volume firstVolume = (Volume)(Volumes.iterator()).next();
-                    for (int j = 0; j < transIds.length; j++) {
-                        VolumeEntry myEntry = (VolumeEntry) DictionariesFactory.findEntryByEntryId(firstVolume.getName(), transIds[j]);
-                        if (myEntry != null && ! myEntry.isEmpty()) {
-                            resLexies.put(myEntry.getEntryId(),myEntry);
-                        } 
-                    }
-                }
+					//PapillonLogger.writeDebugMsg("getDirectResults: " + mySourceEntry.getHeadword() + " target:" + target);
+					// get all cdm elements pointing to target entries.
+					String[] transIds = mySourceEntry.getTranslationsLexieIds(target);
+										
+					//
+					Collection Volumes = VolumesFactory.getVolumesArray(dictName, target, null);
+					if (null != transIds && !Volumes.isEmpty()) {
+						
+						//
+						Volume firstVolume = (Volume)(Volumes.iterator()).next();
+						String firstVolumeName = firstVolume.getName();
+						for (int j = 0; j < transIds.length; j++) {
+							VolumeEntry myEntry = (VolumeEntry) DictionariesFactory.findEntryByEntryId(firstVolumeName, transIds[j]);
+							if (myEntry != null && ! myEntry.isEmpty()) {
+								resLexies.put(myEntry.getEntryId(),myEntry);
+								
+								// pivot volume
+								if (target.equals("axi")) {
+									for (Iterator iter1 = targets.iterator(); iter1.hasNext();) {
+										String target1 = (String)iter1.next();
+										
+										if (target1 != source && !target1.equals("axi")) {
+											// get all cdm elements pointing to target entries.
+											String[] transIds1 = myEntry.getTranslationsLexieIds(target1);
+											
+											Collection Volumes1 = VolumesFactory.getVolumesArray(dictName, target1, null);
+											if (null != transIds1 && !Volumes1.isEmpty()) {
+												Volume firstVolume1 = (Volume)(Volumes1.iterator()).next();
+												String firstVolumeName1 = firstVolume1.getName();
+												for (int j1 = 0; j1 < transIds1.length; j1++) {
+													VolumeEntry myEntry1 = (VolumeEntry) DictionariesFactory.findEntryByEntryId(firstVolumeName1, transIds1[j1]);
+													if (myEntry1 != null && ! myEntry1.isEmpty()) {
+														resLexies.put(myEntry1.getEntryId(),myEntry1);
+													}
+												}
+											}
+										}
+									}
+								}
+							} 
+						}
+					}
 				}
                 
-             }
-            qr.setLexiesHashtable(resLexies);
+			}
+			// PIVOT AXIE RESULTS
+			// Done in the Formatter
+			qr.setLexiesHashtable(resLexies);
         }
 				//PapillonLogger.writeDebugMsg("end of getDirectResults");
 

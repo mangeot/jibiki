@@ -151,6 +151,8 @@ public class XslTransformation implements ResultFormatter {
 
     protected Dictionary currentDictionary;
     protected Volume sourceVolume;
+	
+	public static String XML_FORMATTER = "XML";
 
     //
     private final boolean DEBUG = false;

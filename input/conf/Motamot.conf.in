@@ -125,7 +125,7 @@ SessionManager.MaxIdleTime = 120
 # If the URL "/" for this application is accessed, the user will be
 # redirected to this URL. This should be a relative URL.
 #
-Application.DefaultUrl = "Home.po"
+Application.DefaultUrl = "Motamot.po"
 #
 PresentationManager.CacheFiles = true
 #
@@ -338,8 +338,4 @@ jibiki.dblayer.version=@DBLAYER_VERSION@
 #
 DatabaseManager.ObjectIdColumnName = "ObjectId"
 DatabaseManager.VersionColumnName = "ObjectVersion"
-
-
-
-
 

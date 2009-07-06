@@ -617,7 +617,7 @@ public class ParseVolume {
                 java.util.Hashtable tmpTable = (java.util.Hashtable) CdmElementsTable.get(lang);
                 for (java.util.Enumeration keys = tmpTable.keys(); keys.hasMoreElements();) {
                     String CdmElement = (String) keys.nextElement();
-                    // PapillonLogger.writeDebugMsg("Parse entry, key " + CdmElement + ":");
+					//PapillonLogger.writeDebugMsg("Parse entry, key " + CdmElement + ":");
                     java.util.Vector myVector = (java.util.Vector) tmpTable.get(CdmElement);
                     org.apache.xpath.XPath myXPath = null;
                     boolean isIndex = false;
@@ -635,14 +635,15 @@ public class ParseVolume {
                                 myVector.add(myXPath);
                             }
                         }
-                        //PapillonLogger.writeDebugMsg("Parse entry, key " + CdmElement + " /xpath: " + (String) myVector.elementAt(0));
+                        //PapillonLogger.writeDebugMsg("Parse entry: lang: "+ lang +" /key: " + CdmElement + " /xpath: " + (String) myVector.elementAt(0));
                     }
                     if (myXPath != null) {
                         org.w3c.dom.NodeList resNodeList = null;
                         try {
-                            org.apache.xpath.objects.XObject myXObject = myXPath.execute(
+                           org.apache.xpath.objects.XObject myXObject = myXPath.execute(
                                     new org.apache.xpath.XPathContext(), myRootElt, myPrefixResolver);
                             resNodeList = myXObject.nodelist();
+							//PapillonLogger.writeDebugMsg("Parse entry, xPath.execute res: ");
                         } catch (javax.xml.transform.TransformerException e) {
                             throw new PapillonBusinessException("javax.xml.transform.TransformerException: ", e);
                         }

@@ -99,6 +99,8 @@ import fr.imag.clips.papillon.business.PapillonBusinessException;
 
 // Standard imports
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.text.DateFormat;
@@ -268,12 +270,29 @@ public class MotamotLayout implements StdLayout {
         PapillonBusinessException,
         HttpPresentationException,
         UnsupportedEncodingException {
-            
+   
+			Collection sourceLanguages = null;
+			Collection targetLanguages = null;
+			
+			ArrayList pairLanguages = new ArrayList();
+			String source = sessionData.getPreference("EditEntry.po", "sourceLanguage");
+			String target = sessionData.getPreference("EditEntry.po", "targetLanguage");
+			if (source != null && !source.equals("") && target != null && !target.equals("")) {
+				pairLanguages.add(source);
+				pairLanguages.add(target);
+				sourceLanguages = pairLanguages;
+				targetLanguages = pairLanguages;
+			}
+			else {
+				sourceLanguages = AvailableLanguages.getSourceLanguagesArray();
+				targetLanguages = AvailableLanguages.getTargetLanguagesArray();
+			}
+			
             
             QueryMenuXHTML queryMenu = (QueryMenuXHTML) MultilingualXHtmlTemplateFactory.createTemplate("QueryMenuXHTML", comms, sessionData);
             //XHTMLInputElement headwordInput = queryMenu.getElementHeadwordInput();
             XHTMLInputElement headwordInput = queryMenu.getElementValueField();
-            String headtmp = sessionData.getPreference("Home.po", headwordInput.getName());
+            String headtmp = sessionData.getPreference("Motamot.po", headwordInput.getName());
             if (headtmp != null) {
                 headwordInput.setValue(headtmp);
             }
@@ -287,10 +306,10 @@ public class MotamotLayout implements StdLayout {
             
             Text sourceTextTemplate = (Text) sourceOptionTemplate.getFirstChild();
             String langLoc = sessionData.getUserPreferredLanguage();
-            String prefSrcLang = sessionData.getPreference("Home.po", sourceSelect.getName());
+            String prefSrcLang = sessionData.getPreference("Motamot.po", sourceSelect.getName());
             if (prefSrcLang == null || prefSrcLang.equals("")) {
                 prefSrcLang = langLoc;
-                sessionData.setPreference("Home.po", sourceSelect.getName(), prefSrcLang);
+                sessionData.setPreference("Motamot.po", sourceSelect.getName(), prefSrcLang);
             }
             
  			XHTMLDivElement volumesDiv = queryMenu.getElementVolumesDiv();
@@ -299,7 +318,10 @@ public class MotamotLayout implements StdLayout {
 			volumesLang.removeChild(volumesInputTemplate);
 			volumesDiv.removeChild(volumesLang);
 			volumesInputTemplate.removeAttribute("id");
-           for (Iterator iter = AvailableLanguages.getSourceLanguagesArray().iterator(); iter.hasNext();) {
+			if (pairLanguages != null && pairLanguages.size() ==2 && !pairLanguages.contains(prefSrcLang)) {
+				prefSrcLang = (String) pairLanguages.get(0);
+			}
+           for (Iterator iter = sourceLanguages.iterator(); iter.hasNext();) {
                 String langi = (String)iter.next();
 
                 volumesLang.setAttribute("id","Volumes_"+langi);
@@ -334,6 +356,7 @@ public class MotamotLayout implements StdLayout {
             // Adding the appropriate target languages to the target list
             //XHTMLOptionElement targetOptionTemplate = queryMenu.getElementTargetOptionTemplate();
             XHTMLOptionElement targetOptionTemplate = queryMenu.getElementTargetTmpl();
+            XHTMLOptionElement allTargetsOption = queryMenu.getElementQMAllTargetsOption();
             XHTMLSelectElement targetSelect = (XHTMLSelectElement) targetOptionTemplate.getParentNode();
             if (!sessionData.getClientWithLabelDisplayProblems()) {
                 PapillonBasePO.setUnicodeLabels(targetSelect);
@@ -342,14 +365,19 @@ public class MotamotLayout implements StdLayout {
             // We assume that the option element has only one text child
             // (it should be this way if the HTML is valid...)
             Text targetTextTemplate = (Text) targetOptionTemplate.getFirstChild();
-            String prefTrgLang = sessionData.getPreference("Home.po", targetSelect.getName());
+            String prefTrgLang = sessionData.getPreference("Motamot.po", targetSelect.getName());
             if (prefTrgLang == null || prefTrgLang.equals("")) {
                 prefTrgLang = Home.ALL_TARGETS;
-                sessionData.setPreference("Home.po", targetSelect.getName(), prefTrgLang);
+                sessionData.setPreference("Motamot.po", targetSelect.getName(), prefTrgLang);
             }
+			if (pairLanguages != null && pairLanguages.size() ==2 && !pairLanguages.contains(prefTrgLang)) {
+				prefTrgLang = (String) pairLanguages.get(1);
+				if (prefTrgLang == prefSrcLang) {
+					prefTrgLang = (String) pairLanguages.get(0);
+				}
+			}
             
-            //
-            for (Iterator iter = AvailableLanguages.getTargetLanguagesArray().iterator(); iter.hasNext();) {
+            for (Iterator iter = targetLanguages.iterator(); iter.hasNext();) {
                 String langi = (String)iter.next();
                 
                 //
@@ -359,11 +387,16 @@ public class MotamotLayout implements StdLayout {
                 } else {
                     targetOptionTemplate.setLabel(Languages.localizeName(langLoc, langi));
                 }
+				targetOptionTemplate.setSelected(langi.equals(prefTrgLang));
+
                 // We should select the previously selected target languages...
                 targetTextTemplate.setData(Languages.localizeName(langLoc, langi));
                 targetSelect.appendChild(targetOptionTemplate.cloneNode(true));
             }
             targetSelect.removeChild(targetOptionTemplate);
+			if (source != null && !source.equals("") && target != null && !target.equals("")) {
+				targetSelect.removeChild(allTargetsOption);
+			}
             //PapillonBasePO.setSelected(queryMenu.getElementTarget(), prefTrgLang);
             PapillonBasePO.setSelected(queryMenu.getElementQMTargets(), prefTrgLang);
             

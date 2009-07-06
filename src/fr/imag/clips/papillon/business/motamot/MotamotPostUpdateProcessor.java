@@ -35,6 +35,7 @@ import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory;
 import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
 import fr.imag.clips.papillon.business.user.User;
+import fr.imag.clips.papillon.business.xml.XMLServices;
 
 import fr.imag.clips.papillon.business.transformation.ResultPostUpdateProcessor;
 
@@ -188,8 +189,11 @@ public class MotamotPostUpdateProcessor implements ResultPostUpdateProcessor {
 		reflexie.setAttribute(LANG_TAG, lang2);
 		reflexies.appendChild(reflexie);
 			
+			// FIXME: if I don't recompute the DOM, it does not take into account some parts like the reflexies
+		myAxie.setDom(XMLServices.buildDOMTree(XMLServices.xmlCode(theDom)));
+
 		myAxie.save();
-			return myAxie.getEntryId();
+		return myAxie.getEntryId();
 	}
 
 	protected static String createAxieHeadword(String lang1,String refEntry1,String lang2,String refEntry2) {
@@ -244,6 +248,11 @@ public class MotamotPostUpdateProcessor implements ResultPostUpdateProcessor {
 		reflexie.setAttribute(IDREFLEXIE_TAG, refLexie);
 		reflexie.setAttribute(LANG_TAG, lang);
 		reflexies.appendChild(reflexie);
+		
+		// FIXME: if I don't recompute the DOM, it does not take into account some parts like the reflexies
+		myAxie.setDom(XMLServices.buildDOMTree(XMLServices.xmlCode(theDom)));
+		
+		myAxie.save();
 	}
 
 

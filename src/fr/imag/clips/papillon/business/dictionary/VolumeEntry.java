@@ -1590,14 +1590,13 @@ public class VolumeEntry
 
             // Delete index
             IndexFactory.deleteIndexForEntryId(this.getVolume().getIndexDbname(), this.getHandle());
-
             //
             this.setEntryIdIfNull();
             this.setContributionIdIfNull();
-
             // New index
-            if (index) res = ParseVolume.indexEntry(this);
-
+            if (index) {
+				res = ParseVolume.indexEntry(this);
+			}
             //
             if (null != this.dom) {
                 // If this.dom is null, this means that the dom object has not be accessed nor modified...

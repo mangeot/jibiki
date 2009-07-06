@@ -10,7 +10,7 @@
       <h2 class="menuTitle">
         <a title="Lookup a word in online dictionaries" href="javascript:void(0)">Lookup:</a>
       </h2>
-      <form  id="ConsultForm" method="get" action="Home.po"  onsubmit="filterVolumes();">
+      <form  id="ConsultForm" method="get" action="Motamot.po"  onsubmit="filterVolumes();">
         <div>
                 <div>
                     <div class="menuColumnSize">
@@ -38,8 +38,9 @@
                             <label for="QMTargets" accesskey="a">T<span class="accesskey">a</span>rget:</label>
                          </div>
                         <div class="menuVariableValue" >
+							<input type="hidden" name="TARGETS" value="axi" />
                             <select id="QMTargets" name="TARGETS" class="menuVariableValueWidth">
-                                <option label="All languages" value="*ALL*">All languages</option>
+                                <option id="QMAllTargetsOption" label="All languages" value="*ALL*">All languages</option>
                                 <option id="TargetTmpl" label="NONE" value="NONE">NONE</option>
                             </select>
                         </div>

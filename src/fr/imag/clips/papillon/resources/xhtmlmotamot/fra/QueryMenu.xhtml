@@ -10,7 +10,7 @@
       <h2 class="menuTitle">
       	<a title="Traduction d&rsquo;un mot" href="javascript:void(0)">Consultation&nbsp;:</a>
       </h2>
-      <form  id="ConsultForm" method="get" action="Home.po"   onsubmit="filterVolumes(); return true;">
+      <form  id="ConsultForm" method="get" action="Motamot.po"   onsubmit="filterVolumes(); return true;">
         <div>
                 <div>
                     <div class="menuColumnSize">
@@ -38,8 +38,9 @@
                             <label for="QMTargets" accesskey="c"><span class="accesskey">C</span>ible&nbsp;:</label>
                          </div>
                         <div class="menuVariableValue" >
+						    <input type="hidden" name="TARGETS" value="axi" />
                             <select id="QMTargets" name="TARGETS" class="menuVariableValueWidth">
-                                <option label="All languages" value="*ALL*">toutes</option>
+                                <option id="QMAllTargetsOption" label="All languages" value="*ALL*">toutes</option>
                                 <option id="TargetTmpl" label="NONE" value="NONE">NONE</option>
                             </select>
                         </div>
