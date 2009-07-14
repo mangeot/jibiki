@@ -1243,7 +1243,7 @@
 		A307273B0EC89B2C00733910 /* EditingLayout.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = EditingLayout.xhtml; sourceTree = "<group>"; };
 		A307273C0EC89B2C00733910 /* EditingLayout.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EditingLayout.xmlc; sourceTree = "<group>"; };
 		A307273D0EC89B2C00733910 /* HelpMenu.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = HelpMenu.xhtml; sourceTree = "<group>"; };
-		A307273E0EC89B2C00733910 /* EngfraContent.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = EngfraContent.xhtml; sourceTree = "<group>"; };
+		A307273E0EC89B2C00733910 /* fravieContent.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = fravieContent.xhtml; sourceTree = "<group>"; };
 		A307273F0EC89B2C00733910 /* HomeContent.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HomeContent.xmlc; sourceTree = "<group>"; };
 		A30727400EC89B2C00733910 /* HTMLPalette.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = HTMLPalette.xhtml; sourceTree = "<group>"; };
 		A30727410EC89B2C00733910 /* HTMLPalette.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLPalette.xmlc; sourceTree = "<group>"; };
@@ -1302,10 +1302,12 @@
 		A3376029100241C4002281AF /* MotamotPostUpdateProcessor.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = MotamotPostUpdateProcessor.java; sourceTree = "<group>"; };
 		A39A46EF0FF8B8590090E5C0 /* MotamotAxiFactory.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = MotamotAxiFactory.java; sourceTree = "<group>"; };
 		A39A46F70FF90F040090E5C0 /* Home.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = Home.java; sourceTree = "<group>"; };
-		A39A46FA0FF9215E0090E5C0 /* MotamotContent.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = MotamotContent.xhtml; sourceTree = "<group>"; };
-		A39A47210FF922110090E5C0 /* EngjpnContent.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = EngjpnContent.xhtml; sourceTree = "<group>"; };
+		A39A46FA0FF9215E0090E5C0 /* MotamotContent.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = MotamotContent.xhtml; path = ../eng/MotamotContent.xhtml; sourceTree = "<group>"; };
+		A39A47210FF922110090E5C0 /* engvieContent.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = engvieContent.xhtml; sourceTree = "<group>"; };
 		A39A472E0FF922610090E5C0 /* FrajpnContent.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = FrajpnContent.xhtml; sourceTree = "<group>"; };
 		A39A473B0FF923430090E5C0 /* Motamot.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = Motamot.java; sourceTree = "<group>"; };
+		A3CC9102100CFD4A004DF898 /* MotamotContent.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = MotamotContent.xhtml; sourceTree = "<group>"; };
+		A3CC9103100CFD9B004DF898 /* MotamotContent.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = MotamotContent.xhtml; sourceTree = "<group>"; };
 		A3EE19D70FB6CB26001D2220 /* VolumeCache.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = VolumeCache.java; sourceTree = "<group>"; };
 		A3EE1A110FB6DE0D001D2220 /* papillon_dynamic_objects.doml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = papillon_dynamic_objects.doml; sourceTree = "<group>"; };
 		A3EE1A120FB6DE16001D2220 /* papillon_static_objects.doml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = papillon_static_objects.doml; sourceTree = "<group>"; };
@@ -3139,6 +3141,7 @@
 				A307271A0EC89B2C00733910 /* Layout.xmlc */,
 				A307271B0EC89B2C00733910 /* LexiesManagement.xhtml */,
 				A307271C0EC89B2C00733910 /* LexiesManagement.xmlc */,
+				A3CC9103100CFD9B004DF898 /* MotamotContent.xhtml */,
 				A307271D0EC89B2C00733910 /* options.xmlc */,
 				A307271E0EC89B2C00733910 /* QueryMenu.xhtml */,
 				A307271F0EC89B2C00733910 /* QueryMenu.xmlc */,
@@ -3161,6 +3164,7 @@
 				A307272A0EC89B2C00733910 /* Layout.xmlc */,
 				A307272B0EC89B2C00733910 /* LexiesManagement.xhtml */,
 				A307272C0EC89B2C00733910 /* LexiesManagement.xmlc */,
+				A3CC9102100CFD4A004DF898 /* MotamotContent.xhtml */,
 				A307272D0EC89B2C00733910 /* options.xmlc */,
 				A307272E0EC89B2C00733910 /* QueryMenu.xhtml */,
 				A307272F0EC89B2C00733910 /* QueryMenu.xmlc */,
@@ -3184,8 +3188,8 @@
 				A307273B0EC89B2C00733910 /* EditingLayout.xhtml */,
 				A307273C0EC89B2C00733910 /* EditingLayout.xmlc */,
 				A307273D0EC89B2C00733910 /* HelpMenu.xhtml */,
-				A307273E0EC89B2C00733910 /* EngfraContent.xhtml */,
-				A39A47210FF922110090E5C0 /* EngjpnContent.xhtml */,
+				A307273E0EC89B2C00733910 /* fravieContent.xhtml */,
+				A39A47210FF922110090E5C0 /* engvieContent.xhtml */,
 				A39A472E0FF922610090E5C0 /* FrajpnContent.xhtml */,
 				A39A46FA0FF9215E0090E5C0 /* MotamotContent.xhtml */,
 				A307273F0EC89B2C00733910 /* HomeContent.xmlc */,

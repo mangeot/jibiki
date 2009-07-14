@@ -248,7 +248,7 @@ public class MotamotLinker extends LinkerBasePO {
         key[3] = IQuery.QueryBuilderStrategy[parameters.comparisonOperator];
         keys.add(key);
         
-		/* WE authorize a link to any entry (validated or not) */
+		/* WE (do not) authorize a link to any entry (validated or not) */
 		/* 
 			String[] key2 = new String[4];
 		 key2[0] = Volume.CDM_contributionStatus;
@@ -258,20 +258,34 @@ public class MotamotLinker extends LinkerBasePO {
 		 keys.add(key2);		
 		 */
 		
-	/*	String[] key2 = new String[4];
+		String[] key2 = new String[4];
 		key2[0] = Volume.CDM_contributionStatus;
 		key2[1] = Volume.DEFAULT_LANG;
-		key2[2] = VolumeEntry.REPLACED_STATUS;
-		key2[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_NOT_EQUAL+1];			
+		key2[2] = VolumeEntry.FINISHED_STATUS;
+		key2[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_EXACT+1];			
 		keys.add(key2);		
 		
 		key2[0] = Volume.CDM_contributionStatus;
 		key2[1] = Volume.DEFAULT_LANG;
-		key2[2] = VolumeEntry.DELETED_STATUS;
+		key2[2] = VolumeEntry.MODIFIED_STATUS;
 		key2[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_NOT_EQUAL+1];			
-		keys.add(key2);		
-		*/
+		keys.add(key2);
         
+		/*
+		QueryCriteria criteriaFinishedStatus = new QueryCriteria();
+		criteriaFinishedStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);
+		criteriaFinishedStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.FINISHED_STATUS);
+		criteriaFinishedStatus.add("lang", QueryCriteria.EQUAL, Volume.DEFAULT_LANG);
+		listStatus.add(criteriaFinishedStatus);
+		
+		QueryCriteria criteriaModifiedStatus = new QueryCriteria();
+		criteriaModifiedStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);
+		criteriaModifiedStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.MODIFIED_STATUS);
+		criteriaModifiedStatus.add("lang", QueryCriteria.EQUAL, Volume.DEFAULT_LANG);
+		listStatus.add(criteriaModifiedStatus);
+		
+		queryReq.addOrCriteriaList(listStatus);
+		*/
         
         Collection results = new Vector();
 		

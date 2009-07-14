@@ -1296,7 +1296,7 @@ throws PapillonBusinessException {
         } else if (qrset.size() < 1) {
             PapillonLogger.writeDebugMsg("Error, 0 entry found");
         } else if (qrset.size() > 1) {
-            PapillonLogger.writeDebugMsg("Error, too much entry found");
+            PapillonLogger.writeDebugMsg("Error, too many entries found");
         }
 
         CurrentRequestContext.get().set(entryId, resultEntry);            
