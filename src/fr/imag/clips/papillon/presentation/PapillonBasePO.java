@@ -296,7 +296,7 @@ public abstract class PapillonBasePO extends AbstractPO {
 			org.w3c.dom.Document theDocument = stdLayout.getLayout();
 
 			// I encode every anchor with the session id if the user does not accept cookies
-			if (getComms().response.isSessionIdEncodeUrlRequired()) {
+			if (getComms().response.isSessionIdEncodeUrlRequired() && this.getComms().session != null) {
 				org.w3c.dom.NodeList theAlist = theDocument.getElementsByTagName("a");
 				if (theAlist != null && theAlist.getLength()>0) {
 					for (int i=0; i< theAlist.getLength();i++) {
@@ -389,7 +389,9 @@ public abstract class PapillonBasePO extends AbstractPO {
 				getSessionData().setUserAcceptLanguages(userAcceptLanguage);
 				getSessionData().setUserPreferredLanguage(cookieUser.getLang());
 				getSessionData().setClientWithLabelDisplayProblems(getComms().request.getHeader("User-Agent"));
-				PapillonSessionManager.addNewSession(getComms().session, cookieUser);
+				if (getComms().session != null) {
+					PapillonSessionManager.addNewSession(getComms().session, cookieUser);
+				}
 			}
             else {
 				cookieUser = (fr.imag.clips.papillon.business.user.User) getComms().session.getUser();
