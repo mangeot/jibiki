@@ -105,6 +105,7 @@ public class Papillon extends StandardApplication {
     protected String presentationPriorityPackage = null;
     protected String layoutClassName = "fr.imag.clips.papillon.presentation.PapillonLayout";
     protected String loginCookieName = "PapillonLoginCookie";
+	protected String applicationPrefix = "/";
 	static {
                 System.setProperty("javax.xml.parsers.DocumentBuilderFactory", 
 				"org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
@@ -182,6 +183,14 @@ public class Papillon extends StandardApplication {
         } catch (ConfigException e) {
             // nothing... failing to default...
         }
+		
+		try {
+			applicationPrefix = Enhydra.getApplication().getConfig().getString("Application.Prefix");
+		}
+		catch (com.lutris.util.ConfigException ce) {
+				PapillonLogger.writeDebugMsg("no Application.Prefix var in the config file!");
+		}
+		
 
         try {
            Papillon.initializeAllCaches();
@@ -239,6 +248,10 @@ public class Papillon extends StandardApplication {
 	
 	public String getUrl() {
 		return defaultUrl;
+	}
+    
+	public String getApplicationPrefix() {
+		return applicationPrefix;
 	}
     
     public boolean requestPreprocessor(HttpPresentationComms comms)

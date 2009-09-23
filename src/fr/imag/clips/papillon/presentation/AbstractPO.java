@@ -168,6 +168,7 @@ public abstract class AbstractPO
     protected HttpPresentationComms myComms = null;
     //protected PapillonSessionData mySessionData = null;
 
+						
     /**
      * Gets HttpPresentation object
      *
@@ -547,12 +548,33 @@ public abstract class AbstractPO
      *
      * @return The url value
      */
-    protected String getUrl() {
-        String className = this.getClass().getName();
-        return className.substring(className.lastIndexOf(".") + 1) + ".po";
-    }
-
-
+			protected String getUrl() {
+				String className = this.getClass().getName();
+				return className.substring(className.lastIndexOf(".") + 1) + ".po";
+			}
+			
+			protected String getAbsoluteUrl() {
+				String className = this.getClass().getName();
+				className.replace('.','/');
+				String applicationPrefix = ((Papillon)Enhydra.getApplication()).getApplicationPrefix();
+				if (applicationPrefix != null && !applicationPrefix.endsWith("/")) {
+					applicationPrefix += "/";
+				}
+				String presentationPrefix = "";
+				try {
+					presentationPrefix = Enhydra.getApplication().getConfig().getString("Server.PresentationPrefix");
+				}
+				catch (com.lutris.util.ConfigException ce) {
+					PapillonLogger.writeDebugMsg("com.lutris.util.ConfigException: ");
+					PapillonLogger.writeDebugMsg(ce.toString());
+				}
+				if (className.indexOf(presentationPrefix)==0) {
+					className = className.substring(presentationPrefix.length());
+				}
+				return applicationPrefix + className + ".po";
+			}
+			
+			
     /**
      * Description of the Method
      *

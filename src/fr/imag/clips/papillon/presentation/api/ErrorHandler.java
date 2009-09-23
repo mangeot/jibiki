@@ -89,22 +89,21 @@ public class ErrorHandler extends PapillonBasePO {
 			content = (ErrorXHTML) MultilingualXHtmlTemplateFactory.createTemplate("ErrorXHTML",
 																						 this.getComms(), this.getSessionData());
 		//        ErrorHTML errorPage = new ErrorHTML();
-       String prefix = "";
-			
-			try {
-				prefix = Enhydra.getApplication().getConfig().getString("Application.Prefix");
-			}
-			catch (com.lutris.util.ConfigException ce) {
-				content.setTextErrorMessage("Email com.lutris.util.ConfigException: ");
-				content.setTextStackTrace(ce.toString());
-			}
-			
+       String prefix = this.getAbsoluteUrl();
+			prefix = prefix.substring(0,prefix.lastIndexOf('/') + 1);
+			//if (prefix != null && !prefix.endsWith("/")) {
+			//	prefix += "/";
+			//}
 			
         if(null != this.getComms().exception) {
 			if (this.getComms().exception instanceof com.lutris.appserver.server.httpPresentation.FilePresentationException) {
 				HttpPresentationRequest theRequest = this.getComms().request;
+				String theURI = theRequest.getPresentationURI();
+				if (theURI.indexOf(prefix)==0) {
+					theURI = theURI.substring(prefix.length());
+				}
 				String[] restStrings = theRequest.getPresentationURI().split("/");
-				String message = "REST API URI : " + prefix + " " + theRequest.getPresentationURI() + ";";
+				String message = "REST API URI : [" + prefix + "] " + theRequest.getPresentationURI() + ";";
 				message += "REST API COMMAND : " + theRequest.getMethod();
 				if (restStrings.length>2) {
 					message += "REST API DICT : " + restStrings[2]+ ";";
@@ -116,6 +115,9 @@ public class ErrorHandler extends PapillonBasePO {
 					message += "REST API HW : " + restStrings[4]+ ";";
 					//throw new ClientPageRedirectException();
 				}
+				//	message += "package : " + this.getClass().getResource("/" + this.getClass().getName()+ ".class").toString() + ";";
+				//message += "package : " + getFilePath(this.getClass().getName());
+				message += "package : " + this.getClass().getName();
 				content.setTextErrorMessage(message);
 			}
 			else {
@@ -132,7 +134,6 @@ public class ErrorHandler extends PapillonBasePO {
 				content.setTextErrorMessage(this.getComms().exception.getMessage());
 			}
         }
-        
-			return content.getElementContent();
+		return content.getElementContent();
     }
 }
