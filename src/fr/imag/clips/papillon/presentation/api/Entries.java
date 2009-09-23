@@ -38,7 +38,7 @@
  *  -----------------------------------------------
  *  beta version
  */
-package fr.imag.clips.papillon.presentation;
+package fr.imag.clips.papillon.presentation.api;
 
 import com.lutris.appserver.server.httpPresentation.HttpPresentationException;
 import com.lutris.dods.builder.generator.query.QueryBuilder;
@@ -59,7 +59,7 @@ import fr.imag.clips.papillon.business.xml.XMLServices;
  * @author     mangeot
  * @created    February 24, 2006
  */
-public class Entries extends XmlBasePO {
+public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 	
 	protected static final String DICTIONARY_PARAMETER = "DICTIONARY";
 	protected static final String LANG_PARAMETER = "LANG";
@@ -109,9 +109,13 @@ public class Entries extends XmlBasePO {
 			if (volumesCollection !=null && volumesCollection.size()>0) {
 				theVolume = (Volume) volumesCollection.iterator().next();
 				PapillonLogger.writeDebugMsg("Entries: id: " + entryId + " volume: " + theVolume.getName());
-				VolumeEntry myEntry = VolumeEntriesFactory.findEntryByHandle(theVolume.getName(), entryId);
+				VolumeEntry myEntry = VolumeEntriesFactory.findEntryByContributionId(theVolume.getName(), entryId);
 				if (myEntry != null && !myEntry.isEmpty()) {
+					PapillonLogger.writeDebugMsg("Entry: headword: " + myEntry.getHeadword());
 					resultDoc = myEntry.getDom();
+				}
+				else {
+					PapillonLogger.writeDebugMsg("Entry null: " + entryId);
 				}
 			}
 			

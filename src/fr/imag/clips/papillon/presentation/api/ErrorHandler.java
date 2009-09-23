@@ -88,12 +88,8 @@ public class ErrorHandler extends PapillonBasePO {
 			////// Create Home page
 			content = (ErrorXHTML) MultilingualXHtmlTemplateFactory.createTemplate("ErrorXHTML",
 																						 this.getComms(), this.getSessionData());
-		//        ErrorHTML errorPage = new ErrorHTML();
-       String prefix = this.getAbsoluteUrl();
-			prefix = prefix.substring(0,prefix.lastIndexOf('/') + 1);
-			//if (prefix != null && !prefix.endsWith("/")) {
-			//	prefix += "/";
-			//}
+        String prefix = this.getAbsoluteUrl();
+		prefix = prefix.substring(0,prefix.lastIndexOf('/') + 1);
 			
         if(null != this.getComms().exception) {
 			if (this.getComms().exception instanceof com.lutris.appserver.server.httpPresentation.FilePresentationException) {
@@ -102,22 +98,21 @@ public class ErrorHandler extends PapillonBasePO {
 				if (theURI.indexOf(prefix)==0) {
 					theURI = theURI.substring(prefix.length());
 				}
-				String[] restStrings = theRequest.getPresentationURI().split("/");
+				String[] restStrings = theURI.split("/");
 				String message = "REST API URI : [" + prefix + "] " + theRequest.getPresentationURI() + ";";
-				message += "REST API COMMAND : " + theRequest.getMethod();
-				if (restStrings.length>2) {
-					message += "REST API DICT : " + restStrings[2]+ ";";
+				message += "REST API COMMAND : " + theRequest.getMethod() + ";";
+				if (restStrings.length>=0) {
+					message += "REST API DICT : " + restStrings[0]+ ";";
 				}
-				if (restStrings.length>3) {
-					message += "REST API LANG : " + restStrings[3]+ ";";
+				if (restStrings.length>=1) {
+					message += "REST API LANG : " + restStrings[1]+ ";";
 				}
-				if (restStrings.length>4) {
-					message += "REST API HW : " + restStrings[4]+ ";";
-					//throw new ClientPageRedirectException();
-				}
-				//	message += "package : " + this.getClass().getResource("/" + this.getClass().getName()+ ".class").toString() + ";";
-				//message += "package : " + getFilePath(this.getClass().getName());
-				message += "package : " + this.getClass().getName();
+				if (restStrings.length>=2) {
+					message += "REST API HW : " + restStrings[2]+ ";";
+					String url = prefix+"Entries.po?DICTIONARY=" + restStrings[0] + "&LANG=" + restStrings[1] + "&ID=" + restStrings[2];
+					throw new ClientPageRedirectException(url);
+					//message += " URL : " + url + ";";
+			}
 				content.setTextErrorMessage(message);
 			}
 			else {

@@ -113,7 +113,11 @@ public class GetXmlDocument extends XmlBasePO {
 			if (documentType.equals(CONTRIBUTION_TYPE)) {
 				VolumeEntry myEntry = VolumeEntriesFactory.findEntryByHandle(volumeName, documentId);
 				if (myEntry != null && !myEntry.isEmpty()) {
+					PapillonLogger.writeDebugMsg("Entry: " + myEntry.getHeadword());
 					resultDoc = myEntry.getDom();
+				}
+				else {
+					PapillonLogger.writeDebugMsg("Entry null: " + documentId);
 				}
 			}
 			else if (documentType.equals(SCHEMA_TYPE)) {

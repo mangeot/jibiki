@@ -555,10 +555,10 @@ public abstract class AbstractPO
 			
 			protected String getAbsoluteUrl() {
 				String className = this.getClass().getName();
-				className.replace('.','/');
+				className = className.replace('.','/');
 				String applicationPrefix = ((Papillon)Enhydra.getApplication()).getApplicationPrefix();
-				if (applicationPrefix != null && !applicationPrefix.endsWith("/")) {
-					applicationPrefix += "/";
+				if (applicationPrefix != null && applicationPrefix.endsWith("/")) {
+					applicationPrefix = applicationPrefix.substring(0,applicationPrefix.length()-1);
 				}
 				String presentationPrefix = "";
 				try {
@@ -570,6 +570,9 @@ public abstract class AbstractPO
 				}
 				if (className.indexOf(presentationPrefix)==0) {
 					className = className.substring(presentationPrefix.length());
+				}
+				if (className != null && !className.startsWith("/")) {
+					className += "/";
 				}
 				return applicationPrefix + className + ".po";
 			}
