@@ -245,7 +245,10 @@ public abstract class AbstractPO
     protected void initSessionData() throws HttpPresentationException {
 
         try {
-            Object obj = getComms().sessionData.get(PapillonSessionData.SESSION_KEY);
+            Object obj = null;
+			if (getComms() != null && getComms().sessionData != null) {
+				obj = getComms().sessionData.get(PapillonSessionData.SESSION_KEY);
+			}
             // If we found the session data, save it in a private data member
             if (null != obj) {
                 this.sessionData = (PapillonSessionData) obj;
@@ -253,7 +256,9 @@ public abstract class AbstractPO
                 // If no session data was found, create a new session data instance
                 this.sessionData = new PapillonSessionData();
 
-                getComms().sessionData.set(PapillonSessionData.SESSION_KEY, this.sessionData);
+				if (getComms() != null && getComms().sessionData != null) {
+					getComms().sessionData.set(PapillonSessionData.SESSION_KEY, this.sessionData);
+				}
             }
         } catch (KeywordValueException ex) {
             System.out.println("Problem getting session data from session: " + ex.getMessage());
