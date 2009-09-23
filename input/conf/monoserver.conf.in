@@ -32,6 +32,6 @@ Connection.http.Port = 8999
 # Connect the port to the application.
 #
 Channel.http.channel.Servlet = @APPLICATION@
-Channel.http.channel.Url = /
+Channel.http.channel.Url = @APPLICATION_PREFIX@
 Channel.http.channel.Enabled = yes
 

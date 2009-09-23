@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <title>Papillon</title>
+</head>
+
+<body>
+
+<div id="ApiContent" lang="en" xml:lang="en">
+<h1 style="text-align:center">jibiki REST Application Programming Interface</h1>
+<h2>Summary</h2>
+
+<table>
+<thead>
+ <tr>
+	<th>
+		command
+	</th>
+	<th>
+		result
+	</th>
+ </tr>
+</thead>
+<tr>
+<td>
+ GET api/
+</td>
+<td>
+returns the list of resources stored on the server
+</td>
+</tr>
+<tr>
+<td>
+ GET api/DictName
+</td>
+<td>
+returns the dictionary metadata concerning <em>DictName</em>
+</td>
+</tr>
+<tr>
+<td>
+ PUT api/DictName
+</td>
+<td>
+updates the dictionary metadata concerning <em>DictName</em>
+</td>
+</tr>
+<tr>
+<td>
+ POST api/DictName
+</td>
+<td>
+creates the dictionary <em>DictName</em>
+</td>
+</tr>
+<tr>
+<td>
+ GET api/DictName/lang
+</td>
+<td>
+returns the <em>lang</em> volume metadata concerning <em>DictName</em>
+</td>
+</tr>
+<tr>
+<td>
+ PUT api/DictName/lang
+</td>
+<td>
+updates the <em>lang</em> volume metadata concerning <em>DictName</em>
+</td>
+</tr>
+<tr>
+<td>
+ POST api/DictName/lang
+</td>
+<td>
+creates a new <em>lang</em> volume for <em>DictName</em>
+</td>
+</tr>
+<tr>
+<td>
+ GET api/DictName/lang/prefix
+</td>
+<td>
+returns a list of entry ids whith a headword that match the prefix
+</td>
+</tr>
+<tr>
+<td>
+ GET api/DictName/lang/#id
+</td>
+<td>
+returns the entry with the corresponding id
+</td>
+</tr>
+<tr>
+<td>
+ PUT api/DictName/lang/#id
+</td>
+<td>
+updates the entry with the corresponding id
+</td>
+</tr>
+<tr>
+<td>
+ POST api/DictName/lang/headword
+</td>
+<td>
+creates a new entry with <em>headword</em> in the <em>lang</em> volume
+</td>
+</tr>
+</table>
+
+<ul>
+	<li>All the answers are in XML and encoded in UTF-8.</li>
+	<li><em>lang</em> is the ISO 639-2/T 3 letter code of the language (eg: 'eng' for English,'esp' for Spanish,'fra' for French, etc.)</li>
+</ul>
+ 
+<h2>Misc</h2>
+<p>If you need more help, send an email to
+<a href="mailto:mathieu.mangeotATimag.fr?subject=jibikiServer&amp;body=replace&nbsp;AT&nbsp;by&nbsp;@&nbsp;in&nbsp;the&nbsp;email&nbsp;address">Mathieu Mangeot-Nagata</a>.</p>
+</div>
+</body>
+</html>

@@ -1,131 +1,132 @@
-#
-#  LexALP
-#  Enhydra Application
-#
-#  Simple Enhydra application configuration file.
-#
+	#
+	#  LexALP
+	#  Enhydra Application
+	#
+	#  Simple Enhydra application configuration file.
+	#
 
-#
-# Comma separated CLASSPATH directories and files used by this application.
-# You must rebuild the jar after every change to the app.
-#
-Server.ClassPath[] = "@DEPLOY_PATH@/lib/Papillon.jar"
-#Server.ClassPath[] = "@DEPLOY_PATH@/output/../classes"
+	#
+	# Comma separated CLASSPATH directories and files used by this application.
+	# You must rebuild the jar after every change to the app.
+	#
+	Server.ClassPath[] = "@DEPLOY_PATH@/lib/Papillon.jar"
+	#Server.ClassPath[] = "@DEPLOY_PATH@/output/../classes"
 
-#
-# The fully qualified name of the application class.
-#
-Server.AppClass = fr.imag.clips.papillon.Papillon
+	#
+	# The fully qualified name of the application class.
+	#
+	Server.AppClass = fr.imag.clips.papillon.Papillon
 
-#
-# Prefix used to derive presentation object class
-# names and paths from URLs.
-# Assumes run from the output directory for debugging.
-#
-Server.PresentationPrefix = "fr/imag/clips/papillon/presentation"
+	#
+	# Prefix used to derive presentation object class
+	# names and paths from URLs.
+	# Assumes run from the output directory for debugging.
+	#
+	Server.PresentationPrefix = "fr/imag/clips/papillon/presentation"
 
-#
-# Flag to indicate that application classes and resources should be reloaded
-# automatically if ANY file in the CLASSPATH changes.  NOTE:  This is a
-# debugging option and may slow down the performance of your application.
-# The CLASSPATH should NOT contain any directories (or underlying directories)
-# that contain constantly changing files, i.e. a log file.  For example, do
-# NOT include the application's output directory in the CLASSPATH because it
-# contains the application log files in the underlying log directory.
-#
-Server.AutoReload = false
-#Server.XMLC.DeferredParsing = true
+	#
+	# Flag to indicate that application classes and resources should be reloaded
+	# automatically if ANY file in the CLASSPATH changes.  NOTE:  This is a
+	# debugging option and may slow down the performance of your application.
+	# The CLASSPATH should NOT contain any directories (or underlying directories)
+	# that contain constantly changing files, i.e. a log file.  For example, do
+	# NOT include the application's output directory in the CLASSPATH because it
+	# contains the application log files in the underlying log directory.
+	#
+	Server.AutoReload = false
+	#Server.XMLC.DeferredParsing = true
 
-#
-# Maximum number of minutes a user session can last.
-#
-SessionManager.Lifetime = 720
+	#
+	# Maximum number of minutes a user session can last.
+	#
+	SessionManager.Lifetime = 720
 
-#
-# Maximum number of minutes a user may be idle before being logged off.
-#
-SessionManager.MaxIdleTime = 120
+	#
+	# Maximum number of minutes a user may be idle before being logged off.
+	#
+	SessionManager.MaxIdleTime = 120
 
-#
-# Flag to indicate that SessionManager will be held in memory
-# during restart application (default is false).
-#
-#SessionManager.MemoryPersistence = true
+	#
+	# Flag to indicate that SessionManager will be held in memory
+	# during restart application (default is false).
+	#
+	#SessionManager.MemoryPersistence = true
 
-#
-# The session home implementation to use.  May
-# be one of {BASIC, PAGE_TO_DISK, PAGE_TO_DB, CUSTOM}.
-#
-#SessionManager.SessionHome.Mode = BASIC
+	#
+	# The session home implementation to use.  May
+	# be one of {BASIC, PAGE_TO_DISK, PAGE_TO_DB, CUSTOM}.
+	#
+	#SessionManager.SessionHome.Mode = BASIC
 
-#
-# Maximum number of concurrent sessions.
-#
-#SessionManager.SessionHome.MaxSessions = 100
+	#
+	# Maximum number of concurrent sessions.
+	#
+	#SessionManager.SessionHome.MaxSessions = 100
 
-#
-# PAGE_TO_* settings
-# ------------------
-# The following settings are required by all paged (DISK, DB) implementations.
-#
+	#
+	# PAGE_TO_* settings
+	# ------------------
+	# The following settings are required by all paged (DISK, DB) implementations.
+	#
 
-# The maximum number of sessions that will be held in memory simultaneously.
-#SessionManager.SessionHome.PageThreshold = 50
+	# The maximum number of sessions that will be held in memory simultaneously.
+	#SessionManager.SessionHome.PageThreshold = 50
 
-# The maximum amount of time that a session will remain in memory
-# in an inactive (passive) state.  If this amount of time is exceeded
-# then the session is paged out.  The value is in seconds.
-#SessionManager.SessionHome.PageTimeThreshold = 60
+	# The maximum amount of time that a session will remain in memory
+	# in an inactive (passive) state.  If this amount of time is exceeded
+	# then the session is paged out.  The value is in seconds.
+	#SessionManager.SessionHome.PageTimeThreshold = 60
 
-# The maximum amout of time that a thread will wait for a
-# session to be paged back into memory.  In milliseconds.
-#SessionManager.SessionHome.PageWait = 5000
+	# The maximum amout of time that a thread will wait for a
+	# session to be paged back into memory.  In milliseconds.
+	#SessionManager.SessionHome.PageWait = 5000
 
-#
-# Flag to indicate that sessions should be paged and reloaded
-# during application restart (default is false).
-# This parameter has no effect if use MemoryPersistence = true.
-# Important: Don't use same directory for pageDir key in 
-# PAGE_TO_DISK settings for different applications.
-#
-#SessionManager.SessionHome.SaveOnRestart = true
+	#
+	# Flag to indicate that sessions should be paged and reloaded
+	# during application restart (default is false).
+	# This parameter has no effect if use MemoryPersistence = true.
+	# Important: Don't use same directory for pageDir key in 
+	# PAGE_TO_DISK settings for different applications.
+	#
+	#SessionManager.SessionHome.SaveOnRestart = true
 
-#
-# PAGE_TO_DISK settings
-# ---------------------
-#
-# The directory where sessions will be paged.  This setting is required
-# when using PAGE_TO_DISK.
-#SessionManager.SessionHome.PageDir = /tmp/page
+	#
+	# PAGE_TO_DISK settings
+	# ---------------------
+	#
+	# The directory where sessions will be paged.  This setting is required
+	# when using PAGE_TO_DISK.
+	#SessionManager.SessionHome.PageDir = /tmp/page
 
-#
-# PAGE_TO_DB session home settings
-# --------------------------------
-# NOTE: to use PAGE_TO_DB you'll need your database properly configured.
-#
-# If the following is not specified then sessions are paged to the default database.
-#SessionManager.SessionHome.DatabaseName = _enter_db_name_here
+	#
+	# PAGE_TO_DB session home settings
+	# --------------------------------
+	# NOTE: to use PAGE_TO_DB you'll need your database properly configured.
+	#
+	# If the following is not specified then sessions are paged to the default database.
+	#SessionManager.SessionHome.DatabaseName = _enter_db_name_here
 
-# If the following is not specified then session data is written
-# to the table "PersistenSession"
-#SessionManager.SessionHome.DBTableName = PersistentSession
+	# If the following is not specified then session data is written
+	# to the table "PersistenSession"
+	#SessionManager.SessionHome.DBTableName = PersistentSession
 
-#
-# CUSTOM session home settings
-# ----------------------------
-# The following settings are required when using custom session home interfaces.
-#
-#SessionManager.SessionUserTable.Class =
-#SessionManager.SessionHome.Class =
-
-
+	#
+	# CUSTOM session home settings
+	# ----------------------------
+	# The following settings are required when using custom session home interfaces.
+	#
+	#SessionManager.SessionUserTable.Class =
+	#SessionManager.SessionHome.Class =
 
 
-#
-# If the URL "/" for this application is accessed, the user will be
-# redirected to this URL. This should be a relative URL.
-#
-Application.DefaultUrl = "Motamot.po"
+
+
+	#
+	# If the URL "/" for this application is accessed, the user will be
+	# redirected to this URL. This should be a relative URL.
+	#
+	Application.DefaultUrl = "Motamot.po"
+Application.Prefix = "@APPLICATION_PREFIX@"
 #
 PresentationManager.CacheFiles = true
 #

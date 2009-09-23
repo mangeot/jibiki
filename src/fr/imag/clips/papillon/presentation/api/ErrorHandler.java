@@ -26,7 +26,9 @@ package fr.imag.clips.papillon.presentation.api;
 import com.lutris.logging.*;
 import com.lutris.appserver.server.httpPresentation.*;
 import com.lutris.appserver.server.*;
-//import org.enhydra.xml.xhtml.dom.*;
+
+import com.lutris.appserver.server.Enhydra;
+import fr.imag.clips.papillon.Papillon;
 
 import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 import fr.imag.clips.papillon.presentation.*;
@@ -87,21 +89,32 @@ public class ErrorHandler extends PapillonBasePO {
 			content = (ErrorXHTML) MultilingualXHtmlTemplateFactory.createTemplate("ErrorXHTML",
 																						 this.getComms(), this.getSessionData());
 		//        ErrorHTML errorPage = new ErrorHTML();
-        
+       String prefix = "";
+			
+			try {
+				prefix = Enhydra.getApplication().getConfig().getString("Application.Prefix");
+			}
+			catch (com.lutris.util.ConfigException ce) {
+				content.setTextErrorMessage("Email com.lutris.util.ConfigException: ");
+				content.setTextStackTrace(ce.toString());
+			}
+			
+			
         if(null != this.getComms().exception) {
 			if (this.getComms().exception instanceof com.lutris.appserver.server.httpPresentation.FilePresentationException) {
 				HttpPresentationRequest theRequest = this.getComms().request;
 				String[] restStrings = theRequest.getPresentationURI().split("/");
-				String message = "REST API URI : " + theRequest.getPresentationURI() + ";";
+				String message = "REST API URI : " + prefix + " " + theRequest.getPresentationURI() + ";";
 				message += "REST API COMMAND : " + theRequest.getMethod();
-				if (restStrings.length>1) {
+				if (restStrings.length>2) {
 					message += "REST API DICT : " + restStrings[2]+ ";";
 				}
-				if (restStrings.length>2) {
+				if (restStrings.length>3) {
 					message += "REST API LANG : " + restStrings[3]+ ";";
 				}
-				if (restStrings.length>3) {
+				if (restStrings.length>4) {
 					message += "REST API HW : " + restStrings[4]+ ";";
+					//throw new ClientPageRedirectException();
 				}
 				content.setTextErrorMessage(message);
 			}

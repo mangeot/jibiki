@@ -236,6 +236,10 @@ public class Papillon extends StandardApplication {
     public String getLoginCookieName() {
         return loginCookieName;
     }
+	
+	public String getUrl() {
+		return defaultUrl;
+	}
     
     public boolean requestPreprocessor(HttpPresentationComms comms)
     throws Exception {

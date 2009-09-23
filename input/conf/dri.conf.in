@@ -125,6 +125,7 @@ SessionManager.MaxIdleTime = 120
 # redirected to this URL. This should be a relative URL.
 #
 Application.DefaultUrl = "DRI.po"
+Application.Prefix = "@APPLICATION_PREFIX@"
 #
 PresentationManager.CacheFiles = true
 #
