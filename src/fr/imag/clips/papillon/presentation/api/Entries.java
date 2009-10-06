@@ -97,30 +97,35 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
     public org.w3c.dom.Document getContent()
         throws HttpPresentationException, java.io.IOException, Exception {
 			
-			org.w3c.dom.Document resultDoc = null;
 			
-			String entryId = myGetParameter(ID_PARAMETER);
 			String dictName = myGetParameter(DICTIONARY_PARAMETER);
 			String lang = myGetParameter(LANG_PARAMETER);
-			Volume theVolume = null;
-			
-			java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
-			
-			if (volumesCollection !=null && volumesCollection.size()>0) {
-				theVolume = (Volume) volumesCollection.iterator().next();
-				PapillonLogger.writeDebugMsg("Entries: id: " + entryId + " volume: " + theVolume.getName());
-				VolumeEntry myEntry = VolumeEntriesFactory.findEntryByContributionId(theVolume.getName(), entryId);
-				if (myEntry != null && !myEntry.isEmpty()) {
-					PapillonLogger.writeDebugMsg("Entry: headword: " + myEntry.getHeadword());
-					resultDoc = myEntry.getDom();
-				}
-				else {
-					PapillonLogger.writeDebugMsg("Entry null: " + entryId);
-				}
-			}
-			
-			
-			
-			return resultDoc;			
+			String entryId = myGetParameter(ID_PARAMETER);
+		
+			return getEntry(dictName, lang, entryId);			
         }
+	
+	public static org.w3c.dom.Document getEntry(String dictName, String lang, String entryId) 
+	throws HttpPresentationException, java.io.IOException, Exception {
+
+		Volume theVolume = null;
+		org.w3c.dom.Document resultDoc = null;
+		
+		java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
+		
+		if (volumesCollection !=null && volumesCollection.size()>0) {
+			theVolume = (Volume) volumesCollection.iterator().next();
+			PapillonLogger.writeDebugMsg("Entries: id: " + entryId + " volume: " + theVolume.getName());
+			VolumeEntry myEntry = VolumeEntriesFactory.findEntryByContributionId(theVolume.getName(), entryId);
+			if (myEntry != null && !myEntry.isEmpty()) {
+				PapillonLogger.writeDebugMsg("Entry: headword: " + myEntry.getHeadword());
+				resultDoc = myEntry.getDom();
+			}
+			else {
+				PapillonLogger.writeDebugMsg("Entry null: " + entryId);
+			}
+		}
+		return resultDoc;			
+	}
+	
 }

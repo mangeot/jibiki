@@ -394,7 +394,9 @@ public abstract class PapillonBasePO extends AbstractPO {
 				}
 			}
             else {
-				cookieUser = (fr.imag.clips.papillon.business.user.User) getComms().session.getUser();
+				if (getComms().session != null) {
+					cookieUser = (fr.imag.clips.papillon.business.user.User) getComms().session.getUser();
+				}
 				// if the user is unregistered but active in this session
 				if (cookieUser != null) {
 					// PapillonLogger.writeDebugMsg("Unregistered user from cookie: " + cookieUser.getName());
@@ -403,12 +405,14 @@ public abstract class PapillonBasePO extends AbstractPO {
 					// if the user is unregistered and not active in this session
 					cookieUser = new User();
 					cookieUser.setLang((String) browserAcceptLanguages.get(0));
-					cookieUser.setName(getComms().request.getRemoteHost());
 					cookieUser.setLogin(notRegisterLogin);
-					cookieUser.setEmail(getComms().request.getRemoteUser() + "@" + getComms().request.getRemoteAddr());
 					getSessionData().setUserAcceptLanguages(userAcceptLanguage);
-					getSessionData().setClientWithLabelDisplayProblems(getComms().request.getHeader("User-Agent"));
-					PapillonSessionManager.addNewSession(getComms().session, cookieUser);
+					if (getComms().session != null) {
+						cookieUser.setName(getComms().request.getRemoteHost());
+						cookieUser.setEmail(getComms().request.getRemoteUser() + "@" + getComms().request.getRemoteAddr());
+						getSessionData().setClientWithLabelDisplayProblems(getComms().request.getHeader("User-Agent"));
+						PapillonSessionManager.addNewSession(getComms().session, cookieUser);
+					}
 				}
             }
         }

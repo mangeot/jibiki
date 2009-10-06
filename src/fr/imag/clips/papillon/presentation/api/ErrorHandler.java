@@ -33,6 +33,8 @@ import fr.imag.clips.papillon.Papillon;
 import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 import fr.imag.clips.papillon.presentation.*;
 
+import fr.imag.clips.papillon.business.PapillonLogger;
+
 import java.io.*;
     
 /**
@@ -42,9 +44,9 @@ import java.io.*;
  * @author
  * @version
  */
-public class ErrorHandler extends PapillonBasePO {
+public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO {
  
-	private ErrorXHTML content;
+	private org.w3c.dom.Document content;
 
 	/**
      * Description of the Method
@@ -65,28 +67,18 @@ public class ErrorHandler extends PapillonBasePO {
         return true;
     }
 	
-	
-    /**
-     * Gets the currentSection attribute of the Home object
-     *
-     * @return The currentSection value
-     */
-    protected int getCurrentSection() {
-        return NO_SECTION;
-    }
-
 	/**
      * This implements the run method in HttpPresentation.
      *
      * @param HttpPresentationComms
      * @exception HttpPresentationException
      */
-    public org.w3c.dom.Node getContent()
-        throws HttpPresentationException {
+    public org.w3c.dom.Document getContent()
+        throws HttpPresentationException, java.io.IOException, java.lang.Exception {
         	
 			
 			////// Create Home page
-			content = (ErrorXHTML) MultilingualXHtmlTemplateFactory.createTemplate("ErrorXHTML",
+			content = (org.w3c.dom.Document) MultilingualXHtmlTemplateFactory.createTemplate("ErrorXHTML",
 																						 this.getComms(), this.getSessionData());
         String prefix = this.getAbsoluteUrl();
 		prefix = prefix.substring(0,prefix.lastIndexOf('/') + 1);
@@ -101,6 +93,7 @@ public class ErrorHandler extends PapillonBasePO {
 				String[] restStrings = theURI.split("/");
 				String message = "REST API URI : [" + prefix + "] " + theRequest.getPresentationURI() + ";";
 				message += "REST API COMMAND : " + theRequest.getMethod() + ";";
+				PapillonLogger.writeDebugMsg("REST API COMMAND : " + theRequest.getMethod());
 				if (restStrings.length>=0) {
 					message += "REST API DICT : " + restStrings[0]+ ";";
 				}
@@ -109,11 +102,23 @@ public class ErrorHandler extends PapillonBasePO {
 				}
 				if (restStrings.length>=2) {
 					message += "REST API HW : " + restStrings[2]+ ";";
-					String url = prefix+"Entries.po?DICTIONARY=" + restStrings[0] + "&LANG=" + restStrings[1] + "&ID=" + restStrings[2];
-					throw new ClientPageRedirectException(url);
+					//String url = prefix+"Entries.po?DICTIONARY=" + restStrings[0] + "&LANG=" + restStrings[1] + "&ID=" + restStrings[2];
+					//throw new ClientPageRedirectException(url);
 					//message += " URL : " + url + ";";
-			}
-				content.setTextErrorMessage(message);
+					if (theRequest.getMethod().equals("GET")) {
+						content = Entries.getEntry(restStrings[0], restStrings[1], restStrings[2]);
+					}
+					if (theRequest.getMethod().equals("PUT")) {
+						//content = Entries.putEntry(restStrings[0], restStrings[1], restStrings[2]);
+					}
+					if (theRequest.getMethod().equals("POST")) {
+						//content = Entries.putEntry(restStrings[0], restStrings[1], restStrings[2]);
+					}
+					if (theRequest.getMethod().equals("DELETE")) {
+						//content = Entries.putEntry(restStrings[0], restStrings[1], restStrings[2]);
+					}
+				}
+				//content.setTextErrorMessage(message);
 			}
 			else {
 				StringWriter stringWriter = new StringWriter();
@@ -125,10 +130,10 @@ public class ErrorHandler extends PapillonBasePO {
 				logChannel.write(level, stringWriter.toString());
 				logChannel.write(level, "jibiki.presentation.ErrorHandler caught an exception - " 
                              + this.getComms().exception.toString(), this.getComms().exception);
-				content.setTextStackTrace(stringWriter.toString());
-				content.setTextErrorMessage(this.getComms().exception.getMessage());
+				((ErrorXHTML)content).setTextStackTrace(stringWriter.toString());
+				((ErrorXHTML)content).setTextErrorMessage(this.getComms().exception.getMessage());
 			}
         }
-		return content.getElementContent();
+		return content;
     }
 }
