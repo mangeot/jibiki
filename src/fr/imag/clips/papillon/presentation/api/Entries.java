@@ -44,6 +44,8 @@ import com.lutris.appserver.server.httpPresentation.HttpPresentationException;
 import com.lutris.dods.builder.generator.query.QueryBuilder;
 
 import fr.imag.clips.papillon.business.PapillonLogger;
+import fr.imag.clips.papillon.business.dictionary.Dictionary;
+import fr.imag.clips.papillon.business.dictionary.DictionariesFactory;
 import fr.imag.clips.papillon.business.dictionary.Volume;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory;
@@ -127,5 +129,88 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 		}
 		return resultDoc;			
 	}
+	
+	public static org.w3c.dom.Document putEntry(String dictName, String lang, String entryId, String docXml) 
+	throws HttpPresentationException, java.io.IOException, Exception {
+		
+		Volume theVolume = null;
+		org.w3c.dom.Document resultDoc = null;
+		
+		java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
+		
+		if (volumesCollection !=null && volumesCollection.size()>0) {
+			theVolume = (Volume) volumesCollection.iterator().next();
+			PapillonLogger.writeDebugMsg("Entry: id: " + entryId + " volume: " + theVolume.getName());
+			VolumeEntry myEntry = VolumeEntriesFactory.findEntryByContributionId(theVolume.getName(), entryId);
+			if (myEntry != null && !myEntry.isEmpty()) {
+				PapillonLogger.writeDebugMsg("Entry: headword: " + myEntry.getHeadword());
+				PapillonLogger.writeDebugMsg("Entry: docXML: [" + docXml + "]");
+				org.w3c.dom.Document docDom = XMLServices.buildDOMTree(docXml);
+				if (docDom != null) {
+					myEntry.setDom(docDom);
+					myEntry.save();
+				}
+				resultDoc = myEntry.getDom();
+			}
+			else {
+				PapillonLogger.writeDebugMsg("Entry null: " + entryId);
+			}
+		}
+		return resultDoc;			
+	}
+	
+	public static org.w3c.dom.Document postEntry(String dictName, String lang, String headword, String docXml) 
+	throws HttpPresentationException, java.io.IOException, Exception {
+		
+		Dictionary theDict = null;
+		Volume theVolume = null;
+		org.w3c.dom.Document resultDoc = null;
+		
+		theDict = DictionariesFactory.getDictionaryByName(dictName);
+		if (theDict !=null) {
+			java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
+			if (volumesCollection !=null && volumesCollection.size()>0) {
+				theVolume = (Volume) volumesCollection.iterator().next();
+				PapillonLogger.writeDebugMsg("Entries: headword: " + headword + " volume: " + theVolume.getName());
+				org.w3c.dom.Document docDom = XMLServices.buildDOMTree(docXml);
+				if (docDom!=null) {
+					VolumeEntry newEntry = new VolumeEntry(theDict, theVolume); 
+					newEntry.setDom(docDom);
+					newEntry.setAuthor();
+					newEntry.setCreationDate();
+					newEntry.setHeadword();
+					newEntry.save();
+					resultDoc = newEntry.getDom();
+				}
+			}
+		}
+		return resultDoc;			
+	}
+	
+	public static org.w3c.dom.Document deleteEntry(String dictName, String lang, String entryId) 
+	throws HttpPresentationException, java.io.IOException, Exception {
+		
+		Volume theVolume = null;
+		org.w3c.dom.Document resultDoc = null;
+		
+		java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
+		
+		if (volumesCollection !=null && volumesCollection.size()>0) {
+			theVolume = (Volume) volumesCollection.iterator().next();
+			PapillonLogger.writeDebugMsg("Entries: id: " + entryId + " volume: " + theVolume.getName());
+			VolumeEntry myEntry = VolumeEntriesFactory.findEntryByContributionId(theVolume.getName(), entryId);
+			if (myEntry != null && !myEntry.isEmpty()) {
+				PapillonLogger.writeDebugMsg("Entry: headword: " + myEntry.getHeadword());
+				myEntry.delete();
+				resultDoc = myEntry.getDom();
+			}
+			else {
+				PapillonLogger.writeDebugMsg("Entry null: " + entryId);
+			}
+		}
+		return resultDoc;			
+	}
+	
+	
 	
 }

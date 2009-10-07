@@ -36,6 +36,14 @@ import fr.imag.clips.papillon.presentation.*;
 import fr.imag.clips.papillon.business.PapillonLogger;
 
 import java.io.*;
+/*
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;*/
+
+import java.util.Properties;
+
     
 /**
  * Class to handle exceptions not caught anywhere else in the framework of
@@ -109,13 +117,21 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
 						content = Entries.getEntry(restStrings[0], restStrings[1], restStrings[2]);
 					}
 					if (theRequest.getMethod().equals("PUT")) {
-						//content = Entries.putEntry(restStrings[0], restStrings[1], restStrings[2]);
+						HttpPresentationInputStream inputStream = theRequest.getInputStream();
+						String entry = convertStreamToString(inputStream);
+						System.out.println("put data: "+entry);
+						//inputStream.close();
+						content = Entries.putEntry(restStrings[0], restStrings[1], restStrings[2], entry);
 					}
 					if (theRequest.getMethod().equals("POST")) {
-						//content = Entries.putEntry(restStrings[0], restStrings[1], restStrings[2]);
+						HttpPresentationInputStream inputStream = theRequest.getInputStream();
+						String entry = convertStreamToString(inputStream);
+						System.out.println("post data: "+entry);
+
+						content = Entries.postEntry(restStrings[0], restStrings[1], restStrings[2], entry);
 					}
 					if (theRequest.getMethod().equals("DELETE")) {
-						//content = Entries.putEntry(restStrings[0], restStrings[1], restStrings[2]);
+						content = Entries.deleteEntry(restStrings[0], restStrings[1], restStrings[2]);
 					}
 				}
 				//content.setTextErrorMessage(message);
@@ -136,4 +152,38 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
         }
 		return content;
     }
+	
+	
+	
+			
+		public static String convertStreamToString(InputStream is) {
+			/*
+			 * To convert the InputStream to String we use the BufferedReader.readLine()
+			 * method. We iterate until the BufferedReader return null which means
+			 * there's no more data to read. Each line will appended to a StringBuilder
+			 * and returned as String.
+			 */
+			BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+			StringBuilder sb = new StringBuilder();
+			
+			String line = null;
+			try {
+				while ((line = reader.readLine()) != null) {
+					sb.append(line + "\n");
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			} 
+			/*
+			finally {
+				try {
+					is.close();
+				} catch (IOException e) {
+					// HttpPresentationInputStream may not be closed error
+					//e.printStackTrace();
+				}
+			} */
+			
+			return sb.toString();
+		}
 }
