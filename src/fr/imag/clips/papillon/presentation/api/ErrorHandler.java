@@ -30,8 +30,7 @@ import com.lutris.appserver.server.*;
 import com.lutris.appserver.server.Enhydra;
 import fr.imag.clips.papillon.Papillon;
 
-import fr.imag.clips.papillon.presentation.xhtml.orig.*;
-import fr.imag.clips.papillon.presentation.*;
+import fr.imag.clips.papillon.business.xml.XMLServices;
 
 import fr.imag.clips.papillon.business.PapillonLogger;
 
@@ -55,7 +54,11 @@ import java.util.Properties;
 public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO {
  
 	private org.w3c.dom.Document content;
-
+	
+	protected static String ERROR_PAGE = "<?xml version='1.0'?><html></html>";
+	protected static String LOGIN_PARAMETER = "login";
+	protected static String PASSWORD_PARAMETER = "password";
+	
 	/**
      * Description of the Method
      *
@@ -86,55 +89,119 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
         	
 			
 			////// Create Home page
-			content = (org.w3c.dom.Document) MultilingualXHtmlTemplateFactory.createTemplate("ErrorXHTML",
-																						 this.getComms(), this.getSessionData());
+			content = XMLServices.buildDOMTree(ERROR_PAGE);
         String prefix = this.getAbsoluteUrl();
 		prefix = prefix.substring(0,prefix.lastIndexOf('/') + 1);
 			
         if(null != this.getComms().exception) {
 			if (this.getComms().exception instanceof com.lutris.appserver.server.httpPresentation.FilePresentationException) {
 				HttpPresentationRequest theRequest = this.getComms().request;
+				String login =  myGetParameter(LOGIN_PARAMETER);
+				String password = myGetParameter(PASSWORD_PARAMETER);
+				PapillonLogger.writeDebugMsg("REST API URI : [" + prefix + "] " + theRequest.getPresentationURI()+";");
 				String theURI = theRequest.getPresentationURI();
 				if (theURI.indexOf(prefix)==0) {
 					theURI = theURI.substring(prefix.length());
 				}
-				String[] restStrings = theURI.split("/");
-				String message = "REST API URI : [" + prefix + "] " + theRequest.getPresentationURI() + ";";
-				message += "REST API COMMAND : " + theRequest.getMethod() + ";";
+				String[] restStrings = null;
+				if (theURI!=null &&!theURI.equals("")) {
+					restStrings = theURI.split("/");
+				}
+				
 				PapillonLogger.writeDebugMsg("REST API COMMAND : " + theRequest.getMethod());
-				if (restStrings.length>=0) {
-					message += "REST API DICT : " + restStrings[0]+ ";";
+				if (restStrings== null || restStrings.length==0) {
+					PapillonLogger.writeDebugMsg("REST API DICTLIST;");
+					if (theRequest.getMethod().equals("GET")) {
+						content = Metadata.getDictionaryList();
+					}
+					else if (theRequest.getMethod().equals("PUT")) {
+						HttpPresentationInputStream inputStream = theRequest.getInputStream();
+						String dict = convertStreamToString(inputStream);
+						System.out.println("put dictlist: error message "+ dict);
+					}
+					else if (theRequest.getMethod().equals("POST")) {
+						HttpPresentationInputStream inputStream = theRequest.getInputStream();
+						String dict = convertStreamToString(inputStream);
+						System.out.println("post dictlist: error message "+ dict);
+						
+					}
+					else if (theRequest.getMethod().equals("DELETE")) {
+						System.out.println("delete dictlist: error message! ");
+					}
 				}
-				if (restStrings.length>=1) {
-					message += "REST API LANG : " + restStrings[1]+ ";";
+				if (restStrings.length==1) {
+					PapillonLogger.writeDebugMsg("REST API DICT : " + restStrings[0]+ ";");
+					if (theRequest.getMethod().equals("GET")) {
+						content = Metadata.getDictionaryMetadata(restStrings[0]);
+					}
+					else if (theRequest.getMethod().equals("PUT")) {
+						HttpPresentationInputStream inputStream = theRequest.getInputStream();
+						String dict = convertStreamToString(inputStream);
+						System.out.println("put dict: error message "+ dict);
+					}
+					else if (theRequest.getMethod().equals("POST")) {
+						HttpPresentationInputStream inputStream = theRequest.getInputStream();
+						String dict = convertStreamToString(inputStream);
+						System.out.println("post dict: error message "+ dict);
+						
+					}
+					else if (theRequest.getMethod().equals("DELETE")) {
+						System.out.println("delete dict: error message! "+ restStrings[0]);
+					}
 				}
-				if (restStrings.length>=2) {
-					message += "REST API HW : " + restStrings[2]+ ";";
-					//String url = prefix+"Entries.po?DICTIONARY=" + restStrings[0] + "&LANG=" + restStrings[1] + "&ID=" + restStrings[2];
-					//throw new ClientPageRedirectException(url);
-					//message += " URL : " + url + ";";
+				if (restStrings.length==2) {
+					PapillonLogger.writeDebugMsg("REST API LANG : " + restStrings[1]+ ";");
+					if (theRequest.getMethod().equals("GET")) {
+						content = Metadata.getVolumeMetadata(restStrings[0], restStrings[1]);
+					}
+					else if (theRequest.getMethod().equals("PUT")) {
+						HttpPresentationInputStream inputStream = theRequest.getInputStream();
+						String volume = convertStreamToString(inputStream);
+						System.out.println("put volume: error message "+volume);
+					}
+					else if (theRequest.getMethod().equals("POST")) {
+						HttpPresentationInputStream inputStream = theRequest.getInputStream();
+						String volume = convertStreamToString(inputStream);
+						System.out.println("post volume: error message "+volume);
+						
+					}
+					else if (theRequest.getMethod().equals("DELETE")) {
+						System.out.println("delete volume: error message! " + restStrings[0] + " "+restStrings[1]);
+					}
+				}
+				if (restStrings.length==3) {
+					PapillonLogger.writeDebugMsg("REST API HW : " + restStrings[2]+ ";");
 					if (theRequest.getMethod().equals("GET")) {
 						content = Entries.getEntry(restStrings[0], restStrings[1], restStrings[2]);
 					}
-					if (theRequest.getMethod().equals("PUT")) {
+					else if (theRequest.getMethod().equals("PUT")) {
 						HttpPresentationInputStream inputStream = theRequest.getInputStream();
 						String entry = convertStreamToString(inputStream);
 						System.out.println("put data: "+entry);
 						//inputStream.close();
-						content = Entries.putEntry(restStrings[0], restStrings[1], restStrings[2], entry);
+						content = Entries.putEntry(restStrings[0], restStrings[1], restStrings[2], login,password,entry);
 					}
-					if (theRequest.getMethod().equals("POST")) {
+					else if (theRequest.getMethod().equals("POST")) {
 						HttpPresentationInputStream inputStream = theRequest.getInputStream();
 						String entry = convertStreamToString(inputStream);
 						System.out.println("post data: "+entry);
 
-						content = Entries.postEntry(restStrings[0], restStrings[1], restStrings[2], entry);
+						content = Entries.postEntry(restStrings[0], restStrings[1], restStrings[2], login,password, entry);
 					}
-					if (theRequest.getMethod().equals("DELETE")) {
-						content = Entries.deleteEntry(restStrings[0], restStrings[1], restStrings[2]);
+					else if (theRequest.getMethod().equals("DELETE")) {
+						content = Entries.deleteEntry(restStrings[0], restStrings[1], restStrings[2], login,password);
 					}
 				}
-				//content.setTextErrorMessage(message);
+				if (restStrings.length==4) {
+					PapillonLogger.writeDebugMsg("REST API SEARCH MODE: " + restStrings[2]+ ";");
+					if (theRequest.getMethod().equals("GET")) {
+						content = Entries.getEntries(restStrings[0], restStrings[1], restStrings[2], restStrings[3]);
+					}
+					else {
+						System.out.println("search entries: error message! " + restStrings[0] + " "+restStrings[1]);
+					}
+				}
+					
 			}
 			else {
 				StringWriter stringWriter = new StringWriter();
@@ -146,8 +213,10 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
 				logChannel.write(level, stringWriter.toString());
 				logChannel.write(level, "jibiki.presentation.ErrorHandler caught an exception - " 
                              + this.getComms().exception.toString(), this.getComms().exception);
-				((ErrorXHTML)content).setTextStackTrace(stringWriter.toString());
-				((ErrorXHTML)content).setTextErrorMessage(this.getComms().exception.getMessage());
+				org.w3c.dom.Node stackNode = content.createTextNode(stringWriter.toString());
+				content.getDocumentElement().appendChild(stackNode);
+				org.w3c.dom.Node messageNode = content.createTextNode(this.getComms().exception.getMessage());
+				content.getDocumentElement().appendChild(messageNode);
 			}
         }
 		return content;

@@ -46,10 +46,14 @@ import com.lutris.dods.builder.generator.query.QueryBuilder;
 import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.dictionary.Dictionary;
 import fr.imag.clips.papillon.business.dictionary.DictionariesFactory;
+import fr.imag.clips.papillon.business.dictionary.Index;
+import fr.imag.clips.papillon.business.dictionary.IndexFactory;
 import fr.imag.clips.papillon.business.dictionary.Volume;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory;
 import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
+import fr.imag.clips.papillon.business.user.UsersFactory;
+import fr.imag.clips.papillon.business.user.User;
 import fr.imag.clips.papillon.business.xsl.XslSheet;
 import fr.imag.clips.papillon.business.xsl.XslSheetFactory;
 
@@ -66,6 +70,10 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 	protected static final String DICTIONARY_PARAMETER = "DICTIONARY";
 	protected static final String LANG_PARAMETER = "LANG";
 	protected static final String ID_PARAMETER = "ID";
+	
+	protected static final String ENTRIES_HEAD_XMLSTRING = "<?xml version='1.0' encoding='UTF-8'?><entry-list xmlns='http://www-clips.imag.fr/geta/services/dml'>";
+	protected static final String ENTRIES_TAIL_XMLSTRING ="</entry-list>";
+	
     	
     /**
     *  This method should be implemented in the subclass so that it returns
@@ -129,12 +137,79 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 		}
 		return resultDoc;			
 	}
+
+	public static org.w3c.dom.Document getEntries(String dictName, String lang, String mode, String word) 
+	throws HttpPresentationException, java.io.IOException, Exception {
+		
+		int limit = 40;
+		String allEntries = "";	
+		Volume theVolume = null;
+		org.w3c.dom.Document resultDoc = null;
+		String strategy = QueryBuilder.CASE_SENSITIVE_STARTS_WITH;
+		
+		if (mode !=null && mode.equals("prefix")) {
+			strategy = QueryBuilder.CASE_SENSITIVE_STARTS_WITH;
+		
+		java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
+		
+		if (volumesCollection !=null && volumesCollection.size()>0) {
+			theVolume = (Volume) volumesCollection.iterator().next();
+			PapillonLogger.writeDebugMsg("Entries: volume: " + theVolume.getName());
+			
+			java.util.Vector myKeys = new java.util.Vector();
+			String[] Headword = new String[4];
+			String[] Status = new String[4];
+			Headword[0] = Volume.CDM_headword;
+			Headword[1] = theVolume.getSourceLanguage();
+			Headword[2] = word;
+			Headword[3] = strategy;
+			myKeys.add(Headword);
+				java.util.Vector resultsVector = IndexFactory.getIndexEntriesVector(theVolume.getIndexDbname(),
+																   myKeys,
+																   IndexFactory.ORDER_DESCENDING,
+																   limit);
+			for (int i=0; i<resultsVector.size(); i++) {
+				Index myEntry = (Index) resultsVector.elementAt(i);
+				allEntries += "<entry><headword>" + myEntry.getValue() + "</headword><handle>" + myEntry.getEntryId() + "</handle></entry>";
+			}
+			
+		}
+		else {
+			System.out.println("Error message no corresponding dict: " + dictName + " & lang: " + lang);
+		}
+		resultDoc = XMLServices.buildDOMTree(ENTRIES_HEAD_XMLSTRING + allEntries + ENTRIES_TAIL_XMLSTRING);
+		}
+		else if (mode !=null && mode.equals("handle")) {
+			java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
+			
+			if (volumesCollection !=null && volumesCollection.size()>0) {
+				theVolume = (Volume) volumesCollection.iterator().next();
+				PapillonLogger.writeDebugMsg("Entries: id: " + word + " volume: " + theVolume.getName());
+				VolumeEntry myEntry = VolumeEntriesFactory.findEntryByHandle(theVolume.getName(), word);
+				if (myEntry != null && !myEntry.isEmpty()) {
+					PapillonLogger.writeDebugMsg("Entry: headword: " + myEntry.getHeadword());
+					resultDoc = myEntry.getDom();
+				}
+				else {
+					PapillonLogger.writeDebugMsg("Entry null: " + word);
+				}
+			}
+		}
+		return resultDoc;			
+	}
 	
-	public static org.w3c.dom.Document putEntry(String dictName, String lang, String entryId, String docXml) 
+	
+	public static org.w3c.dom.Document putEntry(String dictName, String lang, String entryId, String login, String password, String docXml) 
 	throws HttpPresentationException, java.io.IOException, Exception {
 		
 		Volume theVolume = null;
 		org.w3c.dom.Document resultDoc = null;
+		
+		if (null != login && !login.equals("") &&
+                null != password && !password.equals("")) {
+                User myUser = UsersFactory.findUserByLogin(login);
+                if (null != myUser && !myUser.isEmpty() && (myUser.isAdmin() || myUser.isValidator() || myUser.isSpecialist())) { 
+					
 		
 		java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
 		
@@ -156,17 +231,30 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 				PapillonLogger.writeDebugMsg("Entry null: " + entryId);
 			}
 		}
+		}
+				else  {
+					PapillonLogger.writeDebugMsg("wrong login or password: " + login);
+				}
+		}
+		else  {
+			PapillonLogger.writeDebugMsg("Login or password empty");
+		}
 		return resultDoc;			
 	}
 	
-	public static org.w3c.dom.Document postEntry(String dictName, String lang, String headword, String docXml) 
+	public static org.w3c.dom.Document postEntry(String dictName, String lang,  String headword, String login, String password, String docXml) 
 	throws HttpPresentationException, java.io.IOException, Exception {
 		
 		Dictionary theDict = null;
 		Volume theVolume = null;
 		org.w3c.dom.Document resultDoc = null;
 		
-		theDict = DictionariesFactory.getDictionaryByName(dictName);
+		if (null != login && !login.equals("") &&
+			null != password && !password.equals("")) {
+			User myUser = UsersFactory.findUserByLogin(login);
+			if (null != myUser && !myUser.isEmpty() && (myUser.isAdmin() || myUser.isValidator())) { 
+
+				theDict = DictionariesFactory.getDictionaryByName(dictName);
 		if (theDict !=null) {
 			java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
 			if (volumesCollection !=null && volumesCollection.size()>0) {
@@ -184,16 +272,29 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 				}
 			}
 		}
+			}
+			else  {
+				PapillonLogger.writeDebugMsg("wrong login or password: " + login);
+			}
+		}
+		else  {
+			PapillonLogger.writeDebugMsg("Login or password empty");
+		}
 		return resultDoc;			
 	}
 	
-	public static org.w3c.dom.Document deleteEntry(String dictName, String lang, String entryId) 
+	public static org.w3c.dom.Document deleteEntry(String dictName, String lang, String login, String password, String entryId) 
 	throws HttpPresentationException, java.io.IOException, Exception {
 		
 		Volume theVolume = null;
 		org.w3c.dom.Document resultDoc = null;
 		
-		java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
+		if (null != login && !login.equals("") &&
+			null != password && !password.equals("")) {
+			User myUser = UsersFactory.findUserByLogin(login);
+			if (null != myUser && !myUser.isEmpty() && myUser.isAdmin()) { 
+
+				java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
 		
 		if (volumesCollection !=null && volumesCollection.size()>0) {
 			theVolume = (Volume) volumesCollection.iterator().next();
@@ -207,6 +308,14 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 			else {
 				PapillonLogger.writeDebugMsg("Entry null: " + entryId);
 			}
+		}
+			}
+			else  {
+				PapillonLogger.writeDebugMsg("wrong login or password: " + login);
+			}
+		}
+		else  {
+			PapillonLogger.writeDebugMsg("Login or password empty");
 		}
 		return resultDoc;			
 	}
