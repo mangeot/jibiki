@@ -285,6 +285,11 @@ h1 {
     font-size: 1.5em;
     font-weight: bold;
     text-align: center;
+	color: navy;
+}
+
+h2 {
+   font-size: 0.8em;
 }
 
 p.standard {
