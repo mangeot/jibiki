@@ -12,110 +12,120 @@
 <h1 style="text-align:center">jibiki REST Application Programming Interface</h1>
 <h2>Summary</h2>
 
-<table>
-<thead>
- <tr>
-	<th>
-		command
-	</th>
-	<th>
-		result
-	</th>
- </tr>
-</thead>
-<tr>
-<td>
- GET api/
-</td>
-<td>
-returns the list of resources stored on the server
-</td>
-</tr>
-<tr>
-<td>
- GET api/DictName
-</td>
-<td>
-returns the dictionary metadata concerning <em>DictName</em>
-</td>
-</tr>
-<tr>
-<td>
- PUT api/DictName
-</td>
-<td>
-updates the dictionary metadata concerning <em>DictName</em>
-</td>
-</tr>
-<tr>
-<td>
- POST api/DictName
-</td>
-<td>
-creates the dictionary <em>DictName</em>
-</td>
-</tr>
-<tr>
-<td>
- GET api/DictName/lang
-</td>
-<td>
-returns the <em>lang</em> volume metadata concerning <em>DictName</em>
-</td>
-</tr>
-<tr>
-<td>
- PUT api/DictName/lang
-</td>
-<td>
-updates the <em>lang</em> volume metadata concerning <em>DictName</em>
-</td>
-</tr>
-<tr>
-<td>
- POST api/DictName/lang
-</td>
-<td>
-creates a new <em>lang</em> volume for <em>DictName</em>
-</td>
-</tr>
-<tr>
-<td>
- GET api/DictName/lang/prefix
-</td>
-<td>
-returns a list of entry ids whith a headword that match the prefix
-</td>
-</tr>
-<tr>
-<td>
- GET api/DictName/lang/#id
-</td>
-<td>
-returns the entry with the corresponding id
-</td>
-</tr>
-<tr>
-<td>
- PUT api/DictName/lang/#id
-</td>
-<td>
-updates the entry with the corresponding id
-</td>
-</tr>
-<tr>
-<td>
- POST api/DictName/lang/headword
-</td>
-<td>
-creates a new entry with <em>headword</em> in the <em>lang</em> volume
-</td>
-</tr>
+<h3>List of available dictionaries</h3>
+
+<table class="api">
+ <tbody>
+    <tr><td>URL</td><td>api/</td></tr>
+    <tr><td>Method</td><td>GET</td></tr>
+    <tr><td>Returns</td><td>200 OK &amp; XML (list of dictionaries metadata)</td></tr>
+ </tbody>
+</table>
+
+<h3>Description of a dictionary</h3>
+
+<table class="api">
+ <tbody>
+    <tr><td>URL</td><td>api/[dictionary]/</td></tr>
+    <tr><td>Method</td><td>GET</td></tr>
+     <tr><td rowspan="2">Returns</td><td>200 OK &amp; XML (dictionary metadata)</td></tr>
+    <tr><td colspan="2">404 Not Found</td></tr>
+ </tbody>
+</table>
+
+<h3>Description of a volume</h3>
+
+<table class="api">
+ <tbody>
+    <tr><td>URL</td><td>api/[dictionary]/[lang]/</td></tr>
+    <tr><td>Method</td><td>GET</td></tr>
+    <tr><td rowspan="2">Returns</td><td >200 OK &amp; XML (volume metadata)</td></tr>
+    <tr><td>404 Not Found</td></tr>
+ </tbody>
+</table>
+
+<h3>Requesting an entry</h3>
+
+<table class="api">
+ <tbody>
+    <tr><td>URL</td><td>api/[dictionary]/[lang]/[contributionId]</td></tr>
+    <tr><td>Method</td><td >GET</td></tr>
+    <tr><td rowspan="2">Returns</td><td >200 OK &amp; XML (entry)</td></tr>
+    <tr><td>404 Not Found</td></tr>
+ </tbody>
+</table>
+
+<h3>Modifying an entry</h3>
+
+<table class="api">
+ <tbody>
+    <tr><td>URL</td><td colspan="2">api/[dictionary]/[lang]/[contributionId]</td></tr>
+    <tr><td>Method</td><td colspan="2">PUT</td></tr>
+    <tr><td rowspan="2">Querystring</td><td>login=</td><td>login</td></tr>
+    <tr><td>password=</td><td>password</td></tr>
+    <tr><td rowspan="3">Returns</td><td colspan="2">201 Created &amp; XML (entry)</td></tr>
+    <tr><td colspan="2">401 Unauthorized</td></tr>
+    <tr><td colspan="2">404 Not Found</td></tr>
+ </tbody>
+</table>
+
+<p>Note: the user has to be logged and in the specialist group.</p>
+
+<h3>Creating an entry</h3>
+
+<table class="api">
+ <tbody>
+    <tr><td>URL</td><td colspan="2">api/[dictionary]/[lang]/[contributionId]</td></tr>
+    <tr><td>Method</td><td colspan="2">POST</td></tr>
+    <tr><td rowspan="2">Querystring</td><td>login=</td><td>login</td></tr>
+    <tr><td>password=</td><td>password</td></tr>
+    <tr><td rowspan="2">Returns</td><td colspan="2">201 Created &amp; XML (entry)</td></tr>
+    <tr><td colspan="2">401 Unauthorized</td></tr>
+ </tbody>
+</table>
+
+<p>Note: the user has to be logged and in the validator group.</p>
+
+<h3>Deleting an entry</h3>
+
+<table class="api">
+ <tbody>
+    <tr><td>URL</td><td colspan="2">api/[dictionary]/[lang]/[contributionId]</td></tr>
+    <tr><td>Method</td><td colspan="2">DELETE</td></tr>
+    <tr><td rowspan="2">Querystring</td><td>login=</td><td>login</td></tr>
+    <tr><td>password=</td><td>password</td></tr>
+    <tr><td rowspan="3">Returns</td><td colspan="2">204 No Content &amp; XML (entry)</td></tr>
+    <tr><td colspan="2">401 Unauthorized</td></tr>
+    <tr><td colspan="2">404 Not Found</td></tr>
+ </tbody>
+</table>
+
+<p>Note: the user has to be logged and in the admin group.</p>
+
+<h3>Querying entries</h3>
+
+<table class="api">
+ <tbody>
+    <tr><td>URL</td><td>api/[dictionary]/[lang]/[criteria]/[string]</td></tr>
+    <tr><td>Method</td><td>GET</td></tr>
+    <tr><td rowspan="2">Returns</td><td>200 OK &amp; XML (entry)</td></tr>
+    <tr><td>404 Not Found</td></tr>
+ </tbody>
+</table>
+
+<p>Criteria is one of the following:</p>
+
+<table class="api">
+ <tbody>
+    <tr><td>prefix</td><td>headword prefix</td></tr>
+    <tr><td>handle</td><td>entry handle</td></tr>
+ </tbody>
 </table>
 
 <ul>
 	<li>All the answers are in XML and encoded in UTF-8.</li>
 	<li><em>lang</em> is the ISO 639-2/T 3 letter code of the language (eg: 'eng' for English,'esp' for Spanish,'fra' for French, etc.)</li>
+	<li>All parameters are case sensitive (dictionary, contributionId, string, etc.)</li>
 </ul>
  
 <h2>Misc</h2>

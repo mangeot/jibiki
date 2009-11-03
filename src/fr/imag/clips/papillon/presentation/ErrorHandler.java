@@ -98,6 +98,7 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
 		prefix = prefix.substring(0,prefix.lastIndexOf('/') + 1);
 		prefix += "api/";
 		HttpPresentationRequest theRequest = this.getComms().request;
+		HttpPresentationResponse theResponse = this.getComms().response;
 		String theURI = theRequest.getPresentationURI();
 		if (theURI.indexOf(prefix)==0) {
 			theURI = theURI.substring(prefix.length());
@@ -105,21 +106,25 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
 		if ((theURI == null || theURI.equals(""))
 		   && (null != this.getComms().exception) 
 		   && (this.getComms().exception instanceof com.lutris.appserver.server.httpPresentation.FilePresentationException)) {
-				PapillonLogger.writeDebugMsg("REST API URI : [" + prefix + "] " + theRequest.getPresentationURI()+";");
-				PapillonLogger.writeDebugMsg("REST API COMMAND : " + theRequest.getMethod());
-					PapillonLogger.writeDebugMsg("REST API DICTLIST;");
+				PapillonLogger.writeDebugMsg("REST API COMMAND: " + theRequest.getMethod() + " DICTLIST");
 					if (theRequest.getMethod().equals("GET")) {
 						content = fr.imag.clips.papillon.presentation.api.Metadata.getDictionaryList();
 					}
 					else if (theRequest.getMethod().equals("PUT")) {
-						System.out.println("put dictlist: error message ");
+						HttpPresentationInputStream inputStream = theRequest.getInputStream();
+						String dict = convertStreamToString(inputStream);
+						System.out.println("Error: put dictlist: not implemented");
+						theResponse.setStatus(HttpPresentationResponse.SC_NOT_IMPLEMENTED);
 					}
 					else if (theRequest.getMethod().equals("POST")) {
-						System.out.println("post dictlist: error message ");
-						
+						HttpPresentationInputStream inputStream = theRequest.getInputStream();
+						String dict = convertStreamToString(inputStream);
+						System.out.println("Error: post dictlist: not implemented");
+						theResponse.setStatus(HttpPresentationResponse.SC_NOT_IMPLEMENTED);						
 					}
 					else if (theRequest.getMethod().equals("DELETE")) {
-						System.out.println("delete dictlist: error message! ");
+						System.out.println("Error: delete dictlist: not implemented");
+						theResponse.setStatus(HttpPresentationResponse.SC_NOT_IMPLEMENTED);
 					}
 			}
 			else {
@@ -154,4 +159,36 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
 			}
 		return content;
     }
+	
+	public static String convertStreamToString(InputStream is) {
+		/*
+		 * To convert the InputStream to String we use the BufferedReader.readLine()
+		 * method. We iterate until the BufferedReader return null which means
+		 * there's no more data to read. Each line will appended to a StringBuilder
+		 * and returned as String.
+		 */
+		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+		StringBuilder sb = new StringBuilder();
+		
+		String line = null;
+		try {
+			while ((line = reader.readLine()) != null) {
+				sb.append(line + "\n");
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} 
+		/*
+		 finally {
+		 try {
+		 is.close();
+		 } catch (IOException e) {
+		 // HttpPresentationInputStream may not be closed error
+		 //e.printStackTrace();
+		 }
+		 } */
+		
+		return sb.toString();
+	}
+	
 }

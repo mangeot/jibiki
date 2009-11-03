@@ -96,6 +96,7 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
         if(null != this.getComms().exception) {
 			if (this.getComms().exception instanceof com.lutris.appserver.server.httpPresentation.FilePresentationException) {
 				HttpPresentationRequest theRequest = this.getComms().request;
+				HttpPresentationResponse theResponse = this.getComms().response;
 				String login =  myGetParameter(LOGIN_PARAMETER);
 				String password = myGetParameter(PASSWORD_PARAMETER);
 				PapillonLogger.writeDebugMsg("REST API URI : [" + prefix + "] " + theRequest.getPresentationURI()+";");
@@ -108,100 +109,179 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
 					restStrings = theURI.split("/");
 				}
 				
-				PapillonLogger.writeDebugMsg("REST API COMMAND : " + theRequest.getMethod());
+				String commande = "REST API COMMAND: " + theRequest.getMethod();
 				if (restStrings== null || restStrings.length==0) {
-					PapillonLogger.writeDebugMsg("REST API DICTLIST;");
+					PapillonLogger.writeDebugMsg(commande + " DICTLIST;");
 					if (theRequest.getMethod().equals("GET")) {
 						content = Metadata.getDictionaryList();
 					}
 					else if (theRequest.getMethod().equals("PUT")) {
 						HttpPresentationInputStream inputStream = theRequest.getInputStream();
 						String dict = convertStreamToString(inputStream);
-						System.out.println("put dictlist: error message "+ dict);
+						System.out.println("Error: put dictlist: not implemented");
+						theResponse.setStatus(HttpPresentationResponse.SC_NOT_IMPLEMENTED);
 					}
 					else if (theRequest.getMethod().equals("POST")) {
 						HttpPresentationInputStream inputStream = theRequest.getInputStream();
 						String dict = convertStreamToString(inputStream);
-						System.out.println("post dictlist: error message "+ dict);
+						System.out.println("Error: post dictlist: not implemented");
+						theResponse.setStatus(HttpPresentationResponse.SC_NOT_IMPLEMENTED);
 						
 					}
 					else if (theRequest.getMethod().equals("DELETE")) {
-						System.out.println("delete dictlist: error message! ");
+						System.out.println("Error: delete dictlist: not implemented");
+						theResponse.setStatus(HttpPresentationResponse.SC_NOT_IMPLEMENTED);
 					}
 				}
 				if (restStrings.length==1) {
-					PapillonLogger.writeDebugMsg("REST API DICT : " + restStrings[0]+ ";");
+					PapillonLogger.writeDebugMsg(commande + " DICT: " + restStrings[0]+ ";");
 					if (theRequest.getMethod().equals("GET")) {
 						content = Metadata.getDictionaryMetadata(restStrings[0]);
+						if (content==null) {
+							String errorMsg = "Error: dict: " + restStrings[0] + " does not exist!";
+							System.out.println(errorMsg);
+							theResponse.setStatus(HttpPresentationResponse.SC_NOT_FOUND,errorMsg);
+						}
 					}
 					else if (theRequest.getMethod().equals("PUT")) {
 						HttpPresentationInputStream inputStream = theRequest.getInputStream();
 						String dict = convertStreamToString(inputStream);
-						System.out.println("put dict: error message "+ dict);
+						System.out.println("Error: put dict: not implemented");
+						theResponse.setStatus(HttpPresentationResponse.SC_NOT_IMPLEMENTED);
 					}
 					else if (theRequest.getMethod().equals("POST")) {
 						HttpPresentationInputStream inputStream = theRequest.getInputStream();
 						String dict = convertStreamToString(inputStream);
-						System.out.println("post dict: error message "+ dict);
-						
+						System.out.println("Error: post dict: not implemented");
+						theResponse.setStatus(HttpPresentationResponse.SC_NOT_IMPLEMENTED);
 					}
 					else if (theRequest.getMethod().equals("DELETE")) {
-						System.out.println("delete dict: error message! "+ restStrings[0]);
+						System.out.println("Error: delete dict: not implemented");
+						theResponse.setStatus(HttpPresentationResponse.SC_NOT_IMPLEMENTED);
 					}
 				}
 				if (restStrings.length==2) {
-					PapillonLogger.writeDebugMsg("REST API LANG : " + restStrings[1]+ ";");
+					PapillonLogger.writeDebugMsg(commande + " DICT: " + restStrings[0] + " LANG: " + restStrings[1]+ ";");
 					if (theRequest.getMethod().equals("GET")) {
 						content = Metadata.getVolumeMetadata(restStrings[0], restStrings[1]);
+						if (content==null) {
+							String errorMsg = "Error: volume: " + restStrings[0] + " lang: " +  restStrings[1] + " does not exist!";
+							System.out.println(errorMsg);
+							theResponse.setStatus(HttpPresentationResponse.SC_NOT_FOUND,errorMsg);
+						}
 					}
 					else if (theRequest.getMethod().equals("PUT")) {
 						HttpPresentationInputStream inputStream = theRequest.getInputStream();
 						String volume = convertStreamToString(inputStream);
-						System.out.println("put volume: error message "+volume);
+						System.out.println("Error: put volume: not implemented");
+						theResponse.setStatus(HttpPresentationResponse.SC_NOT_IMPLEMENTED);
+						theResponse.flush();
 					}
 					else if (theRequest.getMethod().equals("POST")) {
 						HttpPresentationInputStream inputStream = theRequest.getInputStream();
 						String volume = convertStreamToString(inputStream);
-						System.out.println("post volume: error message "+volume);
-						
+						System.out.println("Error: post volume: not implemented");
+						theResponse.setStatus(HttpPresentationResponse.SC_NOT_IMPLEMENTED);						
 					}
 					else if (theRequest.getMethod().equals("DELETE")) {
-						System.out.println("delete volume: error message! " + restStrings[0] + " "+restStrings[1]);
+						String errorMsg = "Error: delete volume: not implemented";
+						System.out.println(errorMsg);
+						theResponse.setStatus(HttpPresentationResponse.SC_NOT_IMPLEMENTED,errorMsg);
 					}
 				}
 				if (restStrings.length==3) {
-					PapillonLogger.writeDebugMsg("REST API HW : " + restStrings[2]+ ";");
+					PapillonLogger.writeDebugMsg(commande + " DICT: " + restStrings[0] + " LANG: " + restStrings[1]+ " ENTRYID : " + restStrings[2]+ ";");
 					if (theRequest.getMethod().equals("GET")) {
 						content = Entries.getEntry(restStrings[0], restStrings[1], restStrings[2]);
+						if (content==null) {
+							String errorMsg = "Error: entryid: " + restStrings[0] + " lang: " +  restStrings[1] + " ID: " + restStrings[2] +" does not exist!";
+							System.out.println(errorMsg);
+							theResponse.setStatus(HttpPresentationResponse.SC_NOT_FOUND,errorMsg);
+						}						
 					}
 					else if (theRequest.getMethod().equals("PUT")) {
 						HttpPresentationInputStream inputStream = theRequest.getInputStream();
 						String entry = convertStreamToString(inputStream);
 						System.out.println("put data: "+entry);
 						//inputStream.close();
-						content = Entries.putEntry(restStrings[0], restStrings[1], restStrings[2], login,password,entry);
+						if (Entries.userCanPutEntry(login,password)) {
+							content = Entries.putEntry(restStrings[0], restStrings[1], restStrings[2], entry);
+							if (content==null) {
+								String errorMsg = "Error: entryid: " + restStrings[0] + " lang: " +  restStrings[1] + " ID: " + restStrings[2] +" does not exist!";
+								System.out.println(errorMsg);
+								theResponse.setStatus(HttpPresentationResponse.SC_NOT_FOUND,errorMsg);
+							}
+							else {
+								theResponse.setStatus(HttpPresentationResponse.SC_CREATED);
+							}
+						}
+						else {
+							String errorMsg = "Error: user: " + login +" not authorized to put entry!";
+							System.out.println(errorMsg);
+							theResponse.setStatus(HttpPresentationResponse.SC_UNAUTHORIZED,errorMsg);
+						}
 					}
 					else if (theRequest.getMethod().equals("POST")) {
 						HttpPresentationInputStream inputStream = theRequest.getInputStream();
 						String entry = convertStreamToString(inputStream);
 						System.out.println("post data: "+entry);
-
-						content = Entries.postEntry(restStrings[0], restStrings[1], restStrings[2], login,password, entry);
+						if (Entries.userCanPostEntry(login,password)) {
+							content = Entries.postEntry(restStrings[0], restStrings[1], restStrings[2], entry);
+							if (content==null) {
+								String errorMsg = "Error: dict: " + restStrings[0] + " lang: " +  restStrings[1] +" does not exist!";
+								System.out.println(errorMsg);
+								theResponse.setStatus(HttpPresentationResponse.SC_NOT_FOUND, errorMsg);
+							}
+							else {
+								theResponse.setStatus(HttpPresentationResponse.SC_CREATED);
+							}
+						}
+						else {
+							String errorMsg = "Error: user: " + login +" not authorized to put entry!";
+							System.out.println(errorMsg);
+							theResponse.setStatus(HttpPresentationResponse.SC_UNAUTHORIZED,errorMsg);
+						}
 					}
 					else if (theRequest.getMethod().equals("DELETE")) {
-						content = Entries.deleteEntry(restStrings[0], restStrings[1], restStrings[2], login,password);
+						if (Entries.userCanDeleteEntry(login,password)) {
+							content = Entries.deleteEntry(restStrings[0], restStrings[1], restStrings[2]);
+							if (content==null) {
+								String errorMsg = "Error: entryid: " + restStrings[0] + " lang: " +  restStrings[1] + " ID: " + restStrings[2] +" does not exist!";
+								System.out.println(errorMsg);
+								theResponse.setStatus(HttpPresentationResponse.SC_NOT_FOUND, errorMsg);
+							}
+							else {
+								theResponse.setStatus(HttpPresentationResponse.SC_NO_CONTENT);
+							}							
+						}
+						else {
+							String errorMsg = "Error: user: " + login +" not authorized to put entry!";
+							System.out.println(errorMsg);
+							theResponse.setStatus(HttpPresentationResponse.SC_UNAUTHORIZED,errorMsg);
+						}
 					}
 				}
 				if (restStrings.length==4) {
-					PapillonLogger.writeDebugMsg("REST API SEARCH MODE: " + restStrings[2]+ ";");
+					PapillonLogger.writeDebugMsg(commande + " DICT: " + restStrings[0] + " LANG: " + restStrings[1]+ " MODE: " + restStrings[2]+ " STRING: " + restStrings[3]+ ";");
 					if (theRequest.getMethod().equals("GET")) {
 						content = Entries.getEntries(restStrings[0], restStrings[1], restStrings[2], restStrings[3]);
+						if (content==null) {
+							String errorMsg = "Error: search: " + restStrings[0] + " lang: " +  restStrings[1] + " method: " + restStrings[2] +" does not exist!";
+							System.out.println(errorMsg);
+							theResponse.setStatus(HttpPresentationResponse.SC_NOT_FOUND, errorMsg);
+						}
 					}
 					else {
+						theResponse.setStatus(HttpPresentationResponse.SC_NOT_IMPLEMENTED);
+						System.out.println("Error: method not implemented");
 						System.out.println("search entries: error message! " + restStrings[0] + " "+restStrings[1]);
 					}
 				}
-					
+				if (restStrings.length>4) {
+					PapillonLogger.writeDebugMsg(commande + " DICT: " + restStrings[0] + " LANG: " + restStrings[1]+ " MODE: " + restStrings[2]+ " STRING: " + restStrings[3]+ ";");
+					theResponse.setStatus(HttpPresentationResponse.SC_NOT_IMPLEMENTED);
+					System.out.println("Error: method not implemented");
+				}
 			}
 			else {
 				StringWriter stringWriter = new StringWriter();

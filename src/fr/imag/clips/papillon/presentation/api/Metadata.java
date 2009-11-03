@@ -132,6 +132,18 @@ public class Metadata extends fr.imag.clips.papillon.presentation.XmlBasePO {
 		return resultDoc;			
 	}
 
+	public static org.w3c.dom.Document getDictionaryMetadata(String dictName) 
+	throws HttpPresentationException, java.io.IOException, Exception {
+		
+		org.w3c.dom.Document resultDoc = null;
+		Dictionary theDict  = DictionariesFactory.getDictionaryByName(dictName);
+		if (theDict !=null && !theDict.isEmpty()) {
+			resultDoc = XMLServices.buildDOMTree(theDict.getXmlCode());
+			PapillonLogger.writeDebugMsg("Dict metadata: " + theDict.getName());
+		}
+		return resultDoc;
+	}
+	
 	public static org.w3c.dom.Document getVolumeMetadata(String dictName, String lang) 
 	throws HttpPresentationException, java.io.IOException, Exception {
 		
@@ -141,18 +153,6 @@ public class Metadata extends fr.imag.clips.papillon.presentation.XmlBasePO {
 			Volume theVolume = (Volume) volumesCollection.iterator().next();
 			PapillonLogger.writeDebugMsg("Volume metadata: " + theVolume.getName());
 			resultDoc = XMLServices.buildDOMTree(theVolume.getXmlCode());
-		}
-		return resultDoc;
-	}
-	
-	public static org.w3c.dom.Document getDictionaryMetadata(String dictName) 
-	throws HttpPresentationException, java.io.IOException, Exception {
-		
-		org.w3c.dom.Document resultDoc = null;
-		Dictionary theDict  = DictionariesFactory.getDictionaryByName(dictName);
-		if (theDict !=null && !theDict.isEmpty()) {
-			resultDoc = XMLServices.buildDOMTree(theDict.getXmlCode());
-			PapillonLogger.writeDebugMsg("Dict metadata: " + theDict.getName());
 		}
 		return resultDoc;
 	}

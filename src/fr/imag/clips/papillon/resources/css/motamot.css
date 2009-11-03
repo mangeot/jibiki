@@ -101,7 +101,22 @@
 body {
 	background : white;
 	font: 10pt   'Lucida Grande', LucidaGrande, Lucida, Helvetica, Arial, sans-serif;
+	color: black;
 }
+
+table.api {
+    margin: 10px 0;
+    caption-side: bottom;
+    border-collapse: collapse;
+    border: 2px solid #345;
+}
+table.api tbody td {
+    border: 1px solid #889;
+    padding: 2px 4px;
+    vertical-align: top;
+	color:black;
+}
+
 
 .titlePane {
 	color: #1cabed;

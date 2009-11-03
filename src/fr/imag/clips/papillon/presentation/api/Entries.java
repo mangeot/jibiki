@@ -172,12 +172,11 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 				Index myEntry = (Index) resultsVector.elementAt(i);
 				allEntries += "<entry><headword>" + myEntry.getValue() + "</headword><handle>" + myEntry.getEntryId() + "</handle></entry>";
 			}
-			
+			resultDoc = XMLServices.buildDOMTree(ENTRIES_HEAD_XMLSTRING + allEntries + ENTRIES_TAIL_XMLSTRING);
 		}
 		else {
 			System.out.println("Error message no corresponding dict: " + dictName + " & lang: " + lang);
 		}
-		resultDoc = XMLServices.buildDOMTree(ENTRIES_HEAD_XMLSTRING + allEntries + ENTRIES_TAIL_XMLSTRING);
 		}
 		else if (mode !=null && mode.equals("handle")) {
 			java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
@@ -198,18 +197,24 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 		return resultDoc;			
 	}
 	
+	public static boolean userCanPutEntry(String login, String password) 
+		throws fr.imag.clips.papillon.business.PapillonBusinessException {
+		boolean answer = false;
+		if (null != login && !login.equals("") &&
+			null != password && !password.equals("")) {
+			User myUser = UsersFactory.findUserByLogin(login);
+			if (null != myUser && !myUser.isEmpty() && (myUser.isAdmin() || myUser.isValidator() || myUser.isSpecialist())) {
+				answer=true;
+			}
+		}
+		return answer;
+	}
 	
-	public static org.w3c.dom.Document putEntry(String dictName, String lang, String entryId, String login, String password, String docXml) 
+	public static org.w3c.dom.Document putEntry(String dictName, String lang, String entryId, String docXml) 
 	throws HttpPresentationException, java.io.IOException, Exception {
 		
 		Volume theVolume = null;
 		org.w3c.dom.Document resultDoc = null;
-		
-		if (null != login && !login.equals("") &&
-                null != password && !password.equals("")) {
-                User myUser = UsersFactory.findUserByLogin(login);
-                if (null != myUser && !myUser.isEmpty() && (myUser.isAdmin() || myUser.isValidator() || myUser.isSpecialist())) { 
-					
 		
 		java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
 		
@@ -231,30 +236,31 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 				PapillonLogger.writeDebugMsg("Entry null: " + entryId);
 			}
 		}
-		}
-				else  {
-					PapillonLogger.writeDebugMsg("wrong login or password: " + login);
-				}
-		}
-		else  {
-			PapillonLogger.writeDebugMsg("Login or password empty");
-		}
 		return resultDoc;			
 	}
 	
-	public static org.w3c.dom.Document postEntry(String dictName, String lang,  String headword, String login, String password, String docXml) 
+	public static boolean userCanPostEntry(String login, String password) 
+		throws fr.imag.clips.papillon.business.PapillonBusinessException {
+		boolean answer = false;
+		if (null != login && !login.equals("") &&
+			null != password && !password.equals("")) {
+			User myUser = UsersFactory.findUserByLogin(login);
+			if (null != myUser && !myUser.isEmpty() && (myUser.isAdmin() || myUser.isValidator())) {
+				answer=true;
+			}
+		}
+		return answer;
+	}
+
+	public static org.w3c.dom.Document postEntry(String dictName, String lang,  String headword, String docXml) 
 	throws HttpPresentationException, java.io.IOException, Exception {
 		
 		Dictionary theDict = null;
 		Volume theVolume = null;
 		org.w3c.dom.Document resultDoc = null;
 		
-		if (null != login && !login.equals("") &&
-			null != password && !password.equals("")) {
-			User myUser = UsersFactory.findUserByLogin(login);
-			if (null != myUser && !myUser.isEmpty() && (myUser.isAdmin() || myUser.isValidator())) { 
 
-				theDict = DictionariesFactory.getDictionaryByName(dictName);
+		theDict = DictionariesFactory.getDictionaryByName(dictName);
 		if (theDict !=null) {
 			java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
 			if (volumesCollection !=null && volumesCollection.size()>0) {
@@ -272,29 +278,29 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 				}
 			}
 		}
-			}
-			else  {
-				PapillonLogger.writeDebugMsg("wrong login or password: " + login);
-			}
-		}
-		else  {
-			PapillonLogger.writeDebugMsg("Login or password empty");
-		}
 		return resultDoc;			
 	}
 	
-	public static org.w3c.dom.Document deleteEntry(String dictName, String lang, String login, String password, String entryId) 
+	public static boolean userCanDeleteEntry(String login, String password) 
+		throws fr.imag.clips.papillon.business.PapillonBusinessException {
+		boolean answer = false;
+		if (null != login && !login.equals("") &&
+			null != password && !password.equals("")) {
+			User myUser = UsersFactory.findUserByLogin(login);
+			if (null != myUser && !myUser.isEmpty() && (myUser.isAdmin())) {
+				answer=true;
+			}
+		}
+		return answer;
+	}
+	
+	public static org.w3c.dom.Document deleteEntry(String dictName, String lang, String entryId) 
 	throws HttpPresentationException, java.io.IOException, Exception {
 		
 		Volume theVolume = null;
 		org.w3c.dom.Document resultDoc = null;
 		
-		if (null != login && !login.equals("") &&
-			null != password && !password.equals("")) {
-			User myUser = UsersFactory.findUserByLogin(login);
-			if (null != myUser && !myUser.isEmpty() && myUser.isAdmin()) { 
-
-				java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
+		java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
 		
 		if (volumesCollection !=null && volumesCollection.size()>0) {
 			theVolume = (Volume) volumesCollection.iterator().next();
@@ -309,17 +315,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 				PapillonLogger.writeDebugMsg("Entry null: " + entryId);
 			}
 		}
-			}
-			else  {
-				PapillonLogger.writeDebugMsg("wrong login or password: " + login);
-			}
-		}
-		else  {
-			PapillonLogger.writeDebugMsg("Login or password empty");
-		}
 		return resultDoc;			
 	}
-	
-	
 	
 }
