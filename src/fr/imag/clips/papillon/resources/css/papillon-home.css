@@ -90,6 +90,22 @@ body {
 	background: white url(/media/papillon-background-fuzzy.png) 0 0 no-repeat fixed;
 }
 
+/*--------------------------------------*/
+/* For the api */
+/*--------------------------------------*/
+table.api {
+    margin: 10px 0;
+    caption-side: bottom;
+    border-collapse: collapse;
+    border: 2px solid #345;
+}
+table.api tbody td {
+    border: 1px solid #889;
+    padding: 2px 4px;
+    vertical-align: top;
+	color:black;
+}
+
 
 /*--------------------------------------*/
 /* For the editor */
