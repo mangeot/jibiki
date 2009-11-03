@@ -123,11 +123,14 @@ public class Metadata extends fr.imag.clips.papillon.presentation.XmlBasePO {
 		
 		java.util.Collection dictCollection = DictionariesFactory.getDictionariesArray();
 		if (dictCollection !=null && dictCollection.size()>0) {
-			Dictionary theDict = (Dictionary) dictCollection.iterator().next();
-			org.w3c.dom.Document theDictDom = XMLServices.buildDOMTree(theDict.getXmlCode());
-			org.w3c.dom.Node theDictImported = resultDoc.importNode(theDictDom.getDocumentElement(), true);
-			resultDoc.getDocumentElement().appendChild(theDictImported);
-			PapillonLogger.writeDebugMsg("Dict: " + theDict.getName());
+			java.util.Iterator dictItr = dictCollection.iterator();
+			while (dictItr.hasNext()) {
+				Dictionary theDict = (Dictionary) dictCollection.iterator().next();
+				org.w3c.dom.Document theDictDom = XMLServices.buildDOMTree(theDict.getXmlCode());
+				org.w3c.dom.Node theDictImported = resultDoc.importNode(theDictDom.getDocumentElement(), true);
+				resultDoc.getDocumentElement().appendChild(theDictImported);
+				PapillonLogger.writeDebugMsg("Dict: " + theDict.getName());
+			}
 		}
 		return resultDoc;			
 	}
