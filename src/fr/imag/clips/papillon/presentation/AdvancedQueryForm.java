@@ -601,11 +601,11 @@ public class AdvancedQueryForm {
         } else {
             // Quick links
             XHTMLElement MyFinishedContributionsElement = queryDoc.getElementMyFinishedContributions();
-            String href = "LexalpEditEntryInit.po?DICTIONARIES=LexALP&ACTION=&CRITERIA_NB=2&FACET.0=cdm-modification-author&OPERATOR.0=2&FACETVALUE.0=" + sessionData.getUser().getLogin() + "&SOURCE.0=All&FACET.1=cdm-contribution-status&OPERATOR.1=2&FACETVALUE.1=" + VolumeEntry.FINISHED_STATUS + "&SOURCE.1=All&NB_RESULT_PER_PAGE=10&XSL=&OFFSET=&lookup=Go";
+            String href = "EditEntryInit.po?CRITERIA_NB=2&FACET.0=cdm-modification-author&OPERATOR.0=2&FACETVALUE.0=" + sessionData.getUser().getLogin() + "&SOURCE.0=All&FACET.1=cdm-contribution-status&OPERATOR.1=2&FACETVALUE.1=" + VolumeEntry.FINISHED_STATUS + "&SOURCE.1=All&NB_RESULT_PER_PAGE=10&XSL=&OFFSET=&lookup=Go";
             MyFinishedContributionsElement.setAttribute("href", href);
             
             XHTMLElement MyNotFinishedContributionsElement = queryDoc.getElementMyNotFinishedContributions();
-            href = "LexalpEditEntryInit.po?DICTIONARIES=LexALP&ACTION=&CRITERIA_NB=2&FACET.0=cdm-modification-author&OPERATOR.0=2&FACETVALUE.0=" + sessionData.getUser().getLogin() + "&SOURCE.0=All&FACET.1=cdm-contribution-status&OPERATOR.1=2&FACETVALUE.1=" + VolumeEntry.NOT_FINISHED_STATUS + "&SOURCE.1=All&NB_RESULT_PER_PAGE=10&XSL=&OFFSET=&lookup=Go";
+            href = "EditEntryInit.po?&CRITERIA_NB=2&FACET.0=cdm-modification-author&OPERATOR.0=2&FACETVALUE.0=" + sessionData.getUser().getLogin() + "&SOURCE.0=All&FACET.1=cdm-contribution-status&OPERATOR.1=2&FACETVALUE.1=" + VolumeEntry.NOT_FINISHED_STATUS + "&SOURCE.1=All&NB_RESULT_PER_PAGE=10&XSL=&OFFSET=&lookup=Go";
             MyNotFinishedContributionsElement.setAttribute("href", href);
         }
         

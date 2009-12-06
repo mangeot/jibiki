@@ -393,7 +393,6 @@ import java.util.Vector;
         public Collection findLexieAndTranslation(User user)  throws PapillonBusinessException {
             try {
                 Collection lexies = findLexie(user);
-
                 // If no target languages, do not merge axies.
                 return DictionariesFactory.expandResults(lexies, this.getTargets(), user, this.getTargets().size() > 0);
             } catch(Exception ex) {

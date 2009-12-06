@@ -2,85 +2,30 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html>
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
-	<title>Edition of Papillon Lexical Database</title>
+	<title>Edition of Papillon Entry</title>
 </head>
 <body>
-<div id="EditEntryInitContent" lang="slv"> 
-<h1>Interface d'édition de <span id="UserName">Ime</span></h1>
-<div>
-<table id="EntryListTable" width="100%" frame="hsides" border="0" summary="Entries" >
-<thead id="EntryListTableHead">
-     <tr>
-	  <th>Mot-vedette</th>
-		<th>ID de l'article</th>
-		<th>Classe Gram.</th>
-		<th>Auteur</th>
-		<th>Statut</th>
-		<th>Éditer</th>
-		<th>Prikaži</th>
-     </tr>
-    </thead>
-    <tfoot id="EntryListTableFoot">
-     <tr>
-     <td colspan="7"><br/></td>
-     </tr>
-    </tfoot>
-    <tbody>
-  <tr id="EntryListRow" >
-    <td><span id="HeadwordList">Vedette</span></td>
-    <td><a href="" id="ViewEntryAnchor"><span id="EntryIdList">EntryId</span></a></td>
-    <td><span id="PosList">pos</span></td>
-    <td><span id="EntryAuthorList">EntryAuthor</span></td>
-    <td><span id="EntryStatusList">EntryStatus</span></td>
-    <td><a href="" id="EditEntryAnchor"><span class="hidden" id="EditMessage">Uredi</span><span class="hidden" id="CopyMessage">Copier et éditer</span></a></td>
-    <td><a href="" id="ViewXmlEntryAnchor">XML</a></td>
-  </tr>
-    <tr id="FormulaRow">
-  <td colspan="7">&nbsp;&nbsp;&nbsp;&nbsp;<span id="Formula">Formule</span></td>
-  </tr>
-    </tbody>
-</table>
-</div>
-<form  id="CreateAnywayForm" action="EditEntryInit.po">
- <p>
-	<input id="VOLUME_ANYWAY" name="VOLUME_ANYWAY" type="hidden" value="" />
-	<input id="HEADWORD_ANYWAY" name="HEADWORD_ANYWAY" type="hidden" value="" />
-	<input id="HEADWORD_DISABLED" name="HEADWORD_DISABLED" size="15" type="text" disabled="disabled" value="" />
-	<input name="CreateAnyway" id="CreateAnywayButton" type="submit" value="Créer de toutes façons"/>
- </p>
-</form>
-<form  id="LookupForm" action="EditEntryInit.po">
-<table width="100%" border="0" summary="HeadwordLookupTable" id="HeadwordLookupTable" cellpadding="0">
-<thead>
-     <tr>
-	  <td></td>
-     </tr>
-    </thead>
-<tr id="HeadwordLookupRow" valign="top">
-	<td>
-	<b><label for="HEADWORD">Mot-vedette&nbsp;:</label></b> 
-	<input id="HEADWORD" name="HEADWORD" size="15" type="text" value=""/>
-	<input id="PartialMatch" name="PartialMatch" type="checkbox" value="PartialMatch"/><label for="PartialMatch">sous-chaîne</label>
-	</td>
-</tr>
-<tr valign="top" id="VolumeLookupRow">
-	<td>
-	<b><label for="VOLUME">Glosar&nbsp;:</label></b>           
-	 <select id="VOLUME" name="VOLUME">
-            <option id="VolumeOptionTemplate" value="NONE" label="NONE">NONE</option>
-        </select>
-	</td>
-</tr>
-<tr valign="top" id="ButtonsLookupRow">
-	<td>
-		<input name="LookupEdit" id="LookupEditButton" type="submit" value="iskanje"/>
-		<input name="Create" id="CreateButton" type="submit" value="Ustvari vnos"/>
-	</td>
-</tr>
-</table>
-</form>
-<div id="EntryDiv" />
-</div>
+    <div id="EditEntryInitContent" lang="en"> 
+        <h1 class="title"><span id="UserName">Name</span> edition interface</h1>
+        <script type="text/javascript">
+            <!-- 
+                // Open a new interface window to create the new entry 
+                function create() {
+                    href = 'EditEntryInit.po?action=createAnyway&VOLUME=' + document.getElementById('VOLUME').value + '&Headword=' +  document.getElementById('Headword').value;
+                    window.open(href,'EditEntry');
+                }
+            //-->
+        </script>
+        <div class="hidden">Create <input type="text" name="Headword" id="Headword"/> in 
+            <select id="VOLUME" name="VOLUME">
+                <option id="VolumeOptionTemplate" value="NONE" label="NONE">NONE</option>
+            </select>
+            <input name="action" id="CreateAnywayButton" type="submit" value="create anyway" onclick="create()"/>
+        </div>
+        <div class="QueryForm" id="QueryForm" >
+        </div>
+        <div id="QueryResultForm">
+        </div>
+    </div>
 </body>
 </html>
-

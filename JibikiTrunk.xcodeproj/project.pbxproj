@@ -218,7 +218,7 @@
 		A30722FB0EC89B2200733910 /* LaunchAction.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = LaunchAction.java; sourceTree = "<group>"; };
 		A30722FC0EC89B2200733910 /* LaunchSaxon8bTransformation.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = LaunchSaxon8bTransformation.java; sourceTree = "<group>"; };
 		A30722FD0EC89B2200733910 /* LexALP.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = LexALP.java; sourceTree = "<group>"; };
-		A30722FE0EC89B2200733910 /* LexalpEditEntryInit.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = LexalpEditEntryInit.java; sourceTree = "<group>"; };
+		A30722FE0EC89B2200733910 /* EditEntryInit.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = EditEntryInit.java; sourceTree = "<group>"; };
 		A30722FF0EC89B2200733910 /* LexALPLayout.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = LexALPLayout.java; sourceTree = "<group>"; };
 		A30723000EC89B2200733910 /* LexALPLinker.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = LexALPLinker.java; sourceTree = "<group>"; };
 		A30723010EC89B2200733910 /* LinkerBasePO.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = LinkerBasePO.java; sourceTree = "<group>"; };
@@ -1811,7 +1811,7 @@
 				A30722FB0EC89B2200733910 /* LaunchAction.java */,
 				A30722FC0EC89B2200733910 /* LaunchSaxon8bTransformation.java */,
 				A30722FD0EC89B2200733910 /* LexALP.java */,
-				A30722FE0EC89B2200733910 /* LexalpEditEntryInit.java */,
+				A30722FE0EC89B2200733910 /* EditEntryInit.java */,
 				A30722FF0EC89B2200733910 /* LexALPLayout.java */,
 				A30723000EC89B2200733910 /* LexALPLinker.java */,
 				A30723010EC89B2200733910 /* LinkerBasePO.java */,

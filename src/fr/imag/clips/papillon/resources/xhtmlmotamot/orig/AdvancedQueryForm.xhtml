@@ -48,24 +48,14 @@
                     <img id="minus" onclick="addOrRemoveCriterion(this.id, '-');" src="media/minus.jpg" alt="-" width="15"/>
                     <img id="plus" onclick="addOrRemoveCriterion(this.id, '+');" src="media/plus.jpg" alt="+" width="15"/>
                     <select id="Facet" name="FACET" onchange="hideOrNotSourceLang(value, name); getSelector(value, name);" >
-                      <option value="cdm-headword" label="Term">Term</option>
+                      <option value="cdm-headword" label="Headword">Headword</option>
                       <option value="cdm-definition" label="Definition">Definition</option>
-                      <option value="cdm-translation" label="Translation">Translation</option>
-                      <option value="cdm-pos" label="Grammar">Grammar</option>
-                      <option value="cdm-context" label="Context">Context</option>
+                      <option value="cdm-pos" label="POS">POS</option>
                       <option value="cdm-example" label="Example">Example</option>
-                      <option value="cdm-note" label="Note">Note</option>
-                      <option value="lexalp-source" label="Source">Source</option>
-                      <option value="lexalp-legal-system" label="Legal system">Legal system</option>
-                      <option value="lexalp-domain" label="Domain number">Domain number</option>
-                      <option value="lexalp-usage" label="Geographical usage">Geographical usage</option>
-                      <option value="axi-reflexie" label="Axie">Axie</option>
                       <option value="cdm-modification-author" label="Modified by">Modified by</option>
                       <option value="cdm-contribution-author" label="Created by">Created by</option>
                       <option value="cdm-modification-date" label="Date">Date</option>
-                      <option value="lexalp-harmonising-status" label="Harmonising status">Harmonising status</option>
-                      <option value="lexalp-process-status" label="Process status">Process status</option>
-                      <option value="cdm-contribution-status" label="Entry status">Progress</option>
+                      <option value="cdm-contribution-status" label="Entry status">Status</option>
                       <option value="cdm-entry-id" label="Entry Id">Entry Id</option>
                       <!--<option value="cdm-contribution-id" label="Entry Id">Contribution Id</option>-->
                     </select>

@@ -214,17 +214,15 @@ public class AdvancedSearch extends PapillonBasePO {
             // Add status criteria
             ArrayList listStatus = new ArrayList();
             
-  /*          QueryCriteria criteriaFinishedStatus = new QueryCriteria();
-            criteriaFinishedStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);  
-            criteriaFinishedStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.FINISHED_STATUS);
-            listStatus.add(criteriaFinishedStatus);
-            
-            QueryCriteria criteriaModifiedStatus = new QueryCriteria();
-            criteriaModifiedStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);
-            criteriaModifiedStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.MODIFIED_STATUS);
-            listStatus.add(criteriaModifiedStatus);
-            
-            queryReq.addOrCriteriaList(listStatus); */
+			QueryCriteria criteriaStatus = new QueryCriteria();
+			criteriaStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);
+			criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.CLASSIFIED_FINISHED_STATUS);
+			criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.CLASSIFIED_NOT_FINISHED_STATUS);
+			criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.DELETED_STATUS);
+			criteriaStatus.add("lang", QueryCriteria.EQUAL, Volume.DEFAULT_LANG);
+			listStatus.add(criteriaStatus);
+			
+			queryReq.addOrCriteriaList(listStatus);
             
             // Perform the request
             Collection qrset = queryReq.findLexieAndTranslation(this.getUser());
