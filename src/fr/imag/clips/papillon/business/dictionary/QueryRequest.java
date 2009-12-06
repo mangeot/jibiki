@@ -266,12 +266,14 @@ import java.util.Vector;
 								ArrayList orNode = (ArrayList)iterAnd.next();
 								Iterator iterOr = orNode.iterator();
 								while (iterOr.hasNext()) {
-									querySearch.addWhereOpenParen();
 									QueryCriteria criteria = (QueryCriteria)iterOr.next();
-									//PapillonLogger.writeDebugMsg("criteria: " + criteria.getFullClause());
-									querySearch.addWhere(criteria.getFullClause());
-									querySearch.addWhereCloseParen();
-									if ( iterOr.hasNext() ) { querySearch.addWhereOr(); }
+									if (criteria.getFullClause() != null && criteria.getFullClause() != "") {
+										querySearch.addWhereOpenParen();
+										//PapillonLogger.writeDebugMsg("isAndTree criteria: " + criteria.getFullClause());
+										querySearch.addWhere(criteria.getFullClause());
+										querySearch.addWhereCloseParen();
+										if ( iterOr.hasNext() ) { querySearch.addWhereOr(); }
+									}
 								}
 								query.addWhereIn(objectIdRDB, querySearch);
 							}
@@ -282,10 +284,13 @@ import java.util.Vector;
 								ArrayList andNode = (ArrayList)iterOr.next();
 								Iterator iterAnd = andNode.iterator();
 								while (iterAnd.hasNext()) {
-									querySearch.addWhereOpenParen();
 									QueryCriteria criteria = (QueryCriteria)iterAnd.next();
-									querySearch.addWhere(criteria.getFullClause());
-									querySearch.addWhereCloseParen();
+									if (criteria.getFullClause() != null && criteria.getFullClause() != "") {
+										querySearch.addWhereOpenParen();
+										//PapillonLogger.writeDebugMsg("isOrTree criteria: " + criteria.getFullClause());
+										querySearch.addWhere(criteria.getFullClause());
+										querySearch.addWhereCloseParen();
+									}
 								}
 								querySearch.addWhereOr();
 								query.addWhereIn(objectIdRDB, querySearch);
@@ -589,7 +594,6 @@ import java.util.Vector;
 							if (andNode.size()==1) {
 								QueryCriteria criteria = (QueryCriteria)andNode.get(0);
 								treeSize -= mergeSubCriterias(criteriaTree, "OR", andNode,criteria);
-								PapillonLogger.writeDebugMsg("mergeCriteriaSubtrees apres mergeSubCriterias");
 							}
 							i++;
 						}                    
@@ -606,6 +610,7 @@ import java.util.Vector;
             try {
                 if ( (criteriaTree.size() != 0)) {
 					if (isAndTree) {    // AND(OR)
+						//PapillonLogger.writeDebugMsg("isAndTree : AND(OR)");
 						Iterator iterAnd = criteriaTree.iterator();
 						while (iterAnd.hasNext()) {
 							ArrayList orNode = (ArrayList)iterAnd.next();
@@ -625,7 +630,7 @@ import java.util.Vector;
 							int nodeSize = andNode.size();
 							while (i<nodeSize-1) {
 								QueryCriteria criteria = (QueryCriteria)andNode.get(i);
-								//nodeSize -= mergeCriterias(andNode,"AND", criteria);
+								nodeSize -= mergeCriterias(andNode,"AND", criteria);
 								i++;
 							}
 						}                    
@@ -670,6 +675,7 @@ import java.util.Vector;
 			throws PapillonBusinessException {
 				int res = 0;
 				try {
+					//PapillonLogger.writeDebugMsg("mergeSubCriterias " + type);
 			int i=node.indexOf(subNode)+1;
 			int nodeSize = node.size();
 			while (i<nodeSize) {
