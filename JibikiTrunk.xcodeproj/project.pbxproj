@@ -1298,11 +1298,12 @@
 		A30727770EC89B2D00733910 /* dump_database */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = dump_database; sourceTree = "<group>"; };
 		A30727780EC89B2D00733910 /* multilingual-sort.sql */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "multilingual-sort.sql"; sourceTree = "<group>"; };
 		A30727790EC89B2D00733910 /* restore_database */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = restore_database; sourceTree = "<group>"; };
+		A30998561121A7BC007DAA26 /* ara */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ara; sourceTree = "<group>"; };
 		A3216DE90ED17C22009BC773 /* LexalpEditEntryInit.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = LexalpEditEntryInit.xhtml; sourceTree = "<group>"; };
 		A3376029100241C4002281AF /* MotamotPostUpdateProcessor.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = MotamotPostUpdateProcessor.java; sourceTree = "<group>"; };
 		A38F4F281021A79900E1B105 /* MotamotContent.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MotamotContent.xmlc; sourceTree = "<group>"; };
 		A39A46EF0FF8B8590090E5C0 /* MotamotAxiFactory.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = MotamotAxiFactory.java; sourceTree = "<group>"; };
-		A39A46F70FF90F040090E5C0 /* Home.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = Home.java; sourceTree = "<group>"; };
+		A39A46F70FF90F040090E5C0 /* Arabic.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = Arabic.java; sourceTree = "<group>"; };
 		A39A46FA0FF9215E0090E5C0 /* MotamotContent.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = MotamotContent.xhtml; path = ../eng/MotamotContent.xhtml; sourceTree = "<group>"; };
 		A39A47210FF922110090E5C0 /* engvieContent.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = engvieContent.xhtml; sourceTree = "<group>"; };
 		A39A472E0FF922610090E5C0 /* FrajpnContent.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = FrajpnContent.xhtml; sourceTree = "<group>"; };
@@ -1802,7 +1803,7 @@
 				A30722F20EC89B2200733910 /* HandleEntryModifications.java */,
 				A3AF17C61069FA0500E1CEB5 /* Help.java */,
 				A30722F40EC89B2200733910 /* History.java */,
-				A39A46F70FF90F040090E5C0 /* Home.java */,
+				A39A46F70FF90F040090E5C0 /* Arabic.java */,
 				A30722F60EC89B2200733910 /* HTMLTransformFactory.java */,
 				A30722F70EC89B2200733910 /* ImportHelp.java */,
 				A30722F80EC89B2200733910 /* Information.java */,
@@ -2318,6 +2319,7 @@
 		A307247B0EC89B2600733910 /* xhtml */ = {
 			isa = PBXGroup;
 			children = (
+				A30998561121A7BC007DAA26 /* ara */,
 				A307247C0EC89B2600733910 /* deu */,
 				A30724A60EC89B2600733910 /* eng */,
 				A30724D20EC89B2700733910 /* est */,
