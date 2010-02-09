@@ -285,7 +285,7 @@ p.standard {
     text-align: justify;
 }
 
-.accesskey {text-decoration: underline; }
+.accesskey {font-size:0.8em;text-decoration: underline; }
 
 .copyright {
 	font-size: xx-small;
