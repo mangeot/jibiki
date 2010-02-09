@@ -90,4 +90,4 @@ FAIT:
   - Solved a bug when the language (d:lang) is not specified in the interface template
   - Solved a bug where half of the childs of an xml element where removed... (when editing it, in certain situations)
   - Solved a bug where an incorrect node was said to correspond with an interface element id.
-  
+test  
