@@ -323,8 +323,13 @@ public class IndexFactory {
 		}
 		return theIndex;
 	}
-		
+	
 	public static Vector getIndexEntriesVector(String indexTableName, Vector Keys, String order, int limit) throws PapillonBusinessException {
+		return getIndexEntriesVector(indexTableName, Keys, order, limit,0);
+	}
+
+	
+	public static Vector getIndexEntriesVector(String indexTableName, Vector Keys, String order, int limit, int offset) throws PapillonBusinessException {
         Vector theEntries = new Vector();
 		
 		if (null != indexTableName) {
@@ -356,6 +361,9 @@ public class IndexFactory {
 					}
 				}				
 				query.getQueryBuilder().setMaxRows((0 == limit) ? DictionariesFactory.MaxRetrievedEntries : limit);
+				if (offset!=0) {
+					query.getQueryBuilder().addEndClause("OFFSET " + offset);
+				}
 				if (order==null || !order.equals(ORDER_DESCENDING)) {
 					order = "";
 				}

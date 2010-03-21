@@ -58,6 +58,9 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
 	protected static String ERROR_PAGE = "<?xml version='1.0'?><html></html>";
 	protected static String LOGIN_PARAMETER = "login";
 	protected static String PASSWORD_PARAMETER = "password";
+	protected static String STRATEGY_PARAMETER = "strategy";
+	protected static String LIMIT_PARAMETER = "count";
+	protected static String OFFSET_PARAMETER = "startIndex";
 	
 	/**
      * Description of the Method
@@ -134,9 +137,15 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
 					}
 				}
 				if (restStrings.length==1) {
-					PapillonLogger.writeDebugMsg(commande + " DICT: " + restStrings[0]+ ";");
 					if (theRequest.getMethod().equals("GET")) {
-						content = Metadata.getDictionaryMetadata(restStrings[0]);
+						PapillonLogger.writeDebugMsg(commande + " DICTLIST;");
+						if (restStrings[0].equals("*")) {
+							content = Metadata.getDictionaryList();
+						}
+						else {
+							PapillonLogger.writeDebugMsg(commande + " DICT: " + restStrings[0]+ ";");
+							content = Metadata.getDictionaryMetadata(restStrings[0]);
+						}
 						if (content==null) {
 							String errorMsg = "Error: dict: " + restStrings[0] + " does not exist!";
 							System.out.println(errorMsg);
@@ -264,7 +273,28 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
 				if (restStrings.length==4) {
 					PapillonLogger.writeDebugMsg(commande + " DICT: " + restStrings[0] + " LANG: " + restStrings[1]+ " MODE: " + restStrings[2]+ " STRING: " + restStrings[3]+ ";");
 					if (theRequest.getMethod().equals("GET")) {
-						content = Entries.getEntries(restStrings[0], restStrings[1], restStrings[2], restStrings[3]);
+						String strategy = myGetParameter(STRATEGY_PARAMETER);
+						String limit = myGetParameter(LIMIT_PARAMETER);
+						String offset = myGetParameter(OFFSET_PARAMETER);
+						if (strategy==null && limit==null && offset == null) {
+							HttpPresentationInputStream inputStream = theRequest.getInputStream();
+							String[] params = convertStreamToString(inputStream).split("&(amp;)?");
+							for (int i=0;i<params.length;i++) {
+								String[] param = params[i].split("=");
+								if (param[0].equals(STRATEGY_PARAMETER)) {
+									strategy = param[1];
+								}
+								if (param[0].equals(LIMIT_PARAMETER)) {
+									limit = param[1];
+								}
+								if (param[0].equals(OFFSET_PARAMETER)) {
+									offset = param[1];
+								}
+							}
+						}
+						PapillonLogger.writeDebugMsg("Strategy: " + strategy);
+						
+						content = Entries.getEntries(restStrings[0], restStrings[1], restStrings[2], restStrings[3], strategy, limit, offset);
 						if (content==null) {
 							String errorMsg = "Error: search: " + restStrings[0] + " lang: " +  restStrings[1] + " method: " + restStrings[2] +" does not exist!";
 							System.out.println(errorMsg);

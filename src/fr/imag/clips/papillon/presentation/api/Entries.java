@@ -138,39 +138,60 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 		return resultDoc;			
 	}
 
-	public static org.w3c.dom.Document getEntries(String dictName, String lang, String mode, String word) 
+	public static org.w3c.dom.Document getEntries(String dictName, String lang, String criteria, String word, String strategy, String limitString, String offsetString) 
 	throws HttpPresentationException, java.io.IOException, Exception {
-		
 		int limit = 40;
+		if (limitString!=null) {
+			limit = Integer.parseInt(limitString);
+		}
+		int offset = 0;
+		if (offsetString!=null) {
+			offset = Integer.parseInt(offsetString);
+		}
+		if (dictName.equals("*")) {
+			dictName=null;
+		}
+		if (lang.equals("*")) {
+			lang=null;
+		}
 		String allEntries = "";	
 		Volume theVolume = null;
 		org.w3c.dom.Document resultDoc = null;
-		String strategy = QueryBuilder.CASE_SENSITIVE_STARTS_WITH;
-		
-		if (mode !=null && mode.equals("prefix")) {
-			strategy = QueryBuilder.CASE_SENSITIVE_STARTS_WITH;
-		
-		java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
+		strategy = getStrategy(strategy);
+		if (criteria !=null && !criteria.equals("handle")) {
+			if (criteria.equals("headword")) {
+				criteria=Volume.CDM_headword;
+			}
+			java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
 		
 		if (volumesCollection !=null && volumesCollection.size()>0) {
-			theVolume = (Volume) volumesCollection.iterator().next();
-			PapillonLogger.writeDebugMsg("Entries: volume: " + theVolume.getName());
-			
-			java.util.Vector myKeys = new java.util.Vector();
-			String[] Headword = new String[4];
-			String[] Status = new String[4];
-			Headword[0] = Volume.CDM_headword;
-			Headword[1] = theVolume.getSourceLanguage();
-			Headword[2] = word;
-			Headword[3] = strategy;
-			myKeys.add(Headword);
+			for (java.util.Iterator iterator = volumesCollection.iterator(); iterator.hasNext(); ) {
+				theVolume = (Volume) iterator.next();
+				PapillonLogger.writeDebugMsg("Entries: volume: " + theVolume.getName());
+				String langCriteria = null;
+				if (Volume.isSourceLangCDMElement(criteria)) {
+					langCriteria = theVolume.getSourceLanguage();
+				}
+				else if (Volume.isDefaultLangCDMElement(criteria)) {
+					langCriteria=Volume.DEFAULT_LANG;
+				}
+				PapillonLogger.writeDebugMsg("limit: " + limit);
+				java.util.Vector myKeys = new java.util.Vector();
+				String[] Word = new String[4];
+				Word[0] = criteria;
+				Word[1] = langCriteria;
+				Word[2] = word;
+				Word[3] = strategy;
+				myKeys.add(Word);
 				java.util.Vector resultsVector = IndexFactory.getIndexEntriesVector(theVolume.getIndexDbname(),
-																   myKeys,
-																   IndexFactory.ORDER_DESCENDING,
-																   limit);
-			for (int i=0; i<resultsVector.size(); i++) {
-				Index myEntry = (Index) resultsVector.elementAt(i);
-				allEntries += "<entry><headword>" + myEntry.getValue() + "</headword><handle>" + myEntry.getEntryId() + "</handle></entry>";
+																					myKeys,
+																					IndexFactory.ORDER_DESCENDING,
+																					limit,
+																					offset);
+				for (int i=0; i<resultsVector.size(); i++) {
+					Index myEntry = (Index) resultsVector.elementAt(i);
+					allEntries += "<entry><headword>" + myEntry.getValue() + "</headword><handle>" + myEntry.getEntryId() + "</handle></entry>";
+				}
 			}
 			resultDoc = XMLServices.buildDOMTree(ENTRIES_HEAD_XMLSTRING + allEntries + ENTRIES_TAIL_XMLSTRING);
 		}
@@ -178,19 +199,22 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 			System.out.println("Error message no corresponding dict: " + dictName + " & lang: " + lang);
 		}
 		}
-		else if (mode !=null && mode.equals("handle")) {
+		else if (criteria !=null && criteria.equals("handle")) {
 			java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
 			
 			if (volumesCollection !=null && volumesCollection.size()>0) {
-				theVolume = (Volume) volumesCollection.iterator().next();
-				PapillonLogger.writeDebugMsg("Entries: id: " + word + " volume: " + theVolume.getName());
-				VolumeEntry myEntry = VolumeEntriesFactory.findEntryByHandle(theVolume.getName(), word);
-				if (myEntry != null && !myEntry.isEmpty()) {
-					PapillonLogger.writeDebugMsg("Entry: headword: " + myEntry.getHeadword());
-					resultDoc = myEntry.getDom();
-				}
-				else {
-					PapillonLogger.writeDebugMsg("Entry null: " + word);
+				java.util.Iterator iterator = volumesCollection.iterator();
+				while (resultDoc==null && iterator.hasNext()) {
+					theVolume = (Volume) iterator.next();
+					PapillonLogger.writeDebugMsg("Entries: id: " + word + " volume: " + theVolume.getName());
+					VolumeEntry myEntry = VolumeEntriesFactory.findEntryByHandle(theVolume.getName(), word);
+					if (myEntry != null && !myEntry.isEmpty()) {
+						PapillonLogger.writeDebugMsg("Entry: headword: " + myEntry.getHeadword());
+						resultDoc = myEntry.getDom();
+					}
+					else {
+						PapillonLogger.writeDebugMsg("Entry null: " + word);
+					}
 				}
 			}
 		}
@@ -316,6 +340,52 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 			}
 		}
 		return resultDoc;			
+	}
+	
+	public static String getStrategy(String strategy) {
+		String result = QueryBuilder.CASE_SENSITIVE_STARTS_WITH;
+		if (strategy !=null) {
+			if (strategy.equals("EQUAL")) {
+				result = QueryBuilder.EQUAL;
+			}
+			if (strategy.equals("CASE_SENSITIVE_STARTS_WITH")) {
+				result = QueryBuilder.CASE_SENSITIVE_STARTS_WITH;
+			}
+			if (strategy.equals("CASE_SENSITIVE_ENDS_WITH")) {
+				result = QueryBuilder.CASE_SENSITIVE_ENDS_WITH;
+			}
+			if (strategy.equals("CASE_SENSITIVE_CONTAINS")) {
+				result = QueryBuilder.CASE_SENSITIVE_CONTAINS;
+			}
+			if (strategy.equals("CASE_INSENSITIVE_EQUAL")) {
+				result = QueryBuilder.CASE_INSENSITIVE_EQUAL;
+			}
+			if (strategy.equals("CASE_INSENSITIVE_STARTS_WITH")) {
+				result = QueryBuilder.CASE_INSENSITIVE_STARTS_WITH;
+			}
+			if (strategy.equals("CASE_INSENSITIVE_ENDS_WITH")) {
+				result = QueryBuilder.CASE_INSENSITIVE_ENDS_WITH;
+			}
+			if (strategy.equals("CASE_INSENSITIVE_CONTAINS")) {
+				result = QueryBuilder.CASE_INSENSITIVE_CONTAINS;
+			}
+			if (strategy.equals("NOT_EQUAL")) {
+				result = QueryBuilder.NOT_EQUAL;
+			}
+			if (strategy.equals("GREATER_THAN")) {
+				result = QueryBuilder.GREATER_THAN;
+			}
+			if (strategy.equals("GREATER_THAN_OR_EQUAL")) {
+				result = QueryBuilder.GREATER_THAN_OR_EQUAL;
+			}
+			if (strategy.equals("LESS_THAN")) {
+				result = QueryBuilder.LESS_THAN;
+			}
+			if (strategy.equals("LESS_THAN_OR_EQUAL")) {
+				result = QueryBuilder.LESS_THAN_OR_EQUAL;
+			}			
+		}
+		return result;
 	}
 	
 }

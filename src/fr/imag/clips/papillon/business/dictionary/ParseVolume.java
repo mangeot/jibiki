@@ -396,6 +396,7 @@ public class ParseVolume {
                         bufferLine = bufferLine.substring(entryIndex);
                     }
                     if (entryBuffer.length() > xmlHeaderBuffer.length()) {
+						PapillonLogger.writeDebugMsg("entry:"+entryBuffer.append(xmlFooterBuffer));
                         if (parseEntry(myDict, myVolume, entryBuffer.append(xmlFooterBuffer), defaultStatus,
                                 isContributionVolume, replaceExistingEntries, replaceExistingContributions, logContribs,
                                 DiscardedEntries)) {

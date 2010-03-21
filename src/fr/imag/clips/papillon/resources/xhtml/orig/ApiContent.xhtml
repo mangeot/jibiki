@@ -106,10 +106,13 @@
 
 <table class="api">
  <tbody>
-    <tr><td>URL</td><td>api/[dictionary]/[lang]/[criteria]/[string]</td></tr>
-    <tr><td>Method</td><td>GET</td></tr>
-    <tr><td rowspan="2">Returns</td><td>200 OK &amp; XML (entry)</td></tr>
-    <tr><td>404 Not Found</td></tr>
+    <tr><td>URL</td><td colspan="2">api/[dictionary]/[lang]/[criteria]/[string]</td></tr>
+    <tr><td>Method</td><td colspan="2">GET</td></tr>
+    <tr><td rowspan="3">Querystring</td><td>strategy=</td><td>strategy</td></tr>
+    <tr><td>count=</td><td>count</td></tr>
+    <tr><td>startIndex=</td><td>startIndex</td></tr>
+    <tr><td rowspan="2">Returns</td><td colspan="2">200 OK &amp; XML (entry)</td></tr>
+    <tr><td colspan="2">404 Not Found</td></tr>
  </tbody>
 </table>
 
@@ -117,8 +120,47 @@
 
 <table class="api">
  <tbody>
-    <tr><td>prefix</td><td>headword prefix</td></tr>
-    <tr><td>handle</td><td>entry handle</td></tr>
+    <tr><td>handle</td><td>unique entry handle specific to the server database</td></tr>
+    <tr><td>cdm-entry-id</td><td>entry id</td></tr>
+    <tr><td>cdm-headword</td><td>entry headword</td></tr>
+    <tr><td>cdm-headword-variant</td><td>entry headword variant</td></tr>
+    <tr><td>cdm-reading</td><td>entry headword reading (ex: japanese kana)</td></tr>
+    <tr><td>cdm-writing</td><td>entry headword transcription (ex: pinyin for Chinese)</td></tr>
+    <tr><td>cdm-pronunciation</td><td>entry headword pronunciation (Usually in IPA but it depends on the resource)</td></tr>
+    <tr><td>cdm-pos</td><td>entry part-of-speech (can be "n", "noun", etc. It depends on the resource)</td></tr>
+    <tr><td>cdm-translation</td><td>entry headword translation in another language</td></tr>
+    <tr><td>cdm-example</td><td>entry examples</td></tr>
+    <tr><td>cdm-idiom</td><td>entry idioms</td></tr>
+    <tr><td>cdm-contribution-id</td><td>contribution id</td></tr>
+    <tr><td>cdm-contribution-author</td><td>contribution author</td></tr>
+    <tr><td>cdm-contribution-creation-date</td><td>contribution creation date</td></tr>
+    <tr><td>cdm-contribution-finition-date</td><td>contribution finition date</td></tr>
+    <tr><td>cdm-contribution-status</td><td>contribution status</td></tr>
+ </tbody>
+</table>
+
+<p>Note: the criteria depends on the resource. A criteria might not be available for one specific resource.
+Other criteria not in the list may exist only for one specific resource.</p>
+
+<p>cdm stands for Common dictionary Markup</p>
+
+<p>Strategy is one of the following:</p>
+
+<table class="api">
+ <tbody>
+    <tr><td>EQUAL</td><td>indexed search</td></tr>
+    <tr><td>CASE_SENSITIVE_STARTS_WITH</td><td>indexed search</td></tr>
+    <tr><td>CASE_SENSITIVE_ENDS_WITH</td><td>sequential search</td></tr>
+    <tr><td>CASE_SENSITIVE_CONTAINS</td><td>sequential search</td></tr>
+    <tr><td>CASE_INSENSITIVE_EQUAL</td><td>indexed search</td></tr>
+    <tr><td>CASE_INSENSITIVE_STARTS_WITH</td><td>indexed search</td></tr>
+    <tr><td>CASE_INSENSITIVE_ENDS_WITH</td><td>sequential search</td></tr>
+    <tr><td>CASE_INSENSITIVE_CONTAINS</td><td>sequential search</td></tr>
+    <tr><td>NOT_EQUAL</td><td>indexed search</td></tr>
+    <tr><td>GREATER_THAN</td><td>indexed search</td></tr>
+    <tr><td>GREATER_THAN_OR_EQUAL</td><td>indexed search</td></tr>
+    <tr><td>LESS_THAN</td><td>indexed search</td></tr>
+    <tr><td>LESS_THAN_OR_EQUAL</td><td>indexed search</td></tr>
  </tbody>
 </table>
 

@@ -322,6 +322,7 @@ public class Volume {
 	public final static String[] indexElements = { 
 		CDM_entryId, 
 		CDM_headword,
+		CDM_headwordVariant,
 		CDM_reading,
 		CDM_writing,
 		CDM_pronunciation,
