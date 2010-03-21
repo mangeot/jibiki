@@ -164,7 +164,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 			java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
 		
 		if (volumesCollection !=null && volumesCollection.size()>0) {
-			StringBuffer allEntries = new StringBuffer(2048);	
+			StringBuffer allEntries = new StringBuffer(120 * (limit+1) * volumesCollection.size());	
 			allEntries.append(ENTRIES_HEAD_XMLSTRING);
 			for (java.util.Iterator iterator = volumesCollection.iterator(); iterator.hasNext(); ) {
 				theVolume = (Volume) iterator.next();
@@ -178,7 +178,6 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 				else if (Volume.isDefaultLangCDMElement(criteria)) {
 					langCriteria=Volume.DEFAULT_LANG;
 				}
-				PapillonLogger.writeDebugMsg("limit: " + limit);
 				java.util.Vector myKeys = new java.util.Vector();
 				String[] Word = new String[4];
 				Word[0] = criteria;
