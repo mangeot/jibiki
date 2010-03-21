@@ -104,6 +104,9 @@ body {
 	color: black;
 }
 
+/*--------------------------------------*/
+/* For the api */
+/*--------------------------------------*/
 table.api {
     margin: 10px 0;
     caption-side: bottom;
@@ -115,6 +118,12 @@ table.api tbody td {
     padding: 2px 4px;
     vertical-align: top;
 	color:black;
+}
+pre.api {
+  	margin:15px;
+  	padding:3px;
+    border: 1px dashed blue;
+    background-color:#E8E8E8;
 }
 
 

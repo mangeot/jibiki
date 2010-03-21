@@ -72,7 +72,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 	protected static final String ID_PARAMETER = "ID";
 	
 	protected static final String ENTRIES_HEAD_XMLSTRING = "<?xml version='1.0' encoding='UTF-8'?><entry-list xmlns='http://www-clips.imag.fr/geta/services/dml'>";
-	protected static final String ENTRIES_TAIL_XMLSTRING ="</entry-list>";
+	protected static final String ENTRIES_TAIL_XMLSTRING ="\n</entry-list>";
 	
     	
     /**
@@ -138,7 +138,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 		return resultDoc;			
 	}
 
-	public static org.w3c.dom.Document getEntries(String dictName, String lang, String criteria, String word, String strategy, String limitString, String offsetString) 
+	public static org.w3c.dom.Document getEntries(String dictName, String lang, String criteria, String word, String key, String strategy, String limitString, String offsetString) 
 	throws HttpPresentationException, java.io.IOException, Exception {
 		int limit = 40;
 		if (limitString!=null) {
@@ -170,7 +170,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 				theVolume = (Volume) iterator.next();
 				PapillonLogger.writeDebugMsg("Entries: volume: " + theVolume.getName());
 				String sourceLang = theVolume.getSourceLanguage();
-				String entryString = "<entry lang='"+sourceLang+"' dictionary='"+theVolume.getDictname()+"'><headword>"; 
+				String entryString = "\n<entry lang='"+sourceLang+"' dictionary='"+theVolume.getDictname()+"'><criteria value='"+criteria+"'>"; 
 				String langCriteria = null;
 				if (Volume.isSourceLangCDMElement(criteria)) {
 					langCriteria = sourceLang;
@@ -194,7 +194,11 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 					Index myEntry = (Index) resultsVector.elementAt(i);
 					allEntries.append(entryString);
 					allEntries.append(myEntry.getValue());
-					allEntries.append("</headword><handle>");
+					allEntries.append("</criteria>");
+					if (key !=null) {
+						allEntries.append(getIndexValues(theVolume,""+myEntry.getEntryId(),key));
+					}
+					allEntries.append("<handle>");
 					allEntries.append(myEntry.getEntryId());
 					allEntries.append("</handle></entry>");
 				}
@@ -207,25 +211,87 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 		}
 		}
 		else if (criteria !=null && criteria.equals("handle")) {
-			java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
-			
-			if (volumesCollection !=null && volumesCollection.size()>0) {
-				java.util.Iterator iterator = volumesCollection.iterator();
-				while (resultDoc==null && iterator.hasNext()) {
-					theVolume = (Volume) iterator.next();
-					PapillonLogger.writeDebugMsg("Entries: id: " + word + " volume: " + theVolume.getName());
-					VolumeEntry myEntry = VolumeEntriesFactory.findEntryByHandle(theVolume.getName(), word);
-					if (myEntry != null && !myEntry.isEmpty()) {
-						PapillonLogger.writeDebugMsg("Entry: headword: " + myEntry.getHeadword());
-						resultDoc = myEntry.getDom();
-					}
-					else {
-						PapillonLogger.writeDebugMsg("Entry null: " + word);
+			if (key==null) {
+				java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
+				if (volumesCollection !=null && volumesCollection.size()>0) {
+					java.util.Iterator iterator = volumesCollection.iterator();
+					while (resultDoc==null && iterator.hasNext()) {
+						theVolume = (Volume) iterator.next();
+						PapillonLogger.writeDebugMsg("Entries: id: " + word + " volume: " + theVolume.getName());
+						VolumeEntry myEntry = VolumeEntriesFactory.findEntryByHandle(theVolume.getName(), word);
+						if (myEntry != null && !myEntry.isEmpty()) {
+							PapillonLogger.writeDebugMsg("Entry: headword: " + myEntry.getHeadword());
+							resultDoc = myEntry.getDom();
+						}
+						else {
+							PapillonLogger.writeDebugMsg("Entry null: " + word);
+						}
 					}
 				}
 			}
+			else {
+				resultDoc = getIndexValue(dictName, lang, word, key);
+			}
 		}
 		return resultDoc;			
+	}
+
+	public static org.w3c.dom.Document getIndexValue(String dictName, String lang, String handle, String key) 
+	throws HttpPresentationException, java.io.IOException, Exception {
+		int limit=1;
+		if (dictName.equals("*")) {
+			dictName=null;
+		}
+		if (lang.equals("*")) {
+			lang=null;
+		}
+		Volume theVolume = null;
+		org.w3c.dom.Document resultDoc = null;
+			java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
+			
+			if (volumesCollection !=null && volumesCollection.size()>0) {
+				StringBuffer allEntries = new StringBuffer(160 * (limit+1) * volumesCollection.size());	
+				allEntries.append(ENTRIES_HEAD_XMLSTRING);
+				for (java.util.Iterator iterator = volumesCollection.iterator(); iterator.hasNext(); ) {
+					theVolume = (Volume) iterator.next();
+					PapillonLogger.writeDebugMsg("Entries: volume: " + theVolume.getName());
+					allEntries.append("\n<entry lang='");
+					allEntries.append(theVolume.getSourceLanguage());
+					allEntries.append("' dictionary='");
+					allEntries.append(theVolume.getDictname());
+					allEntries.append("'><handle>");
+					allEntries.append(handle);
+					allEntries.append("</handle>");
+					allEntries.append(getIndexValues(theVolume, handle, key));
+					allEntries.append("</entry>");
+				}
+				allEntries.append(ENTRIES_TAIL_XMLSTRING);
+				resultDoc = XMLServices.buildDOMTree(allEntries.toString());
+			}
+			else {
+				System.out.println("Error message no corresponding dict: " + dictName + " & lang: " + lang);
+			}
+		return resultDoc;			
+	}
+	
+	protected static String getIndexValues(Volume theVolume, String handle, String key) 
+	throws fr.imag.clips.papillon.business.PapillonBusinessException {
+		if (key.equals("*")) {
+			key=null;
+		}
+		java.util.Vector resultsVector = IndexFactory.getIndexVectorByEntryId(theVolume, handle);
+		StringBuffer allIndexes = new StringBuffer(160 * (resultsVector.size()+1));	
+		for (int i=0; i<resultsVector.size(); i++) {
+			Index myEntry = (Index) resultsVector.elementAt(i);
+			if (key ==null || (key !=null && myEntry.getKey().equals(key))) {
+				allIndexes.append("<key value='");
+				allIndexes.append(myEntry.getKey());
+				allIndexes.append("'>");
+				allIndexes.append(myEntry.getValue());
+				allIndexes.append("</key>");
+			}
+		}
+		return allIndexes.toString();
 	}
 	
 	public static boolean userCanPutEntry(String login, String password) 

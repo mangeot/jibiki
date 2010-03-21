@@ -16,7 +16,7 @@
 
 <table class="api">
  <tbody>
-    <tr><td>URL</td><td>api/</td></tr>
+    <tr><td>URL</td><td><a href="api/">api/</a></td></tr>
     <tr><td>Method</td><td>GET</td></tr>
     <tr><td>Returns</td><td>200 OK &amp; XML (list of dictionaries metadata)</td></tr>
  </tbody>
@@ -54,6 +54,38 @@
     <tr><td>404 Not Found</td></tr>
  </tbody>
 </table>
+
+<p>Example of query: <a href="api/FeM/fra/fra.abandonner.8814938.c">api/FeM/fra/fra.abandonner.8814938.c</a></p>
+<p>Answer:</p>
+<pre>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;volume name="FeM_fra" source-language="fra" target-languages="eng msa" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation=" http://www-clips.imag.fr/geta/services/dml/fem.xsd">
+&lt;d:contribution 
+	d:contribid="fra.abandonner.8814938.c" 
+	d:originalcontribid="" 
+	xmlns:d="http://www-clips.imag.fr/geta/services/dml" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://www-clips.imag.fr/geta/services/dml  
+	http://www-clips.imag.fr/geta/services/dml/dml.xsd">
+	&lt;d:metadata>
+		&lt;d:author>automatic&lt;/d:author>&lt;
+		&lt;d:creation-date>2009/05/07 13:59:57&lt;/d:creation-date>
+	...	
+	&lt;d:data>
+		&lt;entry id="fra.abandonner.8814938.e">
+			&lt;headword>abandonner&lt;/headword>&lt;hom/>
+			&lt;prnc>aban-done-&lt;/prnc>
+			&lt;aux/>
+			&lt;body>
+				&lt;sense-list>
+					&lt;sense>
+					&lt;pos-list>v.tr.&lt;/pos-list>
+					...
+	&lt;/d:data>
+&lt;/d:contribution>
+&lt;/volume>
+</pre>
+
 
 <h3>Modifying an entry</h3>
 
@@ -107,6 +139,7 @@
 <table class="api">
  <tbody>
     <tr><td>URL</td><td colspan="2">api/[dictionary]/[lang]/[criteria]/[string]</td></tr>
+    <tr><td>URL</td><td colspan="2">api/[dictionary]/[lang]/[criteria]/[string]/[key]</td></tr>
     <tr><td>Method</td><td colspan="2">GET</td></tr>
     <tr><td rowspan="3">Querystring</td><td>strategy=</td><td>strategy</td></tr>
     <tr><td>count=</td><td>count</td></tr>
@@ -116,10 +149,73 @@
  </tbody>
 </table>
 
-<p>Note: it is possible to query all the dictionaries by putting a * instead of the name of the dictionary.
-It is also possible to do the same for the [lang] part of the URL.</p>
+<p>The searches with the [key] part give the value of the key for the corresponding entries.
+For example, searching an entry with <i>api/*/eng/cdm-headword/trial/cdm-pos</i> will give a list of 
+parts-of-speech for the "trial" entry.</p>
 
-<p>Criteria is one of the following:</p>
+<p>It is possible to query all the dictionaries by putting a <b>*</b> instead of the name of the dictionary.
+It is also possible to do the same for the [lang] and [key] part of the URL.</p>
+
+<p>The <b>handle</b> criteria is special as it does not give a list of entry handles but the full entry XML
+ content.</p>
+
+<p>Example of query: <a href="api/FeM/fra/cdm-headword/abandonner">api/FeM/fra/cdm-headword/abandonner</a></p>
+<p>Answer:</p>
+<pre>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;entry-list xmlns="http://www-clips.imag.fr/geta/services/dml">
+	&lt;entry dictionary="FeM" lang="fra"&gt;
+		&lt;criteria value='cdm-headword'&gt;abandonner&lt;/criteria&gt;
+		&lt;handle&gt;8814938&lt;/handle&gt;
+	&lt;/entry&gt;
+&lt;/entry-list&gt;
+</pre>
+
+<p>Example of query: <a href="api/FeM/fra/cdm-headword/abandonner/cdm-pos">api/FeM/fra/cdm-headword/abandonner/cdm-pos</a></p>
+<p>Answer:</p>
+<pre>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;entry-list xmlns="http://www-clips.imag.fr/geta/services/dml">
+	&lt;entry dictionary="FeM" lang="fra"&gt;
+		&lt;criteria value='cdm-headword'&gt;abandonner&lt;/criteria&gt;
+		&lt;handle&gt;8814938&lt;/handle&gt;
+		&lt;key value='cdm-pos'&gt;v.t.&lt;/key&gt;
+	&lt;/entry&gt;
+&lt;/entry-list&gt;
+</pre>
+
+<p>Example of query: <a href="api/FeM/fra/handle/8814938">api/FeM/fra/handle/8814938</a></p>
+<p>Answer:</p>
+<pre>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;volume name="FeM_fra" source-language="fra" target-languages="eng msa" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation=" http://www-clips.imag.fr/geta/services/dml/fem.xsd">
+&lt;d:contribution 
+	d:contribid="fra.abandonner.8814938.c" 
+	d:originalcontribid="" 
+	xmlns:d="http://www-clips.imag.fr/geta/services/dml" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://www-clips.imag.fr/geta/services/dml  
+	http://www-clips.imag.fr/geta/services/dml/dml.xsd">
+	&lt;d:metadata>
+		&lt;d:author>automatic&lt;/d:author>&lt;
+		&lt;d:creation-date>2009/05/07 13:59:57&lt;/d:creation-date>
+	...	
+	&lt;d:data>
+		&lt;entry id="fra.abandonner.8814938.e">
+			&lt;headword>abandonner&lt;/headword>&lt;hom/>
+			&lt;prnc>aban-done-&lt;/prnc>
+			&lt;aux/>
+			&lt;body>
+				&lt;sense-list>
+					&lt;sense>
+					&lt;pos-list>v.tr.&lt;/pos-list>
+					...
+	&lt;/d:data>
+&lt;/d:contribution>
+&lt;/volume>
+</pre>
+
+<p>Criteria and key are one of the following:</p>
 
 <table class="api">
  <tbody>
@@ -142,8 +238,8 @@ It is also possible to do the same for the [lang] part of the URL.</p>
  </tbody>
 </table>
 
-<p>Note: the criteria depends on the resource. A criteria might not be available for one specific resource.
-Other criteria not in the list may exist only for one specific resource.</p>
+<p>Note: the criteria and key depend on the resource. A criteria or a key might not be available for one specific resource.
+Other criteria and keys not in the list may exist only for one specific resource.</p>
 
 <p>cdm stands for Common dictionary Markup</p>
 

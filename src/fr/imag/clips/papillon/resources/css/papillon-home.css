@@ -105,6 +105,12 @@ table.api tbody td {
     vertical-align: top;
 	color:black;
 }
+pre.api {
+  	margin:15px;
+  	padding:3px;
+    border: 1px dashed blue;
+    background-color:#E8E8E8;
+}
 
 
 /*--------------------------------------*/

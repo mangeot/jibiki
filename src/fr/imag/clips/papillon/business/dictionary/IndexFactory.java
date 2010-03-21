@@ -295,7 +295,7 @@ public class IndexFactory {
 		return theEntries;
 	}
         
-	protected static Vector getIndexVectorByEntryId(Volume volume, String entryId) throws PapillonBusinessException {
+	public static Vector getIndexVectorByEntryId(Volume volume, String entryId) throws PapillonBusinessException {
 		Vector theIndex = new Vector();
 		
 		if (entryId != null && !entryId.equals("")) {

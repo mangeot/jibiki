@@ -270,12 +270,18 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
 						}
 					}
 				}
-				if (restStrings.length==4) {
+				if (restStrings.length==4 || restStrings.length==5) {
 					PapillonLogger.writeDebugMsg(commande + " DICT: " + restStrings[0] + " LANG: " + restStrings[1]+ " MODE: " + restStrings[2]+ " STRING: " + restStrings[3]+ ";");
 					if (theRequest.getMethod().equals("GET")) {
 						String strategy = myGetParameter(STRATEGY_PARAMETER);
 						String limit = myGetParameter(LIMIT_PARAMETER);
 						String offset = myGetParameter(OFFSET_PARAMETER);
+						String key=null;
+						if (restStrings.length==5) {
+							key = restStrings[4];
+						}
+						/*
+						 //Problem if the inputStream is not closed, the server is waiting in vain 
 						if (strategy==null && limit==null && offset == null) {
 							HttpPresentationInputStream inputStream = theRequest.getInputStream();
 							String[] params = convertStreamToString(inputStream).split("&(amp;)?");
@@ -291,8 +297,8 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
 									offset = param[1];
 								}
 							}
-						}						
-						content = Entries.getEntries(restStrings[0], restStrings[1], restStrings[2], restStrings[3], strategy, limit, offset);
+						}						*/
+						content = Entries.getEntries(restStrings[0], restStrings[1], restStrings[2], restStrings[3], key, strategy, limit, offset);
 						if (content==null) {
 							String errorMsg = "Error: search: " + restStrings[0] + " lang: " +  restStrings[1] + " method: " + restStrings[2] +" does not exist!";
 							System.out.println(errorMsg);
@@ -305,7 +311,7 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
 						System.out.println("search entries: error message! " + restStrings[0] + " "+restStrings[1]);
 					}
 				}
-				if (restStrings.length>4) {
+				if (restStrings.length>5) {
 					PapillonLogger.writeDebugMsg(commande + " DICT: " + restStrings[0] + " LANG: " + restStrings[1]+ " MODE: " + restStrings[2]+ " STRING: " + restStrings[3]+ ";");
 					theResponse.setStatus(HttpPresentationResponse.SC_NOT_IMPLEMENTED);
 					System.out.println("Error: method not implemented");
