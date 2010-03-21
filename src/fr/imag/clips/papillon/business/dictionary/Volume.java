@@ -1187,7 +1187,6 @@ public class Volume {
 			else {
 				fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getXmlFooter: volumesNodes null: " + xmlFooter);
 			}
-			fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getXmlFooter: " + xmlFooter);
 			return xmlFooter;
  		}
 

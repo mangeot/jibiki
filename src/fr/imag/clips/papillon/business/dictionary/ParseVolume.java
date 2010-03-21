@@ -380,6 +380,7 @@ public class ParseVolume {
                 xmlFooterBuffer.append(VolumeEntry.ContributionFooter);
             }
             PapillonLogger.writeDebugMsg("Will parse [" + CDM_Entry + "]");
+            PapillonLogger.writeDebugMsg(" XML footer [" + myVolume.getXmlFooter() + "]");
             xmlFooterBuffer.append(myVolume.getXmlFooter());
             StringBuffer entryBuffer = new StringBuffer();
             entryBuffer.append(xmlHeaderBuffer);
@@ -396,7 +397,7 @@ public class ParseVolume {
                         bufferLine = bufferLine.substring(entryIndex);
                     }
                     if (entryBuffer.length() > xmlHeaderBuffer.length()) {
-						PapillonLogger.writeDebugMsg("entry:"+entryBuffer.append(xmlFooterBuffer));
+						PapillonLogger.writeDebugMsg("entry:["+entryBuffer.append(xmlFooterBuffer)+"]");
                         if (parseEntry(myDict, myVolume, entryBuffer.append(xmlFooterBuffer), defaultStatus,
                                 isContributionVolume, replaceExistingEntries, replaceExistingContributions, logContribs,
                                 DiscardedEntries)) {
@@ -446,7 +447,7 @@ public class ParseVolume {
                                         java.util.Vector DiscardedEntries)
             throws PapillonBusinessException {
         boolean result = false;
-        //PapillonLogger.writeDebugMsg("Parse entry [" + entryString + "]");
+        PapillonLogger.writeDebugMsg("Parse entry: [" + entryString + "]");
         org.w3c.dom.Document myDoc = XMLServices.buildDOMTree(entryString);
         if (myDoc != null) {
             VolumeEntry newEntry = new VolumeEntry(myDict, myVolume);
@@ -559,7 +560,7 @@ public class ParseVolume {
                 }
             }
         } else {
-            PapillonLogger.writeDebugMsg("Entry not valid: " + entryString);
+            PapillonLogger.writeDebugMsg("Entry not valid:[" + entryString + "]");
         }
         return result;
     }
