@@ -154,7 +154,6 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 		if (lang.equals("*")) {
 			lang=null;
 		}
-		String allEntries = "";	
 		Volume theVolume = null;
 		org.w3c.dom.Document resultDoc = null;
 		strategy = getStrategy(strategy);
@@ -165,12 +164,16 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 			java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
 		
 		if (volumesCollection !=null && volumesCollection.size()>0) {
+			StringBuffer allEntries = new StringBuffer(2048);	
+			allEntries.append(ENTRIES_HEAD_XMLSTRING);
 			for (java.util.Iterator iterator = volumesCollection.iterator(); iterator.hasNext(); ) {
 				theVolume = (Volume) iterator.next();
 				PapillonLogger.writeDebugMsg("Entries: volume: " + theVolume.getName());
+				String sourceLang = theVolume.getSourceLanguage();
+				String entryString = "<entry lang='"+sourceLang+"' dictionary='"+theVolume.getDictname()+"'><headword>"; 
 				String langCriteria = null;
 				if (Volume.isSourceLangCDMElement(criteria)) {
-					langCriteria = theVolume.getSourceLanguage();
+					langCriteria = sourceLang;
 				}
 				else if (Volume.isDefaultLangCDMElement(criteria)) {
 					langCriteria=Volume.DEFAULT_LANG;
@@ -190,10 +193,15 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 																					offset);
 				for (int i=0; i<resultsVector.size(); i++) {
 					Index myEntry = (Index) resultsVector.elementAt(i);
-					allEntries += "<entry><headword>" + myEntry.getValue() + "</headword><handle>" + myEntry.getEntryId() + "</handle></entry>";
+					allEntries.append(entryString);
+					allEntries.append(myEntry.getValue());
+					allEntries.append("</headword><handle>");
+					allEntries.append(myEntry.getEntryId());
+					allEntries.append("</handle></entry>");
 				}
 			}
-			resultDoc = XMLServices.buildDOMTree(ENTRIES_HEAD_XMLSTRING + allEntries + ENTRIES_TAIL_XMLSTRING);
+			allEntries.append(ENTRIES_TAIL_XMLSTRING);
+			resultDoc = XMLServices.buildDOMTree(allEntries.toString());
 		}
 		else {
 			System.out.println("Error message no corresponding dict: " + dictName + " & lang: " + lang);
