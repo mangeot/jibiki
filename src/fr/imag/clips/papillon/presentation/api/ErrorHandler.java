@@ -103,7 +103,7 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
 				String login =  myGetParameter(LOGIN_PARAMETER);
 				String password = myGetParameter(PASSWORD_PARAMETER);
 				PapillonLogger.writeDebugMsg("REST API URI : [" + prefix + "] " + theRequest.getPresentationURI()+";");
-				String theURI = theRequest.getPresentationURI();
+				String theURI = java.net.URLDecoder.decode(theRequest.getPresentationURI());
 				if (theURI.indexOf(prefix)==0) {
 					theURI = theURI.substring(prefix.length());
 				}
