@@ -236,7 +236,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 		return resultDoc;			
 	}
 
-	public static org.w3c.dom.Document getIndexValue(String dictName, String lang, String handle, String key) 
+	protected static org.w3c.dom.Document getIndexValue(String dictName, String lang, String handle, String key) 
 	throws HttpPresentationException, java.io.IOException, Exception {
 		int limit=1;
 		if (dictName.equals("*")) {
@@ -276,6 +276,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 	
 	protected static String getIndexValues(Volume theVolume, String handle, String key) 
 	throws fr.imag.clips.papillon.business.PapillonBusinessException {
+		String sourceLang = theVolume.getSourceLanguage();
 		if (key.equals("*")) {
 			key=null;
 		}
@@ -286,7 +287,16 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 			if (key ==null || (key !=null && myEntry.getKey().equals(key))) {
 				allIndexes.append("<key value='");
 				allIndexes.append(myEntry.getKey());
-				allIndexes.append("'>");
+				allIndexes.append("'");
+				if (myEntry.getLang()!=null && 
+					!myEntry.getLang().equals(sourceLang) && 
+					!myEntry.getLang().equals(Volume.DEFAULT_LANG)
+					) {
+					allIndexes.append(" lang='");
+					allIndexes.append(myEntry.getLang());
+					allIndexes.append("'");
+				}
+				allIndexes.append(">");
 				allIndexes.append(myEntry.getValue());
 				allIndexes.append("</key>");
 			}
