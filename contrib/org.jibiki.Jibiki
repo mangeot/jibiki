@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
   <key>Label</key>
-  <string>jibiki</string>
+  <string>org.jibiki.Jibiki</string>
   <key>UserName</key>
   <string>jibiki</string>
   <key>Program</key>
@@ -19,6 +19,10 @@
   <key>Debug</key>
   <false/>
   <key>AbandonProcessGroup</key>
-  <true/>
+  <false/>
+  <key>StandardErrorPath</key>
+  <string>/Users/jibiki/jibiki1.7/output/jibikierror.log</string>
+  <key>StandardOutPath</key>
+  <string>/Users/jibiki/jibiki1.7/output/jibikiout.log</string>
 </dict>
 </plist>
