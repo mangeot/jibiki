@@ -5,6 +5,7 @@
 #
 
 set -e
+cd "`dirname $0`"
 
 #Default values
 MULTISERVER_CONF="./conf/multiserver.conf"
