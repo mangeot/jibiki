@@ -298,12 +298,12 @@ public class Welcome extends PapillonBasePO {
 				org.w3c.dom.Document myNewsDocument = XMLServices.buildDOMTree(newsInputSource);
 				if (myNewsDocument != null) {
 					LatestNewsDOMCache = myNewsDocument.getElementById(LatestNewsIdString);
-					PapillonLogger.writeDebugMsg("LatestNews: " + XMLServices.NodeToString(LatestNewsDOMCache));
 				}
 			}
 		}
         //On rend le contenu correct
-		LatestNewsContainer.appendChild(LatestNewsDOMCache.cloneNode(true));
+		
+		LatestNewsContainer.appendChild(content.getOwnerDocument().importNode(LatestNewsDOMCache,true));
     }
 	
 	protected String getNewsFileAbsolutePath() throws PapillonPresentationException {            
