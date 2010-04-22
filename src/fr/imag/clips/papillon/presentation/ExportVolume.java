@@ -158,6 +158,7 @@ public class ExportVolume extends PapillonBasePO {
         HttpPresentationRequest req = this.getComms().request;
 
 		String export = myGetParameter(content.NAME_EXPORT);
+		String exportList = myGetParameter(content.NAME_EXPORT);
 		String volume = myGetParameter(content.NAME_VOLUME);
 		String outputFormat = myGetParameter(content.NAME_FORMAT);
 

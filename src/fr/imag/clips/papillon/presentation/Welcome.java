@@ -114,11 +114,6 @@ public class Welcome extends PapillonBasePO {
     }
 
     protected boolean userMayUseThisPO() {
-        try {
-            return this.getUser().isSpecialist();
-        } catch (fr.imag.clips.papillon.business.PapillonBusinessException ex) {
-            this.getSessionData().writeUserMessage("Error getting the authorisation to use this PO.");
-        }
         return false;
     }
 	
