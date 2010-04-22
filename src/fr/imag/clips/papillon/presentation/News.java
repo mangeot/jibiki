@@ -62,7 +62,6 @@ public class News extends PapillonBasePO {
 		if (NewsDOMCache == null) {
 			org.xml.sax.InputSource newsInputSource = getInputSource(getNewsFileAbsolutePath());
 			if (newsInputSource != null) {
-				fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("buildDomTree de news");
 				org.w3c.dom.Document myNewsDocument = XMLServices.buildDOMTree(newsInputSource);
 				if (myNewsDocument != null) {
 					NewsDOMCache = myNewsDocument.getElementById(NewsContentIdString);

@@ -72,6 +72,7 @@ public class XMLParsersPool {
 
     protected static synchronized DocumentBuilder createParser() throws ParserConfigurationException {
         myDocumentBuilderFactory.setNamespaceAware(true);
+        myDocumentBuilderFactory.setValidating(false);
 		return myDocumentBuilderFactory.newDocumentBuilder(); 
     }
     
