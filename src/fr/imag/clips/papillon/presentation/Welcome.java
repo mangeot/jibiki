@@ -83,17 +83,24 @@ import fr.imag.clips.papillon.business.dictionary.Volume;
 import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
 import fr.imag.clips.papillon.business.PapillonLogger;
+import fr.imag.clips.papillon.business.xml.XMLServices;
 
 
 public class Welcome extends PapillonBasePO {
 
     protected final static String SORTBY_PARAMETER="SortBy";
 	protected final static String ALL="*ALL*";
+	
+	protected final static String BASE_DIR_CONFIG = "Papillon.Informations.baseDir";
+    protected final static String MEDIA_DIR_CONFIG = "Papillon.Informations.mediaDir";
+	protected final static String NEWS_VOLUME_DIR="news";
+	protected final static String NEWS_FILE="news.xhtml";
+	protected final static String LatestNewsIdString = "LatestNews";
+	
+	protected static org.w3c.dom.Node NewsDOMCache = null;	
     
 	protected static int GDEF_estValidatedEntriesCount = 0;
-	
-	protected static int GDEF_estReviewedEntriesCount = 0;
-	
+	protected static int GDEF_estReviewedEntriesCount = 0;	
 	protected static int GDEF_estFinishedEntriesCount = 0;
 	
 	protected static java.util.Calendar myCalendar = new java.util.GregorianCalendar();
@@ -278,6 +285,58 @@ public class Welcome extends PapillonBasePO {
 			}
 		}
     }
+	
+	protected void addLatestNews(WelcomeTmplXHTML content)
+    throws HttpPresentationException, java.io.IOException {
+		
+		Element LatestNewsContainer = content.getOwnerDocument().getElementById("LatestNewsContainer");
+		
+		if (NewsDOMCache == null) {
+			org.xml.sax.InputSource newsInputSource = getInputSource(getNewsFileAbsolutePath());
+			if (newsInputSource != null) {
+				org.w3c.dom.Document myNewsDocument = XMLServices.buildDOMTree(newsInputSource);
+				if (myNewsDocument != null) {
+					NewsDOMCache = myNewsDocument.getElementById(LatestNewsIdString);
+				}
+			}
+		}
+        //On rend le contenu correct
+		LatestNewsContainer.appendChild(NewsDOMCache.cloneNode(true));
+    }
+	
+	protected String getNewsFileAbsolutePath() throws PapillonPresentationException {            
+		String baseDir = "";
+		String mediaDir = "";
+		String filePath = "";
+		try {
+			baseDir = com.lutris.appserver.server.Enhydra.getApplication().getConfig().getString(BASE_DIR_CONFIG);
+			mediaDir = com.lutris.appserver.server.Enhydra.getApplication().getConfig().getString(MEDIA_DIR_CONFIG);
+			if (! baseDir.endsWith(java.io.File.separator)) {
+				baseDir = baseDir + java.io.File.separator;
+			}
+			if (! mediaDir.endsWith(java.io.File.separator)) {
+				mediaDir = mediaDir + java.io.File.separator;
+			}
+		}
+		catch (com.lutris.util.ConfigException ex) {
+			throw new PapillonPresentationException("Error in Papillon Configuration File: ", ex);
+		}
+		filePath = baseDir + mediaDir + NEWS_VOLUME_DIR + java.io.File.separator + NEWS_FILE;
+		return filePath;
+	}
+	
+	protected org.xml.sax.InputSource getInputSource(String filePath) 
+	throws fr.imag.clips.papillon.business.PapillonBusinessException {	
+		org.xml.sax.InputSource myInputSource = null;
+		try {
+			java.io.FileInputStream myFileInputStream = new java.io.FileInputStream(filePath);
+			myInputSource = new org.xml.sax.InputSource(myFileInputStream);
+		}
+		catch(java.io.IOException ioex) {
+			throw new fr.imag.clips.papillon.business.PapillonBusinessException("Exception in renderOutputStream()", ioex);
+		}
+		return myInputSource;
+	}
 	
 	
 }
