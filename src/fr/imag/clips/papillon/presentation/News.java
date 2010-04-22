@@ -67,7 +67,8 @@ public class News extends PapillonBasePO {
 				if (myNewsDocument != null) {
 					NewsDOMCache = myNewsDocument.getElementById(NewsContentIdString);
 				}
-				fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("buildDomTree de news effectue");
+				fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("buildDomTree de news effectue:");
+				fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg(XMLServices.NodeToString(NewsDOMCache));
 			}
 		}
 		
