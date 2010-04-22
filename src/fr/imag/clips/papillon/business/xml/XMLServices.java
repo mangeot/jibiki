@@ -103,6 +103,7 @@ public class XMLServices {
 
         try {
             DocumentBuilder parser = XMLParsersPool.allocateParser();
+			PapillonLogger.writeDebugMsg("ParserValidating: " + parser.isValidating());
             contentDocument = parser.parse(mySource);
             XMLParsersPool.releaseParser(parser);
         } catch (PapillonBusinessException e) {
