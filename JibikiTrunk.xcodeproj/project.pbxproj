@@ -1315,6 +1315,7 @@
 		A3AF17C61069FA0500E1CEB5 /* Help.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = Help.java; sourceTree = "<group>"; };
 		A3AF17CD1069FAE800E1CEB5 /* ApiContent.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ApiContent.xhtml; sourceTree = "<group>"; };
 		A3AF1808106A10C500E1CEB5 /* GetXmlDocument.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = GetXmlDocument.java; sourceTree = "<group>"; };
+		A3C2A04611805D2700F77173 /* AdvancedQueryForm.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdvancedQueryForm.xhtml; sourceTree = "<group>"; };
 		A3CC9102100CFD4A004DF898 /* MotamotContent.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = MotamotContent.xhtml; sourceTree = "<group>"; };
 		A3CC9103100CFD9B004DF898 /* MotamotContent.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = MotamotContent.xhtml; sourceTree = "<group>"; };
 		A3EE19D70FB6CB26001D2220 /* VolumeCache.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = VolumeCache.java; sourceTree = "<group>"; };
@@ -2880,6 +2881,7 @@
 		A30726470EC89B2A00733910 /* orig */ = {
 			isa = PBXGroup;
 			children = (
+				A3C2A04611805D2700F77173 /* AdvancedQueryForm.xhtml */,
 				A30726480EC89B2A00733910 /* BrowseVolumePage.xhtml */,
 				A30726490EC89B2A00733910 /* BrowseVolumePage.xmlc */,
 				A307264A0EC89B2A00733910 /* ChangeAuthorTmpl.xhtml */,
