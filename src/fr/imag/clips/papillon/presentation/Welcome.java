@@ -279,8 +279,8 @@ public class Welcome extends PapillonBasePO {
 					DAY_OF_MONTH = myCalendar.get(myCalendar.DAY_OF_MONTH);
 				}
 				int total = GDEF_estValidatedEntriesCount + GDEF_estReviewedEntriesCount + GDEF_estFinishedEntriesCount;
-				Utility.setText(GDEFFinishedEntryCount,"" + GDEF_estValidatedEntriesCount);
-				Utility.setText(GDEFReviewedEntryCount,"" + GDEF_estValidatedEntriesCount);
+				Utility.setText(GDEFFinishedEntryCount,"" + GDEF_estFinishedEntriesCount);
+				Utility.setText(GDEFReviewedEntryCount,"" + GDEF_estReviewedEntriesCount);
 				Utility.setText(GDEFValidatedEntryCount,"" + GDEF_estValidatedEntriesCount);
 			}
 		}
