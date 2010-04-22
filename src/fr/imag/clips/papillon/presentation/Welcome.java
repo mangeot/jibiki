@@ -97,7 +97,7 @@ public class Welcome extends PapillonBasePO {
 	protected final static String NEWS_FILE="news.xhtml";
 	protected final static String LatestNewsIdString = "LatestNews";
 	
-	protected static org.w3c.dom.Node NewsDOMCache = null;	
+	protected static org.w3c.dom.Node LatestNewsDOMCache = null;	
     
 	protected static int GDEF_estValidatedEntriesCount = 0;
 	protected static int GDEF_estReviewedEntriesCount = 0;	
@@ -291,17 +291,18 @@ public class Welcome extends PapillonBasePO {
 		
 		Element LatestNewsContainer = content.getElementLatestNewsContainer();
 		
-		if (NewsDOMCache == null) {
+		if (LatestNewsDOMCache == null) {
 			org.xml.sax.InputSource newsInputSource = getInputSource(getNewsFileAbsolutePath());
 			if (newsInputSource != null) {
 				org.w3c.dom.Document myNewsDocument = XMLServices.buildDOMTree(newsInputSource);
 				if (myNewsDocument != null) {
-					NewsDOMCache = myNewsDocument.getElementById(LatestNewsIdString);
+					LatestNewsDOMCache = myNewsDocument.getElementById(LatestNewsIdString);
+					PapillonLogger.writeDebugMsg("LatestNews: " + XMLServices.NodeToString(LatestNewsDOMCache));
 				}
 			}
 		}
         //On rend le contenu correct
-		LatestNewsContainer.appendChild(NewsDOMCache.cloneNode(true));
+		LatestNewsContainer.appendChild(LatestNewsDOMCache.cloneNode(true));
     }
 	
 	protected String getNewsFileAbsolutePath() throws PapillonPresentationException {            
