@@ -80,6 +80,8 @@ import fr.imag.clips.papillon.data.*;
 import fr.imag.clips.papillon.business.utility.Utility;
 import fr.imag.clips.papillon.business.transformation.*;
 import fr.imag.clips.papillon.business.dictionary.Volume;
+import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
+import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
 import fr.imag.clips.papillon.business.PapillonLogger;
 
 
@@ -88,6 +90,16 @@ public class Welcome extends PapillonBasePO {
     protected final static String SORTBY_PARAMETER="SortBy";
 	protected final static String ALL="*ALL*";
     
+	protected static int GDEF_estValidatedEntriesCount = 0;
+	
+	protected static int GDEF_estReviewedEntriesCount = 0;
+	
+	protected static int GDEF_estFinishedEntriesCount = 0;
+	
+	protected static java.util.Calendar myCalendar = new java.util.GregorianCalendar();
+	
+	protected static int DAY_OF_MONTH = 0;
+
     protected WelcomeTmplXHTML content;
 
     protected boolean loggedInUserRequired() {
@@ -119,8 +131,11 @@ public class Welcome extends PapillonBasePO {
 	  
         HttpPresentationRequest req = this.getComms().request;
 
-		String volume =  "GDEF_est";
+		addLoggedUsersArray(content);
 
+		addEntriesCount(content);
+				
+		String volume =  "GDEF_est";
 		java.util.Date fromDate = null;
 		java.util.Date toDate = null;
 		java.util.Calendar calendar = new java.util.GregorianCalendar();
@@ -133,6 +148,7 @@ public class Welcome extends PapillonBasePO {
 			PapillonLogger.writeDebugMsg("Error in date format, please check!");
 		}
 		addContributorsBoard(volume, fromDate, toDate);
+				
 				
         //On rend le contenu correct
         return content.getElementFormulaire();
@@ -202,40 +218,66 @@ public class Welcome extends PapillonBasePO {
 			content.setTextTotalReviewed("" + revisionsTotal);
 			content.setTextTotalValidated("" + validationsTotal);
         }
+			
+	protected void addLoggedUsersArray(WelcomeTmplXHTML content)
+	throws fr.imag.clips.papillon.business.PapillonBusinessException,
+	fr.imag.clips.papillon.presentation.PapillonPresentationException {
 		
-	protected void addBoardForm(String selectedVolume, String fromDate, String toDate)
-		throws fr.imag.clips.papillon.business.PapillonBusinessException {
-	
-		// volume
-        XHTMLOptionElement volumeOptionTemplate = content.getElementVolumeOptionTemplate();
-        Node volumeSelect = volumeOptionTemplate.getParentNode();
-        volumeOptionTemplate.removeAttribute("id");
-        // We assume that the option element has only one text child 
-        // (it should be this way if the HTML is valid...)
-        Text volumeTextTemplate = (Text)volumeOptionTemplate.getFirstChild(); 
-                
-		//      
-        for (Iterator iter = fr.imag.clips.papillon.business.dictionary.VolumesFactory.getVolumesArray().iterator(); iter.hasNext();) {
-            String volumeName = ((Volume)iter.next()).getName();
-            
-            //
-            volumeOptionTemplate.setValue(volumeName);
-            volumeOptionTemplate.setLabel(volumeName);
-            // Je dois ici mettre un text dans l'OPTION, car les browser PC ne sont pas conformes aux 
-            // specs W3C.
-            volumeTextTemplate.setData(volumeName);
-            volumeOptionTemplate.setSelected(volumeName.equals(selectedVolume));
-            volumeSelect.appendChild(volumeOptionTemplate.cloneNode(true));
-        }
-        volumeSelect.removeChild(volumeOptionTemplate);
-
-		// fromDate
-		XHTMLInputElement fromDateElement = content.getElementFromDate();
-		fromDateElement.setValue(fromDate);
-
-		// toDate
-		XHTMLInputElement toDateElement = content.getElementToDate();
-		toDateElement.setValue(toDate);
+		java.util.Vector ActiveUsersVector = PapillonSessionManager.getActiveUsersVector();	
 		
+		//where we must insert the form
+		XHTMLTableRowElement theRow = content.getElementLoggedTemplateRow();
+		XHTMLElement theCount = content.getElementLoggedUsers();
+		XHTMLElement theName = content.getElementLoggedName();
+		
+		Node theRowParent = theRow.getParentNode();
+		
+		theRow.removeAttribute("id");
+		theCount.removeAttribute("id");
+		theName.removeAttribute("id");
+		
+		content.setTextLoggedUsers("" + ActiveUsersVector.size());
+		
+		//adding the logged users
+		for ( int i = 0; i < ActiveUsersVector.size(); i++ ) {
+			User myUser = (User) ActiveUsersVector.elementAt(i);
+			if (myUser != null) {
+				content.setTextLoggedName(myUser.getName());
+			}
+			else {
+				content.setTextLoggedName("");
+			} 
+			theRowParent.appendChild(theRow.cloneNode(true));
+		}
+		theRowParent.removeChild(theRow);
 	}
+	
+	protected void addEntriesCount(WelcomeTmplXHTML content)
+	throws HttpPresentationException,
+	java.io.IOException {
+		
+ 		// code spécifique pour le GDEF
+		Element GDEFFinishedEntryCount = content.getOwnerDocument().getElementById("GDEFFinishedEntryCount");
+		Element GDEFReviewedEntryCount = content.getOwnerDocument().getElementById("GDEFReviewedEntryCount");
+		Element GDEFValidatedEntryCount = content.getOwnerDocument().getElementById("GDEFValidatedEntryCount");
+		if (GDEFFinishedEntryCount != null
+			&& GDEFReviewedEntryCount != null
+			&& GDEFValidatedEntryCount != null) {
+			Volume GDEFVolume = VolumesFactory.getVolumeByName("GDEF_est");
+			if (GDEFVolume!=null) {
+				if (myCalendar.get(myCalendar.DAY_OF_MONTH) != DAY_OF_MONTH) {
+					GDEF_estValidatedEntriesCount = GDEFVolume.getCount(VolumeEntry.VALIDATED_STATUS);
+					GDEF_estReviewedEntriesCount = GDEFVolume.getCount(VolumeEntry.REVIEWED_STATUS);
+					GDEF_estFinishedEntriesCount = GDEFVolume.getCount(VolumeEntry.FINISHED_STATUS);
+					DAY_OF_MONTH = myCalendar.get(myCalendar.DAY_OF_MONTH);
+				}
+				int total = GDEF_estValidatedEntriesCount + GDEF_estReviewedEntriesCount + GDEF_estFinishedEntriesCount;
+				Utility.setText(GDEFFinishedEntryCount,"" + GDEF_estValidatedEntriesCount);
+				Utility.setText(GDEFReviewedEntryCount,"" + GDEF_estValidatedEntriesCount);
+				Utility.setText(GDEFValidatedEntryCount,"" + GDEF_estValidatedEntriesCount);
+			}
+		}
+    }
+	
+	
 }

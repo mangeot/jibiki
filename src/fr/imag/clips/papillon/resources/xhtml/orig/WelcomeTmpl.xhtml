@@ -8,37 +8,28 @@
 <body>
 <div id="Formulaire" lang="en">
 
-<h1>Contributors Board</h1>
+<h1>Bienvenue sur le GDEF</h1>
 
-<form  action="ContributorsBoard.po" method="get">
-  <table width="90%" border="0" cellspacing="5" cellpadding="50" summary="Formulaire">
-    <tbody>
-	  <tr>
-	    <td><b>Volume:</b></td>
-	    <td>
-		  <select name="VOLUME">
-            <option value="*ALL*" label="*all*">*all*</option>
-            <option id="VolumeOptionTemplate" value="NONE" label="NONE">NONE</option>
-          </select>
-	    </td>
-	  </tr>
-	  <tr>
-            <td style="bgcolor:#4682b4;">
-              From (aaaa/mm/dd)
-              <input id="FromDate" name="FromDate" type="text" size="10" value="" />
-            </td>
-            <td style="bgcolor:#4682b4;">
-              to (aaaa/mm/dd)
-              <input id="ToDate" name="ToDate" type="text" size="10" value="" />
-            </td>
-            <td style="bgcolor:#4682b4;">
-				<input id="LOOKUP" name="LOOKUP" type="submit" value="Lookup"/>
-            </td>
-          </tr>
-    </tbody>
-  </table>
-</form>
-<hr />
+<h3>Utilisateurs connectés</h3>
+
+<span id="LoggedUsers">0</span> user(s) currently logged:
+<table summary="Logged users">
+<tr>
+	<th>Name</th>
+</tr>
+<tr id="LoggedTemplateRow">
+	<td><b><span id="LoggedName">name</span></b></td>
+</tr>
+</table>
+
+<h3>Nombre d'articles en cours</h3>
+
+<p>Le dictionnaire contient actuellement <span id="GDEFValidatedEntryCount">XXX</span> articles validés 
+ainsi que <span id="GDEFReviewedEntryCount">XXX</span> articles révisés en attente de validation
+ainsi que <span id="GDEFFinishedEntryCount">XXX</span> articles finis en attente de révision.</p>
+
+<h3>Tableau résumé des contributions</h3>
+
 <div id="ContributorsTable" class="hidden">
 <p>The most active contributor is <strong><span id="BestContributor">John Doe</span></strong> with <span id="MaxContributions">X</span> contributions.</p>
 <p>The most active reviewer is <strong><span id="BestReviewer">John Doe</span></strong> with <span id="MaxRevisions">X</span> revisions.</p>
