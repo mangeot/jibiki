@@ -180,7 +180,7 @@
 		A30722D30EC89B2100733910 /* ConfirmEntry.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = ConfirmEntry.java; sourceTree = "<group>"; };
 		A30722D40EC89B2100733910 /* ConsultInformations.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = ConsultInformations.java; sourceTree = "<group>"; };
 		A30722D50EC89B2100733910 /* Contacts.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = Contacts.java; sourceTree = "<group>"; };
-		A30722D60EC89B2100733910 /* ContributorsBoard.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = ContributorsBoard.java; sourceTree = "<group>"; };
+		A30722D60EC89B2100733910 /* Welcome.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = Welcome.java; sourceTree = "<group>"; };
 		A30722D70EC89B2100733910 /* CreateEntryInit.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = CreateEntryInit.java; sourceTree = "<group>"; };
 		A30722D90EC89B2100733910 /* AdminContributions.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = AdminContributions.java; sourceTree = "<group>"; };
 		A30722DA0EC89B2100733910 /* ConsultExpert.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = ConsultExpert.java; sourceTree = "<group>"; };
@@ -1326,6 +1326,8 @@
 		A3C2A0581180862100F77173 /* multiserver.conf.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = multiserver.conf.in; sourceTree = "<group>"; };
 		A3C2A0591180862100F77173 /* Papillon.conf.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Papillon.conf.in; sourceTree = "<group>"; };
 		A3C2A05A1180862100F77173 /* run.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = run.in; sourceTree = "<group>"; };
+		A3C2A07F1180941200F77173 /* Home.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = Home.java; sourceTree = "<group>"; };
+		A3C2A0A411809BA800F77173 /* WelcomeTmpl.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = WelcomeTmpl.xhtml; sourceTree = "<group>"; };
 		A3CC9102100CFD4A004DF898 /* MotamotContent.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = MotamotContent.xhtml; sourceTree = "<group>"; };
 		A3CC9103100CFD9B004DF898 /* MotamotContent.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = MotamotContent.xhtml; sourceTree = "<group>"; };
 		A3EE19D70FB6CB26001D2220 /* VolumeCache.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = VolumeCache.java; sourceTree = "<group>"; };
@@ -1783,6 +1785,7 @@
 				A30722CC0EC89B2100733910 /* AdvancedQueryForm.java */,
 				A30722CD0EC89B2100733910 /* AdvancedQueryFormAjax.java */,
 				A30722CE0EC89B2100733910 /* AdvancedSearch.java */,
+				A39A46F70FF90F040090E5C0 /* Arabic.java */,
 				A30722CF0EC89B2100733910 /* BrowseVolume.java */,
 				A30722D00EC89B2100733910 /* BrowseVolumePage.java */,
 				A30722D10EC89B2100733910 /* ChangeAuthor.java */,
@@ -1790,7 +1793,7 @@
 				A30722D30EC89B2100733910 /* ConfirmEntry.java */,
 				A30722D40EC89B2100733910 /* ConsultInformations.java */,
 				A30722D50EC89B2100733910 /* Contacts.java */,
-				A30722D60EC89B2100733910 /* ContributorsBoard.java */,
+				A30722D60EC89B2100733910 /* Welcome.java */,
 				A30722D70EC89B2100733910 /* CreateEntryInit.java */,
 				A30722DF0EC89B2100733910 /* DictionaryIndexBrowser.java */,
 				A30722E00EC89B2100733910 /* DistributeWork.java */,
@@ -1814,7 +1817,7 @@
 				A30722F20EC89B2200733910 /* HandleEntryModifications.java */,
 				A3AF17C61069FA0500E1CEB5 /* Help.java */,
 				A30722F40EC89B2200733910 /* History.java */,
-				A39A46F70FF90F040090E5C0 /* Arabic.java */,
+				A3C2A07F1180941200F77173 /* Home.java */,
 				A30722F60EC89B2200733910 /* HTMLTransformFactory.java */,
 				A30722F70EC89B2200733910 /* ImportHelp.java */,
 				A30722F80EC89B2200733910 /* Information.java */,
@@ -2604,6 +2607,7 @@
 				A30725700EC89B2800733910 /* ValidatorMenu.xhtml */,
 				A30725710EC89B2800733910 /* ViewDictionaries.xhtml */,
 				A30725720EC89B2800733910 /* ViewQueryResult.xhtml */,
+				A3C2A0A411809BA800F77173 /* WelcomeTmpl.xhtml */,
 				A30725730EC89B2800733910 /* XMLSchemaContent.xhtml */,
 			);
 			path = orig;
