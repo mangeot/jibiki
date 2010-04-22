@@ -233,11 +233,29 @@ Papillon.Informations.sections.jpn[] = "一般情報",
                                        "その他"
 
 #####
+# Javamail
+#
+# in order to send emails with ssl, you must 
+# - 1 create an ssl-cert and import it:
+# > keytool -import -alias gdef-server -file gdef-server.cer
+# - 2 uncomment the following variables: 
+#javax.net.ssl.trustStore = "/home/motamot/.keystore"
+#javax.net.ssl.trustStorePassword = "@TRUSTSTORE_PASSWORD@"
+# - 3 set the following variables to true
+Papillon.javamail.mailhost.ssl = false
+Papillon.javamail.from = "motamot-server@mailserver.tld"
+Papillon.javamail.mailhost.address = "@MAILHOST_ADDRESS@"
+# if the server needs auth, set the following variable to true and uncomment the following variables
+Papillon.javamail.mailhost.auth = false
+#Papillon.javamail.mailhost.user = "@MAILHOST_USER@"
+#Papillon.javamail.mailhost.password = "@MAILHOST_PASSWORD@"
+
+#####
 # Groups passwords
 #
-Papillon.Users.Groups.Password.admin = "dbpap"
-Papillon.Users.Groups.Password.specialist = "butterfly"
-Papillon.Users.Groups.Password.validator = "farfalla"
+Papillon.Users.Groups.Password.admin = "@JIBIKI_ADMIN_PASSWORD@"
+Papillon.Users.Groups.Password.specialist = "@JIBIKI_SPECIALIST_PASSWORD@"
+Papillon.Users.Groups.Password.validator = "@JIBIKI_VALIDATOR_PASSWORD@"
 
 # Class name of the layout for pages of the application
 Papillon.Presentation.PriorityPackage = "fr.imag.clips.papillon.presentation.xhtmlgdef"
@@ -253,6 +271,12 @@ Papillon.Logging.StoreQueryLogs = true
 # SAXON TRANSFORMATION HANDLER
 #+++++++++++++++++++++++++++++++++
 Papillon.Saxon.Classpath = "@SAXON8_LIB@"
+Papillon.Batik.Classpath = "@BATIK_LIB@"
+Papillon.Xalan.Classpath = "@XALAN_LIB@"
+Papillon.Xerces.Classpath = "@XERCES_LIB@"
+Papillon.Avalon.Classpath = "@AVALON_LIB@"
+Papillon.XmlApi.Classpath = "@XMLAPI_LIB@"
+Papillon.Fo.Xsl = "@FO_PATH@"
 
 #-----------------------------------------------------------------------------
 #                   JDictd server Configuration (RFC 2229)
@@ -277,11 +301,10 @@ DatabaseManager.DefaultDatabase = "papillon"
 DatabaseManager.Debug = "false"
 DatabaseManager.DB.papillon.ClassType = "PostgreSQL"
 DatabaseManager.DB.papillon.JdbcDriver = "org.postgresql.Driver"
-DatabaseManager.DB.papillon.Connection.Url = "jdbc:postgresql://localhost/papillon"
-#DatabaseManager.DB.papillon.Connection.Url = "jdbc:postgresql://gohan.imag.fr/papillon"
+DatabaseManager.DB.motamot.Connection.Url = "@PGSQL_SERVER_URL@"
 
-DatabaseManager.DB.papillon.Connection.User = "papillon"
-DatabaseManager.DB.papillon.Connection.Password = "dbpap"
+DatabaseManager.DB.motamot.Connection.User = "@DB_USER@"
+DatabaseManager.DB.motamot.Connection.Password = "@DB_PASSWD@"
 
 DatabaseManager.DB.papillon.Connection.MaxPoolSize = 30
 DatabaseManager.DB.papillon.Connection.AllocationTimeout = 10000

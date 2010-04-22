@@ -1316,6 +1316,16 @@
 		A3AF17CD1069FAE800E1CEB5 /* ApiContent.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ApiContent.xhtml; sourceTree = "<group>"; };
 		A3AF1808106A10C500E1CEB5 /* GetXmlDocument.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = GetXmlDocument.java; sourceTree = "<group>"; };
 		A3C2A04611805D2700F77173 /* AdvancedQueryForm.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdvancedQueryForm.xhtml; sourceTree = "<group>"; };
+		A3C2A0501180862100F77173 /* backstart.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = backstart.in; sourceTree = "<group>"; };
+		A3C2A0521180862100F77173 /* dri.conf.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dri.conf.in; sourceTree = "<group>"; };
+		A3C2A0531180862100F77173 /* GDEF.conf.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GDEF.conf.in; sourceTree = "<group>"; };
+		A3C2A0541180862100F77173 /* Lexalp.conf.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Lexalp.conf.in; sourceTree = "<group>"; };
+		A3C2A0551180862100F77173 /* log4j.xml.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = log4j.xml.in; sourceTree = "<group>"; };
+		A3C2A0561180862100F77173 /* monoserver.conf.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = monoserver.conf.in; sourceTree = "<group>"; };
+		A3C2A0571180862100F77173 /* Motamot.conf.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Motamot.conf.in; sourceTree = "<group>"; };
+		A3C2A0581180862100F77173 /* multiserver.conf.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = multiserver.conf.in; sourceTree = "<group>"; };
+		A3C2A0591180862100F77173 /* Papillon.conf.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Papillon.conf.in; sourceTree = "<group>"; };
+		A3C2A05A1180862100F77173 /* run.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = run.in; sourceTree = "<group>"; };
 		A3CC9102100CFD4A004DF898 /* MotamotContent.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = MotamotContent.xhtml; sourceTree = "<group>"; };
 		A3CC9103100CFD9B004DF898 /* MotamotContent.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = MotamotContent.xhtml; sourceTree = "<group>"; };
 		A3EE19D70FB6CB26001D2220 /* VolumeCache.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = VolumeCache.java; sourceTree = "<group>"; };
@@ -3308,6 +3318,7 @@
 			children = (
 				A3EE1A110FB6DE0D001D2220 /* papillon_dynamic_objects.doml */,
 				A3EE1A120FB6DE16001D2220 /* papillon_static_objects.doml */,
+				A3C2A04F1180862100F77173 /* input */,
 				A30722060EC89B1D00733910 /* src */,
 			);
 			sourceTree = "<group>";
@@ -3330,6 +3341,31 @@
 				A39FEC8210A06FD400D99EB4 /* Metadata.java */,
 			);
 			path = api;
+			sourceTree = "<group>";
+		};
+		A3C2A04F1180862100F77173 /* input */ = {
+			isa = PBXGroup;
+			children = (
+				A3C2A0501180862100F77173 /* backstart.in */,
+				A3C2A0511180862100F77173 /* conf */,
+				A3C2A05A1180862100F77173 /* run.in */,
+			);
+			path = input;
+			sourceTree = "<group>";
+		};
+		A3C2A0511180862100F77173 /* conf */ = {
+			isa = PBXGroup;
+			children = (
+				A3C2A0521180862100F77173 /* dri.conf.in */,
+				A3C2A0531180862100F77173 /* GDEF.conf.in */,
+				A3C2A0541180862100F77173 /* Lexalp.conf.in */,
+				A3C2A0551180862100F77173 /* log4j.xml.in */,
+				A3C2A0561180862100F77173 /* monoserver.conf.in */,
+				A3C2A0571180862100F77173 /* Motamot.conf.in */,
+				A3C2A0581180862100F77173 /* multiserver.conf.in */,
+				A3C2A0591180862100F77173 /* Papillon.conf.in */,
+			);
+			path = conf;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
