@@ -304,7 +304,7 @@ public class Welcome extends PapillonBasePO {
         //On rend le contenu correct
 		Node newNode = LatestNewsDOMCache.cloneNode(true);
 		PapillonLogger.writeDebugMsg("newnode:" + XMLServices.NodeToString(newNode));
-		Node importedNode = content.getOwnerDocument().importNode(newNode,true);
+		Node importedNode = content.importNode(newNode,true);
 		PapillonLogger.writeDebugMsg("importedNode:" + XMLServices.NodeToString(importedNode));
 		LatestNewsContainer.appendChild(importedNode);
     }
