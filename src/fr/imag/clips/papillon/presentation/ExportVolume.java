@@ -158,7 +158,8 @@ public class ExportVolume extends PapillonBasePO {
         HttpPresentationRequest req = this.getComms().request;
 
 		String export = myGetParameter(content.NAME_EXPORT);
-		String exportList = myGetParameter(content.NAME_EXPORT);
+		String exportList = myGetParameter(content.NAME_EXPORT_LIST);
+		String entryList = myGetParameter(content.NAME_ENTRY_LIST);
 		String volume = myGetParameter(content.NAME_VOLUME);
 		String outputFormat = myGetParameter(content.NAME_FORMAT);
 
@@ -326,6 +327,11 @@ public class ExportVolume extends PapillonBasePO {
 			exportVolume(volume, myKeys, myClauses, outputFormat);
 		}
         
+		if (exportList != null && volume != null && entryList != null) {
+			String[] EntryList = entryList.split("[\\t\\n\\r]+");
+			exportEntryList(volume, EntryList, outputFormat);
+		}
+				
 		addConsultForm(volume);
 		
         //On rend le contenu correct
@@ -417,6 +423,37 @@ public class ExportVolume extends PapillonBasePO {
 		PapillonLogger.writeDebugMsg("ClientPageRedirectException: " + getExportRelativeDir() + filename);			
 		throw new ClientPageRedirectException(getExportRelativeDir() + filename); 
 	}
+
+	protected void exportEntryList(String volume, String[] Headwords,String outputFormat) 
+	throws fr.imag.clips.papillon.business.PapillonBusinessException,
+	java.io.IOException,
+	PapillonPresentationException {
+		java.io.File fileDir = new java.io.File(getExportAbsoluteDir());
+		fileDir.mkdirs();
+		
+		String filename = createFileName(volume, this.getUser().getLogin(), outputFormat);
+		java.io.File exportFile = new java.io.File(fileDir.getCanonicalPath() + File.separator + filename);
+		exportFile.createNewFile();
+		
+		FileOutputStream fileOutStream = new FileOutputStream(exportFile.getCanonicalFile());
+		
+		java.util.zip.GZIPOutputStream myGZipOutStream = new java.util.zip.GZIPOutputStream(fileOutStream);
+		
+		fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory.exportEntryList(volume, Headwords, outputFormat, myGZipOutStream);
+		
+		PapillonLogger.writeDebugMsg("Compressing volume");
+		myGZipOutStream.close();
+		
+		String userMessage = "Volume " + volume + " exported";
+		
+		if (userMessage != null) {
+			this.getSessionData().writeUserMessage(userMessage);
+			PapillonLogger.writeDebugMsg(userMessage);
+		}
+		PapillonLogger.writeDebugMsg("ClientPageRedirectException: " + getExportRelativeDir() + filename);			
+		throw new ClientPageRedirectException(getExportRelativeDir() + filename); 
+	}
+	
 	
 	protected String getExportAbsoluteDir() throws PapillonPresentationException {            
 		String baseDir = "";

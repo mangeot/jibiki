@@ -942,6 +942,83 @@ public class VolumeEntriesFactory {
 				}
 			}
 		}
+
+	public static void exportEntryList(String volumeName, String[] Headwords, String outputFormat, java.io.OutputStream myOutStream)
+	throws fr.imag.clips.papillon.business.PapillonBusinessException {
+		
+		Volume myVolume = VolumesFactory.getVolumeByName(volumeName);
+		if (myVolume !=null && !myVolume.isEmpty()) {
+			Dictionary myDict = DictionariesFactory.getDictionaryByName(myVolume.getDictname());
+			if (myDict !=null && !myDict.isEmpty()) {
+				
+				String tmplEntry = myVolume.getTemplateEntry();
+				String contribString = myVolume.getCdmContribution();
+				String xmlHeader = "";
+				String xmlFooter = "";
+				if (tmplEntry.indexOf("<" + contribString)>=0) {
+					xmlHeader = tmplEntry.substring(0,tmplEntry.indexOf("<" + contribString));
+					String endTag = "</" + contribString + ">";
+					xmlFooter = tmplEntry.substring(tmplEntry.indexOf(endTag)+endTag.length()+1);
+				}
+				
+				PapillonLogger.writeDebugMsg("Start writing volume " + volumeName);
+				fr.imag.clips.papillon.business.transformation.FOProcessor myFOProcessor = null;
+				
+				try {
+					if (outputFormat != null && outputFormat.equals(XHTMLFormat)) {
+						myOutStream.write(XhtmlHeader.getBytes("UTF-8"));
+					}
+					else if (outputFormat != null && outputFormat.equals(TEXTFormat)) {
+						myOutStream.write(TextHeader.getBytes("UTF-8"));
+					}
+					else if (outputFormat != null && outputFormat.equals(PDFFormat)) {
+						myFOProcessor = new fr.imag.clips.papillon.business.transformation.FOProcessor(myOutStream);
+						myOutStream = myFOProcessor.getOutputStreamAsInput();
+						myOutStream.write(FoHeader.getBytes("UTF-8"));
+					}
+					else {
+						myOutStream.write(xmlHeader.getBytes("UTF-8"));
+					}
+					
+					fr.imag.clips.papillon.business.dictionary.IVolumeEntryProcessor myProcessor = new fr.imag.clips.papillon.business.dictionary.ExportVolumeEntryProcessor(outputFormat, myOutStream);
+					PapillonLogger.writeDebugMsg("Processor created");
+					
+					for (int i=0; i<Headwords.length; i++) {
+						String word = Headwords[i];
+						Vector myKeys = new Vector();
+						String[] key1 = new String[4];
+						key1[0] = Volume.CDM_headword;
+						key1[2] = word;
+						key1[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_EXACT+1];
+						myKeys.add(key1);
+						fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory.processVolume(myDict, myVolume, myKeys, null, myProcessor, true);
+					}
+					
+					PapillonLogger.writeDebugMsg("Volume processed");
+					
+					
+					if (outputFormat != null && outputFormat.equals(XHTMLFormat)) {
+						myOutStream.write(XhtmlFooter.getBytes("UTF-8"));
+					}
+					else if (outputFormat != null && outputFormat.equals(TEXTFormat)) {
+						myOutStream.write(TextFooter.getBytes("UTF-8"));
+					}
+					else if (outputFormat != null && outputFormat.equals(PDFFormat)) {
+						myOutStream.write(FoFooter.getBytes("UTF-8"));
+						PapillonLogger.writeDebugMsg("Processing Formating Object to PDF");
+						myFOProcessor.renderOutputStream();
+					}
+					else {
+						myOutStream.write(xmlFooter.getBytes("UTF-8"));
+					}
+				}
+				catch (Exception ex) {
+					throw new PapillonBusinessException("Error in writing an UTF-8 String: ", ex);
+				}
+			}
+		}
+	}
+	
 	
 	public static void convertVolume(String volumeName, Vector myKeys, Vector clauseVector, String stylesheetHandle) throws PapillonBusinessException {
 		
