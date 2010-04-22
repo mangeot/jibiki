@@ -62,12 +62,12 @@ public class News extends PapillonBasePO {
 		if (NewsDOMCache == null) {
 			org.xml.sax.InputSource newsInputSource = getInputSource(getNewsFileAbsolutePath());
 			if (newsInputSource != null) {
-				PapillonLogger.writeDebugMsg("buildDomTree de news");
+				fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("buildDomTree de news");
 				org.w3c.dom.Document myNewsDocument = XMLServices.buildDOMTree(newsInputSource);
 				if (myNewsDocument != null) {
 					NewsDOMCache = myNewsDocument.getElementById(NewsContentIdString);
 				}
-				PapillonLogger.writeDebugMsg("buildDomTree de news effectue");
+				fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("buildDomTree de news effectue");
 			}
 		}
 		
