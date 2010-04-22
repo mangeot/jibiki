@@ -264,9 +264,9 @@ public class Welcome extends PapillonBasePO {
 	java.io.IOException {
 		
  		// code spécifique pour le GDEF
-		Element GDEFFinishedEntryCount = content.getOwnerDocument().getElementById("GDEFFinishedEntryCount");
-		Element GDEFReviewedEntryCount = content.getOwnerDocument().getElementById("GDEFReviewedEntryCount");
-		Element GDEFValidatedEntryCount = content.getOwnerDocument().getElementById("GDEFValidatedEntryCount");
+		Element GDEFFinishedEntryCount = content.getElementGDEFFinishedEntryCount();
+		Element GDEFReviewedEntryCount = content.getElementGDEFReviewedEntryCount();
+		Element GDEFValidatedEntryCount = content.getElementGDEFValidatedEntryCount();
 		if (GDEFFinishedEntryCount != null
 			&& GDEFReviewedEntryCount != null
 			&& GDEFValidatedEntryCount != null) {
@@ -289,7 +289,7 @@ public class Welcome extends PapillonBasePO {
 	protected void addLatestNews(WelcomeTmplXHTML content)
     throws HttpPresentationException, java.io.IOException {
 		
-		Element LatestNewsContainer = content.getOwnerDocument().getElementById("LatestNewsContainer");
+		Element LatestNewsContainer = content.getElementLatestNewsContainer();
 		
 		if (NewsDOMCache == null) {
 			org.xml.sax.InputSource newsInputSource = getInputSource(getNewsFileAbsolutePath());
