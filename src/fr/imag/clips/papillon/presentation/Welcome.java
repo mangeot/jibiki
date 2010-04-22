@@ -139,6 +139,7 @@ public class Welcome extends PapillonBasePO {
         HttpPresentationRequest req = this.getComms().request;
 
 		addLoggedUsersArray(content);
+		addLatestNews(content);
 
 		addEntriesCount(content);
 				
