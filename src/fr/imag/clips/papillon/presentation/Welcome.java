@@ -302,8 +302,9 @@ public class Welcome extends PapillonBasePO {
 			}
 		}
         //On rend le contenu correct
-		
-		LatestNewsContainer.appendChild(content.getOwnerDocument().importNode(LatestNewsDOMCache,true));
+		Node newNode = LatestNewsDOMCache.cloneNode(true);
+		Node importedNode = content.getOwnerDocument().importNode(newNode,true);
+		LatestNewsContainer.appendChild(importedNode);
     }
 	
 	protected String getNewsFileAbsolutePath() throws PapillonPresentationException {            
