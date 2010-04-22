@@ -114,7 +114,7 @@ public class Welcome extends PapillonBasePO {
     }
 
     protected boolean userMayUseThisPO() {
-        return false;
+        return true;
     }
 	
     protected  int getCurrentSection() {
