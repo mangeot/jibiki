@@ -274,7 +274,11 @@ public abstract class PapillonBasePO extends AbstractPO {
             // FIXME: Modification done by Olivier Tache not generic !
             // if content is returned by ConsultInformations, find <HEAD> elements
             // and try to move them to layout's <HEAD>
-            if (content.getNodeName().equals("#document")) {
+            
+			String nodeName = content.getNodeName();
+			PapillonLogger.writeDebugMsg("nodeName: " + nodeName);
+			
+			if (content.getNodeName().equals("#document")) {
                 // the content is returned by ConsultInformations
                 // place the document's body in a <DIV> tag
                 HTMLTransformFactory transf = new HTMLTransformFactory();
