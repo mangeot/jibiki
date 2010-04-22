@@ -485,8 +485,8 @@ For Lexalp, call ant using -Dapplication.name=Lexalp
      <filter token="MAILHOST_PASSWORD" value="${papillon.mailhost.password}" />
 
      <filter token="JIBIKI_ADMIN_PASSWORD" value="${papillon.admin.password}" />
-     <filter token="JIBIKI_SPECIALIST_PASSWORD" value="${papillon.validator.password}" />
-     <filter token="JIBIKI_VALIDATOR_PASSWORD" value="${papillon.specialist.password}" />
+     <filter token="JIBIKI_SPECIALIST_PASSWORD" value="${papillon.specialist.password}" />
+     <filter token="JIBIKI_VALIDATOR_PASSWORD" value="${papillon.validator.password}" />
 
 
       <filter token="PGSQL_SERVER_URL" value="${papillondb.server.url}" />
