@@ -229,7 +229,7 @@ public class AdminEntries extends PapillonBasePO {
         // Create and Register the transaction
   //      CurrentDBTransaction.registerNewDBTransaction();
         try {
-			String message = ParseVolume.parseVolume(volumeString, myURL.toString(), defaultStatus, replaceExistingEntries, replaceExistingContributions, logContribs);
+			String message = ParseVolume.parseVolume(volumeString, myURL, defaultStatus, replaceExistingEntries, replaceExistingContributions, logContribs);
 			userMessage = "Volume: " + volumeString + " / URL: " + myURL + " downloaded...";
 			userMessage += message;
            // everything was correct, commit the transaction...
