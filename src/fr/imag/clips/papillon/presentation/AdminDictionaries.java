@@ -260,49 +260,48 @@ public class AdminDictionaries extends PapillonBasePO {
 		URL myURL = null;
 		try  {
 			myURL = new URL(urlString);
+			PapillonLogger.writeDebugMsg(myURL.toString());
+			String parseVolumesString = req.getParameter(AdminDictionariesXHTML.NAME_AddVolumes);
+			boolean parseVolumes = (parseVolumesString!=null && !parseVolumesString.equals(""));
+			String parseEntriesString = req.getParameter(AdminDictionariesXHTML.NAME_AddVolumesAndEntries);
+			boolean parseEntries = (parseEntriesString!=null && !parseEntriesString.equals(""));
+			String logContribsString = req.getParameter(AdminDictionariesXHTML.NAME_LogContributions);
+			boolean logContribs = (logContribsString!=null && !logContribsString.equals(""));
+			
+			// Create and Register the transaction
+			CurrentDBTransaction.registerNewDBTransaction();
+			Dictionary myDict = null;
+			try {
+				myDict = DictionariesFactory.parseDictionaryMetadata(myURL, parseVolumes, parseEntries, logContribs);
+				if (null != myDict && !myDict.isEmpty()) {
+					userMessage = "adding " + myDict.getName() + " dictionary" + " // " + myDict.getCategory() + " // " + myDict.getType() + " // " + myDict.getDomain() + " // " + myDict.getLegal() + " // " + myDict.getSourceLanguages() + " // " + myDict.getTargetLanguages();
+					myDict.save();
+				} else {
+					userMessage = "Ignoring dictionary";
+				}
+				// everything was correct, commit the transaction...
+				((DBTransaction) CurrentDBTransaction.get()).commit();
+			} catch (Exception e) {
+				userMessage = "Problems while adding the specified dictionary.\n";
+				userMessage += e.getMessage();
+				userMessage += "\nAll changes to the database have been rolled back.";
+				e.printStackTrace();
+				try {
+					((DBTransaction) CurrentDBTransaction.get()).rollback();
+				} catch (java.sql.SQLException sqle) {
+					PapillonLogger.writeDebugMsg("AdminDictionaries: SQLException while rolling back failed transaction.");
+					sqle.printStackTrace();
+				}
+			} finally {
+				CurrentDBTransaction.releaseCurrentDBTransaction();
+			}
+			Papillon.initializeAllCaches();
 		}
 		catch (java.io.IOException ex) {
 			userMessage = "Problems while adding the specified dictionary. The following URL: "+ urlString +" is malformed\n";
             userMessage += ex.getMessage();
 			ex.printStackTrace();
-		}
-		
-        PapillonLogger.writeDebugMsg(myURL.toString());
-		String parseVolumesString = req.getParameter(AdminDictionariesXHTML.NAME_AddVolumes);
-		boolean parseVolumes = (parseVolumesString!=null && !parseVolumesString.equals(""));
-		String parseEntriesString = req.getParameter(AdminDictionariesXHTML.NAME_AddVolumesAndEntries);
-		boolean parseEntries = (parseEntriesString!=null && !parseEntriesString.equals(""));
-		String logContribsString = req.getParameter(AdminDictionariesXHTML.NAME_LogContributions);
-		boolean logContribs = (logContribsString!=null && !logContribsString.equals(""));
-        
-        // Create and Register the transaction
-        CurrentDBTransaction.registerNewDBTransaction();
-		Dictionary myDict = null;
-        try {
-            myDict = DictionariesFactory.parseDictionaryMetadata(myURL, parseVolumes, parseEntries, logContribs);
-            if (null != myDict && !myDict.isEmpty()) {
-                userMessage = "adding " + myDict.getName() + " dictionary" + " // " + myDict.getCategory() + " // " + myDict.getType() + " // " + myDict.getDomain() + " // " + myDict.getLegal() + " // " + myDict.getSourceLanguages() + " // " + myDict.getTargetLanguages();
-                myDict.save();
-            } else {
-                userMessage = "Ignoring dictionary";
-            }
-            // everything was correct, commit the transaction...
-            ((DBTransaction) CurrentDBTransaction.get()).commit();
-        } catch (Exception e) {
-            userMessage = "Problems while adding the specified dictionary.\n";
-            userMessage += e.getMessage();
-            userMessage += "\nAll changes to the database have been rolled back.";
-			e.printStackTrace();
-            try {
-                ((DBTransaction) CurrentDBTransaction.get()).rollback();
-            } catch (java.sql.SQLException sqle) {
-                PapillonLogger.writeDebugMsg("AdminDictionaries: SQLException while rolling back failed transaction.");
-				sqle.printStackTrace();
-            }
-        } finally {
-            CurrentDBTransaction.releaseCurrentDBTransaction();
-        }
-        Papillon.initializeAllCaches();
+		}		
         return userMessage;
     }
 

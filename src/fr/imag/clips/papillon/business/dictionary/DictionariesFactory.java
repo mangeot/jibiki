@@ -439,7 +439,6 @@ public class DictionariesFactory {
 		(URL fileURL, boolean loadVolumes, boolean loadEntries, boolean logContribs)
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
             Dictionary myDict = null;
-            try {
                 Document docXml = XMLServices.buildDOMTree(fileURL);
                 PapillonLogger.writeDebugMsg("The xml");
                 PapillonLogger.writeDebugMsg(XMLServices.xmlCode(docXml));
@@ -497,14 +496,6 @@ public class DictionariesFactory {
                         }
                     }
                 }
-				
-            }
-            catch (PapillonBusinessException pbex) {
-                throw pbex;
-            }
-           // catch(Exception ex) {
-             //   throw new PapillonBusinessException("Exception in parseDictionaryMetadata()", ex);
-            //}
             return myDict;
         }
 	
