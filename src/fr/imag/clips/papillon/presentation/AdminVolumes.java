@@ -222,22 +222,51 @@ public class AdminVolumes extends PapillonBasePO {
             //AJOUT DE DICO
             String userMessage = null;
             String urlString = myGetParameter(AdminVolumesXHTML.NAME_URL);
+			URL myURL = null;
             if (null != urlString &&
 				null != myGetParameter(AdminVolumesXHTML.NAME_Dictionary)) {
-                    userMessage = handleVolumeAddition(req);
+				try  {
+					myURL = new URL(urlString);
                 }
+				catch (java.io.IOException ex) {
+					userMessage += "Problems while adding the specified volume. The following URL: "+ urlString +" is malformed;\n";
+					userMessage += ex.getMessage();
+					ex.printStackTrace();
+				}	
+				if (myURL != null) {
+					userMessage += handleVolumeAddition(req, myURL);
+				}
+			}
              else if (null != myGetParameter(AdminVolumesXHTML.NAME_Volume) &&
 					null != myGetParameter(AdminVolumesXHTML.NAME_URLObject) &&
 					null != myGetParameter(AdminVolumesXHTML.NAME_Object)) {
 					String object = myGetParameter(AdminVolumesXHTML.NAME_Object);
 					String url = myGetParameter(AdminVolumesXHTML.NAME_URLObject);
-					userMessage = this.uploadObject(volName, object, url);
-            
+				 try  {
+					 myURL = new URL(url);
+				 }
+				 catch (java.io.IOException ex) {
+					 userMessage += "Problems while adding the specified volume. The following URL: "+ urlString +" is malformed;\n";
+					 userMessage += ex.getMessage();
+					 ex.printStackTrace();
+				 }	
+				 if (myURL != null) {
+					 userMessage += this.uploadObject(volName, object, url);
+				 }            
             } else if (null != myGetParameter(content.NAME_VolumeTransformation) &&
                        null != myGetParameter(content.NAME_URLObjectTransformation)) {
                 String url = myGetParameter(content.NAME_URLObjectTransformation);
-                userMessage = this.launchTranformation(volNameTransformation, url);
-            
+				try  {
+					myURL = new URL(url);
+				}
+				catch (java.io.IOException ex) {
+					userMessage += "Problems while adding the specified volume. The following URL: "+ urlString +" is malformed;\n";
+					userMessage += ex.getMessage();
+					ex.printStackTrace();
+				}	
+				if (myURL != null) {
+					userMessage += this.launchTranformation(volNameTransformation, url);
+				}            
             //
             } else if (null != myGetParameter(REMOVE_METADATA_PARAMETER)) {
                 String handle = myGetParameter(REMOVE_METADATA_PARAMETER);
@@ -309,10 +338,8 @@ public class AdminVolumes extends PapillonBasePO {
         return content.getElementFormulaire();
     }
     
-	protected String handleVolumeAddition(HttpPresentationRequest req) throws PapillonBusinessException, HttpPresentationException, java.net.MalformedURLException {
+	protected String handleVolumeAddition(HttpPresentationRequest req, URL myURL) throws PapillonBusinessException, HttpPresentationException, java.net.MalformedURLException {
         String userMessage;
-        String urlString = req.getParameter(AdminVolumesXHTML.NAME_URL);
-        URL myURL = new URL(urlString);
         PapillonLogger.writeDebugMsg(myURL.toString());
 		String logContribsString = req.getParameter(AdminVolumesXHTML.NAME_LogContributions);
 		boolean logContribs = (logContribsString!=null && !logContribsString.equals(""));
@@ -334,11 +361,16 @@ public class AdminVolumes extends PapillonBasePO {
                 userMessage = "Ignoring volume";
             }
             // everything was correct, commit the transaction...
-            ((DBTransaction) CurrentDBTransaction.get()).commit();
-        } catch (Exception e) {
+			try {
+				((DBTransaction) CurrentDBTransaction.get()).commit();
+            } catch (java.sql.SQLException sqle) {
+                PapillonLogger.writeDebugMsg("AdminVolumes: SQLException while commiting transaction.");
+				sqle.printStackTrace();
+            }
+        } catch (PapillonBusinessException e) {
             userMessage = "Problems while adding the specified volume.\n";
-            userMessage = userMessage + e.getMessage();
-            userMessage = userMessage + "\nAll changes to the database have been rolled back.";
+            userMessage += e.getMessage();
+            userMessage += "\nAll changes to the database have been rolled back.";
 			e.printStackTrace();
             try {
                 ((DBTransaction) CurrentDBTransaction.get()).rollback();

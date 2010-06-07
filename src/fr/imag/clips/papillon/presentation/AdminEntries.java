@@ -176,6 +176,7 @@ public class AdminEntries extends PapillonBasePO {
         String submitAdd = myGetParameter(content.NAME_ADD);
         String logContributions = myGetParameter(content.NAME_LogContributions);
         String defaultStatus = myGetParameter(content.NAME_DefaultStatus);
+				
 		
         String replaceExistingContributionsString = myGetParameter(content.NAME_ReplaceExistingContributions);
 		int replaceExistingContributions = ParseVolume.ReplaceExistingContribution_Ignore;
@@ -192,10 +193,24 @@ public class AdminEntries extends PapillonBasePO {
 		
 		boolean logContribs = (logContributions!=null && !logContributions.equals(""));
         
-        if (volumeString!=null && !volumeString.equals("") &&
+		String userMessage = null;
+
+		if (volumeString!=null && !volumeString.equals("") &&
 			urlString!=null && !urlString.equals("") &&
 			submitAdd!=null && !submitAdd.equals("")) {
-            String userMessage = handleVolumeAddition(volumeString, urlString, defaultStatus, replaceExistingEntries, replaceExistingContributions, logContribs);
+			java.net.URL myURL = null;
+			try {
+				PapillonLogger.writeDebugMsg(myURL.toString());
+				myURL = new java.net.URL(urlString);
+			}
+			catch (java.io.IOException ex) {
+				userMessage += "Problems while adding the specified volume entries. The following URL: "+ urlString +" is malformed;\n";
+				userMessage += ex.getMessage();
+				ex.printStackTrace();
+			}	
+			if (myURL != null) {
+				userMessage += handleVolumeAddition(volumeString, myURL, defaultStatus, replaceExistingEntries, replaceExistingContributions, logContribs);
+			}
 			if (userMessage != null) {
 				this.getSessionData().writeUserMessage(userMessage);
 				PapillonLogger.writeDebugMsg(userMessage);
@@ -206,7 +221,7 @@ public class AdminEntries extends PapillonBasePO {
         return content.getElementFormulaire();
     }
 	
-	protected String handleVolumeAddition(String volumeString, String urlString, String defaultStatus, int replaceExistingEntries, int replaceExistingContributions, boolean logContribs) 
+	protected String handleVolumeAddition(String volumeString, java.net.URL myURL, String defaultStatus, int replaceExistingEntries, int replaceExistingContributions, boolean logContribs) 
 		throws fr.imag.clips.papillon.business.PapillonBusinessException, 
 			HttpPresentationException {
         String userMessage;
@@ -214,17 +229,15 @@ public class AdminEntries extends PapillonBasePO {
         // Create and Register the transaction
   //      CurrentDBTransaction.registerNewDBTransaction();
         try {
-			java.net.URL myURL = new java.net.URL(urlString);
-			PapillonLogger.writeDebugMsg(myURL.toString());
 			String message = ParseVolume.parseVolume(volumeString, myURL.toString(), defaultStatus, replaceExistingEntries, replaceExistingContributions, logContribs);
 			userMessage = "Volume: " + volumeString + " / URL: " + myURL + " downloaded...";
 			userMessage += message;
            // everything was correct, commit the transaction...
 //            ((DBTransaction) CurrentDBTransaction.get()).commit();
-        } catch (Exception e) {
-            userMessage = "Problems while adding the specified volume.\n";
-            userMessage = userMessage + e.getMessage();
-            userMessage = userMessage + "\nAll changes to the database have been rolled back.";
+        } catch (PapillonBusinessException e) {
+            userMessage = "Problems while adding the specified volume entries.\n";
+            userMessage += e.getMessage();
+            userMessage += "\nAll changes to the database have been rolled back.";
 			e.printStackTrace();
 /*            try {
                 ((DBTransaction) CurrentDBTransaction.get()).rollback();

@@ -302,9 +302,15 @@ public class VolumesFactory {
             throws fr.imag.clips.papillon.business.PapillonBusinessException, java.io.IOException {
 
 				String name = volume.getAttribute("name");
+				if (name == null) {
+					throw new PapillonBusinessException("Exception in newVolume: there is no source language!");
+				}
 				String dbname = volume.getAttribute("dbname");
 				String location = volume.getAttribute(LOCATION_ATTRIBUTE);
 				String source = volume.getAttribute("source-language");
+				if (source == null) {
+					throw new PapillonBusinessException("Exception in newVolume: there is no source language!");
+				}
 				String targets = volume.getAttribute("target-languages");
 				String reverseLookup = volume.getAttribute("reverse-lookup");
 				boolean reverse = (reverseLookup != null && reverseLookup.equals("true"));
@@ -325,6 +331,10 @@ public class VolumesFactory {
 		String schema = getXmlCode(volume, XMLSCHEMA_TAG, fileURL);
         String tmplInterface = getXmlCode(volume, TEMPLATE_INTERFACE_TAG, fileURL);
         String tmplEntry = getXmlCode(volume, TEMPLATE_ENTRY_TAG, fileURL);
+				
+		if (tmplEntry == null) {
+			throw new PapillonBusinessException("Exception in newVolume: there is no template entry!");
+		}
 
 		Hashtable cdmElements = createCdmElementsTable(volume, source, tmplEntry);
 				
