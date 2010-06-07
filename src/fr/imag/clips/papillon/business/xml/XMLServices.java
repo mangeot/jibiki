@@ -77,7 +77,7 @@ public class XMLServices {
      * @param theUrl URL of the source xml
      * @return the DOM Document
      */
-    public static Document buildDOMTree(URL theUrl) {
+    public static Document buildDOMTree(URL theUrl) throws PapillonBusinessException {
         return buildDOMTreeFromUrl(theUrl.toString());
     }
 
@@ -123,20 +123,20 @@ public class XMLServices {
      *
      * @param url * @return the DOM Document
      */
-    public static Document buildDOMTreeFromUrl(String url) {
+    public static Document buildDOMTreeFromUrl(String url) throws PapillonBusinessException {
         Document contentDocument = null;
 
         try {
             DocumentBuilder parser = XMLParsersPool.allocateParser();
             contentDocument = parser.parse(url);
             XMLParsersPool.releaseParser(parser);
-        } catch (PapillonBusinessException pce) {
-            PapillonLogger.writeDebugMsg("ParserConfigurationException: " + pce);
         } catch (org.xml.sax.SAXException saxe) {
-            PapillonLogger.writeDebugMsg("org.xml.sax.SAXException: " + saxe);
+            PapillonLogger.writeDebugMsg("buildDOMTree: org.xml.sax.SAXException: " + saxe);
+			throw new PapillonBusinessException("buildDOMTree: org.xml.sax.SAXException: ", saxe);
         } catch (java.io.IOException ioe) {
-            PapillonLogger.writeDebugMsg("java.io.IOException: " + ioe);
-        }
+            PapillonLogger.writeDebugMsg("buildDOMTree: java.io.IOException: " + ioe);
+ 			throw new PapillonBusinessException("buildDOMTree: java.io.IOException: ", ioe);
+		}
         return contentDocument;
     }
 
