@@ -298,7 +298,7 @@ public class AdminDictionaries extends PapillonBasePO {
 			Papillon.initializeAllCaches();
 		}
 		catch (java.io.IOException ex) {
-			userMessage = "Problems while adding the specified dictionary. The following URL: "+ urlString +" is malformed\n";
+			userMessage = "Problems while adding the specified dictionary. The following URL: "+ urlString +" is malformed;\n";
             userMessage += ex.getMessage();
 			ex.printStackTrace();
 		}		

@@ -105,9 +105,6 @@ public class XMLServices {
             DocumentBuilder parser = XMLParsersPool.allocateParser();
             contentDocument = parser.parse(mySource);
             XMLParsersPool.releaseParser(parser);
-        } catch (PapillonBusinessException e) {
-            PapillonLogger.writeDebugMsg("ParserConfigurationException: " + e);
-			throw e;
         } catch (org.xml.sax.SAXException saxe) {
             PapillonLogger.writeDebugMsg("org.xml.sax.SAXException: " + saxe);
 			throw new PapillonBusinessException("org.xml.sax.SAXException: ", saxe);
