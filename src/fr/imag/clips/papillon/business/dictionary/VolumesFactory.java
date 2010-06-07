@@ -299,17 +299,17 @@ public class VolumesFactory {
      * @throws PapillonBusinessException, IOException
      */
     public static Volume newVolume(String dictname, Element volume, URL fileURL)
-            throws fr.imag.clips.papillon.business.PapillonBusinessException, java.io.IOException {
+            throws fr.imag.clips.papillon.business.PapillonBusinessException {
 
 				String name = volume.getAttribute("name");
-				if (name == null) {
-					throw new PapillonBusinessException("Exception in newVolume: there is no source language!");
+				if (name == null || name.equals("")) {
+					throw new PapillonBusinessException("Exception in newVolume: there is no volume name, there is no 'name' attribute  for the 'volume-metadata' element or it is empty!");
 				}
 				String dbname = volume.getAttribute("dbname");
 				String location = volume.getAttribute(LOCATION_ATTRIBUTE);
 				String source = volume.getAttribute("source-language");
-				if (source == null) {
-					throw new PapillonBusinessException("Exception in newVolume: there is no source language!");
+				if (source == null || source.equals("")) {
+					throw new PapillonBusinessException("Exception in newVolume: there is no volume name, there is no 'source' attribute  for the 'volume-metadata' element or it is empty!");
 				}
 				String targets = volume.getAttribute("target-languages");
 				String reverseLookup = volume.getAttribute("reverse-lookup");
@@ -332,14 +332,17 @@ public class VolumesFactory {
         String tmplInterface = getXmlCode(volume, TEMPLATE_INTERFACE_TAG, fileURL);
         String tmplEntry = getXmlCode(volume, TEMPLATE_ENTRY_TAG, fileURL);
 				
-		if (tmplEntry == null) {
-			throw new PapillonBusinessException("Exception in newVolume: there is no template entry!");
+		if (tmplEntry == null || tmplEntry.equals("")) {
+			throw new PapillonBusinessException("Exception in newVolume: there is no template entry, the element " + TEMPLATE_ENTRY_TAG + " does not exist or is empty!");
 		}
 
 		Hashtable cdmElements = createCdmElementsTable(volume, source, tmplEntry);
 				
+		PapillonLogger.writeDebugMsg("The CDM elements hashtable has been created");
+				
         // Embedding the entry into a contribution element
         tmplEntry = updateTemplateEntry(tmplEntry, cdmElements);
+		PapillonLogger.writeDebugMsg("The template entry has been updated");
 
         String xmlCode = XMLServices.NodeToString(volume);
 
@@ -380,18 +383,33 @@ public class VolumesFactory {
 		
         // Cette méthode dépend du schéma des volumes.
  		
+		if (volume == null) {
+			throw new PapillonBusinessException("Error in createCdmElementsTable: the volume element is null!");
+		}
+		if (source == null || source.equals("")) {
+			throw new PapillonBusinessException("Error in createCdmElementsTable: there is no source language!");
+		}
+		if (tmplEntry == null || tmplEntry.equals("")) {
+			throw new PapillonBusinessException("Error in createCdmElementsTable: there is no template entry!");
+		}
+		
         NodeList cdmElts = volume.getElementsByTagName(CDM_ELEMENTS_TAG);
         if (null != cdmElts && cdmElts.getLength() > 0) {
             Element cdmElt = (Element) cdmElts.item(0);
             cdmElements = buildCdmElementsTable(cdmElt, source);
         } else {
-            PapillonLogger.writeDebugMsg("No cdm-elements tag");
+            PapillonLogger.writeDebugMsg("No " + CDM_ELEMENTS_TAG + " tag");
+			throw new PapillonBusinessException("Error in createCdmElementsTable: there is no " + CDM_ELEMENTS_TAG + " tag!");
         }
 				
         org.w3c.dom.Document myDoc = XMLServices.buildDOMTree(tmplEntry);
         if (myDoc != null) {
             ParseVolume.compileXPathTable(cdmElements, myDoc.getDocumentElement());
         }
+		else {
+            PapillonLogger.writeDebugMsg("Error in createCdmElementsTable: the template entry doc is empty!");
+			throw new PapillonBusinessException("Error in createCdmElementsTable: the template entry doc is empty!");
+		}
 		return cdmElements;
 	}
 
@@ -546,7 +564,7 @@ public class VolumesFactory {
             PapillonLogger.writeDebugMsg("The xml code:");
             PapillonLogger.writeDebugMsg(XMLServices.xmlCodePrettyPrinted(docXml));
 
-            //on recupere le dictionnaire
+            //on recupere le volume
             Element volume;
             boolean virtual = false;
             volume = (Element) docXml.getElementsByTagName(VOLUME_TAG).item(0);
@@ -555,7 +573,7 @@ public class VolumesFactory {
                 virtual = (virtualString != null && virtualString.equals("true"));
             }
 
-            // ajout du dico ds la table.
+            // ajout du volume ds la table.
             resVolume = VolumesFactory.newVolume(dict.getName(), volume, fileURL);
             if (null != resVolume) {
                 resVolume.save();
@@ -927,7 +945,7 @@ public class VolumesFactory {
                 PapillonLogger.writeDebugMsg("No " + tag);
             }
         } catch (MalformedURLException ex) {
-            throw new PapillonBusinessException("Error in getXmlCode with the href " + href, ex);
+            throw new PapillonBusinessException("Error in getXmlCode with the href " + href + ":" + ex.getMessage(), ex);
         }
         return res;
     }
@@ -950,7 +968,7 @@ public class VolumesFactory {
             Element cdmElt = (Element) cdmElts.item(0);
             cdmElements = buildCdmElementsTable(cdmElt, sourceLanguage);
         } else {
-            PapillonLogger.writeDebugMsg("No cdm-elements tag");
+            PapillonLogger.writeDebugMsg("No " + CDM_ELEMENTS_TAG + " tag!");
         }
         org.w3c.dom.Document myDoc = XMLServices.buildDOMTree(tmplEntry);
         if (myDoc != null) {

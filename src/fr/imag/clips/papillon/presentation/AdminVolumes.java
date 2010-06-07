@@ -220,7 +220,7 @@ public class AdminVolumes extends PapillonBasePO {
         if (req.getParameterNames().hasMoreElements()) {
             //TEMPORAIRE :avec l URL
             //AJOUT DE DICO
-            String userMessage = null;
+            String userMessage = "";
             String urlString = myGetParameter(AdminVolumesXHTML.NAME_URL);
 			URL myURL = null;
             if (null != urlString &&
