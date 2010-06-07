@@ -200,8 +200,8 @@ public class AdminEntries extends PapillonBasePO {
 			submitAdd!=null && !submitAdd.equals("")) {
 			java.net.URL myURL = null;
 			try {
-				PapillonLogger.writeDebugMsg(myURL.toString());
 				myURL = new java.net.URL(urlString);
+				PapillonLogger.writeDebugMsg(myURL.toString());
 			}
 			catch (java.io.IOException ex) {
 				userMessage += "Problems while adding the specified volume entries. The following URL: "+ urlString +" is malformed;\n";

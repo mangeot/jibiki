@@ -225,14 +225,14 @@ public class ParseVolume {
         return entry;
     }
 
-    public static String parseVolume(String volumeName, String URL, String defaultStatus, int replaceExistingEntries,
+    public static String parseVolume(String volumeName, java.net.URL myURL, String defaultStatus, int replaceExistingEntries,
                                      int replaceExistingContributions, boolean logContribs)
             throws PapillonBusinessException {
         String message = "";
         Volume volume = VolumesFactory.getVolumeByName(volumeName);
         Dictionary dict = DictionariesFactory.getDictionaryByName(volume.getDictname());
         if (!volume.isEmpty()) {
-            message = parseVolume(dict, volume, URL, defaultStatus, replaceExistingEntries,
+            message = parseVolume(dict, volume, myURL, defaultStatus, replaceExistingEntries,
                     replaceExistingContributions, logContribs);
         } else {
             message = "The volume does not exist!";
@@ -240,29 +240,28 @@ public class ParseVolume {
         return message;
     }
 
-    protected static String parseVolume(Dictionary myDict, Volume myVolume, String url, boolean logContribs)
+    protected static String parseVolume(Dictionary myDict, Volume myVolume, java.net.URL myURL, boolean logContribs)
             throws PapillonBusinessException {
-        String xmlHeader = getXMLHeader(url, myVolume.getCdmEntry());
+        String xmlHeader = getXMLHeader(myURL, myVolume.getCdmEntry());
         String encoding = getEncoding(xmlHeader);
-        return parseEntries(myDict, myVolume, url, encoding, VolumeEntry.FINISHED_STATUS, ReplaceExistingEntry_Ignore,
+        return parseEntries(myDict, myVolume, myURL, encoding, VolumeEntry.FINISHED_STATUS, ReplaceExistingEntry_Ignore,
                 ReplaceExistingContribution_Ignore, logContribs);
     }
 
-    protected static String parseVolume(Dictionary myDict, Volume myVolume, String url, String defaultStatus,
+    protected static String parseVolume(Dictionary myDict, Volume myVolume, java.net.URL myURL, String defaultStatus,
                                         int replaceExistingEntries, int replaceExistingContributions,
                                         boolean logContribs)
             throws PapillonBusinessException {
-        String xmlHeader = getXMLHeader(url, myVolume.getCdmEntry());
+        String xmlHeader = getXMLHeader(myURL, myVolume.getCdmEntry());
         String encoding = getEncoding(xmlHeader);
-        return parseEntries(myDict, myVolume, url, encoding, defaultStatus, replaceExistingEntries,
+        return parseEntries(myDict, myVolume, myURL, encoding, defaultStatus, replaceExistingEntries,
                 replaceExistingContributions, logContribs);
     }
 
-    protected static String getXMLHeader(String url, String CDM_entry)
+    protected static String getXMLHeader(java.net.URL myUrl, String CDM_entry)
             throws PapillonBusinessException {
         String res = XMLHEADER;
         try {
-            java.net.URL myUrl = new java.net.URL(url);
             java.io.InputStream inStream = myUrl.openStream();
             // throws FileNotFoundException
             java.io.InputStreamReader inReader = new java.io.InputStreamReader(inStream, DEFAULT_ENCODING);
@@ -287,7 +286,7 @@ public class ParseVolume {
             }
             inStream.close();
         } catch (java.io.IOException exp) {
-            throw new PapillonBusinessException("ParseVolume.getXMLHeader, error IOException URL: " + url, exp);
+            throw new PapillonBusinessException("ParseVolume.getXMLHeader, error IOException URL: " + myUrl.toString(), exp);
         }
         return res;
     }
@@ -318,7 +317,7 @@ public class ParseVolume {
         return res;
     }
 
-    protected static String parseEntries(Dictionary myDict, Volume myVolume, String url, String encoding,
+    protected static String parseEntries(Dictionary myDict, Volume myVolume, java.net.URL myUrl, String encoding,
                                          String defaultStatus, int replaceExistingEntries,
                                          int replaceExistingContributions, boolean logContribs)
             throws PapillonBusinessException {
@@ -327,7 +326,6 @@ public class ParseVolume {
         String message = "";
         java.util.Vector DiscardedEntries = new Vector();
         try {
-            java.net.URL myUrl = new java.net.URL(url);
             java.io.InputStream inStream = myUrl.openStream();
             java.io.InputStreamReader inReader = new java.io.InputStreamReader(inStream, encoding);
             // throws UnsupportedEncodingException
