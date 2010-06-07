@@ -87,7 +87,7 @@ public class XMLServices {
      * @param xmlInputString The XML source as a String
      * @return the DOM Document
      */
-    public static Document buildDOMTree(String xmlInputString) {
+    public static Document buildDOMTree(String xmlInputString) throws PapillonBusinessException {
         Reader myReader = new StringReader(xmlInputString);
         return buildDOMTree(new InputSource(myReader));
     }
@@ -98,7 +98,7 @@ public class XMLServices {
      * @param mySource the input source
      * @return the DOM Document
      */
-    public static Document buildDOMTree(InputSource mySource) {
+    public static Document buildDOMTree(InputSource mySource) throws PapillonBusinessException {
         Document contentDocument = null;
 
         try {
@@ -107,11 +107,14 @@ public class XMLServices {
             XMLParsersPool.releaseParser(parser);
         } catch (PapillonBusinessException e) {
             PapillonLogger.writeDebugMsg("ParserConfigurationException: " + e);
+			throw e;
         } catch (org.xml.sax.SAXException saxe) {
             PapillonLogger.writeDebugMsg("org.xml.sax.SAXException: " + saxe);
+			throw new PapillonBusinessException("org.xml.sax.SAXException: ", saxe);
         } catch (java.io.IOException ioe) {
             PapillonLogger.writeDebugMsg("java.io.IOException: " + ioe);
-        }
+ 			throw new PapillonBusinessException("java.io.IOException: ", ioe);
+       }
         if (null == contentDocument) {
             PapillonLogger.writeDebugMsg("DOCUMENT IS NULL !!!! ");
         }

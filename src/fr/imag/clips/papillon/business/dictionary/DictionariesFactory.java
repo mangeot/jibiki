@@ -305,7 +305,7 @@ public class DictionariesFactory {
         */
     // FIXME: Most attributes should belong to the dml name space. Currently, only the lang attribute do belong to dml...
     public static Dictionary newDictionary(Element dictionary)
-        throws fr.imag.clips.papillon.business.PapillonBusinessException, java.io.IOException {
+        throws fr.imag.clips.papillon.business.PapillonBusinessException {
 			
             // Cette méthode dépend du schéma des dictionnaires.
             String fullname = dictionary.getAttribute("fullname");
@@ -468,7 +468,13 @@ public class DictionariesFactory {
                             boolean isDefaultXsl = (null != isDefault && isDefault.equals("true"));
                             String isExternal = stylesheet.getAttribute(EXTERNAL_ATTRIBUTE);
                             boolean isExternalXsl = (null != isExternal && isExternal.equals("true"));
-                            URL resultURL = new URL(fileURL,ref);
+							URL resultURL = null;
+							try  {
+								resultURL = new URL(fileURL,ref);
+							}
+							catch (java.io.IOException ex) {
+								throw new PapillonBusinessException("java.io.IOException", ex);
+							}
                             String xslString = fr.imag.clips.papillon.business.xsl.XslSheetFactory.parseXslSheet(resultURL);
                             XslSheetFactory.AddXslSheet(name, myDict.getName(), null , null, xslString, isDefaultXsl, isExternalXsl);
                         }
@@ -479,7 +485,13 @@ public class DictionariesFactory {
                             for (int i=0; i<links.getLength(); i++) {
                                 Element tempElt = (Element)links.item(i);
                                 String ref = tempElt.getAttributeNS(XLINK_URI,HREF_ATTRIBUTE);
-                                URL resultURL = new URL(fileURL,ref);
+								URL resultURL = null;
+								try  {
+									resultURL = new URL(fileURL,ref);
+								}
+								catch (java.io.IOException ex) {
+									throw new PapillonBusinessException("java.io.IOException", ex);
+								}
                                 VolumesFactory.parseVolumeMetadata(myDict, resultURL, loadEntries, logContribs);
                             }
                         }
@@ -487,9 +499,12 @@ public class DictionariesFactory {
                 }
 				
             }
-            catch(Exception ex) {
-                throw new PapillonBusinessException("Exception in parseDictionaryMetadata()", ex);
+            catch (PapillonBusinessException pbex) {
+                throw pbex;
             }
+           // catch(Exception ex) {
+             //   throw new PapillonBusinessException("Exception in parseDictionaryMetadata()", ex);
+            //}
             return myDict;
         }
 	

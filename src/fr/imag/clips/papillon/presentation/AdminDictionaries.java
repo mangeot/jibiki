@@ -257,7 +257,16 @@ public class AdminDictionaries extends PapillonBasePO {
     protected String handleDictionaryAddition(HttpPresentationRequest req) throws PapillonBusinessException, HttpPresentationException, java.net.MalformedURLException {
         String userMessage;
         String urlString = req.getParameter(AdminDictionariesXHTML.NAME_url);
-        URL myURL = new URL(urlString);
+		URL myURL = null;
+		try  {
+			myURL = new URL(urlString);
+		}
+		catch (java.io.IOException ex) {
+			userMessage = "Problems while adding the specified dictionary. The following URL: "+ urlString +" is malformed\n";
+            userMessage += ex.getMessage();
+			ex.printStackTrace();
+		}
+		
         PapillonLogger.writeDebugMsg(myURL.toString());
 		String parseVolumesString = req.getParameter(AdminDictionariesXHTML.NAME_AddVolumes);
 		boolean parseVolumes = (parseVolumesString!=null && !parseVolumesString.equals(""));
@@ -281,8 +290,8 @@ public class AdminDictionaries extends PapillonBasePO {
             ((DBTransaction) CurrentDBTransaction.get()).commit();
         } catch (Exception e) {
             userMessage = "Problems while adding the specified dictionary.\n";
-            userMessage = userMessage + e.getMessage();
-            userMessage = userMessage + "\nAll changes to the database have been rolled back.";
+            userMessage += e.getMessage();
+            userMessage += "\nAll changes to the database have been rolled back.";
 			e.printStackTrace();
             try {
                 ((DBTransaction) CurrentDBTransaction.get()).rollback();
