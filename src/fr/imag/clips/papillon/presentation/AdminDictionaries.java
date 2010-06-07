@@ -280,8 +280,13 @@ public class AdminDictionaries extends PapillonBasePO {
 					userMessage = "Ignoring dictionary";
 				}
 				// everything was correct, commit the transaction...
-				((DBTransaction) CurrentDBTransaction.get()).commit();
-			} catch (Exception e) {
+				try {
+					((DBTransaction) CurrentDBTransaction.get()).commit();
+				} catch (java.sql.SQLException sqle) {
+					PapillonLogger.writeDebugMsg("AdminDictionaries: SQLException while commiting the transaction.");
+					sqle.printStackTrace();
+				}
+			} catch (PapillonBusinessException e) {
 				userMessage = "Problems while adding the specified dictionary.\n";
 				userMessage += e.getMessage();
 				userMessage += "\nAll changes to the database have been rolled back.";
