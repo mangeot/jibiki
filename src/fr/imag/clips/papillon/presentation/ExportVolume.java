@@ -428,6 +428,7 @@ public class ExportVolume extends PapillonBasePO {
 	throws fr.imag.clips.papillon.business.PapillonBusinessException,
 	java.io.IOException,
 	PapillonPresentationException {
+		// PapillonLogger.writeDebugMsg("absoluteDir:"+getExportAbsoluteDir());
 		java.io.File fileDir = new java.io.File(getExportAbsoluteDir());
 		fileDir.mkdirs();
 		

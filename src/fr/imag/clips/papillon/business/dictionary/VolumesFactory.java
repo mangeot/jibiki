@@ -1378,7 +1378,7 @@ public class VolumesFactory {
 		int count = volume.getCount();
 		int delta = 20; // buffer limit
 		PapillonLogger.writeDebugMsg("Volume : " + volume.getName() + " - " + count + " entries");
-		
+		IndexFactory.truncateIndexTable(volume);
 		//
 		for (int i = 0; i < count; i = i + delta) {
 			
