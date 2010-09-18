@@ -306,7 +306,7 @@ public class DictionariesFactory {
     // FIXME: Most attributes should belong to the dml name space. Currently, only the lang attribute do belong to dml...
     public static Dictionary newDictionary(Element dictionary)
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
-			
+						
             // Cette méthode dépend du schéma des dictionnaires.
             String fullname = dictionary.getAttribute("fullname");
             String name = dictionary.getAttribute("name");
@@ -446,7 +446,11 @@ public class DictionariesFactory {
                 // on recupere l'element dictionary
                 Element dictionary;
                 dictionary=(Element)docXml.getElementsByTagName(DICTIONARY_TAG).item(0);
-				
+			
+				if (dictionary==null) {
+					throw new fr.imag.clips.papillon.business.PapillonBusinessException("Error: the XML file does not begin with the tag: " + DICTIONARY_TAG + "!");
+				}
+							
                 // ajout du dico ds la table.
                 myDict = DictionariesFactory.newDictionary(dictionary);
                 if (null != myDict) {

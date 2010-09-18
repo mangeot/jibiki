@@ -87,8 +87,8 @@ public class GenerateTemplate {
 		"</head>\n" +
 		"<body>\n" +
 		"<form  action=\"HandleEntryModifications.po\" method=\"post\" accept-charset=\"utf-8\" enctype=\"application/x-www-form-urlencoded\" xml:lang=\"en\" lang=\"en\" d:lang=\"eng\">\n" +
-		"<h1 style=\"text-align:center\">Edition interface</h1>\n" +
-		"<div name=\"" + UITemplates.EDIT_ENTRY_INTERFACE + "\" id=\"" + UITemplates.DEFAULT_FORM  + "\"  type=\"" + UITemplates.DEFAULT_TYPE  + "\" >\n";
+		"<div name=\"" + UITemplates.EDIT_ENTRY_INTERFACE + "\" id=\"" + UITemplates.DEFAULT_FORM  + "\"  type=\"" + UITemplates.DEFAULT_TYPE  + "\" >\n" +
+		"<h1 style=\"text-align:center\">Edition interface</h1>\n";
 	
 	protected final static String xmlFooter = "</div>\n" +
 		"</form>\n" +

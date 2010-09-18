@@ -572,6 +572,9 @@ public class VolumesFactory {
                 String virtualString = volume.getAttribute(VIRTUAL_ATTRIBUTE);
                 virtual = (virtualString != null && virtualString.equals("true"));
             }
+			else {
+				throw new fr.imag.clips.papillon.business.PapillonBusinessException("Error: the XML file does not begin with the tag: " + VOLUME_TAG + "!");
+			}
 
             // ajout du volume ds la table.
             resVolume = VolumesFactory.newVolume(dict.getName(), volume, fileURL);

@@ -106,14 +106,14 @@ public class XMLServices {
             contentDocument = parser.parse(mySource);
             XMLParsersPool.releaseParser(parser);
         } catch (org.xml.sax.SAXException saxe) {
-            PapillonLogger.writeDebugMsg("buildDOMTree: org.xml.sax.SAXException: " + saxe);
-			throw new PapillonBusinessException("buildDOMTree: org.xml.sax.SAXException: ", saxe);
+            PapillonLogger.writeDebugMsg("buildDOMTree: org.xml.sax.SAXException" + saxe);
+			throw new PapillonBusinessException("buildDOMTree: org.xml.sax.SAXException", saxe);
         } catch (java.io.IOException ioe) {
-            PapillonLogger.writeDebugMsg("buildDOMTree: java.io.IOException: " + ioe);
- 			throw new PapillonBusinessException("buildDOMTree: java.io.IOException: ", ioe);
+            PapillonLogger.writeDebugMsg("buildDOMTree: java.io.IOException" + ioe);
+ 			throw new PapillonBusinessException("buildDOMTree: java.io.IOException", ioe);
        }
         if (null == contentDocument) {
-            PapillonLogger.writeDebugMsg("DOCUMENT IS NULL !!!! ");
+            PapillonLogger.writeDebugMsg("buildDOMTree: DOCUMENT IS NULL !!!! ");
         }
         return contentDocument;
     }
@@ -131,11 +131,11 @@ public class XMLServices {
             contentDocument = parser.parse(url);
             XMLParsersPool.releaseParser(parser);
         } catch (org.xml.sax.SAXException saxe) {
-            PapillonLogger.writeDebugMsg("buildDOMTree: org.xml.sax.SAXException: " + saxe);
-			throw new PapillonBusinessException("buildDOMTree: org.xml.sax.SAXException: ", saxe);
+            PapillonLogger.writeDebugMsg("buildDOMTree from "+ url + " : org.xml.sax.SAXException" + saxe);
+			throw new PapillonBusinessException("buildDOMTree from "+ url + " : org.xml.sax.SAXException", saxe);
         } catch (java.io.IOException ioe) {
-            PapillonLogger.writeDebugMsg("buildDOMTree: java.io.IOException: " + ioe);
- 			throw new PapillonBusinessException("buildDOMTree: java.io.IOException: ", ioe);
+            PapillonLogger.writeDebugMsg("buildDOMTree from "+ url + " : java.io.IOException" + ioe);
+ 			throw new PapillonBusinessException("buildDOMTree from "+ url + " : java.io.IOException", ioe);
 		}
         return contentDocument;
     }
@@ -215,7 +215,7 @@ public class XMLServices {
                 res = myStringWriter.toString();
             }
             catch (java.io.IOException ioe) {
-                PapillonLogger.writeDebugMsg("NodeToString: java.io.IOException: " + ioe);
+                PapillonLogger.writeDebugMsg("NodeToString: java.io.IOException" + ioe);
             }
         }
         return res;
@@ -239,7 +239,7 @@ public class XMLServices {
                 res = myStringWriter.toString();
             }
             catch (java.io.IOException ioe) {
-                PapillonLogger.writeDebugMsg("NodeToString: java.io.IOException: " + ioe);
+                PapillonLogger.writeDebugMsg("NodeToString: java.io.IOException" + ioe);
             }
         }
         return res;
@@ -259,7 +259,7 @@ public class XMLServices {
                 res = myStringWriter.toString();
             }
             catch (java.io.IOException ioe) {
-                PapillonLogger.writeDebugMsg("NodeToString: java.io.IOException: " + ioe);
+                PapillonLogger.writeDebugMsg("NodeToString: java.io.IOException" + ioe);
             }
         }
         return res;
