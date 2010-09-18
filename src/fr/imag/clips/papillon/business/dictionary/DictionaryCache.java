@@ -97,7 +97,7 @@ public class DictionaryCache {
             try {
                 
                 //
-                return dictionaryCacheByHandle.values();
+                return dictionaryCache.values();
                 
             } catch(Exception ex) {
                 throw new PapillonBusinessException("Exception in getDictionariesInCache()", ex);

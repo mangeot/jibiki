@@ -163,7 +163,7 @@ public class VolumeCache {
             try {
                 
                 //
-                Collection collection = volumeCacheByHandle.values();
+                Collection collection = volumeCache.values();
                 
                 //
                 if (collection == null) {

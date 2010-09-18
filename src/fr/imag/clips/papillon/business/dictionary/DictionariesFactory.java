@@ -549,7 +549,9 @@ public class DictionariesFactory {
     public static Collection getDictionariesArray()
         throws PapillonBusinessException {
             try {
-                return DictionaryCache.getDictionariesInCache();
+                Collection dictionaries = DictionaryCache.getDictionariesInCache();
+				//Collection.sort(dictionaries,new fr.imag.clips.papillon.business.utility.DictionaryComparator());
+				return dictionaries;
             }catch(Exception ex) {
                 throw new PapillonBusinessException("Exception in getDictionariesArray()", ex);
             }

@@ -132,7 +132,7 @@
 		A30722980EC89B2000733910 /* AuthorComparator.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = AuthorComparator.java; sourceTree = "<group>"; };
 		A30722990EC89B2000733910 /* CreationDateComparator.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = CreationDateComparator.java; sourceTree = "<group>"; };
 		A307229A0EC89B2000733910 /* Email.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = Email.java; sourceTree = "<group>"; };
-		A307229B0EC89B2000733910 /* HeadwordComparator.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = HeadwordComparator.java; sourceTree = "<group>"; };
+		A307229B0EC89B2000733910 /* DictionaryComparator.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = DictionaryComparator.java; sourceTree = "<group>"; };
 		A307229C0EC89B2000733910 /* HomographNumberComparator.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = HomographNumberComparator.java; sourceTree = "<group>"; };
 		A307229D0EC89B2000733910 /* OptimizedVolumeEntriesIndexer.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = OptimizedVolumeEntriesIndexer.java; sourceTree = "<group>"; };
 		A307229E0EC89B2000733910 /* OriginalContributionIdComparator.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = OriginalContributionIdComparator.java; sourceTree = "<group>"; };
@@ -1299,6 +1299,8 @@
 		A30727780EC89B2D00733910 /* multilingual-sort.sql */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "multilingual-sort.sql"; sourceTree = "<group>"; };
 		A30727790EC89B2D00733910 /* restore_database */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = restore_database; sourceTree = "<group>"; };
 		A30998561121A7BC007DAA26 /* ara */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ara; sourceTree = "<group>"; };
+		A31151A212452A780042BBC6 /* VolumeComparator.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = VolumeComparator.java; sourceTree = "<group>"; };
+		A31151A312452A800042BBC6 /* HeadwordComparator.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = HeadwordComparator.java; sourceTree = "<group>"; };
 		A3216DE90ED17C22009BC773 /* LexalpEditEntryInit.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = LexalpEditEntryInit.xhtml; sourceTree = "<group>"; };
 		A3376029100241C4002281AF /* MotamotPostUpdateProcessor.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = MotamotPostUpdateProcessor.java; sourceTree = "<group>"; };
 		A38F4F281021A79900E1B105 /* MotamotContent.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MotamotContent.xmlc; sourceTree = "<group>"; };
@@ -1663,7 +1665,8 @@
 				A30722980EC89B2000733910 /* AuthorComparator.java */,
 				A30722990EC89B2000733910 /* CreationDateComparator.java */,
 				A307229A0EC89B2000733910 /* Email.java */,
-				A307229B0EC89B2000733910 /* HeadwordComparator.java */,
+				A307229B0EC89B2000733910 /* DictionaryComparator.java */,
+				A31151A312452A800042BBC6 /* HeadwordComparator.java */,
 				A307229C0EC89B2000733910 /* HomographNumberComparator.java */,
 				A307229D0EC89B2000733910 /* OptimizedVolumeEntriesIndexer.java */,
 				A307229E0EC89B2000733910 /* OriginalContributionIdComparator.java */,
@@ -1673,6 +1676,7 @@
 				A30722A20EC89B2000733910 /* StatusComparator.java */,
 				A30722A30EC89B2000733910 /* StringNormalizer.java */,
 				A30722A40EC89B2000733910 /* Utility.java */,
+				A31151A212452A780042BBC6 /* VolumeComparator.java */,
 			);
 			path = utility;
 			sourceTree = "<group>";

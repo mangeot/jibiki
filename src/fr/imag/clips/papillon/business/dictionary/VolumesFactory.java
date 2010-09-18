@@ -753,7 +753,7 @@ public class VolumesFactory {
                 Collection volumesByTarget = VolumeCache.getVolumesInCacheByTargetLanguage(target);
                 volumes.retainAll(volumesByTarget);
             }
-
+			//Collection.sort(volumes,new fr.imag.clips.papillon.business.utility.VolumeComparator());
             //
             return volumes;
 
