@@ -588,6 +588,10 @@ div#firefox img {
 	margin-bottom: 10px;
 }
 
+.status {
+	font-size: xx-small;
+}
+
 .option1 {
 	margin-left: 20px;
 }
