@@ -502,6 +502,39 @@ div#firefox img {
     padding-right: 3px;
 }
 
+.motamot-entry {
+    border:1px solid #898989;
+    margin-bottom:5px;
+    margin-top:-1px;
+    padding:7px;
+}
+
+.entry {
+/*	border: 1px solid #898989;*/
+/*	padding: 5px 5px 5px 5px; */
+	background: #F0F0F0;
+}
+
+.finishedEntry {
+	background: #F0F0F0;
+}
+
+.myFinishedEntry {
+	background: #66CCFF;
+}
+
+.modifiedEntry {
+	background: #F0F0F0;
+}
+
+.myNotFinishedEntry {
+	background: #99CCCC;
+}
+
+.notFinishedEntry {
+	background: #F0F0F0;
+}
+
 .translation {
 	/* border: 1px dashed #898989; */
     margin-left:20px;
@@ -518,13 +551,17 @@ div#firefox img {
     padding: 5px 5px 5px 5px;
 }
 
-/* container contribution */
 .level {
-	float:left;
+	border:1px dashed #898989;
+	float:right;
 	background-color: yellow;
 	font-weight: bold;
+	font-size: 0.8em;
 	color: #DD390E;
 }
+
+/* container contribution */
+
 .jibiki_groups {
     border-right: 1px solid #898989;
     padding-right:5px;
@@ -546,7 +583,6 @@ div#firefox img {
 	font-weight: bold;
 	margin-right: 5px;
 }
-
 
 .contribution {
 	margin-bottom: 10px;
