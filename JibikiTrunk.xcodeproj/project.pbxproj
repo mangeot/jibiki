@@ -3400,7 +3400,14 @@
 			isa = PBXProject;
 			buildConfigurationList = A348B7070E7EFB50003F6712 /* Build configuration list for PBXProject "JibikiTrunk" */;
 			compatibilityVersion = "Xcode 3.1";
+			developmentRegion = English;
 			hasScannedForEncodings = 0;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+			);
 			mainGroup = A348B7020E7EFB50003F6712;
 			projectDirPath = "";
 			projectRoot = "";
