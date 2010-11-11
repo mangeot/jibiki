@@ -580,7 +580,7 @@ public class Home
                 if (searchKind.equals(EXACT_MATCH)) {
                     //// CLASSIC SEARCH
                     // Perform the request
-                    Collection qrset = queryReq.findPreviousLexieAndTranslation(volumeName, headword, this.getUser());
+                    Collection qrset = queryReq.findLexieAndTranslation(this.getUser());
                     // Display classic search result
                     XHTMLElement queryResultForm = content.getElementQueryResultForm();
                     Node viewQueryResultNode = ViewQueryResult.createNodeResult(this.getComms(), this.getSessionData(),
@@ -592,42 +592,7 @@ public class Home
                     Integer resSize = (Integer) CurrentRequestContext.get().get("result_size");
 					removeQueryFuzzyResult();
                 }
-                if (searchKind.equals(NEXT_ENTRY) && !headword.equals("")) {
-                    //// CLASSIC SEARCH
-                    // Perform the request
-                    Collection qrset = queryReq.findNextLexieAndTranslation(volumeName, headword, this.getUser());
-                    // Display classic search result
-                    XHTMLElement queryResultForm = content.getElementQueryResultForm();
-                    Node viewQueryResultNode = ViewQueryResult.createNodeResult(this.getComms(), this.getSessionData(),
-																				this.getUrl(), this.getUser(), qrset, qf.getQueryParameter(),
-																				(this.getUser() != null && !this.getUser().isEmpty()));
-                    queryResultForm.appendChild(content.importNode(viewQueryResultNode, true));
-                    queryResultForm.removeAttribute("id");
-					
-                    Integer resSize = (Integer) CurrentRequestContext.get().get("result_size");
-					removeQueryFuzzyResult();
-                }
-                if (searchKind.equals(PREVIOUS_ENTRY)) {
-                    //// CLASSIC SEARCH
-                    // Perform the request
-                    Collection qrset = queryReq.findPreviousLexieAndTranslation(volumeName, headword, this.getUser());
-                    // Display classic search result
-                    XHTMLElement queryResultForm = content.getElementQueryResultForm();
-                    Node viewQueryResultNode = ViewQueryResult.createNodeResult(this.getComms(), this.getSessionData(),
-                            this.getUrl(), this.getUser(), qrset, qf.getQueryParameter(),
-                            (this.getUser() != null && !this.getUser().isEmpty()));
-                    queryResultForm.appendChild(content.importNode(viewQueryResultNode, true));
-                    queryResultForm.removeAttribute("id");
-
-                    Integer resSize = (Integer) CurrentRequestContext.get().get("result_size");
-
-                    if (resSize.intValue() != 0) {
-                        removeQueryFuzzyResult();
-                    } else {
-                        searchKind = FUZZY_MATCH;
-                    }
-                }
-                if (searchKind.equals(FUZZY_MATCH)) {
+                 if (searchKind.equals(FUZZY_MATCH)) {
                     //// FUZZY SEARCH
 
                     // Modify criteria classic -> fuzzy
