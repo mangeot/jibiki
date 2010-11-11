@@ -470,7 +470,7 @@ public class Home
         if (null == searchKind || searchKind.equals("")) {
             searchKind = EXACT_MATCH;
         }
-		PapillonLogger.writeDebugMsg("Search kind: " + searchKind + " action: " + action + " volumeName: " + volumeName + " headword: "+ headword);
+		//PapillonLogger.writeDebugMsg("Search kind: " + searchKind + " action: " + action + " volumeName: " + volumeName + " headword: "+ headword);
         //
         if (action != null && !action.equals("") && volumeName != null && !volumeName.equals(
                 "") && entryHandle != null && !entryHandle.equals("")) {
@@ -547,7 +547,7 @@ public class Home
 				
 				queryReq.addOrCriteriaList(listStatus);
                 if (searchKind.equals(PREVIOUS_ENTRY) && !headword.equals("")) {
- 					PapillonLogger.writeDebugMsg("search previous entry: " + headword+ " in "+ volumeName);
+ 					//PapillonLogger.writeDebugMsg("search previous entry: " + headword+ " in "+ volumeName);
                    //// CLASSIC SEARCH
                     // Perform the request
                     Collection qrset = queryReq.findPreviousLexieAndTranslation(volumeName, headword, this.getUser());
@@ -563,7 +563,7 @@ public class Home
 					removeQueryFuzzyResult();
                 }
                 if (searchKind.equals(NEXT_ENTRY) && !headword.equals("")) {
-					PapillonLogger.writeDebugMsg("search next entry: " + headword+ " in "+ volumeName);
+					//PapillonLogger.writeDebugMsg("search next entry: " + headword+ " in "+ volumeName);
                     //// CLASSIC SEARCH
                     // Perform the request
                     Collection qrset = queryReq.findNextLexieAndTranslation(volumeName, headword, this.getUser());
