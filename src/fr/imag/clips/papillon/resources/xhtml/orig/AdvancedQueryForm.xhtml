@@ -51,10 +51,20 @@
                     <img id="plus" onclick="addOrRemoveCriterion(this.id, '+');" src="media/plus.jpg" alt="+" width="15"/>
                     <select id="Facet" name="FACET" onchange="hideOrNotSourceLang(value, name);" >
                       <option value="cdm-headword" label="Headword">Headword</option>
+                      <option value="cdm-headword-variant" label="Variant">Variant</option>
+                      <option value="cdm-writing" label="Writing">Writing</option>
+                      <option value="cdm-pos" label="POS">POS</option>
+                      <option value="cdm-example" label="Example">Example</option>
                       <option value="cdm-definition" label="Definition">Definition</option>
-                      <option value="cdm-modification-author" label="Author">Author</option>
-                      <option value="cdm-modification-date" label="Date">Date</option>
+                      <option value="cdm-contribution-author" label="Created by">Created by</option>
+                      <option value="cdm-contribution-creation-date" label="At (aaaa/mm/jj)">At (aaaa/mm/jj)</option>
+                      <option value="cdm-modification-author" label="Modified by">Modified by</option>
+
+                      <option value="cdm-modification-date" label="At (aaaa/mm/jj)">At (aaaa/mm/jj)</option>
                       <option value="cdm-contribution-status" label="Status">Status</option>
+                      <option value="cdm-entry-id" label="Entry id">Entry id</option>
+                      <option value="cdm-contribution-id" label="Contrib id">Contrib id</option>
+                      <option value="cdm-contribution-group" label="Level">Level</option>
                     </select>
                     <select id="Operator" name="OPERATOR" >
                       <option value="0" label="is">is</option>
