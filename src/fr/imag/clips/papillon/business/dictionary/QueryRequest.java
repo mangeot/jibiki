@@ -409,7 +409,7 @@ import java.util.Vector;
          */
         public Collection findPreviousLexieAndTranslation(String volumeName, String headword, User user)  throws PapillonBusinessException {
             try {
-				//PapillonLogger.writeDebugMsg("findPreviousLexieAndTranslation of " + headword + " in " + volumeName);
+				PapillonLogger.writeDebugMsg("findPreviousLexieAndTranslation of " + headword + " in " + volumeName);
 				ArrayList lexies = new ArrayList();
 				VolumeEntry tempEntry = VolumeEntriesFactory.findPreviousEntryByHeadword(volumeName, headword);
 				if (null != tempEntry) {
@@ -437,7 +437,7 @@ import java.util.Vector;
          */
         public Collection findNextLexieAndTranslation(String volumeName, String headword, User user)  throws PapillonBusinessException {
             try {
-				//PapillonLogger.writeDebugMsg("findPreviousLexieAndTranslation of " + headword + " in " + volumeName);
+				PapillonLogger.writeDebugMsg("findPreviousLexieAndTranslation of " + headword + " in " + volumeName);
 				ArrayList lexies = new ArrayList();
 				VolumeEntry tempEntry = VolumeEntriesFactory.findNextEntryByHeadword(volumeName, headword);
 				if (null != tempEntry) {

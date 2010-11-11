@@ -547,7 +547,8 @@ public class Home
 				
 				queryReq.addOrCriteriaList(listStatus);
                 if (searchKind.equals(PREVIOUS_ENTRY) && !headword.equals("")) {
-                    //// CLASSIC SEARCH
+ 					PapillonLogger.writeDebugMsg("search previous entry: " + headword+ " in "+ volumeName);
+                   //// CLASSIC SEARCH
                     // Perform the request
                     Collection qrset = queryReq.findPreviousLexieAndTranslation(volumeName, headword, this.getUser());
                     // Display classic search result
@@ -562,6 +563,7 @@ public class Home
 					removeQueryFuzzyResult();
                 }
                 if (searchKind.equals(NEXT_ENTRY) && !headword.equals("")) {
+					PapillonLogger.writeDebugMsg("search next entry: " + headword+ " in "+ volumeName);
                     //// CLASSIC SEARCH
                     // Perform the request
                     Collection qrset = queryReq.findNextLexieAndTranslation(volumeName, headword, this.getUser());
