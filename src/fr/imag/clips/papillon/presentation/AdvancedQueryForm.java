@@ -392,8 +392,12 @@ public class AdvancedQueryForm {
                 String strategy = AbstractPO.myGetParameter(req, AdvancedQueryFormXHTML.NAME_OPERATOR + "." + Integer.toString(i));
                 
                 //
-                criteria.add("key", "=", key);
-                criteria.add("value", strategy, value);
+				if (key != null && !key.equals("")) {
+					criteria.add("key", "=", key);
+				}
+				if (value != null) {
+					criteria.add("value", strategy, value);
+				}
 				if (language==null) {
 					if (Volume.isDefaultLangCDMElement(key)) {
 						language=Volume.DEFAULT_LANG;
@@ -404,8 +408,9 @@ public class AdvancedQueryForm {
 				}
                 
                 //
-                criteriaList.add(criteria);
-                    
+				if (key != null && !key.equals("") && value != null) {
+					criteriaList.add(criteria);
+				}
             }
         }
         return criteriaList;
