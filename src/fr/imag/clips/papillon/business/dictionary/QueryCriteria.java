@@ -95,6 +95,9 @@ public class QueryCriteria {
         //
         String[] criteria = new String[3];
         criteria[0] = column;
+        if (strategie==null || strategie.equals("")) {
+			strategie = QueryCriteria.EQUAL;
+		}
         if ( strategie.equals(QueryCriteria.EQUAL) ) {
             criteria[1] = QueryBuilder.EQUAL;
             criteria[2] = value; 
