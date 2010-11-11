@@ -117,12 +117,26 @@ public class Actions implements fr.imag.clips.papillon.facelets.api.Actions {
 					edit(myEntry,url,user,editAnchor,duplicateAnchor,deleteAnchor,undeleteAnchor);
 		
 		// (action.equals("HISTORY"))
-					XHTMLAnchorElement viewHistoryEntryAnchor = content.getElementViewHistoryEntryAnchor();
-					viewHistoryEntryAnchor.removeAttribute("id");
-					// FIXME: Create static variable ... VolumeName and EntryHandle ...
-					viewHistoryEntryAnchor.setHref(HistoryURL + "?" + "VolumeName" + "=" + myEntry.getVolumeName() + "&" + "EntryHandle" + "=" + myEntry.getHandle());
-					viewHistoryEntryAnchor.setAttribute("class", "action");
+		XHTMLAnchorElement viewHistoryEntryAnchor = content.getElementViewHistoryEntryAnchor();
+		viewHistoryEntryAnchor.removeAttribute("id");
+		// FIXME: Create static variable ... VolumeName and EntryHandle ...
+		viewHistoryEntryAnchor.setHref(HistoryURL + "?" + "VolumeName" + "=" + myEntry.getVolumeName() + "&" + "EntryHandle" + "=" + myEntry.getHandle());
+		viewHistoryEntryAnchor.setAttribute("class", "action");
 
+		// (action.equals("PREVIOUS"))
+		XHTMLAnchorElement viewPreviousEntryAnchor = content.getElementViewPreviousEntryAnchor();
+		viewPreviousEntryAnchor.removeAttribute("id");
+		// FIXME: Create static variable ... VolumeName and EntryHandle ...
+		viewPreviousEntryAnchor.setHref("?search_type=previous_entry&action=lookup&TARGETS=*ALL*&SOURCE.0=" + myEntry.getSourceLanguage() + "&VOLUME" + "=" + myEntry.getVolumeName() + "&FACETVALUE.0" + "=" + myEntry.getHeadword());
+		viewPreviousEntryAnchor.setAttribute("class", "action");
+		
+		// (action.equals("NEXT"))
+		XHTMLAnchorElement viewNextEntryAnchor = content.getElementViewNextEntryAnchor();
+		viewNextEntryAnchor.removeAttribute("id");
+		// FIXME: Create static variable ... VolumeName and EntryHandle ...
+		viewNextEntryAnchor.setHref("?search_type=next_entry&action=lookup&TARGETS=*ALL*&SOURCE.0=" + myEntry.getSourceLanguage() + "&VOLUME" + "=" + myEntry.getVolumeName() + "&FACETVALUE.0" + "=" + myEntry.getHeadword());
+		viewNextEntryAnchor.setAttribute("class", "action");
+		
 		// (action.equals("STATUS"))
 					XHTMLSpanElement entryStatus = content.getElementEntryStatus();
 					entryStatus.removeAttribute("id");
