@@ -395,9 +395,7 @@ public class AdvancedQueryForm {
 				if (key != null && !key.equals("")) {
 					criteria.add("key", "=", key);
 				}
-				if (value != null) {
-					criteria.add("value", strategy, value);
-				}
+				criteria.add("value", strategy, value);
 				if (language==null) {
 					if (Volume.isDefaultLangCDMElement(key)) {
 						language=Volume.DEFAULT_LANG;
