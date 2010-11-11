@@ -103,6 +103,28 @@ public class JibikiXsltExtension {
         }
     }
 	
+	public static String getEntryHeadword(String entryid) throws PapillonBusinessException {
+        try {
+            JibikiContext context = CurrentRequestContext.get();
+            VolumeEntry ve = VolumeEntriesFactory.findEntryByEntryId(((PapillonSessionData) context.get("sessionData")).getUser(),entryid);
+			
+            return ve.getHeadword();
+        } catch (NullPointerException e) {
+            return "";
+        }
+    }
+	
+	public static String getEntryVolume(String entryid) throws PapillonBusinessException {
+        try {
+            JibikiContext context = CurrentRequestContext.get();
+            VolumeEntry ve = VolumeEntriesFactory.findEntryByEntryId(((PapillonSessionData) context.get("sessionData")).getUser(),entryid);
+			
+            return ve.getVolumeName();
+        } catch (NullPointerException e) {
+            return "";
+        }
+    }
+	
     public static String getEntryModificationAuthor(String entryid) throws PapillonBusinessException {
         try {
             JibikiContext context = CurrentRequestContext.get();
