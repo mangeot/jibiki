@@ -410,7 +410,16 @@ import java.util.Vector;
         public Collection findPreviousLexieAndTranslation(String volumeName, String headword, User user)  throws PapillonBusinessException {
             try {
 				ArrayList lexies = new ArrayList();
-				lexies.add(VolumeEntriesFactory.findPreviousEntryByHeadword(volumeName, headword));
+				VolumeEntry tempEntry = VolumeEntriesFactory.findPreviousEntryByHeadword(volumeName, headword);
+				if (null != tempEntry) {
+					VolumeEntriesFactory.cutEntryCache();
+					// Add the volume entry in the request context.
+					CurrentRequestContext.get().set(tempEntry.getEntryId(), tempEntry);
+					EntryCache.putEntryInCache(tempEntry);
+					QueryResult queryResult = new QueryResult(QueryResult.UNIQUE_RESULT, tempEntry);
+					lexies.add(queryResult);
+				}
+				
                 // If no target languages, do not merge axies.
                 return DictionariesFactory.expandResults((Collection)lexies, this.getTargets(), user, this.getTargets().size() > 0);
             } catch(Exception ex) {
@@ -428,7 +437,15 @@ import java.util.Vector;
         public Collection findNextLexieAndTranslation(String volumeName, String headword, User user)  throws PapillonBusinessException {
             try {
 				ArrayList lexies = new ArrayList();
-				lexies.add(VolumeEntriesFactory.findNextEntryByHeadword(volumeName, headword));
+				VolumeEntry tempEntry = VolumeEntriesFactory.findNextEntryByHeadword(volumeName, headword);
+				if (null != tempEntry) {
+					VolumeEntriesFactory.cutEntryCache();
+					// Add the volume entry in the request context.
+					CurrentRequestContext.get().set(tempEntry.getEntryId(), tempEntry);
+					EntryCache.putEntryInCache(tempEntry);
+					QueryResult queryResult = new QueryResult(QueryResult.UNIQUE_RESULT, tempEntry);
+					lexies.add(queryResult);
+				}
                 // If no target languages, do not merge axies.
                 return DictionariesFactory.expandResults((Collection)lexies, this.getTargets(), user, this.getTargets().size() > 0);
             } catch(Exception ex) {
