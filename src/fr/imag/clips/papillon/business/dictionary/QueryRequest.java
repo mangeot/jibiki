@@ -399,7 +399,43 @@ import java.util.Vector;
                 throw new PapillonBusinessException("Exception in findLexieAndTranslation() ", ex);
             }
         }
-        
+
+		/**
+         * Find lexies and their translations
+         * @param user      add contraints to find lexies FIXME: not use actually 
+         *
+         * @return QueryResult arraylist
+         * @exception PapillonBusinessException if database error
+         */
+        public Collection findPreviousLexieAndTranslation(String volumeName, String headword, User user)  throws PapillonBusinessException {
+            try {
+				ArrayList lexies = new ArrayList();
+				lexies.add(VolumeEntriesFactory.findPreviousEntryByHeadword(volumeName, headword));
+                // If no target languages, do not merge axies.
+                return DictionariesFactory.expandResults((Collection)lexies, this.getTargets(), user, this.getTargets().size() > 0);
+            } catch(Exception ex) {
+                throw new PapillonBusinessException("Exception in findLexieAndTranslation() ", ex);
+            }
+        }
+
+		/**
+         * Find lexies and their translations
+         * @param user      add contraints to find lexies FIXME: not use actually 
+         *
+         * @return QueryResult arraylist
+         * @exception PapillonBusinessException if database error
+         */
+        public Collection findNextLexieAndTranslation(String volumeName, String headword, User user)  throws PapillonBusinessException {
+            try {
+				ArrayList lexies = new ArrayList();
+				lexies.add(VolumeEntriesFactory.findNextEntryByHeadword(volumeName, headword));
+                // If no target languages, do not merge axies.
+                return DictionariesFactory.expandResults((Collection)lexies, this.getTargets(), user, this.getTargets().size() > 0);
+            } catch(Exception ex) {
+                throw new PapillonBusinessException("Exception in findLexieAndTranslation() ", ex);
+            }
+        }
+		
         
         /**
          * Find all lexies in one volume

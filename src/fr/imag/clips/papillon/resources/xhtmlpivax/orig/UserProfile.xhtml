@@ -1,0 +1,431 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <title>Papillon</title>
+    </head>
+    <body>
+        <div id="Formulaire" lang="en" xml:lang="en">
+            <h1 class="title"><span id="UserName">Name</span> Profile</h1>
+            
+            
+            <!-- delete existing quick search -->
+            <h4>Quick Search Alias</h4>
+            <form action="UserProfile.po" method="post">
+                <table width="600" border="1" cellspacing="0" cellpadding="10" summary="QuickSearchAlias">
+                    <tr>
+                        <th>Existing Quick Search Alias</th>
+                        <th>Owner</th>
+                        <th>Remove</th>
+                        <th>Share type</th>
+                        <th>Share group/user</th>
+                    </tr>
+                    <tr id="searchAliasRow">
+                        <td>
+                            <a id="searchAliasName" name="searchAliasName" href="">name</a>
+                        </td>
+                        <td align="center">
+                            <a id="searchAliasOwner" name="searchAliasOwner">owner</a>
+                        </td>
+                        <td align="center">
+                            <a id="searchAliasRemove" name="searchAliasRemove" href="" onclick="return confirm('Are you sure you want to delete the alias?')">remove</a>
+                        </td>
+                        <td align="center">
+                            <select id="SearchAliasShareType" name="SearchAliasShareType">
+                                <option id="SearchAliasSharePublic" value="public" label="public">public</option>
+                                <option id="SearchAliasShareGroup" value="group" label="group">group</option>
+                                <option id="SearchAliasShareUser" value="user" label="user">user</option>
+                                <option id="SearchAliasSharePrivate" value="private" label="private">private</option>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="text" size="20" id="SearchAliasShareContent" name="SearchAliasShareContent"/>
+                        </td>
+                    </tr>
+                </table>
+                <table border="0">
+                    <tr>
+                        <td>
+                            <input name="QuickSearchUpdate" type="submit" value="Update"/>
+                        </td>    
+                    </tr>
+                </table>    
+            </form>
+            
+            
+            <!-- profile -->
+            <hr/>
+            <h4>User Profile</h4>
+            <form action="UserProfile.po" method="get">
+                <table width="600" border="1" cellspacing="0" cellpadding="10" summary="UserProfile">
+                    <tr>
+                        <th>Profile name</th>
+                        <th>Owner</th>
+                        <th>Remove</th>
+                        <th>Status</th>
+                        <th>Share type</th>
+                        <th>Share group/user</th>
+                    </tr>
+                    <tr id="UserProfileRow">
+                        <td>
+                            <a id="UserProfileName" name="UserProfileName" href="" >name</a>
+                        </td>
+                        <td align="center">
+                            <a id="UserProfileOwner" name="UserProfileOwner" href="">owner</a>
+                        </td>
+                        <td align="center">
+                            <a id="UserProfileRemove" name="UserProfileRemove" href="" onclick="return confirm('Are you sure you want to delete the profile?')">remove</a>
+                        </td>
+                        <td align="center">
+                            <a id="UserProfileStatus" name="UserProfileStatus" href="">active</a>
+                        </td>
+                        <td align="center">
+                            <select id="UserProfileType" name="UserProfileType">
+                                <option id="UserProfileTypePublic" value="public" label="public">public</option>
+                                <option id="UserProfileTypeGroup" value="group" label="group">group</option>
+                                <option id="UserProfileTypeUser" value="user" label="user">user</option>
+                                <option id="UserProfileTypePrivate" value="private" label="private">private</option>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="text" size="20" id="UserProfileContent" name="UserProfileContent"/>
+                        </td>
+                    </tr>
+                </table>
+                <table border="0">
+                    <tr>
+                        <td>
+                            <input type="submit" id="UserProfileUpdate" name="UserProfileUpdate" value="ProfileUpdate"/>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+            
+            <form action="UserProfile.po" method="post">
+                <table width="600" border="0" cellspacing="0" cellpadding="10" summary="UserProfile">
+                    <tr>
+                        <th colspan="2" id="ProfileDetailHeading">Profile detail</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>Name:</b>
+                        </td>
+                        <td>
+                            <input id="ProfileDetailName" name="ProfileDetailName" type="text" size="20" value="" readonly="readonly"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>
+                                <b>Type:</b>
+                            </b>
+                        </td>
+                        <td>
+                            <input id="ProfileDetailType" name="ProfileDetailType" type="text" size="20" value=""/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>
+                                <b>Description:</b>
+                            </b>
+                        </td>
+                        <td>
+                            <input type="text" id="ProfileDetailDescription" name="ProfileDetailDescription" size="20" value=""/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>
+                                <b>Interface:</b>
+                            </b>
+                        </td>
+                        <td>
+                            <table width="600" border="1" cellspacing="0" cellpadding="10" summary="UserProfileDetailInterface">
+                                <tr>
+                                    <td align="center"><b>Adjust</b></td>
+                                    <td colspan="4">
+                                        <select id="UserProfileDetailInterfaceAdjustType" name="UserProfileDetailInterfaceAdjustType">
+                                            <option id="UserProfileDetailInterfaceAdjustTypeAutomatic" value="automatic" label="automatic">automatic</option>
+                                            <option id="UserProfileDetailInterfaceAdjustTypeManual" value="manual" label="manual">manual</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Language</th>
+                                    <th>Column size</th>
+                                    <th>Show</th>
+                                    <th>Remove</th>
+                                    <th>Order</th>
+                                </tr>
+                                <tr id="UserProfileDetailInterfaceRow">
+                                    <td align="center">
+                                        <a id="UserProfileDetailInterfaceLanguage" name="UserProfileDetailInterfaceLanguage" href="">lang</a>
+                                    </td>
+                                    <td align="left">
+                                        <input type="text" size="10" id="UserProfileDetailInterfaceSize" name="UserProfileDetailInterfaceSize" value="20"/>
+                                    </td>
+                                    <td align="center">
+                                        <input type="checkbox" id="UserProfileDetailInterfaceShowHide" name="UserProfileDetailInterfaceShowHide" value="show" checked="checked"/>
+                                    </td>
+                                    <td align="center">
+                                        <a id="UserProfileDetailInterfaceRemove" name="UserProfileDetailInterfaceRemove" href="">remove</a>
+                                    </td>
+                                    <td align="center">
+                                        <table>
+                                            <tr>
+                                                <td align="center"><a id="UserProfileDetailInterfaceUp" name="UserProfileDetailInterfaceUp" href="">up</a></td>
+                                            </tr>
+                                            <tr>
+                                                <td align="center"><a id="UserProfileDetailInterfaceDown" name="UserProfileDetailInterfaceDown" href="">down</a></td>
+                                            </tr>
+                                        </table>    
+                                    </td>
+                                </tr>
+                                
+                                <tr id="UserProfileDetailInterfaceRowNew">
+                                    <td align="left">
+                                        <input type="text" id="UserProfileDetailInterfaceLanguageNew" name="UserProfileDetailInterfaceLanguageNew" value="" size="15"/>
+                                    </td>
+                                    <td align="left">
+                                        <input type="text" size="10" id="UserProfileDetailInterfaceSizeNew" name="UserProfileDetailInterfaceSizeNew" value="20"/>
+                                    </td>
+                                    <td align="center">
+                                        <input type="checkbox" id="UserProfileDetailInterfaceShowHideNew" name="UserProfileDetailInterfaceShowHideNew" value="show" checked="checked"/>
+                                    </td>
+                                    <td align="center">
+                                        <!--a id="UserProfileDetailInterfaceRemove" name="UserProfileDetailInterfaceRemove" href="">remove</a-->
+                                    </td>
+                                    <td align="center">
+                                        <!-- table>
+                                            <tr>
+                                            <td align="center"><a id="UserProfileDetailInterfaceUp" name="UserProfileDetailInterfaceUp" href="">up</a></td>
+                                            </tr>
+                                            <tr>
+                                            <td align="center"><a id="UserProfileDetailInterfaceDown" name="UserProfileDetailInterfaceDown" href="">down</a></td>
+                                            </tr>
+                                            </table -->    
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <input name="ProfileDetailUpdate" type="submit" value="Update"/>
+                            <input name="ProfileDetailReset" type="reset" value="Reset"/>
+                            <input name="ProfileDetailCreate" type="submit" value="Create"/>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+            
+            <hr/>
+            
+            <form action="UserProfile.po" method="post">
+                <!-- change password -->
+                <table width="600" border="0" cellspacing="0" cellpadding="10"
+                    summary="ChangePassword">
+                    <tr>
+                        <th colspan="2">
+                            <h3>Group list</h3>
+                        </th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>Groups:</b>
+                        </td>
+                        <td>
+                            <span id="GroupList">Groups</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th colspan="2">
+                            <h3>Change Your Password</h3>
+                        </th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>Login:</b>
+                        </td>
+                        <td>
+                            <span id="CPLogin">Login</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>
+                                <label for="CPPassword">Current Password:</label>
+                            </b>
+                        </td>
+                        <td>
+                            <input id="CPPassword" name="CPPassword" type="password" size="10"
+                                value=""/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>
+                                <label for="NewPassword">New Password:</label>
+                            </b>
+                        </td>
+                        <td>
+                            <input id="NewPassword" name="NewPassword" type="password" size="10"
+                                value=""/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>
+                                <label for="NewPassword2">Retype New Password:</label>
+                            </b>
+                        </td>
+                        <td>
+                            <input id="NewPassword2" name="NewPassword2" type="password" size="10"
+                                value=""/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <input name="ChangePassword" type="submit" value="Change"/>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+
+            <br/>
+            <!-- change mail addresse -->
+            <form action="UserProfile.po" method="post">
+                <table width="600" border="0" cellspacing="0" cellpadding="10"
+                    summary="ChangeMailAddresse">
+                    <tr>
+                        <th colspan="2">
+                            <h3>Edit Your Name and Email</h3>
+                        </th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>Login:</b>
+                        </td>
+                        <td>
+                            <span id="CELogin">Login</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>
+                                <label for="NameInput">Name:</label>
+                            </b>
+                        </td>
+                        <td>
+                            <input name="Name" id="NameInput" type="text" size="30" value="Name"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>
+                                <label for="EmailInput">Email:</label>
+                            </b>
+                        </td>
+                        <td>
+                            <input name="Email" id="EmailInput" type="text" size="30" value="Email"
+                            />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <input name="ChangeEmail" type="submit" value="Change"/>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+
+            <!-- add user in group -->
+            <form action="UserProfile.po" method="post">
+                <table width="600" border="0" cellspacing="0" cellpadding="10" summary="AddGroup">
+                    <tr>
+                        <th colspan="2">Join or Leave a Group</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>Login:</b>
+                        </td>
+                        <td>
+                            <span id="AGLogin">Login</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>
+                                <label for="Group">Group:</label>
+                            </b>
+                        </td>
+                        <td>
+                            <select id="Group" name="Group">
+                                <option id="GroupOptionTemplate" value="group name"
+                                    label="group name">group name</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>
+                                <label for="GroupPassword">Group Password:</label>
+                            </b>
+                        </td>
+                        <td>
+                            <input id="GroupPassword" name="GroupPassword" type="password" size="10"
+                                value=""/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input name="AddGroup" type="submit" value="Join"/>
+                        </td>
+                        <td>
+                            <input name="DelGroup" type="submit" value="Leave"/>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+
+            <!-- delete existing user -->
+            <form action="UserProfile.po" method="post"
+                onsubmit="return confirm('Are you sure you want to delete the user?')">
+                <table width="600" border="0" cellspacing="0" cellpadding="10" summary="DeleteUser">
+                    <tr>
+                        <th colspan="2">Delete Existing User</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>Login:</b>
+                        </td>
+                        <td>
+                            <span id="DLogin">Login</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>
+                                <label for="DPassword">Password:</label>
+                            </b>
+                        </td>
+                        <td>
+                            <input id="DPassword" name="DPassword" type="password" size="10"
+                                value=""/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <input name="Delete" type="submit" value="Delete"/>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+            
+            
+            
+        </div>
+    </body>
+</html>

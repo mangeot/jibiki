@@ -323,12 +323,12 @@ public class Home
     //protected final static String SOURCE_PARAMETER = "SOURCE";
     protected final static String SOURCE_PARAMETER = "SOURCE.0";
 
-    /**
-     * Description of the Field
-     */
-    protected final static String OFFSET_PARAMETER = "OFFSET";
-
-    /**
+			/**
+			 * Description of the Field
+			 */
+			protected final static String OFFSET_PARAMETER = "OFFSET";
+			
+			    /**
      * Description of the Field
      */
     protected final static String ContributionsURL = "AdminContributions.po";
@@ -384,7 +384,9 @@ public class Home
 
     private static final String SEARCH_TYPE_PARAMETER = "search_type";
     private static final String EXACT_MATCH = "exact_match";
-    private static final String FUZZY_MATCH = "fuzzy_match";
+			private static final String FUZZY_MATCH = "fuzzy_match";
+			private static final String PREVIOUS_ENTRY = "previous_entry";
+			private static final String NEXT_ENTRY = "next_entry";
 
     /**
      *  Description of the Field
@@ -462,10 +464,11 @@ public class Home
         // Retrieve parameters
         String action = myGetParameter(EditEntryInitFactory.ACTION_PARAMETER);
         String volumeName = myGetParameter(EditEntryInitFactory.VOLUME_PARAMETER);
-        String entryHandle = myGetParameter(EditEntryInitFactory.HANDLE_PARAMETER);
+		String entryHandle = myGetParameter(EditEntryInitFactory.HANDLE_PARAMETER);
+		headword = myGetParameter(HEADWORD_PARAMETER);
         String searchKind = myGetParameter(SEARCH_TYPE_PARAMETER);
         if (null == searchKind || searchKind.equals("")) {
-            searchKind = "exact_match";
+            searchKind = EXACT_MATCH;
         }
 
         //
@@ -543,10 +546,40 @@ public class Home
                 listStatus.add(criteriaStatus);
 				
 				queryReq.addOrCriteriaList(listStatus);
-                if (searchKind.equals(EXACT_MATCH)) {
+                if (searchKind.equals(PREVIOUS_ENTRY) && !headword.equals("")) {
                     //// CLASSIC SEARCH
                     // Perform the request
-                    Collection qrset = queryReq.findLexieAndTranslation(this.getUser());
+                    Collection qrset = queryReq.findPreviousLexieAndTranslation(volumeName, headword, this.getUser());
+                    // Display classic search result
+                    XHTMLElement queryResultForm = content.getElementQueryResultForm();
+                    Node viewQueryResultNode = ViewQueryResult.createNodeResult(this.getComms(), this.getSessionData(),
+																				this.getUrl(), this.getUser(), qrset, qf.getQueryParameter(),
+																				(this.getUser() != null && !this.getUser().isEmpty()));
+                    queryResultForm.appendChild(content.importNode(viewQueryResultNode, true));
+                    queryResultForm.removeAttribute("id");
+					
+                    Integer resSize = (Integer) CurrentRequestContext.get().get("result_size");
+					removeQueryFuzzyResult();
+                }
+                if (searchKind.equals(NEXT_ENTRY) && !headword.equals("")) {
+                    //// CLASSIC SEARCH
+                    // Perform the request
+                    Collection qrset = queryReq.findNextLexieAndTranslation(volumeName, headword, this.getUser());
+                    // Display classic search result
+                    XHTMLElement queryResultForm = content.getElementQueryResultForm();
+                    Node viewQueryResultNode = ViewQueryResult.createNodeResult(this.getComms(), this.getSessionData(),
+																				this.getUrl(), this.getUser(), qrset, qf.getQueryParameter(),
+																				(this.getUser() != null && !this.getUser().isEmpty()));
+                    queryResultForm.appendChild(content.importNode(viewQueryResultNode, true));
+                    queryResultForm.removeAttribute("id");
+					
+                    Integer resSize = (Integer) CurrentRequestContext.get().get("result_size");
+					removeQueryFuzzyResult();
+                }
+                if (searchKind.equals(PREVIOUS_ENTRY)) {
+                    //// CLASSIC SEARCH
+                    // Perform the request
+                    Collection qrset = queryReq.findPreviousLexieAndTranslation(volumeName, headword, this.getUser());
                     // Display classic search result
                     XHTMLElement queryResultForm = content.getElementQueryResultForm();
                     Node viewQueryResultNode = ViewQueryResult.createNodeResult(this.getComms(), this.getSessionData(),

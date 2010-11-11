@@ -1303,7 +1303,138 @@ public class VolumeEntriesFactory {
         return resultEntry;
     }
 
+	/**
+	 * The findPreviousEntryByHeadword method performs a database query to
+     * return a VolumeEntry
+     *
+     * @param id, the object id of the entries table.
+     * @return the corresponding VolumeEntry
+     * @exception PapillonBusinessException
+     *    if there is a problem retrieving message.
+     */
+	//select value from idxdelafra where key='cdm-headword' and msort<multilingual_sort('fra','essai') order by msort desc limit 2;
+	
+    public static VolumeEntry findPreviousEntryByHeadword(String volumeName, String headword)
+	throws PapillonBusinessException {
+		Volume volume;
+		Dictionary dict;
+		try {
+			volume = VolumesFactory.getVolumeByName(volumeName);
+			dict = DictionariesFactory.getDictionaryByName(volume.getDictname());
+		}
+		catch(Exception ex) {
+			return null;
+		}
+		Vector theEntries = findPreviousIndexEntriesByHeadword(volume.getIndexDbname(), volume.getSourceLanguage() , headword);
+		if (theEntries != null && theEntries.size()>0) {
+			int entryId = ((Index)theEntries.firstElement()).getEntryId();
+			return findEntryByEntryId(dict, volume, ""+entryId);
+		}
+		else {
+			return null;
+		}
+	}
+	
+	protected static Vector findPreviousIndexEntriesByHeadword(String indexTableName, String sourceLanguage, String headword) throws PapillonBusinessException {
+		Vector theEntries = new Vector();
+		if (null != indexTableName) {
+			try {
+				com.lutris.dods.builder.generator.query.RDBColumn keyColumn = IndexDO.getKeyColumn(indexTableName);
+				com.lutris.dods.builder.generator.query.RDBColumn langColumn = IndexDO.getLangColumn(indexTableName);
+				com.lutris.dods.builder.generator.query.RDBColumn valueColumn = IndexDO.getValueColumn(indexTableName);
+				IndexQuery query = new IndexQuery(indexTableName, CurrentDBTransaction.get());
+				//fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Index request table: " + indexTableName);
+				
+				query.getQueryBuilder().addWhere(keyColumn, Volume.CDM_headword, QueryBuilder.EQUAL);
+				query.getQueryBuilder().addWhere(MSORT_FIELD + " < " + "multilingual_sort('" + sourceLanguage + "','" + headword + "')");
+				query.getQueryBuilder().setMaxRows(10);
+				query.getQueryBuilder().addOrderByColumn(MSORT_FIELD,ORDER_DESCENDING);
+				// debug
+				//query.getQueryBuilder().debug();
+				
+				IndexDO[] DOarray = query.getDOArray();
+				if (null != DOarray) {
+					for (int j=0; j < DOarray.length; j++) {
+						Index tempIndex = new Index(DOarray[j]);
+						theEntries.add(tempIndex);
+					}
+				}
+			}
+			catch(Exception ex) {
+				throw new PapillonBusinessException("Exception in getIndexEntriesVector()", ex);
+			}
+		}
+		return theEntries;
+	}
+	
+	
+    /**
+	 * The findNextEntryByHeadword method performs a database query to
+     * return a VolumeEntry
+     *
+     * @param id, the object id of the entries table.
+     * @return the corresponding VolumeEntry
+     * @exception PapillonBusinessException
+     *    if there is a problem retrieving message.
+     */
+	//select value from idxdelafra where key='cdm-headword' and msort>multilingual_sort('fra','essai') order by msort limit 2;
 
+    public static VolumeEntry findNextEntryByHeadword(String volumeName, String headword)
+	throws PapillonBusinessException {
+		Volume volume;
+		Dictionary dict;
+		try {
+			volume = VolumesFactory.getVolumeByName(volumeName);
+			dict = DictionariesFactory.getDictionaryByName(volume.getDictname());
+		}
+		catch(Exception ex) {
+			return null;
+		}
+		Vector theEntries = findNextIndexEntriesByHeadword(volume.getIndexDbname(), volume.getSourceLanguage() , headword);
+		if (theEntries != null && theEntries.size()>0) {
+			int entryId = ((Index)theEntries.firstElement()).getEntryId();
+			return findEntryByEntryId(dict, volume, ""+entryId);
+		}
+		else {
+			return null;
+		}
+	}
+	
+	protected static Vector findNextIndexEntriesByHeadword(String indexTableName, String sourceLanguage, String headword) throws PapillonBusinessException {
+			Vector theEntries = new Vector();
+			if (null != indexTableName) {
+				try {
+					com.lutris.dods.builder.generator.query.RDBColumn keyColumn = IndexDO.getKeyColumn(indexTableName);
+					com.lutris.dods.builder.generator.query.RDBColumn langColumn = IndexDO.getLangColumn(indexTableName);
+					com.lutris.dods.builder.generator.query.RDBColumn valueColumn = IndexDO.getValueColumn(indexTableName);
+					IndexQuery query = new IndexQuery(indexTableName, CurrentDBTransaction.get());
+					//fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Index request table: " + indexTableName);
+					
+					query.getQueryBuilder().addWhere(keyColumn, Volume.CDM_headword, QueryBuilder.EQUAL);
+					query.getQueryBuilder().addWhere(MSORT_FIELD + " > " + "multilingual_sort('" + sourceLanguage + "','" + headword + "')");
+					query.getQueryBuilder().setMaxRows(10);
+					//String order = if (order==null || !order.equals(ORDER_DESCENDING)) {
+					query.getQueryBuilder().addOrderByColumn(MSORT_FIELD,"");
+					// debug
+					//query.getQueryBuilder().debug();
+					
+					IndexDO[] DOarray = query.getDOArray();
+					if (null != DOarray) {
+						for (int j=0; j < DOarray.length; j++) {
+							Index tempIndex = new Index(DOarray[j]);
+							theEntries.add(tempIndex);
+						}
+					}
+				}
+				catch(Exception ex) {
+					throw new PapillonBusinessException("Exception in getIndexEntriesVector()", ex);
+				}
+			}
+			return theEntries;
+		}
+			
+	
+	
 /**
 * Find Entry by entry Id
  *

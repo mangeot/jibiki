@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <title>PIVAX infinitive loop search interface</title>
+        <link rel="stylesheet" href="css/pivax.css"/>
+        <link rel="stylesheet" href="css/google.css"/>
+    </head>
+    <body>
+        <div id="form" lang="en">
+            <h1>PIVAX infinitive loop search interface</h1>
+            <p>Send to PIVAX <i>(Quick.po)</i> with following parameters by <b>PROGRAM</b>. It
+                sends back a HTML file with result in a pure HTML format in a <b>gradually</b>
+                process, finished by the EOF character.</p>
+            <p>Your program saves this HTML file in your application site and load immediatly it
+                when you need</p> The important parameter is: <br/>
+            <ul>
+                <li> required: source=[3_letters], target=[3_letters], lemma=[true/false],
+                    content=[segment content], volume=[volume name, if you know :), if not PIVAX
+                    will search all volumes with the giving source language] </li>
+                <li> optional: timeout=xxxx(ms), scoremin=aaaa, scoremax=bbbb </li>
+                <li> specified and send by SECTra_w (or other ?): segmentId=abcd, project=EOLSS,
+                    page=num </li>
+            </ul>
+            <br/>
+            <form action="Quick.po" method="post">
+                <!-- Select Volume -->
+                <table width="600" border="0" cellspacing="0" cellpadding="10" summary="autoMatch">
+                    <tr>
+                        <td>Source language: <input name="source" id="source" value="eng"/></td>
+                        <td>Target language: <input name="target" id="target" value="fra"/></td>
+                        <td>Do lemma ? <input type="checkbox" name="lammaParam" id="lammaParam"
+                        /></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">Segment: <input name="content" id="content"
+                            value="stavudine heavy water Arizona trout arsenic alarm system"
+                            size="80"/></td>
+                    </tr>
+                    <tr>
+                        <td> Volume name: <input name="volume" id="volume" value="PIVAX_IATE_eng"/></td>
+                    </tr>
+                    <tr>
+                    	<td>
+                    		User: <input name="user" id="user" value="nguyenht"/>
+                    	</td>
+                    	
+                    	<td>
+                    		Password: <input name="password" id="password" value="khunglong" type="password"/>
+                    	</td>                    	
+                    	<td>
+                    		Score min: <input name="scoremin" id="scoremin" value="1"/>
+                    	</td>
+						<td>
+                    		Score max: <input name="scoremax" id="scoremax" value="5"/>
+                    	</td>
+                    	<td>
+                    		time out: <input name="timeout" id="timeout" value="1000"/>
+                    	</td>
+                    </tr>
+                    <tr>
+                        <td> Project name: <input name="project" id="project" value="EOLSS"/>
+                        </td>
+                        <td> Document name: <input name="document" id="document" value="D2"/>
+                        </td>
+                        <td> Segment ID: <input name="segmentID" id="segmentID" value="21212"/>
+                        </td>
+                        <td> page: <input name="page" id="page" value="5"/>
+                        </td>
+                    </tr>
+                    <tr>
+						<td> Inbox (*): <input name="inbox" id="inbox" value="/workspace/jibiki/pivax/data/Pivax_Purgatory/SECTRA_w/"/>
+                        </td>
+						<td> Outbox (*): <input name="outbox" id="outbox" value="/tmp/eolss_d2/"/>
+                        </td>                    
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <input name="search" type="submit" value="search"/>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+        
+        <div id="result">
+            <table>
+                <tr id="caption" class="caption">
+                    <th>Source</th>
+                    <th>Targets</th>
+                </tr>    
+                <tr id="sourceResult" class="sourceResult">
+                    <td id="sourceInformation" class="sourceInformation">
+                        <!--table id="tableInformation" class="tableInformation">
+                            <tr id="rowInformation" class="rowInformation">
+                                <td id="colInformation" class="colInformation">
+                                    <table id="tableItem" class="tableItem">
+                                        <tr id="captionItem" class="captionItem">
+                                            <th>Name</th>
+                                            <th>Value</th>
+                                        </tr>
+                                        <tr id="contentItem" class="contentItem">
+                                            <td id="contentItemName" class="contentItemName">headword</td>
+                                            <td id="contentItemValue" class="contentItemValue">abc</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td id="colButton" class="colButton">
+                                    <table id="tableButton" class="tableButton">
+                                        <tr>
+                                            <td id="colDel" class="colDel">
+                                                <button class="w5" title="Delete"/>
+                                            </td>
+                                            <td id="colRaise" class="colRaise">
+                                                <button class="w4" title="Vote"/>
+                                            </td>
+                                            <td id="colAdd" class="colAdd">
+                                                <button class="wpb" title="Add"/>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table-->
+                    </td>
+                    <td id="targetInformation" class="targetInformation"> </td>
+                </tr>
+                <tr id="addNewTermForm" style="display:none;" class="addNewTermForm">
+                    <td colspan="2"><input name="addItem" value=""/> <button class="wpb" id="addItemButton"></button></td>
+                </tr>
+            </table>
+            
+            <table id="tableButton" class="tableButton">
+                                        <tr>
+                                            <td id="colDel" class="colDel">
+                                                <button class="w5" title="Delete"/>
+                                            </td>
+                                            <td id="colRaise" class="colRaise">
+                                                <button class="w4" title="Vote"/>
+                                            </td>
+                                            <td id="colAdd" class="colAdd">
+                                                <button class="wpb" title="Add"/>
+                                            </td>
+                                        </tr>
+                                    </table>
+        </div>
+    </body>
+</html>
