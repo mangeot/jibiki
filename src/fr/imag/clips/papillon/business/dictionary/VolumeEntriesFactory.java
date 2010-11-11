@@ -1328,7 +1328,7 @@ public class VolumeEntriesFactory {
 		Vector theEntries = findPreviousIndexEntriesByHeadword(volume.getIndexDbname(), volume.getSourceLanguage() , headword);
 		if (theEntries != null && theEntries.size()>0) {
 			int entryId = ((Index)theEntries.firstElement()).getEntryId();
-			return findEntryByEntryId(dict, volume, ""+entryId);
+			return findEntryByHandle(dict, volume, ""+entryId);
 		}
 		else {
 			return null;
@@ -1393,7 +1393,8 @@ public class VolumeEntriesFactory {
 		Vector theEntries = findNextIndexEntriesByHeadword(volume.getIndexDbname(), volume.getSourceLanguage() , headword);
 		if (theEntries != null && theEntries.size()>0) {
 			int entryId = ((Index)theEntries.firstElement()).getEntryId();
-			return findEntryByEntryId(dict, volume, ""+entryId);
+			PapillonLogger.writeDebugMsg("findNextIndexEntriesByHeadword: " + headword + " " + entryId);
+			return findEntryByHandle(dict, volume, ""+entryId);
 		}
 		else {
 			return null;

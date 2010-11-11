@@ -564,6 +564,7 @@ public class Home
                 if (searchKind.equals(NEXT_ENTRY) && !headword.equals("")) {
                     //// CLASSIC SEARCH
                     // Perform the request
+					PapillonLogger.writeDebugMsg("Search next entry: " + headword + " in " + volumeName);
                     Collection qrset = queryReq.findNextLexieAndTranslation(volumeName, headword, this.getUser());
                     // Display classic search result
                     XHTMLElement queryResultForm = content.getElementQueryResultForm();
