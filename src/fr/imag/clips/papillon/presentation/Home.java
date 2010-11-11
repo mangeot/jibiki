@@ -470,7 +470,7 @@ public class Home
         if (null == searchKind || searchKind.equals("")) {
             searchKind = EXACT_MATCH;
         }
-
+		PapillonLogger.writeDebugMsg("Search kind: " + searchKind + " action: " + action + " volumeName: " + volumeName + " headword: "+ headword);
         //
         if (action != null && !action.equals("") && volumeName != null && !volumeName.equals(
                 "") && entryHandle != null && !entryHandle.equals("")) {
