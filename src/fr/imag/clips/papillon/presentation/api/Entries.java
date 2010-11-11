@@ -157,7 +157,67 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 		Volume theVolume = null;
 		org.w3c.dom.Document resultDoc = null;
 		strategy = getStrategy(strategy);
-		if (criteria !=null && !criteria.equals("handle")) {
+		if (criteria !=null && criteria.equals("handle")) {
+			if (key==null) {
+				java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
+				if (volumesCollection !=null && volumesCollection.size()>0) {
+					java.util.Iterator iterator = volumesCollection.iterator();
+					while (resultDoc==null && iterator.hasNext()) {
+						theVolume = (Volume) iterator.next();
+						PapillonLogger.writeDebugMsg("Entries: id: " + word + " volume: " + theVolume.getName());
+						VolumeEntry myEntry = VolumeEntriesFactory.findEntryByHandle(theVolume.getName(), word);
+						if (myEntry != null && !myEntry.isEmpty()) {
+							PapillonLogger.writeDebugMsg("Entry: headword: " + myEntry.getHeadword());
+							resultDoc = myEntry.getDom();
+						}
+						else {
+							PapillonLogger.writeDebugMsg("Entry null: " + word);
+						}
+					}
+				}
+			}
+		}
+		else if (criteria !=null && criteria.equals("previous")) {
+			if (key==null) {
+				java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
+				if (volumesCollection !=null && volumesCollection.size()>0) {
+					java.util.Iterator iterator = volumesCollection.iterator();
+					while (resultDoc==null && iterator.hasNext()) {
+						theVolume = (Volume) iterator.next();
+						PapillonLogger.writeDebugMsg("Entries: id: " + word + " volume: " + theVolume.getName());
+						VolumeEntry myEntry = VolumeEntriesFactory.findPreviousEntryByHeadword(theVolume.getName(), word);
+						if (myEntry != null && !myEntry.isEmpty()) {
+							PapillonLogger.writeDebugMsg("Entry: headword: " + myEntry.getHeadword());
+							resultDoc = myEntry.getDom();
+						}
+						else {
+							PapillonLogger.writeDebugMsg("Entry null: " + word);
+						}
+					}
+				}
+			}
+		}
+		else if (criteria !=null && criteria.equals("next")) {
+			if (key==null) {
+				java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
+				if (volumesCollection !=null && volumesCollection.size()>0) {
+					java.util.Iterator iterator = volumesCollection.iterator();
+					while (resultDoc==null && iterator.hasNext()) {
+						theVolume = (Volume) iterator.next();
+						PapillonLogger.writeDebugMsg("Entries: id: " + word + " volume: " + theVolume.getName());
+						VolumeEntry myEntry = VolumeEntriesFactory.findNextEntryByHeadword(theVolume.getName(), word);
+						if (myEntry != null && !myEntry.isEmpty()) {
+							PapillonLogger.writeDebugMsg("Entry: headword: " + myEntry.getHeadword());
+							resultDoc = myEntry.getDom();
+						}
+						else {
+							PapillonLogger.writeDebugMsg("Entry null: " + word);
+						}
+					}
+				}
+			}
+		}
+		else if (criteria !=null) {
 			if (criteria.equals("headword")) {
 				criteria=Volume.CDM_headword;
 			}
@@ -210,28 +270,8 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 			System.out.println("Error message no corresponding dict: " + dictName + " & lang: " + lang);
 		}
 		}
-		else if (criteria !=null && criteria.equals("handle")) {
-			if (key==null) {
-				java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
-				if (volumesCollection !=null && volumesCollection.size()>0) {
-					java.util.Iterator iterator = volumesCollection.iterator();
-					while (resultDoc==null && iterator.hasNext()) {
-						theVolume = (Volume) iterator.next();
-						PapillonLogger.writeDebugMsg("Entries: id: " + word + " volume: " + theVolume.getName());
-						VolumeEntry myEntry = VolumeEntriesFactory.findEntryByHandle(theVolume.getName(), word);
-						if (myEntry != null && !myEntry.isEmpty()) {
-							PapillonLogger.writeDebugMsg("Entry: headword: " + myEntry.getHeadword());
-							resultDoc = myEntry.getDom();
-						}
-						else {
-							PapillonLogger.writeDebugMsg("Entry null: " + word);
-						}
-					}
-				}
-			}
-			else {
-				resultDoc = getIndexValue(dictName, lang, word, key);
-			}
+		else {
+			resultDoc = getIndexValue(dictName, lang, word, key);
 		}
 		return resultDoc;			
 	}
