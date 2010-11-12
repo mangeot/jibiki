@@ -48,6 +48,8 @@ import fr.imag.clips.papillon.business.dictionary.Volume;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory;
 import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
+import fr.imag.clips.papillon.business.user.User;
+import fr.imag.clips.papillon.business.user.UsersFactory;
 import fr.imag.clips.papillon.business.xsl.XslSheet;
 import fr.imag.clips.papillon.business.xsl.XslSheetFactory;
 
@@ -65,10 +67,13 @@ public class GetXmlDocument extends XmlBasePO {
 	protected static final String VOLUME_PARAMETER = "VOLUME";
 	protected static final String ID_PARAMETER = "ID";
 
+	protected static final String EMAIL_PARAMETER = "EMAIL";
+	
 	protected static final String STYLESHEET_TYPE = "STYLESHEET";
 	protected static final String SCHEMA_TYPE = "SCHEMA";
 	protected static final String ENTRY_TYPE = "ENTRY";
 	protected static final String CONTRIBUTION_TYPE = "CONTRIBUTION";
+	protected static final String USER_TYPE = "USER";
     	
     /**
     *  This method should be implemented in the subclass so that it returns
@@ -107,6 +112,7 @@ public class GetXmlDocument extends XmlBasePO {
 			String documentType = myGetParameter(TYPE_PARAMETER);
 			String documentId = myGetParameter(ID_PARAMETER);
 			String volumeName = myGetParameter(VOLUME_PARAMETER);
+			String email = myGetParameter(EMAIL_PARAMETER);
 			
 			PapillonLogger.writeDebugMsg("GetXmlDocument: type: " + documentType + " id: " + documentId + " volume: " + volumeName);
 			
@@ -130,6 +136,12 @@ public class GetXmlDocument extends XmlBasePO {
 				XslSheet myXslSheet = XslSheetFactory.getXslSheetByHandle(documentId);
 				if (myXslSheet != null && !myXslSheet.isEmpty()) {
 					resultDoc = XMLServices.buildDOMTree(myXslSheet.getXmlCode());
+				}
+			}
+			else if (documentType.equals(USER_TYPE)) {
+				User myUser = UsersFactory.findUserByLogin(documentId);
+				if (myUser != null && !myUser.isEmpty() && myUser.getEmail().equals(email)) {
+					resultDoc = XMLServices.buildDOMTree(myUser.getXmlCode());
 				}
 			}
 			

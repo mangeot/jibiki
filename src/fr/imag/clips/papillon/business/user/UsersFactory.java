@@ -159,7 +159,6 @@ public class UsersFactory {
                     myUser.setPassword(password);
                     myUser.setEmail(email);
                     myUser.setLang(lang);
-                    myUser.setXmlCode(myUser.serializeXml());
                     myUser.save();
                     answerMessage =  "User: "+ myUser.getName() + " // login: " + myUser.getLogin() + " added";
                 }

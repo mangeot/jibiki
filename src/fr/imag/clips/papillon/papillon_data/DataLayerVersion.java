@@ -140,6 +140,7 @@ public class DataLayerVersion {
 				
 				
                 Collection vols = VolumesFactory.getVolumes();
+			if (vols!=null) {
                 Iterator volsIter = vols.iterator();
                 while (volsIter.hasNext()) {
                     Volume vol = (Volume) volsIter.next();
@@ -187,6 +188,26 @@ public class DataLayerVersion {
                         PapillonLogger.writeDebugMsg("entryid column type in table " + vol.getDbname() + " changed!");                        
 					}
                 }
+			}
+			/*
+			 FEAT443
+			 Ajout d'un champ crédits dans l'objet utilisateur pour éventuellement gérer
+			 une somme de crédits (ils s'acquièrent en contribuant).*/			
+			if (!ManageDatabase.getColumnNames("users").contains("credits")) {
+				ManageDatabase.executeSql("alter TABLE users add COLUMN credits integer not null default 0;\n");
+				PapillonLogger.writeDebugMsg("'entries' column added in table users");                        
+			}
+			
+			/*
+			 BUG444
+			 The volumes table is very slow to display the first time it is called because we count the entries of each volume every
+			 time the server is starting.
+			 I added a field in the volumes table in order to store the entries count.*/			
+			if (!ManageDatabase.getColumnNames("volumes").contains("entries")) {
+				ManageDatabase.executeSql("alter TABLE volumes add COLUMN entries integer not null default 0;\n");
+				PapillonLogger.writeDebugMsg("'entries' column added in table volumes");                        
+			}
+			
 			PapillonLogger.writeDebugMsg("If columns were created or dropped, consider vacuum your database!");
             setDBVersion(currentApplicationVersion);
             PapillonLogger.writeDebugMsg("jibikiversion value incremented.");            

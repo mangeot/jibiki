@@ -253,5 +253,7 @@ public class UserProfile extends PapillonBasePO {
 				optionParent.appendChild(groupOption.cloneNode(true));
 			}
 			optionParent.removeChild(groupOption);
+			
+			content.setTextCredits(""+this.getUser().getCredits());
 		}
 }

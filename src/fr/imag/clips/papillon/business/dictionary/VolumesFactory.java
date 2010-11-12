@@ -281,6 +281,7 @@ public class VolumesFactory {
                 Volume vol = new Volume(DOarray[i]);
 				updateCdmElementsTable(vol);
                 VolumeCache.putVolumeInCache(vol.getName(), vol);
+				VolumeEntriesFactory.putNbEntriesNumberInCache(vol.getName(),vol.getEntries());
             }
 
         } catch (Exception ex) {

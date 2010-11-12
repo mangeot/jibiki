@@ -159,22 +159,17 @@ public class VolumeCache {
         */
     public static Collection getVolumesInCache() 
         throws PapillonBusinessException {
-            
+            Collection collection = null;
             try {
+ 				collection = volumeCache.values();
                 
-                //
-                Collection collection = volumeCache.values();
-                
-                //
                 if (collection == null) {
-                    return new ArrayList();
-                } else {
-                    return collection;
-                }
-                
+                    collection = new ArrayList();
+                } 
             } catch(Exception ex) {
-                throw new PapillonBusinessException("Exception in getVolumesInCache()", ex);
+                //throw new PapillonBusinessException("Exception in getVolumesInCache()", ex);
             }
+			return collection;
         }
     
     

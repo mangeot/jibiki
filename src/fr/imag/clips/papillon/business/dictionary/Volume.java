@@ -1207,7 +1207,39 @@ public class Volume {
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
 			return VolumeEntriesFactory.getVolumeEntriesCount(this, status);
 		}
-	
+
+	/**
+	 * getEntries gets entries number of the volume
+     *
+     * @return the number of entries as an integer.
+     * @exception PapillonBusinessException if an error occurs
+     *   retrieving data (usually due to an underlying data layer
+	 *   error).
+     */
+    public int getEntries()
+	throws PapillonBusinessException {
+		try {
+			return myDO.getEntries();
+		} catch(DataObjectException ex) {
+			throw new PapillonBusinessException("Error getting Volume's entries", ex);
+		}
+	}
+	/**
+	 * setEntries sets entries number of the volume
+     *
+     * @return the number of entries as an integer.
+     * @exception PapillonBusinessException if an error occurs
+     *   retrieving data (usually due to an underlying data layer
+	 *   error).
+     */
+    public void setEntries(java.lang.Integer entries)
+	throws PapillonBusinessException {
+		try {
+			myDO.setEntries(entries.intValue());
+		} catch(DataObjectException ex) {
+			throw new PapillonBusinessException("Error setting Volume's entries", ex);
+		}
+	}	
 	
     /**
 	 * Saves the Volume into the database.

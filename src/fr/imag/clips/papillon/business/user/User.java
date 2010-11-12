@@ -119,6 +119,7 @@ public class User implements com.lutris.appserver.server.user.User {
 	protected final static String USER_TAG = "user";
 	protected final static String PREFERENCES_TAG = "preferences";
 	protected final static String PREFERENCE_TAG = "preference";
+	protected final static String CREDITS_TAG = "credits";
 	protected final static String URL_ATTR = "href";
 	protected final static String NAME_ATTR = "name";
 	protected final static String VALUE_ATTR = "value";
@@ -352,6 +353,31 @@ public class User implements com.lutris.appserver.server.user.User {
 		}
 	
 	/**
+	 * Gets the number of credits
+	 *
+	 * @return the dictname.
+	 * @exception PapillonBusinessException if an error occurs
+	 *   retrieving data (usually due to an underlying data layer
+	 *   error).
+	 */
+	public int getCredits()
+	throws PapillonBusinessException {
+		try {
+			return myDO.getCredits();
+		} catch(DataObjectException ex) {
+			throw new PapillonBusinessException("Error getting user's credits", ex);
+		}
+	}
+	public void setCredits(int credits)
+	throws PapillonBusinessException {
+		try {
+			myDO.setCredits(credits);
+		} catch(DataObjectException ex) {
+			throw new PapillonBusinessException("Error setting user's credits", ex);
+		}
+	}
+
+	/**
 		* Gets the xmlcode of the user
 	 *
 	 * @return the xmlcode as a string.
@@ -511,6 +537,7 @@ public class User implements com.lutris.appserver.server.user.User {
 	
 	public void save()
 		throws PapillonBusinessException {
+			this.setXmlCode(this.serializeXml());
 			try {
 				this.myDO.commit();
 			} catch(Exception ex) {
@@ -602,12 +629,13 @@ public class User implements com.lutris.appserver.server.user.User {
 			}
  
 	// password
-			if (getPassword()!=null) {
+			// disabled for security reasons
+			/*if (getPassword()!=null) {
 				xmlCode += "<password encoding='" + PASSWORD_ENCODING + "' ";
 				xmlCode += "digest-length='" + PASSWORD_DIGEST_LENGTH + "' ";
 				xmlCode += "digest='" + PASSWORD_DIGEST + "' ";
 				xmlCode += ">" + getPassword() + "</password>\n";
-			}
+			}*/
  
 	// email
 			if (getEmail()!=null) {
@@ -624,14 +652,15 @@ public class User implements com.lutris.appserver.server.user.User {
 			}
 			xmlCode += "</groups>\n";
 			
-	// preferences
+			// credits
+			xmlCode += "<" + CREDITS_TAG + ">" + getCredits() + "</" + CREDITS_TAG + ">\n";
+			
+			// preferences
 			xmlCode += "<" + PREFERENCES_TAG + "/>\n";
 			
 	// end of user
 			xmlCode += "</" + USER_TAG + ">\n";
 			
-			this.setXmlCode(xmlCode);
-			this.save();
 			return xmlCode;
 		}
 		

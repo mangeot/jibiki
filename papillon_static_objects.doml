@@ -391,7 +391,14 @@
  */</javadoc>
             <type canBeNull="true" dbType="VARCHAR" javaType="String" size="255"/>
           </column>
-          <column id="xmlCode" usedForQuery="true">
+           <column id="credits" usedForQuery="true">
+            <javadoc>/**
+ * credits of the user
+ */</javadoc>
+            <type canBeNull="false" dbType="INTEGER" javaType="int"/>
+				<initialValue>0</initialValue>
+          </column>
+         <column id="xmlCode" usedForQuery="true">
             <javadoc>/**
  * The XML code of the user.
  */</javadoc>
@@ -580,6 +587,13 @@
 * indicates if the volume can be reversed for lookup ie: target words searched as source words.
 */</javadoc>
             <type dbType="CHAR" javaType="String" size="1"/>
+          </column>
+		   <column id="entries" usedForQuery="true">
+            <javadoc>/**
+ * Numer of entries in the volume
+ */</javadoc>
+            <type canBeNull="false" dbType="INTEGER" javaType="int"/>
+			   <initialValue>1</initialValue>
           </column>
 		  <index id="name_idx" unique="true">
             <indexColumn id="name"/>

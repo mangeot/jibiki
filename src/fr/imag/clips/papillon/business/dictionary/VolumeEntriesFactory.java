@@ -648,6 +648,7 @@ public class VolumeEntriesFactory {
 				if (count == null) {
 					if (status.equals(NoStatus)) {
 						count = new Integer(getDbTableEntriesCount(theVolume, null, null, null));
+						theVolume.setEntries(count);
 					}
 					else {
 						java.util.Vector Keys = new java.util.Vector();
@@ -666,6 +667,7 @@ public class VolumeEntriesFactory {
 				volumeTable = new java.util.Hashtable();
 				if (status.equals(NoStatus)) {
 					count = new Integer(getDbTableEntriesCount(theVolume, null, null, null));
+					theVolume.setEntries(count);
 				}
 				else {
 					java.util.Vector Keys = new java.util.Vector();
@@ -686,6 +688,18 @@ public class VolumeEntriesFactory {
 	public static boolean resetCountCache(String volumeName) {
 		VolumeEntriesCountHashtable.remove(volumeName);
 		return true;
+	}
+	
+	public static void putNbEntriesNumberInCache(String volumeName,int entries) throws PapillonBusinessException {
+		java.util.Hashtable volumeTable = (java.util.Hashtable) VolumeEntriesCountHashtable.get(volumeName);
+		if (volumeTable == null) {
+			volumeTable = new java.util.Hashtable();
+			volumeTable.put(NoStatus, new Integer(entries));
+			VolumeEntriesCountHashtable.put(volumeName,volumeTable);
+		}
+		else {
+			volumeTable.put(NoStatus, new Integer(entries));
+		}
 	}
 	
     // FIXME: Should the query building code be factorized ?
