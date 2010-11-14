@@ -100,6 +100,7 @@ public class Kawet extends XmlBasePO {
     public org.w3c.dom.Document getContent()
         throws HttpPresentationException, java.io.IOException, Exception {
 			
+			String errorDocument = "<?xml version='1.0' ?><error>";
 			org.w3c.dom.Document resultDoc = null;
 			
 			String login  = myGetParameter(LOGIN_PARAMETER);
@@ -111,16 +112,30 @@ public class Kawet extends XmlBasePO {
 			
 			if (login !=null && !login.equals("") && email !=null && !email.equals("")) {
 				User myUser = UsersFactory.findUserByLogin(login);
-				if (myUser != null && !myUser.isEmpty() && myUser.getEmail().equals(email)) {
-					if (password !=null && !password.equals("")
-						&& credits !=null && !credits.equals("")) {
-						if (myUser.HasCorrectPassword(password)) {
-							int kawet = Integer.parseInt(credits)+myUser.getCredits();
-							myUser.setCredits(kawet);
-							myUser.save();
+				if (myUser != null && !myUser.isEmpty()) {
+					if (myUser.getEmail().equals(email)) {
+						if (password !=null && !password.equals("")
+							&& credits !=null && !credits.equals("")) {
+							if (myUser.HasCorrectPassword(password)) {
+								int kawet = Integer.parseInt(credits)+myUser.getCredits();
+								myUser.setCredits(kawet);
+								myUser.save();
+							}
+							else {
+								errorDocument += "wrong password</error>";
+								resultDoc = XMLServices.buildDOMTree(errorDocument);
+							}
 						}
+						resultDoc = XMLServices.buildDOMTree(myUser.getXmlCode());
 					}
-					resultDoc = XMLServices.buildDOMTree(myUser.getXmlCode());
+					else {
+						errorDocument += "wrong email</error>";
+						resultDoc = XMLServices.buildDOMTree(errorDocument);
+					}
+				}
+				else {
+					errorDocument += "user unknown</error>";
+					resultDoc = XMLServices.buildDOMTree(errorDocument);
 				}
 			}			
 			return resultDoc;			
