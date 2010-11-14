@@ -262,8 +262,6 @@ public class Home
         extends PapillonBasePO {
 
     private HomeContentXHTML content;
-
-	protected static boolean LoadXslCacheTwice = false;
 			
     /**
      * Description of the Field
@@ -472,13 +470,8 @@ public class Home
         if (null == searchKind || searchKind.equals("")) {
             searchKind = EXACT_MATCH;
         }
-										
-										if (!LoadXslCacheTwice) {
-											XslSheetFactory.initializeXslSheetCache();
-											LoadXslCacheTwice = true;
-										}
 
-		//PapillonLogger.writeDebugMsg("Search kind: " + searchKind + " action: " + action + " volumeName: " + volumeName + " headword: "+ headword);
+										//PapillonLogger.writeDebugMsg("Search kind: " + searchKind + " action: " + action + " volumeName: " + volumeName + " headword: "+ headword);
         //
         if (action != null && !action.equals("") && volumeName != null && !volumeName.equals(
                 "") && entryHandle != null && !entryHandle.equals("")) {

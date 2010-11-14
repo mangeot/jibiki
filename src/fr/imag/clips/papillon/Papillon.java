@@ -191,18 +191,11 @@ public class Papillon extends StandardApplication {
 				PapillonLogger.writeDebugMsg("no Application.Prefix var in the config file!");
 		}
 		
-		/*try {
-			Papillon.initializeAllCaches();
-        } catch (PapillonBusinessException e) {
-            throw new ApplicationException("Initialize caches error", e);
-        }*/
-		
-		// There is a problem when 
-		/*try {
+		try {
 			Papillon.initializeAllCaches();
         } catch (PapillonBusinessException e) {
             ;
-        }*/
+        }
 		
         // Upgrade the DB layer to a correct version
         // Problem is: the cache initialization has to be done in order to get all available volumes
