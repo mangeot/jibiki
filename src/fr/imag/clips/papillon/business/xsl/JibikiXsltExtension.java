@@ -94,6 +94,7 @@ public class JibikiXsltExtension {
 	
 	public static String getEntrySourceLanguage(String entryid) throws PapillonBusinessException {
         try {
+			PApillonLogger.writeDebugMsg("getEntrySourceLanguage: " + entryid);
             JibikiContext context = CurrentRequestContext.get();
             VolumeEntry ve = VolumeEntriesFactory.findEntryByEntryId(((PapillonSessionData) context.get("sessionData")).getUser(),entryid);
 			
