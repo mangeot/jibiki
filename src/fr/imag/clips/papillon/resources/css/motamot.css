@@ -865,13 +865,12 @@ margin-right:10px;
 }
 
 .entry_navigation {
-	border: 2px solid #898989;
-	font-size:small;
-    background-color: #E0E0E0;
-	font-weight:bold;
-	-moz-border-radius: 5px;
-    border-radius: 5px;
-	padding:5px;
+	background-color: #E0E0E0;
+	border-left: 1px solid #898989;
+	border-right: 1px solid #898989;
+	border-top: 1px solid #898989;
+	font-size: small;
+	font-weight: bold;
 }
 
 .entry_actions {
