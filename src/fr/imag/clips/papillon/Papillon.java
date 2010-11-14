@@ -191,11 +191,11 @@ public class Papillon extends StandardApplication {
 				PapillonLogger.writeDebugMsg("no Application.Prefix var in the config file!");
 		}
 		
-		try {
+		/*try {
 			Papillon.initializeAllCaches();
         } catch (PapillonBusinessException e) {
             throw new ApplicationException("Initialize caches error", e);
-        }
+        }*/
 		
 		// There is a problem when 
 		/*try {
@@ -214,11 +214,11 @@ public class Papillon extends StandardApplication {
             throw new ApplicationException("Could not upgrade DB Layer.", e);
         }
 		
-		/*try {
+		try {
 			Papillon.initializeAllCaches();
         } catch (PapillonBusinessException e) {
             throw new ApplicationException("Initialize caches error", e);
-        }*/
+        }
     }
 
     public synchronized static void initializeAllCaches() throws PapillonBusinessException {
