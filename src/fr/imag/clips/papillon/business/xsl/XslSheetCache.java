@@ -34,7 +34,7 @@ public class XslSheetCache {
 
     
     // Xsl sheets caches
-    private static Hashtable xslSheetCache;
+    private static java.util.TreeMap xslSheetCache;
     private static Hashtable xslSheetCacheByHandle;   
     
     
@@ -46,7 +46,7 @@ public class XslSheetCache {
     */
     public static void xslSheetCacheInit() {
 
-        xslSheetCache = new Hashtable();
+        xslSheetCache = new java.util.TreeMap();
         xslSheetCacheByHandle = new Hashtable();
 
     }

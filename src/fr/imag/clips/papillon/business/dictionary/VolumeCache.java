@@ -42,7 +42,7 @@ public class VolumeCache {
     
     
     // Volume cache
-    private static Hashtable volumeCache;
+    private static java.util.TreeMap volumeCache;
     private static Hashtable volumeCacheByHandle;
     private static Hashtable volumeCacheByDictionaryName;
     private static Hashtable volumeCacheBySource;
@@ -55,7 +55,7 @@ public class VolumeCache {
     * 
     */
     public static void volumeCacheInit() {            
-                volumeCache = new Hashtable();
+                volumeCache = new java.util.TreeMap();
                 volumeCacheByHandle = new Hashtable();
                 volumeCacheByDictionaryName = new Hashtable();
                 volumeCacheBySource = new Hashtable();

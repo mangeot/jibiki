@@ -41,7 +41,7 @@ public class DictionaryCache {
     
     
     // Dictionary cache
-    private static Hashtable dictionaryCache;
+    private static java.util.TreeMap dictionaryCache;
     private static Hashtable dictionaryCacheByHandle; 
     
     /** 
@@ -51,7 +51,7 @@ public class DictionaryCache {
     * 
     */
     public static void dictionaryCacheInit() {
-        dictionaryCache = new Hashtable();
+        dictionaryCache = new java.util.TreeMap();
         dictionaryCacheByHandle = new Hashtable();
     }
     
