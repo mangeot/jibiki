@@ -1312,7 +1312,6 @@
 		A37C02D1128C62BD0047A982 /* PivaxPostSaveProcessor.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = PivaxPostSaveProcessor.java; sourceTree = "<group>"; };
 		A37C02D2128C62BD0047A982 /* PivaxPostUpdateProcessor.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = PivaxPostUpdateProcessor.java; sourceTree = "<group>"; };
 		A37C02D3128C62BD0047A982 /* PivaxPreProcessor.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = PivaxPreProcessor.java; sourceTree = "<group>"; };
-		A37C02D4128C62BD0047A982 /* PivaxQuickFormatter.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = PivaxQuickFormatter.java; sourceTree = "<group>"; };
 		A37C02D5128C62BD0047A982 /* System.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = System.java; sourceTree = "<group>"; };
 		A37C02D7128C62BD0047A982 /* Graph.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = Graph.java; sourceTree = "<group>"; };
 		A37C02D8128C62BD0047A982 /* GraphNode.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = GraphNode.java; sourceTree = "<group>"; };
@@ -3441,7 +3440,6 @@
 				A37C02D1128C62BD0047A982 /* PivaxPostSaveProcessor.java */,
 				A37C02D2128C62BD0047A982 /* PivaxPostUpdateProcessor.java */,
 				A37C02D3128C62BD0047A982 /* PivaxPreProcessor.java */,
-				A37C02D4128C62BD0047A982 /* PivaxQuickFormatter.java */,
 				A37C02D5128C62BD0047A982 /* System.java */,
 				A37C02D6128C62BD0047A982 /* unl_graph */,
 			);
