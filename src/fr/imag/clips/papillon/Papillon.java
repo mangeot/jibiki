@@ -194,9 +194,16 @@ public class Papillon extends StandardApplication {
 		try {
 			Papillon.initializeAllCaches();
         } catch (PapillonBusinessException e) {
-            ;
+            throw new ApplicationException("Initialize caches error", e);
         }
-
+		
+		// There is a problem when 
+		/*try {
+			Papillon.initializeAllCaches();
+        } catch (PapillonBusinessException e) {
+            ;
+        }*/
+		
         // Upgrade the DB layer to a correct version
         // Problem is: the cache initialization has to be done in order to get all available volumes
         // hence, layer modifications should not break the cache mecanism...
@@ -207,11 +214,11 @@ public class Papillon extends StandardApplication {
             throw new ApplicationException("Could not upgrade DB Layer.", e);
         }
 		
-		try {
+		/*try {
 			Papillon.initializeAllCaches();
         } catch (PapillonBusinessException e) {
             throw new ApplicationException("Initialize caches error", e);
-        }
+        }*/
     }
 
     public synchronized static void initializeAllCaches() throws PapillonBusinessException {
