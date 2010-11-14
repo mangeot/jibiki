@@ -100,7 +100,7 @@ public class XslSheetCache {
             try {
                 
                 //
-                return xslSheetCacheByHandle.values();
+                return xslSheetCache.values();
                 
             } catch(Exception ex) {
                 throw new PapillonBusinessException("Exception in getXslSheetCache()", ex);
