@@ -62,6 +62,7 @@ public class JibikiXsltExtension {
 
     public static String getUserLogin() throws PapillonBusinessException {
         try {
+			PapillonLogger.writeDebugMsg("getUserLogin: " + entryid);
             JibikiContext context = CurrentRequestContext.get();
             User currentUser = ((PapillonSessionData) context.get("sessionData")).getUser();
             return currentUser.getLogin();
@@ -72,6 +73,7 @@ public class JibikiXsltExtension {
 
     public static String getEntryStatus(String entryid) throws PapillonBusinessException {
         try {
+			PapillonLogger.writeDebugMsg("getEntryStatus: " + entryid);
             JibikiContext context = CurrentRequestContext.get();
             VolumeEntry ve = VolumeEntriesFactory.findEntryByEntryId(((PapillonSessionData) context.get("sessionData")).getUser(),entryid);
 			
@@ -83,6 +85,7 @@ public class JibikiXsltExtension {
 	
 	public static String getEntryGroups(String entryid) throws PapillonBusinessException {
         try {
+			PapillonLogger.writeDebugMsg("getEntryGroups: " + entryid);
             JibikiContext context = CurrentRequestContext.get();
             VolumeEntry ve = VolumeEntriesFactory.findEntryByEntryId(((PapillonSessionData) context.get("sessionData")).getUser(),entryid);
             return  Utility.getStars(ve.getGroups());
@@ -94,7 +97,7 @@ public class JibikiXsltExtension {
 	
 	public static String getEntrySourceLanguage(String entryid) throws PapillonBusinessException {
         try {
-			PApillonLogger.writeDebugMsg("getEntrySourceLanguage: " + entryid);
+			PapillonLogger.writeDebugMsg("getEntrySourceLanguage: " + entryid);
             JibikiContext context = CurrentRequestContext.get();
             VolumeEntry ve = VolumeEntriesFactory.findEntryByEntryId(((PapillonSessionData) context.get("sessionData")).getUser(),entryid);
 			
