@@ -288,8 +288,8 @@ public class ViewDictionaries extends PapillonBasePO {
                 content.setTextDomain("");
                 content.setTextLegal("");
                 // FIXME: Finished entry but not-finished entry ?
-                int nb = volume.getCount(VolumeEntry.FINISHED_STATUS) + volume.getCount(VolumeEntry.NOT_FINISHED_STATUS);
-                content.setTextEntries("" + nb);
+                //int nb = volume.getCount(VolumeEntry.FINISHED_STATUS) + volume.getCount(VolumeEntry.NOT_FINISHED_STATUS);
+                content.setTextEntries("" + volume.getEntries());
 
                 theSeeAnchor.setHref(this.getUrl() + "?"
                                      + SEE_VOLUME_PARAMETER + "="
