@@ -618,6 +618,16 @@ div#firefox img {
     //border: 1px solid #898989;
 }
 
+.entry_navigation {
+	border: 2px solid #898989;
+	font-size:small;
+    background-color: #E0E0E0;
+	font-weight:bold;
+	-moz-border-radius: 5px;
+    border-radius: 5px;
+	padding:5px;
+}
+
 .action_list {
     text-align: right;
 }

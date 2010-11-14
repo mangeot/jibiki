@@ -864,6 +864,16 @@ margin-right:10px;
     text-align: right;
 }
 
+.entry_navigation {
+	border: 2px solid #898989;
+	font-size:small;
+    background-color: #E0E0E0;
+	font-weight:bold;
+	-moz-border-radius: 5px;
+    border-radius: 5px;
+	padding:5px;
+}
+
 .entry_actions {
 	border-top: 1px solid #898989;
 	border-right: 1px solid #898989;
