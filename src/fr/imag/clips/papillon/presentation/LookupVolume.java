@@ -91,7 +91,16 @@ public class LookupVolume extends XmlBasePO {
         return true;
     }
 	
-	protected static org.w3c.dom.Document emptyDoc = XMLServices.buildDOMTree("<?xml version='1.0' encoding='UTF-8' ?><div id='entries'></div>");
+	protected static org.w3c.dom.Document emptyDoc = null;
+	
+	static {
+		try {
+			emptyDoc = XMLServices.buildDOMTree("<?xml version='1.0' encoding='UTF-8' ?><div id='entries'></div>");
+		}
+		catch (Exception ex) {
+			;
+		}
+	}
 	
     /**
         *  Returns the complete document.
