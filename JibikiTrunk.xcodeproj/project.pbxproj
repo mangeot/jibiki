@@ -1408,7 +1408,7 @@
 		A3AF17B21069F97F00E1CEB5 /* Error.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Error.xhtml; sourceTree = "<group>"; };
 		A3AF17C61069FA0500E1CEB5 /* Help.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = Help.java; sourceTree = "<group>"; };
 		A3AF17CD1069FAE800E1CEB5 /* ApiContent.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ApiContent.xhtml; sourceTree = "<group>"; };
-		A3AF1808106A10C500E1CEB5 /* GetXmlDocument.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = GetXmlDocument.java; sourceTree = "<group>"; };
+		A3AF1808106A10C500E1CEB5 /* Kawet.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = Kawet.java; sourceTree = "<group>"; };
 		A3C2A04611805D2700F77173 /* AdvancedQueryForm.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdvancedQueryForm.xhtml; sourceTree = "<group>"; };
 		A3C2A0501180862100F77173 /* backstart.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = backstart.in; sourceTree = "<group>"; };
 		A3C2A0521180862100F77173 /* dri.conf.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dri.conf.in; sourceTree = "<group>"; };
@@ -1910,7 +1910,6 @@
 				A30722ED0EC89B2200733910 /* favicon.ico */,
 				A30722EE0EC89B2200733910 /* GDEFLayout.java */,
 				A30722F00EC89B2200733910 /* GetSystemProperties.java */,
-				A3AF1808106A10C500E1CEB5 /* GetXmlDocument.java */,
 				A30722F20EC89B2200733910 /* HandleEntryModifications.java */,
 				A3AF17C61069FA0500E1CEB5 /* Help.java */,
 				A30722F40EC89B2200733910 /* History.java */,
@@ -1920,6 +1919,7 @@
 				A30722F80EC89B2200733910 /* Information.java */,
 				A30722F90EC89B2200733910 /* JSONHeadwordList.java */,
 				A30722FA0EC89B2200733910 /* JSONPossibleValuesList.java */,
+				A3AF1808106A10C500E1CEB5 /* Kawet.java */,
 				A30722FB0EC89B2200733910 /* LaunchAction.java */,
 				A30722FC0EC89B2200733910 /* LaunchSaxon8bTransformation.java */,
 				A30722FD0EC89B2200733910 /* LexALP.java */,
