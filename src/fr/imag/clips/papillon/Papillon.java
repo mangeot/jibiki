@@ -219,6 +219,11 @@ public class Papillon extends StandardApplication {
         } catch (PapillonBusinessException e) {
             throw new ApplicationException("Initialize caches error", e);
         }
+		try {
+			XslSheetFactory.initializeXslSheetCache();
+        } catch (PapillonBusinessException e) {
+            throw new ApplicationException("Initialize caches error", e);
+        }
     }
 
     public synchronized static void initializeAllCaches() throws PapillonBusinessException {
