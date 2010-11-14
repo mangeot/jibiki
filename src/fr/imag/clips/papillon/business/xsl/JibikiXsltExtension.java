@@ -62,7 +62,7 @@ public class JibikiXsltExtension {
 
     public static String getUserLogin() throws PapillonBusinessException {
         try {
-			PapillonLogger.writeDebugMsg("getUserLogin: " + entryid);
+			PapillonLogger.writeDebugMsg("getUserLogin: ");
             JibikiContext context = CurrentRequestContext.get();
             User currentUser = ((PapillonSessionData) context.get("sessionData")).getUser();
             return currentUser.getLogin();
