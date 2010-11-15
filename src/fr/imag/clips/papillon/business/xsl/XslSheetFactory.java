@@ -476,14 +476,15 @@ public class XslSheetFactory {
     private static void AddXslSheetInCache(XslSheet xsl)
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
             
-            // Add xsl sheet in cache : key is composed of dictionary name, volume name and xsl name
-            XslSheetCache.putXslSheetInCache(xsl.getDictionaryName(), xsl.getVolumeName(), xsl.getName(), xsl);
-            
             // if xsl is defaut sheet, add it in cache with key composed of dictionary name and volume name (no xsl name)
             if (xsl.isDefaultxsl()) {
                 PapillonLogger.writeDebugMsg("XslSheet " + xsl.getName() +" is default xsl");
                 XslSheetCache.putXslSheetInCache(xsl.getDictionaryName(), xsl.getVolumeName(), "", xsl);
             }
+			else {
+				// Add xsl sheet in cache : key is composed of dictionary name, volume name and xsl name
+				XslSheetCache.putXslSheetInCache(xsl.getDictionaryName(), xsl.getVolumeName(), xsl.getName(), xsl);
+			}
         }
     
     
