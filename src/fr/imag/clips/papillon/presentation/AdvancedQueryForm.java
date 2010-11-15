@@ -209,6 +209,7 @@ public class AdvancedQueryForm {
 	com.lutris.appserver.server.httpPresentation.HttpPresentationException {
 		Collection dictionaries  = getRequestedDictionaries(req);
 		if (dictionaries == null) {
+			// removed in order to avoid selecting all dicts by default. It causes problems when many discts are loaded
 			//dictionaries = DictionariesFactory.getDictionariesArray();
 		}
 		return dictionaries;
@@ -637,6 +638,7 @@ public class AdvancedQueryForm {
             minus.getParentNode().removeChild(minus);
             plus.setAttribute("id", "plus.0");
             sourceLang.setAttribute("id", "SourceLang.0");
+			AbstractPO.setSelected(sourceLang,sessionData.getUserPreferredLanguage());
             //sourceLangLabel.setAttribute("for", "SourceLang.0");
         } else {
             nbcrit.setValue(Integer.toString(qp.getCriteria().size()));
