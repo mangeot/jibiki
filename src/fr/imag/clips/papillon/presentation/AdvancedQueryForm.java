@@ -209,7 +209,7 @@ public class AdvancedQueryForm {
 	com.lutris.appserver.server.httpPresentation.HttpPresentationException {
 		Collection dictionaries  = getRequestedDictionaries(req);
 		if (dictionaries == null) {
-			dictionaries = DictionariesFactory.getDictionariesArray();
+			//dictionaries = DictionariesFactory.getDictionariesArray();
 		}
 		return dictionaries;
 	}
