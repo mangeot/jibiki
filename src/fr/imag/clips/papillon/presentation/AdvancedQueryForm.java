@@ -639,7 +639,6 @@ public class AdvancedQueryForm {
             plus.setAttribute("id", "plus.0");
             sourceLang.setAttribute("id", "SourceLang.0");
 			
-			//            String langLoc = sessionData.getUserPreferredLanguage();
             String prefSrcLang = sessionData.getPreference("AdvancedQueryForm.po", sourceLang.getName());
             if (prefSrcLang == null || prefSrcLang.equals("")) {
                 prefSrcLang = sessionData.getUserPreferredLanguage();
