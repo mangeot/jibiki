@@ -78,6 +78,7 @@ package fr.imag.clips.papillon.business.user;
 import fr.imag.clips.papillon.data.*;
 import fr.imag.clips.papillon.business.utility.Utility;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
+import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.xml.XMLServices;
 import fr.imag.clips.papillon.CurrentDBTransaction;
 
