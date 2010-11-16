@@ -108,7 +108,7 @@ public class User implements com.lutris.appserver.server.user.User {
     public final static String ADMIN_GROUP = "admin";
     public final static String SPECIALIST_GROUP = "specialist";
     public final static String VALIDATOR_GROUP = "validator";
-    public final static String KEY_SEP = "?";
+    public final static String KEY_SEP = "||";
     public final static String GROUPS_SEPARATOR_STRING = "#";
 
     protected final static String PASSWORD_STRING = "Papillon.Users.Groups.Password";
