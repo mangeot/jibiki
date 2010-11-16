@@ -638,6 +638,15 @@ public class AdvancedQueryForm {
             minus.getParentNode().removeChild(minus);
             plus.setAttribute("id", "plus.0");
             sourceLang.setAttribute("id", "SourceLang.0");
+			
+			//            String langLoc = sessionData.getUserPreferredLanguage();
+            String prefSrcLang = sessionData.getPreference("AdvancedQueryForm.po", sourceLang.getName());
+            if (prefSrcLang == null || prefSrcLang.equals("")) {
+                prefSrcLang = sessionData.getUserPreferredLanguage();
+                sessionData.setPreference("AdvancedQueryForm.po", sourceLang.getName(), prefSrcLang);
+            }
+			
+			
 			AbstractPO.setSelected(sourceLang,sessionData.getUserPreferredLanguage());
             //sourceLangLabel.setAttribute("for", "SourceLang.0");
         } else {
@@ -651,8 +660,12 @@ public class AdvancedQueryForm {
                 //AbstractPO.setSelected(oper,Integer.toString(operValue));
                 AbstractPO.setSelected(oper, key[3]);
                 valuefield.setValue(key[2]);
-                if (null != key[1] && !key[1].equals(""))
+                if (null != key[1] && !key[1].equals("")) {
                     AbstractPO.setSelected(sourceLang,key[1]);
+					if (i==0)  {
+						sessionData.setPreference("AdvancedQueryForm.po", sourceLang.getName(), key[1]);
+					}
+				}
                 String istr = Integer.toString(i);
                 facet.setAttribute("name", AdvancedQueryFormXHTML.NAME_FACET + "." + istr);
                 oper.setAttribute("name", AdvancedQueryFormXHTML.NAME_OPERATOR + "." + istr);
