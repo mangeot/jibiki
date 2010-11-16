@@ -679,9 +679,6 @@ public class User implements com.lutris.appserver.server.user.User {
 			Hashtable PrefsTable = new Hashtable();
 		
 			String xmlCode = getXmlCode();
-			if (xmlCode==null || xmlCode.equals("")) {
-				xmlCode = serializeXml();
-			}
 			if (xmlCode!=null && !xmlCode.equals("")) {
 				Document myDocDOM = XMLServices.buildDOMTree(xmlCode);
 				NodeList myNodeList = myDocDOM.getElementsByTagName(PREFERENCE_TAG);
