@@ -221,10 +221,10 @@ public class PapillonSessionData {
 			if (!value.equals(pref)) {
 				fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("AddPref: url: " + url + " name: " + name  + " value: " + value + " Pref: " + pref);
 				this.PreferencesTable.put(url + User.KEY_SEP + name, value);
+				if (this.sessionUser!=null && persistent) {
+					this.sessionUser.setPreferences(PreferencesTable);
+				}				
 			}
-			if (this.sessionUser!=null && persistent) {
-				this.sessionUser.setPreferences(PreferencesTable);
-			}				
 		}
 	
 	public void resetPreferences(String url) 
