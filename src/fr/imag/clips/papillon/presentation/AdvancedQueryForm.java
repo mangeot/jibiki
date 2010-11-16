@@ -496,7 +496,8 @@ public class AdvancedQueryForm {
     public void buildFormFromParameters(HttpPresentationComms comms, PapillonSessionData sessionData, QueryParameter qp, boolean showTargets, boolean showQuickSearch) 
         throws com.lutris.appserver.server.httpPresentation.HttpPresentationException
     {
-        // Create the advanced query form and fill it with current requested values
+        String requestURI = comms.request.getPresentationObjectRelativePath();
+		// Create the advanced query form and fill it with current requested values
         AdvancedQueryFormXHTML queryDoc = (AdvancedQueryFormXHTML) 
         MultilingualXHtmlTemplateFactory.createTemplate("AdvancedQueryFormXHTML", comms, sessionData);
         
@@ -639,10 +640,10 @@ public class AdvancedQueryForm {
             plus.setAttribute("id", "plus.0");
             sourceLang.setAttribute("id", "SourceLang.0");
 			
-            String prefSrcLang = sessionData.getPreference("AdvancedQueryForm.po", sourceLang.getName());
+            String prefSrcLang = sessionData.getPreference(requestURI, sourceLang.getName());
             if (prefSrcLang == null || prefSrcLang.equals("")) {
                 prefSrcLang = sessionData.getUserPreferredLanguage();
-                sessionData.setPreference("AdvancedQueryForm.po", sourceLang.getName(), prefSrcLang);
+                sessionData.setPreference(requestURI, sourceLang.getName(), prefSrcLang);
             }
 			AbstractPO.setSelected(sourceLang,prefSrcLang);
             //sourceLangLabel.setAttribute("for", "SourceLang.0");
@@ -657,13 +658,13 @@ public class AdvancedQueryForm {
                 //AbstractPO.setSelected(oper,Integer.toString(operValue));
                 AbstractPO.setSelected(oper, key[3]);
                 valuefield.setValue(key[2]);
-                if (null != key[1] && !key[1].equals("")) {
+				String istr = Integer.toString(i);
+               if (null != key[1] && !key[1].equals("")) {
                     AbstractPO.setSelected(sourceLang,key[1]);
 					if (i==0)  {
-						sessionData.setPreference("AdvancedQueryForm.po", sourceLang.getName() + "." + i, key[1]);
+						sessionData.setPreference(requestURI, sourceLang.getName() + "." + istr, key[1]);
 					}
 				}
-                String istr = Integer.toString(i);
                 facet.setAttribute("name", AdvancedQueryFormXHTML.NAME_FACET + "." + istr);
                 oper.setAttribute("name", AdvancedQueryFormXHTML.NAME_OPERATOR + "." + istr);
                 valuefield.setAttribute("name", AdvancedQueryFormXHTML.NAME_FACETVALUE + "." + istr);
