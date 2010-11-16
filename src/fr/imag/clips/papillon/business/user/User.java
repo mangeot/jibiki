@@ -717,7 +717,7 @@ public class User implements com.lutris.appserver.server.user.User {
 				String[] urlName = key.split(KEY_SEP);
 				String url = urlName[0];
 				String name = urlName[1];
-					PapillonLogger.write("SerPrefs: url: " + url + " name: " + name + " " + key + " value: " + value);
+					PapillonLogger.writeDebugMsg("SerPrefs: url: " + url + " name: " + name + " " + key + " value: " + value);
 				result += "<" + PREFERENCE_TAG + " "+URL_ATTR + "='" + url + "' ";
 				result += NAME_ATTR + "='" + name+ "' ";
 				result += VALUE_ATTR + "='" + value+ "' ";
