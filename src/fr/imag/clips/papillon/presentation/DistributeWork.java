@@ -127,7 +127,7 @@ public class DistributeWork extends PapillonBasePO {
 					domain!= null && !domain.equals("") &&
 					userHandle!= null && !userHandle.equals("")
 				   	) {
-				   User theUser = UsersFactory.findUserByHandle(userHandle);
+				   User theUser = UsersFactory.findUserById(userHandle);
 				   if (theUser != null && !theUser.isEmpty()) {
 						boolean sent = Email.send(theUser.getEmail(), SendDomainSubject_eng, Email.getFromAddress(), send_domain_header + domain + ".\n\n", true, true);
 						if (sent) {

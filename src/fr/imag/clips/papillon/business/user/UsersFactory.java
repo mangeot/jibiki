@@ -58,6 +58,10 @@ import fr.imag.clips.papillon.business.utility.*;
  * Used to find the instances of xslsheet.
  */
 public class UsersFactory {
+	
+	private static Hashtable userCacheById = new Hashtable();
+    private static Hashtable userCacheByLogin = new Hashtable();
+
 
    public static User findUserByName(String name)
     throws PapillonBusinessException {
@@ -79,8 +83,8 @@ public class UsersFactory {
 
     public static User findUserByLogin(String login)
     throws PapillonBusinessException {
-        User theUser = null;
-
+        User theUser = (User) userCacheByLogin.get(login);
+		if (theUser==null) {
         try {
             UserQuery query = new UserQuery(CurrentDBTransaction.get());
             //set query
@@ -89,11 +93,14 @@ public class UsersFactory {
             query.requireUniqueInstance();
             UserDO theUserDO = query.getNextDO();
             theUser = new User(theUserDO);
-            return theUser;
         }catch(Exception ex) {
-            ex.printStackTrace();
             throw new PapillonBusinessException("Exception in findUserByLogin()", ex);
         }
+			if (!theUser.isEmpty()) {
+				userCacheByLogin.put(login, theUser);
+			}
+		}
+		return theUser;
     }
 
     public static User findUserByEmail(String email)
@@ -363,35 +370,28 @@ public class UsersFactory {
         
         return new UserAnswer(myUser,answerMessage);
     }
-
-
-
-//fini 
-   
-    public static User findUserByHandle(String id) 
-        throws PapillonBusinessException {
-		return findUserById(id);
-	}
      
     public static User findUserById(String id) 
         throws PapillonBusinessException {
-        User theUser = null;
-        UserDO theUserDO = null;
-        
+			User theUser = (User) userCacheById.get(id);
+			if (theUser==null) {
         try {
            UserQuery query = new UserQuery(CurrentDBTransaction.get());  
              //set query
             query.setQueryOId(new ObjectId(id));
             // Throw an exception if more than one message is found
             query.requireUniqueInstance();
-            theUserDO = query.getNextDO();
-        theUser = new User(theUserDO);
-        return theUser;
-        
+            UserDO theUserDO = query.getNextDO();
+			theUser = new User(theUserDO);
         }
         catch(Exception ex) {
             throw new fr.imag.clips.papillon.business.PapillonBusinessException("Exception in findUserById()", ex);
         }
+				if (!theUser.isEmpty()) {
+					userCacheById.put(id, theUser);
+				}
+			}
+		return theUser;
     }
 	
 	public static User[] getUsersArray(String sortBy) 
