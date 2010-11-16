@@ -214,6 +214,7 @@ public class PapillonSessionData {
 			}
 			String pref = (String) this.PreferencesTable.get(url + User.KEY_SEP + name);
 			if (value !=null && !value.equals(pref)) {
+				fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("SerPrefs: url: " + url + " sep:" + User.KEY_SEP + " name: " + name  + " value: " + value);
 				this.PreferencesTable.put(url + User.KEY_SEP + name, value);
 			}
 			if (this.sessionUser!=null && persistent) {
