@@ -213,8 +213,8 @@ public class PapillonSessionData {
 				this.PreferencesTable = new Hashtable();
 			}
 			String pref = (String) this.PreferencesTable.get(url + User.KEY_SEP + name);
-			if (value !=null && !value.equals(pref)) {
-				fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("SerPrefs: url: " + url + " sep:" + User.KEY_SEP + " name: " + name  + " value: " + value);
+			if (!value.equals(pref)) {
+				fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("SerPrefs: url: " + url + " sep:" + User.KEY_SEP + " name: " + name  + " value: " + value + " Pref: " + pref);
 				this.PreferencesTable.put(url + User.KEY_SEP + name, value);
 			}
 			if (this.sessionUser!=null && persistent) {

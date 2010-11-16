@@ -642,7 +642,7 @@ public class AdvancedQueryForm {
             String prefSrcLang = sessionData.getPreference("AdvancedQueryForm.po", sourceLang.getName());
             if (prefSrcLang == null || prefSrcLang.equals("")) {
                 prefSrcLang = sessionData.getUserPreferredLanguage();
-                sessionData.setPreference("AdvancedQueryForm.po", sourceLang.getName(), prefSrcLang);
+                sessionData.setPreference("AdvancedQueryForm.po", sourceLang.getName() + "00", prefSrcLang);
             }
 			
 			
@@ -662,7 +662,7 @@ public class AdvancedQueryForm {
                 if (null != key[1] && !key[1].equals("")) {
                     AbstractPO.setSelected(sourceLang,key[1]);
 					if (i==0)  {
-						sessionData.setPreference("AdvancedQueryForm.po", sourceLang.getName(), key[1]);
+						sessionData.setPreference("AdvancedQueryForm.po", sourceLang.getName() + "i" + i, key[1]);
 					}
 				}
                 String istr = Integer.toString(i);
