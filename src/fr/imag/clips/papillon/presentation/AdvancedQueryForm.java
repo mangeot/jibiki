@@ -552,15 +552,13 @@ public class AdvancedQueryForm {
         //queryDoc.getElementOffset().setValue(Integer.toString(qp.getOffset()));
         
         AbstractPO.setSelected(queryDoc.getElementNumberOfResultPerPage(), Integer.toString(qp.getLimit()));
-        
-       //
-        for (Iterator iter = qp.getDictionaries().iterator(); iter.hasNext();) {
-            Dictionary dict = (Dictionary)iter.next();
-			if (dict !=null && !dict.isEmpty()) {
-				AbstractPO.setSelected(queryDoc.getElementDictionaries(), dict.getName());
+        		
+			for (Iterator iter = qp.getDictionaries().iterator(); iter.hasNext();) {
+				Dictionary dict = (Dictionary)iter.next();
+				if (dict !=null && !dict.isEmpty()) {
+					AbstractPO.setSelected(queryDoc.getElementDictionaries(), dict.getName());
+				}
 			}
-        }
-        
         //
         for (Iterator iter = qp.getTargets().iterator(); iter.hasNext();) {
             AbstractPO.setSelected(queryDoc.getElementTargets(), (String)iter.next());

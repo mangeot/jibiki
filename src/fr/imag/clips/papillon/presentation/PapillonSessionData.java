@@ -210,11 +210,16 @@ public class PapillonSessionData {
 				value = "";
 			}
 			if (this.PreferencesTable ==null) {
-				this.PreferencesTable = new Hashtable();
+				if (this.sessionUser!=null) {
+					this.PreferencesTable = this.sessionUser.getPreferences();
+				}
+				else {
+					this.PreferencesTable = new Hashtable();
+				}
 			}
 			String pref = (String) this.PreferencesTable.get(url + User.KEY_SEP + name);
 			if (!value.equals(pref)) {
-				fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("SerPrefs: url: " + url + " sep:" + User.KEY_SEP + " name: " + name  + " value: " + value + " Pref: " + pref);
+				fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("AddPref: url: " + url + " name: " + name  + " value: " + value + " Pref: " + pref);
 				this.PreferencesTable.put(url + User.KEY_SEP + name, value);
 			}
 			if (this.sessionUser!=null && persistent) {
@@ -222,12 +227,16 @@ public class PapillonSessionData {
 			}				
 		}
 	
-	public void resetPreferences(String url) {
+	public void resetPreferences(String url) 
+	throws fr.imag.clips.papillon.business.PapillonBusinessException {
 		for (java.util.Enumeration e = PreferencesTable.elements() ; e.hasMoreElements() ;) {
 			String key = (String) e.nextElement();
 			if (key.regionMatches(0,url,0,url.length())) {
 				this.PreferencesTable.put(key, "");
 			}
-		}		
+		}
+		if (this.sessionUser!=null) {
+			this.sessionUser.setPreferences(PreferencesTable);
+		}						
 	}
 }
