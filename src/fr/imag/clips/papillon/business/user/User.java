@@ -538,7 +538,7 @@ public class User implements com.lutris.appserver.server.user.User {
 	
 	public void save()
 		throws PapillonBusinessException {
-			PapillonLogger.writeDebugMsg("User.save");
+			//PapillonLogger.writeDebugMsg("User.save");
 			this.setXmlCode(this.serializeXml());
 			try {
 				this.myDO.commit();

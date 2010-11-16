@@ -81,7 +81,13 @@ public class MotamotFormatter implements ResultFormatter {
             }
             //
             dictXsl = getXslSheet(dictionaryName, volumeName, (String) parameter);
-
+			/*
+			 System.out.println("Document Builder Factory is: " + myDocumentBuilderFactory.getClass());
+			 System.out.println("Transformer Factory is: " + myTransformerFactory.getClass());
+			 System.out.println("Document Builder is: " + myDocumentBuilder.getClass());
+			 System.out.println("XSLSheet is: " + dictXsl.getName() + " " + dictXsl.getHandle());
+			 */
+			
         } catch (javax.xml.parsers.ParserConfigurationException e) {
             throw new PapillonBusinessException("CRITICAL: error initializing document builder !", e);
         }
