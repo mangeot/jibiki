@@ -195,7 +195,6 @@ public class PapillonSessionData {
 		if (this.PreferencesTable !=null) {
 			pref = (String) this.PreferencesTable.get(url + User.KEY_SEP + name);
 		}
-		
 		return pref;
     } 
 
@@ -211,22 +210,15 @@ public class PapillonSessionData {
 				value = "";
 			}
 			if (this.PreferencesTable ==null) {
-				if (this.sessionUser!=null && persistent) {
-					this.PreferencesTable = this.sessionUser.getPreferences();
-				}
-				else {
-					this.PreferencesTable = new Hashtable();
-				}
+				this.PreferencesTable = new Hashtable();
 			}
-			if (this.PreferencesTable !=null) {
-				String pref = (String) this.PreferencesTable.get(url + User.KEY_SEP + name);
-				if (value !=null && !value.equals(pref)) {
-					this.PreferencesTable.put(url + User.KEY_SEP + name, value);
-					if (this.sessionUser!=null && persistent) {
-						this.sessionUser.setPreference(url, name, value);
-					}
-				}
+			String pref = (String) this.PreferencesTable.get(url + User.KEY_SEP + name);
+			if (value !=null && !value.equals(pref)) {
+				this.PreferencesTable.put(url + User.KEY_SEP + name, value);
 			}
+			if (this.sessionUser!=null && persistent) {
+				this.sessionUser.setPreferences(PreferencesTable);
+			}				
 		}
 	
 	public void resetPreferences(String url) {

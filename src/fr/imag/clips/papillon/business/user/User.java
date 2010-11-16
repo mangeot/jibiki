@@ -126,7 +126,7 @@ public class User implements com.lutris.appserver.server.user.User {
 	
 	protected final static String STAR = "★";
 	
-	
+	protected Hashtable UserPreferencesTable = null;
 	
     /**
 		* The DO of the Volume.
@@ -656,16 +656,24 @@ public class User implements com.lutris.appserver.server.user.User {
 			xmlCode += "<" + CREDITS_TAG + ">" + getCredits() + "</" + CREDITS_TAG + ">\n";
 			
 			// preferences
-			xmlCode += "<" + PREFERENCES_TAG + "/>\n";
+			xmlCode += "<" + PREFERENCES_TAG + ">"+ serializePreferences()+"</" + PREFERENCES_TAG + ">\n";
 			
 	// end of user
 			xmlCode += "</" + USER_TAG + ">\n";
 			
 			return xmlCode;
 		}
-		
+			
+	public Hashtable getPreferences() 
+	throws fr.imag.clips.papillon.business.PapillonBusinessException {
+		if (UserPreferencesTable==null) {
+			UserPreferencesTable = getXMLPreferences();
+		}
+		return UserPreferencesTable;
+	}
+	
 		// preference management methods	
-		public Hashtable getPreferences() 
+		protected Hashtable getXMLPreferences() 
 			throws fr.imag.clips.papillon.business.PapillonBusinessException {
 			Hashtable PrefsTable = new Hashtable();
 		
@@ -686,51 +694,36 @@ public class User implements com.lutris.appserver.server.user.User {
 					}
 				}
 			}
-			
 			return PrefsTable;
 		}
 	
-		public boolean setPreference(String url, String name, String value) 
+	public void setPreferences(Hashtable PreferencesTable) 
+	throws fr.imag.clips.papillon.business.PapillonBusinessException {
+		UserPreferencesTable = PreferencesTable;
+		this.save();
+	}
+	
+		protected String serializePreferences() 
 			throws fr.imag.clips.papillon.business.PapillonBusinessException {
-			boolean found = false;
-		
-			String xmlCode = getXmlCode();
-			if (xmlCode==null || xmlCode.equals("")) {
-				xmlCode = serializeXml();
-			}
-			if (xmlCode!=null && !xmlCode.equals("")) {
-				Document myDocDOM = XMLServices.buildDOMTree(xmlCode);
-				NodeList myNodeList = myDocDOM.getElementsByTagName(PREFERENCE_TAG);
-				int i=0;
-				while (i<myNodeList.getLength () && !found) {
-					Element currentElt = (Element) myNodeList.item(i);
-					String tmpUrl = currentElt.getAttribute(URL_ATTR);
-					String tmpName = currentElt.getAttribute(NAME_ATTR);
-					if (tmpUrl != null && tmpUrl.equals(url)
-					&& tmpName != null && tmpName.equals(name)) {
-						currentElt.setAttribute(VALUE_ATTR,value);
-						found=true;
-					}
-					i++;
+				if (UserPreferencesTable==null) {
+					UserPreferencesTable = getXMLPreferences();
 				}
-				if (!found) {
-					NodeList parentNodeList = myDocDOM.getElementsByTagName(PREFERENCES_TAG);
-					if (parentNodeList!=null && parentNodeList.getLength ()>0) {
-						Element parentElt = (Element) parentNodeList.item(0);
-						Element newPref = myDocDOM.createElement(PREFERENCE_TAG);
-						newPref.setAttribute(URL_ATTR,url);
-						newPref.setAttribute(NAME_ATTR,name);
-						newPref.setAttribute(VALUE_ATTR,value);
-						parentElt.appendChild(newPref);
-						found = true;
-					}
-				}
-				this.setXmlCode(XMLServices.xmlCode(myDocDOM));
-				this.save();
+			String result = "";
+			Enumeration e = UserPreferencesTable.keys();
+				while(e.hasMoreElements()) {
+				String key = (String) e.nextElement();
+				String value = (String) UserPreferencesTable.get(key);
+				String[] urlName = key.split(KEY_SEP);
+				String url = urlName[0];
+				String name = urlName[1];
+				result += "<" + PREFERENCE_TAG + " "+URL_ATTR + "='" + url + "' ";
+				result += NAME_ATTR + "='" + name+ "' ";
+				result += VALUE_ATTR + "='" + value+ "' ";
+				result += "/>";
 			}
-			return found;
+			return result;
 		}
-		
+						
 		public void levelUp()
 		throws PapillonBusinessException {
 			String stars = Utility.getStars(this.getGroupsArray());
