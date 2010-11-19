@@ -1379,7 +1379,7 @@ public class VolumesFactory {
 	throws fr.imag.clips.papillon.business.PapillonBusinessException {
 
 		//
-		VolumesFactory.resetCountCache();
+		VolumeEntriesFactory.resetCountCache(volume.getName());
 		int count = volume.getCount();
 		int delta = 20; // buffer limit
 		PapillonLogger.writeDebugMsg("Volume : " + volume.getName() + " - " + count + " entries");
