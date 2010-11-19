@@ -526,6 +526,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 		String sourceLang = lexieVolume.getSourceLanguage();
 		String axemeLang = sourceLang.toUpperCase();
 		String axiLang = "axi";
+		String unlAxemeLang = "UNL";
 		java.util.Vector myKeys = new java.util.Vector();
 		String[] Word = new String[4];
 		Word[0] = Volume.CDM_headword;
@@ -553,7 +554,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 				Word = new String[4];
 				Word[0] = Volume.CDM_translationReflexie;
 				Word[1] = axemeLang;
-				Word[2] = ""+lexieResultEntry.getValue();
+				Word[2] = lexieResultEntry.getValue();
 				Word[3] = QueryBuilder.EQUAL;
 				myKeys.add(Word);
 				java.util.Vector axemesVector = IndexFactory.getIndexEntriesVector(axemeVolume.getIndexDbname(),
@@ -575,8 +576,8 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 						myKeys = new java.util.Vector();
 						Word = new String[4];
 						Word[0] = Volume.CDM_translationReflexie;
-						Word[1] = axiLang;
-						Word[2] = ""+axemeResultEntry.getValue();
+						Word[1] = axemeLang;
+						Word[2] = axemeResultEntry.getValue();
 						Word[3] = QueryBuilder.EQUAL;
 						myKeys.add(Word);
 						java.util.Vector axiesVector = IndexFactory.getIndexEntriesVector(axieVolume.getIndexDbname(),
@@ -589,7 +590,6 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 							java.util.Vector axiesResultVector = IndexFactory.getIndexVectorByEntryId(axieVolume, ""+ axieEntry.getEntryId());
 							for (int l=0; l<axiesResultVector.size(); l++) {
 								Index axieResultEntry = (Index) axiesResultVector.elementAt(l);
-								String unlAxemeLang = "UNL";
 								if (axieResultEntry.getKey().equals(Volume.CDM_translationReflexie) && axieResultEntry.getLang().equals(unlAxemeLang)) {
 									java.util.Collection unlAxemesVolumesCollection = VolumesFactory.getVolumesArray(dictName,unlAxemeLang,null);
 									if (unlAxemesVolumesCollection !=null && unlAxemesVolumesCollection.size()>0) {
