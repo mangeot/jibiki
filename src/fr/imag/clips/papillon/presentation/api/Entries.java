@@ -524,6 +524,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 		PapillonLogger.writeDebugMsg("Pivax entries: volume: " + lexieVolume.getName() + " word: " + word);
 		String dictName = lexieVolume.getDictname();
 		String sourceLang = lexieVolume.getSourceLanguage();
+		String axemeLang = sourceLang.toUpperCase();
 		java.util.Vector myKeys = new java.util.Vector();
 		String[] Word = new String[4];
 		Word[0] = Volume.CDM_headword;
@@ -538,11 +539,11 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 																			0);
 		for (int i=0; i<lexiesVector.size(); i++) {
 			Index lexieEntry = (Index) lexiesVector.elementAt(i);
+			PapillonLogger.writeDebugMsg("Pivax entries: volume lexies: " + lexieVolume.getName() + " word: " + lexieEntry.getEntryId());
 			java.util.Vector lexiesResultVector = IndexFactory.getIndexVectorByEntryId(lexieVolume, ""+ lexieEntry.getEntryId());
 			for (int p=0; p<lexiesResultVector.size(); p++) {
 				Index lexieResultEntry = (Index) lexiesResultVector.elementAt(p);
-				String axemeLang = sourceLang.toUpperCase();
-				if (lexieResultEntry.getKey().equals(Volume.CDM_entryId) && lexieResultEntry.getLang().equals(axemeLang)) {
+				if (lexieResultEntry.getKey().equals(Volume.CDM_entryId)) {
 			java.util.Collection lexiesVolumesCollection = VolumesFactory.getVolumesArray(dictName,axemeLang,null);
 			if (lexiesVolumesCollection !=null && lexiesVolumesCollection.size()>0) {
 				Volume axemeVolume = ((Volume)lexiesVolumesCollection.iterator().next());
