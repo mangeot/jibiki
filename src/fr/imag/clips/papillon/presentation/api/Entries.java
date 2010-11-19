@@ -631,7 +631,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 																															  IndexFactory.ORDER_DESCENDING,
 																															  1,
 																															  0);
-														for (int o=0; i<unlLexiesVector.size(); o++) {
+														for (int o=0; o<unlLexiesVector.size(); o++) {
 															Index unlIndexEntry = (Index) unlLexiesVector.elementAt(o);
 															VolumeEntry unlEntry = VolumeEntriesFactory.findEntryByHandle(unlVolume.getName(), ""+unlIndexEntry.getEntryId());
 															if (unlEntry != null && !unlEntry.isEmpty()) {
