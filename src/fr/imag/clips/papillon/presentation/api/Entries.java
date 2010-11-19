@@ -525,6 +525,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 		String dictName = lexieVolume.getDictname();
 		String sourceLang = lexieVolume.getSourceLanguage();
 		String axemeLang = sourceLang.toUpperCase();
+		String axiLang = "axi";
 		java.util.Vector myKeys = new java.util.Vector();
 		String[] Word = new String[4];
 		Word[0] = Volume.CDM_headword;
@@ -567,14 +568,14 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 					for (int q=0; q<axemesResultVector.size(); q++) {
 						Index axemeResultEntry = (Index) axemesResultVector.elementAt(p);
 						if (axemeResultEntry.getKey().equals(Volume.CDM_entryId)) {
-					java.util.Collection axemesVolumesCollection = VolumesFactory.getVolumesArray(dictName,axemeLang,null);
+					java.util.Collection axemesVolumesCollection = VolumesFactory.getVolumesArray(dictName,axiLang,null);
 					if (axemesVolumesCollection !=null && axemesVolumesCollection.size()>0) {
 						Volume axieVolume = ((Volume)axemesVolumesCollection.iterator().next());
 						PapillonLogger.writeDebugMsg("Pivax entries: volume axie: " + axieVolume.getName() + " word: " + axemeResultEntry.getValue());
 						myKeys = new java.util.Vector();
 						Word = new String[4];
 						Word[0] = Volume.CDM_translationReflexie;
-						Word[1] = "axi";
+						Word[1] = axiLang;
 						Word[2] = ""+axemeResultEntry.getValue();
 						Word[3] = QueryBuilder.EQUAL;
 						myKeys.add(Word);
