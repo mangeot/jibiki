@@ -527,6 +527,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 		String axemeLang = sourceLang.toUpperCase();
 		String axiLang = "axi";
 		String unlAxemeLang = "UNL";
+		String unlLang = "unl";
 		java.util.Vector myKeys = new java.util.Vector();
 		String[] Word = new String[4];
 		Word[0] = Volume.CDM_headword;
@@ -613,8 +614,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 											PapillonLogger.writeDebugMsg("Pivax entries: volume unl axeme: " + unlAxemeVolume.getName() + " word: " + unlAxemeEntry.getEntryId());
 											for (int n=0; n<unlAxemesResultVector.size(); n++) {
 												Index unlAxemeResultEntry = (Index) unlAxemesResultVector.elementAt(n);
-												if (unlAxemeResultEntry.getKey().equals(Volume.CDM_translationReflexie) && unlAxemeResultEntry.getLang().equals(unlAxemeLang)) {
-													String unlLang = "unl";
+												if (unlAxemeResultEntry.getKey().equals(Volume.CDM_translationReflexie) && unlAxemeResultEntry.getLang().equals(unlLang)) {
 													java.util.Collection unlVolumesCollection = VolumesFactory.getVolumesArray(dictName,unlLang,null);
 													if (unlVolumesCollection !=null && unlVolumesCollection.size()>0) {
 														Volume unlVolume = ((Volume)unlVolumesCollection.iterator().next());
@@ -622,7 +622,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 														myKeys = new java.util.Vector();
 														Word = new String[4];
 														Word[0] = Volume.CDM_entryId;
-														Word[1] = unlLang;
+														Word[1] = Volume.DEFAULT_LANG;
 														Word[2] = unlAxemeResultEntry.getValue();
 														Word[3] = QueryBuilder.EQUAL;
 														myKeys.add(Word);
