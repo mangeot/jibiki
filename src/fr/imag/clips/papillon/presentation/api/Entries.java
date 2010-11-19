@@ -597,8 +597,8 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 										PapillonLogger.writeDebugMsg("Pivax entries: volume unl axeme: " + unlAxemeVolume.getName() + " word: " + axieResultEntry.getValue());
 										myKeys = new java.util.Vector();
 										Word = new String[4];
-										Word[0] = Volume.CDM_translationReflexie;
-										Word[1] = unlAxemeLang;
+										Word[0] = Volume.CDM_entryId;
+										Word[1] = Volume.DEFAULT_LANG;
 										Word[2] = axieResultEntry.getValue();
 										Word[3] = QueryBuilder.EQUAL;
 										myKeys.add(Word);
@@ -610,6 +610,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 										for (int m=0; m<unlAxemesVector.size(); m++) {
 											Index unlAxemeEntry = (Index) unlAxemesVector.elementAt(m);
 											java.util.Vector unlAxemesResultVector = IndexFactory.getIndexVectorByEntryId(unlAxemeVolume, ""+unlAxemeEntry.getEntryId());
+											PapillonLogger.writeDebugMsg("Pivax entries: volume unl axeme: " + unlAxemeVolume.getName() + " word: " + unlAxemeEntry.getEntryId());
 											for (int n=0; n<unlAxemesResultVector.size(); n++) {
 												Index unlAxemeResultEntry = (Index) unlAxemesResultVector.elementAt(n);
 												if (unlAxemeResultEntry.getKey().equals(Volume.CDM_translationReflexie) && unlAxemeResultEntry.getLang().equals(unlAxemeLang)) {
