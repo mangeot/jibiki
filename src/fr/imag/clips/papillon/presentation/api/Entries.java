@@ -545,9 +545,9 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 			for (int p=0; p<lexiesResultVector.size(); p++) {
 				Index lexieResultEntry = (Index) lexiesResultVector.elementAt(p);
 				if (lexieResultEntry.getKey().equals(Volume.CDM_entryId)) {
-			java.util.Collection lexiesVolumesCollection = VolumesFactory.getVolumesArray(dictName,axemeLang,null);
-			if (lexiesVolumesCollection !=null && lexiesVolumesCollection.size()>0) {
-				Volume axemeVolume = ((Volume)lexiesVolumesCollection.iterator().next());
+			java.util.Collection axemesVolumesCollection = VolumesFactory.getVolumesArray(dictName,axemeLang,null);
+			if (axemesVolumesCollection !=null && axemesVolumesCollection.size()>0) {
+				Volume axemeVolume = ((Volume)axemesVolumesCollection.iterator().next());
 				PapillonLogger.writeDebugMsg("Pivax entries: volume axemes: " + axemeVolume.getName() + " word: " + lexieResultEntry.getValue());
 				myKeys = new java.util.Vector();
 				Word = new String[4];
@@ -566,11 +566,11 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 					PapillonLogger.writeDebugMsg("Pivax entries: volume axemes: " + axemeVolume.getName() + " word: " + axemeEntry.getEntryId());
 					java.util.Vector axemesResultVector = IndexFactory.getIndexVectorByEntryId(axemeVolume, ""+ axemeEntry.getEntryId());
 					for (int q=0; q<axemesResultVector.size(); q++) {
-						Index axemeResultEntry = (Index) axemesResultVector.elementAt(p);
+						Index axemeResultEntry = (Index) axemesResultVector.elementAt(q);
 						if (axemeResultEntry.getKey().equals(Volume.CDM_entryId)) {
-					java.util.Collection axemesVolumesCollection = VolumesFactory.getVolumesArray(dictName,axiLang,null);
-					if (axemesVolumesCollection !=null && axemesVolumesCollection.size()>0) {
-						Volume axieVolume = ((Volume)axemesVolumesCollection.iterator().next());
+					java.util.Collection axiesVolumesCollection = VolumesFactory.getVolumesArray(dictName,axiLang,null);
+					if (axiesVolumesCollection !=null && axiesVolumesCollection.size()>0) {
+						Volume axieVolume = ((Volume)axiesVolumesCollection.iterator().next());
 						PapillonLogger.writeDebugMsg("Pivax entries: volume axie: " + axieVolume.getName() + " word: " + axemeResultEntry.getValue());
 						myKeys = new java.util.Vector();
 						Word = new String[4];
