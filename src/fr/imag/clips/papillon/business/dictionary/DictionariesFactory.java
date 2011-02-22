@@ -1265,11 +1265,11 @@ public class DictionariesFactory {
 			java.util.Vector myKeys = new java.util.Vector();
 			String[] Word = new String[4];
 			Word[0] = Volume.CDM_translationReflexie;
-			Word[1] = sourceAxemeLang;
+			Word[1] = sourceLang;
 			Word[2] = qr.getSourceEntry().getEntryId();
 			Word[3] = QueryBuilder.EQUAL;
 			myKeys.add(Word);
-			PapillonLogger.writeDebugMsg("getIndexEntriesVector: "+sourceAxemeLang +" id: "+qr.getSourceEntry().getEntryId()+ " dans: " +axemeVolume.getIndexDbname());
+			PapillonLogger.writeDebugMsg("getIndexEntriesVector: "+sourceLang +" id: "+qr.getSourceEntry().getEntryId()+ " dans: " +axemeVolume.getIndexDbname());
 			java.util.Vector axemesVector = IndexFactory.getIndexEntriesVector(axemeVolume.getIndexDbname(),
 																			   myKeys,
 																			   IndexFactory.ORDER_DESCENDING,
