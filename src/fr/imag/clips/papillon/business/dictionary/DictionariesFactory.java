@@ -1261,7 +1261,7 @@ public class DictionariesFactory {
 		java.util.Collection axemesVolumesCollection = VolumesFactory.getVolumesArray(dictName,sourceAxemeLang,null);
 		if (axemesVolumesCollection !=null && axemesVolumesCollection.size()>0) {
 			Volume axemeVolume = ((Volume)axemesVolumesCollection.iterator().next());
-			PapillonLogger.writeDebugMsg("Pivax entries: volume axemes: " + axemeVolume.getName() + " word: " + qr.getSourceEntry().getHeadword());
+			PapillonLogger.writeDebugMsg("Pivax entries: volume src axemes: " + axemeVolume.getName() + " entryId: " + qr.getSourceEntry().getEntryId());
 			java.util.Vector myKeys = new java.util.Vector();
 			String[] Word = new String[4];
 			Word[0] = Volume.CDM_translationReflexie;
@@ -1269,6 +1269,7 @@ public class DictionariesFactory {
 			Word[2] = qr.getSourceEntry().getEntryId();
 			Word[3] = QueryBuilder.EQUAL;
 			myKeys.add(Word);
+			PapillonLogger.writeDebugMsg("getIndexEntriesVector: "+sourceAxemeLang +" id: "+qr.getSourceEntry().getEntryId()+ " dans: " +axemeVolume.getIndexDbname());
 			java.util.Vector axemesVector = IndexFactory.getIndexEntriesVector(axemeVolume.getIndexDbname(),
 																			   myKeys,
 																			   IndexFactory.ORDER_DESCENDING,
@@ -1276,7 +1277,7 @@ public class DictionariesFactory {
 																			   0);
 			for (int j=0; j<axemesVector.size(); j++) {
 				Index axemeEntry = (Index) axemesVector.elementAt(j);
-				PapillonLogger.writeDebugMsg("Pivax entries: volume axemes: " + axemeVolume.getName() + " word: " + axemeEntry.getEntryId());
+				PapillonLogger.writeDebugMsg("Pivax entries: volume src axemes: " + axemeVolume.getName() + " axemeId: " + axemeEntry.getEntryId());
 				java.util.Vector axemesResultVector = IndexFactory.getIndexVectorByEntryId(axemeVolume, ""+ axemeEntry.getEntryId());
 				for (int q=0; q<axemesResultVector.size(); q++) {
 					Index axemeResultEntry = (Index) axemesResultVector.elementAt(q);
@@ -1308,7 +1309,7 @@ public class DictionariesFactory {
 										java.util.Collection unlAxemesVolumesCollection = VolumesFactory.getVolumesArray(dictName,targetAxemeLang,null);
 										if (unlAxemesVolumesCollection !=null && unlAxemesVolumesCollection.size()>0) {
 											Volume unlAxemeVolume = ((Volume)unlAxemesVolumesCollection.iterator().next());
-											PapillonLogger.writeDebugMsg("Pivax entries: volume unl axeme: " + unlAxemeVolume.getName() + " word: " + axieResultEntry.getValue());
+											PapillonLogger.writeDebugMsg("Pivax entries: volume trg axeme: " + unlAxemeVolume.getName() + " value: " + axieResultEntry.getValue());
 											myKeys = new java.util.Vector();
 											Word = new String[4];
 											Word[0] = Volume.CDM_entryId;
@@ -1324,14 +1325,14 @@ public class DictionariesFactory {
 											for (int m=0; m<unlAxemesVector.size(); m++) {
 												Index unlAxemeEntry = (Index) unlAxemesVector.elementAt(m);
 												java.util.Vector unlAxemesResultVector = IndexFactory.getIndexVectorByEntryId(unlAxemeVolume, ""+unlAxemeEntry.getEntryId());
-												PapillonLogger.writeDebugMsg("Pivax entries: volume unl axeme: " + unlAxemeVolume.getName() + " word: " + unlAxemeEntry.getEntryId());
+												PapillonLogger.writeDebugMsg("Pivax entries: volume trg axeme: " + unlAxemeVolume.getName() + " axemeId: " + unlAxemeEntry.getEntryId());
 												for (int n=0; n<unlAxemesResultVector.size(); n++) {
 													Index unlAxemeResultEntry = (Index) unlAxemesResultVector.elementAt(n);
 													if (unlAxemeResultEntry.getKey().equals(Volume.CDM_translationReflexie)) {
 														java.util.Collection unlVolumesCollection = VolumesFactory.getVolumesArray(dictName,targetLang,null);
 														if (unlVolumesCollection !=null && unlVolumesCollection.size()>0) {
 															Volume unlVolume = ((Volume)unlVolumesCollection.iterator().next());
-															PapillonLogger.writeDebugMsg("Pivax entries: volume unl: " + unlVolume.getName() + " word: " + unlAxemeResultEntry.getValue());
+															PapillonLogger.writeDebugMsg("Pivax entries: volume trg: " + unlVolume.getName() + " value: " + unlAxemeResultEntry.getValue());
 															myKeys = new java.util.Vector();
 															Word = new String[4];
 															Word[0] = Volume.CDM_entryId;
@@ -1348,7 +1349,7 @@ public class DictionariesFactory {
 																Index unlIndexEntry = (Index) unlLexiesVector.elementAt(o);
 																VolumeEntry unlEntry = VolumeEntriesFactory.findEntryByHandle(unlVolume.getName(), ""+unlIndexEntry.getEntryId());
 																if (unlEntry != null && !unlEntry.isEmpty()) {
-																	PapillonLogger.writeDebugMsg("Pivax entries: Entry: headword: " + unlEntry.getHeadword());
+																	PapillonLogger.writeDebugMsg("Pivax entries: trg Entry: headword: " + unlEntry.getHeadword());
 																	resLexies.put(unlEntry.getEntryId(), unlEntry);
 																}
 																else {
