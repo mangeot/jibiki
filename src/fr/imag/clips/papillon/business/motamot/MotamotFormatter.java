@@ -216,7 +216,7 @@ public class MotamotFormatter implements ResultFormatter {
             return docCible.getDocumentElement();
 
         } catch (Exception ex) {
-            throw new PapillonBusinessException("Exception in getFormattedResult()", ex);
+            throw new PapillonBusinessException("Exception in formatResult()", ex);
         }
     }
 

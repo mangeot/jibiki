@@ -183,19 +183,18 @@ public class PivaxFormatter implements ResultFormatter {
         try {
             //
             if (DEBUG) PapillonLogger.writeDebugMsg("PivaxFormater : begin getFormattedResult");
-            
-            // Get document source
+                        
+			// Get document source
             Document docSource = qr.getSourceEntry().getDom();
             // Element handler = docSource.createElement("handler");
             // handler.setAttribute("handler", String.valueOf(qr.getSourceEntry().getHandle()));
             // docSource.appendChild(handler);
 			
             // Create document result
-            Document res = myDocumentBuilder.newDocument();
-            Element div = res.createElement("div");
-            res.appendChild(div);
+            Document resultDoc = myDocumentBuilder.newDocument();
+            Element div = resultDoc.createElement("div");
+            resultDoc.appendChild(div);
             
-            //
             if (null != dictXsl && !dictXsl.isEmpty()) {
 				
                 // PapillonLogger.writeDebugMsg("PivaxFormatter.getFormattedResult dictXsl.getCode(): " + dictXsl.getCode());
@@ -204,55 +203,45 @@ public class PivaxFormatter implements ResultFormatter {
                 // Format document source
                 Node resultNode = formatResult(docSource, dictXsl, usr);
                 // Node srcEntry = addButtons(resultNode, qr.getSourceEntry());
-                div.appendChild(res.importNode(resultNode, true));
+                div.appendChild(resultDoc.importNode(resultNode, true));
             }
-            
+
             // Add 
-            // FIXME : supress, find another solution ()
+            // FIXME : suppress, find another solution ()
             if (qr.getResultKind() == QueryResult.AXIE_COLLECTION_RESULT) {
             	
             	// PapillonLogger.writeDebugMsg("PivaxFormatter.getFormattedResult qr.getLexiesCollection(): " + qr.getLexiesCollection().size());
-            	
+				Element hr = resultDoc.createElement("hr");
+				div.appendChild(hr);
+
                 // Then append each translation
                 Iterator iter = qr.getLexiesCollection().iterator();
                 while (iter.hasNext()) {
                     VolumeEntry ve = (VolumeEntry) iter.next();
                     
                     // PapillonLogger.writeDebugMsg("PivaxFormatter.getFormattedResult target " + ve.getHeadword());
-                    
                     if (ve.getHandle() != qr.getSourceEntry().getHandle() ) { //don't show reverse
                         Document doc = ve.getDom();
                         
-                        //
                         if (null != dictXsl && ! dictXsl.isEmpty()) {
                             
                         	// PapillonLogger.writeDebugMsg("docSourceLexieRef: " + dictXsl.getName() + " " + XMLServices.xmlCodePrettyPrinted(doc));
-                            //
                             Element resultNode = (Element) formatResult(doc, dictXsl, usr);
                             resultNode.setAttribute("class", "translation");
                             
-                            NodeList spanNodes = resultNode.getElementsByTagName("span");
-                            for (int iSpan = 0; iSpan<spanNodes.getLength();iSpan++) {
-                            	Element spanNode = (Element) spanNodes.item(iSpan);
-                            	String classAtt = spanNode.getAttribute("class");
-                            	String newClassAtt = classAtt.replaceAll("src_", "tar_");
-                            	spanNode.setAttribute("class", newClassAtt);
-                            }
-                            
-                            Node targetNode = addButtons(resultNode, ve);
-                            div.appendChild(res.importNode(targetNode, true));
+                            div.appendChild(resultDoc.importNode(resultNode, true));
                         } else
                         	PapillonLogger.writeDebugMsg("PivaxFormatter.getFormattedResult dictXsl is NULL");
                     }
                 }
             }            
-            
+ 			
             //
             if (DEBUG) PapillonLogger.writeDebugMsg("PivaxFormater : end getFormattedResult");
             
             // PapillonLogger.writeDebugMsg("docSourceRoot: " + XMLServices.xmlCodePrettyPrinted(res));
             
-            return (Node) res.getDocumentElement();
+            return (Node) resultDoc.getDocumentElement();
             
         } catch(Exception ex) {
             // throw new PapillonBusinessException("Exception in PIVAX getFormattedResult()", ex);
