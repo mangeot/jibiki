@@ -520,7 +520,9 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 	
 	protected static org.w3c.dom.Document getPivaxEntries(Volume lexieVolume, String word, String strategy, int limit) 
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
-		org.w3c.dom.Document resultDoc = null;
+			
+		org.w3c.dom.Document resultDoc = XMLServices.buildDOMTree(ENTRIES_HEAD_XMLSTRING+ENTRIES_TAIL_XMLSTRING);
+
 		PapillonLogger.writeDebugMsg("Pivax entries: volume: " + lexieVolume.getName() + " word: " + word);
 		String dictName = lexieVolume.getDictname();
 		String sourceLang = lexieVolume.getSourceLanguage();
@@ -636,7 +638,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 															VolumeEntry unlEntry = VolumeEntriesFactory.findEntryByHandle(unlVolume.getName(), ""+unlIndexEntry.getEntryId());
 															if (unlEntry != null && !unlEntry.isEmpty()) {
 																PapillonLogger.writeDebugMsg("Pivax entries: Entry: headword: " + unlEntry.getHeadword());
-																resultDoc = unlEntry.getDom();
+																resultDoc.getDocumentElement().appendChild(resultDoc.importNode(unlEntry.getDom(),true));
 															}
 															else {
 																PapillonLogger.writeDebugMsg("Pivax entries: Entry null: " + word);
@@ -658,7 +660,6 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 			}
 			}
 			}
-			
 		}
 		return resultDoc;
 	}

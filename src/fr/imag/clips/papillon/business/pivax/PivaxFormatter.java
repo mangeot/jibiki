@@ -182,7 +182,7 @@ public class PivaxFormatter implements ResultFormatter {
     public Node getFormattedResult(QueryResult qr, User usr) throws PapillonBusinessException {
         try {
             //
-            if (DEBUG) PapillonLogger.writeDebugMsg("PivaxFormatrer : begin getFormattedResult");
+            if (DEBUG) PapillonLogger.writeDebugMsg("PivaxFormater : begin getFormattedResult");
             
             // Get document source
             Document docSource = qr.getSourceEntry().getDom();
@@ -248,7 +248,7 @@ public class PivaxFormatter implements ResultFormatter {
             }            
             
             //
-            if (DEBUG) PapillonLogger.writeDebugMsg("PivaxFormatrer : end getFormattedResult");
+            if (DEBUG) PapillonLogger.writeDebugMsg("PivaxFormater : end getFormattedResult");
             
             // PapillonLogger.writeDebugMsg("docSourceRoot: " + XMLServices.xmlCodePrettyPrinted(res));
             
