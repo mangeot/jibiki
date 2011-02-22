@@ -638,7 +638,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 															VolumeEntry unlEntry = VolumeEntriesFactory.findEntryByHandle(unlVolume.getName(), ""+unlIndexEntry.getEntryId());
 															if (unlEntry != null && !unlEntry.isEmpty()) {
 																PapillonLogger.writeDebugMsg("Pivax entries: Entry: headword: " + unlEntry.getHeadword());
-																resultDoc.getDocumentElement().appendChild(resultDoc.importNode(unlEntry.getDom(),true));
+																resultDoc.getDocumentElement().appendChild(resultDoc.importNode((org.w3c.dom.Node)unlEntry.getDom().getDocumentElement(),true));
 															}
 															else {
 																PapillonLogger.writeDebugMsg("Pivax entries: Entry null: " + word);
