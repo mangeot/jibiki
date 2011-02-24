@@ -1381,6 +1381,8 @@ public class VolumesFactory {
 		//
 		VolumeEntriesFactory.resetCountCache(volume.getName());
 		int count = volume.getCount();
+		// FIXME: should not be needed here!
+		volume.setEntries(new Integer(count));
 		int delta = 20; // buffer limit
 		PapillonLogger.writeDebugMsg("Volume : " + volume.getName() + " - " + count + " entries");
 		IndexFactory.truncateIndexTable(volume);
