@@ -443,7 +443,7 @@ public class ParseVolume {
                                         java.util.Vector DiscardedEntries)
             throws PapillonBusinessException {
         boolean result = false;
-        //PapillonLogger.writeDebugMsg("Parse entry: [" + entryString + "]");
+        PapillonLogger.writeDebugMsg("Parse entry: [" + entryString + "]");
         org.w3c.dom.Document myDoc = XMLServices.buildDOMTree(entryString);
         if (myDoc != null) {
             VolumeEntry newEntry = new VolumeEntry(myDict, myVolume);
@@ -452,7 +452,6 @@ public class ParseVolume {
             newEntry.setCreationDate();
             newEntry.setHeadword();
             newEntry.setStatusIfNotNull(defaultStatus);
-            // indexEntry(newEntry) is called by myEntry.save();
             String entryId = "";
             if (isContributionVolume) {
                 entryId = newEntry.getContributionId();
@@ -599,7 +598,6 @@ public class ParseVolume {
         return result;
     }
 
-    // FIXME: should not be called parseEntry, but rather indexEntry...
     // FIXME: should be defined here ?
     public static ArrayList indexEntry(Volume volume, org.w3c.dom.Document entryDoc, String handle)
             throws PapillonBusinessException {
@@ -615,7 +613,7 @@ public class ParseVolume {
                 java.util.Hashtable tmpTable = (java.util.Hashtable) CdmElementsTable.get(lang);
                 for (java.util.Enumeration keys = tmpTable.keys(); keys.hasMoreElements();) {
                     String CdmElement = (String) keys.nextElement();
-					//PapillonLogger.writeDebugMsg("Parse entry, key " + CdmElement + ":");
+		//PapillonLogger.writeDebugMsg("Parse entry, key " + CdmElement + ":");
                     java.util.Vector myVector = (java.util.Vector) tmpTable.get(CdmElement);
                     org.apache.xpath.XPath myXPath = null;
                     boolean isIndex = false;
@@ -641,7 +639,7 @@ public class ParseVolume {
                            org.apache.xpath.objects.XObject myXObject = myXPath.execute(
                                     new org.apache.xpath.XPathContext(), myRootElt, myPrefixResolver);
                             resNodeList = myXObject.nodelist();
-						//	PapillonLogger.writeDebugMsg("Parse entry, xPath.execute res: ");
+				//PapillonLogger.writeDebugMsg("Parse entry, xPath.execute res: ");
                         } catch (javax.xml.transform.TransformerException e) {
                             throw new PapillonBusinessException("javax.xml.transform.TransformerException: ", e);
                         }
@@ -649,17 +647,17 @@ public class ParseVolume {
                             for (int i = 0; i < resNodeList.getLength(); i++) {
                                 org.w3c.dom.Node myNode = resNodeList.item(i);
                                 String value = myNode.getNodeValue();
-                             //   PapillonLogger.writeDebugMsg("Parse entry, node " + myNode.getNodeName() + " /value: " + value);
+                               //PapillonLogger.writeDebugMsg("Parse entry, node " + myNode.getNodeName() + " /value: " + value);
                                 if (value != null) {
                                     value = value.trim();
                                     if (!value.equals("")) {
-                           //             PapillonLogger.writeDebugMsg("Parse entry, node value: " + value);
+                                        //PapillonLogger.writeDebugMsg("Parse entry, node value: " + value);
                                         indexes.add(new IndexData(CdmElement, lang, value, handle));
                                     }
                                 }
                             }
                         } else {
-                         //   PapillonLogger.writeDebugMsg("Parse entry, node list null for CdmElement: " + CdmElement + ":");
+                            //PapillonLogger.writeDebugMsg("Parse entry, node list null for CdmElement: " + CdmElement + ":");
                         }
                     }
                 }
