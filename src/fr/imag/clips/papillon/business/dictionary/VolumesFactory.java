@@ -1250,6 +1250,11 @@ public class VolumesFactory {
             addCdmElementInTable(elementsTable, Volume.CDM_modificationComment, Volume.DEFAULT_LANG,
                     currentXpath + "/" + VolumeEntry.commentTag + "/text()", true);
         }
+		// Creating the CDM_entryString from CDM_entry if it does not exist
+        if (getCdmXPathString(elementsTable, Volume.CDM_entryString, Volume.DEFAULT_LANG) == null) {
+            String entryString = getCdmXPathString(elementsTable, Volume.CDM_entry, Volume.DEFAULT_LANG);
+			addCdmElementInTable(elementsTable, Volume.CDM_entryString, Volume.DEFAULT_LANG, entryString,false);
+        }
         if (getCdmXPathString(elementsTable, Volume.CDM_headwordElement, sourceLanguage) == null) {
             String headwordXpath = getCdmXPathString(elementsTable, Volume.CDM_headword, sourceLanguage);
             if (headwordXpath != null) {

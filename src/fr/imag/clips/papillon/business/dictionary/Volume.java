@@ -238,6 +238,9 @@ public class Volume {
 	
 	// All CDM elements
     public static final String CDM_volume = "cdm-volume";
+	// This CDM element will not be compiled as an XPath
+	// I t is used for matching the entry string in the text file
+    public static final  String CDM_entryString = "cdm-entry-string";
     public static final  String CDM_entry = "cdm-entry";
     public static final  String CDM_entryId = "cdm-entry-id";
     public static final  String CDM_headword = "cdm-headword";
@@ -779,6 +782,18 @@ public class Volume {
 		return getTagNameFromXPath(getCdmXPathString(this.CDM_entry));
 	}
 
+    /**
+	 * Gets the CDM entryString of the Volume
+     *
+     * @return the  CDM entry tag name as a String.
+     * @exception PapillonBusinessException if an error occurs
+     *   retrieving data (usually due to an underlying data layer
+	 *   error).
+     */
+    public String getCdmEntryString() {
+		return getTagNameFromXPath(getCdmXPathString(this.CDM_entryString));
+	}
+	
     /**
 	 * Gets the local tag name of the CDM entry of the Volume
      *

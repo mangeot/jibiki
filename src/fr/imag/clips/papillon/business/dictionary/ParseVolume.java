@@ -332,8 +332,7 @@ public class ParseVolume {
             java.io.BufferedReader buffer = new java.io.BufferedReader(inReader);
             StringBuffer xmlHeaderBuffer = new StringBuffer();
             String CDM_Volume = myVolume.getCdmVolume();
-            // FIXME upload des dicos sans contribs à prévoir ...
-            String CDM_Entry = myVolume.getCdmEntry();
+            String CDM_Entry = myVolume.getCdmEntryString();
             String CDM_Contribution = myVolume.getCdmContribution();
             boolean isContributionVolume = false;
 
