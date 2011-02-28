@@ -1273,7 +1273,7 @@ public class DictionariesFactory {
 			java.util.Vector axemesVector = IndexFactory.getIndexEntriesVector(axemeVolume.getIndexDbname(),
 																			   myKeys,
 																			   IndexFactory.ORDER_DESCENDING,
-																			   1,
+																			   100,
 																			   0);
 			for (int j=0; j<axemesVector.size(); j++) {
 				Index axemeEntry = (Index) axemesVector.elementAt(j);
@@ -1296,7 +1296,7 @@ public class DictionariesFactory {
 							java.util.Vector axiesVector = IndexFactory.getIndexEntriesVector(axieVolume.getIndexDbname(),
 																							  myKeys,
 																							  IndexFactory.ORDER_DESCENDING,
-																							  1,
+																							  100,
 																							  0);
 							for (int k=0; k<axiesVector.size(); k++) {
 								Index axieEntry = (Index) axiesVector.elementAt(k);
@@ -1321,7 +1321,7 @@ public class DictionariesFactory {
 											java.util.Vector unlAxemesVector = IndexFactory.getIndexEntriesVector(unlAxemeVolume.getIndexDbname(),
 																												  myKeys,
 																												  IndexFactory.ORDER_DESCENDING,
-																												  1,
+																												  100,
 																												  0);
 											for (int m=0; m<unlAxemesVector.size(); m++) {
 												Index unlAxemeEntry = (Index) unlAxemesVector.elementAt(m);
@@ -1344,7 +1344,7 @@ public class DictionariesFactory {
 															java.util.Vector unlLexiesVector = IndexFactory.getIndexEntriesVector(unlVolume.getIndexDbname(),
 																																  myKeys,
 																																  IndexFactory.ORDER_DESCENDING,
-																																  1,
+																																  100,
 																																  0);
 															for (int o=0; o<unlLexiesVector.size(); o++) {
 																Index unlIndexEntry = (Index) unlLexiesVector.elementAt(o);
