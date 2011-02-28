@@ -649,6 +649,7 @@ public class VolumeEntriesFactory {
 					if (status.equals(NoStatus)) {
 						count = new Integer(getDbTableEntriesCount(theVolume, null, null, null));
 						theVolume.setEntries(count);
+						theVolume.save();
 					}
 					else {
 						java.util.Vector Keys = new java.util.Vector();
@@ -668,6 +669,7 @@ public class VolumeEntriesFactory {
 				if (status.equals(NoStatus)) {
 					count = new Integer(getDbTableEntriesCount(theVolume, null, null, null));
 					theVolume.setEntries(count);
+					theVolume.save();
 				}
 				else {
 					java.util.Vector Keys = new java.util.Vector();
