@@ -544,7 +544,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 																			0);
 		for (int i=0; i<lexiesVector.size(); i++) {
 			Index lexieEntry = (Index) lexiesVector.elementAt(i);
-			PapillonLogger.writeDebugMsg("Pivax entries: volume lexies: " + lexieVolume.getName() + " lexieId: " + lexieEntry.getEntryId());
+			//PapillonLogger.writeDebugMsg("Pivax entries: volume lexies: " + lexieVolume.getName() + " lexieId: " + lexieEntry.getEntryId());
 			java.util.Vector lexiesResultVector = IndexFactory.getIndexVectorByEntryId(lexieVolume, ""+ lexieEntry.getEntryId());
 			for (int p=0; p<lexiesResultVector.size(); p++) {
 				Index lexieResultEntry = (Index) lexiesResultVector.elementAt(p);
@@ -552,7 +552,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 			java.util.Collection axemesVolumesCollection = VolumesFactory.getVolumesArray(dictName,axemeLang,null);
 			if (axemesVolumesCollection !=null && axemesVolumesCollection.size()>0) {
 				Volume axemeVolume = ((Volume)axemesVolumesCollection.iterator().next());
-				PapillonLogger.writeDebugMsg("Pivax entries: volume axemes: " + axemeVolume.getName() + " lexieValue: " + lexieResultEntry.getValue());
+				//PapillonLogger.writeDebugMsg("Pivax entries: volume axemes: " + axemeVolume.getName() + " lexieValue: " + lexieResultEntry.getValue());
 				myKeys = new java.util.Vector();
 				Word = new String[4];
 				Word[0] = Volume.CDM_translationReflexie;
@@ -567,7 +567,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 																					0);
 				for (int j=0; j<axemesVector.size(); j++) {
 					Index axemeEntry = (Index) axemesVector.elementAt(j);
-					PapillonLogger.writeDebugMsg("Pivax entries: volume axemes: " + axemeVolume.getName() + " axemeId: " + axemeEntry.getEntryId());
+					//PapillonLogger.writeDebugMsg("Pivax entries: volume axemes: " + axemeVolume.getName() + " axemeId: " + axemeEntry.getEntryId());
 					java.util.Vector axemesResultVector = IndexFactory.getIndexVectorByEntryId(axemeVolume, ""+ axemeEntry.getEntryId());
 					for (int q=0; q<axemesResultVector.size(); q++) {
 						Index axemeResultEntry = (Index) axemesResultVector.elementAt(q);
@@ -575,7 +575,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 					java.util.Collection axiesVolumesCollection = VolumesFactory.getVolumesArray(dictName,axiLang,null);
 					if (axiesVolumesCollection !=null && axiesVolumesCollection.size()>0) {
 						Volume axieVolume = ((Volume)axiesVolumesCollection.iterator().next());
-						PapillonLogger.writeDebugMsg("Pivax entries: volume axie: " + axieVolume.getName() + " axemeValue: " + axemeResultEntry.getValue());
+						//PapillonLogger.writeDebugMsg("Pivax entries: volume axie: " + axieVolume.getName() + " axemeValue: " + axemeResultEntry.getValue());
 						myKeys = new java.util.Vector();
 						Word = new String[4];
 						Word[0] = Volume.CDM_translationReflexie;
@@ -597,7 +597,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 									java.util.Collection unlAxemesVolumesCollection = VolumesFactory.getVolumesArray(dictName,unlAxemeLang,null);
 									if (unlAxemesVolumesCollection !=null && unlAxemesVolumesCollection.size()>0) {
 										Volume unlAxemeVolume = ((Volume)unlAxemesVolumesCollection.iterator().next());
-										PapillonLogger.writeDebugMsg("Pivax entries: volume unl axeme: " + unlAxemeVolume.getName() + " axieValue: " + axieResultEntry.getValue());
+										//PapillonLogger.writeDebugMsg("Pivax entries: volume unl axeme: " + unlAxemeVolume.getName() + " axieValue: " + axieResultEntry.getValue());
 										myKeys = new java.util.Vector();
 										Word = new String[4];
 										Word[0] = Volume.CDM_entryId;
@@ -613,14 +613,14 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 										for (int m=0; m<unlAxemesVector.size(); m++) {
 											Index unlAxemeEntry = (Index) unlAxemesVector.elementAt(m);
 											java.util.Vector unlAxemesResultVector = IndexFactory.getIndexVectorByEntryId(unlAxemeVolume, ""+unlAxemeEntry.getEntryId());
-											PapillonLogger.writeDebugMsg("Pivax entries: volume unl axeme: " + unlAxemeVolume.getName() + " unlAxemeId: " + unlAxemeEntry.getEntryId());
+											//PapillonLogger.writeDebugMsg("Pivax entries: volume unl axeme: " + unlAxemeVolume.getName() + " unlAxemeId: " + unlAxemeEntry.getEntryId());
 											for (int n=0; n<unlAxemesResultVector.size(); n++) {
 												Index unlAxemeResultEntry = (Index) unlAxemesResultVector.elementAt(n);
 												if (unlAxemeResultEntry.getKey().equals(Volume.CDM_translationReflexie) && unlAxemeResultEntry.getLang().equals(unlLang)) {
 													java.util.Collection unlVolumesCollection = VolumesFactory.getVolumesArray(dictName,unlLang,null);
 													if (unlVolumesCollection !=null && unlVolumesCollection.size()>0) {
 														Volume unlVolume = ((Volume)unlVolumesCollection.iterator().next());
-														PapillonLogger.writeDebugMsg("Pivax entries: volume unl: " + unlVolume.getName() + " unlAxemeValue: " + unlAxemeResultEntry.getValue());
+														//PapillonLogger.writeDebugMsg("Pivax entries: volume unl: " + unlVolume.getName() + " unlAxemeValue: " + unlAxemeResultEntry.getValue());
 														myKeys = new java.util.Vector();
 														Word = new String[4];
 														Word[0] = Volume.CDM_entryId;
