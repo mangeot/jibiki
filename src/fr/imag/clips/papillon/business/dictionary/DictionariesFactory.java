@@ -1285,7 +1285,7 @@ public class DictionariesFactory {
 						java.util.Collection axiesVolumesCollection = VolumesFactory.getVolumesArray(dictName,axiLang,null);
 						if (axiesVolumesCollection !=null && axiesVolumesCollection.size()>0) {
 							Volume axieVolume = ((Volume)axiesVolumesCollection.iterator().next());
-							PapillonLogger.writeDebugMsg("Pivax entries: volume axie: " + axieVolume.getName() + " word: " + axemeResultEntry.getValue());
+							PapillonLogger.writeDebugMsg("Pivax entries: volume axie: " + axieVolume.getName() + " axeme: " + axemeResultEntry.getValue());
 							myKeys = new java.util.Vector();
 							Word = new String[4];
 							Word[0] = Volume.CDM_translationReflexie;
@@ -1300,6 +1300,7 @@ public class DictionariesFactory {
 																							  0);
 							for (int k=0; k<axiesVector.size(); k++) {
 								Index axieEntry = (Index) axiesVector.elementAt(k);
+								PapillonLogger.writeDebugMsg("Pivax entries: volume axie: " + axieVolume.getName() + " axieEntry: " + axieEntry.getValue());
 								java.util.Vector axiesResultVector = IndexFactory.getIndexVectorByEntryId(axieVolume, ""+ axieEntry.getEntryId());
 								for (int l=0; l<axiesResultVector.size(); l++) {
 									Index axieResultEntry = (Index) axiesResultVector.elementAt(l);
