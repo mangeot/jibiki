@@ -10,6 +10,7 @@ import fr.imag.clips.papillon.business.dictionary.Dictionary;
 import fr.imag.clips.papillon.business.dictionary.ErrorAnswer;
 import fr.imag.clips.papillon.business.dictionary.IAnswer;
 import fr.imag.clips.papillon.business.dictionary.IQuery;
+import fr.imag.clips.papillon.business.dictionary.QueryResult;
 import fr.imag.clips.papillon.business.dictionary.Volume;
 import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
 import fr.imag.clips.papillon.business.transformation.XslTransformation;
@@ -167,30 +168,46 @@ public class DictEngine implements IDictEngine {
         */
     public IAnswer[] lookup(String dictName, String lang, String word, int strategy) {
         Collection Answers = null;
+		IAnswer[] AnswerArray = null;
         try {
-            if (dictName.equals("*")) return lookupAll(lang, word, strategy);
-            if (dictName.equals("!")) return lookupAny(lang, word, strategy);
+            if (dictName.equals("*")) {
+				Answers = lookupAll(lang, word, strategy);
+			}
+            if (dictName.equals("!")) {
+				Answers = lookupAny(lang, word, strategy);
+			}
             Dictionary dict = DictionariesFactory.getDictionaryByName(dictName);
             if (dict != null && !dict.isEmpty()) {
                 Answers = lookupDict(dict, lang, word, strategy);
             }
         }
         catch (Exception e) {
-//            throw new RuntimeException("Error in Lookup with Dictionary: " + dictName);
 			System.out.println("Error in Lookup with Dictionary: " + e.toString());
 			e.printStackTrace();
-			return errorAnswers; 
+//            throw new RuntimeException("Error in Lookup with Dictionary: " + dictName);
         }
         if (null != Answers) {
-            return (IAnswer[])Answers.toArray(new IAnswer[0]);
+			try {
+			AnswerArray = new IAnswer[Answers.size()];
+			int ind=0;
+			for (Iterator i = Answers.iterator(); i.hasNext(); ) {
+				QueryResult oneAnswer = (QueryResult) i.next();
+				AnswerArray[ind++] = (IAnswer)oneAnswer.getSourceEntry();
+			}
+			}
+			catch (fr.imag.clips.papillon.business.PapillonBusinessException pbe) {
+				throw new RuntimeException("Error in lookup with dict: "+ dictName);
+			}
+			return AnswerArray;
         }
         else {
             return null;
         }
     }
 
-    public IAnswer[] lookupAll(String lang, String word, int strategy) {
-        Collection Answers = null;
+    public Collection lookupAll(String lang, String word, int strategy) {
+  		//System.out.println("lookupAll word: " + word + " lang: " + lang + " strat: " + strategy + " user: " + this.getUser());
+      Collection Answers = null;
 		Vector theEntries = null;
 			//Headword[0] = key
 			//Headword[1] = lang
@@ -211,16 +228,16 @@ public class DictEngine implements IDictEngine {
                                                                      this.getUser());
         }
         catch (Exception e) {
-//            throw new RuntimeException("Error in Lookup All");
 			System.out.println("Error in LookupAll: " + e.toString());
 			e.printStackTrace();
-			return errorAnswers; 
+            //throw new RuntimeException("Error in Lookup All");
         }
-        return (IAnswer[])Answers.toArray(new IAnswer[0]);
+        return Answers;
     }
 
-    public IAnswer[] lookupAny(String lang, String word, int strategy) {
-        Vector Answers = new Vector();
+    public Collection lookupAny(String lang, String word, int strategy) {
+	   //System.out.println("lookupAny word: " + word + " lang: " + lang + " strat: " + strategy + " user: " + this.getUser());
+       Vector Answers = new Vector();
         try {
             Collection Dictionaries = DictionariesFactory.getDictionariesArray();
             Iterator iter = Dictionaries.iterator();
@@ -234,17 +251,16 @@ public class DictEngine implements IDictEngine {
             }
             
         } catch (Exception e) {
-//            throw new RuntimeException("Error in Lookup Any");
 			System.out.println("Error in Lookup Any: " + e.toString());
 			e.printStackTrace();
-			return errorAnswers; 
+            throw new RuntimeException("Error in Lookup Any");
         }
-        return (IAnswer[])Answers.toArray(new IAnswer[0]);
+        return (Collection) Answers;
     }
 
     public Collection lookupDict(Dictionary dict, String lang, String word, int strategy) 
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
-		System.out.println("lookupDict user: " + this.getUser());
+		//System.out.println("lookupDict word: " + word + " lang: " + lang + " strat: " + strategy + " user: " + this.getUser());
 		Vector theEntries = null;
 			//Headword[0] = key
 			//Headword[1] = lang

@@ -453,7 +453,7 @@ public class XslTransformation implements ResultFormatter {
 
             //
             XslSheet theXslSheet = XslSheetFactory.getXslSheet(answer.getDictionaryName(), answer.getVolumeName(), XslSheet.TEXT_view);
-            if (!theXslSheet.isEmpty()) {
+            if (theXslSheet!=null && !theXslSheet.isEmpty()) {
                 resultString = XslTransformation.TransformToText((Node) resultDOM, theXslSheet);
             }
             if (resultString == null || resultString.equals("")) {
@@ -499,7 +499,7 @@ public class XslTransformation implements ResultFormatter {
                    } */
         }
         catch (Exception ex) {
-            throw new fr.imag.clips.papillon.business.PapillonBusinessException("Exception in applyXslSheetForXml()", ex);
+            throw new fr.imag.clips.papillon.business.PapillonBusinessException("Exception in applyXslSheetForText()", ex);
         }
         return resultString;
     }

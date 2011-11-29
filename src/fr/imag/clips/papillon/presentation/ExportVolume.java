@@ -251,7 +251,7 @@ public class ExportVolume extends PapillonBasePO {
 					strategy1 == IQuery.STRATEGY_LESS_THAN ||
 					strategy1 == IQuery.STRATEGY_LESS_THAN_OR_EQUAL) {
 					String clause = "key='" + search1 + "'";
-					clause += " and " + source + "_sort(value)" + IQuery.QueryBuilderStrategy[strategy1+1] + " " + source + "_sort('" + search1text +"') "; 
+					clause += " and multilingual_sort('" + source + "',value)" + IQuery.QueryBuilderStrategy[strategy1+1] + " multilingual_sort('" + source + "','" + search1text +"') "; 
 					myClauses.add(clause);
 				}
 				else {
@@ -269,7 +269,7 @@ public class ExportVolume extends PapillonBasePO {
 					strategy2 == IQuery.STRATEGY_LESS_THAN ||
 					strategy2 == IQuery.STRATEGY_LESS_THAN_OR_EQUAL) {
 					String clause = "key='" + search2 + "'";
-					clause += " and " + source + "_sort(value)" + IQuery.QueryBuilderStrategy[strategy2+1] + " " + source + "_sort('" + search2text +"') "; 
+					clause += " and multilingual_sort('" + source + "',value)" + IQuery.QueryBuilderStrategy[strategy2+1] + " multilingual_sort('" + source + "','" + search2text +"') "; 
 					myClauses.add(clause);
 				}
 				else {
@@ -287,7 +287,7 @@ public class ExportVolume extends PapillonBasePO {
 					strategy3 == IQuery.STRATEGY_LESS_THAN ||
 					strategy3 == IQuery.STRATEGY_LESS_THAN_OR_EQUAL) {
 					String clause = "key='" + search3 + "'";
-					clause += " and " + source + "_sort(value)" + IQuery.QueryBuilderStrategy[strategy3+1] + " " + source + "_sort('" + search3text +"') "; 
+					clause += " and multilingual_sort('" + source + "',value)" + IQuery.QueryBuilderStrategy[strategy3+1] + " multilingual_sort('" + source + "','" + search3text +"') "; 
 					myClauses.add(clause);
 				}
 				else {
@@ -305,7 +305,7 @@ public class ExportVolume extends PapillonBasePO {
 					strategy4 == IQuery.STRATEGY_LESS_THAN ||
 					strategy4 == IQuery.STRATEGY_LESS_THAN_OR_EQUAL) {
 					String clause = "key='" + search4 + "'";
-					clause += " and " + source + "_sort(value)" + IQuery.QueryBuilderStrategy[strategy4+1] + " " + source + "_sort('" + search4text +"') "; 
+					clause += " and multilingual_sort('" + source + "',value)" + IQuery.QueryBuilderStrategy[strategy3+1] + " multilingual_sort('" + source + "','" + search4text +"') "; 
 					myClauses.add(clause);
 				}
 				else {

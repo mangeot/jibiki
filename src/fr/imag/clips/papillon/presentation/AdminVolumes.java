@@ -169,6 +169,7 @@ public class AdminVolumes extends PapillonBasePO {
     protected final static String SEE_TEMPLATE_PARAMETER="SeeTemplate";
     protected final static String SEE_INTERFACE_PARAMETER="SeeInterface";
     protected final static String GENERATE_INTERFACE_PARAMETER="GenerateItf";
+    protected final static String REMOVE_DATA_PARAMETER="RemoveData";
     protected final static String REMOVE_METADATA_PARAMETER="RemoveMetadata";
     protected final static String REMOVE_ALL_PARAMETER="RemoveAll";
     protected final static String FLUSH_PARAMETER="Flush";
@@ -273,16 +274,25 @@ public class AdminVolumes extends PapillonBasePO {
                 Volume volume = VolumesFactory.getVolumeByHandle(handle);
                 volume.delete();
                 Papillon.initializeAllCaches();
-                userMessage = "Volume " + volume.getName() + " metadata  erased...";	
+                userMessage = "Volume " + volume.getName() + " metadata erased...";	
             
-            //
+				//
+            } else if (null != myGetParameter(REMOVE_DATA_PARAMETER)) {
+                String handle = myGetParameter(REMOVE_DATA_PARAMETER);
+                Volume volume = VolumesFactory.getVolumeByHandle(handle);
+                if (null != volume && !volume.isEmpty()) {
+                    volume.empty();
+                    Papillon.initializeAllCaches();
+                    userMessage = "Volume " + volume.getName() + " emptied, entries deleted...";
+                }
+			//
             } else if (null != myGetParameter(REMOVE_ALL_PARAMETER)) {
                 String handle = myGetParameter(REMOVE_ALL_PARAMETER);
                 Volume volume = VolumesFactory.getVolumeByHandle(handle);
                 if (null != volume && !volume.isEmpty()) {
                     volume.deleteAll();
                     Papillon.initializeAllCaches();
-                    userMessage = "Volume " + volume.getName() + " entries and metadata  erased...";
+                    userMessage = "Volume " + volume.getName() + " entries and metadata erased...";
                 }
             
             //

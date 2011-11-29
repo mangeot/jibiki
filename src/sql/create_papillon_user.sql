@@ -1,6 +1,5 @@
 /* 
  * Papillon 2001
- * © Mathieu Mangeot & Gilles Sérasset, GETA CLIPS IMAG
  * -------------------------------------------------------------
  * $Id$
  * -------------------------------------------------------------
@@ -16,4 +15,4 @@
  * This SQL creates the user papillon.
  */
 
-CREATE USER papillon WITH PASSWORD 'dbpap' CREATEDB CREATEUSER;
+CREATE USER papillon WITH PASSWORD 'dbpap2' CREATEDB CREATEUSER;

@@ -392,7 +392,8 @@ public class VolumeEntriesFactory {
 	protected static final String XhtmlFooter = "</body>\n"
 		+ "</html>\n";
 	
-	protected static final String TextHeader = "Dictionary:\n\n";
+	//protected static final String TextHeader = "Dictionary:\n\n";
+	protected static final String TextHeader = "";
 	protected static final String TextFooter = "";
 	
 	public static final String FoHeader = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
@@ -522,6 +523,7 @@ public class VolumeEntriesFactory {
 		
 		String sourceLanguage = volume.getSourceLanguage();
 		String volumeTableName = volume.getDbname();
+		boolean key1null = false;
 		if (null != volumeTableName) {
 			try {
 				com.lutris.dods.builder.generator.query.QueryBuilder myQueryBuilder = null; 
@@ -555,9 +557,9 @@ public class VolumeEntriesFactory {
 				if (Keys != null) {
 					for (java.util.Enumeration enumKeys = Keys.elements(); enumKeys.hasMoreElements();) {
 						String[] key = (String[]) enumKeys.nextElement();
-                        // debug
-                        //System.out.println("VolumeEntriesFactory.getDbTableEntriesVector: " + key[0] + " | " + key[1] + " | " + key[2] + " | " + key[3]);
 						if (key!=null && key[2] !=null && !key[2].equals("")) {
+							// debug
+							System.out.println("VolumeEntriesFactory.getDbTableEntriesVector: " + volumeTableName + " keys: " + key[0] + " | " + key[1] + " | " + key[2] + " | " + key[3]);
 							myQueryBuilder = new com.lutris.dods.builder.generator.query.QueryBuilder(Columns);
 							if (IndexFactory.databaseVendor != null) {
 								myQueryBuilder.setDatabaseVendor(IndexFactory.databaseVendor);
@@ -566,6 +568,7 @@ public class VolumeEntriesFactory {
 							}
 							myQueryBuilder.addWhere(keyColumn, key[0], QueryBuilder.EQUAL);
 							if ((key[1] ==null || key[1].equals(""))) {
+								key1null = true;
 								if (volume.isSourceLangCDMElement(key[0])) {
 									key[1] = sourceLanguage;
 								}
@@ -590,6 +593,7 @@ public class VolumeEntriesFactory {
 							myQueryBuilder.select(entryidColumn);
 							query.getQueryBuilder().addWhereIn(objectidColumn, myQueryBuilder);
 						}
+						if (key1null) {key[1] = null;}
 					}
 				}				
 				query.getQueryBuilder().setMaxRows((0 == limit) ? DictionariesFactory.MaxRetrievedEntries : limit);
@@ -600,7 +604,7 @@ public class VolumeEntriesFactory {
 				}				
 				query.getQueryBuilder().addOrderByColumn("multilingual_sort('" + sourceLanguage + "',headword)",order);
 				// debug
-				// query.getQueryBuilder().debug();
+				//query.getQueryBuilder().debug();
                 
 				VolumeEntryDO[] DOarray = query.getDOArray();
 				if (null != DOarray) {
@@ -1645,7 +1649,26 @@ throws fr.imag.clips.papillon.business.PapillonBusinessException {
 	}
 }
 
-
+public static void truncateVolumeTables(Volume volume)
+	throws fr.imag.clips.papillon.business.PapillonBusinessException {
+		try {
+			java.util.Vector TableNames = ManageDatabase.getTableNames();
+			if (TableNames.contains(volume.getDbname())) {
+				ManageDatabase.truncateTable(volume.getDbname());
+			}
+			if (TableNames.contains(volume.getIndexDbname())) {
+				ManageDatabase.truncateTable(volume.getIndexDbname());
+			}
+		}
+		catch (Exception e) {
+			throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in truncateVolumeTables with volume: " + volume.getName(), e);
+			//PapillonLogger.writeDebugMsg("Exception in dropVolumeTables with volume: " + volume.getName() + ", probably the tables were already deleted.");
+		}
+	}
+	
+	
+	
+	
 public static void sort (Vector EntryVector, String sortBy) {
     if (sortBy != null && !sortBy.equals("")) {
         if (sortBy.equals(AUTHOR_SORT)) {

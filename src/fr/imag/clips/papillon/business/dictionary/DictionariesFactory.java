@@ -711,10 +711,9 @@ public class DictionariesFactory {
         //	Collection qrset = new HashSet();				
         Collection qrset = new Vector();
         if ((null != dict)
-			&& dict.getSourceLanguagesArray().contains(source)
+			&& ((source ==null) || dict.getSourceLanguagesArray().contains(source))
 			// FIXME: up to now, the preceding statement was always true. I changed it to intersect...
 			&& ((targets == null) || Utility.intersect(targets, dict.getTargetLanguagesArray()))) {
-			
             //
             for (Iterator iter = VolumesFactory.getVolumesArray(dict.getName(), source, null).iterator(); iter.hasNext();)
             {
@@ -723,6 +722,7 @@ public class DictionariesFactory {
                 // FIXME: get the limit argument
                 Vector entriesVector = VolumeEntriesFactory.getVolumeEntriesVector(dict, myVolume, Keys1, Keys2, anyContains, offset, 0);
 				
+				System.out.println("entriesVector.size: " + entriesVector.size());
                 //FIXME: hack for targets array. If the array is null, it means that all targets are asked
                 if (targets == null) {
                     targets = myVolume.getTargetLanguagesArray();
@@ -735,8 +735,8 @@ public class DictionariesFactory {
                 }
             }
         }
-		
-        //
+		System.out.println("qrset.size: " + qrset.size());
+        
         return qrset;
     }
 	

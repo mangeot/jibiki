@@ -19,6 +19,9 @@ sudo ./configure -Djdk.dir=/usr
 ## for jdk1.5:
 # vi bin/ant
 ## add xalan-j_2_4_1/bin/xalan.jar before enhydra classpath 
+### if you install xalan-j_2_7_0/xalan.jar instead of 2_4_0
+### you will have problems in dods egen generation with messages like: [ejen] SystemId Unknown; Line #29; Column #42; Empty expression!
+### I could not locate the errors, probably in some XML files...
 # sudo cp ../xmlc-2.2.13/lib/xmlc.jar lib/.
 chmod -R 777 dods/build/template/standard/*
 sudo chmod 777 dods/build/dods.properties
@@ -39,3 +42,15 @@ cd output
 # ./toolsforjibiki/enhydra5.1/bin/ant quick
 ## for compiling with observateur tracing API
 # ./toolsforjibiki/enhydra5.1/bin/ant quick -Dcompile.to.version=trace
+
+open http://localhost:8999
+# register, login and add yourself in group admin (see admin password in papillon.properties)
+open http://localhost:8999/Register.po
+open http://localhost:8999/UserProfile.po
+
+# upload default stylesheets
+open http://localhost:8999/AdminXsl.po
+# load file:///{jibiki.dir}/src/fr/imag/clips/papillon/resources/xsl/DEFAULT-view.xsl (is default)
+# load file:///{jibiki.dir}/src/fr/imag/clips/papillon/resources/xsl/XML-view.xsl
+# load file:///{jibiki.dir}/src/fr/imag/clips/papillon/resources/xsl/TEXT-view.xsl
+# load file:///{jibiki.dir}/src/fr/imag/clips/papillon/resources/xsl/FormatingObject-view.xsl

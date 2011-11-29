@@ -1275,6 +1275,24 @@ public class Volume {
 		}
     
     /**
+	 * Empties the Volume from the database.
+     *
+     * @exception PapillonBusinessException if an error occurs
+     *   deleting data (usually due to an underlying data layer
+	 *   error).
+     */
+	public void empty() 
+	throws PapillonBusinessException {
+		try {
+			if (this.getLocation().equals(LOCAL_LOCATION)) {
+				VolumeEntriesFactory.truncateVolumeTables(this);
+			}
+		} catch(Exception ex) {
+			throw new PapillonBusinessException("Error emptying Volume", ex);
+		}
+	}
+
+    /**
 	 * Deletes the Volume from the database.
      *
      * @exception PapillonBusinessException if an error occurs

@@ -211,8 +211,8 @@ public class PivaxFormatter implements ResultFormatter {
             if (qr.getResultKind() == QueryResult.AXIE_COLLECTION_RESULT) {
             	
             	// PapillonLogger.writeDebugMsg("PivaxFormatter.getFormattedResult qr.getLexiesCollection(): " + qr.getLexiesCollection().size());
-				Element hr = resultDoc.createElement("hr");
-				div.appendChild(hr);
+				//Element hr = resultDoc.createElement("hr");
+				//div.appendChild(hr);
 
                 // Then append each translation
                 Iterator iter = qr.getLexiesCollection().iterator();
@@ -220,7 +220,8 @@ public class PivaxFormatter implements ResultFormatter {
                     VolumeEntry ve = (VolumeEntry) iter.next();
                     
                     // PapillonLogger.writeDebugMsg("PivaxFormatter.getFormattedResult target " + ve.getHeadword());
-                    if (ve.getHandle() != qr.getSourceEntry().getHandle() ) { //don't show reverse
+                    //if (!ve.getHandle().equals(qr.getSourceEntry().getHandle()) ) { //don't show reverse
+					if (!ve.getSourceLanguage().equals(qr.getSourceEntry().getSourceLanguage()) ) { //don't show source language entries
                         Document doc = ve.getDom();
                         
                         if (null != dictXsl && ! dictXsl.isEmpty()) {

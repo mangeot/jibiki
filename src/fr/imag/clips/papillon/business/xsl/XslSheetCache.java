@@ -124,7 +124,14 @@ public class XslSheetCache {
                 String key = dictionaryName + "/" + volumeName + "/" + xslName;
                 
                 //
-                return (XslSheet)xslSheetCache.get(key);
+                XslSheet theXslSheet =  (XslSheet)xslSheetCache.get(key);
+				if (theXslSheet != null && !theXslSheet.isEmpty()) {
+					//PapillonLogger.writeDebugMsg("XslSheet " + key +" gotFromCache");				
+				}
+				else {
+					//PapillonLogger.writeDebugMsg("XslSheet " + key +" notFoundInCache");				
+				}
+				return theXslSheet;
                 
             } catch(Exception ex) {
                 throw new PapillonBusinessException("Exception in getXslSheet()", ex);

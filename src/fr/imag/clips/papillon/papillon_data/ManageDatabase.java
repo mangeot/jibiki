@@ -46,7 +46,8 @@ public class ManageDatabase implements Query {
 
     protected static final String createTableSql = "CREATE TABLE ";
     protected static final String createIndexSql = "CREATE INDEX ";
-    protected static final String truncateTableSql = "TRUNCATE TABLE ";
+ //   protected static final String truncateTableSql = "TRUNCATE TABLE ";
+    protected static final String truncateTableSql = "DELETE FROM ";
     protected static final String dropTableSql = "DROP TABLE ";
     protected static final String dropIndexSql = "DROP INDEX ";
 	
