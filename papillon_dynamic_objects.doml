@@ -7,6 +7,9 @@
  * $Id$
  *************************************************
  * $Log$
+ * Revision 1.8 2012/3/26 17:00 zhang
+ * added a new table link for separating link & index from table index
+ *
  * Revision 1.7.2.1  2007/10/29 15:11:03  serasset
  * NEW: lexalp css now defines different forms for HARMONISED/REJECTED entries
  * NEW: added new db url/user/password configuration keys in papillon.properties file
@@ -115,7 +118,57 @@
 		  <index id="msort_idx">
           	<indexColumn id="msort"/>
           </index>
-        </table>
+        </table>        
+        <table id="fr.imag.clips.papillon.data.Link" dbTableName="link">
+          <column id="idTarget" usedForQuery="true">
+            <javadoc>/**
+ * the target id
+ */</javadoc>
+            <type dbType="DECIMAL (19,0)" javaType="int" canBeNull="false"/>
+          </column>
+          <column id="lang" usedForQuery="true">
+            <javadoc>/**
+ * the language of the value of the key
+ */</javadoc>
+            <type canBeNull="true" dbType="VARCHAR" javaType="String" size="3"/>
+          </column>
+          <column id="volumeTarget" usedForQuery="true">
+            <javadoc>/**
+ * the name of the volume
+ */</javadoc>
+            <type canBeNull="true" dbType="VARCHAR" javaType="String" size="255"/>
+          </column>
+          <column id="weight" usedForQuery="true">
+            <javadoc>/**
+ * the value of the weight
+ */</javadoc>
+            <type canBeNull="true" dbType="NUMERIC(3,2)" javaType="double" />
+          </column>
+          <column id="type" usedForQuery="true">
+            <javadoc>/**
+ * the value of the type
+ */</javadoc>
+            <type canBeNull="true" dbType="VARCHAR" javaType="String" size="255"/>
+          </column>
+          <column id="label" usedForQuery="true">
+            <javadoc>/**
+ * the value of the label
+ */</javadoc>
+            <type canBeNull="true" dbType="VARCHAR" javaType="String" size="255"/>
+          </column>
+          <column id="entryId" usedForQuery="true">
+            <javadoc>/**
+ * the entry id
+ */</javadoc>
+            <type dbType="DECIMAL (19,0)" javaType="int" canBeNull="false"/>
+          </column>
+		  <index id="idtarget_idx">
+          	<indexColumn id="idTarget"/>
+          </index>
+		  <index id="entryid_idx">
+          	<indexColumn id="entryId"/>
+          </index>
+        </table>       
     </package>
     </package>
     </package>
