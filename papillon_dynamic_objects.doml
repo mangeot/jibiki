@@ -120,12 +120,12 @@
           </index>
         </table>        
         <table id="fr.imag.clips.papillon.data.Link" dbTableName="link">
-          <column id="idTarget" usedForQuery="true">
+        <column id="targetId" usedForQuery="true">
             <javadoc>/**
- * the target id
+ * the value of cdm-translation-ref
  */</javadoc>
-            <type dbType="DECIMAL (19,0)" javaType="int" canBeNull="false"/>
-          </column>
+            <type canBeNull="true" dbType="VARCHAR" javaType="String" size="255"/>
+          </column>        
           <column id="lang" usedForQuery="true">
             <javadoc>/**
  * the language of the value of the key
@@ -142,7 +142,7 @@
             <javadoc>/**
  * the value of the weight
  */</javadoc>
-            <type canBeNull="true" dbType="NUMERIC(3,2)" javaType="double" />
+            <type canBeNull="true" dbType="DECIMAL (3,2)" javaType="double" />
           </column>
           <column id="type" usedForQuery="true">
             <javadoc>/**
@@ -162,9 +162,7 @@
  */</javadoc>
             <type dbType="DECIMAL (19,0)" javaType="int" canBeNull="false"/>
           </column>
-		  <index id="idtarget_idx">
-          	<indexColumn id="idTarget"/>
-          </index>
+
 		  <index id="entryid_idx">
           	<indexColumn id="entryId"/>
           </index>
