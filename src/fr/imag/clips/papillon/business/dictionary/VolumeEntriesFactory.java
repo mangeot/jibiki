@@ -60,7 +60,7 @@
  *
  * Revision 1.46  2006/03/12 23:31:44  mangeot
  * Added notFinishedStatus in findEntryByEntryId
- * ùCVS: ----------------------------------------------------------------------
+ * CVS: ----------------------------------------------------------------------
  *
  * Revision 1.45  2006/03/12 23:19:18  mangeot
  * Fixed a bug that forbed to retrieve entries by translation ids
@@ -356,6 +356,8 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.JOptionPane;
+
 /**
 * Used to find the instances of xslsheet.
  */
@@ -523,7 +525,6 @@ public class VolumeEntriesFactory {
 		
 		String sourceLanguage = volume.getSourceLanguage();
 		String volumeTableName = volume.getDbname();
-		boolean key1null = false;
 		if (null != volumeTableName) {
 			try {
 				com.lutris.dods.builder.generator.query.QueryBuilder myQueryBuilder = null; 
@@ -557,9 +558,9 @@ public class VolumeEntriesFactory {
 				if (Keys != null) {
 					for (java.util.Enumeration enumKeys = Keys.elements(); enumKeys.hasMoreElements();) {
 						String[] key = (String[]) enumKeys.nextElement();
+                        // debug
+                        //System.out.println("VolumeEntriesFactory.getDbTableEntriesVector: " + key[0] + " | " + key[1] + " | " + key[2] + " | " + key[3]);
 						if (key!=null && key[2] !=null && !key[2].equals("")) {
-							// debug
-							System.out.println("VolumeEntriesFactory.getDbTableEntriesVector: " + volumeTableName + " keys: " + key[0] + " | " + key[1] + " | " + key[2] + " | " + key[3]);
 							myQueryBuilder = new com.lutris.dods.builder.generator.query.QueryBuilder(Columns);
 							if (IndexFactory.databaseVendor != null) {
 								myQueryBuilder.setDatabaseVendor(IndexFactory.databaseVendor);
@@ -568,7 +569,6 @@ public class VolumeEntriesFactory {
 							}
 							myQueryBuilder.addWhere(keyColumn, key[0], QueryBuilder.EQUAL);
 							if ((key[1] ==null || key[1].equals(""))) {
-								key1null = true;
 								if (volume.isSourceLangCDMElement(key[0])) {
 									key[1] = sourceLanguage;
 								}
@@ -593,7 +593,6 @@ public class VolumeEntriesFactory {
 							myQueryBuilder.select(entryidColumn);
 							query.getQueryBuilder().addWhereIn(objectidColumn, myQueryBuilder);
 						}
-						if (key1null) {key[1] = null;}
 					}
 				}				
 				query.getQueryBuilder().setMaxRows((0 == limit) ? DictionariesFactory.MaxRetrievedEntries : limit);
@@ -604,7 +603,7 @@ public class VolumeEntriesFactory {
 				}				
 				query.getQueryBuilder().addOrderByColumn("multilingual_sort('" + sourceLanguage + "',headword)",order);
 				// debug
-				//query.getQueryBuilder().debug();
+				// query.getQueryBuilder().debug();
                 
 				VolumeEntryDO[] DOarray = query.getDOArray();
 				if (null != DOarray) {
@@ -1623,6 +1622,11 @@ throws fr.imag.clips.papillon.business.PapillonBusinessException {
 		if (!TableNames.contains(volume.getIndexDbname())) {
 			IndexFactory.createIndexTable(volume);
 		}
+		
+		 if (!TableNames.contains(volume.getLinkDbname())) {
+			LinkFactory.createLinkTable(volume);
+		}
+		 
 	}
 	catch (Exception e) {
 		throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in createVolumeTables with volume: " + volume.getName(), e);
@@ -1635,12 +1639,20 @@ throws fr.imag.clips.papillon.business.PapillonBusinessException {
 public static void dropVolumeTables(Volume volume)
 throws fr.imag.clips.papillon.business.PapillonBusinessException {
 	try {
+		//JOptionPane.showMessageDialog(null,"alert");
 		java.util.Vector TableNames = ManageDatabase.getTableNames();
-		if (TableNames.contains(volume.getDbname())) {
-			ManageDatabase.dropTable(volume.getDbname());
-		}
+		//truncateVolumeTables(volume);
+		
 		if (TableNames.contains(volume.getIndexDbname())) {
 			IndexFactory.dropIndexTable(volume.getIndexDbname());
+		//	JOptionPane.showMessageDialog(null,volume.getIndexDbname());
+		}
+		if (TableNames.contains(volume.getLinkDbname())) {
+			LinkFactory.dropLinkTable(volume.getLinkDbname());
+		}
+		if (TableNames.contains(volume.getDbname())) {			
+			ManageDatabase.dropTable(volume.getDbname());
+		//	JOptionPane.showMessageDialog(null,"1");
 		}
 	}
 	catch (Exception e) {
@@ -1653,11 +1665,14 @@ public static void truncateVolumeTables(Volume volume)
 	throws fr.imag.clips.papillon.business.PapillonBusinessException {
 		try {
 			java.util.Vector TableNames = ManageDatabase.getTableNames();
-			if (TableNames.contains(volume.getDbname())) {
+			if (TableNames.contains(volume.getDbname())) {				
 				ManageDatabase.truncateTable(volume.getDbname());
 			}
 			if (TableNames.contains(volume.getIndexDbname())) {
 				ManageDatabase.truncateTable(volume.getIndexDbname());
+			}
+			if (TableNames.contains(volume.getLinkDbname())) {
+				ManageDatabase.truncateTable(volume.getLinkDbname());
 			}
 		}
 		catch (Exception e) {

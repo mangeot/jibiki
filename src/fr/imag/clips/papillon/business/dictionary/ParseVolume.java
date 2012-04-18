@@ -147,6 +147,7 @@ import fr.imag.clips.papillon.CurrentDBTransaction;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
+import java.awt.List;
 import java.sql.SQLException;
 
 public class ParseVolume {
@@ -559,6 +560,20 @@ public class ParseVolume {
         }
         return result;
     }
+    
+    
+    protected static class LinksData {
+    	String CdmElementValue, handle, lang;
+    	
+    	public LinksData(String cdmeValue, String lang, String handle){
+    	CdmElementValue = cdmeValue;
+    	this.lang = lang;
+    	this.handle = handle;
+    }
+    	public Link toLink(String linkvolume) throws PapillonBusinessException {
+    		return LinkFactory.newLink(linkvolume, CdmElementValue, lang, handle);
+    	}
+    }
 
     protected static class IndexData {
         String CdmElement, lang, value, handle;
@@ -587,22 +602,54 @@ public class ParseVolume {
         }
     }
 
+    public static void saveLinks(ArrayList links, String volumeidx) throws PapillonBusinessException {
+        Iterator i = links.iterator();
+        while (i.hasNext()) {
+            LinksData id = (LinksData) i.next();
+            Link myLink = id.toLink(volumeidx);
+            if (myLink != null && !myLink.isEmpty()) {
+                myLink.save();
+            }
+        }
+    }
     // FIXME: que signifie ce booléen renvoyé ????
     public static boolean indexEntry(VolumeEntry myEntry)
             throws PapillonBusinessException {
         org.w3c.dom.Document entryDoc = myEntry.getDom();
         boolean result = (entryDoc == null);
+        
         ArrayList indexes = indexEntry(myEntry.getVolume(), entryDoc, myEntry.getHandle());
         String volumeidx = myEntry.getVolume().getIndexDbname();
         saveIndexes(indexes, volumeidx);
+        
+     //   ArrayList links = linksEntry(myEntry.getVolume(), entryDoc, myEntry.getHandle());
+     //   String linkvolume = myEntry.getVolume().getLinkDbname();
+     //   saveLinks(links, linkvolume);
+        
+        
         return result;
     }
+    
+    public static boolean linksEntry(VolumeEntry myEntry)
+    		throws PapillonBusinessException {
+    	org.w3c.dom.Document entryDoc = myEntry.getDom();
+    	boolean result = (entryDoc == null);
 
-    // FIXME: should be defined here ?
-    public static ArrayList indexEntry(Volume volume, org.w3c.dom.Document entryDoc, String handle)
+    	ArrayList links = linksEntry(myEntry.getVolume(), entryDoc, myEntry.getHandle());
+    	String linkvolume = myEntry.getVolume().getLinkDbname();
+    	saveLinks(links, linkvolume);
+
+
+    	return result;
+    }
+
+
+
+
+    public static ArrayList linksEntry(Volume volume, org.w3c.dom.Document entryDoc, String handle)
             throws PapillonBusinessException {
-        ArrayList indexes = new ArrayList();
-
+        
+        ArrayList links = new ArrayList();
         if (entryDoc != null) {
             org.w3c.dom.Element myRootElt = entryDoc.getDocumentElement();
             org.apache.xml.utils.PrefixResolver myPrefixResolver = new org.apache.xml.utils.PrefixResolverDefault(
@@ -652,7 +699,90 @@ public class ParseVolume {
                                     value = value.trim();
                                     if (!value.equals("")) {
                                         //PapillonLogger.writeDebugMsg("Parse entry, node value: " + value);
-                                        indexes.add(new IndexData(CdmElement, lang, value, handle));
+                                    	boolean tableIsLinks = chooseTable(CdmElement);
+                                    	
+                                    	if (tableIsLinks){
+                            
+                                    		links.add(new LinksData(value, lang, handle));
+                                    	}
+                                    }
+                                }
+                            }
+                        } else {
+                            //PapillonLogger.writeDebugMsg("Parse entry, node list null for CdmElement: " + CdmElement + ":");
+                        }
+                    }
+                }
+            }
+        }
+        return links;
+    }
+    
+        
+    
+    // FIXME: should be defined here ?
+    public static ArrayList indexEntry(Volume volume, org.w3c.dom.Document entryDoc, String handle)
+            throws PapillonBusinessException {
+        ArrayList indexes = new ArrayList();
+     //   ArrayList links = new ArrayList();
+        if (entryDoc != null) {
+            org.w3c.dom.Element myRootElt = entryDoc.getDocumentElement();
+            org.apache.xml.utils.PrefixResolver myPrefixResolver = new org.apache.xml.utils.PrefixResolverDefault(
+                    myRootElt);
+            java.util.Hashtable CdmElementsTable = volume.getCdmElements();
+            for (java.util.Enumeration langKeys = CdmElementsTable.keys(); langKeys.hasMoreElements();) {
+                String lang = (String) langKeys.nextElement();
+                java.util.Hashtable tmpTable = (java.util.Hashtable) CdmElementsTable.get(lang);
+                for (java.util.Enumeration keys = tmpTable.keys(); keys.hasMoreElements();) {
+                    String CdmElement = (String) keys.nextElement();
+		//PapillonLogger.writeDebugMsg("Parse entry, key " + CdmElement + ":");
+                    java.util.Vector myVector = (java.util.Vector) tmpTable.get(CdmElement);
+                    org.apache.xpath.XPath myXPath = null;
+                    boolean isIndex = false;
+                    if (myVector != null) {
+                        if (myVector.size() == 3) {
+                            isIndex = ((Boolean) myVector.elementAt(1)).booleanValue();
+                            if (isIndex) {
+                                myXPath = (org.apache.xpath.XPath) myVector.elementAt(2);
+                            }
+                        } else if (myVector.size() == 2) {
+                            isIndex = ((Boolean) myVector.elementAt(1)).booleanValue();
+                            if (isIndex) {
+                                String xpathString = (String) myVector.elementAt(0);
+                                myXPath = ParseVolume.compileXPath(xpathString, myRootElt);
+                                myVector.add(myXPath);
+                            }
+                        }
+                        //PapillonLogger.writeDebugMsg("Parse entry: lang: "+ lang +" /key: " + CdmElement + " /xpath: " + (String) myVector.elementAt(0));
+                    }
+                    if (myXPath != null) {
+                        org.w3c.dom.NodeList resNodeList = null;
+                        try {
+                           org.apache.xpath.objects.XObject myXObject = myXPath.execute(
+                                    new org.apache.xpath.XPathContext(), myRootElt, myPrefixResolver);
+                            resNodeList = myXObject.nodelist();
+				//PapillonLogger.writeDebugMsg("Parse entry, xPath.execute res: ");
+                        } catch (javax.xml.transform.TransformerException e) {
+                            throw new PapillonBusinessException("javax.xml.transform.TransformerException: ", e);
+                        }
+                        if (resNodeList != null) {
+                            for (int i = 0; i < resNodeList.getLength(); i++) {
+                                org.w3c.dom.Node myNode = resNodeList.item(i);
+                                String value = myNode.getNodeValue();
+                               //PapillonLogger.writeDebugMsg("Parse entry, node " + myNode.getNodeName() + " /value: " + value);
+                                if (value != null) {
+                                    value = value.trim();
+                                    if (!value.equals("")) {
+                                        //PapillonLogger.writeDebugMsg("Parse entry, node value: " + value);
+                                    //	boolean tableIsLinks = chooseTable(CdmElement);
+                                    	//PapillonLogger.writeDebugMsg("tables is links?" + tableIsLinks);
+                                    //	if (!tableIsLinks){
+                                    		indexes.add(new IndexData(CdmElement, lang, value, handle));
+                                    //	}
+                                    /*	else{
+                                    		
+                                    		links.add(new LinksData(value, lang, handle));
+                                    	}*/
                                     }
                                 }
                             }
@@ -664,6 +794,19 @@ public class ParseVolume {
             }
         }
         return indexes;
+    }
+    
+    
+    /*
+     *decide that the recode should be putted into links table or into index table by CdmElement
+     * */
+    public static boolean chooseTable(String CdmElement){
+    	ArrayList cdmList = new ArrayList();    	
+    	cdmList.add("cdm-translation-ref");
+    	cdmList.add("weight?");
+    	cdmList.add("type?");
+    	boolean tableIsLinks = cdmList.contains(CdmElement);   	
+    	return tableIsLinks;
     }
 
     /**

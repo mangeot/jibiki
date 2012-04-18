@@ -555,6 +555,11 @@ public class Volume {
         throws PapillonBusinessException {
 			return IndexFactory.INDEX_TABLE_PREFIX + getDbname();
 		}
+    
+    public String getLinkDbname() 
+    	throws PapillonBusinessException {
+    		return LinkFactory.LINK_TABLE_PREFIX + getDbname();
+    }
 	
     /**
 	 * Gets the location of the Volume

@@ -27,6 +27,8 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
 
+import javax.swing.JOptionPane;
+
 
 /**
         * A Request is a business object passed when querying dictionaries.
@@ -543,6 +545,7 @@ import java.util.Vector;
         }
 		
 		public void filterVolumes() throws PapillonBusinessException {
+			//JOptionPane.showMessageDialog(null,volumes+","+volumes.size()+","+volumes.get(0));
 			if (volumes.size()>1) {
 			int i=0;
 			while (i<volumes.size()) {

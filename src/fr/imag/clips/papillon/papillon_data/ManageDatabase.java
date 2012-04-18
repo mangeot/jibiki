@@ -2,6 +2,10 @@
  * $Id$
  *-----------------------------------------------------------------------------
  * $Log$
+ * 
+ *Revision 1.20 2012/03/26 17:20:00 zhang
+ *Added a new table link for separating index & link from table index
+ *
  * Revision 1.12  2007/04/05 12:55:54  serasset
  * Added a DBLayer Version management with an auto-update of db layer.
  *
@@ -29,6 +33,8 @@ import fr.imag.clips.papillon.business.PapillonLogger;
 
 import java.sql.*;
 
+import javax.swing.JOptionPane;
+
 import com.lutris.appserver.server.*;
 import com.lutris.appserver.server.sql.*;
 import com.lutris.dods.builder.generator.query.DataObjectException;
@@ -46,10 +52,12 @@ public class ManageDatabase implements Query {
 
     protected static final String createTableSql = "CREATE TABLE ";
     protected static final String createIndexSql = "CREATE INDEX ";
+ 
  //   protected static final String truncateTableSql = "TRUNCATE TABLE ";
     protected static final String truncateTableSql = "DELETE FROM ";
     protected static final String dropTableSql = "DROP TABLE ";
     protected static final String dropIndexSql = "DROP INDEX ";
+   
 	
 	protected static final String DatabaseUserString = "DatabaseManager.DB.papillon.Connection.User";
 	
@@ -146,6 +154,17 @@ public class ManageDatabase implements Query {
         "ObjectId DECIMAL(19,0) NOT NULL PRIMARY KEY," +
         "ObjectVersion INTEGER NOT NULL)";
     
+    protected static String createLinkTableParamsSql = "(" + 
+    	"targetId VARCHAR(255) DEFAULT '\'''\''    ,"+
+    	"lang VARCHAR(3) DEFAULT '\'''\''    ," +
+    	"volumeTarget VARCHAR(255) DEFAULT '\'''\''    ," +
+   		"type VARCHAR(255) DEFAULT '\'''\''    ," +
+   		"label VARCHAR(255) DEFAULT '\'''\''    ," +
+   		"entryId DECIMAL(19,0) NOT NULL    ," +
+   		"weight DECIMAL(3,2) NOT NULL    ," +  
+   		
+        "ObjectId DECIMAL(19,0) NOT NULL PRIMARY KEY," +
+        "ObjectVersion INTEGER NOT NULL)";
     
     public static void createVolumeTable(String table) throws  PapillonBusinessException {
             executeSql(createTableSql + table + createVolumeTableParamsSql);
@@ -154,6 +173,10 @@ public class ManageDatabase implements Query {
     public static void createIndexTable(String indexTable) throws  PapillonBusinessException {
             executeSql(createTableSql + indexTable + createIndexTableParamsSql);
         }
+    
+    public static void createLinkTable(String linkTable) throws  PapillonBusinessException {
+        executeSql(createTableSql + linkTable + createLinkTableParamsSql);
+    }
     
     public static void createIndexForTable(String table, String name, String field1, String field2, String field3) throws  PapillonBusinessException {
             String query = createIndexSql + table + "_" + name  + "_idx" + " ON " + table + " ( " + field1 + "," + field2 + "," + field3 + " )";
@@ -165,11 +188,21 @@ public class ManageDatabase implements Query {
 		executeSql(query);
 	}
     
+    public static void createIndexForLinkTable(String table, String name, String field1, String field2, String field3) throws  PapillonBusinessException {
+        String query = createIndexSql + table + "_" + name  + "_idx" + " ON " + table + " ( " + field1 + "," + field2 + "," + field3 + " )";
+        executeSql(query);
+    }
+
+    public static void createIndexForLinkTable(String table, String name) throws PapillonBusinessException {
+    	String query = createIndexSql + table + "_" + name  + "_idx" + " ON " + table + " ( " + name + " )";
+    	executeSql(query);
+    }
+    
     public static void createSortIndexForVolumeTable(String table, String lang) throws PapillonBusinessException {
 		String query = createIndexSql + table + "_msort_idx" + " ON " + table + " (multilingual_sort( '" + lang + "',headword ))";
 		executeSql(query);
 	}
-    
+
     public static void dropIndexForTable(String table, String name) throws  PapillonBusinessException {
             String query = dropIndexSql + table + "_" + name + "_idx";
             executeSql(query);
@@ -193,6 +226,9 @@ public class ManageDatabase implements Query {
     
     public static void dropTable(String table) throws  PapillonBusinessException {
         executeSql(dropTableSql + table);
+
+       // 
+
         //fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Table: " + table + " dropped");
         
     }
@@ -202,7 +238,7 @@ public class ManageDatabase implements Query {
  		String result = lang + value;
 		
 		java.util.regex.Matcher quoteMatcher = quotePattern.matcher(value);
-		String newValue = quoteMatcher.replaceAll("\\\\'");
+		String newValue = quoteMatcher.replaceAll("''");
 		
 		String sql = "SELECT multilingual_sort('"+ lang + "','" + newValue + "')";
 		java.util.Vector myResultVector = executeSqlQuery(sql,"multilingual_sort");

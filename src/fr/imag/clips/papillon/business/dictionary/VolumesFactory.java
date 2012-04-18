@@ -1408,6 +1408,7 @@ public class VolumesFactory {
 					
 					//
 					ParseVolume.indexEntry(ve);
+				//	ParseVolume.linksEntry(ve);
 					
 				}
 				
