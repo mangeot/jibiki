@@ -520,6 +520,7 @@ public class IndexFactory {
 	public static void dropIndexTable(String table)
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 			try {
+				
 				ManageDatabase.dropTable(table);
 			}
 			catch (Exception e) {
