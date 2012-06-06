@@ -105,9 +105,11 @@ import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.dictionary.Dictionary;
 import fr.imag.clips.papillon.business.dictionary.IAnswer;
+import fr.imag.clips.papillon.business.dictionary.LinkFactory;
 import fr.imag.clips.papillon.business.dictionary.ParseVolume;
 import fr.imag.clips.papillon.business.dictionary.QueryResult;
 import fr.imag.clips.papillon.business.dictionary.Volume;
+import fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
 import fr.imag.clips.papillon.business.user.User;
 import fr.imag.clips.papillon.business.xml.XMLServices;
@@ -127,6 +129,7 @@ import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Hashtable;
@@ -193,42 +196,114 @@ public class XslTransformation implements ResultFormatter {
 		
 		// FIXME: determine what to do for direct translation result:
         // hint, use jibikiXsltExtensions to resolve the links and format everything...
-		// for the moment, old school way...
-		
+		// for the moment, old school way...	
 		if (qr.getResultKind() == QueryResult.DIRECT_TRANSLATIONS_RESULT) {
                 VolumeEntry myAnswer = qr.getSourceEntry();
+                
+//PapillonLogger.writeDebugMsg("myAnser = "+myAnswer);
 
+
+				String myLinkTable = myAnswer.getVolume().getLinkDbname();
+				PapillonLogger.writeDebugMsg("Volumetable = "+myAnswer.getVolume().getDbname()+" , Entry =" +myAnswer.toString());
+				String[] myObjectId = VolumeEntriesFactory.findEntryIdByEntryName(myAnswer.toString(), myAnswer.getVolume());
+				for (int i=0; i<myObjectId.length; i++){
+					PapillonLogger.writeDebugMsg("myObjectId = "+myObjectId[i]);
+				}
                 Volume myVolume = myAnswer.getVolume();
                 Dictionary myDictionary = myAnswer.getDictionary();
 
-                //
                 Collection targets = myVolume.getTargetLanguagesArray();
+                
                 for (Iterator iter = targets.iterator(); iter.hasNext();) {
                     String target = (String) iter.next();
-
                     //
                     if (target != null && !target.equals("") && target!= myVolume.getSourceLanguage()) {
-						//PapillonLogger.writeDebugMsg("getFormattedResult: " + target);
-                        NodeList myNodeList = ParseVolume.getCdmElements(myAnswer, Volume.CDM_translationReflexie, target);
-                        if ((myNodeList != null) && (myNodeList.getLength() > 0)) {
-                            for (int i = 0; i < myNodeList.getLength(); i++) {
-                                Node myNode = myNodeList.item(i);
-                                String translationId = myNode.getNodeValue();
-                                if (myNode.getNodeType() == Node.TEXT_NODE) {
-                                    Node textNode = myNode;
-                                    myNode = myNode.getParentNode();
-                                    myNode.removeChild(textNode);
-                                }
-                                VolumeEntry newEntry = (VolumeEntry) qr.getLexiesHashtable().get(translationId);
-                                if (newEntry != null && !newEntry.isEmpty()) {
-                                    Node tempNode = myAnswer.getDom().importNode((Node) newEntry.getDom().getDocumentElement(), true);
-                                    myNode.appendChild(tempNode);
-                                }
-                            }
-                        }
+  
+                    	NodeList myNodeList = ParseVolume.getCdmElements(myAnswer, Volume.CDM_translationReflexie, target);
+
+                    	
+                    	ArrayList myHwList = new ArrayList();
+                    	for (int i=0; i<myObjectId.length;i++){
+                    		String myHeadword[] = LinkFactory.findHeadwordbyEntryId(myObjectId[i], myLinkTable);
+                    		
+                    		for (int j=0; j<myHeadword.length;j++){
+                    			
+                    			if(!myHwList.contains(myHeadword[j])){
+                    				myHwList.add(myHeadword[j]);
+                    				String myHwId = myHeadword[j];
+                    			
+                    				PapillonLogger.writeDebugMsg("myHw = "+myHwId);
+                    				PapillonLogger.writeDebugMsg("qr:"+qr.DIRECT_TRANSLATIONS_RESULT+", "+qr.getLexiesHashtable().size()+", "+qr.getLexiesHashtable().elements().toString());
+                    				VolumeEntry newEntry = (VolumeEntry) qr.getLexiesHashtable().get(myHwId);
+                    				
+                    				//PapillonLogger.writeDebugMsg("------MynewEntryID = "+newEntry.getEntryId()+" MynewEntryOID ="+newEntry.getHandle()+" MynewEntry Table Name ="+newEntry.getTableName()); 
+                    				PapillonLogger.writeDebugMsg("------j = "+j+" i="+i);
+                    				PapillonLogger.writeDebugMsg("---------------------------------------");
+     
+                    				if ((myNodeList != null) && (myNodeList.getLength() > 0)) {
+                    					for (int n = 0; n < myNodeList.getLength(); n++) {
+                    						Node myNode = myNodeList.item(n);
+                    						PapillonLogger.writeDebugMsg("+++++++MyNode = "+myNode+", myNodeValue="+myNode.getNodeValue()); 
+                    						if (myNode.getNodeValue().equals(myHwId)){
+                    							PapillonLogger.writeDebugMsg("MyNode = "+myNode+", myNodeValue="+myNode.getNodeValue());    
+//                                          	 String translationId = myNode.getNodeValue();
+//                                         	   PapillonLogger.writeDebugMsg("translationId = "+translationId);    
+                    							if (myNode.getNodeType() == Node.TEXT_NODE) {
+                    								Node textNode = myNode;
+                    								PapillonLogger.writeDebugMsg("???this node = "+myNode.getNodeValue()); 
+                    								myNode = myNode.getParentNode();
+                    								PapillonLogger.writeDebugMsg("parent node = "+myNode.getNodeName());                
+                    								myNode.removeChild(textNode);
+                    							}
+                                            
+                    							if (newEntry != null && !newEntry.isEmpty()) {
+                    								Node tempNode = myAnswer.getDom().importNode((Node) newEntry.getDom().getDocumentElement(), true);
+                    								PapillonLogger.writeDebugMsg("tempNode = "+tempNode.getNodeName()+", "+tempNode.getNodeValue()+", "+tempNode.getParentNode()+", "+tempNode.getChildNodes());
+                    								myNode.appendChild(tempNode);
+                    								PapillonLogger.writeDebugMsg("appendChild = "+ XMLServices.NodeToString(myNode));
+                    							}	
+                                        	  
+                    						}
+                                          
+                    					}	
+                    				}
+                    			}
+                    		}
+                    	}
+                    	
                     }
                 }
 			}
+                    
+                    	
+                    	
+                    	
+            //        	NodeList myNodeList = ParseVolume.getCdmElements(myAnswer, Volume.CDM_translationReflexie, target);
+                    	//PapillonLogger.writeDebugMsg("NodeList = "+myNodeList);        
+                    	
+//                        if ((myNodeList != null) && (myNodeList.getLength() > 0)) {
+//                            for (int i = 0; i < myNodeList.getLength(); i++) {
+//                                Node myNode = myNodeList.item(i);
+//PapillonLogger.writeDebugMsg("MyNode = "+myNode);    
+//                                String translationId = myNode.getNodeValue();
+//PapillonLogger.writeDebugMsg("translationId = "+translationId);    
+//                                if (myNode.getNodeType() == Node.TEXT_NODE) {
+//                                    Node textNode = myNode;
+//                                    myNode = myNode.getParentNode();
+//                                    PapillonLogger.writeDebugMsg("parent node = "+myNode.getNodeName());                
+//                                    myNode.removeChild(textNode);
+//                                }
+//                                VolumeEntry newEntry = (VolumeEntry) qr.getLexiesHashtable().get(translationId);
+//PapillonLogger.writeDebugMsg("newEntryID = "+newEntry.getEntryId()+" newEntryOid="+newEntry.getHandle()+" newEntry Table Name"+newEntry.getTableName());
+//                                if (newEntry != null && !newEntry.isEmpty()) {
+//                                    Node tempNode = myAnswer.getDom().importNode((Node) newEntry.getDom().getDocumentElement(), true);
+//PapillonLogger.writeDebugMsg("tempNode = "+tempNode.getNodeName()+", "+tempNode.getNodeValue()+", "+tempNode.getParentNode()+", "+tempNode.getChildNodes());
+//                                    myNode.appendChild(tempNode);
+//PapillonLogger.writeDebugMsg("appendChild = "+ XMLServices.NodeToString(myNode));
+//                                }
+//                            }
+//                        }
+
 
 
         // Is reverse unique result still in use ?
@@ -239,11 +314,14 @@ public class XslTransformation implements ResultFormatter {
             if (null != dictXsl && !dictXsl.isEmpty()) {
                 // Format document source
                 Node resultNode = formatResult(qr.getSourceEntry().getDom(), dictXsl, usr);
-				//PapillonLogger.writeDebugMsg("ResultNode: " + qr.getSourceEntry().getHeadword() + " node: " + XMLServices.NodeToString(resultNode));
-                rootdiv.appendChild(res.importNode(resultNode, true));
+			//	PapillonLogger.writeDebugMsg("ResultNode: " + qr.getSourceEntry().getHeadword() + " node: " + XMLServices.NodeToString(resultNode)+", "+resultNode.getNodeValue());
+                
+				rootdiv.appendChild(res.importNode(resultNode, true));
+			//	PapillonLogger.writeDebugMsg("rootdiv:"+rootdiv.getTextContent());
             }
         } 
-		
+
+
        return rootdiv;
     }
 

@@ -112,6 +112,7 @@ import com.lutris.dods.builder.generator.query.QueryBuilder;
 
 import fr.imag.clips.papillon.business.message.MessageDBLoader;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
+import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.dictionary.DictionariesFactory;
 import fr.imag.clips.papillon.business.dictionary.QueryResult;
 import fr.imag.clips.papillon.business.dictionary.QueryParameter;
@@ -205,12 +206,13 @@ public class AdvancedSearch extends PapillonBasePO {
         // Create query request
         QueryRequest queryReq = qf.getQueryRequest();
         
-		
+		if(queryReq.isEmpty()){PapillonLogger.writeDebugMsg("---qr advanced is empty");}
 		
         // Display query result if query request have criteria
         // Display query result if no action on form (add ou remove criteria)
         if (!queryReq.isEmpty() && !qf.actionOnFormRequested()) {
-            
+    		PapillonLogger.writeDebugMsg("---qr advanced is not empty");
+           
             // Add status criteria
             ArrayList listStatus = new ArrayList();
             

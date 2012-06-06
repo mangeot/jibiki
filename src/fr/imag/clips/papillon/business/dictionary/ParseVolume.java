@@ -774,11 +774,11 @@ public class ParseVolume {
                                     value = value.trim();
                                     if (!value.equals("")) {
                                         //PapillonLogger.writeDebugMsg("Parse entry, node value: " + value);
-                                    //	boolean tableIsLinks = chooseTable(CdmElement);
+                                    	boolean tableIsLinks = chooseTable(CdmElement);
                                     	//PapillonLogger.writeDebugMsg("tables is links?" + tableIsLinks);
-                                    //	if (!tableIsLinks){
+                                    	if (!tableIsLinks){
                                     		indexes.add(new IndexData(CdmElement, lang, value, handle));
-                                    //	}
+                                    	}
                                     /*	else{
                                     		
                                     		links.add(new LinksData(value, lang, handle));
@@ -987,6 +987,8 @@ public class ParseVolume {
      */
     public static org.w3c.dom.NodeList getCdmElements(IAnswer myEntry, String CdmElement, String lang)
             throws PapillonBusinessException {
+//////////
+//    	PapillonLogger.writeDebugMsg("myEntry = "+myEntry+", CdmElement ="+CdmElement+" , lang = "+lang);  
         return getCdmElements(myEntry.getDom(), CdmElement, lang, myEntry.getVolume().getCdmElements());
     }
 

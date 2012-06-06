@@ -1507,7 +1507,7 @@ public class DictionariesFactory {
 				String target = (String)iter.next();
 				
 				if (target != source) {
-					//PapillonLogger.writeDebugMsg("getDirectResults: " + mySourceEntry.getHeadword() + " target:" + target);
+					PapillonLogger.writeDebugMsg("getDirectResults: " + mySourceEntry.getHeadword() + " target:" + target);
 					// get all cdm elements pointing to target entries.
 					String[] transIds = mySourceEntry.getTranslationsLexieIds(target);
 					
@@ -1522,6 +1522,7 @@ public class DictionariesFactory {
 							VolumeEntry myEntry = (VolumeEntry) DictionariesFactory.findEntryByEntryId(firstVolumeName, transIds[j]);
 							if (myEntry != null && ! myEntry.isEmpty()) {
 								resLexies.put(myEntry.getEntryId(),myEntry);
+								PapillonLogger.writeDebugMsg("getDirectResults: target id: " + myEntry.getEntryId());
 								
 								// pivot volume
 								if (target.equals("axi")) {

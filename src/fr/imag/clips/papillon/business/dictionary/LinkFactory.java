@@ -16,6 +16,8 @@ import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.data.LinkDO;
 import fr.imag.clips.papillon.data.LinkQuery;
+import fr.imag.clips.papillon.data.VolumeEntryDO;
+import fr.imag.clips.papillon.data.VolumeEntryQuery;
 import fr.imag.clips.papillon.papillon_data.ManageDatabase;
 
 import java.util.Collection;
@@ -236,7 +238,44 @@ public class LinkFactory {
             
 		}
 
+	public static String[] findHeadwordbyEntryId (String entryId, String tableName) {
+		String[] headword=null;
+		try{
+			LinkQuery qr = new LinkQuery(tableName,CurrentDBTransaction.get());
+			qr.setQueryEntryId(Integer.parseInt(entryId));
+			LinkDO[] theLinkEntry = qr.getDOArray();
+			headword = new String[theLinkEntry.length];
+			for (int i=0; i<theLinkEntry.length;i++){
+				headword[i] = theLinkEntry[i].getTargetId();
+				//String[] hw = headword[i].split("\\.");
+				//headword[i] = hw[1];
+			}
+			
+		}catch(Exception ex){
+			PapillonLogger.writeDebugMsg("findHeadwordbyEntryId error"+ex);
+		}
+		return headword;
+	}
 	
+//	public static String[] findTranslationIdByEntryId (String[] entryId, String tableName)
+//	throws PapillonBusinessException {
+//		VolumeEntry theEntry = null;
+//		String[] myEntryId = null;
+//		try{
+//			VolumeEntryQuery query = new VolumeEntryQuery(myVolume.getDbname(), CurrentDBTransaction.get());
+//			//set query
+//			query.setQueryHeadword(entryName);
+//			VolumeEntryDO[] theEntryDO = query.getDOArray();			
+//			myEntryId = new String[theEntryDO.length];
+//			for(int i=0; i<theEntryDO.length;i++){	
+//				String testid = theEntryDO[0].get_Handle();
+//				myEntryId[i] = theEntryDO[i].get_Handle();
+//			}
+//	    }catch(Exception ex) {
+//	        throw new PapillonBusinessException("Exception in findEntryIdByEntryName()", ex);
+//	    }
+//		return myEntryId;
+//	}
 	
 	public static void emptyLink(String table)
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {

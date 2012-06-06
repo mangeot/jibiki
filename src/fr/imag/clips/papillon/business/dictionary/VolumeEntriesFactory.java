@@ -352,6 +352,7 @@ import fr.imag.clips.papillon.papillon_data.ManageDatabase;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -1787,6 +1788,28 @@ public static String normalizeValue(String value) {
     
     //
     return value;
+}
+
+
+
+public static String[] findEntryIdByEntryName (String entryName, Volume myVolume)
+throws PapillonBusinessException {
+	VolumeEntry theEntry = null;
+	String[] myEntryId = null;
+	try{
+		VolumeEntryQuery query = new VolumeEntryQuery(myVolume.getDbname(), CurrentDBTransaction.get());
+		//set query
+		query.setQueryHeadword(entryName);
+		VolumeEntryDO[] theEntryDO = query.getDOArray();			
+		myEntryId = new String[theEntryDO.length];
+		for(int i=0; i<theEntryDO.length;i++){	
+			String testid = theEntryDO[0].get_Handle();
+			myEntryId[i] = theEntryDO[i].get_Handle();
+		}
+    }catch(Exception ex) {
+        throw new PapillonBusinessException("Exception in findEntryIdByEntryName()", ex);
+    }
+	return myEntryId;
 }
 
 }

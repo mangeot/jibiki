@@ -305,6 +305,10 @@ import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.utility.Utility;
 import fr.imag.clips.papillon.business.xml.XMLServices;
 import fr.imag.clips.papillon.data.VolumeEntryDO;
+import fr.imag.clips.papillon.data.VolumeEntryQuery;
+import fr.imag.clips.papillon.papillon_data.ManageDatabase;
+import com.lutris.dods.builder.generator.query.QueryBuilder;
+
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -363,7 +367,9 @@ public class VolumeEntry
     public final static String previousClassifiedFinishedContributionTag = DML_PREFIX_COLON + "previous-classified-finished-contribution";
     public final static String previousClassifiedNotFinishedContributionTag = DML_PREFIX_COLON + "previous-classified-not-finished-contribution";
     public final static String nextContributionAuthorTag = DML_PREFIX_COLON + "next-contribution-author";
-
+    public final static ArrayList cdmList = new ArrayList();    	
+    
+    
     public final static String ContributionHeader = "<" + contributionTag +
             " xmlns:" + DmlPrefixResolver.DML_PREFIX + "=\"" + DmlPrefixResolver.DML_URI + "\"" +
             " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"" +
@@ -824,6 +830,9 @@ public class VolumeEntry
      */
     public String[] getReferencedLexieIds(String lang)
             throws PapillonBusinessException {
+    	// utilise table link
+    	// verifier ou il est utilise
+    	// si c'est plus pratique, renvoyer une collection au lieu d'un tableau de string
         return ParseVolume.getCdmStrings(this, Volume.CDM_axiReflexie, lang);
     }
 
@@ -832,6 +841,7 @@ public class VolumeEntry
      */
     public String[] getTranslationsLexieIds(String lang)
             throws PapillonBusinessException {
+    	// utilise table link
         return ParseVolume.getCdmStrings(this, Volume.CDM_translationReflexie, lang);
     }
 
@@ -840,6 +850,8 @@ public class VolumeEntry
      */
     public String[] getReferencedAxieIds()
             throws PapillonBusinessException {
+    	// utilise table link
+
         return ParseVolume.getCdmStrings(this, Volume.CDM_axiRefaxie);
     }
 
@@ -1786,4 +1798,5 @@ public class VolumeEntry
             return "";
         }
     }
+
 }
