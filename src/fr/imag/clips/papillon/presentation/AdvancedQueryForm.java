@@ -3,7 +3,7 @@
  *
  *  Enhydra super-servlet presentation object
  * 
- * © Gilles Sérasset - GETA CLIPS IMAG
+ * ¬© Gilles S√©rasset - GETA CLIPS IMAG
  * Projet Papillon
  *-----------------------------------------------
  * $Id$
@@ -415,7 +415,7 @@ public class AdvancedQueryForm {
         return criteriaList;
     }
     
-    
+    //////////该看这了 ZHANG YING
     public String getRequestedAction(HttpServletRequest req) 
         throws java.io.UnsupportedEncodingException,
         com.lutris.appserver.server.httpPresentation.HttpPresentationException

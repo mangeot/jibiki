@@ -245,6 +245,7 @@ public class VolumesFactory {
 
     protected final static String HREF_ATTRIBUTE = "href";
     protected final static String INDEX_ATTRIBUTE = "index";
+    protected final static String LINK_ATTRIBUTE = "link";
     protected final static String LANG_ATTRIBUTE = "lang";
     protected final static String LOCATION_ATTRIBUTE = "location";
     protected final static String VIRTUAL_ATTRIBUTE = "virtual";
@@ -562,8 +563,8 @@ public class VolumesFactory {
 
         try {
             Document docXml = XMLServices.buildDOMTree(fileURL);
-            PapillonLogger.writeDebugMsg("The xml code:");
-            PapillonLogger.writeDebugMsg(XMLServices.xmlCodePrettyPrinted(docXml));
+//            PapillonLogger.writeDebugMsg("The xml code:");
+//            PapillonLogger.writeDebugMsg(XMLServices.xmlCodePrettyPrinted(docXml));
 
             //on recupere le volume
             Element volume;
@@ -1013,6 +1014,13 @@ public class VolumesFactory {
                 if (!isIndex) {
                     isIndex = Volume.isIndexCDMElement(eltName);
                 }
+                
+//                boolean isLink = false;
+//                String link = myElt.getAttribute(LINK_ATTRIBUTE);
+//                isLink = (link != null && link.equals("true"));
+//                if (!isLink) {
+//                    isLink = Volume.isLinkCDMElement(eltName);
+//                }
 
                 String xpath = myElt.getAttribute(XPATH_ATTRIBUTE);
                // PapillonLogger.writeDebugMsg("addCdmElementInTable: " + eltName + " lang: " + lang + " index: " + isIndex + " xpath: " + xpath);
@@ -1314,7 +1322,7 @@ public class VolumesFactory {
                         "updateTemplateEntry: contribNodeList null? " + (contribNodeList == null) + " entryNodeList null?: " + (entryNodeList == null));
             }
         }
-        PapillonLogger.writeDebugMsg("updateTemplateEntry: templateEntry final: " + tmplEntry);
+        //PapillonLogger.writeDebugMsg("updateTemplateEntry: templateEntry final: " + tmplEntry);
         return tmplEntry;
     }
 

@@ -1,0 +1,255 @@
+
+<TABLE>
+    <PACKAGE>fr.imag.clips.papillon.data</PACKAGE>
+    <AUTHOR>NN</AUTHOR>
+    <PROJECT_NAME>DODS Project</PROJECT_NAME>
+    <TABLE_NAME>volumes</TABLE_NAME>
+    <CLASS_NAME>Volume</CLASS_NAME>
+    <DB_VENDOR>PostgreSQL</DB_VENDOR>
+    <TEMPLATE_SET>standard</TEMPLATE_SET>
+    <GENERATE_SECURE>false</GENERATE_SECURE>
+    <GENERATE_INSECURE>true</GENERATE_INSECURE>
+    <MASS_UPDATES>false</MASS_UPDATES>
+    <MASS_DELETES>false</MASS_DELETES>
+    <DO_IS_OID_BASED>true</DO_IS_OID_BASED>
+    <IS_ABSTRACT>false</IS_ABSTRACT>
+    <DELETE_CASCADES>false</DELETE_CASCADES>
+    <DO_IS_MULTIDB_BASED>false</DO_IS_MULTIDB_BASED>
+    <IS_ANY_COLUMN_SECURE>false</IS_ANY_COLUMN_SECURE>
+    <GENERATE_DIRTY>Deprecate</GENERATE_DIRTY>
+
+    <COLUMN name="name">
+        <IS_CONSTANT>false</IS_CONSTANT>
+      <JAVADOC>/**
+ * Name of the volume
+ */</JAVADOC>
+        <DB_TYPE>VARCHAR</DB_TYPE>
+        <JAVA_TYPE>String</JAVA_TYPE>
+        <USED_FOR_QUERY>true</USED_FOR_QUERY>
+        <CAN_BE_NULL>false</CAN_BE_NULL>
+        <IS_PRIMARY_KEY>false</IS_PRIMARY_KEY>
+        <SIZE>255</SIZE>
+        <IS_ARRAY>false</IS_ARRAY>
+        <GENERATE_SECURE>false</GENERATE_SECURE>
+        <GENERATE_INSECURE>true</GENERATE_INSECURE>
+    </COLUMN>
+
+
+    <COLUMN name="dictname">
+        <IS_CONSTANT>false</IS_CONSTANT>
+      <JAVADOC>/**
+ * Name of the dictionary that contains this volume
+ */</JAVADOC>
+        <DB_TYPE>VARCHAR</DB_TYPE>
+        <JAVA_TYPE>String</JAVA_TYPE>
+        <USED_FOR_QUERY>true</USED_FOR_QUERY>
+        <CAN_BE_NULL>false</CAN_BE_NULL>
+        <IS_PRIMARY_KEY>false</IS_PRIMARY_KEY>
+        <SIZE>255</SIZE>
+        <IS_ARRAY>false</IS_ARRAY>
+        <GENERATE_SECURE>false</GENERATE_SECURE>
+        <GENERATE_INSECURE>true</GENERATE_INSECURE>
+    </COLUMN>
+
+
+    <COLUMN name="dbname">
+        <IS_CONSTANT>false</IS_CONSTANT>
+      <JAVADOC>/**
+ * Name of the database table where the volume entries are stored
+ */</JAVADOC>
+        <DB_TYPE>VARCHAR</DB_TYPE>
+        <JAVA_TYPE>String</JAVA_TYPE>
+        <USED_FOR_QUERY>true</USED_FOR_QUERY>
+        <CAN_BE_NULL>false</CAN_BE_NULL>
+        <IS_PRIMARY_KEY>false</IS_PRIMARY_KEY>
+        <SIZE>255</SIZE>
+        <IS_ARRAY>false</IS_ARRAY>
+        <GENERATE_SECURE>false</GENERATE_SECURE>
+        <GENERATE_INSECURE>true</GENERATE_INSECURE>
+    </COLUMN>
+
+
+    <COLUMN name="location">
+        <IS_CONSTANT>false</IS_CONSTANT>
+      <JAVADOC>/**
+ * Indicates if the volume is stored locally or remotely
+ */</JAVADOC>
+        <DB_TYPE>VARCHAR</DB_TYPE>
+        <JAVA_TYPE>String</JAVA_TYPE>
+        <USED_FOR_QUERY>true</USED_FOR_QUERY>
+        <CAN_BE_NULL>false</CAN_BE_NULL>
+        <IS_PRIMARY_KEY>false</IS_PRIMARY_KEY>
+        <SIZE>255</SIZE>
+        <IS_ARRAY>false</IS_ARRAY>
+        <GENERATE_SECURE>false</GENERATE_SECURE>
+        <GENERATE_INSECURE>true</GENERATE_INSECURE>
+    </COLUMN>
+
+
+    <COLUMN name="sourceLanguage">
+        <IS_CONSTANT>false</IS_CONSTANT>
+      <JAVADOC>/**
+ * source language of the volume
+ * values taken from dml:lang type
+ * (eng, fra, jpn, etc.)  (mainly ISO 639-2/T)
+ */</JAVADOC>
+        <DB_TYPE>VARCHAR</DB_TYPE>
+        <JAVA_TYPE>String</JAVA_TYPE>
+        <USED_FOR_QUERY>true</USED_FOR_QUERY>
+        <CAN_BE_NULL>false</CAN_BE_NULL>
+        <IS_PRIMARY_KEY>false</IS_PRIMARY_KEY>
+        <SIZE>3</SIZE>
+        <IS_ARRAY>false</IS_ARRAY>
+        <GENERATE_SECURE>false</GENERATE_SECURE>
+        <GENERATE_INSECURE>true</GENERATE_INSECURE>
+    </COLUMN>
+
+
+    <COLUMN name="targetLanguages">
+        <IS_CONSTANT>false</IS_CONSTANT>
+      <JAVADOC>/**
+ * target languages of the volume
+ * values taken from dml:lang type
+ * (eng, fra, jpn, etc.)  (mainly ISO 639-2/T)
+ */</JAVADOC>
+        <DB_TYPE>VARCHAR</DB_TYPE>
+        <JAVA_TYPE>String</JAVA_TYPE>
+        <USED_FOR_QUERY>true</USED_FOR_QUERY>
+        <CAN_BE_NULL>false</CAN_BE_NULL>
+        <IS_PRIMARY_KEY>false</IS_PRIMARY_KEY>
+        <SIZE>255</SIZE>
+        <IS_ARRAY>false</IS_ARRAY>
+        <GENERATE_SECURE>false</GENERATE_SECURE>
+        <GENERATE_INSECURE>true</GENERATE_INSECURE>
+    </COLUMN>
+
+
+    <COLUMN name="volumeRef">
+        <IS_CONSTANT>false</IS_CONSTANT>
+      <JAVADOC>/**
+ * Href of the volume file where are stored the entries
+ */</JAVADOC>
+        <DB_TYPE>VARCHAR</DB_TYPE>
+        <JAVA_TYPE>String</JAVA_TYPE>
+        <USED_FOR_QUERY>true</USED_FOR_QUERY>
+        <CAN_BE_NULL>false</CAN_BE_NULL>
+        <IS_PRIMARY_KEY>false</IS_PRIMARY_KEY>
+        <SIZE>255</SIZE>
+        <IS_ARRAY>false</IS_ARRAY>
+        <GENERATE_SECURE>false</GENERATE_SECURE>
+        <GENERATE_INSECURE>true</GENERATE_INSECURE>
+    </COLUMN>
+
+
+    <COLUMN name="xmlCode">
+        <IS_CONSTANT>false</IS_CONSTANT>
+      <JAVADOC>/**
+ * The XML code of the volume metadata.
+ */</JAVADOC>
+        <DB_TYPE>LONGVARCHAR</DB_TYPE>
+        <JAVA_TYPE>String</JAVA_TYPE>
+        <USED_FOR_QUERY>true</USED_FOR_QUERY>
+        <CAN_BE_NULL>false</CAN_BE_NULL>
+        <IS_PRIMARY_KEY>false</IS_PRIMARY_KEY>
+        <IS_ARRAY>false</IS_ARRAY>
+        <GENERATE_SECURE>false</GENERATE_SECURE>
+        <GENERATE_INSECURE>true</GENERATE_INSECURE>
+    </COLUMN>
+
+
+    <COLUMN name="xmlSchema">
+        <IS_CONSTANT>false</IS_CONSTANT>
+      <JAVADOC>/**
+ * The XML code of the XML schema representing the microstructure of the volume
+*/</JAVADOC>
+        <DB_TYPE>LONGVARCHAR</DB_TYPE>
+        <JAVA_TYPE>String</JAVA_TYPE>
+        <USED_FOR_QUERY>false</USED_FOR_QUERY>
+        <CAN_BE_NULL>true</CAN_BE_NULL>
+        <IS_PRIMARY_KEY>false</IS_PRIMARY_KEY>
+        <IS_ARRAY>false</IS_ARRAY>
+        <GENERATE_SECURE>false</GENERATE_SECURE>
+        <GENERATE_INSECURE>true</GENERATE_INSECURE>
+    </COLUMN>
+
+
+    <COLUMN name="templateItf">
+        <IS_CONSTANT>false</IS_CONSTANT>
+      <JAVADOC>/**
+ * The XML code of the interface template used in the online Edition interface module
+*/</JAVADOC>
+        <DB_TYPE>LONGVARCHAR</DB_TYPE>
+        <JAVA_TYPE>String</JAVA_TYPE>
+        <USED_FOR_QUERY>false</USED_FOR_QUERY>
+        <CAN_BE_NULL>true</CAN_BE_NULL>
+        <IS_PRIMARY_KEY>false</IS_PRIMARY_KEY>
+        <IS_ARRAY>false</IS_ARRAY>
+        <GENERATE_SECURE>false</GENERATE_SECURE>
+        <GENERATE_INSECURE>true</GENERATE_INSECURE>
+    </COLUMN>
+
+
+    <COLUMN name="templateEntry">
+        <IS_CONSTANT>false</IS_CONSTANT>
+      <JAVADOC>/**
+* The XML code of an empty entry used as a template
+*/</JAVADOC>
+        <DB_TYPE>LONGVARCHAR</DB_TYPE>
+        <JAVA_TYPE>String</JAVA_TYPE>
+        <USED_FOR_QUERY>false</USED_FOR_QUERY>
+        <CAN_BE_NULL>true</CAN_BE_NULL>
+        <IS_PRIMARY_KEY>false</IS_PRIMARY_KEY>
+        <IS_ARRAY>false</IS_ARRAY>
+        <GENERATE_SECURE>false</GENERATE_SECURE>
+        <GENERATE_INSECURE>true</GENERATE_INSECURE>
+    </COLUMN>
+
+
+    <COLUMN name="reverse">
+        <IS_CONSTANT>false</IS_CONSTANT>
+      <JAVADOC>/**
+* indicates if the volume can be reversed for lookup ie: target words searched as source words.
+*/</JAVADOC>
+        <DB_TYPE>CHAR</DB_TYPE>
+        <JAVA_TYPE>String</JAVA_TYPE>
+        <USED_FOR_QUERY>true</USED_FOR_QUERY>
+        <CAN_BE_NULL>false</CAN_BE_NULL>
+        <IS_PRIMARY_KEY>false</IS_PRIMARY_KEY>
+        <SIZE>1</SIZE>
+        <IS_ARRAY>false</IS_ARRAY>
+        <GENERATE_SECURE>false</GENERATE_SECURE>
+        <GENERATE_INSECURE>true</GENERATE_INSECURE>
+    </COLUMN>
+
+
+    <COLUMN name="entries">
+        <IS_CONSTANT>false</IS_CONSTANT>
+      <JAVADOC>/**
+ * Numer of entries in the volume
+ */</JAVADOC>
+        <DB_TYPE>INTEGER</DB_TYPE>
+        <JAVA_TYPE>int</JAVA_TYPE>
+        <JAVA_DEFAULT_VALUE>1</JAVA_DEFAULT_VALUE>
+        <USED_FOR_QUERY>true</USED_FOR_QUERY>
+        <CAN_BE_NULL>false</CAN_BE_NULL>
+        <IS_PRIMARY_KEY>false</IS_PRIMARY_KEY>
+        <IS_ARRAY>false</IS_ARRAY>
+        <GENERATE_SECURE>false</GENERATE_SECURE>
+        <GENERATE_INSECURE>true</GENERATE_INSECURE>
+    </COLUMN>
+
+
+    <INDEX id="name_idx" unique="true" clustered="false">
+        <INDEX_COLUMN id="name"/>
+    </INDEX>
+
+    <INDEX id="dictname_idx" unique="false" clustered="false">
+        <INDEX_COLUMN id="dictname"/>
+    </INDEX>
+
+    <INDEX id="dbname_idx" unique="false" clustered="false">
+        <INDEX_COLUMN id="dbname"/>
+    </INDEX>
+
+
+</TABLE>

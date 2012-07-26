@@ -1,0 +1,316 @@
+
+
+<project name="generateJava" default="generate_all">
+<property name="doml.file" value="/Users/yingzhang/Projet/LINKS_1_0/papillon_static_objects.doml"/>
+<property name="project.root" value="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static"/>
+<property name="template.dir" value="/Users/yingzhang/Projet/Jibiki/toolsforjibiki/enhydra5.1/dods/build/template"/>
+<property name="template.set" value="standard"/>
+
+	<taskdef name="ejen" classname="org.ejen.EjenTask"/>
+
+	
+		<target name="fr.imag.clips.papillon.data.ContributionLog">
+		
+			<ejen>
+				<source file="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/ContributionLog.xml"/>
+				<template file="${template.dir}/${template.set}/Query/mainQUERY.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/ContributionLogQuery.java">
+				</template>
+				
+				<template file="${template.dir}/${template.set}/DOI/mainDOI.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/ContributionLogDOI.java">
+				</template>
+				
+				<template file="${template.dir}/${template.set}/DataStruct/mainDataStruct.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/ContributionLogDataStruct.java">
+				</template>
+				
+				<template file="${template.dir}/${template.set}/do/mainDO.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/ContributionLogDO.java">
+		  		</template>
+				
+			</ejen>
+		</target>
+		
+		<target name="fr.imag.clips.papillon.data.Dictionary">
+		
+			<ejen>
+				<source file="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/Dictionary.xml"/>
+				<template file="${template.dir}/${template.set}/Query/mainQUERY.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/DictionaryQuery.java">
+				</template>
+				
+				<template file="${template.dir}/${template.set}/DOI/mainDOI.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/DictionaryDOI.java">
+				</template>
+				
+				<template file="${template.dir}/${template.set}/DataStruct/mainDataStruct.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/DictionaryDataStruct.java">
+				</template>
+				
+				<template file="${template.dir}/${template.set}/do/mainDO.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/DictionaryDO.java">
+		  		</template>
+				
+			</ejen>
+		</target>
+		
+		<target name="fr.imag.clips.papillon.data.InformationDocument">
+		
+			<ejen>
+				<source file="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/InformationDocument.xml"/>
+				<template file="${template.dir}/${template.set}/Query/mainQUERY.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/InformationDocumentQuery.java">
+				</template>
+				
+				<template file="${template.dir}/${template.set}/DOI/mainDOI.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/InformationDocumentDOI.java">
+				</template>
+				
+				<template file="${template.dir}/${template.set}/DataStruct/mainDataStruct.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/InformationDocumentDataStruct.java">
+				</template>
+				
+				<template file="${template.dir}/${template.set}/do/mainDO.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/InformationDocumentDO.java">
+		  		</template>
+				
+			</ejen>
+		</target>
+		
+		<target name="fr.imag.clips.papillon.data.Message">
+		
+			<ejen>
+				<source file="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/Message.xml"/>
+				<template file="${template.dir}/${template.set}/Query/mainQUERY.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/MessageQuery.java">
+				</template>
+				
+				<template file="${template.dir}/${template.set}/DOI/mainDOI.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/MessageDOI.java">
+				</template>
+				
+				<template file="${template.dir}/${template.set}/DataStruct/mainDataStruct.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/MessageDataStruct.java">
+				</template>
+				
+				<template file="${template.dir}/${template.set}/do/mainDO.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/MessageDO.java">
+		  		</template>
+				
+			</ejen>
+		</target>
+		
+		<target name="fr.imag.clips.papillon.data.JibikiVersion">
+		
+			<ejen>
+				<source file="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/JibikiVersion.xml"/>
+				<template file="${template.dir}/${template.set}/Query/mainQUERY.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/JibikiVersionQuery.java">
+				</template>
+				
+				<template file="${template.dir}/${template.set}/DOI/mainDOI.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/JibikiVersionDOI.java">
+				</template>
+				
+				<template file="${template.dir}/${template.set}/DataStruct/mainDataStruct.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/JibikiVersionDataStruct.java">
+				</template>
+				
+				<template file="${template.dir}/${template.set}/do/mainDO.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/JibikiVersionDO.java">
+		  		</template>
+				
+			</ejen>
+		</target>
+		
+		<target name="fr.imag.clips.papillon.data.Group">
+		
+			<ejen>
+				<source file="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/Group.xml"/>
+				<template file="${template.dir}/${template.set}/Query/mainQUERY.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/GroupQuery.java">
+				</template>
+				
+				<template file="${template.dir}/${template.set}/DOI/mainDOI.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/GroupDOI.java">
+				</template>
+				
+				<template file="${template.dir}/${template.set}/DataStruct/mainDataStruct.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/GroupDataStruct.java">
+				</template>
+				
+				<template file="${template.dir}/${template.set}/do/mainDO.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/GroupDO.java">
+		  		</template>
+				
+			</ejen>
+		</target>
+		
+		<target name="fr.imag.clips.papillon.data.QueryLog">
+		
+			<ejen>
+				<source file="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/QueryLog.xml"/>
+				<template file="${template.dir}/${template.set}/Query/mainQUERY.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/QueryLogQuery.java">
+				</template>
+				
+				<template file="${template.dir}/${template.set}/DOI/mainDOI.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/QueryLogDOI.java">
+				</template>
+				
+				<template file="${template.dir}/${template.set}/DataStruct/mainDataStruct.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/QueryLogDataStruct.java">
+				</template>
+				
+				<template file="${template.dir}/${template.set}/do/mainDO.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/QueryLogDO.java">
+		  		</template>
+				
+			</ejen>
+		</target>
+		
+		<target name="fr.imag.clips.papillon.data.XslSheet">
+		
+			<ejen>
+				<source file="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/XslSheet.xml"/>
+				<template file="${template.dir}/${template.set}/Query/mainQUERY.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/XslSheetQuery.java">
+				</template>
+				
+				<template file="${template.dir}/${template.set}/DOI/mainDOI.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/XslSheetDOI.java">
+				</template>
+				
+				<template file="${template.dir}/${template.set}/DataStruct/mainDataStruct.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/XslSheetDataStruct.java">
+				</template>
+				
+				<template file="${template.dir}/${template.set}/do/mainDO.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/XslSheetDO.java">
+		  		</template>
+				
+			</ejen>
+		</target>
+		
+		<target name="fr.imag.clips.papillon.data.InformationFile">
+		
+			<ejen>
+				<source file="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/InformationFile.xml"/>
+				<template file="${template.dir}/${template.set}/Query/mainQUERY.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/InformationFileQuery.java">
+				</template>
+				
+				<template file="${template.dir}/${template.set}/DOI/mainDOI.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/InformationFileDOI.java">
+				</template>
+				
+				<template file="${template.dir}/${template.set}/DataStruct/mainDataStruct.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/InformationFileDataStruct.java">
+				</template>
+				
+				<template file="${template.dir}/${template.set}/do/mainDO.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/InformationFileDO.java">
+		  		</template>
+				
+			</ejen>
+		</target>
+		
+		<target name="fr.imag.clips.papillon.data.PapillonAxi">
+		
+			<ejen>
+				<source file="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/PapillonAxi.xml"/>
+				<template file="${template.dir}/${template.set}/Query/mainQUERY.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/PapillonAxiQuery.java">
+				</template>
+				
+				<template file="${template.dir}/${template.set}/DOI/mainDOI.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/PapillonAxiDOI.java">
+				</template>
+				
+				<template file="${template.dir}/${template.set}/DataStruct/mainDataStruct.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/PapillonAxiDataStruct.java">
+				</template>
+				
+				<template file="${template.dir}/${template.set}/do/mainDO.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/PapillonAxiDO.java">
+		  		</template>
+				
+			</ejen>
+		</target>
+		
+		<target name="fr.imag.clips.papillon.data.Volume">
+		
+			<ejen>
+				<source file="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/Volume.xml"/>
+				<template file="${template.dir}/${template.set}/Query/mainQUERY.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/VolumeQuery.java">
+				</template>
+				
+				<template file="${template.dir}/${template.set}/DOI/mainDOI.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/VolumeDOI.java">
+				</template>
+				
+				<template file="${template.dir}/${template.set}/DataStruct/mainDataStruct.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/VolumeDataStruct.java">
+				</template>
+				
+				<template file="${template.dir}/${template.set}/do/mainDO.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/VolumeDO.java">
+		  		</template>
+				
+			</ejen>
+		</target>
+		
+		<target name="fr.imag.clips.papillon.data.FoksEntry">
+		
+			<ejen>
+				<source file="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/FoksEntry.xml"/>
+				<template file="${template.dir}/${template.set}/Query/mainQUERY.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/FoksEntryQuery.java">
+				</template>
+				
+				<template file="${template.dir}/${template.set}/DOI/mainDOI.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/FoksEntryDOI.java">
+				</template>
+				
+				<template file="${template.dir}/${template.set}/DataStruct/mainDataStruct.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/FoksEntryDataStruct.java">
+				</template>
+				
+				<template file="${template.dir}/${template.set}/do/mainDO.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/FoksEntryDO.java">
+		  		</template>
+				
+			</ejen>
+		</target>
+		
+		<target name="fr.imag.clips.papillon.data.User">
+		
+			<ejen>
+				<source file="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/User.xml"/>
+				<template file="${template.dir}/${template.set}/Query/mainQUERY.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/UserQuery.java">
+				</template>
+				
+				<template file="${template.dir}/${template.set}/DOI/mainDOI.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/UserDOI.java">
+				</template>
+				
+				<template file="${template.dir}/${template.set}/DataStruct/mainDataStruct.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/UserDataStruct.java">
+				</template>
+				
+				<template file="${template.dir}/${template.set}/do/mainDO.xsl" outdated="true"
+						  filepattern="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static/fr/imag/clips/papillon/data/UserDO.java">
+		  		</template>
+				
+			</ejen>
+		</target>
+		
+		
+		<target name="generate_all" depends="fr.imag.clips.papillon.data.ContributionLog, fr.imag.clips.papillon.data.Dictionary, fr.imag.clips.papillon.data.InformationDocument, fr.imag.clips.papillon.data.Message, fr.imag.clips.papillon.data.JibikiVersion, fr.imag.clips.papillon.data.Group, fr.imag.clips.papillon.data.QueryLog, fr.imag.clips.papillon.data.XslSheet, fr.imag.clips.papillon.data.InformationFile, fr.imag.clips.papillon.data.PapillonAxi, fr.imag.clips.papillon.data.Volume, fr.imag.clips.papillon.data.FoksEntry, fr.imag.clips.papillon.data.User">
+		</target>
+
+</project>
+

@@ -1812,4 +1812,222 @@ throws PapillonBusinessException {
 	return myEntryId;
 }
 
+static String typeDico = new String();
+public static ArrayList findTargetIdByValue(String headword, String keyword, int operator,
+		String values) throws PapillonBusinessException{
+	try{
+		String[] myVolumeName;
+		String[] dicName ;
+		if (keyword == "dico"){
+			myVolumeName = new String[1];
+			//myVolumeName[0] = values;
+			dicName = new String[1];
+			dicName[0] = values;
+		}
+		else{
+			//get all volume name 
+			VolumeQuery qr = new VolumeQuery(CurrentDBTransaction.get());
+			VolumeDO[] theVolumeDO = qr.getDOArray();
+			myVolumeName = new String[theVolumeDO.length];
+			dicName = new String[theVolumeDO.length];
+			for(int i=0; i<theVolumeDO.length; i++){
+				myVolumeName[i] = theVolumeDO[i].getDbname();
+				dicName[i] = theVolumeDO[i].getDictname();
+			}
+		}
+		//get all related objectid in volume table by headword
+		ArrayList objectId = new ArrayList();
+		ArrayList temp = new ArrayList(); 
+		//ArrayList arrayTemp = new ArrayList();
+		String targetid = new String();
+		for(int i=0; i< myVolumeName.length; i++){ //search in each volume
+			
+			VolumeEntryQuery qrEntry = new VolumeEntryQuery(myVolumeName[i], CurrentDBTransaction.get());
+			qrEntry.setQueryHeadword(headword);
+			VolumeEntryDO[] theEntryDO = qrEntry.getDOArray();
+			DictionaryQuery dicoQr = new DictionaryQuery(CurrentDBTransaction.get());
+			dicoQr.setQueryName(dicName[i]);
+			DictionaryDO[] dicoDO = dicoQr.getDOArray();
+			typeDico =  dicoDO[0].getType();
+			//PapillonLogger.writeDebugMsg("type de dico is direct, pivax, bilingue or ... : "+typeDico);
+
+			if (theEntryDO.length!=0){
+			
+				for(int n=0; n<theEntryDO.length;n++){		
+					
+					int l = objectId.size();	
+					objectId.add(new Integer(Integer.parseInt(theEntryDO[n].get_Handle())));
+					int entryId = Integer.parseInt(objectId.get(l).toString());
+					//get all related entry in linktable and indextable
+					switch (ChooseTableByKeyword(keyword)){
+						case 1: 
+							//PapillonLogger.writeDebugMsg("in case 1, filter in index table");
+							IndexQuery MyqrIndex = new IndexQuery("idx"+myVolumeName[i], CurrentDBTransaction.get());
+							MyqrIndex.setQueryKey(keyword);
+							MyqrIndex.setQueryValue(values);
+							MyqrIndex.setQueryEntryId(entryId);
+							if (!MyqrIndex.equals(null)){
+								//add entryDO in the return list
+							//	temp[arrayTemp.size()] = theEntryDO[n];
+							//	arrayTemp.add("");
+							}
+							break;
+						case 2: 
+							//PapillonLogger.writeDebugMsg("in case 2, filter in link table");
+							//PapillonLogger.writeDebugMsg("is link table");
+							LinkQuery MyqrLink = new LinkQuery("link"+myVolumeName[i], CurrentDBTransaction.get());
+							if (keyword == "lc"){
+								MyqrLink.setQueryLang(values);
+							}else if(keyword == "poids"){
+								//PapillonLogger.writeDebugMsg("is poids");
+								double v = Double.parseDouble(values);
+								//PapillonLogger.writeDebugMsg("value is"+v);
+								MyqrLink.setQueryWeight(v, QueryBuilder.GREATER_THAN);
+								
+							}
+							MyqrLink.setQueryEntryId(entryId);
+							//PapillonLogger.writeDebugMsg("reussi a excuter les query");
+							if (!MyqrLink.equals(null)){
+								//add tragetid in the return list
+								//PapillonLogger.writeDebugMsg("n ="+n);
+								//PapillonLogger.writeDebugMsg("theEntryDO[n]="+theEntryDO[n].get_Handle());
+								//PapillonLogger.writeDebugMsg("temp.length ="+temp.size());
+								//PapillonLogger.writeDebugMsg("query has reslut: n="+n+", theEntryDO[n]="+theEntryDO[n].get_Handle()+", temp.length ="+temp.size());
+								//VolumeEntryDO ve = theEntryDO[n];
+								//PapillonLogger.writeDebugMsg("ve is existe: ve ="+ve.get_Handle());
+								
+								int row = MyqrLink.getCount();
+								//search target with link table params targetid and lang
+								LinkDO[] linkEntry = MyqrLink.getDOArray();
+								if (linkEntry.length > 0){
+									for (int b = 0; b < row; b++){
+										targetid = linkEntry[b].getTargetId();
+										//PapillonLogger.writeDebugMsg("+++tragetid ="+targetid);
+										//String lang = linkEntry[b].getLang();
+										//VolumeEntryDO ve = findTargetEntryByTargetidAndLang(targetid,lang);
+										temp.add(targetid);
+									}
+								}
+								
+								//zhang ying 11111
+								//temp.add(targetid);
+								
+								
+								//PapillonLogger.writeDebugMsg("temp = " + temp[arrayTemp.size()]);
+								//arrayTemp.add("");
+							}
+							break;
+						case 3:
+							//PapillonLogger.writeDebugMsg("in case 3, error");
+							break;
+							
+						
+					}
+					
+				
+				}
+				
+			}
+			
+	
+			
+		}
+		//PapillonLogger.writeDebugMsg("return temp");
+		return temp;
+	
+    }catch(Exception ex) {
+        throw new PapillonBusinessException("Exception in findEntryByValue()", ex);
+    }
+ 
 }
+
+//public static VolumeEntryDO findTargetEntryByTargetidAndLang(String targetid, String lang){
+//}
+
+
+public static int ChooseTableByKeyword(String key){
+	ArrayList indexKeyList = new ArrayList();    	
+	indexKeyList.add("auteur");
+	indexKeyList.add("group");
+	indexKeyList.add("comment");
+	indexKeyList.add("date");
+	ArrayList linkKeyList = new ArrayList();
+	linkKeyList.add("poids");
+	linkKeyList.add("lc");
+	int mykey;
+	if (indexKeyList.contains(key)){
+		return 1;
+	}else if (linkKeyList.contains(key)){
+		return 2;
+	}else if (key == "dico"){
+		return 3;
+	}	
+	return 0;
+}
+
+public static VolumeEntryDO[] findEntry (ArrayList conditions) throws PapillonBusinessException{
+	ArrayList targetIdList = new ArrayList();
+	if (!conditions.isEmpty()){
+		String hw = ((ArrayList)conditions.get(0)).get(0).toString(); // headword : conditions.get(0)
+		for (int i=0; i<conditions.size(); i++){
+			String keyword = ((ArrayList)conditions.get(i+1)).get(0).toString(); //conditions: conditions.get(>0)
+			String o = ((ArrayList)conditions.get(i+1)).get(1).toString();
+			int operator = 1;
+			if (o == "1"){
+				operator = 1;
+			}else if (o == "2"){
+				operator = 2;
+			}else if (o == "3"){
+				operator =3;
+			}
+			String values =  ((ArrayList)conditions.get(i+1)).get(2).toString();
+			ArrayList myList = findTargetIdByValue(hw, keyword, operator, values);
+//			try{
+//				if (myList.size() != 0){
+//					for (int a=0; a<myList.size(); a++){
+//						//PapillonLogger.writeDebugMsg("--- myList return is :"  +myList.get(a));
+//					}
+//				}
+//		    }catch(Exception ex) {
+//		        throw new PapillonBusinessException("Exception in findEntry()", ex);
+//		    }
+		    		
+				for (int j=0; j< myList.size(); j++){
+					if (targetIdList.isEmpty()){
+						targetIdList.add(myList.get(j).toString()) ;
+						
+					}else if(!listExist(targetIdList, myList.get(j).toString())){
+						targetIdList.add(myList.get(j));
+						
+					}
+				}
+			//	XslTransformation.getFormattedResultForLink(typeDico, targetIdList);
+				if(myList.size()==0){
+					PapillonLogger.writeDebugMsg("no match found");
+				}
+				for (int j=0; j<myList.size(); j++){
+					PapillonLogger.writeDebugMsg("final list:"+targetIdList.get(j));
+					
+				}
+									
+			}
+		}
+	return null;
+}
+
+
+
+public static boolean listExist (ArrayList targetIdList, String newTarget){
+
+	for (int i=0; i<targetIdList.size(); i++){
+		//PapillonLogger.writeDebugMsg("listExist? :"+targetIdList.get(i)+"' new:"+newTarget);
+		if (targetIdList.get(i)==newTarget || targetIdList.get(i).equals(newTarget)){
+			//PapillonLogger.writeDebugMsg("list equals: targetlist"+targetIdList.get(i)+"' new:"+newTarget);
+			return true;
+		}
+	}
+	return false;
+	
+}
+}
+

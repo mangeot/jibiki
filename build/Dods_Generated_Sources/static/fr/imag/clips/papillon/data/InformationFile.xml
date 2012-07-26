@@ -1,0 +1,119 @@
+
+<TABLE>
+    <PACKAGE>fr.imag.clips.papillon.data</PACKAGE>
+    <AUTHOR>NN</AUTHOR>
+    <PROJECT_NAME>DODS Project</PROJECT_NAME>
+    <TABLE_NAME>informationfiles</TABLE_NAME>
+    <CLASS_NAME>InformationFile</CLASS_NAME>
+    <DB_VENDOR>PostgreSQL</DB_VENDOR>
+    <TEMPLATE_SET>standard</TEMPLATE_SET>
+    <GENERATE_SECURE>false</GENERATE_SECURE>
+    <GENERATE_INSECURE>true</GENERATE_INSECURE>
+    <MASS_UPDATES>false</MASS_UPDATES>
+    <MASS_DELETES>false</MASS_DELETES>
+    <DO_IS_OID_BASED>true</DO_IS_OID_BASED>
+    <IS_ABSTRACT>false</IS_ABSTRACT>
+    <DELETE_CASCADES>false</DELETE_CASCADES>
+    <DO_IS_MULTIDB_BASED>false</DO_IS_MULTIDB_BASED>
+    <IS_ANY_COLUMN_SECURE>false</IS_ANY_COLUMN_SECURE>
+    <GENERATE_DIRTY>Deprecate</GENERATE_DIRTY>
+
+    <COLUMN name="filename">
+        <IS_CONSTANT>false</IS_CONSTANT>
+        <DB_TYPE>LONGVARCHAR</DB_TYPE>
+        <JAVA_TYPE>String</JAVA_TYPE>
+        <USED_FOR_QUERY>true</USED_FOR_QUERY>
+        <CAN_BE_NULL>false</CAN_BE_NULL>
+        <IS_PRIMARY_KEY>false</IS_PRIMARY_KEY>
+        <IS_ARRAY>false</IS_ARRAY>
+        <GENERATE_SECURE>false</GENERATE_SECURE>
+        <GENERATE_INSECURE>true</GENERATE_INSECURE>
+    </COLUMN>
+
+
+    <COLUMN name="filetype">
+        <IS_CONSTANT>false</IS_CONSTANT>
+        <DB_TYPE>LONGVARCHAR</DB_TYPE>
+        <JAVA_TYPE>String</JAVA_TYPE>
+        <USED_FOR_QUERY>true</USED_FOR_QUERY>
+        <CAN_BE_NULL>false</CAN_BE_NULL>
+        <IS_PRIMARY_KEY>false</IS_PRIMARY_KEY>
+        <IS_ARRAY>false</IS_ARRAY>
+        <GENERATE_SECURE>false</GENERATE_SECURE>
+        <GENERATE_INSECURE>true</GENERATE_INSECURE>
+    </COLUMN>
+
+
+    <COLUMN name="document">
+      <REFERENCE_OBJECT name="InformationDocument">
+          <CONSTRAINT>true</CONSTRAINT>
+          <IS_ABSTRACT>false</IS_ABSTRACT>
+          <IS_FOREIGN_KEY>false</IS_FOREIGN_KEY>
+          <PACKAGE>fr.imag.clips.papillon.data</PACKAGE>
+          <TABLE_NAME>informationdocument</TABLE_NAME>
+      </REFERENCE_OBJECT>
+        <IS_CONSTANT>false</IS_CONSTANT>
+      <JAVADOC>/**
+ * The document this file belongs to.
+ */</JAVADOC>
+        <DB_TYPE>none</DB_TYPE>
+        <JAVA_TYPE>fr.imag.clips.papillon.data.InformationDocumentDO</JAVA_TYPE>
+        <USED_FOR_QUERY>true</USED_FOR_QUERY>
+        <CAN_BE_NULL>false</CAN_BE_NULL>
+        <IS_PRIMARY_KEY>false</IS_PRIMARY_KEY>
+        <IS_ARRAY>false</IS_ARRAY>
+        <GENERATE_SECURE>false</GENERATE_SECURE>
+        <GENERATE_INSECURE>true</GENERATE_INSECURE>
+    </COLUMN>
+
+
+    <COLUMN name="filecode">
+        <IS_CONSTANT>false</IS_CONSTANT>
+        <DB_TYPE>LONGVARCHAR</DB_TYPE>
+        <JAVA_TYPE>String</JAVA_TYPE>
+        <USED_FOR_QUERY>true</USED_FOR_QUERY>
+        <CAN_BE_NULL>true</CAN_BE_NULL>
+        <IS_PRIMARY_KEY>false</IS_PRIMARY_KEY>
+        <IS_ARRAY>false</IS_ARRAY>
+        <GENERATE_SECURE>false</GENERATE_SECURE>
+        <GENERATE_INSECURE>true</GENERATE_INSECURE>
+    </COLUMN>
+
+
+    <COLUMN name="isIndexFile">
+        <IS_CONSTANT>false</IS_CONSTANT>
+      <JAVADOC>/**
+ * States if the file is the index of its document
+ * Only one file per document should be the index file...
+ */</JAVADOC>
+        <DB_TYPE>CHAR</DB_TYPE>
+        <JAVA_TYPE>String</JAVA_TYPE>
+        <USED_FOR_QUERY>true</USED_FOR_QUERY>
+        <CAN_BE_NULL>false</CAN_BE_NULL>
+        <IS_PRIMARY_KEY>false</IS_PRIMARY_KEY>
+        <SIZE>1</SIZE>
+        <IS_ARRAY>false</IS_ARRAY>
+        <GENERATE_SECURE>false</GENERATE_SECURE>
+        <GENERATE_INSECURE>true</GENERATE_INSECURE>
+    </COLUMN>
+
+
+    <COLUMN name="language">
+        <IS_CONSTANT>false</IS_CONSTANT>
+      <JAVADOC>/**
+ * The language of the file
+ */</JAVADOC>
+        <DB_TYPE>VARCHAR</DB_TYPE>
+        <JAVA_TYPE>String</JAVA_TYPE>
+        <USED_FOR_QUERY>true</USED_FOR_QUERY>
+        <CAN_BE_NULL>false</CAN_BE_NULL>
+        <IS_PRIMARY_KEY>false</IS_PRIMARY_KEY>
+        <SIZE>5</SIZE>
+        <IS_ARRAY>false</IS_ARRAY>
+        <GENERATE_SECURE>false</GENERATE_SECURE>
+        <GENERATE_INSECURE>true</GENERATE_INSECURE>
+    </COLUMN>
+
+
+
+</TABLE>

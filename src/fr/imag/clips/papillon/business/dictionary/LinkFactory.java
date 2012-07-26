@@ -204,7 +204,7 @@ public class LinkFactory {
 		}
 	}
 	
-	public static Link newLink(String table, String targetId, String lang, String handle)
+	public static Link newLink(String table, String targetId, String lang, String handle, double weight)
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 			//
 			int intId = 0;
@@ -216,6 +216,7 @@ public class LinkFactory {
 			}
 			
 			Link newLink = null;
+			//PapillonLogger.writeDebugMsg("value = "+targetId+", lang = "+lang+", handle = "+handle+"weight = "+ weight);
 			if (targetId != null) {
 				targetId = targetId.trim();
 				if (!targetId.equals("")) {
@@ -231,6 +232,8 @@ public class LinkFactory {
 					newLink.setTargetId(targetId);
 					// entry id
 					newLink.setEntryId(intId);
+					//
+					newLink.setWeight(weight);
 				}
 			}
 			//fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("NEW INDEX : table=" + table + " key=" + key + " lang=" + lang + " value=" + value + " lang=" + handle);

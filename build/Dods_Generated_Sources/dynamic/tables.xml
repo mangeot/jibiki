@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<DATABASE>
+ <TABLE name="link" id="fr.imag.clips.papillon.data.Link" path="fr/imag/clips/papillon/data" class="Link"/>
+ <TABLE name="index" id="fr.imag.clips.papillon.data.Index" path="fr/imag/clips/papillon/data" class="Index"/>
+ <TABLE name="volume" id="fr.imag.clips.papillon.data.VolumeEntry" path="fr/imag/clips/papillon/data" class="VolumeEntry"/>
+</DATABASE>

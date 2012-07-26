@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<CLASSES>
+    <CLASS name="fr.imag.clips.papillon.data.LinkDO"/>
+    <CLASS name="fr.imag.clips.papillon.data.IndexDO"/>
+    <CLASS name="fr.imag.clips.papillon.data.VolumeEntryDO"/>
+</CLASSES>

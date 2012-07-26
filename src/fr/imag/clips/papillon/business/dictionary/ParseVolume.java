@@ -145,6 +145,7 @@ import fr.imag.clips.papillon.business.xml.XMLServices;
 import fr.imag.clips.papillon.CurrentDBTransaction;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
 import java.awt.List;
@@ -182,7 +183,7 @@ public class ParseVolume {
     protected static final String XMLHEADER = "<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>";
     protected static final String XMLDECLSTART = "<?xml ";
     protected static final int MAX_TRY = 5;
-
+    static HashMap weight = new HashMap();
 
     public static int parseFoksVolume(String url)
             throws PapillonBusinessException {
@@ -444,7 +445,7 @@ public class ParseVolume {
                                         java.util.Vector DiscardedEntries)
             throws PapillonBusinessException {
         boolean result = false;
-        PapillonLogger.writeDebugMsg("Parse entry: [" + entryString + "]");
+       
         org.w3c.dom.Document myDoc = XMLServices.buildDOMTree(entryString);
         if (myDoc != null) {
             VolumeEntry newEntry = new VolumeEntry(myDict, myVolume);
@@ -564,14 +565,16 @@ public class ParseVolume {
     
     protected static class LinksData {
     	String CdmElementValue, handle, lang;
+    	double weight;
     	
-    	public LinksData(String cdmeValue, String lang, String handle){
+    	public LinksData(String cdmeValue, String lang, String handle, double weight){
     	CdmElementValue = cdmeValue;
     	this.lang = lang;
     	this.handle = handle;
+    	this.weight = weight;
     }
     	public Link toLink(String linkvolume) throws PapillonBusinessException {
-    		return LinkFactory.newLink(linkvolume, CdmElementValue, lang, handle);
+    		return LinkFactory.newLink(linkvolume, CdmElementValue, lang, handle, weight);
     	}
     }
 
@@ -655,30 +658,35 @@ public class ParseVolume {
             org.apache.xml.utils.PrefixResolver myPrefixResolver = new org.apache.xml.utils.PrefixResolverDefault(
                     myRootElt);
             java.util.Hashtable CdmElementsTable = volume.getCdmElements();
+           
             for (java.util.Enumeration langKeys = CdmElementsTable.keys(); langKeys.hasMoreElements();) {
                 String lang = (String) langKeys.nextElement();
+             
                 java.util.Hashtable tmpTable = (java.util.Hashtable) CdmElementsTable.get(lang);
                 for (java.util.Enumeration keys = tmpTable.keys(); keys.hasMoreElements();) {
                     String CdmElement = (String) keys.nextElement();
-		//PapillonLogger.writeDebugMsg("Parse entry, key " + CdmElement + ":");
+              
                     java.util.Vector myVector = (java.util.Vector) tmpTable.get(CdmElement);
+   
                     org.apache.xpath.XPath myXPath = null;
                     boolean isIndex = false;
                     if (myVector != null) {
                         if (myVector.size() == 3) {
                             isIndex = ((Boolean) myVector.elementAt(1)).booleanValue();
+                         //   PapillonLogger.writeDebugMsg("myVecotr, size=3:"+myVector.elementAt(0)+", "+myVector.elementAt(1)+", "+myVector.elementAt(2));
                             if (isIndex) {
                                 myXPath = (org.apache.xpath.XPath) myVector.elementAt(2);
                             }
                         } else if (myVector.size() == 2) {
                             isIndex = ((Boolean) myVector.elementAt(1)).booleanValue();
+                        //    PapillonLogger.writeDebugMsg("myVecotr, size=2:"+myVector.elementAt(0)+", "+myVector.elementAt(1));
                             if (isIndex) {
                                 String xpathString = (String) myVector.elementAt(0);
                                 myXPath = ParseVolume.compileXPath(xpathString, myRootElt);
                                 myVector.add(myXPath);
                             }
                         }
-                        //PapillonLogger.writeDebugMsg("Parse entry: lang: "+ lang +" /key: " + CdmElement + " /xpath: " + (String) myVector.elementAt(0));
+                      //  PapillonLogger.writeDebugMsg("Parse entry: lang: "+ lang +" /key: " + CdmElement + " /xpath: " + (String) myVector.elementAt(0));
                     }
                     if (myXPath != null) {
                         org.w3c.dom.NodeList resNodeList = null;
@@ -694,23 +702,65 @@ public class ParseVolume {
                             for (int i = 0; i < resNodeList.getLength(); i++) {
                                 org.w3c.dom.Node myNode = resNodeList.item(i);
                                 String value = myNode.getNodeValue();
+                                
                                //PapillonLogger.writeDebugMsg("Parse entry, node " + myNode.getNodeName() + " /value: " + value);
                                 if (value != null) {
                                     value = value.trim();
                                     if (!value.equals("")) {
-                                        //PapillonLogger.writeDebugMsg("Parse entry, node value: " + value);
+                                        //PapillonLogger.writeDebugMsg("Parse entry, node value: " + value+", "+CdmElement);
                                     	boolean tableIsLinks = chooseTable(CdmElement);
                                     	
                                     	if (tableIsLinks){
-                            
-                                    		links.add(new LinksData(value, lang, handle));
+                                    		
+//                                    		
+//                                    		PapillonLogger.writeDebugMsg("Node of ref="+myNode.getNodeName()+", value ="+myNode.getNodeValue());
+//                                    		PapillonLogger.writeDebugMsg("ParentNode of ref="+myNode.getParentNode().getNodeName()+", value ="+myNode.getParentNode().getNodeValue());
+//                                    		PapillonLogger.writeDebugMsg("Parent-Parent-Node of ref="+myNode.getParentNode().getParentNode().getNodeName()+", value ="+myNode.getParentNode().getNodeValue());
+                                    	
+                                    		
+                                    		
+//                                    		if(myNode.getParentNode().hasChildNodes()){
+//                                    			PapillonLogger.writeDebugMsg("has child node"+myNode.getParentNode().getChildNodes().getLength());
+//                                    			for(int n=0; n<myNode.getParentNode().getChildNodes().getLength(); n++){
+//                                    				PapillonLogger.writeDebugMsg("the"+n+"eme child node is "+myNode.getParentNode().getChildNodes().item(n).getNodeName()+", value ="+myNode.getParentNode().getChildNodes().item(n).getNodeValue());
+//                                    			}
+//                                    		}
+                                    		
+//                                    		PapillonLogger.writeDebugMsg("CdmElement = "+CdmElement);
+                                    		if(CdmElement == Volume.CDM_linksWeight){
+                                    			org.w3c.dom.Node parentNode = myNode.getParentNode().getParentNode();
+//                                    			PapillonLogger.writeDebugMsg("parentNode = "+parentNode.getNodeName());
+                                        	
+                                        		if(parentNode.hasChildNodes()){
+                                        			for(int c=0; c<parentNode.getChildNodes().getLength(); c++) {
+//                                        				PapillonLogger.writeDebugMsg("Child = "+parentNode.getChildNodes().item(c));
+                                        			}
+                                        		}
+                                        		parentNode.removeChild(myNode.getParentNode());
+                                        		
+                                        		if(parentNode.hasChildNodes()){
+                                        			for(int c=0; c<parentNode.getChildNodes().getLength(); c++) {
+//                                        				PapillonLogger.writeDebugMsg("Child2 = "+parentNode.getChildNodes().item(c));
+                                        			}
+                                        		}
+                                        		org.w3c.dom.Node newNode = parentNode.getFirstChild().getFirstChild(); 
+//                                        		PapillonLogger.writeDebugMsg("Newnode = "+newNode.getNodeName()+", "+newNode.getNodeValue());
+                                    			String ref=newNode.getNodeValue();             	
+                                    			setWeight(value, handle, ref);
+//                                    			PapillonLogger.writeDebugMsg("CdmElement is cdm-links-weight, so weight = "+ getWeight(handle, ref));
+                                    			
+                                    		}else if(CdmElement == Volume.CDM_translationReflexie){
+//                                    				PapillonLogger.writeDebugMsg("CdmElement is cdm-translation-ref, weight = " + getWeight(handle,value));
+//                                    				PapillonLogger.writeDebugMsg("value = "+value+", lang = "+lang+", handle = "+handle+"weight = "+ getWeight(handle,value));
+                                    				links.add(new LinksData(value, lang, handle, getWeight(handle,value)));
+//                                        		
+                                    		}                                    		
                                     	}
                                     }
                                 }
                             }
-                        } else {
-                            //PapillonLogger.writeDebugMsg("Parse entry, node list null for CdmElement: " + CdmElement + ":");
-                        }
+ 
+                        } 
                     }
                 }
             }
@@ -718,7 +768,19 @@ public class ParseVolume {
         return links;
     }
     
-        
+    public static void setWeight(String value, String handle, String ref){
+    	String key = ref+"|"+handle;
+//    	PapillonLogger.writeDebugMsg("key = "+key);
+    	weight.put(key, value);
+//    	PapillonLogger.writeDebugMsg("set weight = "+ weight.get(key).toString());
+    }
+    
+    public static double getWeight(String handle, String ref){
+    	String key = ref+"|"+handle;
+//    	PapillonLogger.writeDebugMsg("get weight = "+ weight.get(key).toString());
+    	double valueOfWeight = Double.parseDouble(weight.get(key).toString());
+    	return valueOfWeight;
+    }
     
     // FIXME: should be defined here ?
     public static ArrayList indexEntry(Volume volume, org.w3c.dom.Document entryDoc, String handle)
@@ -732,9 +794,11 @@ public class ParseVolume {
             java.util.Hashtable CdmElementsTable = volume.getCdmElements();
             for (java.util.Enumeration langKeys = CdmElementsTable.keys(); langKeys.hasMoreElements();) {
                 String lang = (String) langKeys.nextElement();
+                
                 java.util.Hashtable tmpTable = (java.util.Hashtable) CdmElementsTable.get(lang);
                 for (java.util.Enumeration keys = tmpTable.keys(); keys.hasMoreElements();) {
                     String CdmElement = (String) keys.nextElement();
+      
 		//PapillonLogger.writeDebugMsg("Parse entry, key " + CdmElement + ":");
                     java.util.Vector myVector = (java.util.Vector) tmpTable.get(CdmElement);
                     org.apache.xpath.XPath myXPath = null;
@@ -777,6 +841,7 @@ public class ParseVolume {
                                     	boolean tableIsLinks = chooseTable(CdmElement);
                                     	//PapillonLogger.writeDebugMsg("tables is links?" + tableIsLinks);
                                     	if (!tableIsLinks){
+                                    		
                                     		indexes.add(new IndexData(CdmElement, lang, value, handle));
                                     	}
                                     /*	else{
@@ -801,10 +866,15 @@ public class ParseVolume {
      *decide that the recode should be putted into links table or into index table by CdmElement
      * */
     public static boolean chooseTable(String CdmElement){
-    	ArrayList cdmList = new ArrayList();    	
-    	cdmList.add("cdm-translation-ref");
-    	cdmList.add("weight?");
-    	cdmList.add("type?");
+    	ArrayList cdmList = new ArrayList(); 
+    	if(Volume.linkElements.length>0){
+    		for (int i = 0; i<Volume.linkElements.length; i++){
+    			cdmList.add(Volume.linkElements[i]);
+    		}
+    	}
+//    	cdmList.add("cdm-translation-ref");
+//    	cdmList.add("cdm-links-weight");
+    	
     	boolean tableIsLinks = cdmList.contains(CdmElement);   	
     	return tableIsLinks;
     }

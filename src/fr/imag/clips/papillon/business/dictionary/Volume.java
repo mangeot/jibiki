@@ -256,6 +256,7 @@ public class Volume {
     // FIXME: Added by Gilles for distinction between translations in a bilingual dictionary and
     // FIXME: translation links to target entries in another volume.
     public static final  String CDM_translationReflexie = "cdm-translation-ref";
+    public static final  String CDM_linksWeight = "cdm-links-weight";
     public static final  String CDM_example = "cdm-example";
     public static final  String CDM_idiom = "cdm-idiom";
 	// xpaths calculated from previous ones
@@ -322,6 +323,7 @@ public class Volume {
 	// other constants
 	public final static String DEFAULT_LANG = "#NA";
 	
+	//FIXME: CDM_translation, CDM_translationReflexie, CDM_linkWeight are linkElements
 	public final static String[] indexElements = { 
 		CDM_entryId, 
 		CDM_headword,
@@ -334,6 +336,7 @@ public class Volume {
 		CDM_idiom,
 		CDM_translation,
 		CDM_translationReflexie,
+		CDM_linksWeight,
 		
 // contribution CDM elements
 		CDM_contributionId,
@@ -353,6 +356,12 @@ public class Volume {
 		CDM_gdefEstParticule,
 		CDM_gdefEstFrequence
 		
+	};
+	
+	//it does not work. all CDM_Elements are read from the String[] indexElements. Look VolumesFactory.java:createCdmElementsTable, buildCdmElementsTable addCdmElementInTable
+	public final static String[] linkElements = {
+		CDM_translationReflexie,
+		CDM_linksWeight,
 	};
 		
 	public final static String[] langElements = { 
@@ -1136,6 +1145,11 @@ public class Volume {
     public static boolean isIndexCDMElement(String eltName) {
 		return java.util.Arrays.asList(indexElements).contains(eltName);
 	}
+    
+    
+    public static boolean isLinkCDMElement(String eltName) {
+    	return java.util.Arrays.asList(linkElements).contains(eltName);
+    }
 	
     /**
 		* IsLangCDMElement tells if the CDM element needs a language 

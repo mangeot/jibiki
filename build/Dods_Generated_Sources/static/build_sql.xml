@@ -1,0 +1,173 @@
+
+
+<project name="generateSQL" default="generateSql">
+<property name="doml.file" value="/Users/yingzhang/Projet/LINKS_1_0/papillon_static_objects.doml"/>
+<property name="project.root" value="/Users/yingzhang/Projet/LINKS_1_0/build/Dods_Generated_Sources/static"/>
+<property name="template.dir" value="/Users/yingzhang/Projet/Jibiki/toolsforjibiki/enhydra5.1/dods/build/template"/>
+<property name="template.set" value="standard"/>
+
+	<taskdef name="ejen" classname="org.ejen.EjenTask"/>
+
+	
+		<target name="fr.imag.clips.papillon.data.ContributionLog">
+		
+			<ejen>
+				<source file="${project.root}/fr/imag/clips/papillon/data/ContributionLog.xml"/>
+				<template file="${template.dir}/${template.set}/sql/SQLcreateTables.xsl" outdated="true"
+						  filepattern="${project.root}/fr/imag/clips/papillon/data/ContributionLog.sql"/>
+				
+				<template file="${template.dir}/${template.set}/sql/SQLdropTables.xsl"/>
+				
+			</ejen>
+		</target>
+		
+		<target name="fr.imag.clips.papillon.data.Dictionary">
+		
+			<ejen>
+				<source file="${project.root}/fr/imag/clips/papillon/data/Dictionary.xml"/>
+				<template file="${template.dir}/${template.set}/sql/SQLcreateTables.xsl" outdated="true"
+						  filepattern="${project.root}/fr/imag/clips/papillon/data/Dictionary.sql"/>
+				
+				<template file="${template.dir}/${template.set}/sql/SQLdropTables.xsl"/>
+				
+			</ejen>
+		</target>
+		
+		<target name="fr.imag.clips.papillon.data.InformationDocument">
+		
+			<ejen>
+				<source file="${project.root}/fr/imag/clips/papillon/data/InformationDocument.xml"/>
+				<template file="${template.dir}/${template.set}/sql/SQLcreateTables.xsl" outdated="true"
+						  filepattern="${project.root}/fr/imag/clips/papillon/data/InformationDocument.sql"/>
+				
+				<template file="${template.dir}/${template.set}/sql/SQLdropTables.xsl"/>
+				
+			</ejen>
+		</target>
+		
+		<target name="fr.imag.clips.papillon.data.Message">
+		
+			<ejen>
+				<source file="${project.root}/fr/imag/clips/papillon/data/Message.xml"/>
+				<template file="${template.dir}/${template.set}/sql/SQLcreateTables.xsl" outdated="true"
+						  filepattern="${project.root}/fr/imag/clips/papillon/data/Message.sql"/>
+				
+				<template file="${template.dir}/${template.set}/sql/SQLdropTables.xsl"/>
+				
+			</ejen>
+		</target>
+		
+		<target name="fr.imag.clips.papillon.data.JibikiVersion">
+		
+			<ejen>
+				<source file="${project.root}/fr/imag/clips/papillon/data/JibikiVersion.xml"/>
+				<template file="${template.dir}/${template.set}/sql/SQLcreateTables.xsl" outdated="true"
+						  filepattern="${project.root}/fr/imag/clips/papillon/data/JibikiVersion.sql"/>
+				
+				<template file="${template.dir}/${template.set}/sql/SQLdropTables.xsl"/>
+				
+			</ejen>
+		</target>
+		
+		<target name="fr.imag.clips.papillon.data.Group">
+		
+			<ejen>
+				<source file="${project.root}/fr/imag/clips/papillon/data/Group.xml"/>
+				<template file="${template.dir}/${template.set}/sql/SQLcreateTables.xsl" outdated="true"
+						  filepattern="${project.root}/fr/imag/clips/papillon/data/Group.sql"/>
+				
+				<template file="${template.dir}/${template.set}/sql/SQLdropTables.xsl"/>
+				
+			</ejen>
+		</target>
+		
+		<target name="fr.imag.clips.papillon.data.QueryLog">
+		
+			<ejen>
+				<source file="${project.root}/fr/imag/clips/papillon/data/QueryLog.xml"/>
+				<template file="${template.dir}/${template.set}/sql/SQLcreateTables.xsl" outdated="true"
+						  filepattern="${project.root}/fr/imag/clips/papillon/data/QueryLog.sql"/>
+				
+				<template file="${template.dir}/${template.set}/sql/SQLdropTables.xsl"/>
+				
+			</ejen>
+		</target>
+		
+		<target name="fr.imag.clips.papillon.data.XslSheet">
+		
+			<ejen>
+				<source file="${project.root}/fr/imag/clips/papillon/data/XslSheet.xml"/>
+				<template file="${template.dir}/${template.set}/sql/SQLcreateTables.xsl" outdated="true"
+						  filepattern="${project.root}/fr/imag/clips/papillon/data/XslSheet.sql"/>
+				
+				<template file="${template.dir}/${template.set}/sql/SQLdropTables.xsl"/>
+				
+			</ejen>
+		</target>
+		
+		<target name="fr.imag.clips.papillon.data.InformationFile">
+		
+			<ejen>
+				<source file="${project.root}/fr/imag/clips/papillon/data/InformationFile.xml"/>
+				<template file="${template.dir}/${template.set}/sql/SQLcreateTables.xsl" outdated="true"
+						  filepattern="${project.root}/fr/imag/clips/papillon/data/InformationFile.sql"/>
+				
+				<template file="${template.dir}/${template.set}/sql/SQLdropTables.xsl"/>
+				
+			</ejen>
+		</target>
+		
+		<target name="fr.imag.clips.papillon.data.PapillonAxi">
+		
+			<ejen>
+				<source file="${project.root}/fr/imag/clips/papillon/data/PapillonAxi.xml"/>
+				<template file="${template.dir}/${template.set}/sql/SQLcreateTables.xsl" outdated="true"
+						  filepattern="${project.root}/fr/imag/clips/papillon/data/PapillonAxi.sql"/>
+				
+				<template file="${template.dir}/${template.set}/sql/SQLdropTables.xsl"/>
+				
+			</ejen>
+		</target>
+		
+		<target name="fr.imag.clips.papillon.data.Volume">
+		
+			<ejen>
+				<source file="${project.root}/fr/imag/clips/papillon/data/Volume.xml"/>
+				<template file="${template.dir}/${template.set}/sql/SQLcreateTables.xsl" outdated="true"
+						  filepattern="${project.root}/fr/imag/clips/papillon/data/Volume.sql"/>
+				
+				<template file="${template.dir}/${template.set}/sql/SQLdropTables.xsl"/>
+				
+			</ejen>
+		</target>
+		
+		<target name="fr.imag.clips.papillon.data.FoksEntry">
+		
+			<ejen>
+				<source file="${project.root}/fr/imag/clips/papillon/data/FoksEntry.xml"/>
+				<template file="${template.dir}/${template.set}/sql/SQLcreateTables.xsl" outdated="true"
+						  filepattern="${project.root}/fr/imag/clips/papillon/data/FoksEntry.sql"/>
+				
+				<template file="${template.dir}/${template.set}/sql/SQLdropTables.xsl"/>
+				
+			</ejen>
+		</target>
+		
+		<target name="fr.imag.clips.papillon.data.User">
+		
+			<ejen>
+				<source file="${project.root}/fr/imag/clips/papillon/data/User.xml"/>
+				<template file="${template.dir}/${template.set}/sql/SQLcreateTables.xsl" outdated="true"
+						  filepattern="${project.root}/fr/imag/clips/papillon/data/User.sql"/>
+				
+				<template file="${template.dir}/${template.set}/sql/SQLdropTables.xsl"/>
+				
+			</ejen>
+		</target>
+		
+		
+		<target name="generateSql" depends="fr.imag.clips.papillon.data.ContributionLog, fr.imag.clips.papillon.data.Dictionary, fr.imag.clips.papillon.data.InformationDocument, fr.imag.clips.papillon.data.Message, fr.imag.clips.papillon.data.JibikiVersion, fr.imag.clips.papillon.data.Group, fr.imag.clips.papillon.data.QueryLog, fr.imag.clips.papillon.data.XslSheet, fr.imag.clips.papillon.data.InformationFile, fr.imag.clips.papillon.data.PapillonAxi, fr.imag.clips.papillon.data.Volume, fr.imag.clips.papillon.data.FoksEntry, fr.imag.clips.papillon.data.User">
+		</target>
+
+</project>
+

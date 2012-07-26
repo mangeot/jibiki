@@ -1,0 +1,61 @@
+<html>
+<head>
+  <title>Dods-ejen readme</title>
+</head>
+<body>
+<br>
+<h2>To generate SQL and java files:</h2>
+<ol>
+  <li>
+    Use the Dods-ejen Wizard to generate your SQL files and java classes (dods.bat or
+    dods (for Linux)). Also you can use dods Ant Task and include it in your
+    build.xml file.
+  </li>
+  <li>
+    Choose options (one or more):
+    <br>Generate SQL files (with or without using SQLSplitter tool)
+    	<br>Generate java files
+    	<br>Compile java classes
+  </li>
+</ol>
+<h2>To build and compile dods java classes and sql files</h2>
+<ol>
+  <li>
+    To create all sql files and java classes and to compile use <b>generateAll </b>target
+    of <b>build_dods.xml </b>(default target)<b>.</b>
+  </li>
+  <li>
+    To create only sql files just type use <b>generateSql </b>target of <b>build_dods.xml.</b>
+  </li>
+  <li>
+    To create only java files and to compile them use <b>generateJava </b>target
+    of <b>build_dods.xml.</b>
+  </li>
+  <li>
+    To create only java files and  not to compile them use <b>generateJavaNoCompile
+    </b>target of <b>build_dods.xml.&nbsp;</b>
+  </li>
+  <li>
+    To create SQL files and java files and not to compile them type use <b> generateNoCompile
+    </b>target of <b>build_dods.xml.&nbsp;</b>
+  </li>
+  
+  <li>
+    To create all sql files and java classes and to compile it. SQL files will
+    be divided into separate files using SQLSplitter use <b>generateAllSplit </b>target
+    of <b>build_dods.xml.&nbsp;</b>
+  </li>
+  
+  <li>
+    To create SQL files and separate sql commands using SQLSplitter and java
+    files and not to compile them use <b>generateNoCompileSplit </b>target of <b>build_dods.xml.&nbsp;</b>
+  </li>
+  
+  <li>
+    To create only sql files and separate them in different files using
+    SQLSplitter use <b>generateSqlSplit </b>target of <b>build_dods.xml. </b>
+  </li>
+  
+</ol>
+</body>
+</html>
