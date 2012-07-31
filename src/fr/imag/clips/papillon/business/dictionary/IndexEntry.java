@@ -259,14 +259,20 @@ public class IndexEntry {
 									if (linkType.equals(Volume.CDM_linkWeight)) {
 										myLink.setWeight(value);
 									}
-									if (linkType.equals(Volume.CDM_linkValue)) {
+									else if (linkType.equals(Volume.CDM_linkValue)) {
 										myLink.setTargetId(value);
 									}									
-									if (linkType.equals(Volume.CDM_linkVolume)) {
+									else if (linkType.equals(Volume.CDM_linkVolume)) {
 										myLink.setVolumeTarget(value);
 									}									
-									if (linkType.equals(Volume.CDM_linkLang)) {
+									else if (linkType.equals(Volume.CDM_linkLang)) {
 										myLink.setLang(value);
+									}									
+									else if (linkType.equals(Volume.CDM_linkType)) {
+										myLink.setType(value);
+									}									
+									else if (linkType.equals(Volume.CDM_linkLabel)) {
+										myLink.setLabel(value);
 									}									
 								}
 							}

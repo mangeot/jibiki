@@ -265,6 +265,8 @@ public class Volume {
     public static final  String CDM_linkWeight = "weight";
     public static final  String CDM_linkVolume = "volume";
     public static final  String CDM_linkLang = "lang";
+    public static final  String CDM_linkType = "type";
+    public static final  String CDM_linkLabel = "label";
 	
 	
 	// xpaths calculated from previous ones
