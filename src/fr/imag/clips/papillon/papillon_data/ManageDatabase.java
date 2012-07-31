@@ -156,6 +156,7 @@ public class ManageDatabase implements Query {
     
     protected static String createLinkTableParamsSql = "(" + 
     	"targetId VARCHAR(255) DEFAULT '\'''\''    ,"+
+		"name VARCHAR(255) DEFAULT '\'''\''    ," +
     	"lang VARCHAR(3) DEFAULT '\'''\''    ," +
     	"volumeTarget VARCHAR(255) DEFAULT '\'''\''    ," +
    		"type VARCHAR(255) DEFAULT '\'''\''    ," +

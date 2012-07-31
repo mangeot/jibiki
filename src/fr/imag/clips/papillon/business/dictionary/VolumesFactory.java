@@ -237,6 +237,9 @@ public class VolumesFactory {
 
     protected final static String VOLUME_TAG = "volume-metadata";
     protected final static String CDM_ELEMENTS_TAG = "cdm-elements";
+    protected final static String LINKS_TAG = "links";
+	protected final static String DEFAULT_LINK_NAME = "unknown";
+	protected final static String TRANSLATION_LINK_NAME = "translation";
     protected final static String XSLSHEET_TAG = "xsl-stylesheet";
     protected final static String XMLSCHEMA_TAG = "xmlschema-ref";
     protected final static String TEMPLATE_INTERFACE_TAG = "template-interface-ref";
@@ -246,6 +249,7 @@ public class VolumesFactory {
     protected final static String HREF_ATTRIBUTE = "href";
     protected final static String INDEX_ATTRIBUTE = "index";
     protected final static String LINK_ATTRIBUTE = "link";
+    protected final static String LINK_NAME_SEPARATOR = "||";
     protected final static String LANG_ATTRIBUTE = "lang";
     protected final static String LOCATION_ATTRIBUTE = "location";
     protected final static String VIRTUAL_ATTRIBUTE = "virtual";
@@ -337,7 +341,7 @@ public class VolumesFactory {
 		if (tmplEntry == null || tmplEntry.equals("")) {
 			throw new PapillonBusinessException("Exception in newVolume: there is no template entry, the element " + TEMPLATE_ENTRY_TAG + " does not exist or is empty!");
 		}
-
+		upgradeCdmLinkElement(volume.getOwnerDocument());
 		Hashtable cdmElements = createCdmElementsTable(volume, source, tmplEntry);
 				
 		PapillonLogger.writeDebugMsg("The CDM elements hashtable has been created");
@@ -377,6 +381,59 @@ public class VolumesFactory {
 	}
 	}
 	
+	public static org.apache.xpath.XPath compileXPath(String xpathString, org.w3c.dom.Element myRootElt)
+	throws PapillonBusinessException {
+        javax.xml.transform.SourceLocator mySourceLocator = new org.apache.xml.utils.SAXSourceLocator();
+        DmlPrefixResolver myPrefixResolver = new DmlPrefixResolver(myRootElt);
+        org.apache.xpath.XPath myXPath = null;
+        try {
+            myXPath = new org.apache.xpath.XPath(xpathString, mySourceLocator, myPrefixResolver,
+												 org.apache.xpath.XPath.SELECT);
+        } catch (javax.xml.transform.TransformerException e) {
+            throw new PapillonBusinessException("javax.xml.transform.TransformerException: ", e);
+        }
+        return myXPath;
+    }
+	
+    public static org.apache.xpath.XPath compileXPath(String xpathString,
+                                                      org.apache.xml.utils.PrefixResolver aPrefixResolver)
+	throws PapillonBusinessException {
+        javax.xml.transform.SourceLocator mySourceLocator = new org.apache.xml.utils.SAXSourceLocator();
+        org.apache.xpath.XPath myXPath = null;
+        try {
+            myXPath = new org.apache.xpath.XPath(xpathString, mySourceLocator, aPrefixResolver,
+												 org.apache.xpath.XPath.SELECT);
+        } catch (javax.xml.transform.TransformerException e) {
+            throw new PapillonBusinessException("javax.xml.transform.TransformerException: ", e);
+        }
+        return myXPath;
+    }
+	
+    /* cdmElements Hashtable = {lang => Hashtable} = {CDM_element => Vector} = (xpathString, isIndex, XPath)*/
+    protected static boolean compileXPathTable(java.util.Hashtable cdmElements, org.w3c.dom.Element myRootElt)
+	throws PapillonBusinessException {
+        boolean result = false;
+        for (java.util.Enumeration langKeys = cdmElements.keys(); langKeys.hasMoreElements();) {
+            String lang = (String) langKeys.nextElement();
+            java.util.Hashtable tmpTable = (java.util.Hashtable) cdmElements.get(lang);
+            for (java.util.Enumeration keys = tmpTable.keys(); keys.hasMoreElements();) {
+                String CDM_element = (String) keys.nextElement();
+                java.util.Vector eltVector = (java.util.Vector) tmpTable.get(CDM_element);
+                if (eltVector != null && eltVector.size() == 2) {
+                    String xpathString = (String) eltVector.elementAt(0);
+                    org.apache.xpath.XPath myXPath = compileXPath(xpathString, myRootElt);
+                    if (myXPath != null) {
+						// PapillonLogger.writeDebugMsg("compileXPathTable: CDM element: " + CDM_element + " xpath not null: " + xpathString);
+                        eltVector.add(myXPath);
+                        result = true;
+                    } else {
+						//      PapillonLogger.writeDebugMsg("compileXPathTable: CDM element: " + CDM_element + " xpath null: " + xpathString);
+                    }
+                }
+            }
+        }
+        return result;
+    }	
 	
 	
 	protected static Hashtable createCdmElementsTable(Element volume, String source, String tmplEntry) 
@@ -406,7 +463,7 @@ public class VolumesFactory {
 				
         org.w3c.dom.Document myDoc = XMLServices.buildDOMTree(tmplEntry);
         if (myDoc != null) {
-            ParseVolume.compileXPathTable(cdmElements, myDoc.getDocumentElement());
+            compileXPathTable(cdmElements, myDoc.getDocumentElement());
         }
 		else {
             PapillonLogger.writeDebugMsg("Error in createCdmElementsTable: the template entry doc is empty!");
@@ -415,6 +472,8 @@ public class VolumesFactory {
 		return cdmElements;
 	}
 
+	
+	
 
     /**
      * Create an unique volume
@@ -817,11 +876,8 @@ public class VolumesFactory {
         } catch (Exception ex) {
             throw new PapillonBusinessException("Exception in getVolumesArray()", ex);
         }
-
-
     }
 	
-
 
     /**
      * Return the collection of all volumes
@@ -977,7 +1033,7 @@ public class VolumesFactory {
         }
         org.w3c.dom.Document myDoc = XMLServices.buildDOMTree(tmplEntry);
         if (myDoc != null) {
-            ParseVolume.compileXPathTable(cdmElements, myDoc.getDocumentElement());
+            compileXPathTable(cdmElements, myDoc.getDocumentElement());
         }
         return cdmElements;
     }
@@ -997,34 +1053,68 @@ public class VolumesFactory {
             if (myNode.getNodeType() == Node.ELEMENT_NODE) {
                 Element myElt = (Element) myNode;
                 String eltName = myElt.getTagName();
-
-                /* determine the language of the cdm element */
-                String lang = Volume.DEFAULT_LANG;
-                Attr langAttr = myElt.getAttributeNodeNS(DML_URI, LANG_ATTRIBUTE);
-                if (langAttr != null) {
-                    lang = langAttr.getValue();
-                } else if (Volume.isLangCDMElement(eltName)) {
-                    lang = sourceLanguage;
-                }
-
-                /* determine if the cdm element has to be indexed */
-                boolean isIndex = false;
-                String index = myElt.getAttribute(INDEX_ATTRIBUTE);
-                isIndex = (index != null && index.equals("true"));
-                if (!isIndex) {
-                    isIndex = Volume.isIndexCDMElement(eltName);
-                }
-                
-//                boolean isLink = false;
-//                String link = myElt.getAttribute(LINK_ATTRIBUTE);
-//                isLink = (link != null && link.equals("true"));
-//                if (!isLink) {
-//                    isLink = Volume.isLinkCDMElement(eltName);
-//                }
-
-                String xpath = myElt.getAttribute(XPATH_ATTRIBUTE);
-               // PapillonLogger.writeDebugMsg("addCdmElementInTable: " + eltName + " lang: " + lang + " index: " + isIndex + " xpath: " + xpath);
-                addCdmElementInTable(cdmElements, eltName, lang, xpath, isIndex);
+				
+				if (eltName.equals(LINKS_TAG)) {
+					NodeList cdmLinksChilds = myElt.getChildNodes();
+					for (int j = 0; j < cdmLinksChilds.getLength(); j++) {
+						Node linkNode = cdmLinksChilds.item(j);
+						if (linkNode.getNodeType() == Node.ELEMENT_NODE) {
+							Element linkElt = (Element) linkNode;
+							String linkEltName = linkElt.getTagName();
+							if (linkEltName.equals(Volume.CDM_link)) {
+								String lang = Volume.DEFAULT_LANG;
+								Attr langAttr = linkElt.getAttributeNodeNS(DML_URI, LANG_ATTRIBUTE);
+								if (langAttr != null) {
+									lang = langAttr.getValue();
+								}
+								String name = DEFAULT_LINK_NAME;
+								Attr nameAttr = linkElt.getAttributeNode(NAME_ATTRIBUTE);
+								if (nameAttr != null) {
+									name = nameAttr.getValue();
+								}
+								name = linkEltName + LINK_NAME_SEPARATOR + name;
+								String xpath = linkElt.getAttribute(XPATH_ATTRIBUTE);
+								//PapillonLogger.writeDebugMsg("addCdmElementInTable: " + name + " lang: " + lang + " xpath: " + xpath);
+								addCdmElementInTable(cdmElements, name, lang, xpath, true);
+								NodeList cdmLinkChilds = linkElt.getChildNodes();
+								for (int k = 0; k < cdmLinkChilds.getLength(); k++) {
+									Node linkChildNode = cdmLinkChilds.item(k);
+									if (linkChildNode.getNodeType() == Node.ELEMENT_NODE) {
+										Element linkChildElt = (Element) linkChildNode;
+										String linkChildName = linkChildElt.getTagName();
+										String xpathName = name + LINK_NAME_SEPARATOR + linkChildName;
+										xpath = linkChildElt.getAttribute(XPATH_ATTRIBUTE);
+										//PapillonLogger.writeDebugMsg("addCdmElementInTable: " + xpathName + " lang: " + lang + " xpath: " + xpath);
+										addCdmElementInTable(cdmElements, xpathName, lang, xpath, true);
+									}
+								}
+							}
+						}
+					}
+				}
+				else {
+					/* determine the language of the cdm element */
+					String lang = Volume.DEFAULT_LANG;
+					Attr langAttr = myElt.getAttributeNodeNS(DML_URI, LANG_ATTRIBUTE);
+					if (langAttr != null) {
+						lang = langAttr.getValue();
+					} else if (Volume.isLangCDMElement(eltName)) {
+						lang = sourceLanguage;
+					}
+					
+					/* determine if the cdm element has to be indexed */
+					boolean isIndex = false;
+					String index = myElt.getAttribute(INDEX_ATTRIBUTE);
+					isIndex = (index != null && index.equals("true"));
+					if (!isIndex) {
+						isIndex = Volume.isIndexCDMElement(eltName);
+					}
+					
+					
+					String xpath = myElt.getAttribute(XPATH_ATTRIBUTE);
+					// PapillonLogger.writeDebugMsg("addCdmElementInTable: " + eltName + " lang: " + lang + " index: " + isIndex + " xpath: " + xpath);
+					addCdmElementInTable(cdmElements, eltName, lang, xpath, isIndex);
+				}
             }
         }
         completeCdmElementsTable(cdmElements, sourceLanguage);
@@ -1032,6 +1122,50 @@ public class VolumesFactory {
         return cdmElements;
     }
 
+	protected static void upgradeCdmLinkElement(Document docXml ) {
+
+        NodeList cdmElts = docXml.getElementsByTagName(CDM_ELEMENTS_TAG);
+        if (null != cdmElts && cdmElts.getLength() > 0) {
+            Element cdmElt = (Element) cdmElts.item(0);
+			
+			NodeList translationsRef = cdmElt.getElementsByTagName(Volume.CDM_translationReflexie);
+			if (null != translationsRef && translationsRef.getLength() > 0) {
+				Element translationRef = (Element) translationsRef.item(0);
+
+				Element newLink = docXml.createElement(Volume.CDM_link);
+				newLink.setAttribute(NAME_ATTRIBUTE,TRANSLATION_LINK_NAME);
+				
+				Attr langAttr = translationRef.getAttributeNodeNS(DML_URI, LANG_ATTRIBUTE);
+				if (langAttr != null) {
+					newLink.setAttribute("d:"+ LANG_ATTRIBUTE, langAttr.getValue());
+				}
+
+				Element value = docXml.createElement(Volume.CDM_linkValue);
+				String xpath = translationRef.getAttribute(XPATH_ATTRIBUTE);
+				String xpathStart = xpath.substring(0,xpath.lastIndexOf('/'));
+				String xpathEnd = xpath.substring(xpath.lastIndexOf('/')+1);
+				newLink.setAttribute(XPATH_ATTRIBUTE, xpathStart);
+				value.setAttribute(XPATH_ATTRIBUTE, xpathEnd);
+
+				newLink.appendChild(value);
+
+				Element linksElement = null;
+				NodeList linksList = cdmElt.getElementsByTagName(LINKS_TAG);
+				if (null != linksList && linksList.getLength() > 0) {
+					linksElement = (Element) linksList.item(0);
+				}
+				else {
+					linksElement = docXml.createElement(LINKS_TAG);
+					cdmElt.appendChild(linksElement);
+				}
+				
+				linksElement.appendChild(newLink);
+				cdmElt.removeChild(translationRef);
+				//PapillonLogger.writeDebugMsg("docXml modifié: " + XMLServices.NodeToString(docXml));
+			} 
+		} 
+	}
+	
 
     /**
      * @param Hashtable
@@ -1297,9 +1431,9 @@ public class VolumesFactory {
             throws fr.imag.clips.papillon.business.PapillonBusinessException {
         if (tmplEntry != null && !tmplEntry.equals("")) {
             org.w3c.dom.Document templateDoc = XMLServices.buildDOMTree(tmplEntry);
-            org.w3c.dom.NodeList contribNodeList = ParseVolume.getCdmElements(templateDoc, Volume.CDM_contribution,
+            org.w3c.dom.NodeList contribNodeList = IndexEntry.getCdmElements(templateDoc, Volume.CDM_contribution,
                     Volume.DEFAULT_LANG, cdmElements);
-            org.w3c.dom.NodeList entryNodeList = ParseVolume.getCdmElements(templateDoc, Volume.CDM_templateEntry,
+            org.w3c.dom.NodeList entryNodeList = IndexEntry.getCdmElements(templateDoc, Volume.CDM_templateEntry,
                     Volume.DEFAULT_LANG, cdmElements);
 
             if ((contribNodeList == null || contribNodeList.getLength() == 0) && (entryNodeList != null && entryNodeList.getLength() == 1)) {
@@ -1310,7 +1444,7 @@ public class VolumesFactory {
                 Node contributionNode = templateDoc.importNode(contributionDoc.getDocumentElement(), true);
                 Node entryParent = myEntryNode.getParentNode();
                 entryParent.replaceChild(contributionNode, myEntryNode);
-                NodeList dataNodeList = ParseVolume.getCdmElements(templateDoc, Volume.CDM_contributionDataElement,
+                NodeList dataNodeList = IndexEntry.getCdmElements(templateDoc, Volume.CDM_contributionDataElement,
                         Volume.DEFAULT_LANG, cdmElements);
                 if (dataNodeList != null && dataNodeList.getLength() == 1) {
                     Node dataNode = dataNodeList.item(0);
@@ -1415,9 +1549,7 @@ public class VolumesFactory {
 					VolumeEntry ve = (VolumeEntry) buffer.next();
 					
 					//
-					ParseVolume.indexEntry(ve);
-					ParseVolume.linksEntry(ve);
-					
+					IndexEntry.indexEntry(ve);					
 				}
 				
 				// End transaction : a part was correct, commit the transaction ...

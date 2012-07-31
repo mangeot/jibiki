@@ -106,7 +106,7 @@ import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.dictionary.Dictionary;
 import fr.imag.clips.papillon.business.dictionary.IAnswer;
 import fr.imag.clips.papillon.business.dictionary.LinkFactory;
-import fr.imag.clips.papillon.business.dictionary.ParseVolume;
+import fr.imag.clips.papillon.business.dictionary.IndexEntry;
 import fr.imag.clips.papillon.business.dictionary.QueryResult;
 import fr.imag.clips.papillon.business.dictionary.Volume;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory;
@@ -223,7 +223,7 @@ public class XslTransformation implements ResultFormatter {
 //                //
 //                if (target != null && !target.equals("") && target!= myVolume.getSourceLanguage()) {
 //
-//                	NodeList myNodeList = ParseVolume.getCdmElements(myAnswer, Volume.CDM_translationReflexie, target);
+//                	NodeList myNodeList = IndexEntry.getCdmElements(myAnswer, Volume.CDM_translationReflexie, target);
 //
 //                	
 //                	ArrayList myHwList = new ArrayList();
@@ -340,7 +340,7 @@ public class XslTransformation implements ResultFormatter {
                     //
                     if (target != null && !target.equals("") && target!= myVolume.getSourceLanguage()) {
   
-                    	NodeList myNodeList = ParseVolume.getCdmElements(myAnswer, Volume.CDM_translationReflexie, target);
+                    	NodeList myNodeList = IndexEntry.getCdmElements(myAnswer, Volume.CDM_translationReflexie, target);
 
                     	
                     	ArrayList myHwList = new ArrayList();
@@ -399,7 +399,7 @@ public class XslTransformation implements ResultFormatter {
                     	
                     	
                     	
-            //        	NodeList myNodeList = ParseVolume.getCdmElements(myAnswer, Volume.CDM_translationReflexie, target);
+            //        	NodeList myNodeList = IndexEntry.getCdmElements(myAnswer, Volume.CDM_translationReflexie, target);
                     	//PapillonLogger.writeDebugMsg("NodeList = "+myNodeList);        
                     	
 //                        if ((myNodeList != null) && (myNodeList.getLength() > 0)) {
@@ -472,7 +472,7 @@ public class XslTransformation implements ResultFormatter {
 //
 //                    //
 //                    if (target != null && !target.equals("")) {
-//                        NodeList myNodeList = ParseVolume.getCdmElements(myAnswer, Volume.CDM_translationReflexie, target);
+//                        NodeList myNodeList = IndexEntry.getCdmElements(myAnswer, Volume.CDM_translationReflexie, target);
 //                        if ((myNodeList != null) && (myNodeList.getLength() > 0)) {
 //                            for (int i = 0; i < myNodeList.getLength(); i++) {
 //                                Node myNode = myNodeList.item(i);

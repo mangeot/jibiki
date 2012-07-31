@@ -204,7 +204,7 @@ public class LinkFactory {
 		}
 	}
 	
-	public static Link newLink(String table, String targetId, String lang, String handle, double weight)
+	public static Link newLink(String table, String name, String lang, String handle)
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 			//
 			int intId = 0;
@@ -215,29 +215,21 @@ public class LinkFactory {
 				throw new PapillonBusinessException("Exception in newLink()", ex);
 			}
 			
-			Link newLink = null;
+			Link newLink = new Link(table);
 			//PapillonLogger.writeDebugMsg("value = "+targetId+", lang = "+lang+", handle = "+handle+"weight = "+ weight);
-			if (targetId != null) {
-				targetId = targetId.trim();
-				if (!targetId.equals("")) {
-					newLink=new Link(table);
-					// lang of the key
-					if (lang.length()==3) {
-						newLink.setLang(lang);
-					}
-					else {
-						newLink.setLang(Volume.DEFAULT_LANG);
-					}
-					// value of the key
-					newLink.setTargetId(targetId);
-					// entry id
-					newLink.setEntryId(intId);
-					//
-					newLink.setWeight(weight);
-				}
+			// lang of the key
+			if (lang.length()==3) {
+				newLink.setLang(lang);
 			}
+			else {
+				newLink.setLang(Volume.DEFAULT_LANG);
+			}
+			newLink.setName(name);
+			// entry id
+			newLink.setEntryId(intId);
+					//
 			//fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("NEW INDEX : table=" + table + " key=" + key + " lang=" + lang + " value=" + value + " lang=" + handle);
-				return newLink;
+			return newLink;
             
 		}
 

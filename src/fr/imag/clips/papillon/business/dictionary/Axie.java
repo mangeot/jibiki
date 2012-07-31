@@ -243,7 +243,7 @@ public class Axie implements IAnswer {
 	
 	public void setId(String id)
         throws PapillonBusinessException {
-			org.w3c.dom.Node idNode = ParseVolume.getCdmElement(this, this.getVolume().CDM_entryId);
+			org.w3c.dom.Node idNode = IndexEntry.getCdmElement(this, this.getVolume().CDM_entryId);
 			if (idNode != null) {
 				idNode.setNodeValue(id);
 			}

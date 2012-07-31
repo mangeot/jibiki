@@ -256,9 +256,17 @@ public class Volume {
     // FIXME: Added by Gilles for distinction between translations in a bilingual dictionary and
     // FIXME: translation links to target entries in another volume.
     public static final  String CDM_translationReflexie = "cdm-translation-ref";
-    public static final  String CDM_linksWeight = "cdm-links-weight";
     public static final  String CDM_example = "cdm-example";
     public static final  String CDM_idiom = "cdm-idiom";
+	
+	// New CDM elements for links
+    public static final  String CDM_link = "link";
+    public static final  String CDM_linkValue = "value";
+    public static final  String CDM_linkWeight = "weight";
+    public static final  String CDM_linkVolume = "volume";
+    public static final  String CDM_linkLang = "lang";
+	
+	
 	// xpaths calculated from previous ones
     public static final  String CDM_headwordElement = "cdm-headword-element";
 	public static final  String CDM_entryIdElement = "cdm-entry-id-element";
@@ -307,6 +315,8 @@ public class Volume {
     public static final  String CDM_nextContributionAuthorElement = "cdm-next-contribution-author-element";
 
 	
+	
+	
 	/* constants added to manage axies, it should be generic...*/
     public static final  String CDM_axiSemanticCat = "axi-semantic-cat";
     public static final  String CDM_axiSynonyms = "axi-synonyms";
@@ -336,7 +346,7 @@ public class Volume {
 		CDM_idiom,
 		CDM_translation,
 		CDM_translationReflexie,
-		CDM_linksWeight,
+		CDM_linkWeight,
 		
 // contribution CDM elements
 		CDM_contributionId,
@@ -361,7 +371,8 @@ public class Volume {
 	//it does not work. all CDM_Elements are read from the String[] indexElements. Look VolumesFactory.java:createCdmElementsTable, buildCdmElementsTable addCdmElementInTable
 	public final static String[] linkElements = {
 		CDM_translationReflexie,
-		CDM_linksWeight,
+		CDM_linkValue,
+		CDM_linkWeight,
 	};
 		
 	public final static String[] langElements = { 
@@ -666,6 +677,20 @@ public class Volume {
 			}
 		}
 	
+	public String getDefaultTargetVolumeName(String target) 
+		throws PapillonBusinessException {
+		String volumeName = null;
+		Collection Volumes1 = VolumesFactory.getVolumesArray(this.getDictname(), target, null);
+		if (!Volumes1.isEmpty() && Volumes1.size()>0) {
+			Volume firstVolume1 = (Volume)(Volumes1.iterator()).next();
+			volumeName = firstVolume1.getName();
+		}
+		return volumeName;
+	}
+
+
+
+
 	
     /**
 	 * Gets the href of the Volume
@@ -1207,7 +1232,7 @@ public class Volume {
 			
 			org.w3c.dom.Document templateDoc = XMLServices.buildDOMTree(templateEntry);
 			
-			org.w3c.dom.NodeList volumeNodes = ParseVolume.getCdmElements(templateDoc, Volume.CDM_volume, Volume.DEFAULT_LANG, this.getCdmElements()); 
+			org.w3c.dom.NodeList volumeNodes = IndexEntry.getCdmElements(templateDoc, Volume.CDM_volume, Volume.DEFAULT_LANG, this.getCdmElements()); 
 
 			if (volumeNodes != null && volumeNodes.getLength() >0) {
 				org.w3c.dom.Node volumeNode = volumeNodes.item(0);

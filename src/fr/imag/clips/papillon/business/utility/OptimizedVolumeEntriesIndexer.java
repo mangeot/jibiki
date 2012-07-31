@@ -6,7 +6,7 @@ import com.lutris.appserver.server.sql.DBTransaction;
 import fr.imag.clips.papillon.CurrentDBTransaction;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.PapillonLogger;
-import fr.imag.clips.papillon.business.dictionary.ParseVolume;
+import fr.imag.clips.papillon.business.dictionary.IndexEntry;
 import fr.imag.clips.papillon.business.dictionary.Volume;
 import fr.imag.clips.papillon.business.xml.XMLServices;
 import org.w3c.dom.Document;
@@ -24,6 +24,8 @@ public class OptimizedVolumeEntriesIndexer {
 
     public static void rebuildIndexes(Volume volume) throws PapillonBusinessException {
         DBConnection myDbConnection = null;
+		org.apache.xml.utils.PrefixResolver myPrefixResolver = null;
+		java.util.Hashtable CdmElementsTable = volume.getCdmElements();
         String sql = "SELECT xmlcode, objectid FROM " + volume.getDbname() + " ORDER BY objectid";
 
         PapillonLogger.writeDebugMsg("Re-indexing volume " + volume.getDbname() + " which contains " + volume.getCount() + " entries.");
@@ -31,6 +33,7 @@ public class OptimizedVolumeEntriesIndexer {
         int offset = 0;
         int resultCount = 100;
         ArrayList indexes = new ArrayList(4000);
+        ArrayList links = new ArrayList(4000);
         
         while (resultCount == 100) {
             resultCount = 0;
@@ -47,8 +50,17 @@ public class OptimizedVolumeEntriesIndexer {
                         String xmlCode = myResultSet.getString("xmlcode");
                         Document xmlDoc = XMLServices.buildDOMTree(xmlCode);
                         String handle = myResultSet.getString("objectid");
-
-                        indexes.addAll(ParseVolume.indexEntry(volume, xmlDoc, handle));
+							
+						if (xmlDoc != null) {
+							org.w3c.dom.Element myRootElt = xmlDoc.getDocumentElement();
+								
+							if (myPrefixResolver == null) {
+								myPrefixResolver = new org.apache.xml.utils.PrefixResolverDefault(myRootElt);
+							}
+							indexes.addAll(IndexEntry.indexEntry(CdmElementsTable, myRootElt, myPrefixResolver, handle));
+							links.addAll(IndexEntry.indexEntryLinks(CdmElementsTable, volume.getIndexDbname(), myRootElt, myPrefixResolver, handle));
+						}						
+						
                         resultCount++;
                     }
                     myResultSet.close();
@@ -76,7 +88,8 @@ public class OptimizedVolumeEntriesIndexer {
 
             try {
                 CurrentDBTransaction.registerNewDBTransaction();
-                ParseVolume.saveIndexes(indexes, volume.getIndexDbname());
+                IndexEntry.saveIndexes(indexes, volume.getIndexDbname());
+                IndexEntry.saveLinks(links);
                 CurrentDBTransaction.get().commit();
             } catch (SQLException se) {
                 String userMessage = "Problems when re-index entries.";

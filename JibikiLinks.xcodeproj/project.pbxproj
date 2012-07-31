@@ -46,7 +46,7 @@
 		A30722360EC89B1E00733910 /* IVolumeEntryProcessor.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = IVolumeEntryProcessor.java; sourceTree = "<group>"; };
 		A30722370EC89B1E00733910 /* NormalizeHeadwordProcessor.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = NormalizeHeadwordProcessor.java; sourceTree = "<group>"; };
 		A30722380EC89B1E00733910 /* PapillonPivotFactory.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = PapillonPivotFactory.java; sourceTree = "<group>"; };
-		A30722390EC89B1E00733910 /* ParseVolume.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = ParseVolume.java; sourceTree = "<group>"; };
+		A30722390EC89B1E00733910 /* IndexEntry.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = IndexEntry.java; sourceTree = "<group>"; };
 		A307223A0EC89B1E00733910 /* QueryCriteria.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = QueryCriteria.java; sourceTree = "<group>"; };
 		A307223B0EC89B1E00733910 /* QueryParameter.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = QueryParameter.java; sourceTree = "<group>"; };
 		A307223C0EC89B1E00733910 /* QueryRequest.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = QueryRequest.java; sourceTree = "<group>"; };
@@ -1405,6 +1405,9 @@
 		A39A472E0FF922610090E5C0 /* FrajpnContent.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = FrajpnContent.xhtml; sourceTree = "<group>"; };
 		A39A473B0FF923430090E5C0 /* Motamot.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = Motamot.java; sourceTree = "<group>"; };
 		A39FEC8210A06FD400D99EB4 /* Metadata.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = Metadata.java; sourceTree = "<group>"; };
+		A3AB8B3715C7CBE800929F98 /* Link.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = Link.java; sourceTree = "<group>"; };
+		A3AB8B3815C7CBEE00929F98 /* LinkFactory.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = LinkFactory.java; sourceTree = "<group>"; };
+		A3AB8B4015C7CC4700929F98 /* ParseVolume.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = ParseVolume.java; sourceTree = "<group>"; };
 		A3AF17B01069F94800E1CEB5 /* ErrorHandler.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = ErrorHandler.java; sourceTree = "<group>"; };
 		A3AF17B11069F95C00E1CEB5 /* ErrorHandler.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = ErrorHandler.java; sourceTree = "<group>"; };
 		A3AF17B21069F97F00E1CEB5 /* Error.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Error.xhtml; sourceTree = "<group>"; };
@@ -1593,11 +1596,14 @@
 				A30722320EC89B1E00733910 /* IAnswer.java */,
 				A30722330EC89B1E00733910 /* Index.java */,
 				A30722340EC89B1E00733910 /* IndexFactory.java */,
+				A30722390EC89B1E00733910 /* IndexEntry.java */,
 				A30722350EC89B1E00733910 /* IQuery.java */,
 				A30722360EC89B1E00733910 /* IVolumeEntryProcessor.java */,
+				A3AB8B3715C7CBE800929F98 /* Link.java */,
+				A3AB8B3815C7CBEE00929F98 /* LinkFactory.java */,
 				A30722370EC89B1E00733910 /* NormalizeHeadwordProcessor.java */,
 				A30722380EC89B1E00733910 /* PapillonPivotFactory.java */,
-				A30722390EC89B1E00733910 /* ParseVolume.java */,
+				A3AB8B4015C7CC4700929F98 /* ParseVolume.java */,
 				A307223A0EC89B1E00733910 /* QueryCriteria.java */,
 				A307223B0EC89B1E00733910 /* QueryParameter.java */,
 				A307223C0EC89B1E00733910 /* QueryRequest.java */,
@@ -3644,7 +3650,7 @@
 /* Begin PBXProject section */
 		A348B7040E7EFB50003F6712 /* Project object */ = {
 			isa = PBXProject;
-			buildConfigurationList = A348B7070E7EFB50003F6712 /* Build configuration list for PBXProject "JibikiTrunk" */;
+			buildConfigurationList = A348B7070E7EFB50003F6712 /* Build configuration list for PBXProject "JibikiLinks" */;
 			compatibilityVersion = "Xcode 3.1";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -3707,7 +3713,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A348B7070E7EFB50003F6712 /* Build configuration list for PBXProject "JibikiTrunk" */ = {
+		A348B7070E7EFB50003F6712 /* Build configuration list for PBXProject "JibikiLinks" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A348B7050E7EFB50003F6712 /* Debug */,

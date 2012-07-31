@@ -582,12 +582,12 @@ public class VolumeEntry
      */
     public String getCdmHeadword()
             throws PapillonBusinessException {
-        return ParseVolume.getCdmString(this, Volume.CDM_headword, this.getSourceLanguage());
+        return IndexEntry.getCdmString(this, Volume.CDM_headword, this.getSourceLanguage());
     }
 
     public void setHeadword()
             throws PapillonBusinessException {
-        String word = ParseVolume.getCdmString(this, Volume.CDM_headword, this.getSourceLanguage());
+        String word = IndexEntry.getCdmString(this, Volume.CDM_headword, this.getSourceLanguage());
         if (word != null) {
             word = word.trim();
         }
@@ -600,7 +600,7 @@ public class VolumeEntry
 
     public void setHeadword(String word)
             throws PapillonBusinessException {
-        ParseVolume.setCdmElement(this, Volume.CDM_headwordElement, word, this.getSourceLanguage());
+        IndexEntry.setCdmElement(this, Volume.CDM_headwordElement, word, this.getSourceLanguage());
         try {
             myDO.setHeadword(word);
         } catch (DataObjectException ex) {
@@ -619,7 +619,7 @@ public class VolumeEntry
     public String getHomographNumber()
             throws PapillonBusinessException {
         String hn = "";
-        hn = ParseVolume.getCdmString(this, Volume.CDM_homographNumber, this.getSourceLanguage());
+        hn = IndexEntry.getCdmString(this, Volume.CDM_homographNumber, this.getSourceLanguage());
         return hn;
     }
 
@@ -714,7 +714,7 @@ public class VolumeEntry
 
     protected void setEntryId(String newId)
             throws PapillonBusinessException {
-        ParseVolume.setCdmElement(this, Volume.CDM_entryIdElement, newId);
+        IndexEntry.setCdmElement(this, Volume.CDM_entryIdElement, newId);
     }
 
 
@@ -748,7 +748,7 @@ public class VolumeEntry
 
     public String getEntryId()
             throws PapillonBusinessException {
-        return ParseVolume.getCdmString(this, Volume.CDM_entryId);
+        return IndexEntry.getCdmString(this, Volume.CDM_entryId);
     }
 
     /* methods for the contribution id */
@@ -783,7 +783,7 @@ public class VolumeEntry
     // FIXME: public method, use to commute id whenever one save a draft contribution
     public void setContributionId(String newId)
             throws PapillonBusinessException {
-        ParseVolume.setCdmElement(this, Volume.CDM_contributionId, newId);
+        IndexEntry.setCdmElement(this, Volume.CDM_contributionId, newId);
     }
 
     /**
@@ -796,7 +796,7 @@ public class VolumeEntry
      */
     public String getContributionId()
             throws PapillonBusinessException {
-        return ParseVolume.getCdmString(this, Volume.CDM_contributionId);
+        return IndexEntry.getCdmString(this, Volume.CDM_contributionId);
     }
 
     /**
@@ -809,7 +809,7 @@ public class VolumeEntry
      */
     public void setOriginalContributionId(String newId)
             throws PapillonBusinessException {
-        ParseVolume.setCdmElement(this, Volume.CDM_originalContributionId, newId);
+        IndexEntry.setCdmElement(this, Volume.CDM_originalContributionId, newId);
     }
 
     /**
@@ -822,7 +822,7 @@ public class VolumeEntry
      */
     public String getOriginalContributionId()
             throws PapillonBusinessException {
-        return ParseVolume.getCdmString(this, Volume.CDM_originalContributionId);
+        return IndexEntry.getCdmString(this, Volume.CDM_originalContributionId);
     }
 
 /* methods for axi-reflinks */
@@ -835,7 +835,7 @@ public class VolumeEntry
     	// utilise table link
     	// verifier ou il est utilise
     	// si c'est plus pratique, renvoyer une collection au lieu d'un tableau de string
-        return ParseVolume.getCdmStrings(this, Volume.CDM_axiReflexie, lang);
+        return IndexEntry.getCdmStrings(this, Volume.CDM_axiReflexie, lang);
     }
 
     /**
@@ -844,7 +844,7 @@ public class VolumeEntry
     public String[] getTranslationsLexieIds(String lang)
             throws PapillonBusinessException {
     	// utilise table link
-        return ParseVolume.getCdmStrings(this, Volume.CDM_translationReflexie, lang);
+        return IndexEntry.getCdmStrings(this, Volume.CDM_translationReflexie, lang);
     }
 
     /**
@@ -854,7 +854,7 @@ public class VolumeEntry
             throws PapillonBusinessException {
     	// utilise table link
 
-        return ParseVolume.getCdmStrings(this, Volume.CDM_axiRefaxie);
+        return IndexEntry.getCdmStrings(this, Volume.CDM_axiRefaxie);
     }
 
     /* other methods */
@@ -869,7 +869,7 @@ public class VolumeEntry
      */
     public String getAuthor()
             throws PapillonBusinessException {
-        return ParseVolume.getCdmString(this, Volume.CDM_contributionAuthor);
+        return IndexEntry.getCdmString(this, Volume.CDM_contributionAuthor);
     }
 
 
@@ -883,12 +883,12 @@ public class VolumeEntry
      */
     public void setAuthor(String author)
             throws PapillonBusinessException {
-        ParseVolume.setCdmElement(this, Volume.CDM_contributionAuthorElement, author);
+        IndexEntry.setCdmElement(this, Volume.CDM_contributionAuthorElement, author);
     }
 
     public void setAuthor()
             throws PapillonBusinessException {
-        String author = ParseVolume.getCdmString(this, Volume.CDM_contributionAuthor);
+        String author = IndexEntry.getCdmString(this, Volume.CDM_contributionAuthor);
         if (author == null || author.equals("")) {
             setAuthor("automatic");
         }
@@ -905,7 +905,7 @@ public class VolumeEntry
     public java.util.Date getCreationDate()
             throws PapillonBusinessException {
         java.util.Date resDate = null;
-        String dateString = ParseVolume.getCdmString(this, Volume.CDM_contributionCreationDate);
+        String dateString = IndexEntry.getCdmString(this, Volume.CDM_contributionCreationDate);
         if (dateString != null && !dateString.equals("")) {
             try {
                 resDate = Utility.PapillonCDMDateFormat.parse(dateString);
@@ -925,7 +925,7 @@ public class VolumeEntry
      */
     public void setCreationDate()
             throws PapillonBusinessException {
-        String dateString = ParseVolume.getCdmString(this, Volume.CDM_contributionCreationDate);
+        String dateString = IndexEntry.getCdmString(this, Volume.CDM_contributionCreationDate);
         if (dateString == null || dateString.equals("")) {
             setCreationDate(Utility.PapillonCDMDateFormat.format(new java.util.Date()));
         }
@@ -940,7 +940,7 @@ public class VolumeEntry
 
     protected void setCreationDate(String date)
             throws PapillonBusinessException {
-        ParseVolume.setCdmElement(this, Volume.CDM_contributionCreationDateElement, date);
+        IndexEntry.setCdmElement(this, Volume.CDM_contributionCreationDateElement, date);
     }
 
     /**
@@ -952,7 +952,7 @@ public class VolumeEntry
      */
     public void setFinitionDate()
             throws PapillonBusinessException {
-        String dateString = ParseVolume.getCdmString(this, Volume.CDM_contributionFinitionDate);
+        String dateString = IndexEntry.getCdmString(this, Volume.CDM_contributionFinitionDate);
         if (dateString == null || dateString.equals("")) {
             setFinitionDate(Utility.PapillonCDMDateFormat.format(new java.util.Date()));
         }
@@ -967,7 +967,7 @@ public class VolumeEntry
 
     protected void setFinitionDate(String date)
             throws PapillonBusinessException {
-        ParseVolume.setCdmElement(this, Volume.CDM_contributionFinitionDateElement, date);
+        IndexEntry.setCdmElement(this, Volume.CDM_contributionFinitionDateElement, date);
     }
 
     /**
@@ -981,7 +981,7 @@ public class VolumeEntry
     public java.util.Date getFinitionDate()
             throws PapillonBusinessException {
         java.util.Date resDate = null;
-        String dateString = ParseVolume.getCdmString(this, Volume.CDM_contributionFinitionDate);
+        String dateString = IndexEntry.getCdmString(this, Volume.CDM_contributionFinitionDate);
         if (dateString != null && !dateString.equals("")) {
             try {
                 resDate = Utility.PapillonCDMDateFormat.parse(dateString);
@@ -1013,7 +1013,7 @@ public class VolumeEntry
 
     protected void setReviewDate(String date)
             throws PapillonBusinessException {
-        ParseVolume.setCdmElement(this, Volume.CDM_contributionReviewDateElement, date);
+        IndexEntry.setCdmElement(this, Volume.CDM_contributionReviewDateElement, date);
     }
 
 
@@ -1028,7 +1028,7 @@ public class VolumeEntry
     public java.util.Date getReviewDate()
             throws PapillonBusinessException {
         java.util.Date resDate = null;
-        String dateString = ParseVolume.getCdmString(this, Volume.CDM_contributionReviewDate);
+        String dateString = IndexEntry.getCdmString(this, Volume.CDM_contributionReviewDate);
         if (dateString != null && !dateString.equals("")) {
             try {
                 resDate = Utility.PapillonCDMDateFormat.parse(dateString);
@@ -1049,7 +1049,7 @@ public class VolumeEntry
      */
     public String getReviewer()
             throws PapillonBusinessException {
-        return ParseVolume.getCdmString(this, Volume.CDM_contributionReviewer);
+        return IndexEntry.getCdmString(this, Volume.CDM_contributionReviewer);
     }
 
     /**
@@ -1062,7 +1062,7 @@ public class VolumeEntry
      */
     public void setReviewer(String reviewer)
             throws PapillonBusinessException {
-        ParseVolume.setCdmElement(this, Volume.CDM_contributionReviewerElement, reviewer);
+        IndexEntry.setCdmElement(this, Volume.CDM_contributionReviewerElement, reviewer);
     }
 
     /**
@@ -1076,7 +1076,7 @@ public class VolumeEntry
     public java.util.Date getValidationDate()
             throws PapillonBusinessException {
         java.util.Date resDate = null;
-        String dateString = ParseVolume.getCdmString(this, Volume.CDM_contributionValidationDate);
+        String dateString = IndexEntry.getCdmString(this, Volume.CDM_contributionValidationDate);
         if (dateString != null && !dateString.equals("")) {
             try {
                 resDate = Utility.PapillonCDMDateFormat.parse(dateString);
@@ -1108,7 +1108,7 @@ public class VolumeEntry
 
     protected void setValidationDate(String date)
             throws PapillonBusinessException {
-        ParseVolume.setCdmElement(this, Volume.CDM_contributionValidationDateElement, date);
+        IndexEntry.setCdmElement(this, Volume.CDM_contributionValidationDateElement, date);
     }
 
     /**
@@ -1121,7 +1121,7 @@ public class VolumeEntry
      */
     public String getValidator()
             throws PapillonBusinessException {
-        return ParseVolume.getCdmString(this, Volume.CDM_contributionValidator);
+        return IndexEntry.getCdmString(this, Volume.CDM_contributionValidator);
     }
 
     /**
@@ -1134,7 +1134,7 @@ public class VolumeEntry
      */
     public void setValidator(String validator)
             throws PapillonBusinessException {
-        ParseVolume.setCdmElement(this, Volume.CDM_contributionValidatorElement, validator);
+        IndexEntry.setCdmElement(this, Volume.CDM_contributionValidatorElement, validator);
     }
 
     /**
@@ -1147,7 +1147,7 @@ public class VolumeEntry
      */
     public String getStatus()
             throws PapillonBusinessException {
-        return ParseVolume.getCdmString(this, Volume.CDM_contributionStatus);
+        return IndexEntry.getCdmString(this, Volume.CDM_contributionStatus);
     }
 
     /**
@@ -1160,12 +1160,12 @@ public class VolumeEntry
      */
     public void setStatus(String status)
             throws PapillonBusinessException {
-        ParseVolume.setCdmElement(this, Volume.CDM_contributionStatusElement, status);
+        IndexEntry.setCdmElement(this, Volume.CDM_contributionStatusElement, status);
     }
 
     public void setStatusIfNotNull(String defaultStatus)
             throws PapillonBusinessException {
-        String status = ParseVolume.getCdmString(this, Volume.CDM_contributionStatus);
+        String status = IndexEntry.getCdmString(this, Volume.CDM_contributionStatus);
         if (status == null || status.equals("")) {
             setStatus(defaultStatus);
         }
@@ -1289,7 +1289,7 @@ public class VolumeEntry
      */
     public String[] getGroups()
             throws PapillonBusinessException {
-        return ParseVolume.getCdmStrings(this, Volume.CDM_contributionGroup);
+        return IndexEntry.getCdmStrings(this, Volume.CDM_contributionGroup);
     }
 
     /**
@@ -1304,7 +1304,7 @@ public class VolumeEntry
             throws PapillonBusinessException {
         if (groups != null && groups.length > 0) {
             org.w3c.dom.Document myDocument = this.getDom();
-            org.w3c.dom.Node groupsNode = ParseVolume.getCdmElement(this, Volume.CDM_contributionGroups);
+            org.w3c.dom.Node groupsNode = IndexEntry.getCdmElement(this, Volume.CDM_contributionGroups);
             if (groupsNode != null) {
                 while (groupsNode.hasChildNodes()) {
                     groupsNode.removeChild(groupsNode.getFirstChild());
@@ -1332,7 +1332,7 @@ public class VolumeEntry
      */
     public String getPos()
             throws PapillonBusinessException {
-        return ParseVolume.getCdmString(this, Volume.CDM_pos, this.getSourceLanguage());
+        return IndexEntry.getCdmString(this, Volume.CDM_pos, this.getSourceLanguage());
     }
 
     protected void setDictionary(Dictionary dict) {
@@ -1377,7 +1377,7 @@ public class VolumeEntry
 
     public Collection getClassifiedFinishedContributionIdCollection()
             throws PapillonBusinessException {
-        String[] list = ParseVolume.getCdmStrings(this, Volume.CDM_previousClassifiedFinishedContribution);
+        String[] list = IndexEntry.getCdmStrings(this, Volume.CDM_previousClassifiedFinishedContribution);
         ArrayList arrayList = new ArrayList();
         if (list != null) {
             for (int i = 0; i < list.length; i++) {
@@ -1392,7 +1392,7 @@ public class VolumeEntry
 
     public void initClassifiedFinishedContribution()
             throws PapillonBusinessException {
-        ParseVolume.initCdmElement(this, Volume.CDM_previousClassifiedFinishedContributionElement);
+        IndexEntry.initCdmElement(this, Volume.CDM_previousClassifiedFinishedContributionElement);
     }
 
     public void addClassifiedFinishedContribution(VolumeEntry contribution)
@@ -1402,38 +1402,38 @@ public class VolumeEntry
 
     public void addClassifiedFinishedContribution(String contributionId)
             throws PapillonBusinessException {
-        ParseVolume.addCdmElement(this, Volume.CDM_previousClassifiedFinishedContributionElement, contributionId);
+        IndexEntry.addCdmElement(this, Volume.CDM_previousClassifiedFinishedContributionElement, contributionId);
     }
 
     public String getClassifiedNotFinishedContributionId()
             throws PapillonBusinessException {
-        return ParseVolume.getCdmString(this, Volume.CDM_previousClassifiedNotFinishedContribution);
+        return IndexEntry.getCdmString(this, Volume.CDM_previousClassifiedNotFinishedContribution);
     }
 
     public void setClassifiedNotFinishedContribution(VolumeEntry contribution)
             throws PapillonBusinessException {
-        ParseVolume.setCdmElement(this, Volume.CDM_previousClassifiedNotFinishedContributionElement,
+        IndexEntry.setCdmElement(this, Volume.CDM_previousClassifiedNotFinishedContributionElement,
                 contribution.getContributionId());
     }
 
     public void setClassifiedNotFinishedContribution(String contributionId)
             throws PapillonBusinessException {
-        ParseVolume.setCdmElement(this, Volume.CDM_previousClassifiedNotFinishedContributionElement, contributionId);
+        IndexEntry.setCdmElement(this, Volume.CDM_previousClassifiedNotFinishedContributionElement, contributionId);
     }
 
     public void initClassifiedNotFinishedContribution()
             throws PapillonBusinessException {
-        ParseVolume.setCdmElement(this, Volume.CDM_previousClassifiedNotFinishedContributionElement, "");
+        IndexEntry.setCdmElement(this, Volume.CDM_previousClassifiedNotFinishedContributionElement, "");
     }
 
     public String getNextContributionAuthor()
             throws PapillonBusinessException {
-        return ParseVolume.getCdmString(this, Volume.CDM_nextContributionAuthor);
+        return IndexEntry.getCdmString(this, Volume.CDM_nextContributionAuthor);
     }
 
     public void setNextContributionAuthor(String author)
             throws PapillonBusinessException {
-        ParseVolume.setCdmElement(this, Volume.CDM_nextContributionAuthorElement, author);
+        IndexEntry.setCdmElement(this, Volume.CDM_nextContributionAuthorElement, author);
     }
 
 
@@ -1451,7 +1451,7 @@ public class VolumeEntry
 
     protected String createNewId()
             throws PapillonBusinessException {
-        return createNewId(ParseVolume.getCdmString(this, Volume.CDM_headword, this.getSourceLanguage()));
+        return createNewId(IndexEntry.getCdmString(this, Volume.CDM_headword, this.getSourceLanguage()));
     }
 
     /**
@@ -1464,17 +1464,17 @@ public class VolumeEntry
      */
     public String getModificationAuthor()
             throws PapillonBusinessException {
-        return ParseVolume.getCdmString(this, Volume.CDM_modificationAuthor);
+        return IndexEntry.getCdmString(this, Volume.CDM_modificationAuthor);
     }
 
     public String getModificationDate()
             throws PapillonBusinessException {
-        return ParseVolume.getCdmString(this, Volume.CDM_modificationDate);
+        return IndexEntry.getCdmString(this, Volume.CDM_modificationDate);
     }
 
     public String getModificationComment()
             throws PapillonBusinessException {
-        return ParseVolume.getCdmString(this, Volume.CDM_modificationComment);
+        return IndexEntry.getCdmString(this, Volume.CDM_modificationComment);
     }
 
 
@@ -1489,18 +1489,18 @@ public class VolumeEntry
         /*
 		Volume myVolume = this.getVolume();
 		Document myDocument = this.getDom();
-		org.w3c.dom.Node myEntry = ParseVolume.getCdmElement(this, Volume.CDM_entry);
+		org.w3c.dom.Node myEntry = IndexEntry.getCdmElement(this, Volume.CDM_entry);
 		*/
         //PapillonLogger.writeDebugMsg("VolumeEntry.setModification: " + author + " comment: " + comment);
 
         // ps pour Mathieu : TU TOUCHES PAS A CA :)
-        ParseVolume.setCdmElement(this, Volume.CDM_modificationAuthorElement, author);
-        ParseVolume.setCdmElement(this, Volume.CDM_modificationDateElement, Utility.PapillonCDMDateFormat.format(date));
-        ParseVolume.setCdmElement(this, Volume.CDM_modificationCommentElement, comment);
+        IndexEntry.setCdmElement(this, Volume.CDM_modificationAuthorElement, author);
+        IndexEntry.setCdmElement(this, Volume.CDM_modificationDateElement, Utility.PapillonCDMDateFormat.format(date));
+        IndexEntry.setCdmElement(this, Volume.CDM_modificationCommentElement, comment);
 
         /*
           //
-          org.w3c.dom.Node myHistory = ParseVolume.getCdmElement(this, Volume.CDM_history);
+          org.w3c.dom.Node myHistory = IndexEntry.getCdmElement(this, Volume.CDM_history);
           if (myHistory == null) {
               fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("setModification: myHistory null");
               myHistory = myDocument.createElement(myVolume.getCdmHistory());
@@ -1532,7 +1532,7 @@ public class VolumeEntry
      */
     public String getDefinition()
             throws PapillonBusinessException {
-        return "   " + ParseVolume.getCdmString(this, Volume.CDM_definition);
+        return "   " + IndexEntry.getCdmString(this, Volume.CDM_definition);
     }
 
     /**
@@ -1571,7 +1571,7 @@ public class VolumeEntry
      */
     public String getParticule()
             throws fr.imag.clips.papillon.business.PapillonBusinessException {
-        return ParseVolume.getCdmString(this, Volume.CDM_gdefEstParticule, this.getSourceLanguage());
+        return IndexEntry.getCdmString(this, Volume.CDM_gdefEstParticule, this.getSourceLanguage());
     }
 
 	public Volume getAxieVolume() 
@@ -1609,7 +1609,7 @@ public class VolumeEntry
             this.setContributionIdIfNull();
             // New index
             if (index) {
-				res = ParseVolume.indexEntry(this);
+				res = IndexEntry.indexEntry(this);
 			}
             //
             if (null != this.dom) {

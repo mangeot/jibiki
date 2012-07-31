@@ -15,7 +15,7 @@ import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.dictionary.DictionariesFactory;
 import fr.imag.clips.papillon.business.dictionary.Dictionary;
 import fr.imag.clips.papillon.business.dictionary.IAnswer;
-import fr.imag.clips.papillon.business.dictionary.ParseVolume;
+import fr.imag.clips.papillon.business.dictionary.IndexEntry;
 import fr.imag.clips.papillon.business.dictionary.QueryResult;
 import fr.imag.clips.papillon.business.dictionary.Volume;
 import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
@@ -126,7 +126,7 @@ public class MotamotFormatter implements ResultFormatter {
 					// DIRECT TRANSLATION RESULTS
                     if (target != null && !target.equals("") && target!= sourceLanguage) {
 						//PapillonLogger.writeDebugMsg("getFormattedDirectResult: " + target);
-                        NodeList myNodeList = ParseVolume.getCdmElements(myAnswer, Volume.CDM_translationReflexie, target);
+                        NodeList myNodeList = IndexEntry.getCdmElements(myAnswer, Volume.CDM_translationReflexie, target);
                         if ((myNodeList != null) && (myNodeList.getLength() > 0)) {
                             for (int i = 0; i < myNodeList.getLength(); i++) {
                                 Node myNode = myNodeList.item(i);

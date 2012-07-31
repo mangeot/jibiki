@@ -318,7 +318,8 @@ public class Dictionary {
             throw new PapillonBusinessException("Error setting Dictionary's targets", ex);
         }
     }
-   
+	
+	   
     public String getXmlCode()
         throws PapillonBusinessException {
         try {

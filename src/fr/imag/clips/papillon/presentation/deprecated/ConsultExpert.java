@@ -1015,7 +1015,7 @@ public class ConsultExpert extends PapillonBasePO {
                 if (myWritingEntry != null && !myWritingEntry.isEmpty()) {
                     //NOTE: I store the writing of the Japanese entries in the Key1 field.
                     // The reading field is used for transcriptions like romaji
-					myWriting = ParseVolume.getCdmString(myWritingEntry,Volume.CDM_writing,"jpn");
+					myWriting = IndexEntry.getCdmString(myWritingEntry,Volume.CDM_writing,"jpn");
                 }
                 content.setTextFoksWriting(myWriting);
                 // Le grade

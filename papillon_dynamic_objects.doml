@@ -120,6 +120,12 @@
           </index>
         </table>        
         <table id="fr.imag.clips.papillon.data.Link" dbTableName="link">
+        <column id="name" usedForQuery="true">
+            <javadoc>/**
+ * the name of the link (eg: cdm-translation-ref)
+ */</javadoc>
+            <type canBeNull="true" dbType="VARCHAR" javaType="String" size="255"/>
+          </column>        
         <column id="targetId" usedForQuery="true">
             <javadoc>/**
  * the value of cdm-translation-ref
@@ -164,6 +170,9 @@
           </column>
 
 		  <index id="entryid_idx">
+          	<indexColumn id="entryId"/>
+          </index>
+		  <index id="targetid_idx">
           	<indexColumn id="entryId"/>
           </index>
         </table>       

@@ -222,7 +222,7 @@ public class LexALPFormatter
                 // Make sure the source entry is not duplicated in the result set.
                 qr.getLexiesHashtable().remove(ve.getEntryId());
                 // Then format the group of related entries...
-                String ls = ParseVolume.getCdmString(ve, "lexalp-legal-system");
+                String ls = IndexEntry.getCdmString(ve, "lexalp-legal-system");
                 if (! matchingGroups.containsKey(ls)) {
                     // If the legal system has already been handled, this source entry should be disregarded. 
                     matchingGroups.put(ls, getMatchingResultGroup(res, qr, ve, usr));
@@ -274,7 +274,7 @@ public class LexALPFormatter
             throws PapillonBusinessException {
         Element lsdiv = res.createElement("div");
         lsdiv.setAttribute("class", "lexalp-lsgroup");
-        String ls = ParseVolume.getCdmString(ve, "lexalp-legal-system");
+        String ls = IndexEntry.getCdmString(ve, "lexalp-legal-system");
         Node resultNode = null;
         if (null != dictXsl && !dictXsl.isEmpty()) {
             // Format document source
@@ -346,7 +346,7 @@ public class LexALPFormatter
         while (it.hasNext()) {
             VolumeEntry ve = (VolumeEntry) it.next();
             try {
-                String ls = ParseVolume.getCdmString(ve, "lexalp-legal-system");
+                String ls = IndexEntry.getCdmString(ve, "lexalp-legal-system");
                 String lg = ve.getVolume().getSourceLanguage();
                 if ((legalSystem == null || legalSystem.equals(ls)) && lang.equals(lg)) {
                     results.add(ve);

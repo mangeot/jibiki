@@ -193,6 +193,11 @@ public class Link {
 	/**
 
 	 */
+	public void setWeight(String weight)
+	throws PapillonBusinessException {
+		setWeight(Double.parseDouble(weight));
+	}
+
 	public void setWeight(double weight)
 	    throws PapillonBusinessException {
 	        try {
@@ -202,7 +207,29 @@ public class Link {
 	        }
 	    }
 	
-    /**
+    public String getName()
+    throws PapillonBusinessException {
+		try {
+			return myDO.getName();
+		} catch(DataObjectException ex) {
+			throw new PapillonBusinessException("Error getting link name", ex);
+		}
+	}
+	
+	/**
+	 
+	 */
+	public void setName(String name)
+	throws PapillonBusinessException {
+		try {
+			myDO.setName(name);
+		} catch(DataObjectException ex) {
+			throw new PapillonBusinessException("Error setting link name", ex);
+		}
+	}
+	
+    
+	/**
 		* Gets the language of the key
      *
      * @return the language as an ISO-639/2T 3 letters language code (fra, deu, eng, etc.).
