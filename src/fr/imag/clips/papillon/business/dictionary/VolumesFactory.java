@@ -238,8 +238,6 @@ public class VolumesFactory {
     protected final static String VOLUME_TAG = "volume-metadata";
     protected final static String CDM_ELEMENTS_TAG = "cdm-elements";
     protected final static String LINKS_TAG = "links";
-	protected final static String DEFAULT_LINK_NAME = "unknown";
-	protected final static String TRANSLATION_LINK_NAME = "translation";
     protected final static String XSLSHEET_TAG = "xsl-stylesheet";
     protected final static String XMLSCHEMA_TAG = "xmlschema-ref";
     protected final static String TEMPLATE_INTERFACE_TAG = "template-interface-ref";
@@ -248,8 +246,6 @@ public class VolumesFactory {
 
     protected final static String HREF_ATTRIBUTE = "href";
     protected final static String INDEX_ATTRIBUTE = "index";
-    protected final static String LINK_ATTRIBUTE = "link";
-    protected final static String LINK_NAME_SEPARATOR = "||";
     protected final static String LANG_ATTRIBUTE = "lang";
     protected final static String LOCATION_ATTRIBUTE = "location";
     protected final static String VIRTUAL_ATTRIBUTE = "virtual";
@@ -257,7 +253,7 @@ public class VolumesFactory {
     protected final static String NAME_ATTRIBUTE = "name";
     protected final static String DEFAULT_ATTRIBUTE = "default";
     protected final static String EXTERNAL_ATTRIBUTE = "external";
-
+	
     protected final static String VOLUME_GDEF_est = "GDEF_est";
     protected final static String VOLUME_GDEF_tes = "GDEF_tes";
     protected final static String VOLUME_GDEF_fra = "GDEF_fra";
@@ -284,7 +280,7 @@ public class VolumesFactory {
             // Add volumes in cache (keys are the volume names)
             for (int i = 0; i < DOarray.length; i++) {
                 Volume vol = new Volume(DOarray[i]);
-				updateCdmElementsTable(vol);
+				updateCdmElementsAndLinksTables(vol);
                 VolumeCache.putVolumeInCache(vol.getName(), vol);
 				VolumeEntriesFactory.putNbEntriesNumberInCache(vol.getName(),vol.getEntries());
             }
@@ -342,9 +338,11 @@ public class VolumesFactory {
 			throw new PapillonBusinessException("Exception in newVolume: there is no template entry, the element " + TEMPLATE_ENTRY_TAG + " does not exist or is empty!");
 		}
 		upgradeCdmLinkElement(volume.getOwnerDocument());
-		Hashtable cdmElements = createCdmElementsTable(volume, source, tmplEntry);
+				Hashtable cdmElements = createCdmElementsTable(volume, source, tmplEntry);
 				
-		PapillonLogger.writeDebugMsg("The CDM elements hashtable has been created");
+				Hashtable linksTable = createLinksTable(volume, tmplEntry);
+				
+		PapillonLogger.writeDebugMsg("The CDM elements and links hashtables have been created");
 				
         // Embedding the entry into a contribution element
         tmplEntry = updateTemplateEntry(tmplEntry, cdmElements);
@@ -354,7 +352,7 @@ public class VolumesFactory {
 
         //
         Volume newVolume = createUniqueVolume(name, dictname, dbname, location, source, targets, href, cdmElements,
-                xmlCode, schema, tmplInterface, tmplEntry, reverse);
+                linksTable, xmlCode, schema, tmplInterface, tmplEntry, reverse);
 
         // Add in cache
         VolumeCache.putVolumeInCache(newVolume.getName(), newVolume);
@@ -366,7 +364,7 @@ public class VolumesFactory {
         return newVolume;
     }
 	
-	protected static void updateCdmElementsTable(Volume theVolume) 
+	protected static void updateCdmElementsAndLinksTables(Volume theVolume) 
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 	
 	Document docXml = XMLServices.buildDOMTree(theVolume.getXmlCode());
@@ -378,6 +376,8 @@ public class VolumesFactory {
 	if (volume != null) {
 		Hashtable cdmElements = createCdmElementsTable(volume, theVolume.getSourceLanguage(),theVolume.getTemplateEntry());
 		theVolume.setCdmElements(cdmElements);
+		Hashtable linksTable = createLinksTable(volume, theVolume.getTemplateEntry());
+		theVolume.setLinksTable(linksTable);
 	}
 	}
 	
@@ -433,7 +433,7 @@ public class VolumesFactory {
             }
         }
         return result;
-    }	
+    }
 	
 	
 	protected static Hashtable createCdmElementsTable(Element volume, String source, String tmplEntry) 
@@ -472,6 +472,67 @@ public class VolumesFactory {
 		return cdmElements;
 	}
 
+    /* linksTable Hashtable = {name => Hashtable} = {element => Vector} = (xpathString, XPath)*/
+    protected static boolean compileLinksXPathTable(java.util.Hashtable linksTable, org.w3c.dom.Element myRootElt)
+	throws PapillonBusinessException {
+        boolean result = false;
+        for (java.util.Enumeration nameKeys = linksTable.keys(); nameKeys.hasMoreElements();) {
+            String name = (String) nameKeys.nextElement();
+            java.util.Hashtable tmpTable = (java.util.Hashtable) linksTable.get(name);
+            for (java.util.Enumeration keys = tmpTable.keys(); keys.hasMoreElements();) {
+                String element = (String) keys.nextElement();
+				if (!element.equals(Volume.LINK_STRING_LANG_TYPE)) {
+                java.util.Vector eltVector = (java.util.Vector) tmpTable.get(element);
+                if (eltVector != null && eltVector.size() == 1) {
+                    String xpathString = (String) eltVector.elementAt(0);
+                    org.apache.xpath.XPath myXPath = compileXPath(xpathString, myRootElt);
+                    if (myXPath != null) {
+						 //PapillonLogger.writeDebugMsg("compileLinksXPathTable: CDM element: " + element + " xpath not null: " + xpathString);
+                        eltVector.add(myXPath);
+                        result = true;
+                    } else {
+						//PapillonLogger.writeDebugMsg("compileXPathTable: CDM element: " + element + " xpath null: " + xpathString);
+                    }
+                }
+				}
+            }
+        }
+        return result;
+    }	
+	
+
+	protected static Hashtable createLinksTable(Element volume, String tmplEntry) 
+	throws fr.imag.clips.papillon.business.PapillonBusinessException {
+		Hashtable linksTable = null;
+		
+        // Cette méthode dépend du schéma des volumes.
+ 		
+		if (volume == null) {
+			throw new PapillonBusinessException("Error in createLinksTable: the volume element is null!");
+		}
+		if (tmplEntry == null || tmplEntry.equals("")) {
+			throw new PapillonBusinessException("Error in createLinksTable: there is no template entry!");
+		}
+		
+        NodeList cdmElts = volume.getElementsByTagName(CDM_ELEMENTS_TAG);
+        if (null != cdmElts && cdmElts.getLength() > 0) {
+            Element cdmElt = (Element) cdmElts.item(0);
+            linksTable = buildLinksTable(cdmElt);
+        } else {
+            PapillonLogger.writeDebugMsg("No " + CDM_ELEMENTS_TAG + " tag");
+			throw new PapillonBusinessException("Error in createLinksTable: there is no " + CDM_ELEMENTS_TAG + " tag!");
+        }
+		
+        org.w3c.dom.Document myDoc = XMLServices.buildDOMTree(tmplEntry);
+        if (myDoc != null) {
+            compileLinksXPathTable(linksTable, myDoc.getDocumentElement());
+        }
+		else {
+            PapillonLogger.writeDebugMsg("Error in createLinksTable: the template entry doc is empty!");
+			throw new PapillonBusinessException("Error in createLinksTable: the template entry doc is empty!");
+		}
+		return linksTable;
+	}
 	
 	
 
@@ -496,7 +557,7 @@ public class VolumesFactory {
      */
     protected static Volume createUniqueVolume(String name, String dictname, String dbname, String location,
                                                String source, String targets, String href,
-                                               java.util.Hashtable cdmElements, String xmlCode, String xmlSchema,
+                                               java.util.Hashtable cdmElements, java.util.Hashtable linksTable, String xmlCode, String xmlSchema,
                                                String tmplInterface, String tmplEntry, boolean reverse)
             throws fr.imag.clips.papillon.business.PapillonBusinessException {
         Volume myVolume = null;
@@ -514,6 +575,7 @@ public class VolumesFactory {
                 myVolume.setTargetLanguages(targets);
                 myVolume.setVolumeRef(href);
                 myVolume.setCdmElements(cdmElements);
+                myVolume.setLinksTable(linksTable);
                 myVolume.setXmlCode(xmlCode);
                 myVolume.setXmlSchema(xmlSchema);
                 myVolume.setTemplateInterface(tmplInterface);
@@ -639,6 +701,7 @@ public class VolumesFactory {
 
             // ajout du volume ds la table.
             resVolume = VolumesFactory.newVolume(dict.getName(), volume, fileURL);
+			//PapillonLogger.writeDebugMsg("parseVolumeMetadata: linksTable size: " + resVolume.getLinksTable().size());
             if (null != resVolume) {
                 resVolume.save();
 
@@ -1037,7 +1100,7 @@ public class VolumesFactory {
         }
         return cdmElements;
     }
-
+	
 
     /**
      * @param Node
@@ -1054,45 +1117,7 @@ public class VolumesFactory {
                 Element myElt = (Element) myNode;
                 String eltName = myElt.getTagName();
 				
-				if (eltName.equals(LINKS_TAG)) {
-					NodeList cdmLinksChilds = myElt.getChildNodes();
-					for (int j = 0; j < cdmLinksChilds.getLength(); j++) {
-						Node linkNode = cdmLinksChilds.item(j);
-						if (linkNode.getNodeType() == Node.ELEMENT_NODE) {
-							Element linkElt = (Element) linkNode;
-							String linkEltName = linkElt.getTagName();
-							if (linkEltName.equals(Volume.CDM_link)) {
-								String lang = Volume.DEFAULT_LANG;
-								Attr langAttr = linkElt.getAttributeNodeNS(DML_URI, LANG_ATTRIBUTE);
-								if (langAttr != null) {
-									lang = langAttr.getValue();
-								}
-								String name = DEFAULT_LINK_NAME;
-								Attr nameAttr = linkElt.getAttributeNode(NAME_ATTRIBUTE);
-								if (nameAttr != null) {
-									name = nameAttr.getValue();
-								}
-								name = linkEltName + LINK_NAME_SEPARATOR + name;
-								String xpath = linkElt.getAttribute(XPATH_ATTRIBUTE);
-								//PapillonLogger.writeDebugMsg("addCdmElementInTable: " + name + " lang: " + lang + " xpath: " + xpath);
-								addCdmElementInTable(cdmElements, name, lang, xpath, true);
-								NodeList cdmLinkChilds = linkElt.getChildNodes();
-								for (int k = 0; k < cdmLinkChilds.getLength(); k++) {
-									Node linkChildNode = cdmLinkChilds.item(k);
-									if (linkChildNode.getNodeType() == Node.ELEMENT_NODE) {
-										Element linkChildElt = (Element) linkChildNode;
-										String linkChildName = linkChildElt.getTagName();
-										String xpathName = name + LINK_NAME_SEPARATOR + linkChildName;
-										xpath = linkChildElt.getAttribute(XPATH_ATTRIBUTE);
-										//PapillonLogger.writeDebugMsg("addCdmElementInTable: " + xpathName + " lang: " + lang + " xpath: " + xpath);
-										addCdmElementInTable(cdmElements, xpathName, lang, xpath, true);
-									}
-								}
-							}
-						}
-					}
-				}
-				else {
+				if (!eltName.equals(LINKS_TAG)) {
 					/* determine the language of the cdm element */
 					String lang = Volume.DEFAULT_LANG;
 					Attr langAttr = myElt.getAttributeNodeNS(DML_URI, LANG_ATTRIBUTE);
@@ -1121,6 +1146,101 @@ public class VolumesFactory {
         updateCdmElementsTable(cdmElements);
         return cdmElements;
     }
+	
+	
+ 	/**
+     * @param String
+     * @param String
+     * @param String
+     * @return Hashtable
+     * @throws PapillonBusinessException
+     */
+    /* cdmElements Hashtable = {lang => Hashtable} = {CDM_element => Vector} = (xpathString, isIndex, XPath)*/
+    public static Hashtable buildLinksTable(String xmlCode, String tmplEntry)
+	throws fr.imag.clips.papillon.business.PapillonBusinessException {
+        Hashtable linksTable = new Hashtable();
+        Document docXml = XMLServices.buildDOMTree(xmlCode);
+        NodeList cdmElts = docXml.getElementsByTagName(CDM_ELEMENTS_TAG);
+        if (null != cdmElts && cdmElts.getLength() > 0) {
+            Element cdmElt = (Element) cdmElts.item(0);
+            linksTable = buildLinksTable(cdmElt);
+        } else {
+            PapillonLogger.writeDebugMsg("No " + CDM_ELEMENTS_TAG + " tag!");
+        }
+        org.w3c.dom.Document myDoc = XMLServices.buildDOMTree(tmplEntry);
+        if (myDoc != null) {
+            compileLinksXPathTable(linksTable, myDoc.getDocumentElement());
+        }
+        return linksTable;
+    }
+
+	
+	/**
+     * @param Node
+     * @param String
+     * @return Hashtable
+     */
+    /* linksTable Hashtable = {name => Hashtable} = {element => Vector} (xpathString, XPath) */
+    protected static Hashtable buildLinksTable(Node cdmElt) {
+        Hashtable linksTable = new Hashtable();
+        NodeList cdmChilds = cdmElt.getChildNodes();
+        for (int i = 0; i < cdmChilds.getLength(); i++) {
+            Node myNode = cdmChilds.item(i);
+            if (myNode.getNodeType() == Node.ELEMENT_NODE) {
+                Element myElt = (Element) myNode;
+                String eltName = myElt.getTagName();
+				
+				if (eltName.equals(LINKS_TAG)) {
+					NodeList cdmLinksChilds = myElt.getChildNodes();
+					for (int j = 0; j < cdmLinksChilds.getLength(); j++) {
+						Node linkNode = cdmLinksChilds.item(j);
+						if (linkNode.getNodeType() == Node.ELEMENT_NODE) {
+							Element linkElt = (Element) linkNode;
+							String linkEltName = linkElt.getTagName();
+							if (linkEltName.equals(Volume.CDM_link)) {
+								String name = Volume.LINK_defaultLinkName;
+								Attr nameAttr = linkElt.getAttributeNode(NAME_ATTRIBUTE);
+								if (nameAttr != null) {
+									name = nameAttr.getValue();
+								}
+								String xpath = linkElt.getAttribute(XPATH_ATTRIBUTE);
+								Hashtable linkTable = new java.util.Hashtable();
+								java.util.Vector theVector = new java.util.Vector();
+								theVector.add(xpath);
+								//PapillonLogger.writeDebugMsg("addLinkInTable: " + name + " xpath: " + xpath);
+								linkTable.put(Volume.LINK_ELEMENT_TYPE,theVector);
+								
+								String lang = Volume.DEFAULT_LANG;
+								Attr langAttr = linkElt.getAttributeNodeNS(DML_URI, LANG_ATTRIBUTE);
+								if (langAttr != null) {
+									lang = langAttr.getValue();
+								}
+								//PapillonLogger.writeDebugMsg("addLinkInTable: " + name + " xpath: " + lang);
+								linkTable.put(Volume.LINK_STRING_LANG_TYPE,lang);
+								
+								NodeList cdmLinkChilds = linkElt.getChildNodes();
+								for (int k = 0; k < cdmLinkChilds.getLength(); k++) {
+									Node linkChildNode = cdmLinkChilds.item(k);
+									if (linkChildNode.getNodeType() == Node.ELEMENT_NODE) {
+										Element linkChildElt = (Element) linkChildNode;
+										String linkChildName = linkChildElt.getTagName();
+										xpath = linkChildElt.getAttribute(XPATH_ATTRIBUTE);
+										java.util.Vector secVector = new java.util.Vector();
+										secVector.add(xpath);
+									linkTable.put(linkChildName,secVector);
+										//PapillonLogger.writeDebugMsg("addLinkInTable: " + linkChildName + " xpath: " + xpath);
+									}
+								}
+								linksTable.put(name, linkTable); 
+								//PapillonLogger.writeDebugMsg("addLinkTableinLinksTable: " + name);
+							}
+						}
+					}
+				}
+            }
+        }
+        return linksTable;
+    }
 
 	protected static void upgradeCdmLinkElement(Document docXml ) {
 
@@ -1133,7 +1253,7 @@ public class VolumesFactory {
 				Element translationRef = (Element) translationsRef.item(0);
 
 				Element newLink = docXml.createElement(Volume.CDM_link);
-				newLink.setAttribute(NAME_ATTRIBUTE,TRANSLATION_LINK_NAME);
+				newLink.setAttribute(NAME_ATTRIBUTE,Volume.LINK_translationLinkName);
 				
 				Attr langAttr = translationRef.getAttributeNodeNS(DML_URI, LANG_ATTRIBUTE);
 				if (langAttr != null) {

@@ -126,9 +126,15 @@
  */</javadoc>
             <type canBeNull="true" dbType="VARCHAR" javaType="String" size="255"/>
           </column>        
+        <column id="elementId" usedForQuery="true">
+            <javadoc>/**
+ * the value of id of link element in the entry XML
+ */</javadoc>
+            <type canBeNull="true" dbType="VARCHAR" javaType="String" size="255"/>
+          </column>        
         <column id="targetId" usedForQuery="true">
             <javadoc>/**
- * the value of cdm-translation-ref
+ * the value of the target entry id
  */</javadoc>
             <type canBeNull="true" dbType="VARCHAR" javaType="String" size="255"/>
           </column>        

@@ -393,6 +393,8 @@ public class AdminVolumes extends PapillonBasePO {
         }
         // Finally initialize all caches
         // FIXME: other connection can certainly happen during cache initialization... how can we avoid this ?
+		VolumeEntriesFactory.resetCountCache(myVolume.getName());
+		myVolume.getCount();
         Papillon.initializeAllCaches();
         
         return userMessage;

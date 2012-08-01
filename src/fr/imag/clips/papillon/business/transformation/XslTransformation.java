@@ -111,6 +111,8 @@ import fr.imag.clips.papillon.business.dictionary.QueryResult;
 import fr.imag.clips.papillon.business.dictionary.Volume;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
+import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
+import fr.imag.clips.papillon.business.dictionary.Link;
 import fr.imag.clips.papillon.business.user.User;
 import fr.imag.clips.papillon.business.xml.XMLServices;
 import fr.imag.clips.papillon.business.xsl.JibikiXsltExtension;
@@ -319,12 +321,65 @@ public class XslTransformation implements ResultFormatter {
         // hint, use jibikiXsltExtensions to resolve the links and format everything...
 		// for the moment, old school way...	
 		if (qr.getResultKind() == QueryResult.DIRECT_TRANSLATIONS_RESULT) {
-                VolumeEntry myAnswer = qr.getSourceEntry();
-                
+			VolumeEntry myAnswer = qr.getSourceEntry();
+			java.util.Vector linkedEntries = qr.getLinkedEntries();
+			java.util.Hashtable linksTable = myAnswer.getVolume().getLinksTable();
+			java.util.Hashtable linkTable = (java.util.Hashtable) linksTable.get(Volume.LINK_translationLinkName);
+			if (linkTable != null && linkedEntries != null && linkedEntries.size()>0) {
+				java.util.Vector eltVector =  (java.util.Vector) linkTable.get(Volume.LINK_ELEMENT_TYPE);											
+				java.util.Vector valueVector =  (java.util.Vector) linkTable.get(Volume.CDM_linkValue);											
+				if (eltVector != null && eltVector.size() > 1 && valueVector != null && valueVector.size() > 1) {
+					org.apache.xpath.XPath eltXPath =  (org.apache.xpath.XPath) eltVector.elementAt(1);											
+					org.apache.xpath.XPath valueXPath =  (org.apache.xpath.XPath) valueVector.elementAt(1);		
+					NodeList linksElements = IndexEntry.getNodeListFromXPath(myAnswer.getDom().getDocumentElement(), eltXPath);
+					if ((linksElements != null) && (linksElements.getLength() > 0)) {
+						for (int n = 0; n < linksElements.getLength(); n++) {
+							org.w3c.dom.Node myNode = linksElements.item(n);
+							String value = IndexEntry.getStringFromXPath((Element) myNode, valueXPath);
+							boolean found = false;
+							Iterator linkedEntriesIterator = linkedEntries.iterator();
+							while (linkedEntriesIterator.hasNext() && !found) {
+								Link link = (Link) linkedEntriesIterator.next();
+								if (link.getTargetId().equals(value)) {
+									Node tempNode = myAnswer.getDom().importNode((Node) link.getLinkedEntry().getDom().getDocumentElement(), true);
+									NodeList nlt = myNode.getChildNodes();
+									if (nlt != null && nlt.getLength()>0) {
+										for(int t=0;t<nlt.getLength();t++) {
+											Node nt = nlt.item(t);
+											if (nt.getNodeType() == Node.TEXT_NODE) {
+												myNode.removeChild(nt);
+											}
+										}
+									}
+									myNode.appendChild(tempNode);
+									linkedEntries.remove(link);
+									found = true;
+								}
+							}
+						}
+					}
+				}
+			}
+			else {
+				PapillonLogger.writeDebugMsg("LinkedEntries null!");
+			}
+		}
+		if (null != dictXsl && !dictXsl.isEmpty()) {
+			// Format document source
+			Node resultNode = formatResult(qr.getSourceEntry().getDom(), dictXsl, usr);
+			//	PapillonLogger.writeDebugMsg("ResultNode: " + qr.getSourceEntry().getHeadword() + " node: " + XMLServices.NodeToString(resultNode)+", "+resultNode.getNodeValue());
+				
+			rootdiv.appendChild(res.importNode(resultNode, true));
+			//	PapillonLogger.writeDebugMsg("rootdiv:"+rootdiv.getTextContent());
+		}
+		
+		return rootdiv;
+	} 
+	
 //PapillonLogger.writeDebugMsg("myAnser = "+myAnswer);
 
 
-				String myLinkTable = myAnswer.getVolume().getLinkDbname();
+/*				String myLinkTable = myAnswer.getVolume().getLinkDbname();
 				PapillonLogger.writeDebugMsg("Volumetable = "+myAnswer.getVolume().getDbname()+" , Entry =" +myAnswer.toString());
 				String[] myObjectId = VolumeEntriesFactory.findEntryIdByEntryName(myAnswer.toString(), myAnswer.getVolume());
 				for (int i=0; i<myObjectId.length; i++){
@@ -395,7 +450,7 @@ public class XslTransformation implements ResultFormatter {
                     }
                 }
 			}
-                    
+ */                   
                     	
                     	
                     	
@@ -428,7 +483,7 @@ public class XslTransformation implements ResultFormatter {
 
 
         // Is reverse unique result still in use ?
-        if (qr.getResultKind() == QueryResult.UNIQUE_RESULT ||
+  /*      if (qr.getResultKind() == QueryResult.UNIQUE_RESULT ||
                 (qr.getResultKind() == QueryResult.REVERSE_UNIQUE_RESULT) ||
                 (qr.getResultKind() == QueryResult.AXIE_COLLECTION_RESULT) ||
                 (qr.getResultKind() == QueryResult.DIRECT_TRANSLATIONS_RESULT)) {
@@ -444,7 +499,7 @@ public class XslTransformation implements ResultFormatter {
 
 
        return rootdiv;
-    }
+    } */
 
 //    public Node getFormattedResultOld(QueryResult qr, User usr) throws PapillonBusinessException {
 //        Node doc = null;

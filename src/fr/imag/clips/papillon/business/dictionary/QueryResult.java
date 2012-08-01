@@ -56,6 +56,7 @@ package fr.imag.clips.papillon.business.dictionary;
 
 import java.util.Hashtable;
 import java.util.ArrayList;
+import java.util.Vector;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 
 /**
@@ -83,6 +84,7 @@ public class QueryResult {
 	protected ArrayList sourceEntries = new ArrayList();
     protected VolumeEntry resultAxie = null;
     protected Hashtable lexiesHashtable = new Hashtable();
+    protected Vector linkedEntries = null;
 	
     public QueryResult() {
         this.resultKind = UNKNOWN;
@@ -94,6 +96,7 @@ public class QueryResult {
         this.sourceEntries = qr.getSourceEntries();
         this.resultAxie = qr.getResultAxie();
         this.lexiesHashtable = qr.getLexiesHashtable();
+        this.linkedEntries = qr.getLinkedEntries();
     }
     
     
@@ -155,6 +158,14 @@ public class QueryResult {
     
     public Hashtable getLexiesHashtable() {
         return this.lexiesHashtable;
+    }
+    
+    public void setLinkedEntries(Vector lexies) {
+        this.linkedEntries = lexies;
+    }
+    
+    public Vector getLinkedEntries() {
+        return this.linkedEntries;
     }
     
     public java.util.Collection getLexiesCollection() {

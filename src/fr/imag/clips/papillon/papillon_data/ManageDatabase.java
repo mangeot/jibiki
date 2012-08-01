@@ -155,14 +155,15 @@ public class ManageDatabase implements Query {
         "ObjectVersion INTEGER NOT NULL)";
     
     protected static String createLinkTableParamsSql = "(" + 
-    	"targetId VARCHAR(255) DEFAULT '\'''\''    ,"+
+		"targetId VARCHAR(255) DEFAULT '\'''\''    ,"+
+		"elementId VARCHAR(255) DEFAULT '\'''\''    ,"+
 		"name VARCHAR(255) DEFAULT '\'''\''    ," +
     	"lang VARCHAR(3) DEFAULT '\'''\''    ," +
     	"volumeTarget VARCHAR(255) DEFAULT '\'''\''    ," +
    		"type VARCHAR(255) DEFAULT '\'''\''    ," +
    		"label VARCHAR(255) DEFAULT '\'''\''    ," +
    		"entryId DECIMAL(19,0) NOT NULL    ," +
-   		"weight DECIMAL(3,2) NOT NULL    ," +  
+  		"weight DECIMAL(3,2) NOT NULL    ," +  
    		
         "ObjectId DECIMAL(19,0) NOT NULL PRIMARY KEY," +
         "ObjectVersion INTEGER NOT NULL)";

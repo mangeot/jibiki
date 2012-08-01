@@ -33,6 +33,7 @@ public class Link {
      */
     
     protected LinkDO myDO = null;
+	protected VolumeEntry linkedEntry = null;
 
     /**
      * The public constructor.
@@ -116,6 +117,28 @@ public class Link {
 	            throw new PapillonBusinessException("Error setting index lang", ex);
 	        }
 	    }
+	
+	public String getElementId()
+    throws PapillonBusinessException {
+		try {
+			return myDO.getElementId();
+		} catch(DataObjectException ex) {
+			throw new PapillonBusinessException("Error getting element id", ex);
+		}
+	}
+	
+	
+	
+	
+	public void setElementId(String id)
+	throws PapillonBusinessException {
+		try {
+			myDO.setElementId(id);
+		} catch(DataObjectException ex) {
+			throw new PapillonBusinessException("Error setting element id", ex);
+		}
+	}
+	
 	
 	
     public String getVolumeTarget()
@@ -271,6 +294,25 @@ public class Link {
      *   retrieving data (usually due to an underlying data layer
 						  *   error).
      */
+
+	/**
+     * Gets the linkedEntry
+	 *
+     * @return the entry.
+     */
+	public VolumeEntry getLinkedEntry() {
+		return linkedEntry;
+	}
+	
+    /**
+	 * Sets the linkedEntry
+     *
+     * @param the entry.
+     */
+	public void setLinkedEntry(VolumeEntry theEntry) {
+		linkedEntry = theEntry;
+	}
+	
 	
     /**
      * Gets the EntryId

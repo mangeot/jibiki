@@ -103,12 +103,14 @@ public class DataLayerVersion {
     }
 
     // WARNING: This method should be called AFTER CACHE INITIALISATION.
-    public static void upgradeDB() throws PapillonBusinessException {
+    public static boolean upgradeDB() throws PapillonBusinessException {
+		boolean result = false;
         int currentDBVersion = getDBVersion();
         int currentApplicationVersion = getApplicationVersion();
         if (currentDBVersion < currentApplicationVersion) {
             PapillonLogger.writeDebugMsg("Upgrading database from version " + currentDBVersion + " to version " + currentApplicationVersion);
-            if (currentDBVersion <= 0) {
+            result = true;
+			if (currentDBVersion <= 0) {
                 // Check if the version column do exist and create it if necessary
                 if (!ManageDatabase.getTableNames().contains("jibikiversion")) {
                     ManageDatabase.executeSql(
@@ -212,5 +214,6 @@ public class DataLayerVersion {
             setDBVersion(currentApplicationVersion);
             PapillonLogger.writeDebugMsg("jibikiversion value incremented.");            
         }
+		return result;
     }
 }

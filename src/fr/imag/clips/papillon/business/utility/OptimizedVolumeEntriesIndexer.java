@@ -26,6 +26,7 @@ public class OptimizedVolumeEntriesIndexer {
         DBConnection myDbConnection = null;
 		org.apache.xml.utils.PrefixResolver myPrefixResolver = null;
 		java.util.Hashtable CdmElementsTable = volume.getCdmElements();
+		java.util.Hashtable linksTable = volume.getLinksTable();
         String sql = "SELECT xmlcode, objectid FROM " + volume.getDbname() + " ORDER BY objectid";
 
         PapillonLogger.writeDebugMsg("Re-indexing volume " + volume.getDbname() + " which contains " + volume.getCount() + " entries.");
@@ -58,7 +59,7 @@ public class OptimizedVolumeEntriesIndexer {
 								myPrefixResolver = new org.apache.xml.utils.PrefixResolverDefault(myRootElt);
 							}
 							indexes.addAll(IndexEntry.indexEntry(CdmElementsTable, myRootElt, myPrefixResolver, handle));
-							links.addAll(IndexEntry.indexEntryLinks(CdmElementsTable, volume.getIndexDbname(), myRootElt, myPrefixResolver, handle));
+							links.addAll(IndexEntry.indexEntryLinks(linksTable, volume, myRootElt, myPrefixResolver, handle));
 						}						
 						
                         resultCount++;

@@ -1087,7 +1087,7 @@ public class DictionariesFactory {
      */      
     public static Collection expandResult(VolumeEntry ve, Collection targets, User user) 
 	throws PapillonBusinessException {
-        
+        PapillonLogger.writeDebugMsg("expandResult: " + ve.getHeadword());
         //    
         Collection myVector = new Vector();
         QueryResult qr = new QueryResult();
@@ -1112,7 +1112,9 @@ public class DictionariesFactory {
                 //
                 Collection realTargets = Utility.ArrayIntersection(ve.getVolume().getTargetLanguagesArray(), targets);
                 qr.setResultKind(QueryResult.DIRECT_TRANSLATIONS_RESULT);
-				myVector.add(getDirectResults(qr, ve.getSourceLanguage(), realTargets, user));
+				
+				qr.setLinkedEntries(LinkFactory.getLinkVectorByEntry(user, ve));
+				//myVector.add(getDirectResults(qr, ve.getSourceLanguage(), realTargets, user));
 				
 				//
             } else {
@@ -1208,7 +1210,8 @@ public class DictionariesFactory {
 				Collection realTargets = Utility.ArrayIntersection(ve.getVolume().getTargetLanguagesArray(), targets);
 				Iterator iter = realTargets.iterator();
 				qr.setResultKind(QueryResult.DIRECT_TRANSLATIONS_RESULT);
-				qr = getDirectResults(qr, ve.getSourceLanguage(), realTargets, user);
+				qr.setLinkedEntries(LinkFactory.getLinkVectorByEntry(user, ve));
+				//qr = getDirectResults(qr, ve.getSourceLanguage(), realTargets, user);
 				result.add(qr);
 			}
 			else {

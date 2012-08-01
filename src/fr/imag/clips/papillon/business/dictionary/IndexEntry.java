@@ -28,9 +28,6 @@ import java.awt.List;
 import java.sql.SQLException;
 
 public class IndexEntry {
-
-    static HashMap weight = new HashMap();
-	public static final String ELEMENT_TYPE = "element";
     
     protected static class IndexData {
         String CdmElement, lang, value, handle;
@@ -89,7 +86,8 @@ public class IndexEntry {
 				String volumeidx = myEntry.getVolume().getIndexDbname();
 				saveIndexes(indexes, volumeidx);
 								
-				ArrayList links = indexEntryLinks(CdmElementsTable, myEntry.getVolume(), myRootElt, myPrefixResolver, myEntry.getHandle());
+				java.util.Hashtable linksTable = myEntry.getVolume().getLinksTable();
+				ArrayList links = indexEntryLinks(linksTable, myEntry.getVolume(), myRootElt, myPrefixResolver, myEntry.getHandle());
 				saveLinks(links);
 			}
          
@@ -113,7 +111,7 @@ public class IndexEntry {
                     boolean isIndex = false;
                     if (myVector != null) {
 						isIndex = ((Boolean) myVector.elementAt(1)).booleanValue();
-						if (isIndex && !isLink(CdmElement)) {
+						if (isIndex) {
 							myXPath = (org.apache.xpath.XPath) myVector.elementAt(2);
  							
 							//PapillonLogger.writeDebugMsg("Index entry: lang: "+ lang +" /key: " + CdmElement + " /xpath: " + (String) myVector.elementAt(0));
@@ -127,12 +125,7 @@ public class IndexEntry {
             }
         return indexes;
     }
-	
-	protected static boolean isLink (String xpathName) {
-		return (xpathName.startsWith(Volume.CDM_link + VolumesFactory.LINK_NAME_SEPARATOR));
-	}
-    
-	
+		
 	protected static ArrayList createIndexData (String theElement, org.apache.xpath.XPath theXPath, String theLang, String theHandle,
 										org.w3c.dom.Element theRootElement,
 										org.apache.xml.utils.PrefixResolver thePrefixResolver) 
@@ -166,62 +159,16 @@ public class IndexEntry {
 		return resultData;
 	}
 
-	public static ArrayList indexEntryLinks(java.util.Hashtable CdmElementsTable, Volume theVolume, org.w3c.dom.Element myRootElt, org.apache.xml.utils.PrefixResolver myPrefixResolver, String handle)
+	public static ArrayList indexEntryLinks(java.util.Hashtable linksTable, Volume theVolume, org.w3c.dom.Element theRootElement, org.apache.xml.utils.PrefixResolver thePrefixResolver, String theHandle)
 	throws PapillonBusinessException {
-		ArrayList linksArray = new ArrayList();
-
-		for (java.util.Enumeration langKeys = CdmElementsTable.keys(); langKeys.hasMoreElements();) {
-			String lang = (String) langKeys.nextElement();
-			java.util.Hashtable linksTable = new java.util.Hashtable();
-			
-			java.util.Hashtable tmpTable = (java.util.Hashtable) CdmElementsTable.get(lang);
-			for (java.util.Enumeration keys = tmpTable.keys(); keys.hasMoreElements();) {
-				String CdmElement = (String) keys.nextElement();
-				
-				//PapillonLogger.writeDebugMsg("Index entry, key " + CdmElement + ":");
-				java.util.Vector myVector = (java.util.Vector) tmpTable.get(CdmElement);
-				org.apache.xpath.XPath myXPath = null;
-				boolean isIndex = false;
-				if (myVector != null) {
-					isIndex = ((Boolean) myVector.elementAt(1)).booleanValue();
-					if (isIndex && isLink(CdmElement)) {
-						myXPath = (org.apache.xpath.XPath) myVector.elementAt(2);
-						
-						//PapillonLogger.writeDebugMsg("Index entry: lang: "+ lang +" /key: " + CdmElement + " /xpath: " + (String) myVector.elementAt(0));
-						java.util.StringTokenizer myTokens = new java.util.StringTokenizer(CdmElement,VolumesFactory.LINK_NAME_SEPARATOR);
-						myTokens.nextToken();
-						String linkName = myTokens.nextToken();
-						java.util.Hashtable linkTable = (java.util.Hashtable) linksTable.get(linkName);
-						if (linkTable ==null) {
-							linkTable = new java.util.Hashtable();
-							linksTable.put(linkName, linkTable);
-						}
-						String type = ELEMENT_TYPE;
-						if (myTokens.hasMoreTokens()) {
-							type = myTokens.nextToken();
-						}
-						linkTable.put(type,myXPath);
-					}
-				}
-			}
-			linksArray.addAll(indexLinks(linksTable, theVolume, lang, handle, myRootElt, myPrefixResolver));
-		}
-        return linksArray;
-    }
-	
-	
-	protected static ArrayList indexLinks (java.util.Hashtable linksTable, Volume theVolume,
-										   String theLang, String theHandle,
-										   org.w3c.dom.Element theRootElement,
-										   org.apache.xml.utils.PrefixResolver thePrefixResolver) 
-	throws PapillonBusinessException {
+		//PapillonLogger.writeDebugMsg("indexEntryLinks: linksTable.size: " + linksTable.size());
 		ArrayList linksArray = new ArrayList();
 		String linkDbtableName = theVolume.getLinkDbname();
 		for (java.util.Enumeration linksKeys = linksTable.keys(); linksKeys.hasMoreElements();) {
 			String linkName = (String) linksKeys.nextElement();
 			java.util.Hashtable linkTable = (java.util.Hashtable) linksTable.get(linkName);
-			org.apache.xpath.XPath linkElementXPath = (org.apache.xpath.XPath) linkTable.get(ELEMENT_TYPE);
-			linkTable.remove(ELEMENT_TYPE);
+			java.util.Vector linkElementVector = (java.util.Vector) linkTable.get(Volume.LINK_ELEMENT_TYPE);
+			org.apache.xpath.XPath linkElementXPath = (org.apache.xpath.XPath) linkElementVector.elementAt(1);
 			org.w3c.dom.NodeList resNodeList = null;
 			try {
 				org.apache.xpath.objects.XObject myXObject = linkElementXPath.execute(
@@ -231,6 +178,12 @@ public class IndexEntry {
 			} catch (javax.xml.transform.TransformerException e) {
 				throw new PapillonBusinessException("javax.xml.transform.TransformerException: ", e);
 			}
+			String theLang = Volume.DEFAULT_LANG;
+			String newLang = (String) linkTable.get(Volume.LINK_STRING_LANG_TYPE);
+			if (newLang != null && !newLang.equals("")) {
+				theLang = newLang;
+			}
+
 			if (resNodeList != null) {
 				for (int i = 0; i < resNodeList.getLength(); i++) {
 					org.w3c.dom.Node myNode = resNodeList.item(i);
@@ -238,7 +191,9 @@ public class IndexEntry {
 					
 					for (java.util.Enumeration linkKeys = linkTable.keys(); linkKeys.hasMoreElements();) {
 						String linkType = (String) linkKeys.nextElement();
-						org.apache.xpath.XPath linkXPath = (org.apache.xpath.XPath) linkTable.get(linkType);
+						if (linkType != Volume.LINK_STRING_LANG_TYPE && linkType != Volume.LINK_STRING_LANG_TYPE) {
+						java.util.Vector linkVector = (java.util.Vector) linkTable.get(linkType);
+						org.apache.xpath.XPath linkXPath = (org.apache.xpath.XPath) linkVector.elementAt(1);
 						org.w3c.dom.NodeList linkNodeList = null;
 						try {
 							org.apache.xpath.objects.XObject myXObject = linkXPath.execute(
@@ -256,17 +211,20 @@ public class IndexEntry {
 								value = value.trim();
 								if (!value.equals("")) {
 									//PapillonLogger.writeDebugMsg("Index entry link, node value: " + value);
-									if (linkType.equals(Volume.CDM_linkWeight)) {
-										myLink.setWeight(value);
-									}
-									else if (linkType.equals(Volume.CDM_linkValue)) {
+									if (linkType.equals(Volume.CDM_linkValue)) {
 										myLink.setTargetId(value);
-									}									
+									}	
 									else if (linkType.equals(Volume.CDM_linkVolume)) {
 										myLink.setVolumeTarget(value);
-									}									
+									}
+									else if (linkType.equals(Volume.CDM_linkWeight)) {
+										myLink.setWeight(value);
+									}
 									else if (linkType.equals(Volume.CDM_linkLang)) {
 										myLink.setLang(value);
+									}									
+									else if (linkType.equals(Volume.CDM_linkElementId)) {
+										myLink.setElementId(value);
 									}									
 									else if (linkType.equals(Volume.CDM_linkType)) {
 										myLink.setType(value);
@@ -277,6 +235,7 @@ public class IndexEntry {
 								}
 							}
 						}
+					}
 					}
 					if (myLink.getVolumeTarget() == null || myLink.getVolumeTarget().equals("")) {
 						String targetVolumeName = theVolume.getDefaultTargetVolumeName(theLang);
@@ -326,7 +285,6 @@ public class IndexEntry {
      */
     public static org.w3c.dom.NodeList getCdmElements(IAnswer myEntry, String CdmElement, String lang)
             throws PapillonBusinessException {
-//////////
 //    	PapillonLogger.writeDebugMsg("myEntry = "+myEntry+", CdmElement ="+CdmElement+" , lang = "+lang);  
         return getCdmElements(myEntry.getDom(), CdmElement, lang, myEntry.getVolume().getCdmElements());
     }
@@ -337,29 +295,14 @@ public class IndexEntry {
         org.w3c.dom.NodeList resNodeList = null;
         // fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getCdmElements: " + CdmElement + " " + lang);
         if (lang != null && !lang.equals("") && CdmElementsTable != null) {
-            org.w3c.dom.Element rootElt = myEntryDOM.getDocumentElement();
-            org.apache.xml.utils.PrefixResolver tmpPrefixResolver = new org.apache.xml.utils.PrefixResolverDefault(
-                    rootElt);
             java.util.Hashtable tmpTable = (java.util.Hashtable) CdmElementsTable.get(lang);
             if (tmpTable != null) {
                 java.util.Vector myVector = (java.util.Vector) tmpTable.get(CdmElement);
                 org.apache.xpath.XPath myXPath = null;
                 if (myVector != null && myVector.size() == 3) {
                     myXPath = (org.apache.xpath.XPath) myVector.elementAt(2);
-                    if (myXPath != null && myEntryDOM != null) {
-                        try {
-							//PapillonLogger.writeDebugMsg("executexPath: 0" + myVector.elementAt(0) + " 1"+ myVector.elementAt(1));
-                            org.apache.xpath.objects.XObject myXObject = myXPath.execute(
-                                    new org.apache.xpath.XPathContext(), myEntryDOM.getDocumentElement(),
-                                    tmpPrefixResolver);
-                            resNodeList = myXObject.nodelist();
-                        } catch (javax.xml.transform.TransformerException e) {
-                            throw new PapillonBusinessException("javax.xml.transform.TransformerException: ", e);
-                        }
-                    } else {
-                        //fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getCdmElements: myXPath: null for XPathString: " + (String) myVector.elementAt(0));
-                    }
-                } else {
+					resNodeList = getNodeListFromXPath(myEntryDOM.getDocumentElement(), myXPath);
+                 } else {
                     //fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getCdmElements: Vector: null for CdmElement: " + CdmElement + " lang: " + lang);
                 }
             } else {
@@ -370,7 +313,47 @@ public class IndexEntry {
         }
         return resNodeList;
     }
-
+	
+	public static org.w3c.dom.NodeList getNodeListFromXPath(org.w3c.dom.Element myEntryDOM, org.apache.xpath.XPath myXPath) 
+	throws PapillonBusinessException {
+		org.w3c.dom.NodeList resNodeList = null;
+		org.apache.xml.utils.PrefixResolver tmpPrefixResolver = new org.apache.xml.utils.PrefixResolverDefault(myEntryDOM.getOwnerDocument().getDocumentElement());
+		
+		if (myXPath != null && myEntryDOM != null) {
+			try {
+				//PapillonLogger.writeDebugMsg("executexPath: 0" + myVector.elementAt(0) + " 1"+ myVector.elementAt(1));
+				org.apache.xpath.objects.XObject myXObject = myXPath.execute(new org.apache.xpath.XPathContext(), myEntryDOM,tmpPrefixResolver);
+				resNodeList = myXObject.nodelist();
+			} catch (javax.xml.transform.TransformerException e) {
+				throw new PapillonBusinessException("javax.xml.transform.TransformerException: ", e);
+			}
+		}
+		return resNodeList;
+	}
+	
+	public static String getStringFromXPath(org.w3c.dom.Element myEntryDOM, org.apache.xpath.XPath myXPath) 
+	throws PapillonBusinessException {
+		String resultString = null;
+		org.apache.xml.utils.PrefixResolver tmpPrefixResolver = new org.apache.xml.utils.PrefixResolverDefault(myEntryDOM.getOwnerDocument().getDocumentElement());
+		
+		if (myXPath != null && myEntryDOM != null) {
+			try {
+				//PapillonLogger.writeDebugMsg("executexPath: 0" + myVector.elementAt(0) + " 1"+ myVector.elementAt(1));
+				org.apache.xpath.objects.XObject myXObject = myXPath.execute(new org.apache.xpath.XPathContext(), myEntryDOM,tmpPrefixResolver);
+				org.w3c.dom.NodeList resNodeList = myXObject.nodelist();
+				if (resNodeList != null && resNodeList.getLength() > 0) {
+					org.w3c.dom.Node resNode = resNodeList.item(0);
+					if (resNode!=null) {
+						resultString = resNode.getNodeValue();
+					}
+				}
+			} catch (javax.xml.transform.TransformerException e) {
+				throw new PapillonBusinessException("javax.xml.transform.TransformerException: ", e);
+			}
+		}
+		return resultString;
+	}
+	
     public static org.w3c.dom.Node getCdmElement(IAnswer myEntry, String CdmElement)
             throws PapillonBusinessException {
         return getCdmElement(myEntry, CdmElement, Volume.DEFAULT_LANG);

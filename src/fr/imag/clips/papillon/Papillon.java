@@ -201,22 +201,19 @@ public class Papillon extends StandardApplication {
         // Problem is: the cache initialization has to be done in order to get all available volumes
         // hence, layer modifications should not break the cache mecanism...
         PapillonLogger.writeInfoMsg("Database uses Data Layer Version n°: " + DataLayerVersion.getDBVersion());
-        try {
-            DataLayerVersion.upgradeDB();
+        boolean upgraded = false;
+		try {
+            upgraded = DataLayerVersion.upgradeDB();
         } catch (PapillonBusinessException e) {
             throw new ApplicationException("Could not upgrade DB Layer.", e);
         }
-		
-		try {
-			Papillon.initializeAllCaches();
-        } catch (PapillonBusinessException e) {
-            throw new ApplicationException("Initialize caches error", e);
-        }
-		try {
-			XslSheetFactory.initializeXslSheetCache();
-        } catch (PapillonBusinessException e) {
-            throw new ApplicationException("Initialize caches error", e);
-        }
+		if (upgraded) {
+			try {
+				Papillon.initializeAllCaches();
+			} catch (PapillonBusinessException e) {
+				throw new ApplicationException("Initialize caches error", e);
+			}
+		}
     }
 
     public synchronized static void initializeAllCaches() throws PapillonBusinessException {
@@ -241,6 +238,7 @@ public class Papillon extends StandardApplication {
         XslSheetFactory.initializeJibikiXslSheet();
 
         AvailableLanguages.resetCache();
+		
     }
 
     public String getPriorityPackage() {

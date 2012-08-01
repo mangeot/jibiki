@@ -261,12 +261,19 @@ public class Volume {
 	
 	// New CDM elements for links
     public static final  String CDM_link = "link";
-    public static final  String CDM_linkValue = "value";
-    public static final  String CDM_linkWeight = "weight";
-    public static final  String CDM_linkVolume = "volume";
+    public static final  String CDM_linkElementId = "id";
+    public static final  String CDM_linkLabel = "label";
     public static final  String CDM_linkLang = "lang";
     public static final  String CDM_linkType = "type";
-    public static final  String CDM_linkLabel = "label";
+    public static final  String CDM_linkValue = "value";
+    public static final  String CDM_linkVolume = "volume";
+    public static final  String CDM_linkWeight = "weight";
+	public final static  String LINK_defaultLinkName = "unknown";
+	public final static  String LINK_translationLinkName = "translation";
+	
+	// For linksTable
+	public final static String LINK_ELEMENT_TYPE = "element";
+	public final static String LINK_STRING_LANG_TYPE = "langString";
 	
 	
 	// xpaths calculated from previous ones
@@ -445,7 +452,16 @@ public class Volume {
      */
 	protected java.util.Hashtable CDM_elements =  null;
 	
-    /**
+ 
+    /*
+     * table schema:
+     * Hastable with key [name] (translation, xref, etc.)
+     * Of Hastable with key [element] (element, value, target_volume, targetId, etc.)
+     * Of Vector (String xpath, XPath xpath_compiled) 
+     */
+	protected java.util.Hashtable linksTable =  null;
+
+	/**
 	 * The DO of the Volume.
      */
     protected VolumeDO myDO = null;
@@ -456,6 +472,7 @@ public class Volume {
     public Volume() throws PapillonBusinessException {
         try {
 		    this.CDM_elements = new java.util.Hashtable();
+		    this.linksTable = new java.util.Hashtable();
             this.myDO = VolumeDO.createVirgin(CurrentDBTransaction.get());  
         } catch(DatabaseManagerException ex) {
             throw new PapillonBusinessException("Error creating empty Volume", ex);
@@ -732,6 +749,19 @@ public class Volume {
 	}
 	
     /**
+	 * Gets the links Hashtable of the Volume
+     *
+     * @return the  links Hashtable.
+     * @exception PapillonBusinessException if an error occurs
+     *   retrieving data (usually due to an underlying data layer
+	 *   error).
+     */
+    public java.util.Hashtable getLinksTable() {
+		return this.linksTable;
+	}
+	
+
+	/**
 	 * Gets a CDM XPath of the Volume
      *
      * @param the name of the CDM XPath as a String.
@@ -991,7 +1021,33 @@ public class Volume {
      *   retrieving data (usually due to an underlying data layer
 	 *   error).
      */
-    public String getXmlCode()
+
+	/**
+	 * Sets the Links Hashtable of the Volume
+     *
+     * @exception PapillonBusinessException if an error occurs
+     *   retrieving data (usually due to an underlying data layer
+	 *   error).
+     */
+	public void setLinksTable() 
+	throws PapillonBusinessException {
+		this.linksTable = VolumesFactory.buildLinksTable(this.getXmlCode(), this.getTemplateEntry());
+	}
+	
+	/**
+	 * Sets the Links Hashtable of the Volume
+     *
+     * @param the CDM elements as an Hashtable.
+     * @exception PapillonBusinessException if an error occurs
+     *   retrieving data (usually due to an underlying data layer
+	 *   error).
+     */
+	public void setLinksTable(java.util.Hashtable elements) {
+        this.linksTable = elements;
+	}
+	
+	
+	public String getXmlCode()
         throws PapillonBusinessException {
 			try {
 				return this.myDO.getXmlCode();

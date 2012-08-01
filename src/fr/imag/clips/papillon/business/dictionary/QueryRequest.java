@@ -363,6 +363,8 @@ import javax.swing.JOptionPane;
 
                     // Debug
                     if (DEBUG) veQuery.getQueryBuilder().debug();
+                    //PapillonLogger.writeDebugMsg("findLexie debug");
+					//veQuery.getQueryBuilder().debug();
 
                     //
                     VolumeEntryDO[] DOarray = veQuery.getDOArray();

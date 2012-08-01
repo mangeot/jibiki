@@ -14,6 +14,7 @@ import com.lutris.dods.builder.generator.query.QueryBuilder;
 import fr.imag.clips.papillon.CurrentDBTransaction;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.PapillonLogger;
+import fr.imag.clips.papillon.business.user.User;
 import fr.imag.clips.papillon.data.LinkDO;
 import fr.imag.clips.papillon.data.LinkQuery;
 import fr.imag.clips.papillon.data.VolumeEntryDO;
@@ -251,6 +252,41 @@ public class LinkFactory {
 		}
 		return headword;
 	}
+	
+    /**
+	 * Gets the linked entries of an entry from its entryId (handle)
+     *
+     * @param user the user
+     * @param entryID the entryId or handle of the entry
+     * @param theVolume the entry volume 
+     * @return the Vector containing Link objects.
+     * @exception PapillonBusinessException if an error occurs
+     *   retrieving data (usually due to an underlying data layer
+	 *   error).
+     */
+	public static Vector getLinkVectorByEntry (User user, VolumeEntry theEntry) throws PapillonBusinessException {
+		//PapillonLogger.writeDebugMsg("getLinkVectorByEntry: "+ theEntry.getHeadword() + " handle: " + theEntry.getHandle());
+        Vector theLinks = new Vector();
+		try{
+			LinkQuery qr = new LinkQuery(theEntry.getVolume().getLinkDbname(),CurrentDBTransaction.get());
+			qr.setQueryEntryId(Integer.parseInt(theEntry.getHandle()));
+			LinkDO[] DOarray = qr.getDOArray();
+			for (int i=0; i<DOarray.length;i++){
+				Link tempLink = new Link(DOarray[i]);
+				VolumeEntry linkedEntry = VolumeEntriesFactory.findEntryByEntryId(user, VolumesFactory.getVolumeByName(tempLink.getVolumeTarget()), tempLink.getTargetId());
+				if (linkedEntry != null && !linkedEntry.isEmpty()) {
+					tempLink.setLinkedEntry(linkedEntry);
+					//PapillonLogger.writeDebugMsg("getLinkVectorByEntry: linkedEntry added: "+ linkedEntry.getHeadword());
+					theLinks.add(tempLink);
+				}
+			}
+			
+		} catch(Exception ex){
+			throw new PapillonBusinessException("Exception in getLinksbyEntryId()", ex);
+		}
+		return theLinks;
+	}
+	
 	
 //	public static String[] findTranslationIdByEntryId (String[] entryId, String tableName)
 //	throws PapillonBusinessException {
