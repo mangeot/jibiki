@@ -80,14 +80,12 @@ public class IndexEntry {
 				java.util.Hashtable CdmElementsTable = myEntry.getVolume().getCdmElements();
 				org.w3c.dom.Element myRootElt = entryDoc.getDocumentElement();
 					
-				org.apache.xml.utils.PrefixResolver myPrefixResolver = new org.apache.xml.utils.PrefixResolverDefault(myRootElt);
-
-				ArrayList indexes = indexEntry(CdmElementsTable, myRootElt, myPrefixResolver, myEntry.getHandle());
+				ArrayList indexes = indexEntry(CdmElementsTable, myRootElt, myEntry.getVolume().getPrefixResolver(), myEntry.getHandle());
 				String volumeidx = myEntry.getVolume().getIndexDbname();
 				saveIndexes(indexes, volumeidx);
 								
 				java.util.Hashtable linksTable = myEntry.getVolume().getLinksTable();
-				ArrayList links = indexEntryLinks(linksTable, myEntry.getVolume(), myRootElt, myPrefixResolver, myEntry.getHandle());
+				ArrayList links = indexEntryLinks(linksTable, myEntry.getVolume(), myRootElt, myEntry.getHandle());
 				saveLinks(links);
 			}
          
@@ -159,11 +157,12 @@ public class IndexEntry {
 		return resultData;
 	}
 
-	public static ArrayList indexEntryLinks(java.util.Hashtable linksTable, Volume theVolume, org.w3c.dom.Element theRootElement, org.apache.xml.utils.PrefixResolver thePrefixResolver, String theHandle)
+	public static ArrayList indexEntryLinks(java.util.Hashtable linksTable, Volume theVolume, org.w3c.dom.Element theRootElement, String theHandle)
 	throws PapillonBusinessException {
 		//PapillonLogger.writeDebugMsg("indexEntryLinks: linksTable.size: " + linksTable.size());
 		ArrayList linksArray = new ArrayList();
 		String linkDbtableName = theVolume.getLinkDbname();
+		org.apache.xml.utils.PrefixResolver  thePrefixResolver = theVolume.getPrefixResolver();
 		for (java.util.Enumeration linksKeys = linksTable.keys(); linksKeys.hasMoreElements();) {
 			String linkName = (String) linksKeys.nextElement();
 			java.util.Hashtable linkTable = (java.util.Hashtable) linksTable.get(linkName);
@@ -286,11 +285,11 @@ public class IndexEntry {
     public static org.w3c.dom.NodeList getCdmElements(IAnswer myEntry, String CdmElement, String lang)
             throws PapillonBusinessException {
 //    	PapillonLogger.writeDebugMsg("myEntry = "+myEntry+", CdmElement ="+CdmElement+" , lang = "+lang);  
-        return getCdmElements(myEntry.getDom(), CdmElement, lang, myEntry.getVolume().getCdmElements());
+        return getCdmElements(myEntry.getDom(), CdmElement, lang, myEntry.getVolume().getCdmElements(), myEntry.getVolume().getPrefixResolver());
     }
 
     public static org.w3c.dom.NodeList getCdmElements(org.w3c.dom.Document myEntryDOM, String CdmElement, String lang,
-                                                      java.util.Hashtable CdmElementsTable)
+                                                      java.util.Hashtable CdmElementsTable, org.apache.xml.utils.PrefixResolver thePrefixResolver)
             throws PapillonBusinessException {
         org.w3c.dom.NodeList resNodeList = null;
         // fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getCdmElements: " + CdmElement + " " + lang);
@@ -301,7 +300,7 @@ public class IndexEntry {
                 org.apache.xpath.XPath myXPath = null;
                 if (myVector != null && myVector.size() == 3) {
                     myXPath = (org.apache.xpath.XPath) myVector.elementAt(2);
-					resNodeList = getNodeListFromXPath(myEntryDOM.getDocumentElement(), myXPath);
+					resNodeList = getNodeListFromXPath(myEntryDOM.getDocumentElement(), myXPath, thePrefixResolver);
                  } else {
                     //fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getCdmElements: Vector: null for CdmElement: " + CdmElement + " lang: " + lang);
                 }
@@ -314,10 +313,9 @@ public class IndexEntry {
         return resNodeList;
     }
 	
-	public static org.w3c.dom.NodeList getNodeListFromXPath(org.w3c.dom.Element myEntryDOM, org.apache.xpath.XPath myXPath) 
+	public static org.w3c.dom.NodeList getNodeListFromXPath(org.w3c.dom.Element myEntryDOM, org.apache.xpath.XPath myXPath, org.apache.xml.utils.PrefixResolver tmpPrefixResolver) 
 	throws PapillonBusinessException {
 		org.w3c.dom.NodeList resNodeList = null;
-		org.apache.xml.utils.PrefixResolver tmpPrefixResolver = new org.apache.xml.utils.PrefixResolverDefault(myEntryDOM.getOwnerDocument().getDocumentElement());
 		
 		if (myXPath != null && myEntryDOM != null) {
 			try {
@@ -331,10 +329,9 @@ public class IndexEntry {
 		return resNodeList;
 	}
 	
-	public static String getStringFromXPath(org.w3c.dom.Element myEntryDOM, org.apache.xpath.XPath myXPath) 
+	public static String getStringFromXPath(org.w3c.dom.Element myEntryDOM, org.apache.xpath.XPath myXPath, org.apache.xml.utils.PrefixResolver tmpPrefixResolver) 
 	throws PapillonBusinessException {
 		String resultString = null;
-		org.apache.xml.utils.PrefixResolver tmpPrefixResolver = new org.apache.xml.utils.PrefixResolverDefault(myEntryDOM.getOwnerDocument().getDocumentElement());
 		
 		if (myXPath != null && myEntryDOM != null) {
 			try {

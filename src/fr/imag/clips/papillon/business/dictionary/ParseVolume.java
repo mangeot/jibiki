@@ -374,8 +374,8 @@ public class ParseVolume {
             if (isContributionVolume) {
                 CDM_Entry = CDM_Contribution;
             } else {
-                xmlHeaderBuffer.append(VolumeEntry.ContributionHeader);
-                xmlFooterBuffer.append(VolumeEntry.ContributionFooter);
+                xmlHeaderBuffer.append(VolumeEntry.getContributionHeader(myVolume.getTemplateEntry()));
+                xmlFooterBuffer.append(VolumeEntry.getContributionFooter(myVolume.getTemplateEntry()));
             }
             PapillonLogger.writeDebugMsg("Will parse [" + CDM_Entry + "]");
             PapillonLogger.writeDebugMsg(" XML footer [" + myVolume.getXmlFooter() + "]");

@@ -231,9 +231,8 @@ import java.io.StringReader;
  */
 public class VolumesFactory {
 
-
-    protected final static String DML_URI = DmlPrefixResolver.DML_URI;
-    protected final static String XLINK_URI = DmlPrefixResolver.XLINK_URI;
+	public final static String DML_URI = "http://www-clips.imag.fr/geta/services/dml";
+    public final static String XLINK_URI = "http://www.w3.org/1999/xlink";
 
     protected final static String VOLUME_TAG = "volume-metadata";
     protected final static String CDM_ELEMENTS_TAG = "cdm-elements";
@@ -253,6 +252,9 @@ public class VolumesFactory {
     protected final static String NAME_ATTRIBUTE = "name";
     protected final static String DEFAULT_ATTRIBUTE = "default";
     protected final static String EXTERNAL_ATTRIBUTE = "external";
+	
+	protected final static String XMLNAMESPACE = "xmlns";
+
 	
     protected final static String VOLUME_GDEF_est = "GDEF_est";
     protected final static String VOLUME_GDEF_tes = "GDEF_tes";
@@ -337,6 +339,9 @@ public class VolumesFactory {
 		if (tmplEntry == null || tmplEntry.equals("")) {
 			throw new PapillonBusinessException("Exception in newVolume: there is no template entry, the element " + TEMPLATE_ENTRY_TAG + " does not exist or is empty!");
 		}
+		else {
+			tmplEntry = addDmlUrlInTemplateEntry(tmplEntry);
+		}
 		upgradeCdmLinkElement(volume.getOwnerDocument());
 				Hashtable cdmElements = createCdmElementsTable(volume, source, tmplEntry);
 				
@@ -380,21 +385,7 @@ public class VolumesFactory {
 		theVolume.setLinksTable(linksTable);
 	}
 	}
-	
-	public static org.apache.xpath.XPath compileXPath(String xpathString, org.w3c.dom.Element myRootElt)
-	throws PapillonBusinessException {
-        javax.xml.transform.SourceLocator mySourceLocator = new org.apache.xml.utils.SAXSourceLocator();
-        DmlPrefixResolver myPrefixResolver = new DmlPrefixResolver(myRootElt);
-        org.apache.xpath.XPath myXPath = null;
-        try {
-            myXPath = new org.apache.xpath.XPath(xpathString, mySourceLocator, myPrefixResolver,
-												 org.apache.xpath.XPath.SELECT);
-        } catch (javax.xml.transform.TransformerException e) {
-            throw new PapillonBusinessException("javax.xml.transform.TransformerException: ", e);
-        }
-        return myXPath;
-    }
-	
+		
     public static org.apache.xpath.XPath compileXPath(String xpathString,
                                                       org.apache.xml.utils.PrefixResolver aPrefixResolver)
 	throws PapillonBusinessException {
@@ -410,7 +401,7 @@ public class VolumesFactory {
     }
 	
     /* cdmElements Hashtable = {lang => Hashtable} = {CDM_element => Vector} = (xpathString, isIndex, XPath)*/
-    protected static boolean compileXPathTable(java.util.Hashtable cdmElements, org.w3c.dom.Element myRootElt)
+    protected static boolean compileXPathTable(java.util.Hashtable cdmElements, org.apache.xml.utils.PrefixResolver aPrefixResolver)
 	throws PapillonBusinessException {
         boolean result = false;
         for (java.util.Enumeration langKeys = cdmElements.keys(); langKeys.hasMoreElements();) {
@@ -421,7 +412,7 @@ public class VolumesFactory {
                 java.util.Vector eltVector = (java.util.Vector) tmpTable.get(CDM_element);
                 if (eltVector != null && eltVector.size() == 2) {
                     String xpathString = (String) eltVector.elementAt(0);
-                    org.apache.xpath.XPath myXPath = compileXPath(xpathString, myRootElt);
+                    org.apache.xpath.XPath myXPath = compileXPath(xpathString, aPrefixResolver);
                     if (myXPath != null) {
 						// PapillonLogger.writeDebugMsg("compileXPathTable: CDM element: " + CDM_element + " xpath not null: " + xpathString);
                         eltVector.add(myXPath);
@@ -452,28 +443,32 @@ public class VolumesFactory {
 			throw new PapillonBusinessException("Error in createCdmElementsTable: there is no template entry!");
 		}
 		
-        NodeList cdmElts = volume.getElementsByTagName(CDM_ELEMENTS_TAG);
-        if (null != cdmElts && cdmElts.getLength() > 0) {
-            Element cdmElt = (Element) cdmElts.item(0);
-            cdmElements = buildCdmElementsTable(cdmElt, source);
-        } else {
-            PapillonLogger.writeDebugMsg("No " + CDM_ELEMENTS_TAG + " tag");
-			throw new PapillonBusinessException("Error in createCdmElementsTable: there is no " + CDM_ELEMENTS_TAG + " tag!");
-        }
-				
         org.w3c.dom.Document myDoc = XMLServices.buildDOMTree(tmplEntry);
+		String dml_prefix = "";
         if (myDoc != null) {
-            compileXPathTable(cdmElements, myDoc.getDocumentElement());
+			dml_prefix = getDmlPrefix(myDoc.getDocumentElement());
         }
 		else {
             PapillonLogger.writeDebugMsg("Error in createCdmElementsTable: the template entry doc is empty!");
 			throw new PapillonBusinessException("Error in createCdmElementsTable: the template entry doc is empty!");
 		}
+		
+        NodeList cdmElts = volume.getElementsByTagName(CDM_ELEMENTS_TAG);
+        if (null != cdmElts && cdmElts.getLength() > 0) {
+            Element cdmElt = (Element) cdmElts.item(0);
+            cdmElements = buildCdmElementsTable(cdmElt, source, dml_prefix);
+        } else {
+            PapillonLogger.writeDebugMsg("No " + CDM_ELEMENTS_TAG + " tag");
+			throw new PapillonBusinessException("Error in createCdmElementsTable: there is no " + CDM_ELEMENTS_TAG + " tag!");
+        }
+				
+		org.apache.xml.utils.PrefixResolver tmplPrefixResolver = new org.apache.xml.utils.PrefixResolverDefault(myDoc.getDocumentElement());
+		compileXPathTable(cdmElements, tmplPrefixResolver);
 		return cdmElements;
 	}
 
     /* linksTable Hashtable = {name => Hashtable} = {element => Vector} = (xpathString, XPath)*/
-    protected static boolean compileLinksXPathTable(java.util.Hashtable linksTable, org.w3c.dom.Element myRootElt)
+    protected static boolean compileLinksXPathTable(java.util.Hashtable linksTable, org.apache.xml.utils.PrefixResolver aPrefixResolver)
 	throws PapillonBusinessException {
         boolean result = false;
         for (java.util.Enumeration nameKeys = linksTable.keys(); nameKeys.hasMoreElements();) {
@@ -485,7 +480,7 @@ public class VolumesFactory {
                 java.util.Vector eltVector = (java.util.Vector) tmpTable.get(element);
                 if (eltVector != null && eltVector.size() == 1) {
                     String xpathString = (String) eltVector.elementAt(0);
-                    org.apache.xpath.XPath myXPath = compileXPath(xpathString, myRootElt);
+                    org.apache.xpath.XPath myXPath = compileXPath(xpathString, aPrefixResolver);
                     if (myXPath != null) {
 						 //PapillonLogger.writeDebugMsg("compileLinksXPathTable: CDM element: " + element + " xpath not null: " + xpathString);
                         eltVector.add(myXPath);
@@ -504,6 +499,7 @@ public class VolumesFactory {
 	protected static Hashtable createLinksTable(Element volume, String tmplEntry) 
 	throws fr.imag.clips.papillon.business.PapillonBusinessException {
 		Hashtable linksTable = null;
+
 		
         // Cette méthode dépend du schéma des volumes.
  		
@@ -514,6 +510,7 @@ public class VolumesFactory {
 			throw new PapillonBusinessException("Error in createLinksTable: there is no template entry!");
 		}
 		
+
         NodeList cdmElts = volume.getElementsByTagName(CDM_ELEMENTS_TAG);
         if (null != cdmElts && cdmElts.getLength() > 0) {
             Element cdmElt = (Element) cdmElts.item(0);
@@ -523,9 +520,10 @@ public class VolumesFactory {
 			throw new PapillonBusinessException("Error in createLinksTable: there is no " + CDM_ELEMENTS_TAG + " tag!");
         }
 		
-        org.w3c.dom.Document myDoc = XMLServices.buildDOMTree(tmplEntry);
+       org.w3c.dom.Document myDoc = XMLServices.buildDOMTree(tmplEntry);
         if (myDoc != null) {
-            compileLinksXPathTable(linksTable, myDoc.getDocumentElement());
+			org.apache.xml.utils.PrefixResolver tmplPrefixResolver = new org.apache.xml.utils.PrefixResolverDefault(myDoc.getDocumentElement());
+            compileLinksXPathTable(linksTable, tmplPrefixResolver);
         }
 		else {
             PapillonLogger.writeDebugMsg("Error in createLinksTable: the template entry doc is empty!");
@@ -1083,21 +1081,18 @@ public class VolumesFactory {
      * @throws PapillonBusinessException
      */
     /* cdmElements Hashtable = {lang => Hashtable} = {CDM_element => Vector} = (xpathString, isIndex, XPath)*/
-    public static Hashtable buildCdmElementsTable(String xmlCode, String tmplEntry, String sourceLanguage)
+    public static Hashtable buildCdmElementsTable(String xmlCode, String sourceLanguage, org.apache.xml.utils.PrefixResolver thePrefixResolver)
             throws fr.imag.clips.papillon.business.PapillonBusinessException {
         Hashtable cdmElements = new Hashtable();
         Document docXml = XMLServices.buildDOMTree(xmlCode);
         NodeList cdmElts = docXml.getElementsByTagName(CDM_ELEMENTS_TAG);
         if (null != cdmElts && cdmElts.getLength() > 0) {
             Element cdmElt = (Element) cdmElts.item(0);
-            cdmElements = buildCdmElementsTable(cdmElt, sourceLanguage);
+            cdmElements = buildCdmElementsTable(cdmElt, sourceLanguage, getDmlPrefix(docXml.getDocumentElement()));
         } else {
             PapillonLogger.writeDebugMsg("No " + CDM_ELEMENTS_TAG + " tag!");
         }
-        org.w3c.dom.Document myDoc = XMLServices.buildDOMTree(tmplEntry);
-        if (myDoc != null) {
-            compileXPathTable(cdmElements, myDoc.getDocumentElement());
-        }
+		compileXPathTable(cdmElements, thePrefixResolver);
         return cdmElements;
     }
 	
@@ -1108,7 +1103,7 @@ public class VolumesFactory {
      * @return Hashtable
      */
     /* cdmElements Hashtable = {lang => Hashtable} = {CDM_element => Vector} = (xpathString, isIndex, XPath)*/
-    protected static Hashtable buildCdmElementsTable(Node cdmElt, String sourceLanguage) {
+    protected static Hashtable buildCdmElementsTable(Node cdmElt, String sourceLanguage, String dml_prefix) {
         Hashtable cdmElements = new Hashtable();
         NodeList cdmChilds = cdmElt.getChildNodes();
         for (int i = 0; i < cdmChilds.getLength(); i++) {
@@ -1142,8 +1137,8 @@ public class VolumesFactory {
 				}
             }
         }
-        completeCdmElementsTable(cdmElements, sourceLanguage);
-        updateCdmElementsTable(cdmElements);
+        completeCdmElementsTable(cdmElements, sourceLanguage, dml_prefix);
+        updateCdmElementsTable(cdmElements, dml_prefix);
         return cdmElements;
     }
 	
@@ -1156,7 +1151,7 @@ public class VolumesFactory {
      * @throws PapillonBusinessException
      */
     /* cdmElements Hashtable = {lang => Hashtable} = {CDM_element => Vector} = (xpathString, isIndex, XPath)*/
-    public static Hashtable buildLinksTable(String xmlCode, String tmplEntry)
+    public static Hashtable buildLinksTable(String xmlCode, org.apache.xml.utils.PrefixResolver thePrefixResolver)
 	throws fr.imag.clips.papillon.business.PapillonBusinessException {
         Hashtable linksTable = new Hashtable();
         Document docXml = XMLServices.buildDOMTree(xmlCode);
@@ -1167,10 +1162,7 @@ public class VolumesFactory {
         } else {
             PapillonLogger.writeDebugMsg("No " + CDM_ELEMENTS_TAG + " tag!");
         }
-        org.w3c.dom.Document myDoc = XMLServices.buildDOMTree(tmplEntry);
-        if (myDoc != null) {
-            compileLinksXPathTable(linksTable, myDoc.getDocumentElement());
-        }
+		compileLinksXPathTable(linksTable, thePrefixResolver);
         return linksTable;
     }
 
@@ -1291,7 +1283,11 @@ public class VolumesFactory {
      * @param Hashtable
      */
     /* cdmElements Hashtable = {lang => Hashtable} = {CDM_element => Vector} = (xpathString, isIndex, XPath)*/
-    protected static void updateCdmElementsTable(Hashtable cdmElements) {
+    protected static void updateCdmElementsTable(Hashtable cdmElements, String dml_prefix) {
+
+		if (dml_prefix != null && !dml_prefix.equals("")) {
+			dml_prefix += ":";
+		}
 
         String contribPath = getCdmXPathString(cdmElements, Volume.CDM_contribution, Volume.DEFAULT_LANG);
         String entryPath = getCdmXPathString(cdmElements, Volume.CDM_entry, Volume.DEFAULT_LANG);
@@ -1307,7 +1303,7 @@ public class VolumesFactory {
                     String xpathString = (String) eltVector.elementAt(0);
                     if (xpathString.indexOf(contribPath) < 0 && xpathString.indexOf(entryPath) == 0) {
                         xpathString = searchAndReplace(xpathString, entryPath,
-                                contribPath + "/" + VolumeEntry.dataTag + "/" + entryTag);
+                                contribPath + "/" + dml_prefix + VolumeEntry.dataTag + "/" + entryTag);
                         eltVector.remove(0);
                         eltVector.add(0, xpathString);
                     }
@@ -1324,12 +1320,17 @@ public class VolumesFactory {
      * @param String
      */
     /* cdmElements Hashtable = {lang => Hashtable} = {CDM_element => Vector} = (xpathString, isIndex, XPath)*/
-    protected static void completeCdmElementsTable(Hashtable elementsTable, String sourceLanguage) {
+    protected static void completeCdmElementsTable(Hashtable elementsTable, String sourceLanguage, String dml_prefix) {
+		
+		if (dml_prefix != null && !dml_prefix.equals("")) {
+			dml_prefix += ":";
+		}
+		
         String currentXpath = getCdmXPathString(elementsTable, Volume.CDM_volume, Volume.DEFAULT_LANG);
         // PapillonLogger.writeDebugMsg("completeCdmElementsTable: currentXpath: " + currentXpath);
 
         // contribution tags
-        currentXpath += "/" + VolumeEntry.contributionTag;
+        currentXpath += "/" + dml_prefix + VolumeEntry.contributionTag;
         if (getCdmXPathString(elementsTable, Volume.CDM_contribution, Volume.DEFAULT_LANG) == null) {
             addCdmElementInTable(elementsTable, Volume.CDM_contribution, Volume.DEFAULT_LANG, currentXpath,
                     Volume.isIndexCDMElement(Volume.CDM_contribution));
@@ -1346,171 +1347,171 @@ public class VolumesFactory {
         }
         if (getCdmXPathString(elementsTable, Volume.CDM_contributionDataElement, Volume.DEFAULT_LANG) == null) {
             addCdmElementInTable(elementsTable, Volume.CDM_contributionDataElement, Volume.DEFAULT_LANG,
-                    currentXpath + "/" + VolumeEntry.dataTag,
+                    currentXpath + "/" + dml_prefix + VolumeEntry.dataTag,
                     Volume.isIndexCDMElement(Volume.CDM_contributionDataElement));
         }
-        currentXpath += "/" + VolumeEntry.metadataTag;
+        currentXpath += "/" + dml_prefix + VolumeEntry.metadataTag;
         if (getCdmXPathString(elementsTable, Volume.CDM_contributionAuthorElement, Volume.DEFAULT_LANG) == null) {
             addCdmElementInTable(elementsTable, Volume.CDM_contributionAuthorElement, Volume.DEFAULT_LANG,
-                    currentXpath + "/" + VolumeEntry.authorTag,
+                    currentXpath + "/" + dml_prefix + VolumeEntry.authorTag,
                     Volume.isIndexCDMElement(Volume.CDM_contributionAuthorElement));
         }
         if (getCdmXPathString(elementsTable, Volume.CDM_contributionAuthor, Volume.DEFAULT_LANG) == null) {
             addCdmElementInTable(elementsTable, Volume.CDM_contributionAuthor, Volume.DEFAULT_LANG,
-                    currentXpath + "/" + VolumeEntry.authorTag + "/text()",
+                    currentXpath + "/" + dml_prefix + VolumeEntry.authorTag + "/text()",
                     Volume.isIndexCDMElement(Volume.CDM_contributionAuthor));
         }
         if (getCdmXPathString(elementsTable, Volume.CDM_contributionGroups, Volume.DEFAULT_LANG) == null) {
             addCdmElementInTable(elementsTable, Volume.CDM_contributionGroups, Volume.DEFAULT_LANG,
-                    currentXpath + "/" + VolumeEntry.groupsTag,
+                    currentXpath + "/" + dml_prefix + VolumeEntry.groupsTag,
                     Volume.isIndexCDMElement(Volume.CDM_contributionGroups));
         }
         if (getCdmXPathString(elementsTable, Volume.CDM_contributionGroup, Volume.DEFAULT_LANG) == null) {
             addCdmElementInTable(elementsTable, Volume.CDM_contributionGroup, Volume.DEFAULT_LANG,
-                    currentXpath + "/" + VolumeEntry.groupsTag + "/" + VolumeEntry.groupTag + "/text()",
+                    currentXpath + "/" + dml_prefix + VolumeEntry.groupsTag + "/" + dml_prefix + VolumeEntry.groupTag + "/text()",
                     Volume.isIndexCDMElement(Volume.CDM_contributionGroup));
         }
         if (getCdmXPathString(elementsTable, Volume.CDM_contributionCreationDateElement, Volume.DEFAULT_LANG) == null) {
             addCdmElementInTable(elementsTable, Volume.CDM_contributionCreationDateElement, Volume.DEFAULT_LANG,
-                    currentXpath + "/" + VolumeEntry.creationDateTag,
+                    currentXpath + "/" + dml_prefix + VolumeEntry.creationDateTag,
                     Volume.isIndexCDMElement(Volume.CDM_contributionCreationDateElement));
         }
         if (getCdmXPathString(elementsTable, Volume.CDM_contributionCreationDate, Volume.DEFAULT_LANG) == null) {
             addCdmElementInTable(elementsTable, Volume.CDM_contributionCreationDate, Volume.DEFAULT_LANG,
-                    currentXpath + "/" + VolumeEntry.creationDateTag + "/text()",
+                    currentXpath + "/" + dml_prefix + VolumeEntry.creationDateTag + "/text()",
                     Volume.isIndexCDMElement(Volume.CDM_contributionCreationDate));
         }
         if (getCdmXPathString(elementsTable, Volume.CDM_contributionFinitionDateElement, Volume.DEFAULT_LANG) == null) {
             addCdmElementInTable(elementsTable, Volume.CDM_contributionFinitionDateElement, Volume.DEFAULT_LANG,
-                    currentXpath + "/" + VolumeEntry.finitionDateTag,
+                    currentXpath + "/" + dml_prefix + VolumeEntry.finitionDateTag,
                     Volume.isIndexCDMElement(Volume.CDM_contributionFinitionDateElement));
         }
         if (getCdmXPathString(elementsTable, Volume.CDM_contributionFinitionDate, Volume.DEFAULT_LANG) == null) {
             addCdmElementInTable(elementsTable, Volume.CDM_contributionFinitionDate, Volume.DEFAULT_LANG,
-                    currentXpath + "/" + VolumeEntry.finitionDateTag + "/text()",
+                    currentXpath + "/" + dml_prefix + VolumeEntry.finitionDateTag + "/text()",
                     Volume.isIndexCDMElement(Volume.CDM_contributionFinitionDate));
         }
         if (getCdmXPathString(elementsTable, Volume.CDM_contributionReviewDateElement, Volume.DEFAULT_LANG) == null) {
             addCdmElementInTable(elementsTable, Volume.CDM_contributionReviewDateElement, Volume.DEFAULT_LANG,
-                    currentXpath + "/" + VolumeEntry.reviewDateTag,
+                    currentXpath + "/" + dml_prefix + VolumeEntry.reviewDateTag,
                     Volume.isIndexCDMElement(Volume.CDM_contributionReviewDateElement));
         }
         if (getCdmXPathString(elementsTable, Volume.CDM_contributionReviewDate, Volume.DEFAULT_LANG) == null) {
             addCdmElementInTable(elementsTable, Volume.CDM_contributionReviewDate, Volume.DEFAULT_LANG,
-                    currentXpath + "/" + VolumeEntry.reviewDateTag + "/text()",
+                    currentXpath + "/" + dml_prefix + VolumeEntry.reviewDateTag + "/text()",
                     Volume.isIndexCDMElement(Volume.CDM_contributionReviewDate));
         }
         if (getCdmXPathString(elementsTable, Volume.CDM_contributionReviewerElement, Volume.DEFAULT_LANG) == null) {
             addCdmElementInTable(elementsTable, Volume.CDM_contributionReviewerElement, Volume.DEFAULT_LANG,
-                    currentXpath + "/" + VolumeEntry.reviewerTag,
+                    currentXpath + "/" + dml_prefix + VolumeEntry.reviewerTag,
                     Volume.isIndexCDMElement(Volume.CDM_contributionReviewerElement));
         }
         if (getCdmXPathString(elementsTable, Volume.CDM_contributionReviewer, Volume.DEFAULT_LANG) == null) {
             addCdmElementInTable(elementsTable, Volume.CDM_contributionReviewer, Volume.DEFAULT_LANG,
-                    currentXpath + "/" + VolumeEntry.reviewerTag + "/text()",
+                    currentXpath + "/" + dml_prefix + VolumeEntry.reviewerTag + "/text()",
                     Volume.isIndexCDMElement(Volume.CDM_contributionReviewer));
         }
         if (getCdmXPathString(elementsTable, Volume.CDM_contributionValidationDateElement,
                 Volume.DEFAULT_LANG) == null) {
             addCdmElementInTable(elementsTable, Volume.CDM_contributionValidationDateElement, Volume.DEFAULT_LANG,
-                    currentXpath + "/" + VolumeEntry.validationDateTag,
+                    currentXpath + "/" + dml_prefix + VolumeEntry.validationDateTag,
                     Volume.isIndexCDMElement(Volume.CDM_contributionValidationDateElement));
         }
         if (getCdmXPathString(elementsTable, Volume.CDM_contributionValidationDate, Volume.DEFAULT_LANG) == null) {
             addCdmElementInTable(elementsTable, Volume.CDM_contributionValidationDate, Volume.DEFAULT_LANG,
-                    currentXpath + "/" + VolumeEntry.validationDateTag + "/text()",
+                    currentXpath + "/" + dml_prefix + VolumeEntry.validationDateTag + "/text()",
                     Volume.isIndexCDMElement(Volume.CDM_contributionValidationDate));
         }
         if (getCdmXPathString(elementsTable, Volume.CDM_contributionValidatorElement, Volume.DEFAULT_LANG) == null) {
             addCdmElementInTable(elementsTable, Volume.CDM_contributionValidatorElement, Volume.DEFAULT_LANG,
-                    currentXpath + "/" + VolumeEntry.validatorTag,
+                    currentXpath + "/" + dml_prefix + VolumeEntry.validatorTag,
                     Volume.isIndexCDMElement(Volume.CDM_contributionValidatorElement));
         }
         if (getCdmXPathString(elementsTable, Volume.CDM_contributionValidator, Volume.DEFAULT_LANG) == null) {
             addCdmElementInTable(elementsTable, Volume.CDM_contributionValidator, Volume.DEFAULT_LANG,
-                    currentXpath + "/" + VolumeEntry.validatorTag + "/text()",
+                    currentXpath + "/" + dml_prefix + VolumeEntry.validatorTag + "/text()",
                     Volume.isIndexCDMElement(Volume.CDM_contributionValidator));
         }
         if (getCdmXPathString(elementsTable, Volume.CDM_contributionStatusElement, Volume.DEFAULT_LANG) == null) {
             addCdmElementInTable(elementsTable, Volume.CDM_contributionStatusElement, Volume.DEFAULT_LANG,
-                    currentXpath + "/" + VolumeEntry.statusTag,
+                    currentXpath + "/" + dml_prefix + VolumeEntry.statusTag,
                     Volume.isIndexCDMElement(Volume.CDM_contributionStatusElement));
         }
         if (getCdmXPathString(elementsTable, Volume.CDM_contributionStatus, Volume.DEFAULT_LANG) == null) {
             addCdmElementInTable(elementsTable, Volume.CDM_contributionStatus, Volume.DEFAULT_LANG,
-                    currentXpath + "/" + VolumeEntry.statusTag + "/text()",
+                    currentXpath + "/" + dml_prefix + VolumeEntry.statusTag + "/text()",
                     Volume.isIndexCDMElement(Volume.CDM_contributionStatus));
         }
         // Previous classified finished contribution
         if (getCdmXPathString(elementsTable, Volume.CDM_previousClassifiedFinishedContributionElement,
                 Volume.DEFAULT_LANG) == null) {
             addCdmElementInTable(elementsTable, Volume.CDM_previousClassifiedFinishedContributionElement,
-                    Volume.DEFAULT_LANG, currentXpath + "/" + VolumeEntry.previousClassifiedFinishedContributionTag,
+                    Volume.DEFAULT_LANG, currentXpath + "/" + dml_prefix + VolumeEntry.previousClassifiedFinishedContributionTag,
                     false);
         }
         if (getCdmXPathString(elementsTable, Volume.CDM_previousClassifiedFinishedContribution,
                 Volume.DEFAULT_LANG) == null) {
             addCdmElementInTable(elementsTable, Volume.CDM_previousClassifiedFinishedContribution, Volume.DEFAULT_LANG,
-                    currentXpath + "/" + VolumeEntry.previousClassifiedFinishedContributionTag + "/text()", true);
+                    currentXpath + "/" + dml_prefix + VolumeEntry.previousClassifiedFinishedContributionTag + "/text()", true);
         }
         // Previous classified not finished contribution
         if (getCdmXPathString(elementsTable, Volume.CDM_previousClassifiedNotFinishedContributionElement,
                 Volume.DEFAULT_LANG) == null) {
             addCdmElementInTable(elementsTable, Volume.CDM_previousClassifiedNotFinishedContributionElement,
-                    Volume.DEFAULT_LANG, currentXpath + "/" + VolumeEntry.previousClassifiedNotFinishedContributionTag,
+                    Volume.DEFAULT_LANG, currentXpath + "/" + dml_prefix + VolumeEntry.previousClassifiedNotFinishedContributionTag,
                     false);
         }
         if (getCdmXPathString(elementsTable, Volume.CDM_previousClassifiedNotFinishedContribution,
                 Volume.DEFAULT_LANG) == null) {
             addCdmElementInTable(elementsTable, Volume.CDM_previousClassifiedNotFinishedContribution,
                     Volume.DEFAULT_LANG,
-                    currentXpath + "/" + VolumeEntry.previousClassifiedNotFinishedContributionTag + "/text()", true);
+                    currentXpath + "/" + dml_prefix + VolumeEntry.previousClassifiedNotFinishedContributionTag + "/text()", true);
         }
         // Next contribution author
         if (getCdmXPathString(elementsTable, Volume.CDM_nextContributionAuthorElement, Volume.DEFAULT_LANG) == null) {
             addCdmElementInTable(elementsTable, Volume.CDM_nextContributionAuthorElement, Volume.DEFAULT_LANG,
-                    currentXpath + "/" + VolumeEntry.nextContributionAuthorTag, false);
+                    currentXpath + "/" + dml_prefix + VolumeEntry.nextContributionAuthorTag, false);
         }
         if (getCdmXPathString(elementsTable, Volume.CDM_nextContributionAuthor, Volume.DEFAULT_LANG) == null) {
             addCdmElementInTable(elementsTable, Volume.CDM_nextContributionAuthor, Volume.DEFAULT_LANG,
-                    currentXpath + "/" + VolumeEntry.nextContributionAuthorTag + "/text()", true);
+                    currentXpath + "/" + dml_prefix + VolumeEntry.nextContributionAuthorTag + "/text()", true);
         }
 
 
-        currentXpath += "/" + VolumeEntry.historyTag;
+        currentXpath += "/" + dml_prefix + VolumeEntry.historyTag;
         if (getCdmXPathString(elementsTable, Volume.CDM_history, Volume.DEFAULT_LANG) == null) {
             addCdmElementInTable(elementsTable, Volume.CDM_history, Volume.DEFAULT_LANG, currentXpath,
                     Volume.isIndexCDMElement(Volume.CDM_history));
         }
 
-        currentXpath += "/" + VolumeEntry.modificationTag;
+        currentXpath += "/" + dml_prefix + VolumeEntry.modificationTag;
         if (getCdmXPathString(elementsTable, Volume.CDM_modification, Volume.DEFAULT_LANG) == null) {
             addCdmElementInTable(elementsTable, Volume.CDM_modification, Volume.DEFAULT_LANG, currentXpath,
                     Volume.isIndexCDMElement(Volume.CDM_modification));
         }
         if (getCdmXPathString(elementsTable, Volume.CDM_modificationAuthorElement, Volume.DEFAULT_LANG) == null) {
             addCdmElementInTable(elementsTable, Volume.CDM_modificationAuthorElement, Volume.DEFAULT_LANG,
-                    currentXpath + "/" + VolumeEntry.authorTag, false);
+                    currentXpath + "/" + dml_prefix + VolumeEntry.authorTag, false);
         }
         if (getCdmXPathString(elementsTable, Volume.CDM_modificationAuthor, Volume.DEFAULT_LANG) == null) {
             addCdmElementInTable(elementsTable, Volume.CDM_modificationAuthor, Volume.DEFAULT_LANG,
-                    currentXpath + "/" + VolumeEntry.authorTag + "/text()", true);
+                    currentXpath + "/" + dml_prefix + VolumeEntry.authorTag + "/text()", true);
         }
         if (getCdmXPathString(elementsTable, Volume.CDM_modificationDateElement, Volume.DEFAULT_LANG) == null) {
             addCdmElementInTable(elementsTable, Volume.CDM_modificationDateElement, Volume.DEFAULT_LANG,
-                    currentXpath + "/" + VolumeEntry.dateTag, false);
+                    currentXpath + "/" + dml_prefix + VolumeEntry.dateTag, false);
         }
         if (getCdmXPathString(elementsTable, Volume.CDM_modificationDate, Volume.DEFAULT_LANG) == null) {
             addCdmElementInTable(elementsTable, Volume.CDM_modificationDate, Volume.DEFAULT_LANG,
-                    currentXpath + "/" + VolumeEntry.dateTag + "/text()", true);
+                    currentXpath + "/" + dml_prefix + VolumeEntry.dateTag + "/text()", true);
         }
         if (getCdmXPathString(elementsTable, Volume.CDM_modificationCommentElement, Volume.DEFAULT_LANG) == null) {
             addCdmElementInTable(elementsTable, Volume.CDM_modificationCommentElement, Volume.DEFAULT_LANG,
-                    currentXpath + "/" + VolumeEntry.commentTag, false);
+                    currentXpath + "/" + dml_prefix + VolumeEntry.commentTag, false);
         }
         if (getCdmXPathString(elementsTable, Volume.CDM_modificationComment, Volume.DEFAULT_LANG) == null) {
             addCdmElementInTable(elementsTable, Volume.CDM_modificationComment, Volume.DEFAULT_LANG,
-                    currentXpath + "/" + VolumeEntry.commentTag + "/text()", true);
+                    currentXpath + "/" + dml_prefix + VolumeEntry.commentTag + "/text()", true);
         }
 		// Creating the CDM_entryString from CDM_entry if it does not exist
         if (getCdmXPathString(elementsTable, Volume.CDM_entryString, Volume.DEFAULT_LANG) == null) {
@@ -1550,23 +1551,25 @@ public class VolumesFactory {
     public static String updateTemplateEntry(String tmplEntry, Hashtable cdmElements)
             throws fr.imag.clips.papillon.business.PapillonBusinessException {
         if (tmplEntry != null && !tmplEntry.equals("")) {
-            org.w3c.dom.Document templateDoc = XMLServices.buildDOMTree(tmplEntry);
+            org.w3c.dom.Document templateDoc = XMLServices.buildDOMTree(tmplEntry);			
+			org.apache.xml.utils.PrefixResolver tmplPrefixResolver = new org.apache.xml.utils.PrefixResolverDefault(templateDoc);
+
             org.w3c.dom.NodeList contribNodeList = IndexEntry.getCdmElements(templateDoc, Volume.CDM_contribution,
-                    Volume.DEFAULT_LANG, cdmElements);
+                    Volume.DEFAULT_LANG, cdmElements, tmplPrefixResolver);
             org.w3c.dom.NodeList entryNodeList = IndexEntry.getCdmElements(templateDoc, Volume.CDM_templateEntry,
-                    Volume.DEFAULT_LANG, cdmElements);
+                    Volume.DEFAULT_LANG, cdmElements, tmplPrefixResolver);
 
             if ((contribNodeList == null || contribNodeList.getLength() == 0) && (entryNodeList != null && entryNodeList.getLength() == 1)) {
                 Node myEntryNode = entryNodeList.item(0);
                 // FIXME: maybe use XMLC to have an already compiled DOM ?
-                String contributionString = VolumeEntry.ContributionHeader + VolumeEntry.ContributionFooter;
+              String contributionString = VolumeEntry.getContributionHeader(tmplEntry) + VolumeEntry.getContributionFooter(tmplEntry);
                 org.w3c.dom.Document contributionDoc = XMLServices.buildDOMTree(contributionString);
                 Node contributionNode = templateDoc.importNode(contributionDoc.getDocumentElement(), true);
                 Node entryParent = myEntryNode.getParentNode();
                 entryParent.replaceChild(contributionNode, myEntryNode);
                 NodeList dataNodeList = IndexEntry.getCdmElements(templateDoc, Volume.CDM_contributionDataElement,
-                        Volume.DEFAULT_LANG, cdmElements);
-                if (dataNodeList != null && dataNodeList.getLength() == 1) {
+                        Volume.DEFAULT_LANG, cdmElements, tmplPrefixResolver);
+               if (dataNodeList != null && dataNodeList.getLength() == 1) {
                     Node dataNode = dataNodeList.item(0);
                     dataNode.appendChild(myEntryNode);
                     tmplEntry = XMLServices.xmlCode(templateDoc);
@@ -1576,10 +1579,65 @@ public class VolumesFactory {
                         "updateTemplateEntry: contribNodeList null? " + (contribNodeList == null) + " entryNodeList null?: " + (entryNodeList == null));
             }
         }
-        //PapillonLogger.writeDebugMsg("updateTemplateEntry: templateEntry final: " + tmplEntry);
         return tmplEntry;
     }
-
+	
+    protected static String addDmlUrlInTemplateEntry(String tmplEntry)
+	throws fr.imag.clips.papillon.business.PapillonBusinessException {
+		String result = null;
+        if (tmplEntry != null && !tmplEntry.equals("")) {
+            org.w3c.dom.Document templateDoc = XMLServices.buildDOMTree(tmplEntry);
+			org.w3c.dom.Element rootElement = templateDoc.getDocumentElement();
+			if (getDmlPrefix(rootElement) == null) {
+				String newDmlPrefix = "d";
+				ArrayList prefixes = getPrefixes(rootElement);
+				while (prefixes.contains(newDmlPrefix)) {
+					newDmlPrefix += "d";
+				}
+				rootElement.setAttribute(XMLNAMESPACE + ":" + newDmlPrefix, DML_URI);
+			}
+			result = XMLServices.xmlCode(templateDoc);
+		}
+		return result;
+	}
+			
+	public static String getDmlPrefix(Element element) {
+		return getPrefix(element, DML_URI);
+	}
+	
+	public static String getPrefix(Element element, String namespaceUri) {
+		String prefix = null;
+		org.w3c.dom.NamedNodeMap atts = element.getAttributes();
+		int i=0;
+		while (i < atts.getLength() && prefix ==null) {
+			Node node = atts.item(i);
+			String name = node.getNodeName();
+			if (namespaceUri.equals(node.getNodeValue())
+				&& (name != null && (XMLNAMESPACE.equals(name) || name.startsWith(XMLNAMESPACE + ":")))) {
+				prefix = node.getLocalName();
+				if (prefix.equals(XMLNAMESPACE)) {
+					prefix = "";
+				}
+			}
+			i++;
+		}
+		return prefix;
+	}
+	
+	public static ArrayList getPrefixes(Element element) {
+		org.w3c.dom.NamedNodeMap atts = element.getAttributes();
+		ArrayList prefixes = new ArrayList(atts.getLength());
+		for (int i=0; i < atts.getLength(); i++) {
+			Node node = atts.item(i);
+			String name = node.getNodeName();
+			if (name != null && (XMLNAMESPACE.equals(name) || name.startsWith(XMLNAMESPACE + ":"))) {
+				prefixes.add(node.getLocalName());
+			}
+		}
+		return prefixes;
+	}
+	
+	
 
     /**
      * @param Hashtable

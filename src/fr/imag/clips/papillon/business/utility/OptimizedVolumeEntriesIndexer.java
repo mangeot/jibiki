@@ -24,7 +24,6 @@ public class OptimizedVolumeEntriesIndexer {
 
     public static void rebuildIndexes(Volume volume) throws PapillonBusinessException {
         DBConnection myDbConnection = null;
-		org.apache.xml.utils.PrefixResolver myPrefixResolver = null;
 		java.util.Hashtable CdmElementsTable = volume.getCdmElements();
 		java.util.Hashtable linksTable = volume.getLinksTable();
         String sql = "SELECT xmlcode, objectid FROM " + volume.getDbname() + " ORDER BY objectid";
@@ -55,11 +54,8 @@ public class OptimizedVolumeEntriesIndexer {
 						if (xmlDoc != null) {
 							org.w3c.dom.Element myRootElt = xmlDoc.getDocumentElement();
 								
-							if (myPrefixResolver == null) {
-								myPrefixResolver = new org.apache.xml.utils.PrefixResolverDefault(myRootElt);
-							}
-							indexes.addAll(IndexEntry.indexEntry(CdmElementsTable, myRootElt, myPrefixResolver, handle));
-							links.addAll(IndexEntry.indexEntryLinks(linksTable, volume, myRootElt, myPrefixResolver, handle));
+							indexes.addAll(IndexEntry.indexEntry(CdmElementsTable, myRootElt, volume.getPrefixResolver(), handle));
+							links.addAll(IndexEntry.indexEntryLinks(linksTable, volume, myRootElt, handle));
 						}						
 						
                         resultCount++;

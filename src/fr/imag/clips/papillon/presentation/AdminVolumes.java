@@ -587,12 +587,14 @@ public class AdminVolumes extends PapillonBasePO {
 				else if (object.equals(Object_Metadata)) {
 					myVolume.setXmlCode(objectResult);
 					myVolume.setCdmElements();
+					myVolume.setLinksTable();
 				}
 				else if (object.equals(Object_Template)) {
 					objectResult = VolumesFactory.updateTemplateEntry(objectResult, myVolume.getCdmElements());
 					PapillonLogger.writeDebugMsg("uploadObject objectResult: " + objectResult);
 					myVolume.setTemplateEntry(objectResult);
 					myVolume.setCdmElements();
+					myVolume.setLinksTable();
 				}
 				else if (object.equals(Object_Interface)) {
 					myVolume.setTemplateInterface(objectResult);

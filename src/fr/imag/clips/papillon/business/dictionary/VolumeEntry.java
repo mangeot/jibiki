@@ -337,71 +337,33 @@ public class VolumeEntry
     public final static String DELETED_STATUS = "deleted";
     public final static String MODIFIED_STATUS = "modified";
 
-    protected static String DML_PREFIX_COLON = DmlPrefixResolver.DML_PREFIX;
-
-    static {
-        if (DML_PREFIX_COLON != null && !DML_PREFIX_COLON.equals("")) {
-            DML_PREFIX_COLON += ":";
-        }
-    }
-
-    public final static String authorTag = DML_PREFIX_COLON + "author";
-    public final static String commentTag = DML_PREFIX_COLON + "comment";
-    public final static String contributionTag = DML_PREFIX_COLON + "contribution";
-    public final static String contributionIdAttr = DML_PREFIX_COLON + "contribid";
-    public final static String creationDateTag = DML_PREFIX_COLON + "creation-date";
-    public final static String dataTag = DML_PREFIX_COLON + "data";
-    public final static String dateTag = DML_PREFIX_COLON + "date";
-    public final static String originalContributionIdAttr = DML_PREFIX_COLON + "originalcontribid";
-    public final static String groupsTag = DML_PREFIX_COLON + "groups";
-    public final static String groupTag = DML_PREFIX_COLON + "group";
-    public final static String historyTag = DML_PREFIX_COLON + "history";
-    public final static String metadataTag = DML_PREFIX_COLON + "metadata";
-    public final static String modificationTag = DML_PREFIX_COLON + "modification";
-    public final static String finitionDateTag = DML_PREFIX_COLON + "finition-date";
-    public final static String reviewDateTag = DML_PREFIX_COLON + "review-date";
-    public final static String reviewerTag = DML_PREFIX_COLON + "reviewer";
-    public final static String statusTag = DML_PREFIX_COLON + "status";
-    public final static String validationDateTag = DML_PREFIX_COLON + "validation-date";
-    public final static String validatorTag = DML_PREFIX_COLON + "validator";
-    public final static String previousClassifiedFinishedContributionTag = DML_PREFIX_COLON + "previous-classified-finished-contribution";
-    public final static String previousClassifiedNotFinishedContributionTag = DML_PREFIX_COLON + "previous-classified-not-finished-contribution";
-    public final static String nextContributionAuthorTag = DML_PREFIX_COLON + "next-contribution-author";
-    public final static ArrayList cdmList = new ArrayList();    	
+			protected static String DML_PREFIX = "d";
+			
+			public final static String authorTag = "author";
+			public final static String commentTag = "comment";
+			public final static String contributionTag = "contribution";
+			public final static String contributionIdAttr = "contribid";
+			public final static String creationDateTag = "creation-date";
+			public final static String dataTag = "data";
+			public final static String dateTag = "date";
+			public final static String originalContributionIdAttr = "originalcontribid";
+			public final static String groupsTag = "groups";
+			public final static String groupTag = "group";
+			public final static String historyTag = "history";
+			public final static String metadataTag = "metadata";
+			public final static String modificationTag = "modification";
+			public final static String finitionDateTag = "finition-date";
+			public final static String reviewDateTag = "review-date";
+			public final static String reviewerTag = "reviewer";
+			public final static String statusTag = "status";
+			public final static String validationDateTag = "validation-date";
+			public final static String validatorTag = "validator";
+			public final static String previousClassifiedFinishedContributionTag = "previous-classified-finished-contribution";
+			public final static String previousClassifiedNotFinishedContributionTag = "previous-classified-not-finished-contribution";
+			public final static String nextContributionAuthorTag = "next-contribution-author";
+			
+			public final static ArrayList cdmList = new ArrayList();    	
     
-    
-    public final static String ContributionHeader = "<" + contributionTag +
-            " xmlns:" + DmlPrefixResolver.DML_PREFIX + "=\"" + DmlPrefixResolver.DML_URI + "\"" +
-            " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"" +
-            " xsi:schemaLocation=\"http://www-clips.imag.fr/geta/services/dml " +
-            " http://www-clips.imag.fr/geta/services/dml/dml.xsd\"" + " " +
-            contributionIdAttr + "=\"\" " + originalContributionIdAttr + "=\"\">" +
-            "<" + metadataTag + ">" +
-            "<" + authorTag + "/>" +
-            "<" + groupsTag + "/>" +
-            "<" + creationDateTag + "/>" +
-            "<" + finitionDateTag + "/>" +
-            "<" + reviewDateTag + "/>" +
-            "<" + reviewerTag + "/>" +
-            "<" + validationDateTag + "/>" +
-            "<" + validatorTag + "/>" +
-            "<" + statusTag + "/>" +
-            "<" + historyTag + ">" +
-            "<" + modificationTag + ">" +
-            "<" + authorTag + "/>" +
-            "<" + dateTag + "/>" +
-            "<" + commentTag + "/>" +
-            "</" + modificationTag + ">" +
-            "</" + historyTag + ">" +
-            "<" + previousClassifiedFinishedContributionTag + "/>" +
-            "<" + previousClassifiedNotFinishedContributionTag + "/>" +
-            "<" + nextContributionAuthorTag + "/>" +
-            "</" + metadataTag + ">" +
-            "<" + dataTag + ">";
-
-
-    public final static String ContributionFooter = "</" + dataTag + ">" + "</" + contributionTag + ">";
-
     protected static final String ENTRY_ID_SUFFIX = ".e";
     protected static final String CONTRIBUTION_ID_SUFFIX = ".c";
 
@@ -1559,6 +1521,59 @@ public class VolumeEntry
     }
      */
 
+			
+			public static String getContributionHeader(String templateEntry) 
+			throws fr.imag.clips.papillon.business.PapillonBusinessException {
+			org.w3c.dom.Document myDoc = XMLServices.buildDOMTree(templateEntry);
+			String dmlPrefixOrig = VolumesFactory.getDmlPrefix(myDoc.getDocumentElement());
+			String dmlPrefix = dmlPrefixOrig;
+			String dmlXmlns = VolumesFactory.XMLNAMESPACE;
+			if (dmlPrefixOrig!= null && !dmlPrefixOrig.equals("")) {
+				dmlPrefix = dmlPrefixOrig + ":";
+				dmlXmlns += ":" +  dmlPrefixOrig;
+			}
+			
+			String result = "<" + dmlPrefix + contributionTag +
+			" " + dmlXmlns + "=\"" + VolumesFactory.DML_URI +"\"" + 
+				
+            " " + dmlPrefix + contributionIdAttr + "=\"\" " + dmlPrefix + originalContributionIdAttr + "=\"\">" +
+            "<" + dmlPrefix + metadataTag + ">" +
+            "<" + dmlPrefix + authorTag + "/>" +
+            "<" + dmlPrefix + groupsTag + "/>" +
+            "<" + dmlPrefix + creationDateTag + "/>" +
+            "<" + dmlPrefix + finitionDateTag + "/>" +
+            "<" + dmlPrefix + reviewDateTag + "/>" +
+            "<" + dmlPrefix + reviewerTag + "/>" +
+            "<" + dmlPrefix + validationDateTag + "/>" +
+            "<" + dmlPrefix + validatorTag + "/>" +
+            "<" + dmlPrefix + statusTag + "/>" +
+            "<" + dmlPrefix + historyTag + ">" +
+            "<" + dmlPrefix + modificationTag + ">" +
+            "<" + dmlPrefix + authorTag + "/>" +
+            "<" + dmlPrefix + dateTag + "/>" +
+            "<" + dmlPrefix + commentTag + "/>" +
+            "</" + dmlPrefix + modificationTag + ">" +
+            "</" + dmlPrefix + historyTag + ">" +
+            "<" + dmlPrefix + previousClassifiedFinishedContributionTag + "/>" +
+            "<" + dmlPrefix + previousClassifiedNotFinishedContributionTag + "/>" +
+            "<" + dmlPrefix + nextContributionAuthorTag + "/>" +
+            "</" + dmlPrefix + metadataTag + ">" +
+            "<" + dmlPrefix + dataTag + ">";
+			return result;
+		} 			
+			
+			public static String getContributionFooter(String templateEntry) 
+			 throws fr.imag.clips.papillon.business.PapillonBusinessException {
+				org.w3c.dom.Document myDoc = XMLServices.buildDOMTree(templateEntry);
+				String dmlPrefix = VolumesFactory.getDmlPrefix(myDoc.getDocumentElement());
+				
+				if (dmlPrefix!= null && !dmlPrefix.equals("")) {
+					dmlPrefix += ":";
+				}
+				return "</" + dmlPrefix + dataTag + ">" + "</" + dmlPrefix + contributionTag + ">";
+			}
+			
+			
     /**
      * getParticule
      * <p/>

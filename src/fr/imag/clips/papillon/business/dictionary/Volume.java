@@ -460,6 +460,7 @@ public class Volume {
      * Of Vector (String xpath, XPath xpath_compiled) 
      */
 	protected java.util.Hashtable linksTable =  null;
+	protected org.apache.xml.utils.PrefixResolver prefixResolver = null;
 
 	/**
 	 * The DO of the Volume.
@@ -998,7 +999,7 @@ public class Volume {
      */
 	public void setCdmElements() 
         throws PapillonBusinessException {
-			this.CDM_elements = VolumesFactory.buildCdmElementsTable(this.getXmlCode(), this.getTemplateEntry(), this.getSourceLanguage());
+			this.CDM_elements = VolumesFactory.buildCdmElementsTable(this.getXmlCode(), this.getSourceLanguage(), this.getPrefixResolver());
 	}
 	
 	/**
@@ -1031,7 +1032,7 @@ public class Volume {
      */
 	public void setLinksTable() 
 	throws PapillonBusinessException {
-		this.linksTable = VolumesFactory.buildLinksTable(this.getXmlCode(), this.getTemplateEntry());
+		this.linksTable = VolumesFactory.buildLinksTable(this.getXmlCode(), this.getPrefixResolver());
 	}
 	
 	/**
@@ -1191,6 +1192,24 @@ public class Volume {
 		}
 	
     /**
+	 * Gets the prefix resolver of the volume XML
+     *
+     * @return the xml prefix resolver.
+     * @exception PapillonBusinessException if an error occurs
+     *   retrieving data (usually due to an underlying data layer
+	 *   error).
+     */
+    public org.apache.xml.utils.PrefixResolver getPrefixResolver()
+	throws PapillonBusinessException {
+			if (this.prefixResolver == null) {
+				org.w3c.dom.Document myDoc = XMLServices.buildDOMTree(this.getTemplateEntry());
+				this.prefixResolver = new org.apache.xml.utils.PrefixResolverDefault(myDoc.getDocumentElement());
+
+			}
+			return this.prefixResolver;
+	}
+
+    /**
 	 * Gets the xml code of  template entry of the volume
      *
      * @return the xml code as a string.
@@ -1290,7 +1309,7 @@ public class Volume {
 			
 			org.w3c.dom.Document templateDoc = XMLServices.buildDOMTree(templateEntry);
 			
-			org.w3c.dom.NodeList volumeNodes = IndexEntry.getCdmElements(templateDoc, Volume.CDM_volume, Volume.DEFAULT_LANG, this.getCdmElements()); 
+			org.w3c.dom.NodeList volumeNodes = IndexEntry.getCdmElements(templateDoc, Volume.CDM_volume, Volume.DEFAULT_LANG, this.getCdmElements(), this.getPrefixResolver()); 
 
 			if (volumeNodes != null && volumeNodes.getLength() >0) {
 				org.w3c.dom.Node volumeNode = volumeNodes.item(0);
