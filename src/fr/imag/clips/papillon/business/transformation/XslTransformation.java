@@ -322,6 +322,7 @@ public class XslTransformation implements ResultFormatter {
 		// for the moment, old school way...	
 		if (qr.getResultKind() == QueryResult.DIRECT_TRANSLATIONS_RESULT) {
 			VolumeEntry myAnswer = qr.getSourceEntry();
+			org.apache.xml.utils.PrefixResolver thePrefixResolver = myAnswer.getVolume().getPrefixResolver();
 			java.util.Vector linkedEntries = qr.getLinkedEntries();
 			java.util.Hashtable linksTable = myAnswer.getVolume().getLinksTable();
 			java.util.Hashtable linkTable = (java.util.Hashtable) linksTable.get(Volume.LINK_translationLinkName);
@@ -331,11 +332,11 @@ public class XslTransformation implements ResultFormatter {
 				if (eltVector != null && eltVector.size() > 1 && valueVector != null && valueVector.size() > 1) {
 					org.apache.xpath.XPath eltXPath =  (org.apache.xpath.XPath) eltVector.elementAt(1);											
 					org.apache.xpath.XPath valueXPath =  (org.apache.xpath.XPath) valueVector.elementAt(1);		
-					NodeList linksElements = IndexEntry.getNodeListFromXPath(myAnswer.getDom().getDocumentElement(), eltXPath);
+					NodeList linksElements = IndexEntry.getNodeListFromXPath(myAnswer.getDom().getDocumentElement(), eltXPath, thePrefixResolver);
 					if ((linksElements != null) && (linksElements.getLength() > 0)) {
 						for (int n = 0; n < linksElements.getLength(); n++) {
 							org.w3c.dom.Node myNode = linksElements.item(n);
-							String value = IndexEntry.getStringFromXPath((Element) myNode, valueXPath);
+							String value = IndexEntry.getStringFromXPath((Element) myNode, valueXPath, thePrefixResolver);
 							boolean found = false;
 							Iterator linkedEntriesIterator = linkedEntries.iterator();
 							while (linkedEntriesIterator.hasNext() && !found) {
