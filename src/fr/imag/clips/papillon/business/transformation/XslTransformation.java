@@ -312,7 +312,6 @@ public class XslTransformation implements ResultFormatter {
     public Node getFormattedResult(QueryResult qr, User usr)
             throws PapillonBusinessException {
 
-		Collection answers = new ArrayList();
         Document res = myDocumentBuilder.newDocument();
         Element rootdiv = res.createElement("div");
         rootdiv.setAttribute("class", "entry");
@@ -323,22 +322,21 @@ public class XslTransformation implements ResultFormatter {
 		// FIXME: determine what to do for direct translation result:
         // hint, use jibikiXsltExtensions to resolve the links and format everything...
 		// for the moment, old school way...	
-		if (qr.getResultKind() == QueryResult.AXIE_COLLECTION_RESULT) {
-		}
-		else {
-			insertLinkedEntries(myAnswer, linkedEntries);
-			answers.add(myAnswer);
-		}
+		insertLinkedEntries(myAnswer, linkedEntries);
+		//answers.add(myAnswer);
 		if (null != dictXsl && !dictXsl.isEmpty()) {
 			// Format document source
-			for (Iterator iterator = answers.iterator();iterator.hasNext();) {
-				VolumeEntry theAnswer = (VolumeEntry) iterator.next();
-				Node resultNode = formatResult(theAnswer.getDom(), dictXsl, usr);
+			//for (Iterator iterator = answers.iterator();iterator.hasNext();) {
+			//	VolumeEntry theAnswer = (VolumeEntry) iterator.next();
+			//Node resultNode = formatResult(theAnswer.getDom(), dictXsl, usr);
+			//PapillonLogger.writeDebugMsg("Answer: " + qr.getSourceEntry().getHeadword() + " node: " + XMLServices.NodeToString(myAnswer.getDom()));
+			
+			Node resultNode = formatResult(myAnswer.getDom(), dictXsl, usr);
 				//	PapillonLogger.writeDebugMsg("ResultNode: " + qr.getSourceEntry().getHeadword() + " node: " + XMLServices.NodeToString(resultNode)+", "+resultNode.getNodeValue());
 				
 				rootdiv.appendChild(res.importNode(resultNode, true));
 				//	PapillonLogger.writeDebugMsg("rootdiv:"+rootdiv.getTextContent());
-			}				
+			//}				
 		}
 		return rootdiv;
 	} 
@@ -610,7 +608,7 @@ public class XslTransformation implements ResultFormatter {
             return docCible.getDocumentElement();
 
         } catch (Exception ex) {
-            throw new PapillonBusinessException("Exception in getFormattedResult()", ex);
+            throw new PapillonBusinessException("Exception in formatResult()", ex);
         }
     }
 

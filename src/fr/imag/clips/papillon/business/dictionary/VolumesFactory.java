@@ -1156,14 +1156,14 @@ public class VolumesFactory {
      * @throws PapillonBusinessException
      */
     /* cdmElements HashMap = {lang => HashMap} = {CDM_element => ArrayList} = (xpathString, isIndex, XPath)*/
-    public static HashMap buildLinksTable(String xmlCode, org.apache.xml.utils.PrefixResolver thePrefixResolver, HashMap cdmElements)
+    public static HashMap buildLinksTable(String xmlCode, org.apache.xml.utils.PrefixResolver thePrefixResolver, HashMap cdmElements, String dml_prefix)
 	throws fr.imag.clips.papillon.business.PapillonBusinessException {
         HashMap linksTable = new HashMap();
         Document docXml = XMLServices.buildDOMTree(xmlCode);
         NodeList cdmElts = docXml.getElementsByTagName(CDM_ELEMENTS_TAG);
         if (null != cdmElts && cdmElts.getLength() > 0) {
             Element cdmElt = (Element) cdmElts.item(0);
-            linksTable = buildLinksTable(cdmElt, cdmElements, getDmlPrefix(docXml.getDocumentElement()));
+            linksTable = buildLinksTable(cdmElt, cdmElements, dml_prefix);
         } else {
             PapillonLogger.writeDebugMsg("No " + CDM_ELEMENTS_TAG + " tag!");
         }

@@ -999,7 +999,9 @@ public class Volume {
      */
 	public void setCdmElements() 
         throws PapillonBusinessException {
-			this.CDM_elements = VolumesFactory.buildCdmElementsTable(this.getXmlCode(), this.getSourceLanguage(), this.getPrefixResolver());
+			org.w3c.dom.Document myDoc = XMLServices.buildDOMTree(this.getTemplateEntry());
+			String dml_prefix = VolumesFactory.getDmlPrefix(myDoc.getDocumentElement());
+			this.CDM_elements = VolumesFactory.buildCdmElementsTable(this.getXmlCode(), this.getSourceLanguage(), this.getPrefixResolver(), dml_prefix);
 	}
 	
 	/**
@@ -1032,7 +1034,9 @@ public class Volume {
      */
 	public void setLinksTable() 
 	throws PapillonBusinessException {
-		this.linksTable = VolumesFactory.buildLinksTable(this.getXmlCode(), this.getPrefixResolver());
+		org.w3c.dom.Document myDoc = XMLServices.buildDOMTree(this.getTemplateEntry());
+		String dml_prefix = VolumesFactory.getDmlPrefix(myDoc.getDocumentElement());
+		this.linksTable = VolumesFactory.buildLinksTable(this.getXmlCode(), this.getPrefixResolver(), this.getCdmElements(), dml_prefix);
 	}
 	
 	/**

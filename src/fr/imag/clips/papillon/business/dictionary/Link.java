@@ -30,7 +30,7 @@ public class Link {
     
 	
 	public static final String FINAL_TYPE = "final";
-	public static final String AXIE_TYPE = "axie";
+	public static final String AXIE_TYPE = "axi";
 
     /**
      * The DO of the Dictionary.

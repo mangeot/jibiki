@@ -1073,6 +1073,14 @@ public class DictionariesFactory {
 		}
 	}
 	
+	
+    public static Collection expandResult(VolumeEntry ve, Collection targets, User user) 
+		throws PapillonBusinessException {
+			QueryResult myQR = new QueryResult();
+			myQR.addSourceEntry(ve);
+			return expandResult(myQR, targets, user);
+	}
+	
 	/** 
      * Create a query result collection that contains all translations of the current entry, for the requested target languages.
      *
@@ -1085,13 +1093,14 @@ public class DictionariesFactory {
      * @exception PapillonBusinessException
      * @deprecated use expand results with a collection of QueryResults
      */      
-    public static Collection expandResult(VolumeEntry ve, Collection targets, User user) 
+    public static Collection expandResult(QueryResult theQR, Collection targets, User user) 
 	throws PapillonBusinessException {
-        PapillonLogger.writeDebugMsg("expandResult: " + ve.getHeadword());
         //    
         HashMap theLinks = new HashMap();
 		Collection myArrayList = new ArrayList();
  
+		VolumeEntry ve = theQR.getSourceEntry();
+        //PapillonLogger.writeDebugMsg("expandResult: " + ve.getHeadword());
 		Collection realTargets = Utility.ArrayIntersection(ve.getDictionary().getTargetLanguagesArray(), targets);
 		String type = ve.getDictionary().getType();
             
@@ -1101,9 +1110,9 @@ public class DictionariesFactory {
 			for (Iterator iter = axies.keySet().iterator(); iter.hasNext();) {
 				String entryId = (String) iter.next();
 				VolumeEntry axie = (VolumeEntry) axies.get(entryId);
+				//PapillonLogger.writeDebugMsg("expandResult: " + entryId + " hw:" +axie.getHeadword());
 				HashMap tempLinks = (HashMap) theLinks.clone();
-				tempLinks.put(axie.getEntryId(),axie);
-				LinkFactory.getLinkedEntriesByEntry(axie, tempLinks, realTargets, user);
+				LinkFactory.getLinkedEntriesByAxie(axie, tempLinks, user);
 				QueryResult qr = new QueryResult();
 				qr.addSourceEntry(axie);
 				qr.setLexiesHashMap(tempLinks);
@@ -1112,11 +1121,9 @@ public class DictionariesFactory {
 			
 		}
 		else {
-			QueryResult qr = new QueryResult();
-			qr.addSourceEntry(ve);
 			LinkFactory.getLinkedEntriesByEntry(ve, theLinks, realTargets, user);
-			qr.setLexiesHashMap(theLinks);
-			myArrayList.add(qr);
+			theQR.setLexiesHashMap(theLinks);
+			myArrayList.add(theQR);
 		}        
 		return myArrayList;
     }
@@ -1136,12 +1143,16 @@ public class DictionariesFactory {
      */      
 	public static Collection expandResults(Collection ves, Collection targets, User user, boolean mergeAxies) 
 	throws PapillonBusinessException {
-		
+		Collection resultsList = new ArrayList();
 		// Add axies and remove duplicates entries
-		Collection resultsWithAxies = addAxiesAndTranslations(ves, targets, user, mergeAxies);
-		
+		//Collection resultsWithAxies = addAxiesAndTranslations(ves, targets, user, mergeAxies);
+		Iterator itve = ves.iterator();
+        while (itve.hasNext()) {
+			QueryResult qr = (QueryResult) itve.next() ;
+			resultsList.addAll(expandResult(qr, targets, user));
+		}
 		//
-		return resultsWithAxies;
+		return resultsList;
 	}
 	
 	public static Collection addAxiesAndTranslations(Collection ves, Collection targets, User user, boolean mergeAxies) 
@@ -1149,7 +1160,7 @@ public class DictionariesFactory {
 		Collection result = new ArrayList();
 		QueryResult qr;
 		Iterator itve = ves.iterator();
-		//PapillonLogger.writeDebugMsg("addAxiesAndTranslations : ");
+		PapillonLogger.writeDebugMsg("addAxiesAndTranslations : ");
         while (itve.hasNext()) {
 			qr = (QueryResult) itve.next() ;
 			VolumeEntry ve = qr.getSourceEntry();
