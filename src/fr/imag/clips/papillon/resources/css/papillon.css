@@ -536,5 +536,63 @@ A:hover {
 TD.result {background: #e6e6fa; font-size: 11px;}
 TH.result {background: #fdcfcf;font-family: Arial, sans-serif; font-size: 11px;} 
 
+/* Styles for Motamot dict */
+
+.motamot-entry {
+    border:1px solid #898989;
+    margin-bottom:5px;
+    margin-top:-1px;
+    padding:7px;
+}
+
+.motamot-entry-selected {
+    border:2px solid black;
+    margin-bottom:4px;
+    margin-top:0px;
+    padding:7px;
+	background-color: red;
+}
+
+.motamot-sense {
+    border:1px solid #898989;
+    margin-bottom:5px;
+    margin-top:-1px;
+    margin-left:15px;
+    padding:7px;
+}
+
+.motamot-sense-selected {
+    border:2px solid black;
+    margin-bottom:4px;
+    margin-top:-2px;
+    margin-left:14px;
+    padding: 7px;
+	background-color: yellow;
+}
+
+/* Styles from LexAlp project */
+.entry {
+	background: #F0F0F0;
+}
+
+.finishedEntry {
+	background: #F0F0F0;
+}
+
+.myFinishedEntry {
+	background: #66CCFF;
+}
+
+.modifiedEntry {
+	background: #F0F0F0;
+}
+
+.myNotFinishedEntry {
+	background: #99CCCC;
+}
+
+.notFinishedEntry {
+	background: #F0F0F0;
+}
 
 

@@ -255,8 +255,10 @@ public class LinkFactory {
 						Volume myVolume = VolumesFactory.getVolumeByName(tempLink.getVolumeTarget());
 						if (myVolume !=null && !myVolume.isEmpty()) {
 							linkedEntry = VolumeEntriesFactory.findEntryByEntryId(user, myVolume, tempLink.getTargetId());
-							theLinks.put(tempLink.getTargetId(),linkedEntry);
-							PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: "+ theEntry.getEntryId() + " TargetId: " + tempLink.getTargetId());
+							if (linkedEntry != null && !linkedEntry.isEmpty()) {
+								theLinks.put(tempLink.getTargetId(),linkedEntry);
+							}
+							//PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: "+ theEntry.getEntryId() + " TargetId: " + tempLink.getTargetId() + " lang:" + lang);
 						}
 					}
 					if (linkedEntry != null && !linkedEntry.isEmpty()) {
@@ -292,6 +294,9 @@ public class LinkFactory {
 								theLinks.put(tempLink.getTargetId(),linkedEntry);
 							}
 						}
+					}
+					else {
+						//PapillonLogger.writeDebugMsg("getLinkedEntriesByAxie: linkedEntry already in "+ tempLink.getVolumeTarget() + " TargetId: " + tempLink.getTargetId());
 					}
 					if (linkedEntry != null && !linkedEntry.isEmpty()) {
 						if (tempLink.getType() == null || !tempLink.getType().equals(Link.FINAL_TYPE)) {

@@ -516,6 +516,11 @@ A:hover {
 	color: #FF0000;
 	}
 
+.khm {
+	font-family: sans-serif;
+	color: #000099;
+	}
+
 .lao	{
 	font-family: sans-serif;
 	color: #FF0099;
@@ -538,6 +543,11 @@ A:hover {
 .tha	{
 	font-family: sans-serif;
 	color: #6600FF;
+	}
+	
+.unl	{
+	font-family: courier, sans-serif;
+	color: #1B1464;
 	}
 
 .vie	{

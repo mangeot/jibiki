@@ -1121,6 +1121,7 @@ public class DictionariesFactory {
 			
 		}
 		else {
+			realTargets.remove(ve.getSourceLanguage());
 			LinkFactory.getLinkedEntriesByEntry(ve, theLinks, realTargets, user);
 			theQR.setLexiesHashMap(theLinks);
 			myArrayList.add(theQR);
