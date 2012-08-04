@@ -23,7 +23,6 @@ import fr.imag.clips.papillon.CurrentDBTransaction;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Vector;
 import java.awt.List;
 import java.sql.SQLException;
 
@@ -77,14 +76,14 @@ public class IndexEntry {
         boolean result = false;
 				
 			if (entryDoc != null) {
-				java.util.Hashtable CdmElementsTable = myEntry.getVolume().getCdmElements();
+				java.util.HashMap CdmElementsTable = myEntry.getVolume().getCdmElements();
 				org.w3c.dom.Element myRootElt = entryDoc.getDocumentElement();
 					
 				ArrayList indexes = indexEntry(CdmElementsTable, myRootElt, myEntry.getVolume().getPrefixResolver(), myEntry.getHandle());
 				String volumeidx = myEntry.getVolume().getIndexDbname();
 				saveIndexes(indexes, volumeidx);
 								
-				java.util.Hashtable linksTable = myEntry.getVolume().getLinksTable();
+				java.util.HashMap linksTable = myEntry.getVolume().getLinksTable();
 				ArrayList links = indexEntryLinks(linksTable, myEntry.getVolume(), myRootElt, myEntry.getHandle());
 				saveLinks(links);
 			}
@@ -92,27 +91,27 @@ public class IndexEntry {
         return result;
     }
     
-    public static ArrayList indexEntry(java.util.Hashtable CdmElementsTable, org.w3c.dom.Element myRootElt, org.apache.xml.utils.PrefixResolver myPrefixResolver, String handle)
+    public static ArrayList indexEntry(java.util.HashMap CdmElementsTable, org.w3c.dom.Element myRootElt, org.apache.xml.utils.PrefixResolver myPrefixResolver, String handle)
             throws PapillonBusinessException {
 				ArrayList indexes = new ArrayList();				
 				
-            for (java.util.Enumeration langKeys = CdmElementsTable.keys(); langKeys.hasMoreElements();) {
-                String lang = (String) langKeys.nextElement();
+            for (Iterator langKeys = CdmElementsTable.keySet().iterator(); langKeys.hasNext();) {
+                String lang = (String) langKeys.next();
                 
-                java.util.Hashtable tmpTable = (java.util.Hashtable) CdmElementsTable.get(lang);
-                for (java.util.Enumeration keys = tmpTable.keys(); keys.hasMoreElements();) {
-                    String CdmElement = (String) keys.nextElement();
+                java.util.HashMap tmpTable = (java.util.HashMap) CdmElementsTable.get(lang);
+                for (Iterator keys = tmpTable.keySet().iterator(); keys.hasNext();) {
+                    String CdmElement = (String) keys.next();
       
 					//PapillonLogger.writeDebugMsg("Index entry, key " + CdmElement + ":");
-                    java.util.Vector myVector = (java.util.Vector) tmpTable.get(CdmElement);
+                    ArrayList myArrayList = (ArrayList) tmpTable.get(CdmElement);
                     org.apache.xpath.XPath myXPath = null;
                     boolean isIndex = false;
-                    if (myVector != null) {
-						isIndex = ((Boolean) myVector.elementAt(1)).booleanValue();
+                    if (myArrayList != null) {
+						isIndex = ((Boolean) myArrayList.get(1)).booleanValue();
 						if (isIndex) {
-							myXPath = (org.apache.xpath.XPath) myVector.elementAt(2);
+							myXPath = (org.apache.xpath.XPath) myArrayList.get(2);
  							
-							//PapillonLogger.writeDebugMsg("Index entry: lang: "+ lang +" /key: " + CdmElement + " /xpath: " + (String) myVector.elementAt(0));
+							//PapillonLogger.writeDebugMsg("Index entry: lang: "+ lang +" /key: " + CdmElement + " /xpath: " + (String) myArrayList.elementAt(0));
 							indexes.addAll(createIndexData (CdmElement, myXPath, 
 										  lang, handle,
 										  myRootElt,myPrefixResolver
@@ -157,23 +156,21 @@ public class IndexEntry {
 		return resultData;
 	}
 
-	public static ArrayList indexEntryLinks(java.util.Hashtable linksTable, Volume theVolume, org.w3c.dom.Element theRootElement, String theHandle)
+	public static ArrayList indexEntryLinks(java.util.HashMap linksTable, Volume theVolume, org.w3c.dom.Element theRootElement, String theHandle)
 	throws PapillonBusinessException {
-		//PapillonLogger.writeDebugMsg("indexEntryLinks: linksTable.size: " + linksTable.size());
+		//PapillonLogger.writeDebugMsg("indexEntryLinks on: " + theVolume.getName() + " linksTable.size: " + linksTable.size());
 		ArrayList linksArray = new ArrayList();
 		String linkDbtableName = theVolume.getLinkDbname();
 		org.apache.xml.utils.PrefixResolver  thePrefixResolver = theVolume.getPrefixResolver();
-		for (java.util.Enumeration linksKeys = linksTable.keys(); linksKeys.hasMoreElements();) {
-			String linkName = (String) linksKeys.nextElement();
-			java.util.Hashtable linkTable = (java.util.Hashtable) linksTable.get(linkName);
-			java.util.Vector linkElementVector = (java.util.Vector) linkTable.get(Volume.LINK_ELEMENT_TYPE);
-			org.apache.xpath.XPath linkElementXPath = (org.apache.xpath.XPath) linkElementVector.elementAt(1);
+		for (Iterator linksKeys = linksTable.keySet().iterator(); linksKeys.hasNext();) {
+			String linkName = (String) linksKeys.next();
+			HashMap linkTable = (HashMap) linksTable.get(linkName);
+			ArrayList linkElementArrayList = (ArrayList) linkTable.get(Volume.LINK_ELEMENT_TYPE);
+			org.apache.xpath.XPath linkElementXPath = (org.apache.xpath.XPath) linkElementArrayList.get(1);
 			org.w3c.dom.NodeList resNodeList = null;
 			try {
-				org.apache.xpath.objects.XObject myXObject = linkElementXPath.execute(
-																			  new org.apache.xpath.XPathContext(), theRootElement, thePrefixResolver);
+				org.apache.xpath.objects.XObject myXObject = linkElementXPath.execute(new org.apache.xpath.XPathContext(), theRootElement, thePrefixResolver);
 				resNodeList = myXObject.nodelist();
-				//PapillonLogger.writeDebugMsg("Index entry link, xPath.execute res: ");
 			} catch (javax.xml.transform.TransformerException e) {
 				throw new PapillonBusinessException("javax.xml.transform.TransformerException: ", e);
 			}
@@ -186,13 +183,14 @@ public class IndexEntry {
 			if (resNodeList != null) {
 				for (int i = 0; i < resNodeList.getLength(); i++) {
 					org.w3c.dom.Node myNode = resNodeList.item(i);
+					//PapillonLogger.writeDebugMsg("Index entry link, Node " + myNode.getNodeName());
 					Link myLink = LinkFactory.newLink(linkDbtableName, linkName, theLang, theHandle);
 					
-					for (java.util.Enumeration linkKeys = linkTable.keys(); linkKeys.hasMoreElements();) {
-						String linkType = (String) linkKeys.nextElement();
+					for (Iterator linkKeys = linkTable.keySet().iterator(); linkKeys.hasNext();) {
+						String linkType = (String) linkKeys.next();
 						if (linkType != Volume.LINK_STRING_LANG_TYPE && linkType != Volume.LINK_STRING_LANG_TYPE) {
-						java.util.Vector linkVector = (java.util.Vector) linkTable.get(linkType);
-						org.apache.xpath.XPath linkXPath = (org.apache.xpath.XPath) linkVector.elementAt(1);
+						ArrayList linkArrayList = (ArrayList) linkTable.get(linkType);
+						org.apache.xpath.XPath linkXPath = (org.apache.xpath.XPath) linkArrayList.get(1);
 						org.w3c.dom.NodeList linkNodeList = null;
 						try {
 							org.apache.xpath.objects.XObject myXObject = linkXPath.execute(
@@ -237,14 +235,19 @@ public class IndexEntry {
 					}
 					}
 					if (myLink.getVolumeTarget() == null || myLink.getVolumeTarget().equals("")) {
-						String targetVolumeName = theVolume.getDefaultTargetVolumeName(theLang);
+						String targetVolumeName = theVolume.getDefaultTargetVolumeName(myLink.getLang());
 						myLink.setVolumeTarget(targetVolumeName);
 					}						
-					
-					linksArray.add(myLink);
+					if (myLink.getType() == null || myLink.getType().equals("")) {
+						myLink.setType(Link.FINAL_TYPE);
+					}
+					if (myLink.getTargetId() != null && !myLink.getTargetId().equals("")) {
+						linksArray.add(myLink);
+					}
 				}
-			} else {
-				//PapillonLogger.writeDebugMsg("Index entry link, node list null for CdmElement: " + linkName + ":");
+			} 
+			else {
+				PapillonLogger.writeDebugMsg("Index entry link, node list null for CdmElement: " + linkName);
 			}
 		}
 		return linksArray;
@@ -289,20 +292,20 @@ public class IndexEntry {
     }
 
     public static org.w3c.dom.NodeList getCdmElements(org.w3c.dom.Document myEntryDOM, String CdmElement, String lang,
-                                                      java.util.Hashtable CdmElementsTable, org.apache.xml.utils.PrefixResolver thePrefixResolver)
+                                                      HashMap CdmElementsTable, org.apache.xml.utils.PrefixResolver thePrefixResolver)
             throws PapillonBusinessException {
         org.w3c.dom.NodeList resNodeList = null;
         // fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getCdmElements: " + CdmElement + " " + lang);
         if (lang != null && !lang.equals("") && CdmElementsTable != null) {
-            java.util.Hashtable tmpTable = (java.util.Hashtable) CdmElementsTable.get(lang);
+            java.util.HashMap tmpTable = (java.util.HashMap) CdmElementsTable.get(lang);
             if (tmpTable != null) {
-                java.util.Vector myVector = (java.util.Vector) tmpTable.get(CdmElement);
+                ArrayList myArrayList = (ArrayList) tmpTable.get(CdmElement);
                 org.apache.xpath.XPath myXPath = null;
-                if (myVector != null && myVector.size() == 3) {
-                    myXPath = (org.apache.xpath.XPath) myVector.elementAt(2);
+                if (myArrayList != null && myArrayList.size() == 3) {
+                    myXPath = (org.apache.xpath.XPath) myArrayList.get(2);
 					resNodeList = getNodeListFromXPath(myEntryDOM.getDocumentElement(), myXPath, thePrefixResolver);
                  } else {
-                    //fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getCdmElements: Vector: null for CdmElement: " + CdmElement + " lang: " + lang);
+                    //fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getCdmElements: ArrayList: null for CdmElement: " + CdmElement + " lang: " + lang);
                 }
             } else {
                 //fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getCdmElements: " + CdmElement + " tmpTable == null for lang: " + lang);
@@ -319,7 +322,7 @@ public class IndexEntry {
 		
 		if (myXPath != null && myEntryDOM != null) {
 			try {
-				//PapillonLogger.writeDebugMsg("executexPath: 0" + myVector.elementAt(0) + " 1"+ myVector.elementAt(1));
+				//PapillonLogger.writeDebugMsg("executexPath: 0" + myArrayList.get(0) + " 1"+ myArrayList.get(1));
 				org.apache.xpath.objects.XObject myXObject = myXPath.execute(new org.apache.xpath.XPathContext(), myEntryDOM,tmpPrefixResolver);
 				resNodeList = myXObject.nodelist();
 			} catch (javax.xml.transform.TransformerException e) {
@@ -335,7 +338,7 @@ public class IndexEntry {
 		
 		if (myXPath != null && myEntryDOM != null) {
 			try {
-				//PapillonLogger.writeDebugMsg("executexPath: 0" + myVector.elementAt(0) + " 1"+ myVector.elementAt(1));
+				//PapillonLogger.writeDebugMsg("executexPath: 0" + myArrayList.get(0) + " 1"+ myArrayList.get(1));
 				org.apache.xpath.objects.XObject myXObject = myXPath.execute(new org.apache.xpath.XPathContext(), myEntryDOM,tmpPrefixResolver);
 				org.w3c.dom.NodeList resNodeList = myXObject.nodelist();
 				if (resNodeList != null && resNodeList.getLength() > 0) {

@@ -40,7 +40,12 @@
 package fr.imag.clips.papillon.business.dictionary;
 
 // For the TreMap & TreeSet & Array
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 public class AvailableLanguages {
 
@@ -170,8 +175,8 @@ public class AvailableLanguages {
 			for (Iterator iter =  VolumesFactory.getVolumesArray().iterator(); iter.hasNext();) {
 				// get all cdm-elements with Volume.DEFAULT_LANG language
 				Volume volume = (Volume)iter.next();
-				Hashtable CdmElementsTable = volume.getCdmElements();
-				Hashtable CdmElementsTableDefaultLang = (Hashtable) CdmElementsTable.get(Volume.DEFAULT_LANG);
+				HashMap CdmElementsTable = volume.getCdmElements();
+				HashMap CdmElementsTableDefaultLang = (HashMap) CdmElementsTable.get(Volume.DEFAULT_LANG);
 				
 				CdmElementsWithDefaultLanguage.addAll(CdmElementsTableDefaultLang.keySet());
 			}

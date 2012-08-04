@@ -442,24 +442,24 @@ public class Volume {
 
 /*
  * table schema:
- * String lang (ISO 639-2/T) -> CDM_element -> Vector (String xpath, boolean is_index, XPath xpath_compiled) 
+ * String lang (ISO 639-2/T) -> CDM_element -> ArrayList (String xpath, boolean is_index, XPath xpath_compiled) 
  */
     /*
      * table schema:
      * Hastable with key [String lang (ISO 639-2/T)] 
-     * OF Hastable with key [CDM_element] 
-     * OF Vector (String xpath, boolean is_index, XPath xpath_compiled) 
+     * OF HashMap with key [CDM_element] 
+     * OF ArrayList (String xpath, boolean is_index, XPath xpath_compiled) 
      */
-	protected java.util.Hashtable CDM_elements =  null;
+	protected java.util.HashMap CDM_elements =  null;
 	
  
     /*
      * table schema:
      * Hastable with key [name] (translation, xref, etc.)
-     * Of Hastable with key [element] (element, value, target_volume, targetId, etc.)
-     * Of Vector (String xpath, XPath xpath_compiled) 
+     * Of HashMap with key [element] (element, value, target_volume, targetId, etc.)
+     * Of ArrayList (String xpath, XPath xpath_compiled) 
      */
-	protected java.util.Hashtable linksTable =  null;
+	protected java.util.HashMap linksTable =  null;
 	protected org.apache.xml.utils.PrefixResolver prefixResolver = null;
 
 	/**
@@ -472,8 +472,8 @@ public class Volume {
      */
     public Volume() throws PapillonBusinessException {
         try {
-		    this.CDM_elements = new java.util.Hashtable();
-		    this.linksTable = new java.util.Hashtable();
+		    this.CDM_elements = new java.util.HashMap();
+		    this.linksTable = new java.util.HashMap();
             this.myDO = VolumeDO.createVirgin(CurrentDBTransaction.get());  
         } catch(DatabaseManagerException ex) {
             throw new PapillonBusinessException("Error creating empty Volume", ex);
@@ -738,26 +738,26 @@ public class Volume {
 		}
 	
     /**
-	 * Gets the CDM elements Hashtable of the Volume
+	 * Gets the CDM elements HashMap of the Volume
      *
-     * @return the  CDM elements Hashtable.
+     * @return the  CDM elements HashMap.
      * @exception PapillonBusinessException if an error occurs
      *   retrieving data (usually due to an underlying data layer
 	 *   error).
      */
-    public java.util.Hashtable getCdmElements() {
+    public java.util.HashMap getCdmElements() {
 		return this.CDM_elements;
 	}
 	
     /**
-	 * Gets the links Hashtable of the Volume
+	 * Gets the links HashMap of the Volume
      *
-     * @return the  links Hashtable.
+     * @return the  links HashMap.
      * @exception PapillonBusinessException if an error occurs
      *   retrieving data (usually due to an underlying data layer
 	 *   error).
      */
-    public java.util.Hashtable getLinksTable() {
+    public java.util.HashMap getLinksTable() {
 		return this.linksTable;
 	}
 	
@@ -787,18 +787,18 @@ public class Volume {
      */
     protected String getCdmXPathString(String name, String lang) {
 		String res = null;
-		java.util.Hashtable tmpTable = (java.util.Hashtable) this.CDM_elements.get(lang);
+		java.util.HashMap tmpTable = (java.util.HashMap) this.CDM_elements.get(lang);
 		if (tmpTable != null) {
-			java.util.Vector myVector = (java.util.Vector) tmpTable.get(name);
-			if (myVector != null && myVector.size()>0) {
-				res = (String) myVector.elementAt(0);
+			java.util.ArrayList myArrayList = (java.util.ArrayList) tmpTable.get(name);
+			if (myArrayList != null && myArrayList.size()>0) {
+				res = (String) myArrayList.get(0);
 			}
 		}
 		else {
-			fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Error 1: CDM Element null for name: " + name + " " + lang + " Hashtable: " + this.CDM_elements.toString());
+			fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Error 1: CDM Element null for name: " + name + " " + lang + " HashMap: " + this.CDM_elements.toString());
 		}
 		if (res == null || res.equals("")) {
-			fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Error 2: CDM Element null for name: " + name + " " + lang + " Hashtable: " + this.CDM_elements.toString());
+			fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Error 2: CDM Element null for name: " + name + " " + lang + " HashMap: " + this.CDM_elements.toString());
 		}
 		// fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getCdmXPathString: " + name + " : " + res);
 		return res;
@@ -991,7 +991,7 @@ public class Volume {
 	}
 	
 	/**
-	 * Sets the CDM elements Hashtable of the Volume
+	 * Sets the CDM elements HashMap of the Volume
      *
      * @exception PapillonBusinessException if an error occurs
      *   retrieving data (usually due to an underlying data layer
@@ -1003,14 +1003,14 @@ public class Volume {
 	}
 	
 	/**
-	 * Sets the CDM elements Hashtable of the Volume
+	 * Sets the CDM elements HashMap of the Volume
      *
-     * @param the CDM elements as an Hashtable.
+     * @param the CDM elements as an HashMap.
      * @exception PapillonBusinessException if an error occurs
      *   retrieving data (usually due to an underlying data layer
 	 *   error).
      */
-	public void setCdmElements(java.util.Hashtable elements) {
+	public void setCdmElements(java.util.HashMap elements) {
         this.CDM_elements = elements;
 	}
 	
@@ -1024,7 +1024,7 @@ public class Volume {
      */
 
 	/**
-	 * Sets the Links Hashtable of the Volume
+	 * Sets the Links HashMap of the Volume
      *
      * @exception PapillonBusinessException if an error occurs
      *   retrieving data (usually due to an underlying data layer
@@ -1036,14 +1036,14 @@ public class Volume {
 	}
 	
 	/**
-	 * Sets the Links Hashtable of the Volume
+	 * Sets the Links HashMap of the Volume
      *
-     * @param the CDM elements as an Hashtable.
+     * @param the CDM elements as an HashMap.
      * @exception PapillonBusinessException if an error occurs
      *   retrieving data (usually due to an underlying data layer
 	 *   error).
      */
-	public void setLinksTable(java.util.Hashtable elements) {
+	public void setLinksTable(java.util.HashMap elements) {
         this.linksTable = elements;
 	}
 	

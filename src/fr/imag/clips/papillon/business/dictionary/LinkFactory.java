@@ -22,9 +22,9 @@ import fr.imag.clips.papillon.data.VolumeEntryQuery;
 import fr.imag.clips.papillon.papillon_data.ManageDatabase;
 
 import java.util.Collection;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Vector;
+import java.util.ArrayList;
 
 /**
 * Used to find the instances of xslsheet.
@@ -59,8 +59,8 @@ public class LinkFactory {
 		
 	
         
-	public static Vector getLinkVectorByEntryId(Volume volume, String entryId) throws PapillonBusinessException {
-		Vector theLink = new Vector();
+	public static ArrayList getLinkArrayByEntryId(Volume volume, String entryId) throws PapillonBusinessException {
+		ArrayList theLink = new ArrayList();
 		
 		if (entryId != null && !entryId.equals("")) {
 			int intId = 0;
@@ -150,32 +150,7 @@ public class LinkFactory {
 		return theEntries;
 	}
 	////*/
-	
-	protected static boolean createLinkForLexiesHashtable(String linkDbname, Axie myAxie)
-		throws PapillonBusinessException {
-			Hashtable lexies = myAxie.getLexies();
-			if (lexies != null) {
-				Iterator myIterator = lexies.values().iterator();
-				while (myIterator.hasNext()) {
-					Vector myVector = (Vector) myIterator.next();
-					if (myVector != null && myVector.size()>0) {
-						for (int i=0;i<myVector.size();i++) {
-							String myString = (String) myVector.elementAt(i);
-							if (myString != null && !myString.equals("")) {
-								////Link myLink = LinkFactory.newLink(linkDbname, Volume.CDM_entryId, Axie.LANG,myString,myAxie.getHandle());
-								////myLink.save();
-							}
-						}
-					}
-				}				
-			}
-			return true;
-		}	
-	
-	
-	protected static void deleteLinkForEntryId(String linkDbname, String entryId) throws 	PapillonBusinessException {
-		Vector theLink = new Vector();
-		
+	protected static void deleteLinkForEntryId(String linkDbname, String entryId) throws 	PapillonBusinessException {		
 		String cmp_op = QueryBuilder.EQUAL;
 		
 		int intId = 0;
@@ -264,27 +239,66 @@ public class LinkFactory {
      *   retrieving data (usually due to an underlying data layer
 	 *   error).
      */
-	public static Vector getLinkVectorByEntry (User user, VolumeEntry theEntry) throws PapillonBusinessException {
-		//PapillonLogger.writeDebugMsg("getLinkVectorByEntry: "+ theEntry.getHeadword() + " handle: " + theEntry.getHandle());
-        Vector theLinks = new Vector();
+	public static void getLinkedEntriesByEntry(VolumeEntry theEntry, HashMap theLinks, Collection targets, User user) throws PapillonBusinessException {
+		try{
+			Iterator iter = targets.iterator();
+			while (iter.hasNext()) {
+				String lang = (String) iter.next();
+				LinkQuery qr = new LinkQuery(theEntry.getVolume().getLinkDbname(),CurrentDBTransaction.get());
+				qr.setQueryEntryId(Integer.parseInt(theEntry.getHandle()));
+				qr.setQueryLang(lang);
+				LinkDO[] DOarray = qr.getDOArray();
+				for (int i=0; i<DOarray.length;i++){
+					Link tempLink = new Link(DOarray[i]);
+					VolumeEntry linkedEntry = (VolumeEntry) theLinks.get(tempLink.getTargetId());
+					if (linkedEntry==null || linkedEntry.isEmpty()) {
+						linkedEntry = VolumeEntriesFactory.findEntryByEntryId(user, VolumesFactory.getVolumeByName(tempLink.getVolumeTarget()), tempLink.getTargetId());
+						theLinks.put(tempLink.getTargetId(),linkedEntry);
+						PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: "+ theEntry.getEntryId() + " TargetId: " + tempLink.getTargetId());
+					}
+					if (linkedEntry != null && !linkedEntry.isEmpty()) {
+						if (tempLink.getType() == null || !tempLink.getType().equals(Link.FINAL_TYPE)) {
+							getLinkedEntriesByEntry(linkedEntry, theLinks, targets, user);
+						}
+					}
+				}
+			}
+			
+		} catch(Exception ex){
+			throw new PapillonBusinessException("Exception in getLinkedEntriesByEntry()", ex);
+		}
+	}
+	
+	
+	public static HashMap getLinkedAxiesByEntry(VolumeEntry theEntry, HashMap theLinks, User user) throws PapillonBusinessException {
+		PapillonLogger.writeDebugMsg("getLinkedAxiesByEntry: "+ theEntry.getHeadword() + " entryId: " + theEntry.getEntryId());
+		HashMap theAxies = new HashMap();
 		try{
 			LinkQuery qr = new LinkQuery(theEntry.getVolume().getLinkDbname(),CurrentDBTransaction.get());
 			qr.setQueryEntryId(Integer.parseInt(theEntry.getHandle()));
 			LinkDO[] DOarray = qr.getDOArray();
 			for (int i=0; i<DOarray.length;i++){
 				Link tempLink = new Link(DOarray[i]);
-				VolumeEntry linkedEntry = VolumeEntriesFactory.findEntryByEntryId(user, VolumesFactory.getVolumeByName(tempLink.getVolumeTarget()), tempLink.getTargetId());
+				VolumeEntry linkedEntry = (VolumeEntry) theLinks.get(tempLink.getTargetId());
+				if (linkedEntry==null || linkedEntry.isEmpty()) {
+					linkedEntry = VolumeEntriesFactory.findEntryByEntryId(user, VolumesFactory.getVolumeByName(tempLink.getVolumeTarget()), tempLink.getTargetId());
+				}
 				if (linkedEntry != null && !linkedEntry.isEmpty()) {
-					tempLink.setLinkedEntry(linkedEntry);
-					//PapillonLogger.writeDebugMsg("getLinkVectorByEntry: linkedEntry added: "+ linkedEntry.getHeadword());
-					theLinks.add(tempLink);
+					PapillonLogger.writeDebugMsg("getLinkedAxiesByEntry: linkedEntry added: "+ linkedEntry.getHeadword() + " entryId: " + linkedEntry.getEntryId());
+					theLinks.put(tempLink.getTargetId(),linkedEntry);
+					if (tempLink.getType() != null && tempLink.getType().equals(Link.AXIE_TYPE)) {
+						theAxies.put(linkedEntry.getEntryId(),linkedEntry);
+					}
+					else {
+						theAxies.putAll(getLinkedAxiesByEntry(linkedEntry,theLinks,user));
+					}
 				}
 			}
 			
 		} catch(Exception ex){
-			throw new PapillonBusinessException("Exception in getLinksbyEntryId()", ex);
+			throw new PapillonBusinessException("Exception in getLinkedAxiesByEntry()", ex);
 		}
-		return theLinks;
+		return theAxies;
 	}
 	
 	

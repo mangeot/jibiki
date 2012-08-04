@@ -23,9 +23,8 @@ import fr.imag.clips.papillon.data.VolumeEntryQuery;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
@@ -553,7 +552,7 @@ import javax.swing.JOptionPane;
 			while (i<volumes.size()) {
 				boolean keepVolume = true;
 				Volume volume = (Volume)volumes.get(i);
-				Hashtable CDMelements = volume.getCdmElements();
+				HashMap CDMelements = volume.getCdmElements();
 				if (this.isAndTree) {
 					Iterator iterAnd = criteriaTree.iterator();
 					while (iterAnd.hasNext() && keepVolume) {
@@ -583,16 +582,16 @@ import javax.swing.JOptionPane;
 			}
 		}
 		
-		protected boolean filterAndCriteriaSubtree(Hashtable CDMelements, ArrayList subtree) {
+		protected boolean filterAndCriteriaSubtree(HashMap CDMelements, ArrayList subtree) {
 			boolean keepVolume = true;
 			if (subtree.size() >0) {
 				Iterator citer = subtree.iterator();
 				while ( citer.hasNext() && keepVolume) {
 					QueryCriteria criteria = (QueryCriteria)citer.next();
 					if (criteria.getLang() != null) {
-						Hashtable langElements = (Hashtable) CDMelements.get(criteria.getLang());
+						HashMap langElements = (HashMap) CDMelements.get(criteria.getLang());
 						if (langElements != null) {
-							Vector element = (Vector) langElements.get(criteria.getKey());
+							ArrayList element = (ArrayList) langElements.get(criteria.getKey());
 							keepVolume = (element != null);	
 						}
 						else {
@@ -604,7 +603,7 @@ import javax.swing.JOptionPane;
 			return keepVolume;
 		}
 		
-		protected boolean filterOrCriteriaSubtree(Hashtable CDMelements, ArrayList subtree) {
+		protected boolean filterOrCriteriaSubtree(HashMap CDMelements, ArrayList subtree) {
 			boolean keepVolume = false;
 			if (subtree.size() >0) {
 					Iterator citer = subtree.iterator();
@@ -612,9 +611,9 @@ import javax.swing.JOptionPane;
 						QueryCriteria criteria = (QueryCriteria)citer.next();
 						//PapillonLogger.writeDebugMsg("filterOrCriteria: " + criteria.getKey() + " langue : " + criteria.getLang());
 						if (criteria.getLang() != null) {
-							Hashtable langElements = (Hashtable) CDMelements.get(criteria.getLang());
+							HashMap langElements = (HashMap) CDMelements.get(criteria.getLang());
 							if (langElements != null) {
-								Vector element = (Vector) langElements.get(criteria.getKey());
+								ArrayList element = (ArrayList) langElements.get(criteria.getKey());
 								if (element != null) {
 									keepVolume = true;
 								}	

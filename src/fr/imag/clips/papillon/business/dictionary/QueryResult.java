@@ -54,7 +54,7 @@ package fr.imag.clips.papillon.business.dictionary;
 
 /* standards imports */
 
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Vector;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
@@ -83,8 +83,7 @@ public class QueryResult {
 	//protected VolumeEntry sourceEntry = null;
 	protected ArrayList sourceEntries = new ArrayList();
     protected VolumeEntry resultAxie = null;
-    protected Hashtable lexiesHashtable = new Hashtable();
-    protected Vector linkedEntries = null;
+    protected HashMap lexiesHashMap = new HashMap();
 	
     public QueryResult() {
         this.resultKind = UNKNOWN;
@@ -95,8 +94,7 @@ public class QueryResult {
         this.resultKind = qr.getResultKind();
         this.sourceEntries = qr.getSourceEntries();
         this.resultAxie = qr.getResultAxie();
-        this.lexiesHashtable = qr.getLexiesHashtable();
-        this.linkedEntries = qr.getLinkedEntries();
+        this.lexiesHashMap = qr.getLexiesHashMap();
     }
     
     
@@ -110,9 +108,9 @@ public class QueryResult {
         this.resultAxie = axie;
     }
     
-    public QueryResult(int kind, VolumeEntry source, VolumeEntry axie, Hashtable lexies) {
+    public QueryResult(int kind, VolumeEntry source, VolumeEntry axie, HashMap lexies) {
         this(kind, source, axie);
-        this.lexiesHashtable = lexies;
+        this.lexiesHashMap = lexies;
     }
     
     public void addSourceEntry(VolumeEntry ve) {
@@ -144,32 +142,24 @@ public class QueryResult {
         return this.resultKind;
     }
 
-    public void setResultAxie(VolumeEntry ax) {
-        this.resultAxie = ax;
+    public void setResultAxie(VolumeEntry axies) {
+        this.resultAxie = axies;
     }
     
     public VolumeEntry getResultAxie() {
         return this.resultAxie;
     }
 
-    public void setLexiesHashtable(Hashtable lexies) {
-        this.lexiesHashtable = lexies;
+    public void setLexiesHashMap(HashMap lexies) {
+        this.lexiesHashMap = lexies;
     }
     
-    public Hashtable getLexiesHashtable() {
-        return this.lexiesHashtable;
+    public HashMap getLexiesHashMap() {
+        return this.lexiesHashMap;
     }
-    
-    public void setLinkedEntries(Vector lexies) {
-        this.linkedEntries = lexies;
-    }
-    
-    public Vector getLinkedEntries() {
-        return this.linkedEntries;
-    }
-    
+        
     public java.util.Collection getLexiesCollection() {
-        return this.lexiesHashtable.values();
+        return this.lexiesHashMap.values();
     }
     
     

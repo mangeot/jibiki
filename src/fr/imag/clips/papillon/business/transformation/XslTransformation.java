@@ -312,70 +312,92 @@ public class XslTransformation implements ResultFormatter {
     public Node getFormattedResult(QueryResult qr, User usr)
             throws PapillonBusinessException {
 
+		Collection answers = new ArrayList();
         Document res = myDocumentBuilder.newDocument();
         Element rootdiv = res.createElement("div");
         rootdiv.setAttribute("class", "entry");
         res.appendChild(rootdiv);
+		VolumeEntry myAnswer = qr.getSourceEntry();
+		java.util.HashMap linkedEntries = qr.getLexiesHashMap();
 		
 		// FIXME: determine what to do for direct translation result:
         // hint, use jibikiXsltExtensions to resolve the links and format everything...
 		// for the moment, old school way...	
-		if (qr.getResultKind() == QueryResult.DIRECT_TRANSLATIONS_RESULT) {
-			VolumeEntry myAnswer = qr.getSourceEntry();
-			org.apache.xml.utils.PrefixResolver thePrefixResolver = myAnswer.getVolume().getPrefixResolver();
-			java.util.Vector linkedEntries = qr.getLinkedEntries();
-			java.util.Hashtable linksTable = myAnswer.getVolume().getLinksTable();
-			java.util.Hashtable linkTable = (java.util.Hashtable) linksTable.get(Volume.LINK_translationLinkName);
-			if (linkTable != null && linkedEntries != null && linkedEntries.size()>0) {
-				java.util.Vector eltVector =  (java.util.Vector) linkTable.get(Volume.LINK_ELEMENT_TYPE);											
-				java.util.Vector valueVector =  (java.util.Vector) linkTable.get(Volume.CDM_linkValue);											
+		if (qr.getResultKind() == QueryResult.AXIE_COLLECTION_RESULT) {
+		}
+		else {
+			insertLinkedEntries(myAnswer, linkedEntries);
+			answers.add(myAnswer);
+		}
+		if (null != dictXsl && !dictXsl.isEmpty()) {
+			// Format document source
+			for (Iterator iterator = answers.iterator();iterator.hasNext();) {
+				VolumeEntry theAnswer = (VolumeEntry) iterator.next();
+				Node resultNode = formatResult(theAnswer.getDom(), dictXsl, usr);
+				//	PapillonLogger.writeDebugMsg("ResultNode: " + qr.getSourceEntry().getHeadword() + " node: " + XMLServices.NodeToString(resultNode)+", "+resultNode.getNodeValue());
+				
+				rootdiv.appendChild(res.importNode(resultNode, true));
+				//	PapillonLogger.writeDebugMsg("rootdiv:"+rootdiv.getTextContent());
+			}				
+		}
+		return rootdiv;
+	} 
+	
+	protected static void insertLinkedEntries (VolumeEntry theEntry, java.util.HashMap linkedEntries) 
+	throws PapillonBusinessException {
+		//PapillonLogger.writeDebugMsg("insertLinkedEntries for: " +theEntry.getHeadword());
+		org.apache.xml.utils.PrefixResolver thePrefixResolver = theEntry.getVolume().getPrefixResolver();
+		java.util.HashMap linksTable = theEntry.getVolume().getLinksTable();
+		org.w3c.dom.Document theEntryDoc = theEntry.getDom();
+		Iterator myVeryOwnIterator = linksTable.keySet().iterator();
+		while(myVeryOwnIterator.hasNext()) {
+			java.util.HashMap linkTable = (java.util.HashMap) linksTable.get(myVeryOwnIterator.next());
+			if (linkTable != null) {
+				ArrayList eltVector =  (ArrayList) linkTable.get(Volume.LINK_ELEMENT_TYPE);											
+				ArrayList valueVector =  (ArrayList) linkTable.get(Volume.CDM_linkValue);											
+				ArrayList typeVector =  (ArrayList) linkTable.get(Volume.CDM_linkType);											
 				if (eltVector != null && eltVector.size() > 1 && valueVector != null && valueVector.size() > 1) {
-					org.apache.xpath.XPath eltXPath =  (org.apache.xpath.XPath) eltVector.elementAt(1);											
-					org.apache.xpath.XPath valueXPath =  (org.apache.xpath.XPath) valueVector.elementAt(1);		
-					NodeList linksElements = IndexEntry.getNodeListFromXPath(myAnswer.getDom().getDocumentElement(), eltXPath, thePrefixResolver);
+					org.apache.xpath.XPath eltXPath =  (org.apache.xpath.XPath) eltVector.get(1);											
+					org.apache.xpath.XPath valueXPath =  (org.apache.xpath.XPath) valueVector.get(1);		
+					NodeList linksElements = IndexEntry.getNodeListFromXPath(theEntryDoc.getDocumentElement(), eltXPath, thePrefixResolver);
 					if ((linksElements != null) && (linksElements.getLength() > 0)) {
 						for (int n = 0; n < linksElements.getLength(); n++) {
 							org.w3c.dom.Node myNode = linksElements.item(n);
-							String value = IndexEntry.getStringFromXPath((Element) myNode, valueXPath, thePrefixResolver);
-							boolean found = false;
-							Iterator linkedEntriesIterator = linkedEntries.iterator();
-							while (linkedEntriesIterator.hasNext() && !found) {
-								Link link = (Link) linkedEntriesIterator.next();
-								if (link.getTargetId().equals(value)) {
-									Node tempNode = myAnswer.getDom().importNode((Node) link.getLinkedEntry().getDom().getDocumentElement(), true);
-									NodeList nlt = myNode.getChildNodes();
-									if (nlt != null && nlt.getLength()>0) {
-										for(int t=0;t<nlt.getLength();t++) {
-											Node nt = nlt.item(t);
-											if (nt.getNodeType() == Node.TEXT_NODE) {
-												myNode.removeChild(nt);
+							NodeList valueNodeList = IndexEntry.getNodeListFromXPath((Element) myNode, valueXPath, thePrefixResolver);
+							if (valueNodeList != null && valueNodeList.getLength() > 0) {
+								Node valueNode = valueNodeList.item(0);
+								if (valueNode!=null) {
+									VolumeEntry linkedEntry = (VolumeEntry) linkedEntries.get(valueNode.getNodeValue());
+									if (linkedEntry != null && !linkedEntry.isEmpty()) {
+										//PapillonLogger.writeDebugMsg("insertLinkedEntry: " + linkedEntry.getHeadword());
+										NodeList childNodes = myNode.getChildNodes();
+										for(int c=0;c<childNodes.getLength();c++) {
+											Node childNode = childNodes.item(c);
+											if (childNode.getNodeType()==Node.ELEMENT_NODE) {
+												myNode.removeChild(childNode);
 											}
 										}
+										if (typeVector != null && typeVector.size() > 1) {
+											org.apache.xpath.XPath typeXPath =  (org.apache.xpath.XPath) typeVector.get(1);
+											NodeList typeNodeList = IndexEntry.getNodeListFromXPath((Element) myNode, typeXPath, thePrefixResolver);
+											if (typeNodeList != null && typeNodeList.getLength() > 0) {
+												Node typeNode = typeNodeList.item(0);
+												if (!typeNode.getNodeValue().equals(Link.FINAL_TYPE)) {
+													insertLinkedEntries(linkedEntry, linkedEntries);
+												}
+											}
+										}
+										Node tempNode = theEntryDoc.importNode((Node) linkedEntry.getDom().getDocumentElement(), true);
+										myNode.appendChild(tempNode);
 									}
-									myNode.appendChild(tempNode);
-									linkedEntries.remove(link);
-									found = true;
 								}
 							}
 						}
 					}
 				}
 			}
-			else {
-				PapillonLogger.writeDebugMsg("LinkedEntries null!");
-			}
-		}
-		if (null != dictXsl && !dictXsl.isEmpty()) {
-			// Format document source
-			Node resultNode = formatResult(qr.getSourceEntry().getDom(), dictXsl, usr);
-			//	PapillonLogger.writeDebugMsg("ResultNode: " + qr.getSourceEntry().getHeadword() + " node: " + XMLServices.NodeToString(resultNode)+", "+resultNode.getNodeValue());
-				
-			rootdiv.appendChild(res.importNode(resultNode, true));
-			//	PapillonLogger.writeDebugMsg("rootdiv:"+rootdiv.getTextContent());
-		}
-		
-		return rootdiv;
-	} 
+		}	
+	}
 	
 //PapillonLogger.writeDebugMsg("myAnser = "+myAnswer);
 
@@ -576,7 +598,7 @@ public class XslTransformation implements ResultFormatter {
      * @throws fr.imag.clips.papillon.business.PapillonBusinessException
      *
      */
-    private Node formatResult(Document docSource, XslSheet xsl, User usr)
+    private static Node formatResult(Document docSource, XslSheet xsl, User usr)
             throws PapillonBusinessException {
         try {
 

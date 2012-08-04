@@ -1089,50 +1089,36 @@ public class DictionariesFactory {
 	throws PapillonBusinessException {
         PapillonLogger.writeDebugMsg("expandResult: " + ve.getHeadword());
         //    
-        Collection myVector = new Vector();
-        QueryResult qr = new QueryResult();
-        qr.addSourceEntry(ve);
-        
-        //
-		String category = ve.getDictionary().getCategory();
-        if (!category.equals("monolingual")) {
-			String type = ve.getDictionary().getType();
+        HashMap theLinks = new HashMap();
+		Collection myArrayList = new ArrayList();
+ 
+		Collection realTargets = Utility.ArrayIntersection(ve.getDictionary().getTargetLanguagesArray(), targets);
+		String type = ve.getDictionary().getType();
             
-            //
-            if (type.equals("pivot")) {
-                
-                //
-                Collection realTargets = Utility.ArrayIntersection(ve.getDictionary().getTargetLanguagesArray(), targets);
-                qr.setResultKind(QueryResult.AXIE_COLLECTION_RESULT);
-				myVector = getPivotResults(qr, ve.getSourceLanguage(), realTargets, user);
-				
-				//
-            } else if (type.equals("direct")) {
-                
-                //
-                Collection realTargets = Utility.ArrayIntersection(ve.getVolume().getTargetLanguagesArray(), targets);
-                qr.setResultKind(QueryResult.DIRECT_TRANSLATIONS_RESULT);
-				
-				qr.setLinkedEntries(LinkFactory.getLinkVectorByEntry(user, ve));
-				//myVector.add(getDirectResults(qr, ve.getSourceLanguage(), realTargets, user));
-				
-				//
-            } else {
-                
-				// type monovolume: bilingual in the same file
-				// type monodirectional: bilingual in the same file
-				qr.setResultKind(QueryResult.UNIQUE_RESULT);
-				myVector.add(qr);
+		if (type.equals("pivot")) {
+			theLinks.put(ve.getEntryId(),ve);
+			HashMap axies = LinkFactory.getLinkedAxiesByEntry(ve,theLinks, user);
+			for (Iterator iter = axies.keySet().iterator(); iter.hasNext();) {
+				String entryId = (String) iter.next();
+				VolumeEntry axie = (VolumeEntry) axies.get(entryId);
+				HashMap tempLinks = (HashMap) theLinks.clone();
+				tempLinks.put(axie.getEntryId(),axie);
+				LinkFactory.getLinkedEntriesByEntry(axie, tempLinks, realTargets, user);
+				QueryResult qr = new QueryResult();
+				qr.addSourceEntry(axie);
+				qr.setLexiesHashMap(tempLinks);
+				myArrayList.add(qr);
 			}
-            
-		} else {
-            // monolingual
-            qr.setResultKind(QueryResult.UNIQUE_RESULT);
-            myVector.add(qr);
-        }
-        
-        //
-		return myVector;
+			
+		}
+		else {
+			QueryResult qr = new QueryResult();
+			qr.addSourceEntry(ve);
+			LinkFactory.getLinkedEntriesByEntry(ve, theLinks, realTargets, user);
+			qr.setLexiesHashMap(theLinks);
+			myArrayList.add(qr);
+		}        
+		return myArrayList;
     }
     
 	/** 
@@ -1208,9 +1194,10 @@ public class DictionariesFactory {
 			}
 			else if (type.equals("direct")) {
 				Collection realTargets = Utility.ArrayIntersection(ve.getVolume().getTargetLanguagesArray(), targets);
-				Iterator iter = realTargets.iterator();
 				qr.setResultKind(QueryResult.DIRECT_TRANSLATIONS_RESULT);
-				qr.setLinkedEntries(LinkFactory.getLinkVectorByEntry(user, ve));
+				HashMap theHashMap = new HashMap();
+				LinkFactory.getLinkedEntriesByEntry(ve, theHashMap, realTargets, user);
+				qr.setLexiesHashMap(theHashMap);
 				//qr = getDirectResults(qr, ve.getSourceLanguage(), realTargets, user);
 				result.add(qr);
 			}
@@ -1224,7 +1211,7 @@ public class DictionariesFactory {
 		//PapillonLogger.writeDebugMsg("end of addAxiesAndTranslations");
 		return result;
 	}
-	
+			
 	private static QueryResult findQueryResultWithAxieId(Collection res, String aid) throws PapillonBusinessException {
 		Iterator it = res.iterator();
 		while (it.hasNext()) {
@@ -1238,7 +1225,7 @@ public class DictionariesFactory {
 	private static void addPivotTranslations(QueryResult qr, Collection targets) throws PapillonBusinessException {
 		
 		VolumeEntry myAxie = qr.getResultAxie();
-		Hashtable resLexies = new Hashtable();
+		HashMap resLexies = new HashMap();
 		
 		for (Iterator iter2 = targets.iterator(); iter2.hasNext();) {
 			String target = (String)iter2.next();
@@ -1249,7 +1236,7 @@ public class DictionariesFactory {
 				resLexies.put(myTargetLexie.getEntryId(), myTargetLexie);
 			}
 		}
-		qr.setLexiesHashtable(resLexies);
+		qr.setLexiesHashMap(resLexies);
 	}
 	
 	private static void addPivaxTranslations(QueryResult qr, Collection targets) throws PapillonBusinessException {
@@ -1259,7 +1246,7 @@ public class DictionariesFactory {
 		String sourceAxemeLang = sourceLang.toUpperCase();
 		String axiLang = "axi";
 		
-		Hashtable resLexies = new Hashtable();
+		HashMap resLexies = new HashMap();
 		
 		java.util.Collection axemesVolumesCollection = VolumesFactory.getVolumesArray(dictName,sourceAxemeLang,null);
 		if (axemesVolumesCollection !=null && axemesVolumesCollection.size()>0) {
@@ -1373,7 +1360,7 @@ public class DictionariesFactory {
 				}
 			}
 		}
-		qr.setLexiesHashtable(resLexies);
+		qr.setLexiesHashMap(resLexies);
 	}
 	
 	
@@ -1453,7 +1440,7 @@ public class DictionariesFactory {
 					
 					// FIXME: Typecasting will not work for papillon until axies are treated normally...
 					VolumeEntry myAxie = (VolumeEntry) iter.next();
-					Hashtable resLexies = new Hashtable();
+					HashMap resLexies = new HashMap();
 					
 					//
 					for (Iterator iter2 = targets.iterator(); iter2.hasNext();) {
@@ -1472,7 +1459,7 @@ public class DictionariesFactory {
 					//
 					QueryResult qr = new QueryResult(proto);
 					qr.setResultAxie(myAxie);
-					qr.setLexiesHashtable(resLexies);
+					qr.setLexiesHashMap(resLexies);
 					qrset.add(qr);
 				}
 				// Return a collection of axieset...
@@ -1503,7 +1490,7 @@ public class DictionariesFactory {
 		if (null != qr && null != qr.getSourceEntry()) {
 			VolumeEntry mySourceEntry = qr.getSourceEntry();
 			String dictName = mySourceEntry.getDictionaryName();
-			Hashtable resLexies = new Hashtable();
+			HashMap resLexies = new HashMap();
 			
 			// DIRECT TRANSLATION RESULTS + AXIES
 			for (Iterator iter = targets.iterator(); iter.hasNext();) {
@@ -1558,7 +1545,7 @@ public class DictionariesFactory {
 			}
 			// PIVOT AXIE RESULTS
 			// Done in the Formatter
-			qr.setLexiesHashtable(resLexies);
+			qr.setLexiesHashMap(resLexies);
 		}
 		//PapillonLogger.writeDebugMsg("end of getDirectResults");
 		

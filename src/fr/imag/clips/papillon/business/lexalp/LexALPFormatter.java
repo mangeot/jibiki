@@ -220,7 +220,7 @@ public class LexALPFormatter
             while (it.hasNext()) {
                 VolumeEntry ve = (VolumeEntry) it.next();
                 // Make sure the source entry is not duplicated in the result set.
-                qr.getLexiesHashtable().remove(ve.getEntryId());
+                qr.getLexiesHashMap().remove(ve.getEntryId());
                 // Then format the group of related entries...
                 String ls = IndexEntry.getCdmString(ve, "lexalp-legal-system");
                 if (! matchingGroups.containsKey(ls)) {
@@ -357,7 +357,7 @@ public class LexALPFormatter
         }
         for(Iterator itResults = results.iterator(); itResults.hasNext();) {
             try {
-                qr.getLexiesHashtable().remove(((VolumeEntry)itResults.next()).getEntryId());
+                qr.getLexiesHashMap().remove(((VolumeEntry)itResults.next()).getEntryId());
             } catch (PapillonBusinessException e) {
                 // do nothing... 
             }

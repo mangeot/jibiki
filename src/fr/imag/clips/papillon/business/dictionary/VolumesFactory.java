@@ -170,7 +170,7 @@
  * context in which all db commands will be executed.
  *
  * Revision 1.3.2.4  2005/02/06 22:43:49  mangeot
- * Merged the 2 Hashtables CDM Elements and XPaths into one
+ * Merged the 2 HashMaps CDM Elements and XPaths into one
  * Added a boolean (reverse-lookup) in the volume metadata and functionalities in order to perform a reverse lookup when no direct lookup result is found
  * Added a boolean (index) in the volume metadata for indexing the only specified CDM Elements
  *
@@ -223,7 +223,11 @@ import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.stream.StreamSource;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Enumeration;
 import java.io.StringReader;
 
 /**
@@ -343,9 +347,9 @@ public class VolumesFactory {
 			tmplEntry = addDmlUrlInTemplateEntry(tmplEntry);
 		}
 		upgradeCdmLinkElement(volume.getOwnerDocument());
-				Hashtable cdmElements = createCdmElementsTable(volume, source, tmplEntry);
+				HashMap cdmElements = createCdmElementsTable(volume, source, tmplEntry);
 				
-				Hashtable linksTable = createLinksTable(volume, tmplEntry);
+				HashMap linksTable = createLinksTable(volume, tmplEntry, cdmElements);
 				
 		PapillonLogger.writeDebugMsg("The CDM elements and links hashtables have been created");
 				
@@ -379,9 +383,9 @@ public class VolumesFactory {
 	boolean virtual = false;
 	volume = (Element) docXml.getElementsByTagName(VOLUME_TAG).item(0);
 	if (volume != null) {
-		Hashtable cdmElements = createCdmElementsTable(volume, theVolume.getSourceLanguage(),theVolume.getTemplateEntry());
+		HashMap cdmElements = createCdmElementsTable(volume, theVolume.getSourceLanguage(),theVolume.getTemplateEntry());
 		theVolume.setCdmElements(cdmElements);
-		Hashtable linksTable = createLinksTable(volume, theVolume.getTemplateEntry());
+		HashMap linksTable = createLinksTable(volume, theVolume.getTemplateEntry(), cdmElements);
 		theVolume.setLinksTable(linksTable);
 	}
 	}
@@ -400,25 +404,25 @@ public class VolumesFactory {
         return myXPath;
     }
 	
-    /* cdmElements Hashtable = {lang => Hashtable} = {CDM_element => Vector} = (xpathString, isIndex, XPath)*/
-    protected static boolean compileXPathTable(java.util.Hashtable cdmElements, org.apache.xml.utils.PrefixResolver aPrefixResolver)
+    /* cdmElements HashMap = {lang => HashMap} = {CDM_element => ArrayList} = (xpathString, isIndex, XPath)*/
+    protected static boolean compileXPathTable(java.util.HashMap cdmElements, org.apache.xml.utils.PrefixResolver aPrefixResolver)
 	throws PapillonBusinessException {
         boolean result = false;
-        for (java.util.Enumeration langKeys = cdmElements.keys(); langKeys.hasMoreElements();) {
-            String lang = (String) langKeys.nextElement();
-            java.util.Hashtable tmpTable = (java.util.Hashtable) cdmElements.get(lang);
-            for (java.util.Enumeration keys = tmpTable.keys(); keys.hasMoreElements();) {
-                String CDM_element = (String) keys.nextElement();
-                java.util.Vector eltVector = (java.util.Vector) tmpTable.get(CDM_element);
-                if (eltVector != null && eltVector.size() == 2) {
-                    String xpathString = (String) eltVector.elementAt(0);
+        for (Iterator langKeys = cdmElements.keySet().iterator(); langKeys.hasNext();) {
+            String lang = (String) langKeys.next();
+            java.util.HashMap tmpTable = (java.util.HashMap) cdmElements.get(lang);
+            for (Iterator keys = tmpTable.keySet().iterator(); keys.hasNext();) {
+                String CDM_element = (String) keys.next();
+                ArrayList eltArrayList = (ArrayList) tmpTable.get(CDM_element);
+                if (eltArrayList != null && eltArrayList.size() == 2) {
+                    String xpathString = (String) eltArrayList.get(0);
                     org.apache.xpath.XPath myXPath = compileXPath(xpathString, aPrefixResolver);
                     if (myXPath != null) {
-						// PapillonLogger.writeDebugMsg("compileXPathTable: CDM element: " + CDM_element + " xpath not null: " + xpathString);
-                        eltVector.add(myXPath);
+						 //PapillonLogger.writeDebugMsg("compileXPathTable: CDM element: " + CDM_element + " xpath not null: " + xpathString);
+                        eltArrayList.add(myXPath);
                         result = true;
                     } else {
-						//      PapillonLogger.writeDebugMsg("compileXPathTable: CDM element: " + CDM_element + " xpath null: " + xpathString);
+						//PapillonLogger.writeDebugMsg("compileXPathTable: CDM element: " + CDM_element + " xpath null: " + xpathString);
                     }
                 }
             }
@@ -427,9 +431,9 @@ public class VolumesFactory {
     }
 	
 	
-	protected static Hashtable createCdmElementsTable(Element volume, String source, String tmplEntry) 
+	protected static HashMap createCdmElementsTable(Element volume, String source, String tmplEntry) 
 	throws fr.imag.clips.papillon.business.PapillonBusinessException {
-		Hashtable cdmElements = null;
+		HashMap cdmElements = null;
 		
         // Cette méthode dépend du schéma des volumes.
  		
@@ -444,13 +448,13 @@ public class VolumesFactory {
 		}
 		
         org.w3c.dom.Document myDoc = XMLServices.buildDOMTree(tmplEntry);
-		String dml_prefix = "";
-        if (myDoc != null) {
-			dml_prefix = getDmlPrefix(myDoc.getDocumentElement());
-        }
-		else {
-            PapillonLogger.writeDebugMsg("Error in createCdmElementsTable: the template entry doc is empty!");
+        String dml_prefix = "";
+		if (myDoc == null) {
+           PapillonLogger.writeDebugMsg("Error in createCdmElementsTable: the template entry doc is empty!");
 			throw new PapillonBusinessException("Error in createCdmElementsTable: the template entry doc is empty!");
+		}
+		else {
+			dml_prefix = getDmlPrefix(myDoc.getDocumentElement());
 		}
 		
         NodeList cdmElts = volume.getElementsByTagName(CDM_ELEMENTS_TAG);
@@ -467,23 +471,23 @@ public class VolumesFactory {
 		return cdmElements;
 	}
 
-    /* linksTable Hashtable = {name => Hashtable} = {element => Vector} = (xpathString, XPath)*/
-    protected static boolean compileLinksXPathTable(java.util.Hashtable linksTable, org.apache.xml.utils.PrefixResolver aPrefixResolver)
+    /* linksTable HashMap = {name => HashMap} = {element => ArrayList} = (xpathString, XPath)*/
+    protected static boolean compileLinksXPathTable(java.util.HashMap linksTable, org.apache.xml.utils.PrefixResolver aPrefixResolver)
 	throws PapillonBusinessException {
         boolean result = false;
-        for (java.util.Enumeration nameKeys = linksTable.keys(); nameKeys.hasMoreElements();) {
-            String name = (String) nameKeys.nextElement();
-            java.util.Hashtable tmpTable = (java.util.Hashtable) linksTable.get(name);
-            for (java.util.Enumeration keys = tmpTable.keys(); keys.hasMoreElements();) {
-                String element = (String) keys.nextElement();
+        for (Iterator nameKeys = linksTable.keySet().iterator(); nameKeys.hasNext();) {
+            String name = (String) nameKeys.next();
+            java.util.HashMap tmpTable = (java.util.HashMap) linksTable.get(name);
+            for (Iterator keys = tmpTable.keySet().iterator(); keys.hasNext();) {
+                String element = (String) keys.next();
 				if (!element.equals(Volume.LINK_STRING_LANG_TYPE)) {
-                java.util.Vector eltVector = (java.util.Vector) tmpTable.get(element);
-                if (eltVector != null && eltVector.size() == 1) {
-                    String xpathString = (String) eltVector.elementAt(0);
+                ArrayList eltArrayList = (ArrayList) tmpTable.get(element);
+                if (eltArrayList != null && eltArrayList.size() == 1) {
+                    String xpathString = (String) eltArrayList.get(0);
                     org.apache.xpath.XPath myXPath = compileXPath(xpathString, aPrefixResolver);
                     if (myXPath != null) {
 						 //PapillonLogger.writeDebugMsg("compileLinksXPathTable: CDM element: " + element + " xpath not null: " + xpathString);
-                        eltVector.add(myXPath);
+                        eltArrayList.add(myXPath);
                         result = true;
                     } else {
 						//PapillonLogger.writeDebugMsg("compileXPathTable: CDM element: " + element + " xpath null: " + xpathString);
@@ -496,9 +500,9 @@ public class VolumesFactory {
     }	
 	
 
-	protected static Hashtable createLinksTable(Element volume, String tmplEntry) 
+	protected static HashMap createLinksTable(Element volume, String tmplEntry, HashMap cdmElements) 
 	throws fr.imag.clips.papillon.business.PapillonBusinessException {
-		Hashtable linksTable = null;
+		HashMap linksTable = null;
 
 		
         // Cette méthode dépend du schéma des volumes.
@@ -509,26 +513,27 @@ public class VolumesFactory {
 		if (tmplEntry == null || tmplEntry.equals("")) {
 			throw new PapillonBusinessException("Error in createLinksTable: there is no template entry!");
 		}
-		
 
-        NodeList cdmElts = volume.getElementsByTagName(CDM_ELEMENTS_TAG);
+		org.w3c.dom.Document myDoc = XMLServices.buildDOMTree(tmplEntry);
+		String dml_prefix = "";
+        if (myDoc != null) {
+			dml_prefix = getDmlPrefix(myDoc.getDocumentElement());
+		}
+		else {
+            PapillonLogger.writeDebugMsg("Error in createLinksTable: the template entry doc is empty!");
+			throw new PapillonBusinessException("Error in createLinksTable: the template entry doc is empty!");
+		}
+		NodeList cdmElts = volume.getElementsByTagName(CDM_ELEMENTS_TAG);
         if (null != cdmElts && cdmElts.getLength() > 0) {
             Element cdmElt = (Element) cdmElts.item(0);
-            linksTable = buildLinksTable(cdmElt);
+            linksTable = buildLinksTable(cdmElt, cdmElements, dml_prefix);
         } else {
             PapillonLogger.writeDebugMsg("No " + CDM_ELEMENTS_TAG + " tag");
 			throw new PapillonBusinessException("Error in createLinksTable: there is no " + CDM_ELEMENTS_TAG + " tag!");
         }
 		
-       org.w3c.dom.Document myDoc = XMLServices.buildDOMTree(tmplEntry);
-        if (myDoc != null) {
-			org.apache.xml.utils.PrefixResolver tmplPrefixResolver = new org.apache.xml.utils.PrefixResolverDefault(myDoc.getDocumentElement());
-            compileLinksXPathTable(linksTable, tmplPrefixResolver);
-        }
-		else {
-            PapillonLogger.writeDebugMsg("Error in createLinksTable: the template entry doc is empty!");
-			throw new PapillonBusinessException("Error in createLinksTable: the template entry doc is empty!");
-		}
+		org.apache.xml.utils.PrefixResolver tmplPrefixResolver = new org.apache.xml.utils.PrefixResolverDefault(myDoc.getDocumentElement());
+		compileLinksXPathTable(linksTable, tmplPrefixResolver);
 		return linksTable;
 	}
 	
@@ -544,7 +549,7 @@ public class VolumesFactory {
      * @param String
      * @param String
      * @param String
-     * @param Hashtable
+     * @param HashMap
      * @param String
      * @param String
      * @param String
@@ -555,7 +560,7 @@ public class VolumesFactory {
      */
     protected static Volume createUniqueVolume(String name, String dictname, String dbname, String location,
                                                String source, String targets, String href,
-                                               java.util.Hashtable cdmElements, java.util.Hashtable linksTable, String xmlCode, String xmlSchema,
+                                               java.util.HashMap cdmElements, java.util.HashMap linksTable, String xmlCode, String xmlSchema,
                                                String tmplInterface, String tmplEntry, boolean reverse)
             throws fr.imag.clips.papillon.business.PapillonBusinessException {
         Volume myVolume = null;
@@ -1077,18 +1082,18 @@ public class VolumesFactory {
      * @param String
      * @param String
      * @param String
-     * @return Hashtable
+     * @return HashMap
      * @throws PapillonBusinessException
      */
-    /* cdmElements Hashtable = {lang => Hashtable} = {CDM_element => Vector} = (xpathString, isIndex, XPath)*/
-    public static Hashtable buildCdmElementsTable(String xmlCode, String sourceLanguage, org.apache.xml.utils.PrefixResolver thePrefixResolver)
+    /* cdmElements HashMap = {lang => HashMap} = {CDM_element => ArrayList} = (xpathString, isIndex, XPath)*/
+    public static HashMap buildCdmElementsTable(String xmlCode, String sourceLanguage, org.apache.xml.utils.PrefixResolver thePrefixResolver, String dml_prefix)
             throws fr.imag.clips.papillon.business.PapillonBusinessException {
-        Hashtable cdmElements = new Hashtable();
+        HashMap cdmElements = new HashMap();
         Document docXml = XMLServices.buildDOMTree(xmlCode);
         NodeList cdmElts = docXml.getElementsByTagName(CDM_ELEMENTS_TAG);
         if (null != cdmElts && cdmElts.getLength() > 0) {
             Element cdmElt = (Element) cdmElts.item(0);
-            cdmElements = buildCdmElementsTable(cdmElt, sourceLanguage, getDmlPrefix(docXml.getDocumentElement()));
+            cdmElements = buildCdmElementsTable(cdmElt, sourceLanguage, dml_prefix);
         } else {
             PapillonLogger.writeDebugMsg("No " + CDM_ELEMENTS_TAG + " tag!");
         }
@@ -1100,12 +1105,12 @@ public class VolumesFactory {
     /**
      * @param Node
      * @param String
-     * @return Hashtable
+     * @return HashMap
      */
-    /* cdmElements Hashtable = {lang => Hashtable} = {CDM_element => Vector} = (xpathString, isIndex, XPath)*/
-    protected static Hashtable buildCdmElementsTable(Node cdmElt, String sourceLanguage, String dml_prefix) {
-        Hashtable cdmElements = new Hashtable();
-        NodeList cdmChilds = cdmElt.getChildNodes();
+    /* cdmElements HashMap = {lang => HashMap} = {CDM_element => ArrayList} = (xpathString, isIndex, XPath)*/
+    protected static HashMap buildCdmElementsTable(Node cdmElt, String sourceLanguage, String dml_prefix) {
+        HashMap cdmElements = new HashMap();
+       NodeList cdmChilds = cdmElt.getChildNodes();
         for (int i = 0; i < cdmChilds.getLength(); i++) {
             Node myNode = cdmChilds.item(i);
             if (myNode.getNodeType() == Node.ELEMENT_NODE) {
@@ -1147,18 +1152,18 @@ public class VolumesFactory {
      * @param String
      * @param String
      * @param String
-     * @return Hashtable
+     * @return HashMap
      * @throws PapillonBusinessException
      */
-    /* cdmElements Hashtable = {lang => Hashtable} = {CDM_element => Vector} = (xpathString, isIndex, XPath)*/
-    public static Hashtable buildLinksTable(String xmlCode, org.apache.xml.utils.PrefixResolver thePrefixResolver)
+    /* cdmElements HashMap = {lang => HashMap} = {CDM_element => ArrayList} = (xpathString, isIndex, XPath)*/
+    public static HashMap buildLinksTable(String xmlCode, org.apache.xml.utils.PrefixResolver thePrefixResolver, HashMap cdmElements)
 	throws fr.imag.clips.papillon.business.PapillonBusinessException {
-        Hashtable linksTable = new Hashtable();
+        HashMap linksTable = new HashMap();
         Document docXml = XMLServices.buildDOMTree(xmlCode);
         NodeList cdmElts = docXml.getElementsByTagName(CDM_ELEMENTS_TAG);
         if (null != cdmElts && cdmElts.getLength() > 0) {
             Element cdmElt = (Element) cdmElts.item(0);
-            linksTable = buildLinksTable(cdmElt);
+            linksTable = buildLinksTable(cdmElt, cdmElements, getDmlPrefix(docXml.getDocumentElement()));
         } else {
             PapillonLogger.writeDebugMsg("No " + CDM_ELEMENTS_TAG + " tag!");
         }
@@ -1170,13 +1175,21 @@ public class VolumesFactory {
 	/**
      * @param Node
      * @param String
-     * @return Hashtable
+     * @return HashMap
      */
-    /* linksTable Hashtable = {name => Hashtable} = {element => Vector} (xpathString, XPath) */
-    protected static Hashtable buildLinksTable(Node cdmElt) {
-        Hashtable linksTable = new Hashtable();
+    /* linksTable HashMap = {name => HashMap} = {element => ArrayList} (xpathString, XPath) */
+    protected static HashMap buildLinksTable(Node cdmElt, HashMap cdmElements, String dml_prefix) {
+		HashMap linksTable = new HashMap();
+		
+		String contribPath = getCdmXPathString(cdmElements, Volume.CDM_contribution, Volume.DEFAULT_LANG);
+        String entryPath = getCdmXPathString(cdmElements, Volume.CDM_templateEntry, Volume.DEFAULT_LANG);
+        String entryTag = Volume.getTagNameFromXPath(entryPath);
+		if (dml_prefix != null && !dml_prefix.equals("")) {
+			dml_prefix += ":";
+		}
+		
         NodeList cdmChilds = cdmElt.getChildNodes();
-        for (int i = 0; i < cdmChilds.getLength(); i++) {
+		for (int i = 0; i < cdmChilds.getLength(); i++) {
             Node myNode = cdmChilds.item(i);
             if (myNode.getNodeType() == Node.ELEMENT_NODE) {
                 Element myElt = (Element) myNode;
@@ -1195,12 +1208,18 @@ public class VolumesFactory {
 								if (nameAttr != null) {
 									name = nameAttr.getValue();
 								}
-								String xpath = linkElt.getAttribute(XPATH_ATTRIBUTE);
-								Hashtable linkTable = new java.util.Hashtable();
-								java.util.Vector theVector = new java.util.Vector();
-								theVector.add(xpath);
-								//PapillonLogger.writeDebugMsg("addLinkInTable: " + name + " xpath: " + xpath);
-								linkTable.put(Volume.LINK_ELEMENT_TYPE,theVector);
+								String xpathString = linkElt.getAttribute(XPATH_ATTRIBUTE);
+								/* update xpath with DML metadata elements */
+								if (xpathString.indexOf(contribPath) < 0 && xpathString.indexOf(entryPath) == 0) {
+									xpathString = searchAndReplace(xpathString, entryPath,
+																   contribPath + "/" + dml_prefix + VolumeEntry.dataTag + "/" + entryTag);
+								}
+								
+								HashMap linkTable = new HashMap();
+								ArrayList theArrayList = new ArrayList();
+								theArrayList.add(xpathString);
+								//PapillonLogger.writeDebugMsg("addLinkInTable: " + name + " xpath: " + xpathString);
+								linkTable.put(Volume.LINK_ELEMENT_TYPE,theArrayList);
 								
 								String lang = Volume.DEFAULT_LANG;
 								Attr langAttr = linkElt.getAttributeNodeNS(DML_URI, LANG_ATTRIBUTE);
@@ -1216,10 +1235,10 @@ public class VolumesFactory {
 									if (linkChildNode.getNodeType() == Node.ELEMENT_NODE) {
 										Element linkChildElt = (Element) linkChildNode;
 										String linkChildName = linkChildElt.getTagName();
-										xpath = linkChildElt.getAttribute(XPATH_ATTRIBUTE);
-										java.util.Vector secVector = new java.util.Vector();
-										secVector.add(xpath);
-									linkTable.put(linkChildName,secVector);
+										String xpath = linkChildElt.getAttribute(XPATH_ATTRIBUTE);
+										ArrayList secArrayList = new ArrayList();
+										secArrayList.add(xpath);
+									linkTable.put(linkChildName,secArrayList);
 										//PapillonLogger.writeDebugMsg("addLinkInTable: " + linkChildName + " xpath: " + xpath);
 									}
 								}
@@ -1280,10 +1299,10 @@ public class VolumesFactory {
 	
 
     /**
-     * @param Hashtable
+     * @param HashMap
      */
-    /* cdmElements Hashtable = {lang => Hashtable} = {CDM_element => Vector} = (xpathString, isIndex, XPath)*/
-    protected static void updateCdmElementsTable(Hashtable cdmElements, String dml_prefix) {
+    /* cdmElements HashMap = {lang => HashMap} = {CDM_element => ArrayList} = (xpathString, isIndex, XPath)*/
+    protected static void updateCdmElementsTable(HashMap cdmElements, String dml_prefix) {
 
 		if (dml_prefix != null && !dml_prefix.equals("")) {
 			dml_prefix += ":";
@@ -1293,34 +1312,34 @@ public class VolumesFactory {
         String entryPath = getCdmXPathString(cdmElements, Volume.CDM_entry, Volume.DEFAULT_LANG);
         String entryTag = Volume.getTagNameFromXPath(entryPath);
 
-        for (java.util.Enumeration langKeys = cdmElements.keys(); langKeys.hasMoreElements();) {
-            String lang = (String) langKeys.nextElement();
-            java.util.Hashtable tmpTable = (java.util.Hashtable) cdmElements.get(lang);
-            for (java.util.Enumeration keys = tmpTable.keys(); keys.hasMoreElements();) {
-                String CDM_element = (String) keys.nextElement();
-                java.util.Vector eltVector = (java.util.Vector) tmpTable.get(CDM_element);
-                if (eltVector != null && eltVector.size() >= 2) {
-                    String xpathString = (String) eltVector.elementAt(0);
+        for (Iterator  langKeys = cdmElements.keySet().iterator(); langKeys.hasNext();) {
+            String lang = (String) langKeys.next();
+            HashMap tmpTable = (java.util.HashMap) cdmElements.get(lang);
+            for (Iterator keys = tmpTable.keySet().iterator(); keys.hasNext();) {
+                String CDM_element = (String) keys.next();
+                ArrayList eltArrayList = (ArrayList) tmpTable.get(CDM_element);
+                if (eltArrayList != null && eltArrayList.size() >= 2) {
+                    String xpathString = (String) eltArrayList.get(0);
                     if (xpathString.indexOf(contribPath) < 0 && xpathString.indexOf(entryPath) == 0) {
                         xpathString = searchAndReplace(xpathString, entryPath,
                                 contribPath + "/" + dml_prefix + VolumeEntry.dataTag + "/" + entryTag);
-                        eltVector.remove(0);
-                        eltVector.add(0, xpathString);
+                        eltArrayList.remove(0);
+                        eltArrayList.add(0, xpathString);
                     }
                 }
             }
         }
         /* Here I keep the original entry xpath in order to use it when I load the template entry */
         addCdmElementInTable(cdmElements, Volume.CDM_templateEntry, Volume.DEFAULT_LANG, entryPath, false);
-    }
-
+    }	
+	
 
     /**
-     * @param Hashtable
+     * @param HashMap
      * @param String
      */
-    /* cdmElements Hashtable = {lang => Hashtable} = {CDM_element => Vector} = (xpathString, isIndex, XPath)*/
-    protected static void completeCdmElementsTable(Hashtable elementsTable, String sourceLanguage, String dml_prefix) {
+    /* cdmElements HashMap = {lang => HashMap} = {CDM_element => ArrayList} = (xpathString, isIndex, XPath)*/
+    protected static void completeCdmElementsTable(HashMap elementsTable, String sourceLanguage, String dml_prefix) {
 		
 		if (dml_prefix != null && !dml_prefix.equals("")) {
 			dml_prefix += ":";
@@ -1543,12 +1562,12 @@ public class VolumesFactory {
 
     /**
      * @param String
-     * @param Hashtable
+     * @param HashMap
      * @return String
      * @throws PapillonBusinessException
      */
     // embeds the template entry into a contribution element
-    public static String updateTemplateEntry(String tmplEntry, Hashtable cdmElements)
+    public static String updateTemplateEntry(String tmplEntry, HashMap cdmElements)
             throws fr.imag.clips.papillon.business.PapillonBusinessException {
         if (tmplEntry != null && !tmplEntry.equals("")) {
             org.w3c.dom.Document templateDoc = XMLServices.buildDOMTree(tmplEntry);			
@@ -1606,12 +1625,14 @@ public class VolumesFactory {
 	}
 	
 	public static String getPrefix(Element element, String namespaceUri) {
+		//PapillonLogger.writeDebugMsg("get dml prefix: " + element.getNodeName() + " " + DML_URI);
 		String prefix = null;
 		org.w3c.dom.NamedNodeMap atts = element.getAttributes();
 		int i=0;
 		while (i < atts.getLength() && prefix ==null) {
 			Node node = atts.item(i);
 			String name = node.getNodeName();
+			//PapillonLogger.writeDebugMsg("get dml prefix: name : " + name + " value: " + node.getNodeValue());
 			if (namespaceUri.equals(node.getNodeValue())
 				&& (name != null && (XMLNAMESPACE.equals(name) || name.startsWith(XMLNAMESPACE + ":")))) {
 				prefix = node.getLocalName();
@@ -1640,19 +1661,19 @@ public class VolumesFactory {
 	
 
     /**
-     * @param Hashtable
+     * @param HashMap
      * @param String
      * @param String
      * @return String
      */
-    protected static String getCdmXPathString(Hashtable table, String name, String lang) {
+    protected static String getCdmXPathString(HashMap table, String name, String lang) {
         String res = null;
         if (table != null) {
-            java.util.Hashtable tmpTable = (java.util.Hashtable) table.get(lang);
+            java.util.HashMap tmpTable = (java.util.HashMap) table.get(lang);
             if (tmpTable != null) {
-                java.util.Vector myVector = (java.util.Vector) tmpTable.get(name);
-                if (myVector != null && myVector.size() > 0) {
-                    res = (String) myVector.elementAt(0);
+                java.util.ArrayList myArrayList = (java.util.ArrayList) tmpTable.get(name);
+                if (myArrayList != null && myArrayList.size() > 0) {
+                    res = (String) myArrayList.get(0);
                 }
             }
         }
@@ -1661,25 +1682,25 @@ public class VolumesFactory {
 
 
     /**
-     * @param Hashtable
+     * @param HashMap
      * @param String
      * @param String
      * @param String
      * @param boolean
      */
-    protected static void addCdmElementInTable(Hashtable table, String elt, String lang, String xpathString,
+    protected static void addCdmElementInTable(HashMap table, String elt, String lang, String xpathString,
                                                boolean isIndex) {
-        /* cdmElements Hashtable = {lang => Hashtable} = {CDM_element => Vector} = (xpathString, isIndex, XPath)*/
+        /* cdmElements HashMap = {lang => HashMap} = {CDM_element => ArrayList} = (xpathString, isIndex, XPath)*/
 //		PapillonLogger.writeDebugMsg("addCdmElementInTable: elt: " + elt + " lang: " + lang + " xpath: " + xpathString + " isIndex: " + isIndex);
-        Vector xpathAndIndexVector = new Vector();
-        xpathAndIndexVector.add(xpathString);
-        xpathAndIndexVector.add(new Boolean(isIndex));
-        Hashtable tmpTable = (Hashtable) table.get(lang);
+        ArrayList xpathAndIndexList = new ArrayList();
+        xpathAndIndexList.add(xpathString);
+        xpathAndIndexList.add(new Boolean(isIndex));
+        HashMap tmpTable = (HashMap) table.get(lang);
         if (tmpTable == null) {
-            tmpTable = new Hashtable();
+            tmpTable = new HashMap();
             table.put(lang, tmpTable);
         }
-        tmpTable.put(elt, xpathAndIndexVector);
+        tmpTable.put(elt, xpathAndIndexList);
     }
 
 

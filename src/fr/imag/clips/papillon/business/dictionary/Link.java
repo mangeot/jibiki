@@ -28,10 +28,13 @@ public class Link {
 	// Beware, for the text database columns, there is an UTF-8 conversion needed
 	// but for the character columns, no need !
     
+	
+	public static final String FINAL_TYPE = "final";
+	public static final String AXIE_TYPE = "axie";
+
     /**
      * The DO of the Dictionary.
      */
-    
     protected LinkDO myDO = null;
 	protected VolumeEntry linkedEntry = null;
 

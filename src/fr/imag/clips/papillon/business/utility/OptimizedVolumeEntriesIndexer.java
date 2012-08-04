@@ -24,8 +24,8 @@ public class OptimizedVolumeEntriesIndexer {
 
     public static void rebuildIndexes(Volume volume) throws PapillonBusinessException {
         DBConnection myDbConnection = null;
-		java.util.Hashtable CdmElementsTable = volume.getCdmElements();
-		java.util.Hashtable linksTable = volume.getLinksTable();
+		java.util.HashMap CdmElementsTable = volume.getCdmElements();
+		java.util.HashMap linksTable = volume.getLinksTable();
         String sql = "SELECT xmlcode, objectid FROM " + volume.getDbname() + " ORDER BY objectid";
 
         PapillonLogger.writeDebugMsg("Re-indexing volume " + volume.getDbname() + " which contains " + volume.getCount() + " entries.");

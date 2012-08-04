@@ -41,6 +41,7 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.ByteArrayOutputStream;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.HashMap;
 import java.util.Hashtable;
 
 
@@ -114,10 +115,10 @@ public class MotamotFormatter implements ResultFormatter {
 				String sourceLanguage = myVolume.getSourceLanguage();
 				Collection targets = myVolume.getTargetLanguagesArray();
 
-				Hashtable lexiesTable = qr.getLexiesHashtable();
-				java.util.Enumeration e = lexiesTable.keys();
-				while( e. hasMoreElements() ){
-					PapillonLogger.writeDebugMsg("Lexieshashtable: " + e.nextElement());
+				HashMap lexiesTable = qr.getLexiesHashMap();
+				java.util.Iterator e = lexiesTable.keySet().iterator();
+				while( e.hasNext() ){
+					PapillonLogger.writeDebugMsg("LexieshashMap: " + e.next());
 				}
 				
                 for (Iterator iter = targets.iterator(); iter.hasNext();) {
@@ -146,7 +147,7 @@ public class MotamotFormatter implements ResultFormatter {
 									}
 								}
 								//PapillonLogger.writeDebugMsg("Node type: " + myNode.getNodeType() + ", name: " + myNode.getNodeName() + " , value: " + myNode.getNodeValue());
-                                VolumeEntry newEntry = (VolumeEntry) qr.getLexiesHashtable().get(translationId);
+                                VolumeEntry newEntry = (VolumeEntry) qr.getLexiesHashMap().get(translationId);
                                 if (newEntry != null && !newEntry.isEmpty()) {
 									if (target.equals("axi")) {
 										for (Iterator itera = targets.iterator(); itera.hasNext();) {
@@ -162,7 +163,7 @@ public class MotamotFormatter implements ResultFormatter {
 													Volume firstVolume = (Volume)(Volumes.iterator()).next();
 													String volumeName = firstVolume.getName();
 													for (int j = 0; j < transIds.length; j++) {
-														VolumeEntry myEntry = (VolumeEntry) qr.getLexiesHashtable().get(transIds[j]);
+														VolumeEntry myEntry = (VolumeEntry) qr.getLexiesHashMap().get(transIds[j]);
 														if (myEntry != null && ! myEntry.isEmpty()) {
 															Node tempNode = myAnswer.getDom().importNode((Node) myEntry.getDom().getDocumentElement(), true);
 															myNode.appendChild(tempNode);

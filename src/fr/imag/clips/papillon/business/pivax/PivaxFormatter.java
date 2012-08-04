@@ -1,81 +1,9 @@
 /*
  *
  *-----------------------
- * $Id: LexALPFormatter.java,v 1.14 2007/02/07 13:58:57 fbrunet Exp $
+ * $Id$
  *------------------------
- * $Log: LexALPFormatter.java,v $
- * Revision 1.14  2007/02/07 13:58:57  fbrunet
- * added message before axies are merged and undo process if the merge is not correct.
- *
- * Revision 1.13  2007/01/15 17:12:18  serasset
- * Several notes added, suppressed the HTMLDOM_CACHE stuff.
- *
- * Revision 1.12  2007/01/08 15:13:42  fbrunet
- * Correction of th xml attribut bug in ContributionHeader (VolumeEntry class)
- *
- * Revision 1.11  2006/11/09 09:04:42  fbrunet
- * *** empty log message ***
- *
- * Revision 1.10  2006/09/19 08:15:22  fbrunet
- * *** empty log message ***
- *
- * Revision 1.9  2006/09/18 12:24:54  fbrunet
- * - add xsl cascading to lexalp formatter (in xsl view, add tag nextXsl with dictionaryName, volumeName and xslName attributes)
- *
- * Revision 1.8  2006/09/11 19:57:48  fbrunet
- * - bug correction : interface edition (link axie to another axi)
- *
- * Revision 1.7  2006/08/10 22:17:13  fbrunet
- * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
- * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
- * - Bug correction : +/- in advanced search
- *
- * Revision 1.6  2006/06/01 22:05:05  fbrunet
- * New interface, quick search, new contribution management (the first edition not create new contribution. New contribution is created after add, remove element, update, save, etc. in the interface window)
- *
- * Revision 1.5  2006/03/01 15:12:31  mangeot
- * Merge between maintrunk and LEXALP_1_1 branch
- *
- * Revision 1.4.4.3  2006/01/25 15:22:23  fbrunet
- * Improvement of QueryRequest
- * Add new search criteria
- * Add modified status
- *
- * Revision 1.4.4.2  2006/01/24 13:39:49  fbrunet
- * Modification view management
- * Modification LexALP postprocessing
- *
- * Revision 1.4.4.1  2005/08/31 15:01:39  serasset
- * Applied modifications done on the LEXALP_1_0 branch to updated sources of the
- * trunk to create a new updated LEXALP_1_1 branch.
- *
- * Revision 1.4.2.1  2005/07/22 13:28:32  serasset
- * Modified EditEntryInit for Lexalp. It now serves as a main page for db maintenance.
- * Added a function to get url for QueryParameter.
- * Modified the way xslsheets are handled in order to allow several xslsheet with the same name, different dicts.
- *
- * Revision 1.4  2005/07/21 09:37:47  serasset
- * LexALPLinker had a pb with package since MM modification.
- * Lexalp query menu leads to AdvancedSearch.
- * XslSheetFactory's get default xsl for dict and volume now sets the names to "" during fallback.
- *
- * Revision 1.3  2005/07/16 12:58:31  serasset
- * Added limit parameter to query functions
- * Added a parameter to Formater initializations
- * Developped a new Advanced search functionality with reusable code for the query form handling...
- *
- * Revision 1.2  2005/05/25 13:31:08  serasset
- * Return a monolingual entry even if the lexie is not linked to an axie.
- * LexALP transformer now formats simple monolingual query results.
- *
- * Revision 1.1  2005/05/24 12:51:21  serasset
- * Updated many aspect of the Papillon project to handle lexalp project.
- * 1. Layout is now parametrable in the application configuration file.
- * 2. Notion of QueryResult has been defined to handle mono/bi and multi lingual dictionary requests
- * 3. Result presentation may be done by way of standard xsl or with any class implementing the appropriate interface.
- * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
- * 5. It is now possible to give a name to the cookie key in the app conf file
- * 6. Several bug fixes.
+ * $Log$
  *
  *------------------------
  */
