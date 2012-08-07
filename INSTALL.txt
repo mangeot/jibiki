@@ -9,14 +9,16 @@ svn checkout svn://svn.ligforge.imag.fr/svnroot/toolsforjibiki
 
 ## for a longer version, see toolsforjibiki/INSTALL_Tools_For_Jibiki.html
 ## for jdk1.5 version:
-#Add the xalan.jar in the enhydra ant classpath; see below.
 #Replace the xmlc.jar located in enhydra5.1/lib directory with the new xmlc.jar
 # located in xmlc-2.2.13/lib/ dir, see below.
+#Add the xalan.jar in the enhydra ant classpath (after the ./configure)
+# see below.
 cd toolsforjibiki
 tar zxvf *.tar.gz
 cd enhydra5.1
 sudo ./configure -Djdk.dir=/usr
 ## for jdk1.5:
+# sudo chmod 755 bin/ant
 # vi bin/ant
 ## add xalan-j_2_4_1/bin/xalan.jar before enhydra classpath 
 ### if you install xalan-j_2_7_0/xalan.jar instead of 2_4_0
@@ -33,9 +35,9 @@ cp papillon.properties.in papillon.properties
 export LC_ALL=en_US.UTF-8
 ./toolsforjibiki/enhydra5.1/bin/ant make
 sudo -u postgres psql template1 -f src/sql/create_papillon_user.sql
-sudo -u postgres psql template1 papillon -f src/sql/create_papillon_database.sql
-sudo -u postgres psql papillon papillon -f src/sql/multilingual-sort.sql
-sudo -u postgres psql papillon papillon -f build/Dods_Generated_Sources/static/SQLcreate.sql
+sudo -u postgres psql template1 papillon -h localhost -f src/sql/create_papillon_database.sql
+sudo -u postgres psql papillon papillon -h localhost -f src/sql/multilingual-sort.sql
+sudo -u postgres psql papillon papillon -h localhost -f build/Dods_Generated_Sources/static/SQLcreate.sql
 cd output
 ./run --debug --exec
 ## for compiling only java classes
@@ -50,7 +52,12 @@ open http://localhost:8999/UserProfile.po
 
 # upload default stylesheets
 open http://localhost:8999/AdminXsl.po
-# load file:///{jibiki.dir}/src/fr/imag/clips/papillon/resources/xsl/DEFAULT-view.xsl (is default)
 # load file:///{jibiki.dir}/src/fr/imag/clips/papillon/resources/xsl/XML-view.xsl
 # load file:///{jibiki.dir}/src/fr/imag/clips/papillon/resources/xsl/TEXT-view.xsl
 # load file:///{jibiki.dir}/src/fr/imag/clips/papillon/resources/xsl/FormatingObject-view.xsl
+
+#For http redirection on standard 80 port, add the following lines 
+# in the /etc/apache2/sites-enabled/default.conf file:
+#        ProxyPass /jibiki http://localhost:8999
+#        ProxyPassReverse /jibiki http://localhost:8999
+

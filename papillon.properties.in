@@ -6,7 +6,7 @@
 # Modify it according to your environment.
 
 ###############################
-## typical values for MacOs X.
+## typical values for LINUX
 ###############################
 # Papillon jars
 ## in the following paths, replace . by the directory full path
@@ -14,6 +14,7 @@ papillon.xalan.jar=/home/jibiki/toolsforjibiki/xalan-j_2_7_0/xalan.jar
 papillon.xerces.jar=/home/jibiki/toolsforjibiki/xalan-j_2_7_0/xercesImpl.jar
 papillon.xmlapi.jar=/home/jibiki/toolsforjibiki/xalan-j_2_7_0/xml-apis.jar
 papillon.xsltc.jar=/home/jibiki/toolsforjibiki/xalan-j_2_7_0/xsltc.jar
+#sudo apt-get install libpg-java 
 papillon.pgsql.jar=/usr/share/java/postgresql.jar
 papillon.fop.jar=/home/jibiki/toolsforjibiki/fop-0.20.5/build/fop.jar
 papillon.avalon.jar=/home/jibiki/toolsforjibiki/fop-0.20.5/lib/avalon-framework-cvs-20020806.jar
