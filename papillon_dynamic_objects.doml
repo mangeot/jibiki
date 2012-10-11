@@ -179,7 +179,19 @@
           	<indexColumn id="entryId"/>
           </index>
 		  <index id="targetid_idx">
-          	<indexColumn id="entryId"/>
+          	<indexColumn id="targetId"/>
+          </index>
+		  <index id="lang_idx">
+          	<indexColumn id="lang"/>
+          </index>
+		  <index id="volumeTarget_idx">
+          	<indexColumn id="volumeTarget"/>
+          </index>
+		  <index id="type_idx">
+          	<indexColumn id="type"/>
+          </index>
+		  <index id="name_idx">
+          	<indexColumn id="name"/>
           </index>
         </table>       
     </package>

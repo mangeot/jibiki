@@ -331,11 +331,17 @@ public class XslTransformation implements ResultFormatter {
 			//Node resultNode = formatResult(theAnswer.getDom(), dictXsl, usr);
 			//PapillonLogger.writeDebugMsg("Answer: " + qr.getSourceEntry().getHeadword() + " node: " + XMLServices.NodeToString(myAnswer.getDom()));
 			
+            //PapillonLogger.writeDebugMsg("XSLSheet is: " + dictXsl.getName() + " " + dictXsl.getHandle());
 			Node resultNode = formatResult(myAnswer.getDom(), dictXsl, usr);
-				//	PapillonLogger.writeDebugMsg("ResultNode: " + qr.getSourceEntry().getHeadword() + " node: " + XMLServices.NodeToString(resultNode)+", "+resultNode.getNodeValue());
+			if (resultNode == null) {
+				PapillonLogger.writeDebugMsg("ResultNode empty, problem with the XSL sheet: " + dictXsl.getName() + " " + dictXsl.getHandle());
+				resultNode = myAnswer.getDom().getDocumentElement();
+				
+			}
+			PapillonLogger.writeDebugMsg("ResultNode: " + qr.getSourceEntry().getHeadword() + " node: " + XMLServices.NodeToString(resultNode)+", "+resultNode.getNodeValue());
 				
 				rootdiv.appendChild(res.importNode(resultNode, true));
-				//	PapillonLogger.writeDebugMsg("rootdiv:"+rootdiv.getTextContent());
+					PapillonLogger.writeDebugMsg("rootdiv:"+rootdiv.getTextContent());
 			//}				
 		}
 		return rootdiv;

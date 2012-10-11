@@ -37,6 +37,12 @@ public class LinkFactory {
 
 	public final static String ENTRYID_FIELD = "entryid";
 
+	public final static String NAME_FIELD = "name";
+	public final static String LANG_FIELD = "lang";
+	public final static String VOLUME_FIELD = "volumetarget";
+	public final static String TYPE_FIELD = "type";
+	public final static String WEIGHT_FIELD = "weight";
+	public final static String LABEL_FIELD = "label";
 	
 	public final static String ORDER_ASCENDING = "";
 	public final static String ORDER_DESCENDING = "DESC";
@@ -396,7 +402,12 @@ public class LinkFactory {
 			try {
 				ManageDatabase.createIndexForTable(table,OBJECTID_FIELD);
 				ManageDatabase.createIndexForTable(table,ENTRYID_FIELD);
-
+				ManageDatabase.createIndexForTable(table,NAME_FIELD);
+				ManageDatabase.createIndexForTable(table,LANG_FIELD);
+				ManageDatabase.createIndexForTable(table,VOLUME_FIELD);
+				ManageDatabase.createIndexForTable(table,TYPE_FIELD);
+				ManageDatabase.createIndexForTable(table,WEIGHT_FIELD);
+				ManageDatabase.createIndexForTable(table,LABEL_FIELD);				
 			}
 			catch (Exception e) {
 				throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in createLinkForTable: " + table, e);
