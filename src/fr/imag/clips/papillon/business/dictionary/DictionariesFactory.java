@@ -1096,7 +1096,7 @@ public class DictionariesFactory {
     public static Collection expandResult(QueryResult theQR, Collection targets, User user) 
 	throws PapillonBusinessException {
         //    
-        HashMap theLinks = new HashMap();
+        HashMap allLinks = new HashMap();
 		Collection myArrayList = new ArrayList();
  
 		VolumeEntry ve = theQR.getSourceEntry();
@@ -1105,25 +1105,24 @@ public class DictionariesFactory {
 		String type = ve.getDictionary().getType();
             
 		if (type.equals("pivot")) {
-			theLinks.put(ve.getEntryId(),ve);
-			HashMap axies = LinkFactory.getLinkedAxiesByEntry(ve,theLinks, user);
+			allLinks.put(ve.getEntryId(),ve);
+			HashMap axies = LinkFactory.getLinkedAxiesByEntry(ve,allLinks, user);
 			for (Iterator iter = axies.keySet().iterator(); iter.hasNext();) {
 				String entryId = (String) iter.next();
 				VolumeEntry axie = (VolumeEntry) axies.get(entryId);
 				//PapillonLogger.writeDebugMsg("expandResult: " + entryId + " hw:" +axie.getHeadword());
-				HashMap tempLinks = (HashMap) theLinks.clone();
-				LinkFactory.getLinkedEntriesByAxie(axie, tempLinks, user);
+				ArrayList tempLinks = new ArrayList();
+				LinkFactory.getLinkedEntriesByAxie(axie, tempLinks, allLinks, user);
 				QueryResult qr = new QueryResult();
 				qr.addSourceEntry(axie);
-				qr.setLexiesHashMap(tempLinks);
+				qr.setLexiesHashMap(allLinks);
 				myArrayList.add(qr);
 			}
-			
 		}
 		else {
 			realTargets.remove(ve.getSourceLanguage());
-			LinkFactory.getLinkedEntriesByEntry(ve, theLinks, realTargets, user);
-			theQR.setLexiesHashMap(theLinks);
+			LinkFactory.getLinkedEntriesByEntry(ve, allLinks, realTargets, user);
+			theQR.setLexiesHashMap(allLinks);
 			myArrayList.add(theQR);
 		}        
 		return myArrayList;

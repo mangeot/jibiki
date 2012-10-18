@@ -256,20 +256,18 @@ public class LinkFactory {
 				LinkDO[] DOarray = qr.getDOArray();
 				for (int i=0; i<DOarray.length;i++){
 					Link tempLink = new Link(DOarray[i]);
-					VolumeEntry linkedEntry = (VolumeEntry) theLinks.get(tempLink.getTargetId());
-					if (linkedEntry==null || linkedEntry.isEmpty()) {
+					String targetId = tempLink.getTargetId();
+					if (!theLinks.containsKey(targetId)) {
 						Volume myVolume = VolumesFactory.getVolumeByName(tempLink.getVolumeTarget());
 						if (myVolume !=null && !myVolume.isEmpty()) {
-							linkedEntry = VolumeEntriesFactory.findEntryByEntryId(user, myVolume, tempLink.getTargetId());
+							VolumeEntry linkedEntry = VolumeEntriesFactory.findEntryByEntryId(user, myVolume, targetId);
 							if (linkedEntry != null && !linkedEntry.isEmpty()) {
 								theLinks.put(tempLink.getTargetId(),linkedEntry);
+								if (tempLink.getType() == null || !tempLink.getType().equals(Link.FINAL_TYPE)) {
+									getLinkedEntriesByEntry(linkedEntry, theLinks, targets, user);
+								}
 							}
 							//PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: "+ theEntry.getEntryId() + " TargetId: " + tempLink.getTargetId() + " lang:" + lang);
-						}
-					}
-					if (linkedEntry != null && !linkedEntry.isEmpty()) {
-						if (tempLink.getType() == null || !tempLink.getType().equals(Link.FINAL_TYPE)) {
-							getLinkedEntriesByEntry(linkedEntry, theLinks, targets, user);
 						}
 					}
 				}
@@ -280,40 +278,42 @@ public class LinkFactory {
 		}
 	}
 
-	public static void getLinkedEntriesByAxie(VolumeEntry theEntry, HashMap theLinks, User user) throws PapillonBusinessException {
-		try{
-			//PapillonLogger.writeDebugMsg("getLinkedEntriesByAxie: "+ theEntry.getEntryId());
+	public static void getLinkedEntriesByAxie(VolumeEntry theEntry, ArrayList theLinks, HashMap allLinks, User user) throws PapillonBusinessException {
+		try {
+			// PapillonLogger.writeDebugMsg("getLinkedEntriesByAxie: "+ theEntry.getEntryId());
 			LinkQuery qr = new LinkQuery(theEntry.getVolume().getLinkDbname(),CurrentDBTransaction.get());
 			qr.setQueryEntryId(Integer.parseInt(theEntry.getHandle()));
 			LinkDO[] DOarray = qr.getDOArray();
 			for (int i=0; i<DOarray.length;i++){
 				Link tempLink = new Link(DOarray[i]);
 				String linkType = tempLink.getType();
+				String targetId = tempLink.getTargetId();
 				if (linkType ==null || !linkType.equals(Link.AXIE_TYPE)) {
-					VolumeEntry linkedEntry = (VolumeEntry) theLinks.get(tempLink.getTargetId());
+					VolumeEntry linkedEntry = (VolumeEntry) allLinks.get(targetId);
 					if (linkedEntry==null || linkedEntry.isEmpty()) {
 						Volume myVolume = VolumesFactory.getVolumeByName(tempLink.getVolumeTarget());
 						if (myVolume !=null && !myVolume.isEmpty()) {
-							//PapillonLogger.writeDebugMsg("getLinkedEntriesByAxie: find volume "+ tempLink.getVolumeTarget() + " TargetId: " + tempLink.getTargetId());
+							// PapillonLogger.writeDebugMsg("getLinkedEntriesByAxie: find volume "+ tempLink.getVolumeTarget() + " TargetId: " + tempLink.getTargetId());
 							linkedEntry = VolumeEntriesFactory.findEntryByEntryId(user, myVolume, tempLink.getTargetId());
 							if (linkedEntry != null && !linkedEntry.isEmpty()) {
-								theLinks.put(tempLink.getTargetId(),linkedEntry);
+								allLinks.put(targetId,linkedEntry);
 							}
 						}
 					}
 					else {
-						//PapillonLogger.writeDebugMsg("getLinkedEntriesByAxie: linkedEntry already in "+ tempLink.getVolumeTarget() + " TargetId: " + tempLink.getTargetId());
+						// PapillonLogger.writeDebugMsg("getLinkedEntriesByAxie: linkedEntry already in "+ tempLink.getVolumeTarget() + " TargetId: " + tempLink.getTargetId());
 					}
-					if (linkedEntry != null && !linkedEntry.isEmpty()) {
-						if (tempLink.getType() == null || !tempLink.getType().equals(Link.FINAL_TYPE)) {
-							getLinkedEntriesByAxie(linkedEntry, theLinks, user);
+					if (linkedEntry != null && !linkedEntry.isEmpty() && !theLinks.contains(targetId)) {
+						theLinks.add(targetId);
+						if (linkType == null || !linkType.equals(Link.FINAL_TYPE)) {
+							getLinkedEntriesByAxie(linkedEntry, theLinks, allLinks, user);
 						}
 					}
 				}
 			}
 			
 		} catch(Exception ex){
-			throw new PapillonBusinessException("Exception in getLinkedEntriesByEntry()", ex);
+			throw new PapillonBusinessException("Exception in getLinkedEntriesByAxie()", ex);
 		}
 	}
 	
@@ -327,7 +327,9 @@ public class LinkFactory {
 			LinkDO[] DOarray = qr.getDOArray();
 			for (int i=0; i<DOarray.length;i++){
 				Link tempLink = new Link(DOarray[i]);
-				VolumeEntry linkedEntry = (VolumeEntry) theLinks.get(tempLink.getTargetId());
+				String targetId = tempLink.getTargetId();
+				if (!theAxies.containsKey(targetId)) {
+				VolumeEntry linkedEntry = (VolumeEntry) theLinks.get(targetId);
 				if (linkedEntry==null || linkedEntry.isEmpty()) {
 					Volume myVolume = VolumesFactory.getVolumeByName(tempLink.getVolumeTarget());
 					if (myVolume !=null && !myVolume.isEmpty()) {
@@ -346,6 +348,7 @@ public class LinkFactory {
 					else {
 						theLinks.put(tempLink.getTargetId(),linkedEntry);
 					}
+				}
 				}
 			}
 			

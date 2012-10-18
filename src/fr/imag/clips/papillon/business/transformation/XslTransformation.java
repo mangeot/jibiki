@@ -338,10 +338,10 @@ public class XslTransformation implements ResultFormatter {
 				resultNode = myAnswer.getDom().getDocumentElement();
 				
 			}
-			PapillonLogger.writeDebugMsg("ResultNode: " + qr.getSourceEntry().getHeadword() + " node: " + XMLServices.NodeToString(resultNode)+", "+resultNode.getNodeValue());
+			//PapillonLogger.writeDebugMsg("ResultNode: " + qr.getSourceEntry().getHeadword() + " node: " + XMLServices.NodeToString(resultNode)+", "+resultNode.getNodeValue());
 				
 				rootdiv.appendChild(res.importNode(resultNode, true));
-					PapillonLogger.writeDebugMsg("rootdiv:"+rootdiv.getTextContent());
+					//PapillonLogger.writeDebugMsg("rootdiv:"+rootdiv.getTextContent());
 			//}				
 		}
 		return rootdiv;
