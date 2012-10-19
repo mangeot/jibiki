@@ -349,6 +349,7 @@ public class XslTransformation implements ResultFormatter {
 	
 	protected static void insertLinkedEntries (VolumeEntry theEntry, java.util.HashMap linkedEntries) 
 	throws PapillonBusinessException {
+		linkedEntries.remove(theEntry.getEntryId());
 		//PapillonLogger.writeDebugMsg("insertLinkedEntries for: " +theEntry.getHeadword());
 		org.apache.xml.utils.PrefixResolver thePrefixResolver = theEntry.getVolume().getPrefixResolver();
 		java.util.HashMap linksTable = theEntry.getVolume().getLinksTable();
