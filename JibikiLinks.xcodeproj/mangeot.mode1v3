@@ -275,7 +275,9 @@
 								<string>A30722220EC89B1E00733910</string>
 								<string>A39A46EE0FF8B8590090E5C0</string>
 								<string>A37C02CD128C62BD0047A982</string>
+								<string>A30722820EC89B2000733910</string>
 								<string>A30722970EC89B2000733910</string>
+								<string>A30722A80EC89B2000733910</string>
 								<string>A30722AF0EC89B2100733910</string>
 								<string>A30722B00EC89B2100733910</string>
 								<string>A30722B40EC89B2100733910</string>
@@ -286,8 +288,8 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>20</integer>
-									<integer>12</integer>
+									<integer>72</integer>
+									<integer>69</integer>
 									<integer>11</integer>
 									<integer>10</integer>
 									<integer>9</integer>
@@ -298,7 +300,7 @@
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 0}, {369, 824}}</string>
+							<string>{{0, 0}, {369, 882}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -310,14 +312,14 @@
 					<key>GeometryConfiguration</key>
 					<dict>
 						<key>Frame</key>
-						<string>{{0, 0}, {386, 842}}</string>
+						<string>{{0, 0}, {386, 900}}</string>
 						<key>GroupTreeTableConfiguration</key>
 						<array>
 							<string>MainColumn</string>
 							<real>369</real>
 						</array>
 						<key>RubberWindowFrame</key>
-						<string>75 145 1243 883 0 0 1680 1028 </string>
+						<string>393 87 1601 941 0 0 1680 1028 </string>
 					</dict>
 					<key>Module</key>
 					<string>PBXSmartGroupTreeModule</string>
@@ -333,7 +335,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>DictionariesFactory.java</string>
+								<string>PivaxFormatter.java</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -341,11 +343,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>DictionariesFactory.java</string>
+										<string>PivaxFormatter.java</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>A33CDFAF1631A39100B5F243</string>
+										<string>A394214916358C2B00113726</string>
 										<key>history</key>
 										<array>
 											<string>A39B626B15CC981B0094072E</string>
@@ -365,8 +367,9 @@
 											<string>A3FD2CB5162F1B13007F2618</string>
 											<string>A3A3163316306FCF002A7AB7</string>
 											<string>A3A3163416306FCF002A7AB7</string>
-											<string>A3A3163516306FCF002A7AB7</string>
-											<string>A33CDFAE1631A39100B5F243</string>
+											<string>A33CDFB31631A7C200B5F243</string>
+											<string>A33CDFB41631A7C200B5F243</string>
+											<string>A394214816358C2B00113726</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -378,14 +381,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {852, 697}}</string>
+								<string>{{0, 0}, {1210, 752}}</string>
 								<key>RubberWindowFrame</key>
-								<string>75 145 1243 883 0 0 1680 1028 </string>
+								<string>393 87 1601 941 0 0 1680 1028 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>697pt</string>
+							<string>752pt</string>
 						</dict>
 						<dict>
 							<key>ContentConfiguration</key>
@@ -398,18 +401,18 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 702}, {852, 140}}</string>
+								<string>{{0, 757}, {1210, 143}}</string>
 								<key>RubberWindowFrame</key>
-								<string>75 145 1243 883 0 0 1680 1028 </string>
+								<string>393 87 1601 941 0 0 1680 1028 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
 							<key>Proportion</key>
-							<string>140pt</string>
+							<string>143pt</string>
 						</dict>
 					</array>
 					<key>Proportion</key>
-					<string>852pt</string>
+					<string>1210pt</string>
 				</dict>
 			</array>
 			<key>Name</key>
@@ -424,9 +427,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>A33CDFB01631A39100B5F243</string>
+				<string>A394214A16358C2B00113726</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>A33CDFB11631A39100B5F243</string>
+				<string>A394214B16358C2B00113726</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -568,7 +571,7 @@
 		<string>/Projects/jibiki/branches/LINKS_1_0/JibikiLinks.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
-	<string>75 145 1243 883 0 0 1680 1028 </string>
+	<string>393 87 1601 941 0 0 1680 1028 </string>
 	<key>WindowToolsV3</key>
 	<array>
 		<dict>
@@ -645,7 +648,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>A3D629281485232300B7780F</string>
-				<string>A33CDFB21631A39100B5F243</string>
+				<string>A394214C16358C2B00113726</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
