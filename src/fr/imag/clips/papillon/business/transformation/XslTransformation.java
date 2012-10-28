@@ -390,6 +390,7 @@ public class XslTransformation implements ResultFormatter {
 														myNode.removeChild(childNode);
 													}
 												}
+												String refDir = direction;
 												if (typeString.equals(Link.AXIE_TYPE)) {
 													if (direction.equals(Link.DIRECTION_UP)) {
 														direction = Link.DIRECTION_DOWN;
@@ -397,10 +398,9 @@ public class XslTransformation implements ResultFormatter {
 													linkedEntries.remove(linkedEntry.getEntryId());
 												}
 												if (!typeString.equals(Link.FINAL_TYPE)) {
-													String refDir = direction;
 													insertLinkedEntries(linkedEntry, linkedEntries, direction);
-													direction = refDir;
 												}			
+												direction = refDir;
 												Node tempNode = theEntryDoc.importNode((Node) linkedEntry.getDom().getDocumentElement(), true);
 												//PapillonLogger.writeDebugMsg("insertingLinkedEntry: " + linkedEntry.getEntryId());
 												myNode.appendChild(tempNode);
