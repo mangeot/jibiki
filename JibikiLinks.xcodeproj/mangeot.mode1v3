@@ -347,16 +347,16 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>A3A1ED14163D8A4F0002A0C4</string>
+										<string>A3BB5A05163DAA2D00C6B50F</string>
 										<key>history</key>
 										<array>
 											<string>A3A20A81163C40D7007E1A77</string>
-											<string>A3A20A82163C40D7007E1A77</string>
 											<string>A3A20A83163C40D7007E1A77</string>
 											<string>A3A20A84163C40D7007E1A77</string>
 											<string>A3A20A86163C40D7007E1A77</string>
-											<string>A3A20A89163C410B007E1A77</string>
-											<string>A3A20A90163C4381007E1A77</string>
+											<string>A3BB5A00163DAA2C00C6B50F</string>
+											<string>A3BB5A01163DAA2C00C6B50F</string>
+											<string>A3BB59FC163DAA2C00C6B50F</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -368,14 +368,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {1270, 859}}</string>
+								<string>{{0, 0}, {1270, 858}}</string>
 								<key>RubberWindowFrame</key>
 								<string>0 84 1661 944 0 0 1680 1028 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>859pt</string>
+							<string>858pt</string>
 						</dict>
 						<dict>
 							<key>ContentConfiguration</key>
@@ -388,14 +388,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 864}, {1270, 39}}</string>
+								<string>{{0, 863}, {1270, 40}}</string>
 								<key>RubberWindowFrame</key>
 								<string>0 84 1661 944 0 0 1680 1028 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
 							<key>Proportion</key>
-							<string>39pt</string>
+							<string>40pt</string>
 						</dict>
 					</array>
 					<key>Proportion</key>
@@ -414,9 +414,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>A3A1ED15163D8A4F0002A0C4</string>
+				<string>A3BB5A03163DAA2C00C6B50F</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>A3A1ED16163D8A4F0002A0C4</string>
+				<string>A3BB5A04163DAA2C00C6B50F</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -554,6 +554,7 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
+		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>A3D629281485232300B7780F</string>
 		<string>/Projects/jibiki/branches/LINKS_1_0/JibikiLinks.xcodeproj</string>
 	</array>
@@ -635,7 +636,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>A3D629281485232300B7780F</string>
-				<string>A3A1ED17163D8A4F0002A0C4</string>
+				<string>A3BB59FA163DAA2C00C6B50F</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
@@ -790,6 +791,8 @@
 							<key>Dock</key>
 							<array>
 								<dict>
+									<key>BecomeActive</key>
+									<true/>
 									<key>ContentConfiguration</key>
 									<dict>
 										<key>PBXProjectModuleGUID</key>
@@ -816,8 +819,6 @@
 							<string>598pt</string>
 						</dict>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -853,8 +854,8 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C530D57069F1CE1000CFCEE</string>
-				<string>A3A20A7F163C3EE5007E1A77</string>
-				<string>A3A20A80163C3EE5007E1A77</string>
+				<string>A3BB59FE163DAA2C00C6B50F</string>
+				<string>A3BB59FF163DAA2C00C6B50F</string>
 				<string>1CDD528C0622207200134675</string>
 				<string>1CD0528E0623707200166675</string>
 			</array>
