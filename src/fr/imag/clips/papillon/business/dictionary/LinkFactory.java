@@ -245,33 +245,49 @@ public class LinkFactory {
      *   retrieving data (usually due to an underlying data layer
 	 *   error).
      */
-	public static void getLinkedEntriesByEntry(VolumeEntry theEntry, HashMap theLinks, Collection targets, User user) throws PapillonBusinessException {
+	public static void getLinkedEntriesByEntry(VolumeEntry theEntry, ArrayList theAxies, HashMap theLinks, Collection targets, String direction, User user) throws PapillonBusinessException {
 		try{
-			Iterator iter = targets.iterator();
-			while (iter.hasNext()) {
-				String lang = (String) iter.next();
+			//PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: start "+ theEntry.getEntryId());
+//			Iterator iter = targets.iterator();
+//			while (iter.hasNext()) {
+//				String lang = (String) iter.next();
+//				PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: lang "+ lang);
 				LinkQuery qr = new LinkQuery(theEntry.getVolume().getLinkDbname(),CurrentDBTransaction.get());
 				qr.setQueryEntryId(Integer.parseInt(theEntry.getHandle()));
-				qr.setQueryLang(lang);
+//				qr.setQueryLang(lang);
 				LinkDO[] DOarray = qr.getDOArray();
 				for (int i=0; i<DOarray.length;i++){
 					Link tempLink = new Link(DOarray[i]);
 					String targetId = tempLink.getTargetId();
-					if (!theLinks.containsKey(targetId)) {
-						Volume myVolume = VolumesFactory.getVolumeByName(tempLink.getVolumeTarget());
-						if (myVolume !=null && !myVolume.isEmpty()) {
-							VolumeEntry linkedEntry = VolumeEntriesFactory.findEntryByEntryId(user, myVolume, targetId);
-							if (linkedEntry != null && !linkedEntry.isEmpty()) {
-								theLinks.put(tempLink.getTargetId(),linkedEntry);
-								if (tempLink.getType() == null || !tempLink.getType().equals(Link.FINAL_TYPE)) {
-									getLinkedEntriesByEntry(linkedEntry, theLinks, targets, user);
+					String type = tempLink.getType();
+					if (((direction.equals(Link.DIRECTION_UP) && (type == null || !type.equals(Link.FINAL_TYPE)))
+						|| (direction.equals(Link.DIRECTION_DOWN) && ((type == null || !type.equals(Link.FINAL_TYPE)) || 
+																		(type.equals(Link.FINAL_TYPE) && targets.contains(tempLink.getLang())))))
+						&& !theAxies.contains(targetId)) {
+						VolumeEntry linkedEntry = (VolumeEntry) theLinks.get(targetId);
+						if (linkedEntry == null ||linkedEntry.isEmpty()) {
+							Volume myVolume = VolumesFactory.getVolumeByName(tempLink.getVolumeTarget());
+							if (myVolume !=null && !myVolume.isEmpty()) {
+								//PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: call findEntryByEntryId "+ myVolume.getName() + " " + targetId);
+								linkedEntry = VolumeEntriesFactory.findEntryByEntryId(user, myVolume, targetId);
+								if (linkedEntry != null && !linkedEntry.isEmpty() &&!theLinks.containsKey(targetId)) {
+									theLinks.put(targetId,linkedEntry);
 								}
 							}
-							//PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: "+ theEntry.getEntryId() + " TargetId: " + tempLink.getTargetId() + " lang:" + lang);
+						}
+						if (linkedEntry != null && !linkedEntry.isEmpty()) {
+							if (type == null || !type.equals(Link.FINAL_TYPE)) {
+								if (type != null && type.equals(Link.AXIE_TYPE)) {
+									theAxies.add(targetId);
+									direction = Link.DIRECTION_DOWN;
+								}
+								//PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: call getLinkedEntriesByEntry "+ linkedEntry.getEntryId()  + " lang: " + tempLink.getLang());
+								getLinkedEntriesByEntry(linkedEntry, theAxies, theLinks, targets, direction, user);
+							}
 						}
 					}
 				}
-			}
+//			}
 			
 		} catch(Exception ex){
 			throw new PapillonBusinessException("Exception in getLinkedEntriesByEntry()", ex);

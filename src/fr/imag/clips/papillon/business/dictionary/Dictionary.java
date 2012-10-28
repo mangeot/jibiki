@@ -92,6 +92,11 @@ import java.util.Iterator;
  * Represents a Dictionary. 
  */
 public class Dictionary {
+	
+	
+	public static String PIVOT_TYPE = "pivot";
+	public static String PIVAX_TYPE = "pivax";
+	public static String DIRECT_TYPE = "direct";
     /**
      * The DO of the Dictionary.
      */

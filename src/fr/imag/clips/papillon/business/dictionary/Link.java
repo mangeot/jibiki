@@ -32,6 +32,9 @@ public class Link {
 	public static final String FINAL_TYPE = "final";
 	public static final String AXIE_TYPE = "axi";
 
+	public static final String DIRECTION_UP = "up";
+	public static final String DIRECTION_DOWN = "down";
+
     /**
      * The DO of the Dictionary.
      */

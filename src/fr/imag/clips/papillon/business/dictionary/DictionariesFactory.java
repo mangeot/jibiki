@@ -1098,14 +1098,21 @@ public class DictionariesFactory {
         //    
         HashMap allLinks = new HashMap();
 		Collection myArrayList = new ArrayList();
+		String direction = Link.DIRECTION_DOWN;
  
 		VolumeEntry ve = theQR.getSourceEntry();
-        //PapillonLogger.writeDebugMsg("expandResult: " + ve.getHeadword());
+        PapillonLogger.writeDebugMsg("expandResult: " + ve.getHeadword());
 		Collection realTargets = Utility.ArrayIntersection(ve.getDictionary().getTargetLanguagesArray(), targets);
 		String type = ve.getDictionary().getType();
             
-		if (type.equals("pivot")) {
+		if (type.equals(Dictionary.PIVOT_TYPE)) {
 			allLinks.put(ve.getEntryId(),ve);
+			direction = Link.DIRECTION_UP;
+		}
+		else {
+			realTargets.remove(ve.getSourceLanguage());
+		}
+			/*
 			HashMap axies = LinkFactory.getLinkedAxiesByEntry(ve,allLinks, user);
 			for (Iterator iter = axies.keySet().iterator(); iter.hasNext();) {
 				String entryId = (String) iter.next();
@@ -1117,14 +1124,11 @@ public class DictionariesFactory {
 				qr.addSourceEntry(axie);
 				qr.setLexiesHashMap(allLinks);
 				myArrayList.add(qr);
-			}
-		}
-		else {
-			realTargets.remove(ve.getSourceLanguage());
-			LinkFactory.getLinkedEntriesByEntry(ve, allLinks, realTargets, user);
-			theQR.setLexiesHashMap(allLinks);
-			myArrayList.add(theQR);
-		}        
+			} */
+		ArrayList axieLinks = new ArrayList();
+		LinkFactory.getLinkedEntriesByEntry(ve, axieLinks, allLinks, realTargets, direction, user);
+		theQR.setLexiesHashMap(allLinks);
+		myArrayList.add(theQR);
 		return myArrayList;
     }
     
@@ -1166,12 +1170,12 @@ public class DictionariesFactory {
 			VolumeEntry ve = qr.getSourceEntry();
 			String type = ve.getDictionary().getType();
 			//PapillonLogger.writeDebugMsg("Lexie : " + ve.getHeadword() + ", type : " + type);
-			if (type.equals("pivax")) {
+			if (type.equals(Dictionary.PIVAX_TYPE)) {
 				qr.setResultKind(QueryResult.AXIE_COLLECTION_RESULT);
 				addPivaxTranslations(qr, targets);
 				result.add(qr);
 			}
-			else if (type.equals("pivot")) {
+			else if (type.equals(Dictionary.PIVOT_TYPE)) {
 				// qr.setResultKind(QueryResult.AXIE_COLLECTION_RESULT);
 				// myVector = getPivotResults(qr, ve.getSourceLanguage(), realTargets, user);
 				
@@ -1203,11 +1207,12 @@ public class DictionariesFactory {
 				}
 				//
 			}
-			else if (type.equals("direct")) {
+			else if (type.equals(Dictionary.DIRECT_TYPE)) {
 				Collection realTargets = Utility.ArrayIntersection(ve.getVolume().getTargetLanguagesArray(), targets);
 				qr.setResultKind(QueryResult.DIRECT_TRANSLATIONS_RESULT);
 				HashMap theHashMap = new HashMap();
-				LinkFactory.getLinkedEntriesByEntry(ve, theHashMap, realTargets, user);
+				ArrayList theAxies = new ArrayList();
+				LinkFactory.getLinkedEntriesByEntry(ve, theAxies, theHashMap, realTargets, Link.DIRECTION_DOWN, user);
 				qr.setLexiesHashMap(theHashMap);
 				//qr = getDirectResults(qr, ve.getSourceLanguage(), realTargets, user);
 				result.add(qr);
