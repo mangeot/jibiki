@@ -87,7 +87,7 @@
 
 body {
     font-family: Helvetica, Arial, sans-serif;
-	background: white url(/media/papillon-background-fuzzy.png) 0 0 no-repeat fixed;
+	background: white url(../media/papillon-background-fuzzy.png) 0 0 no-repeat fixed;
 }
 
 /*--------------------------------------*/
@@ -140,7 +140,7 @@ td.block {
 }
 
 .mainColumn {
-   background: white url(/media/papillon-background-fuzzy-lighter.png) 0 0 no-repeat fixed;
+   background: white url(../media/papillon-background-fuzzy-lighter.png) 0 0 no-repeat fixed;
    color: #000;
 /*   position: absolute;
    left: 0; 
@@ -155,7 +155,7 @@ td.block {
 }
 
 .editing {
-   background: white url(/media/papillon-background-fuzzy-lighter.png) 0 0 no-repeat fixed;
+   background: white url(../media/papillon-background-fuzzy-lighter.png) 0 0 no-repeat fixed;
    color: #000;
 /*   position: absolute;
    left: 0; */
@@ -194,7 +194,7 @@ table.center {
 	font-style: italic;
 	font-size: 2.5em;
 	font-weight: normal;
-	background: white url(/media/papillon-background-fuzzy-lighter.png) 0 0 no-repeat fixed;   
+	background: white url(../media/papillon-background-fuzzy-lighter.png) 0 0 no-repeat fixed;   
 	border-left: 1px solid black;
 }
 
@@ -208,8 +208,8 @@ table.center {
 /*-------------------------*/
 
 #MenuBar {
-	background: white url(/media/papillon-background-fuzzy-lighter.png) 0 0 no-repeat fixed;
-	height: 1.4em;
+	background: white url(../media/papillon-background-fuzzy-lighter.png) 0 0 no-repeat fixed;
+	height: 1.5em;
 	line-height: 1.2em;
 	z-index:10;
 	text-align: left;
@@ -307,7 +307,7 @@ div.popupMenu ul li:hover {
     } */
 	
 .menuBlock {
-	background: white url(/media/papillon-background-fuzzy-light.png) 0 0 no-repeat fixed;
+	background: white url(../media/papillon-background-fuzzy-light.png) 0 0 no-repeat fixed;
     color: #000;
     padding-bottom: 0.2em;
     border: 1px solid black;

@@ -13,11 +13,43 @@
     <div id="EditEntryForm" class="editEntry" xml:lang="en" lang="en">
         <form action="HandleEntryModifications.po" method="post" accept-charset="utf-8" enctype="application/x-www-form-urlencoded" id="default">
             <div>
-                <script type="text/javascript" src="javascript/pivax.js">
-                  <!--                    
+                <script type="text/javascript">
+                  <!--
+                    function updateFields(idField, idFieldValue) {
+                      if (idField != '') {
+                        theIdField = document.getElementById(idField);
+						if (theIdField==null) {
+							//alert('updateFields: idField null ' + idField);
+						}
+						else {
+							theIdField.value = idFieldValue;
+						}
+                      }
+                    }
+					
+			function show_hide(anchor,id) {
+				if (el = document.getElementById(id)) {
+					var show = el.style.display=='none';
+					el.style.display = (show ? '' : 'none');
+					anchor.innerHTML = (show ? '-' : '+');
+					var hideBlocks = document.getElementById('HideBlocks');
+					var hideBlocksId = hideBlocks.getAttribute('value');
+					id = "," + id;
+					if (show) {
+						var idIndex = hideBlocksId.indexOf(id);
+						if (idIndex>=0) {
+							hideBlocks.setAttribute('value',hideBlocksId.substring(0,idIndex) + hideBlocksId.substring(idIndex + id.length));
+						}
+					}
+					else {
+						hideBlocks.setAttribute('value',hideBlocksId + id);
+					}
+				}
+			}
+
+                  
                   // -->
                 </script>
-                <a name="top"/>
                 <input name="VolumeName" id="VolumeName" type="hidden" value="" />
                 <input name="EntryHandle" id="EntryHandle" type="hidden" value="" />
                 <input name="Referrer" id="Referrer" type="hidden" value="" />
@@ -27,10 +59,6 @@
                 <input name="MoveDownCall" type="hidden" value="" />
                 <input name="ChooseCall" type="hidden" value="" />
 				<input name="HideBlocks" id="HideBlocks" type="hidden" value="" />
-                
-                <input name="idFieldName" id="idFieldName" type="hidden" value="" />
-                <input name="handleFieldName" id="handleFieldName" type="hidden" value="" />
-                <input name="volFieldName" id="volFieldName" type="hidden" value="" />
                 
                 <!--Interface-->
                 <div id="EditEntryContent"></div>
@@ -43,7 +71,6 @@
                     <input name="Save" type="submit" value="Finish" style="font-weight: bold;"/>
 					<!--label for="SaveComment">Comment:</label> <input name="SaveComment" type="text" /-->
                 </div>
-                <a name="bottom"/>
             </div>
         </form>
     </div>

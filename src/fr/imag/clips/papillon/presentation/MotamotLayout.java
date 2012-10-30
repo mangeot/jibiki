@@ -153,13 +153,12 @@ public class MotamotLayout implements StdLayout {
             
             // menu
             handleLangForm(comms, sessionData, url);
+            handleUserMenu(comms, sessionData);
             handleConsultForm(comms, sessionData);
             handleLexieMenu(comms, sessionData);
             handleHelpMenu(comms, sessionData);
-            //handleAxieMenu(comms, sessionData);
             //handleReviewerMenu(comms, sessionData);
             handleAdministratorMenu(comms, sessionData);
-            removeMenuBlockPlaceHolder();
         }
     
     
@@ -182,8 +181,8 @@ public class MotamotLayout implements StdLayout {
     }
     
     
-    /**
-        *  Description of the Method
+	/**
+	 *  Description of the Method
      *
      * @param  comms
      *      Description of the Parameter
@@ -197,56 +196,49 @@ public class MotamotLayout implements StdLayout {
      *      Description of the Exception
      */
     protected void handleLangForm(HttpPresentationComms comms, PapillonSessionData sessionData, String url)
-        throws com.lutris.appserver.server.httpPresentation.HttpPresentationException, PapillonBusinessException {
-            
-            UserLanguageSelectXHTML langSelect = (UserLanguageSelectXHTML) MultilingualXHtmlTemplateFactory.createTemplate("UserLanguageSelectXHTML", comms, sessionData);
-            XHTMLSelectElement langSelectElement = (XHTMLSelectElement) langSelect.getElementLang();
-            
-            // I select by default the user preferred language for the languages menu
-            if (!sessionData.getClientWithLabelDisplayProblems()) {
-                PapillonBasePO.setUnicodeLabels(langSelectElement);
-            }
-            PapillonBasePO.setSelected(langSelectElement, sessionData.getUserPreferredLanguage());
-            
-            LangAndUserXHTML userMenu = (LangAndUserXHTML) MultilingualXHtmlTemplateFactory.createTemplate("LangAndUserXHTML", comms, sessionData);
-            // I add the LangSelectElement in the menu
-            Node selectHolder = userMenu.getElementLangSelectPlace();
-            selectHolder.getParentNode().replaceChild(userMenu.importNode(langSelectElement, true), selectHolder);
-            
-            // I add the URL of the page for the action of the language form
-            XHTMLFormElement umLangForm = (XHTMLFormElement) userMenu.getElementLangForm();
-            umLangForm.setAction(url);
-            
-            // Handle the user part of the block
-            handleUserLogin(userMenu, sessionData.getUser());
-            
-            Node placeHolder = layout.getElementMenuBlockPlaceHolder();
-            Node placeHolderMother = placeHolder.getParentNode();
-            placeHolderMother.insertBefore(layout.importNode(userMenu.getElementLanguageAndUser(), true),placeHolder);
-            //layout.getElementMenuColumn().appendChild(layout.importNode(userMenu.getElementLanguageAndUser(), true));
-        }
+	throws com.lutris.appserver.server.httpPresentation.HttpPresentationException, PapillonBusinessException {
+		
+		UserLanguageSelectXHTML langSelect = (UserLanguageSelectXHTML) MultilingualXHtmlTemplateFactory.createTemplate("UserLanguageSelectXHTML", comms, sessionData);
+		XHTMLSelectElement langSelectElement = (XHTMLSelectElement) langSelect.getElementLang();
+		
+		// I select by default the user preferred language for the languages menu
+		if (!sessionData.getClientWithLabelDisplayProblems()) {
+			PapillonBasePO.setUnicodeLabels(langSelectElement);
+		}
+		// I add the URL of the page for the action of the language form
+		XHTMLFormElement umLangForm = (XHTMLFormElement) langSelect.getElementLangForm();
+		umLangForm.setAction(url);
+		
+		layout.getElementLangFormHolder().appendChild(layout.importNode(umLangForm, true));
+	}
     
     
     /**
-        *  Description of the Method
+	 *  Description of the Method
      *
      * @param  userMenu                       Description of the Parameter
      * @param  myUser                         Description of the Parameter
      * @exception  PapillonBusinessException  Description of the Exception
      */
-    protected void handleUserLogin(LangAndUserXHTML userMenu, User myUser)
-        throws PapillonBusinessException {
-            // If the user is logged
-            if (null != myUser && !myUser.isEmpty()) {
-                userMenu.setTextUserLogin(myUser.getLogin());
-                Utility.removeElement(userMenu.getElementLoginAnchor());
-            }                                         // If the user is not logged
-            else {
-                userMenu.setTextUserLogin("");
-                Utility.removeElement(userMenu.getElementUserProfileAnchor());
-                Utility.removeElement(userMenu.getElementLogoutAnchor());
-            }
-        }
+    protected void handleUserMenu(HttpPresentationComms comms, PapillonSessionData sessionData)
+	throws com.lutris.appserver.server.httpPresentation.HttpPresentationException, PapillonBusinessException {
+		
+		LangAndUserXHTML userMenu = (LangAndUserXHTML) MultilingualXHtmlTemplateFactory.createTemplate("LangAndUserXHTML", comms, sessionData);
+		
+		// If the user is logged
+		User myUser = sessionData.getUser();
+		if (null != myUser && !myUser.isEmpty()) {
+			userMenu.setTextUserLogin(myUser.getLogin());
+			Utility.removeElement(userMenu.getElementLoginAnchor());
+		}                                         // If the user is not logged
+		else {
+			userMenu.setTextUserLogin("");
+			Utility.removeElement(userMenu.getElementUserProfileAnchor());
+			Utility.removeElement(userMenu.getElementLogoutAnchor());
+		}
+		
+		layout.getElementUserMenuHolder().appendChild(layout.importNode(userMenu.getElementUserMenu(), true));
+	}
     
     
     /**
@@ -400,11 +392,8 @@ public class MotamotLayout implements StdLayout {
             //PapillonBasePO.setSelected(queryMenu.getElementTarget(), prefTrgLang);
             PapillonBasePO.setSelected(queryMenu.getElementQMTargets(), prefTrgLang);
             
-          // Add the menu to the Page
-            Node placeHolder = layout.getElementMenuBlockPlaceHolder();
-            Node placeHolderMother = placeHolder.getParentNode();
-            placeHolderMother.insertBefore(layout.importNode(queryMenu.getElementQueryMenu(), true), placeHolder);
-            //layout.getElementMenuColumn().appendChild(layout.importNode(queryMenu.getElementQueryMenu(), true));
+            // Add the menu to the Page
+            layout.getElementQueryMenuHolder().appendChild(layout.importNode(queryMenu.getElementQueryMenu(), true));
         }
     
     
@@ -425,11 +414,7 @@ public class MotamotLayout implements StdLayout {
             if (null != myUser && !myUser.isEmpty()) {
                 LexiesManagementXHTML lexiesMenu = (LexiesManagementXHTML) MultilingualXHtmlTemplateFactory.createTemplate("LexiesManagementXHTML", comms, sessionData);
                 
-                Node placeHolder = layout.getElementMenuBlockPlaceHolder();
-                Node placeHolderMother = placeHolder.getParentNode();
-                placeHolderMother.insertBefore(layout.importNode(lexiesMenu.getElementLexiesManagement(), true), placeHolder);
-                
-                //layout.getElementMenuColumn().appendChild(layout.importNode(lexiesMenu.getElementLexiesManagement(), true));
+                layout.getElementLexiesManagementHolder().appendChild(layout.importNode(lexiesMenu.getElementLexiesManagement(), true));
             }
         }
     
@@ -451,41 +436,11 @@ public class MotamotLayout implements StdLayout {
             if (null != myUser && !myUser.isEmpty()) {
                 HelpMenuXHTML helpMenu = (HelpMenuXHTML) MultilingualXHtmlTemplateFactory.createTemplate("HelpMenuXHTML", comms, sessionData);
                 
-                Node placeHolder = layout.getElementMenuBlockPlaceHolder();
-                Node placeHolderMother = placeHolder.getParentNode();
-                placeHolderMother.insertBefore(layout.importNode(helpMenu.getElementHelpMenu(), true), placeHolder);
-                
-                //layout.getElementMenuColumn().appendChild(layout.importNode(lexiesMenu.getElementLexiesManagement(), true));
+                layout.getElementHelpMenuHolder().appendChild(layout.importNode(helpMenu.getElementHelpMenu(), true));
             }
         }
     
-    
-    /**
-        *  Description of the Method
-     *
-     * @param  comms
-     *      Description of the Parameter
-     * @param  sessionData
-     *      Description of the Parameter
-     * @exception  com.lutris.appserver.server.httpPresentation.HttpPresentationException
-     *      Description of the Exception
-     */
-    protected void handleAxieMenu(HttpPresentationComms comms, PapillonSessionData sessionData)
-        throws com.lutris.appserver.server.httpPresentation.HttpPresentationException {
-            // If the user is logged in add the lexie menu
-            User myUser = sessionData.getUser();
-            if (null != myUser && !myUser.isEmpty()) {
-                AxiesManagementXHTML axiesMenu = (AxiesManagementXHTML) MultilingualXHtmlTemplateFactory.createTemplate("AxiesManagementXHTML", comms, sessionData);
-                
-                Node placeHolder = layout.getElementMenuBlockPlaceHolder();
-                Node placeHolderMother = placeHolder.getParentNode();
-                placeHolderMother.insertBefore(layout.importNode(axiesMenu.getElementAxiesManagement(), true), placeHolder);
-                
-                //layout.getElementMenuColumn().appendChild(layout.importNode(axiesMenu.getElementAxiesManagement(), true));
-            }
-        }
-    
-    
+        
     /**
         *  Description of the Method
      *
@@ -503,11 +458,7 @@ public class MotamotLayout implements StdLayout {
             if (null != myUser && !myUser.isEmpty() && myUser.isSpecialist()) {
                 ReviewerMenuXHTML reviewerMenu = (ReviewerMenuXHTML) MultilingualXHtmlTemplateFactory.createTemplate("ReviewerMenuXHTML", comms, sessionData);
 
-                Node placeHolder = layout.getElementMenuBlockPlaceHolder();
-                Node placeHolderMother = placeHolder.getParentNode();
-                placeHolderMother.insertBefore(layout.importNode(reviewerMenu.getElementReviewerMenu(), true), placeHolder);
-                
-                //layout.getElementMenuColumn().appendChild(layout.importNode(reviewerMenu.getElementReviewerMenu(), true));
+                layout.getElementReviewerMenuHolder().appendChild(layout.importNode(reviewerMenu.getElementReviewerMenu(), true));
             }
         }
     
@@ -529,17 +480,7 @@ public class MotamotLayout implements StdLayout {
             if (null != myUser && !myUser.isEmpty() && myUser.isAdmin()) {
                 AdministrationMenuXHTML adminMenu = (AdministrationMenuXHTML) MultilingualXHtmlTemplateFactory.createTemplate("AdministrationMenuXHTML", comms, sessionData);
                 
-                Node placeHolder = layout.getElementMenuBlockPlaceHolder();
-                Node placeHolderMother = placeHolder.getParentNode();
-                placeHolderMother.insertBefore(layout.importNode(adminMenu.getElementAdministrationMenu(), true), placeHolder);
-                
-                //layout.getElementMenuColumn().appendChild(layout.importNode(adminMenu.getElementAdministrationMenu(), true));
+                layout.getElementAdministrationMenuHolder().appendChild(layout.importNode(adminMenu.getElementAdministrationMenu(), true));
             }
         }
-    
-protected void removeMenuBlockPlaceHolder() {
-    Node placeHolder = layout.getElementMenuBlockPlaceHolder();
-    Node placeHolderMother = placeHolder.getParentNode();
-    placeHolderMother.removeChild(placeHolder);
-}
 }

@@ -6,9 +6,11 @@
     <title>Menu</title>
   </head>
   <body>
-    <form action="">
-      <div>
-        <select name="lang" id="lang" onchange="this.form.submit()">
+   <form id="LangForm" action="PapillonBasePO.po">
+        <div>
+        <img src="media/multilingual_logo.jpg" alt="lang/语言/言語/لُغة/..." height="20px" style="vertical-align: middle;"/>
+         <select name="lang" id="lang" onchange="this.form.submit()">
+          <option label="lang go" selected="selected" value="">lang/语言/لُغة/...</option>
           <option label="arabiya" value="ara">عربية</option>
           <option label="Catala" value="cat">Català</option>
           <option label="Deutsch" value="deu">Deutsch</option>
@@ -20,7 +22,8 @@
           <option label="Russian" value="rus">Русский</option>
           <option label="jiantizhongwen" value="zho">简体中文</option>
         </select>
+        <noscript><div><input type="submit" value="Go" /></div></noscript>
       </div>
-    </form>
+      </form>
   </body>
 </html>

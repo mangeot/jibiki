@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
    <title>Papillon</title>
@@ -70,22 +70,15 @@
             <option value="4" label="Copy anyway">Copy anyway</option>
             <option value="5" label="Copy if same satus">Copy if same satus</option>
             <option value="6" label="Copy if finished">Copy if finished</option>
-		        <option value="7" label="Merge">Merge to unique(axeme or axie entries only)</option>
 		</select>
-	  <table id="tbJoin" style="display:yes">
-	    <tr>
-	      <td><input name="deleteOld" type="checkbox" value="deleteOld" checked="checked"/>Delete olds</td>
-	      <td><input name="recursiveRelate" type="checkbox" value="recursiveRelate" checked="checked"/>Change related entries</td>
-	    </tr>
-	  </table>
 	</td>
 	<td>Default status</td>
 	<td>
 		<select name="DefaultStatus" id="DefaultStatus">
-            <option value="not finished" label="not finished">not finished</option>
             <option value="finished" label="finished">finished</option>
-            <option value="revised" label="revised">revised</option>
-            <option value="validated" label="validated">validated</option>
+            <option value="not finished" label="not finished">not finished</option>
+            <!--option value="revised" label="revised">revised</option>
+            <option value="validated" label="validated">validated</option-->
 		</select>
 	</td>
 </tr>
@@ -99,6 +92,7 @@
 </tr>
 </table>
 </form>
+<p class="note">After importing data, do not forget to <a href="Admin.po">reindex</a> your volume!</p>
 <div id="Xml">
 
 </div>

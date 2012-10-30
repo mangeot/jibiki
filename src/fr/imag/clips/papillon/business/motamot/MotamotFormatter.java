@@ -146,7 +146,7 @@ public class MotamotFormatter implements ResultFormatter {
 										myNode = myNode.getParentNode();
 									}
 								}
-								//PapillonLogger.writeDebugMsg("Node type: " + myNode.getNodeType() + ", name: " + myNode.getNodeName() + " , value: " + myNode.getNodeValue());
+								PapillonLogger.writeDebugMsg("Node type: " + myNode.getNodeType() + ", name: " + myNode.getNodeName() + " , value: " + myNode.getNodeValue());
                                 VolumeEntry newEntry = (VolumeEntry) qr.getLexiesHashMap().get(translationId);
                                 if (newEntry != null && !newEntry.isEmpty()) {
 									if (target.equals("axi")) {

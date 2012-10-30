@@ -124,8 +124,8 @@ public class GDEFLayout implements StdLayout {
             
             // Création du document
             layout = (LayoutXHTML) MultilingualXHtmlTemplateFactory.createTemplate("LayoutXHTML", comms, sessionData);
-            HeaderXHTML header = (HeaderXHTML) MultilingualXHtmlTemplateFactory.createTemplate("HeaderXHTML", comms, sessionData);
-            Node menuBar = header.getElementMenuBar();
+           // HeaderXHTML header = (HeaderXHTML) MultilingualXHtmlTemplateFactory.createTemplate("HeaderXHTML", comms, sessionData);
+           // Node menuBar = header.getElementMenuBar();
             
             /*
             // adding a script if needed
@@ -149,22 +149,16 @@ public class GDEFLayout implements StdLayout {
                 scriptParent.appendChild(layout.importNode(script, true));
             }
             scriptElement.removeAttribute("id");
-            
-            // gestion spécifique à IExplorer
-            if (!sessionData.getClientWithLabelDisplayProblems()) {
-                XHTMLElement removeIfNotIE = layout.getElementRemoveIfNotIE();
-                removeIfNotIE.getParentNode().removeChild(removeIfNotIE);
-            }
-            
+                        
             // Insertion du header et du footer
-            layout.getElementHeaderPlace().appendChild(layout.importNode(menuBar, true));
+           // layout.getElementHeaderPlace().appendChild(layout.importNode(menuBar, true));
             // layout.getElementFooterPlace().appendChild(layout.importNode( menuBar, true));
             
             // Gestion du menu :
             // Si les utilisateurs sont logués, on met leur login
             
             // menu
-            handleLangForm(comms, sessionData, url);
+            handleUserMenu(comms, sessionData);
             handleConsultForm(comms, sessionData);
 			
 			if (Admin.EDIT_DATA) {
@@ -189,70 +183,34 @@ public class GDEFLayout implements StdLayout {
     public Node getContentPlaceHolder() {
         return layout.getElementMainColumn();
     }
+        
     
     /**
-        *  Description of the Method
-     *
-     * @param  comms
-     *      Description of the Parameter
-     * @param  sessionData
-     *      Description of the Parameter
-     * @param  url
-     *      Description of the Parameter
-     * @exception  com.lutris.appserver.server.httpPresentation.HttpPresentationException
-     *      Description of the Exception
-     * @exception  PapillonBusinessException
-     *      Description of the Exception
-     */
-    protected void handleLangForm(HttpPresentationComms comms, PapillonSessionData sessionData, String url)
-        throws com.lutris.appserver.server.httpPresentation.HttpPresentationException, PapillonBusinessException {
-            
-            UserLanguageSelectXHTML langSelect = (UserLanguageSelectXHTML) MultilingualXHtmlTemplateFactory.createTemplate("UserLanguageSelectXHTML", comms, sessionData);
-            XHTMLSelectElement langSelectElement = (XHTMLSelectElement) langSelect.getElementLang();
-            
-            // I select by default the user preferred language for the languages menu
-            if (!sessionData.getClientWithLabelDisplayProblems()) {
-                PapillonBasePO.setUnicodeLabels(langSelectElement);
-            }
-            PapillonBasePO.setSelected(langSelectElement, sessionData.getUserPreferredLanguage());
-            
-            LangAndUserXHTML userMenu = (LangAndUserXHTML) MultilingualXHtmlTemplateFactory.createTemplate("LangAndUserXHTML", comms, sessionData);
-            // I add the LangSelectElement in the menu
-            Node selectHolder = userMenu.getElementLangSelectPlace();
-            selectHolder.getParentNode().replaceChild(userMenu.importNode(langSelectElement, true), selectHolder);
-            
-            // I add the URL of the page for the action of the language form
-            XHTMLFormElement umLangForm = (XHTMLFormElement) userMenu.getElementLangForm();
-            umLangForm.setAction(url);
-            
-            // Handle the user part of the block
-            handleUserLogin(userMenu, sessionData.getUser());
-            
-            layout.getElementMenuColumn().appendChild(layout.importNode(userMenu.getElementLanguageAndUser(), true));
-        }
-    
-    
-    /**
-        *  Description of the Method
+	 *  Description of the Method
      *
      * @param  userMenu                       Description of the Parameter
      * @param  myUser                         Description of the Parameter
      * @exception  PapillonBusinessException  Description of the Exception
      */
-    protected void handleUserLogin(LangAndUserXHTML userMenu, User myUser)
-        throws PapillonBusinessException {
-            // If the user is logged
-            if (null != myUser && !myUser.isEmpty()) {
-                userMenu.setTextUserLogin(myUser.getLogin());
-                Utility.removeElement(userMenu.getElementLoginAnchor());
-            }                                         // If the user is not logged
-            else {
-                userMenu.setTextUserLogin("");
-                Utility.removeElement(userMenu.getElementUserProfileAnchor());
-                Utility.removeElement(userMenu.getElementLogoutAnchor());
-            }
-        }
-    
+    protected void handleUserMenu(HttpPresentationComms comms, PapillonSessionData sessionData)
+	throws com.lutris.appserver.server.httpPresentation.HttpPresentationException, PapillonBusinessException {
+		
+		LangAndUserXHTML userMenu = (LangAndUserXHTML) MultilingualXHtmlTemplateFactory.createTemplate("LangAndUserXHTML", comms, sessionData);
+		
+		// If the user is logged
+		User myUser = sessionData.getUser();
+		if (null != myUser && !myUser.isEmpty()) {
+			userMenu.setTextUserLogin(myUser.getLogin());
+			Utility.removeElement(userMenu.getElementLoginAnchor());
+		}                                         // If the user is not logged
+		else {
+			userMenu.setTextUserLogin("");
+			Utility.removeElement(userMenu.getElementUserProfileAnchor());
+			Utility.removeElement(userMenu.getElementLogoutAnchor());
+		}
+		
+		layout.getElementUserMenuHolder().appendChild(layout.importNode(userMenu.getElementUserMenu(), true));
+	}
     
     /**
         *  Description of the Method
@@ -334,7 +292,7 @@ public class GDEFLayout implements StdLayout {
             PapillonBasePO.setSelected(queryMenu.getElementQMTargets(), prefTrgLang);
             
             // Add the menu to the Page
-            layout.getElementMenuColumn().appendChild(layout.importNode(queryMenu.getElementQueryMenu(), true));
+            layout.getElementQueryMenuHolder().appendChild(layout.importNode(queryMenu.getElementQueryMenu(), true));
         }
     
     
@@ -354,7 +312,7 @@ public class GDEFLayout implements StdLayout {
             User myUser = sessionData.getUser();
             if (null != myUser && !myUser.isEmpty()) {
                 LexiesManagementXHTML lexiesMenu = (LexiesManagementXHTML) MultilingualXHtmlTemplateFactory.createTemplate("LexiesManagementXHTML", comms, sessionData);
-                layout.getElementMenuColumn().appendChild(layout.importNode(lexiesMenu.getElementLexiesManagement(), true));
+				layout.getElementLexiesManagementHolder().appendChild(layout.importNode(lexiesMenu.getElementLexiesManagement(), true));
             }
         }
     
@@ -375,7 +333,7 @@ public class GDEFLayout implements StdLayout {
             User myUser = sessionData.getUser();
             if (null != myUser && !myUser.isEmpty() && myUser.isSpecialist()) {
                 ReviewerMenuXHTML reviewerMenu = (ReviewerMenuXHTML) MultilingualXHtmlTemplateFactory.createTemplate("ReviewerMenuXHTML", comms, sessionData);
-                layout.getElementMenuColumn().appendChild(layout.importNode(reviewerMenu.getElementReviewerMenu(), true));
+                layout.getElementReviewerMenuHolder().appendChild(layout.importNode(reviewerMenu.getElementReviewerMenu(), true));
             }
         }
     
@@ -396,7 +354,7 @@ public class GDEFLayout implements StdLayout {
             User myUser = sessionData.getUser();
             if (null != myUser && !myUser.isEmpty() && myUser.isValidator()) {
                 ValidatorMenuXHTML validatorMenu = (ValidatorMenuXHTML) MultilingualXHtmlTemplateFactory.createTemplate("ValidatorMenuXHTML", comms, sessionData);
-                layout.getElementMenuColumn().appendChild(layout.importNode(validatorMenu.getElementValidatorMenu(), true));
+                layout.getElementValidatorMenuHolder().appendChild(layout.importNode(validatorMenu.getElementValidatorMenu(), true));
             }
         }
 
@@ -416,7 +374,7 @@ public class GDEFLayout implements StdLayout {
             User myUser = sessionData.getUser();
             if (null != myUser && !myUser.isEmpty() && myUser.isAdmin()) {
                 AdministrationMenuXHTML adminMenu = (AdministrationMenuXHTML) MultilingualXHtmlTemplateFactory.createTemplate("AdministrationMenuXHTML", comms, sessionData);
-                layout.getElementMenuColumn().appendChild(layout.importNode(adminMenu.getElementAdministrationMenu(), true));
+                layout.getElementAdministrationMenuHolder().appendChild(layout.importNode(adminMenu.getElementAdministrationMenu(), true));
             }
         }
     

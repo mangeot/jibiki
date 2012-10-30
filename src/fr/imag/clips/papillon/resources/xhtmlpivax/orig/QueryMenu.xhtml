@@ -35,7 +35,7 @@
         <input type="submit" name="lookup" value="Go" />
         </div>
       </form>-->
-               <form  id="ConsultForm" method="get" action="Home.po" >
+               <form  id="ConsultForm" method="get" action="Home.po"  onsubmit="filterVolumes();">
         <div>
                 <div>
                     <div class="menuColumnSize">
@@ -44,8 +44,8 @@
                         </div>
                         <div class="menuVariableValue" >
                             <input type="hidden" id="Facet" name="FACET.0" value="cdm-headword"/>
-                            <input type="hidden" id="Operator" name="OPERATOR.0" value="2"/>
-                            <input id="ValueField" name="FACETVALUE.0" type="text" class="menuVariableValueWidth" />
+                            <input type="hidden" id="Operator" name="OPERATOR.0" value="0"/>
+                            <input id="ValueField" name="FACETVALUE.0" type="text" size="15" class="menuVariableValueWidth" />
                         </div>
                     </div>
                     <div class="menuColumnSize">
@@ -60,29 +60,22 @@
                     </div>
                     <div class="menuColumnSize">
                         <div class="menuVariableName">
-                            <label for="Targets" accesskey="t"><span class="accesskey">T</span>arget:</label>
+                            <label for="QMTargets" accesskey="t"><span class="accesskey">T</span>arget:</label>
                          </div>
                         <div class="menuVariableValue" >
-                            <select id="Targets" name="TARGETS" class="menuVariableValueWidth">
-                                <option label="All languages" value="*ALL*">All languages</option>
+                            <select id="QMTargets" name="TARGETS" class="menuVariableValueWidth">
+                                <option id="QMAllTargetsOption" label="All languages" value="*ALL*">All languages</option>
                                 <option id="TargetTmpl" label="NONE" value="NONE">NONE</option>
                             </select>
                         </div>
                     </div>
-                    <div class="menuColumnSize">
-                        <div class="menuVariableName">
-                            <label for="Systems" accesskey="m">Syste<span class="accesskey">m</span>s:</label>
-                        </div>
-                        <div class="menuVariableValue" >
-                            <select id="Systems" name="SYSTEMS" class="menuVariableValueWidth">
-                                <option label="All systems" value="*ALL*">All systems</option>
-                                <option id="SystemTmpl" label="NONE" value="NONE">NONE</option>
-                            </select>
-                        </div>
-                    </div>
                 </div>
-                            
                 <div>
+ 					<div id="VolumesDiv">
+						<div id="VolumesLang">
+							<input type="hidden" id="VolumesInput" name="VOLUMES" value="*ALL*"/>
+						</div>
+					</div>
                     <input type="hidden" name="XSL" value="Default"/>
                     <input type="hidden" name="NB_RESULT_PER_PAGE" value="5" />
                     <input type="hidden" name="OFFSET"/>
@@ -91,8 +84,10 @@
                 </div>
                 </div>
             </form>
-      <a title="Advanced Lookup of a Word" href="ConsultExpert.po">Advanced Lookup</a>
+      <a title="Advanced Lookup of a Word" href="AdvancedSearch.po">Advanced Lookup</a>
       <br/>
+      <!--a title="Alphabetical Lookup" href="BrowseVolumePage.po">Alphabetical Lookup</a>
+      <br/-->
       <a title="Dictionary List" href="ViewDictionaries.po">Dictionary List</a>
     </div>
   </body>

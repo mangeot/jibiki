@@ -99,10 +99,187 @@
 /*<group=page layout>*/
 
 body {
-	background : white;
+	background : #DA9673;
 	font: 10pt   'Lucida Grande', LucidaGrande, Lucida, Helvetica, Arial, sans-serif;
-	color: black;
+	color: #283310;
 }
+
+/*-------------------------*/
+/* CSS only popup menus    */
+/*-------------------------*/
+
+#MenuBar {
+	height: 1.4em;
+	line-height: 1.2em;
+	z-index:10;
+	text-align: left;
+}
+
+.popupMenu {
+	width: auto;
+	float: left;
+	padding: 0.1em 0em 0.1em 0em;
+	cursor: default;
+	border-left: 1px solid black;
+	border-bottom: 1px solid black;
+}
+
+.popupMenu:hover {
+   background: #887;
+   color:#fff;
+}
+
+.popupMenu  a {
+   padding: 0em 0.5em 0em 0.5em ;
+   text-decoration: none;
+}
+
+.popupMenu  a:link {
+   color:#00a;
+}
+
+.popupMenu  a:visited {
+   color:#00a;
+}
+
+.popupMenu  a:active {
+   color:#00a;
+}
+
+.popupMenu  a:hover {
+   background: #887;
+   color:#fff;
+   text-decoration: none;
+}
+
+.popupMenu ul {
+	display: none;
+	position: absolute;
+	background: #aa7;
+	color: black;
+	list-style: none;
+	margin: 0em 0 0 0;
+   padding: 0;
+}
+
+.popupMenu ul li {
+   display: block;
+   padding: 0.1em 0.5em 0.1em 0.5em ;
+   font-size:0.9em;
+}
+
+div.popupMenu:hover ul {
+    display: block;
+    margin: 0;
+    padding: 0;
+
+}
+
+div.popupMenu ul li:hover {
+   background: #887;
+   color: #fff;
+}
+
+/*-----------------------------------*/
+/* MenuBlock (left) part of the page */
+/*-----------------------------------*/
+
+/*.menuVariableName {
+    float: left; 
+    width: 50px;
+    }
+    
+.menuVariableValue {
+    margin-right: 7px;
+    float: right; 
+    width: 90px;
+    }
+        
+.menuVariableValueWidth {
+    width: 100%;
+    }
+
+.menuGo {
+    width: 50px;
+    margin-left:auto; 
+    margin-right:auto;
+    margin-top: 5px;
+    } */
+	
+.menuBlock {
+	background: white url(/media/papillon-background-fuzzy-light.png) 0 0 no-repeat fixed;
+    color: #000;
+    padding-bottom: 0.2em;
+    border: 1px solid black;
+    font-size: 13px;
+    margin-bottom: .5em;
+}
+
+.menuBlock h2.menuTitle {
+   background: #aa7;
+   color: #fff;
+   border: none;
+   border-bottom : 1px solid grey;
+   width: 100%;
+   font-weight: bold;
+   font-size: medium;
+   text-indent: 0.5em;
+   margin-top: 0;
+   padding: 0.1em 0;
+   font-variant: small-caps;
+}
+
+.menuBlock a:link {
+    text-decoration: none; 
+    color: blue;
+}
+
+.menuBlock a:visited {
+    text-decoration: none; 
+    color: blue;
+}
+
+.menuBlock a:active {
+    text-decoration: none; 
+    color: blue;
+}
+
+.menuBlock a:hover {
+    text-decoration: none; 
+    color: #000070;
+}
+
+.menuBlock h2, .menuBlock div, .menuBlock p, .menuBlock ul {
+   color: #000;
+}
+
+.menuBlock div, .menuBlock p, .menuBlock ul {
+   margin-top: 0.2em;
+}
+
+.menuBlock li {
+   margin-left: 0;
+   color: #aa7;
+}
+
+.menuBlock p, .menuBlock div {
+   text-indent: 0.3em;
+}
+
+.menuBlock form {
+   margin-top: 0;
+   padding-left: 0.2em;
+   padding-right: 0.2em;
+}
+
+.menuBlock h2.menuTitle a {
+   color: #fff;
+}
+
+.menuBlock h2.menuTitle a:hover {
+   text-decoration: none;
+}
+
 
 /*--------------------------------------*/
 /* For the api */

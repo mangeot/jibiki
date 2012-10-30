@@ -235,23 +235,23 @@ public class LinkFactory {
 	}
 	
     /**
-	 * Gets the linked entries of an entry from its entryId (handle)
+	 * Gets the linked entries of an entry
+	 * recursive procedure.
      *
+     * @param theEntry the VolumeEntry
+     * @param theAxies an ArrayList of axies already linked 
+     * @param theLinks the HashMap of linked entries by entryid
+     * @param targets Collection of target languages
+     * @param direction string representing the direction of the result tree traversal (Link.DIRECTION_UP or Link.DIRECTION_DOWN)
      * @param user the user
-     * @param entryID the entryId or handle of the entry
-     * @param theVolume the entry volume 
-     * @return the Vector containing Link objects.
+     * @return void
      * @exception PapillonBusinessException if an error occurs
      *   retrieving data (usually due to an underlying data layer
 	 *   error).
      */
 	public static void getLinkedEntriesByEntry(VolumeEntry theEntry, ArrayList theAxies, HashMap theLinks, Collection targets, String direction, User user) throws PapillonBusinessException {
 		try{
-			PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: start "+ theEntry.getEntryId() + " direction: " + direction);
-//			Iterator iter = targets.iterator();
-//			while (iter.hasNext()) {
-//				String lang = (String) iter.next();
-//				PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: lang "+ lang);
+			//PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: start "+ theEntry.getEntryId() + " direction: " + direction);
 				LinkQuery qr = new LinkQuery(theEntry.getVolume().getLinkDbname(),CurrentDBTransaction.get());
 				qr.setQueryEntryId(Integer.parseInt(theEntry.getHandle()));
 //				qr.setQueryLang(lang);
@@ -268,7 +268,7 @@ public class LinkFactory {
 						if (linkedEntry == null ||linkedEntry.isEmpty()) {
 							Volume myVolume = VolumesFactory.getVolumeByName(tempLink.getVolumeTarget());
 							if (myVolume !=null && !myVolume.isEmpty()) {
-								PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: call findEntryByEntryId "+ myVolume.getName() + " " + targetId);
+								//PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: call findEntryByEntryId "+ myVolume.getName() + " " + targetId);
 								linkedEntry = VolumeEntriesFactory.findEntryByEntryId(user, myVolume, targetId);
 								if (linkedEntry != null && !linkedEntry.isEmpty() &&!theLinks.containsKey(targetId)) {
 									theLinks.put(targetId,linkedEntry);
@@ -282,7 +282,7 @@ public class LinkFactory {
 									theAxies.add(targetId);
 									direction = Link.DIRECTION_DOWN;
 								}
-								PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: call getLinkedEntriesByEntry "+ linkedEntry.getEntryId()  + " lang: " + tempLink.getLang());
+								//PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: call getLinkedEntriesByEntry "+ linkedEntry.getEntryId()  + " lang: " + tempLink.getLang());
 								getLinkedEntriesByEntry(linkedEntry, theAxies, theLinks, targets, direction, user);
 								direction = prevDir;
 							}

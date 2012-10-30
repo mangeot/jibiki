@@ -11,17 +11,10 @@
         <div>
         Find entries where:<br/>
         <!-- MULTIPLE VALUES: VOLUMES, TARGETS, -->
-        <!--input type="hidden" name="idFieldName" id="idFieldName"/>
-        <input type="hidden" name="handleFieldName" id="handleFieldName"/>
-        <input type="hidden" name="volFieldName" id="volFieldName"/-->
-          
+          <input type="hidden" name="idFieldName" id="idFieldName"/>
+          <input type="hidden" name="langFieldName" id="langFieldName"/>
         <input type="hidden" name="VOLUMES" value="" id="Volumes"/>
         <input type="hidden" id="Targets" name="TARGETS" value=""/>
-        <input type="hidden" id="Systems" name="SYSTEMS" value=""/>  
-          <input type="hidden" id="axeme" name="axeme" value=""/>
-          <input type="hidden" id="axemeHandle" name="axemeHandle" value=""/>  
-          <input type="hidden" id="axieHandle" name="axieHandle" value=""/>    
-          
         <!-- multiple selection: dictionaries to search into -->
         <input type="hidden" id="Dictionaries" name="DICTIONARIES"/>
 
@@ -40,18 +33,13 @@
             <option value="5" label="ends with">ends with</option>
         </select>
         <input type="text" id="ValueField" name="FACETVALUE" size="14" maxlength="128" />
-        <label for="TargetLang" accesskey="i"><span class="accesskey">I</span>n:</label>
-        <select id="TargetLang" name="SOURCE">
-            <option id="AllTargetsOption" value="*ALL*" label="ALL">All languages</option>
-            <option id="TargetOptionTemplate" value="NONE" label="NONE">NONE</option>
+        <label for="SourceLang" accesskey="i"><span class="accesskey">I</span>n:</label>
+        <select id="SourceLang" name="SOURCE">
+            <option id="AllSourcesOption" value="*ALL*" label="ALL">All languages</option>
+            <option id="SourceOptionTemplate" value="NONE" label="NONE">NONE</option>
         </select>
-        <label for="System" accesskey="s"><span class="accesskey">S</span>ystem:</label>
-        <select id="System" name="SYSTEM">
-          <option id="AllSystemsOption" value="*ALL*" label="ALL">All systems</option>
-          <option id="SystemOptionTemplate" value="NONE" label="NONE">NONE</option>
-        </select>  
         </div>
-        <input type="hidden" name="XSL" value="Default" id="Xsl"/>
+        <input type="hidden" name="XSL" value="Defaut" id="Xsl"/>
         <input type="submit" name="lookup" value="Go" />
         </div>
       </form>

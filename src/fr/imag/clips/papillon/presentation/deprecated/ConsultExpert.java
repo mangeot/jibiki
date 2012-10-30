@@ -239,9 +239,10 @@ public class ConsultExpert extends PapillonBasePO {
     protected final static String ANY_RESOURCE = "*ANY*";
     protected final static String ANY_TARGET = "*ANY*";
 
-    protected final static String ContributionsVolumeParameter = ReviewContributions.VOLUME_PARAMETER;
-    protected final static String ContributionsHandleParameter = ReviewContributions.HANDLE_PARAMETER;
-	protected final static String ContributionsDeleteParameter = ReviewContributions.REMOVE_VALIDATED_CONTRIB_PARAMETER;
+    protected final static String ContributionsVolumeParameter = "VOLUME";
+    protected final static String ContributionsHandleParameter = "HANDLE";
+	protected final static String ContributionsDeleteParameter = "REMOVE_VALIDATED_CONTRIB";
+	
     /**
      *  Description of the Field
      */

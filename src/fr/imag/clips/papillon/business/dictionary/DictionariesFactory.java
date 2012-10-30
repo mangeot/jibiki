@@ -1525,8 +1525,10 @@ public class DictionariesFactory {
 						Volume firstVolume = (Volume)(Volumes.iterator()).next();
 						String firstVolumeName = firstVolume.getName();
 						for (int j = 0; j < transIds.length; j++) {
+							PapillonLogger.writeDebugMsg("getDirectResults: findEntryByEntryId:" + transIds[j]);
 							VolumeEntry myEntry = (VolumeEntry) DictionariesFactory.findEntryByEntryId(firstVolumeName, transIds[j]);
 							if (myEntry != null && ! myEntry.isEmpty()) {
+								PapillonLogger.writeDebugMsg("getDirectResults: targetEntryId:" + myEntry.getEntryId());
 								resLexies.put(myEntry.getEntryId(),myEntry);
 								PapillonLogger.writeDebugMsg("getDirectResults: target id: " + myEntry.getEntryId());
 								

@@ -307,7 +307,16 @@ public class XslTransformation implements ResultFormatter {
     
     
     
-    
+	/**
+	 * Gets the XML code of a query result (VolumeEntry) and apply an XSLt strylesheet for HTML output
+     *
+     * @param qr the QueryResult
+     * @param user the User
+     * @return Node the result HTML node
+     * @exception PapillonBusinessException if an error occurs
+     *   retrieving data (usually due to an underlying data layer
+	 *   error).
+     */	
     
     public Node getFormattedResult(QueryResult qr, User usr)
             throws PapillonBusinessException {
@@ -322,19 +331,11 @@ public class XslTransformation implements ResultFormatter {
 			direction = Link.DIRECTION_UP;
 		}
 		java.util.HashMap linkedEntries = qr.getLexiesHashMap();
-		
-		// FIXME: determine what to do for direct translation result:
-        // hint, use jibikiXsltExtensions to resolve the links and format everything...
-		// for the moment, old school way...	
+
 		insertLinkedEntries(myAnswer, linkedEntries, direction);
-		//answers.add(myAnswer);
 		if (null != dictXsl && !dictXsl.isEmpty()) {
 			// Format document source
-			//for (Iterator iterator = answers.iterator();iterator.hasNext();) {
-			//	VolumeEntry theAnswer = (VolumeEntry) iterator.next();
-			//Node resultNode = formatResult(theAnswer.getDom(), dictXsl, usr);
-			PapillonLogger.writeDebugMsg("Answer: " + qr.getSourceEntry().getHeadword() + " node: " + XMLServices.NodeToString(myAnswer.getDom()));
-			
+			//PapillonLogger.writeDebugMsg("Answer: " + qr.getSourceEntry().getHeadword() + " node: " + XMLServices.NodeToString(myAnswer.getDom()));			
             //PapillonLogger.writeDebugMsg("XSLSheet is: " + dictXsl.getName() + " " + dictXsl.getHandle());
 			Node resultNode = formatResult(myAnswer.getDom(), dictXsl, usr);
 			if (resultNode == null) {
@@ -351,6 +352,20 @@ public class XslTransformation implements ResultFormatter {
 		return rootdiv;
 	} 
 	
+    /**
+	 * Inserting the xml code of the linked entries in an entry xml code
+	 * recursive procedure.
+	 * generic for direct, pivot or pivax macrostructures
+     *
+     * @param theEntry the VolumeEntry
+     * @param theLinks the HashMap of linked entries by entryid
+     * @param direction string representing the direction of the result tree traversal (Link.DIRECTION_UP or Link.DIRECTION_DOWN)
+     * @param user the user
+     * @return void
+     * @exception PapillonBusinessException if an error occurs
+     *   retrieving data (usually due to an underlying data layer
+	 *   error).
+     */
 	protected static void insertLinkedEntries (VolumeEntry theEntry, java.util.HashMap linkedEntries, String direction) 
 	throws PapillonBusinessException {
 		//PapillonLogger.writeDebugMsg("insertLinkedEntries for: " +theEntry.getEntryId());
@@ -529,6 +544,7 @@ public class XslTransformation implements ResultFormatter {
                 (qr.getResultKind() == QueryResult.DIRECT_TRANSLATIONS_RESULT)) {
             if (null != dictXsl && !dictXsl.isEmpty()) {
                 // Format document source
+				PapillonLogger.writeDebugMsg("SourceNode: " + qr.getSourceEntry().getHeadword() + " node: " + XMLServices.NodeToString(qr.getSourceEntry().getDom()));
                 Node resultNode = formatResult(qr.getSourceEntry().getDom(), dictXsl, usr);
 			//	PapillonLogger.writeDebugMsg("ResultNode: " + qr.getSourceEntry().getHeadword() + " node: " + XMLServices.NodeToString(resultNode)+", "+resultNode.getNodeValue());
                 

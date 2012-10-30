@@ -49,6 +49,7 @@
                     <img id="plus" onclick="addOrRemoveCriterion(this.id, '+');" src="media/plus.jpg" alt="+" width="15"/>
                     <select id="Facet" name="FACET" onchange="hideOrNotSourceLang(value, name); getSelector(value, name);" >
                       <option value="cdm-headword" label="Headword">Headword</option>
+					  <option value="cdm-pronunciation" label="Pronunciation">Pronunciation</option>
                       <option value="cdm-definition" label="Definition">Definition</option>
                       <option value="cdm-pos" label="POS">POS</option>
                       <option value="cdm-example" label="Example">Example</option>
@@ -78,7 +79,7 @@
                         -->
                         <label style="padding-left: 1em;">source language:</label>
                         <select id="SourceLang" name="SOURCE">
-                            <option value="All" label="All">all languages</option>
+                            <option value="All">all</option>
                             <option id="SourceOptionTemplate" value="NONE" label="NONE">NONE</option>
                         </select>
                     </span>
