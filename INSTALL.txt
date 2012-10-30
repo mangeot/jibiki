@@ -1,8 +1,8 @@
 #!/bin/sh
 
 ## short install needs:
-- jdk1.4
-- postgres8.1
+- jdk1.4 -> jdk1.7
+- postgres8.1 -> postgres9.0
 - postgresql-jdbc
 - toolsforjibiki
 svn checkout svn://svn.ligforge.imag.fr/svnroot/toolsforjibiki
