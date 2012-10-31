@@ -335,7 +335,7 @@ public class XslTransformation implements ResultFormatter {
 		insertLinkedEntries(myAnswer, linkedEntries, direction);
 		if (null != dictXsl && !dictXsl.isEmpty()) {
 			// Format document source
-			//PapillonLogger.writeDebugMsg("Answer: " + qr.getSourceEntry().getHeadword() + " node: " + XMLServices.NodeToString(myAnswer.getDom()));			
+			PapillonLogger.writeDebugMsg("Answer: " + qr.getSourceEntry().getHeadword() + " node: " + XMLServices.NodeToString(myAnswer.getDom()));			
             //PapillonLogger.writeDebugMsg("XSLSheet is: " + dictXsl.getName() + " " + dictXsl.getHandle());
 			Node resultNode = formatResult(myAnswer.getDom(), dictXsl, usr);
 			if (resultNode == null) {
@@ -343,7 +343,7 @@ public class XslTransformation implements ResultFormatter {
 				resultNode = myAnswer.getDom().getDocumentElement();
 				
 			}
-			//PapillonLogger.writeDebugMsg("ResultNode: " + qr.getSourceEntry().getHeadword() + " node: " + XMLServices.NodeToString(resultNode)+", "+resultNode.getNodeValue());
+			PapillonLogger.writeDebugMsg("ResultNode: " + qr.getSourceEntry().getHeadword() + " node: " + XMLServices.NodeToString(resultNode)+", "+resultNode.getNodeValue());
 				
 				rootdiv.appendChild(res.importNode(resultNode, true));
 					//PapillonLogger.writeDebugMsg("rootdiv:"+rootdiv.getTextContent());
@@ -368,7 +368,7 @@ public class XslTransformation implements ResultFormatter {
      */
 	protected static void insertLinkedEntries (VolumeEntry theEntry, java.util.HashMap linkedEntries, String direction) 
 	throws PapillonBusinessException {
-		//PapillonLogger.writeDebugMsg("insertLinkedEntries for: " +theEntry.getEntryId());
+		PapillonLogger.writeDebugMsg("insertLinkedEntries for: " +theEntry.getEntryId());
 		org.apache.xml.utils.PrefixResolver thePrefixResolver = theEntry.getVolume().getPrefixResolver();
 		java.util.HashMap linksTable = theEntry.getVolume().getLinksTable();
 		org.w3c.dom.Document theEntryDoc = theEntry.getDom();
@@ -417,7 +417,7 @@ public class XslTransformation implements ResultFormatter {
 												}			
 												direction = refDir;
 												Node tempNode = theEntryDoc.importNode((Node) linkedEntry.getDom().getDocumentElement(), true);
-												//PapillonLogger.writeDebugMsg("insertingLinkedEntry: " + linkedEntry.getEntryId());
+												PapillonLogger.writeDebugMsg("insertingLinkedEntry: " + linkedEntry.getEntryId());
 												myNode.appendChild(tempNode);
 											}
 										}

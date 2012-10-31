@@ -229,6 +229,8 @@
 			<key>Layout</key>
 			<array>
 				<dict>
+					<key>BecomeActive</key>
+					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -283,7 +285,6 @@
 								<string>A30722D80EC89B2100733910</string>
 								<string>A30723380EC89B2300733910</string>
 								<string>A307247B0EC89B2600733910</string>
-								<string>A307252E0EC89B2700733910</string>
 								<string>A37C02EC128C62DB0047A982</string>
 								<string>A37C02EE128C62DB0047A982</string>
 								<string>A37C0300128C62DB0047A982</string>
@@ -294,8 +295,6 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>298</integer>
-									<integer>281</integer>
 									<integer>190</integer>
 									<integer>10</integer>
 									<integer>9</integer>
@@ -306,7 +305,7 @@
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 0}, {369, 795}}</string>
+							<string>{{0, 4747}, {369, 795}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -336,8 +335,6 @@
 					<key>Dock</key>
 					<array>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -355,7 +352,7 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>A3EC816B163FBEFB00715BB7</string>
+										<string>A3E11521163FF4BA0005DE65</string>
 										<key>history</key>
 										<array>
 											<string>A3A20A81163C40D7007E1A77</string>
@@ -379,7 +376,7 @@
 											<string>A3EC8167163FBEFB00715BB7</string>
 											<string>A3EC8168163FBEFB00715BB7</string>
 											<string>A3EC8169163FBEFB00715BB7</string>
-											<string>A3EC816A163FBEFB00715BB7</string>
+											<string>A3EC816B163FBEFB00715BB7</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -437,9 +434,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>A3EC811F163FB63100715BB7</string>
+				<string>A3E11522163FF4BA0005DE65</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>A3EC8120163FB63100715BB7</string>
+				<string>A3E11523163FF4BA0005DE65</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -577,8 +574,8 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>A3D629281485232300B7780F</string>
+		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>/Projects/jibiki/branches/LINKS_1_0/JibikiLinks.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
@@ -659,7 +656,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>A3D629281485232300B7780F</string>
-				<string>A3EC8105163FB62D00715BB7</string>
+				<string>A3E11524163FF4BA0005DE65</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
@@ -819,7 +816,7 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CDD528C0622207200134675</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>Layout.xhtml</string>
+										<string></string>
 										<key>StatusBarVisibility</key>
 										<true/>
 									</dict>
@@ -877,8 +874,8 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C530D57069F1CE1000CFCEE</string>
-				<string>A3EC8111163FB62D00715BB7</string>
-				<string>A3EC8112163FB62D00715BB7</string>
+				<string>A3E11525163FF4BA0005DE65</string>
+				<string>A3E11526163FF4BA0005DE65</string>
 				<string>1CDD528C0622207200134675</string>
 				<string>1CD0528E0623707200166675</string>
 			</array>
@@ -887,7 +884,7 @@
 			<key>WindowToolGUID</key>
 			<string>1C530D57069F1CE1000CFCEE</string>
 			<key>WindowToolIsVisible</key>
-			<false/>
+			<true/>
 		</dict>
 		<dict>
 			<key>Identifier</key>
