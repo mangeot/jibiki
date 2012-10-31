@@ -260,8 +260,8 @@ public class LinkFactory {
 					Link tempLink = new Link(DOarray[i]);
 					String targetId = tempLink.getTargetId();
 					String type = tempLink.getType();
-					if (((direction.equals(Link.DIRECTION_UP) && (type == null || !type.equals(Link.FINAL_TYPE)))
-						|| (direction.equals(Link.DIRECTION_DOWN) && ((type == null || !type.equals(Link.FINAL_TYPE)) || 
+					if (((direction.equals(Link.DIRECTION_UP) && (type == null || type.equals(Link.AXEME_TYPE) || type.equals(Link.AXIE_TYPE)))
+						|| (direction.equals(Link.DIRECTION_DOWN) && ((type == null || type.equals(Link.AXEME_TYPE || type.equals(Link.AXIE_TYPE)) || 
 																		(type.equals(Link.FINAL_TYPE) && targets.contains(tempLink.getLang())))))
 						&& !theAxies.contains(targetId)) {
 						VolumeEntry linkedEntry = (VolumeEntry) theLinks.get(targetId);
