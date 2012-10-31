@@ -16,9 +16,9 @@
 	};
 	A307222A0EC89B1E00733910 /* DictionariesFactory.java */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1260, 23730}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1260, 23745}}";
 			sepNavSelRange = "{12724, 0}";
-			sepNavVisRange = "{11780, 1996}";
+			sepNavVisRange = "{11780, 1925}";
 		};
 	};
 	A307222B0EC89B1E00733910 /* Dictionary.java */ = {
@@ -536,16 +536,18 @@
 					PBXFileDataSource_Target_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 373360823;
-			PBXWorkspaceStateSaveDate = 373360823;
+			PBXPerProjectTemplateStateSaveDate = 373367323;
+			PBXWorkspaceStateSaveDate = 373367323;
 		};
 		perUserProjectItems = {
+			A396B10316411A6C008EDEEA = A396B10316411A6C008EDEEA /* PBXTextBookmark */;
+			A396B10416411A6C008EDEEA = A396B10416411A6C008EDEEA /* PBXTextBookmark */;
+			A396B10516411A6C008EDEEA = A396B10516411A6C008EDEEA /* PBXTextBookmark */;
 			A3A20A81163C40D7007E1A77 = A3A20A81163C40D7007E1A77 /* PBXTextBookmark */;
 			A3A20A83163C40D7007E1A77 = A3A20A83163C40D7007E1A77 /* PBXTextBookmark */;
 			A3A20A84163C40D7007E1A77 = A3A20A84163C40D7007E1A77 /* PBXTextBookmark */;
 			A3A20A86163C40D7007E1A77 = A3A20A86163C40D7007E1A77 /* PBXTextBookmark */;
 			A3D2C763163EC3B40029B0F7 = A3D2C763163EC3B40029B0F7 /* PBXTextBookmark */;
-			A3E11521163FF4BA0005DE65 = A3E11521163FF4BA0005DE65 /* PBXTextBookmark */;
 			A3EC8113163FB63100715BB7 = A3EC8113163FB63100715BB7 /* PBXTextBookmark */;
 			A3EC8114163FB63100715BB7 = A3EC8114163FB63100715BB7 /* PBXTextBookmark */;
 			A3EC8115163FB63100715BB7 = A3EC8115163FB63100715BB7 /* PBXTextBookmark */;
@@ -560,9 +562,7 @@
 			A3EC8165163FBEFB00715BB7 = A3EC8165163FBEFB00715BB7 /* PBXTextBookmark */;
 			A3EC8166163FBEFB00715BB7 = A3EC8166163FBEFB00715BB7 /* PBXTextBookmark */;
 			A3EC8167163FBEFB00715BB7 = A3EC8167163FBEFB00715BB7 /* PBXTextBookmark */;
-			A3EC8168163FBEFB00715BB7 = A3EC8168163FBEFB00715BB7 /* PBXTextBookmark */;
 			A3EC8169163FBEFB00715BB7 = A3EC8169163FBEFB00715BB7 /* PBXTextBookmark */;
-			A3EC816B163FBEFB00715BB7 = A3EC816B163FBEFB00715BB7 /* PBXTextBookmark */;
 		};
 		sourceControlManager = A3F36016137BDF4A000F8617 /* Source Control */;
 		userBuildSettings = {
@@ -602,6 +602,36 @@
 			sepNavSelRange = "{276, 1003}";
 			sepNavVisRange = "{0, 1295}";
 		};
+	};
+	A396B10316411A6C008EDEEA /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = A307222A0EC89B1E00733910 /* DictionariesFactory.java */;
+		name = "DictionariesFactory.java: 312";
+		rLen = 0;
+		rLoc = 12724;
+		rType = 0;
+		vrLen = 1925;
+		vrLoc = 11780;
+	};
+	A396B10416411A6C008EDEEA /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = A3DD4FAF12933C6C0099E764 /* XslTransformation.java */;
+		name = "XslTransformation.java: 420";
+		rLen = 0;
+		rLoc = 20289;
+		rType = 0;
+		vrLen = 2441;
+		vrLoc = 18419;
+	};
+	A396B10516411A6C008EDEEA /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = A3AB8B3815C7CBEE00929F98 /* LinkFactory.java */;
+		name = "LinkFactory.java: 285";
+		rLen = 0;
+		rLoc = 10636;
+		rType = 0;
+		vrLen = 2922;
+		vrLoc = 8000;
 	};
 	A39917DE16271D470052B09A /* LangAndUser.xhtml */ = {
 		uiCtxt = {
@@ -694,9 +724,9 @@
 	};
 	A3AB8B3815C7CBEE00929F98 /* LinkFactory.java */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1532, 7095}}";
-			sepNavSelRange = "{8047, 0}";
-			sepNavVisRange = "{7750, 2582}";
+			sepNavIntBoundsRect = "{{0, 0}, {1532, 7050}}";
+			sepNavSelRange = "{10636, 0}";
+			sepNavVisRange = "{8000, 2922}";
 		};
 	};
 	A3AB8B4015C7CC4700929F98 /* ParseVolume.java */ = {
@@ -725,20 +755,10 @@
 	};
 	A3DD4FAF12933C6C0099E764 /* XslTransformation.java */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1644, 13515}}";
-			sepNavSelRange = "{15432, 0}";
-			sepNavVisRange = "{15122, 2754}";
+			sepNavIntBoundsRect = "{{0, 0}, {1412, 13665}}";
+			sepNavSelRange = "{20289, 0}";
+			sepNavVisRange = "{18419, 2441}";
 		};
-	};
-	A3E11521163FF4BA0005DE65 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = A3DD4FAF12933C6C0099E764 /* XslTransformation.java */;
-		name = "XslTransformation.java: 358";
-		rLen = 0;
-		rLoc = 16438;
-		rType = 0;
-		vrLen = 2758;
-		vrLoc = 15122;
 	};
 	A3EC8113163FB63100715BB7 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -894,16 +914,6 @@
 		vrLen = 1371;
 		vrLoc = 0;
 	};
-	A3EC8168163FBEFB00715BB7 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = A307222A0EC89B1E00733910 /* DictionariesFactory.java */;
-		name = "DictionariesFactory.java: 312";
-		rLen = 0;
-		rLoc = 12724;
-		rType = 0;
-		vrLen = 1996;
-		vrLoc = 11780;
-	};
 	A3EC8169163FBEFB00715BB7 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = A3AB8B3815C7CBEE00929F98 /* LinkFactory.java */;
@@ -913,16 +923,6 @@
 		rType = 0;
 		vrLen = 2582;
 		vrLoc = 7750;
-	};
-	A3EC816B163FBEFB00715BB7 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = A3DD4FAF12933C6C0099E764 /* XslTransformation.java */;
-		name = "XslTransformation.java: 358";
-		rLen = 0;
-		rLoc = 16438;
-		rType = 0;
-		vrLen = 2800;
-		vrLoc = 15080;
 	};
 	A3EE19D70FB6CB26001D2220 /* VolumeCache.java */ = {
 		uiCtxt = {

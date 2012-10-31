@@ -229,8 +229,6 @@
 			<key>Layout</key>
 			<array>
 				<dict>
-					<key>BecomeActive</key>
-					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -295,7 +293,9 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>190</integer>
+									<integer>53</integer>
+									<integer>40</integer>
+									<integer>11</integer>
 									<integer>10</integer>
 									<integer>9</integer>
 									<integer>8</integer>
@@ -305,7 +305,7 @@
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 4747}, {369, 795}}</string>
+							<string>{{0, 540}, {369, 795}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -335,12 +335,14 @@
 					<key>Dock</key>
 					<array>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>XslTransformation.java</string>
+								<string>LinkFactory.java</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -348,11 +350,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>XslTransformation.java</string>
+										<string>LinkFactory.java</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>A3E11521163FF4BA0005DE65</string>
+										<string>A396B10516411A6C008EDEEA</string>
 										<key>history</key>
 										<array>
 											<string>A3A20A81163C40D7007E1A77</string>
@@ -374,9 +376,9 @@
 											<string>A3EC8165163FBEFB00715BB7</string>
 											<string>A3EC8166163FBEFB00715BB7</string>
 											<string>A3EC8167163FBEFB00715BB7</string>
-											<string>A3EC8168163FBEFB00715BB7</string>
+											<string>A396B10316411A6C008EDEEA</string>
+											<string>A396B10416411A6C008EDEEA</string>
 											<string>A3EC8169163FBEFB00715BB7</string>
-											<string>A3EC816B163FBEFB00715BB7</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -434,9 +436,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>A3E11522163FF4BA0005DE65</string>
+				<string>A396B10616411A6C008EDEEA</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>A3E11523163FF4BA0005DE65</string>
+				<string>A396B10716411A6C008EDEEA</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -575,7 +577,6 @@
 	<key>WindowOrderList</key>
 	<array>
 		<string>A3D629281485232300B7780F</string>
-		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>/Projects/jibiki/branches/LINKS_1_0/JibikiLinks.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
@@ -656,7 +657,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>A3D629281485232300B7780F</string>
-				<string>A3E11524163FF4BA0005DE65</string>
+				<string>A396B10816411A6C008EDEEA</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>

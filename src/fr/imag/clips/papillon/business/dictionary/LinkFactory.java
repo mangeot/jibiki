@@ -280,7 +280,10 @@ public class LinkFactory {
 								String prevDir = direction;
 								if (type != null && type.equals(Link.AXIE_TYPE)) {
 									theAxies.add(targetId);
-									direction = Link.DIRECTION_DOWN;
+									PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: "+ targetId  + " added");
+									if (direction.equals(Link.DIRECTION_UP)) {
+										direction = Link.DIRECTION_DOWN;
+									}
 								}
 								PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: call getLinkedEntriesByEntry "+ linkedEntry.getEntryId()  + " lang: " + tempLink.getLang());
 								getLinkedEntriesByEntry(linkedEntry, theAxies, theLinks, targets, direction, user);
