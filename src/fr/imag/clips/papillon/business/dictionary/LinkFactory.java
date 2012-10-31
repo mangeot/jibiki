@@ -285,7 +285,7 @@ public class LinkFactory {
 										direction = Link.DIRECTION_DOWN;
 									}
 								}
-								PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: call getLinkedEntriesByEntry "+ linkedEntry.getEntryId()  + " lang: " + tempLink.getLang());
+								PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: call getLinkedEntriesByEntry "+ linkedEntry.getEntryId()  + " lang: " + tempLink.getLang() + "type: " + tempLink.getType());
 								getLinkedEntriesByEntry(linkedEntry, theAxies, theLinks, targets, direction, user);
 								direction = prevDir;
 							}
