@@ -276,7 +276,7 @@ public class LinkFactory {
 							}
 						}
 						if (linkedEntry != null && !linkedEntry.isEmpty()) {
-							if (type == null || type.equals(Link.AXIE_TYPE) || type.equals(Link.AXEME_TYPE) || type.equals(Link.EQU_TYPE)) {
+							if (type == null || type.equals(Link.AXIE_TYPE) || type.equals(Link.AXEME_TYPE) || type.equals(Link.EQU_TYPE) || type.equals(Link.CNT_TYPE)) {
 								String prevDir = direction;
 								if (type != null && type.equals(Link.AXIE_TYPE) || type.equals(Link.EQU_TYPE) || type.equals(Link.CNT_TYPE)) {
 									theAxies.add(targetId);
