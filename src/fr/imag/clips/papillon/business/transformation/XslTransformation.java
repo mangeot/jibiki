@@ -410,6 +410,8 @@ public class XslTransformation implements ResultFormatter {
 													if (direction.equals(Link.DIRECTION_UP)) {
 														direction = Link.DIRECTION_DOWN;
 													}
+												}
+												if (typeString.equals(Link.AXIE_TYPE) || typeString.equals(Link.EQU_TYPE) || typeString.equals(Link.CNT_TYPE)) {
 													linkedEntries.remove(linkedEntry.getEntryId());
 												}
 												if (!typeString.equals(Link.FINAL_TYPE)) {
