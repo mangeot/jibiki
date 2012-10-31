@@ -276,16 +276,16 @@ public class LinkFactory {
 							}
 						}
 						if (linkedEntry != null && !linkedEntry.isEmpty()) {
-							if (type == null || !type.equals(Link.FINAL_TYPE)) {
+							if (type == null || type.equals(Link.AXIE_TYPE) || type.equals(Link.AXEME_TYPE) || type.equals(Link.EQU_TYPE)) {
 								String prevDir = direction;
-								if (type != null && type.equals(Link.AXIE_TYPE)) {
+								if (type != null && type.equals(Link.AXIE_TYPE) || type.equals(Link.EQU_TYPE) || type.equals(Link.CNT_TYPE)) {
 									theAxies.add(targetId);
 									PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: "+ targetId  + " added");
 									if (direction.equals(Link.DIRECTION_UP)) {
 										direction = Link.DIRECTION_DOWN;
 									}
 								}
-								PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: call getLinkedEntriesByEntry "+ linkedEntry.getEntryId()  + " lang: " + tempLink.getLang() + "type: " + tempLink.getType());
+								PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: call getLinkedEntriesByEntry "+ linkedEntry.getEntryId()  + " lang: " + tempLink.getLang() + " type: " + tempLink.getType());
 								getLinkedEntriesByEntry(linkedEntry, theAxies, theLinks, targets, direction, user);
 								direction = prevDir;
 							}

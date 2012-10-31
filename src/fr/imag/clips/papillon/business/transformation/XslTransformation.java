@@ -412,7 +412,7 @@ public class XslTransformation implements ResultFormatter {
 													}
 													linkedEntries.remove(linkedEntry.getEntryId());
 												}
-												if (!typeString.equals(Link.FINAL_TYPE)) {
+												if (!typeString.equals(Link.AXEME_TYPE)) {
 													insertLinkedEntries(linkedEntry, linkedEntries, direction);
 												}			
 												direction = refDir;
