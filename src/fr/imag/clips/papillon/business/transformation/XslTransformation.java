@@ -415,7 +415,7 @@ public class XslTransformation implements ResultFormatter {
 												if (typeString.equals(Link.AXIE_TYPE) || typeString.equals(Link.EQU_TYPE) || typeString.equals(Link.CNT_TYPE)) {
 													linkedEntries.remove(linkedEntry.getEntryId());
 												}
-												if (!typeString.equals(Link.FINAL_TYPE)) {
+												if ((direction.equals(Link.DIRECTION_UP) && !typeString.equals(Link.FINAL_TYPE)) || (direction.equals(Link.DIRECTION_DOWN) && !typeString.equals(Link.AXIE_TYPE) && !typeString.equals(Link.FINAL_TYPE))) {
 													insertLinkedEntries(linkedEntry, linkedEntries, newDir);
 												}			
 												Node tempNode = theEntryDoc.importNode((Node) linkedEntry.getDom().getDocumentElement(), true);
