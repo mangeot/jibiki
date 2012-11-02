@@ -278,16 +278,15 @@ public class LinkFactory {
 						if (linkedEntry != null && !linkedEntry.isEmpty()) {
 							//if (type == null || type.equals(Link.AXIE_TYPE) || type.equals(Link.AXEME_TYPE) || type.equals(Link.EQU_TYPE) || type.equals(Link.CNT_TYPE)) {
 							if (type == null || type.equals(Link.AXIE_TYPE) || type.equals(Link.AXEME_TYPE)) {
-								String prevDir = direction;
+								String newDir = direction;
 								if (type != null && type.equals(Link.AXIE_TYPE) || type.equals(Link.EQU_TYPE) || type.equals(Link.CNT_TYPE)) {
 									theAxies.add(targetId);
-									if (direction.equals(Link.DIRECTION_UP)) {
-										direction = Link.DIRECTION_DOWN;
+									if (newDir.equals(Link.DIRECTION_UP)) {
+										newDir = Link.DIRECTION_DOWN;
 									}
 								}
 								//PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: call getLinkedEntriesByEntry "+ linkedEntry.getEntryId()  + " lang: " + tempLink.getLang() + " type: " + tempLink.getType());
-								getLinkedEntriesByEntry(linkedEntry, theAxies, theLinks, targets, direction, user);
-								direction = prevDir;
+								getLinkedEntriesByEntry(linkedEntry, theAxies, theLinks, targets, newDir, user);
 							}
 						}
 					}

@@ -406,19 +406,18 @@ public class XslTransformation implements ResultFormatter {
 														myNode.removeChild(childNode);
 													}
 												}
-												String refDir = direction;
+												String newDir = direction;
 												if (typeString.equals(Link.AXIE_TYPE)) {
-													if (direction.equals(Link.DIRECTION_UP)) {
-														direction = Link.DIRECTION_DOWN;
+													if (newDir.equals(Link.DIRECTION_UP)) {
+														newDir = Link.DIRECTION_DOWN;
 													}
 												}
 												if (typeString.equals(Link.AXIE_TYPE) || typeString.equals(Link.EQU_TYPE) || typeString.equals(Link.CNT_TYPE)) {
 													linkedEntries.remove(linkedEntry.getEntryId());
 												}
 												if (!typeString.equals(Link.FINAL_TYPE)) {
-													insertLinkedEntries(linkedEntry, linkedEntries, direction);
+													insertLinkedEntries(linkedEntry, linkedEntries, newDir);
 												}			
-												direction = refDir;
 												Node tempNode = theEntryDoc.importNode((Node) linkedEntry.getDom().getDocumentElement(), true);
 												//PapillonLogger.writeDebugMsg("insertingLinkedEntry: " + linkedEntry.getEntryId());
 												myNode.appendChild(tempNode);
