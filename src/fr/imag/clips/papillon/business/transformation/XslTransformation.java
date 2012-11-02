@@ -391,7 +391,9 @@ public class XslTransformation implements ResultFormatter {
 							if (typeNodeList != null && typeNodeList.getLength() > 0) {
 								Node typeNode = typeNodeList.item(0);
 								String typeString = typeNode.getNodeValue();
-								if (!typeString.equals(Link.FINAL_TYPE) || direction.equals(Link.DIRECTION_DOWN)) {
+								if ((direction.equals(Link.DIRECTION_UP) && (type == null || type.equals(Link.AXEME_TYPE) || type.equals(Link.AXIE_TYPE)))
+									 || (direction.equals(Link.DIRECTION_DOWN) && ((type == null || type.equals(Link.AXEME_TYPE)))))
+									if (!typeString.equals(Link.FINAL_TYPE) || direction.equals(Link.DIRECTION_DOWN)) {
 									NodeList valueNodeList = IndexEntry.getNodeListFromXPath((Element) myNode, valueXPath, thePrefixResolver);
 									if (valueNodeList != null && valueNodeList.getLength() > 0) {
 										Node valueNode = valueNodeList.item(0);
