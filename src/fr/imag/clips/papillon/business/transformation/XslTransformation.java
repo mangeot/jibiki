@@ -335,7 +335,7 @@ public class XslTransformation implements ResultFormatter {
 		insertLinkedEntries(myAnswer, linkedEntries, direction);
 		if (null != dictXsl && !dictXsl.isEmpty()) {
 			// Format document source
-			PapillonLogger.writeDebugMsg("Answer: " + qr.getSourceEntry().getHeadword() + " node: " + XMLServices.NodeToString(myAnswer.getDom()));			
+			//PapillonLogger.writeDebugMsg("Answer: " + qr.getSourceEntry().getHeadword() + " node: " + XMLServices.NodeToString(myAnswer.getDom()));			
             //PapillonLogger.writeDebugMsg("XSLSheet is: " + dictXsl.getName() + " " + dictXsl.getHandle());
 			Node resultNode = formatResult(myAnswer.getDom(), dictXsl, usr);
 			if (resultNode == null) {
