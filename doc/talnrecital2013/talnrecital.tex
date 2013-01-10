@@ -29,14 +29,12 @@
 
 %% In an English article, use \resumeEn with 2 arguments (french title and french summary)
 \resume{
-Ici, un résumé en français (max. 150 mots).\\
-\lipsum[1]
+La gestion des terminologies est un domaine de recherche à long terme. En particulier pour les situations compliquées comme les acronymes, la recherche n’est jamais interrompue. Dans cet article, nous parlerons de lier plusieurs termes différents à un seul référent via les notions de pivot et de prolexème. Ces notions permettent par exemple de faire le lien entre plusieurs termes qui désignent un même et unique référent : nations unies, ONU, organisation des nations unies et onusien. Il existe Jibiki, une plate-forme générique de gestion de bases lexicales permettant de gérer n’importe quel type de structure (macro et microstructure). Nous avons implémenté la notion de prolexème[…] dans la plate-forme Jibiki pour réaliser les gestions des terminologies riches comme les acronymes.
 }
 
 %% In an English article, use \abstractEn with 1 arguments (english summary)
 \abstract{TALN-RECITAL2013 template (English translation of the article title)}{
 The translation of the title in English is mandatory to enhance visibility of the online version of the papers in international scientific article databases (DBLP, citeseer, etc.). Here an abstract in English (max. 150 words).\\
-\lipsum[2]
 }
 
 \motsClefs{base lexicale multilingue, macrostructure, Jibiki, Pivax, Common Dictionary Markup, iPoLex, entrepôt de données linguistiques}
@@ -51,7 +49,6 @@ The translation of the title in English is mandatory to enhance visibility of th
 \section{Introduction}
 
 \subsection{Situation}
-
 L
 
 \subsection{Intérêt}
@@ -65,12 +62,14 @@ L
 \section{Problématique}
 
 % reprendre l'explication du cahier des charges des acronymes
-
-L
+Les liens entre les termes sont compliqués. Il existe la possibilité de lier plusieurs termes différents à un seul référent : Jean‐Paul II et Karol Jozef Wojtyla en français, ou en anglais John Paul II et Karol Jozef Wojtyla. De même, certains liens évoluent avec le temps : le pape désignait Jean­‐Paul II en 2004 et Benoît XVI en 2012. Des pays parlant la même langue (ex : France et Suisse romande) peuvent également utiliser des mots différents pour le même concept. Ex : "chien renifleur" et "chien drogue". Inversement, le même terme peut désigner des concepts différents : Dans la province de langue allemande de Bolzano en Italie, le Landeshauptmann est le président du conseil provincial, avec des compétences beaucoup plus limitées que le Landeshauptmann autrichien, qui est à la tête de l'un des Etats (Land) de la fédération autrichienne.\\
+Pour les gestions des acronymes, les liens riches sont plus répandu et plus complexe. Dans l'article introduisant la notion de Prolexème, il a été discuté qu’il y a des lexies ayant des acronymes dans certaines langues, mais pas dans d'autres. Par exemple, en français, il y a « organisation des nations unies », on peut aussi dire « Nations unies », « ONU », « onusien ». En anglais, on a « United Nations » et son acronyme « UNO ». En chinois, on a 联合国 qui est la seule lexie pour cette signification, et il n’y a pas d’acronyme. Quand on construit des ressources lexicales, comment créer les liens entre les acronymes et les mots standard ?\\
+Dans les chapitres suivants, nous parlerons des idées pour résoudre les problèmes décrits ci-dessus. 
 
 \section{Données : choix de la macrostructure}
 
 % dans cet article, on ne détaille pas la microstructure. On l'évoquera seulement
+La macrostructure est la structure de dictionnaire, il est l’organisation des volumes. Les volumes sont les ressources lexicales, un dictionnaire comprend un ou plusieurs volumes.\\Nous avons plusieurs types de macrostructure qui correspond aux les types différents de dictionnaire.  Ici, nous présenterons trois macrostructures principales.\\
 
 \subsection{Macrostructure Papillon}
 
@@ -88,8 +87,13 @@ L \cite{MMHTN09}
 % utilise les concepts présentés précédemment (structure pivot à étages, multiples volumes dans la même langue, lexies, axies, axemes)
 % utilise le concept de prolexème (au même niveau que les axèmes)
 % présente le concept de proaxie
+\begin{figure}[htbp] 
+\begin{center} 
+\includegraphics[width=14cm]{images/proaxie.jpg}
+\end{center} 
+\caption{Macrostructure de ProAxie} \label{image} \
+\end{figure}
 
-L
 
 \section{Outils nécessaires : plateformes de manipulation}
 
@@ -121,7 +125,7 @@ L
 
 % scénario 1 : montre si une axie est dispo ONU => ONU en chinois 
 % scénario 2 : montre s'il n'y a pas d'axie de dispo, on passe par la proaxie et on utilise l'étiquette (label) Organisation des Nations Unies => United Nations
-% scénario 3 : montre s'il n'y a pas d'axie de dispo et pas d'étiquette correspondante. On utilise seulement la proaxie : Trouver un exemple avec un acronyme dans une langue et pas dans une autre
+% scénario 3 : montre s'il n'y a pas d'axie de dispo et pas d'étiquette correspondante. On utilise seulement la proaxie : Trouver un exemple avec un acronyme dans une langue et pas dans une autre (onusien vers chinois et vers anglais )
 
 \section{Conclusion}
 
