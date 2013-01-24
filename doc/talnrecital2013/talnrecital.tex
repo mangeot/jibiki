@@ -94,10 +94,23 @@ Donc, la macrostructure de la gestion des acronymes faudra nous permettre de
 \item gérer les liens  plus complexe et
 \item gérer les multiples volumes dans la même langue. 
 \end{itemize}
-\end{itemize}Pour implémenter la gestion des acronymes dans la plate-forme Jibiki, nous utilisons les liens riches. Nous avons certainement besoin des conceptions d’Axie et de Lexie. En plus, nous avons proposé un nouveau macrostructure avec deux nouvelles notions: ProAxie et ProLexème.\\
-\subsubsection{ProLexème}
-
-\subsubsection{ProAxie}
+\end{itemize}Pour implémenter la gestion des acronymes, nous avons proposé un nouvelle macrostructure avec deux nouvelles notions: ProAxie et ProLexème. Nous avons certainement besoin des conceptions d’Axie et de Lexie. \\
+\\
+\textbf{ProLexème}\\
+Il y a un seul volume de prolexème pour chaque langue. Dans ce volume, les prolexèmes regroupent les lexies. Les liens bi-directions entre les lexies et leurs prolexèmes sont marqués avec une étiquette (alias, acronyme, définition, etc.). Un sens lexical est une entrée de prolexème qui lie les lexies différentes de ce même sens. \\
+Par exemple, l’entrée de prolexème est « fr.organisation\_des\_nations\_unies.1 » qui lie l’entrée de lexie 
+\begin{itemize}
+\begin{itemize}
+\item « ONU » avec une étiquette « acronyme »\item « nations unies » avec une étiquette « alias »\item « onusien » avec une étiquette « alias »\item « organisation des nations unies » avec une étiquette « définition ».
+\end{itemize}
+\end{itemize}
+\quad  \\
+\textbf{ProAxie}\\
+Il y a un seul volume de proaxie dans un dictionnaire. Les proaxies regroupent les prolexèmes de langues différentes dans un même sens. Par exemple, un dictionnaire trilingue : français, anglais et chinois. L’entrée de proaxie « proaxie.united\_nations.1 » lie avec 
+\begin{itemize}
+\begin{itemize}\item l’entrée « fra.organisation\_des\_nations\_unies.1 » du volume des prolexèmes français et \item l’entrée « eng.united\_nations.1 » du volume des prolexèmes anglais et\item l’entrée « zho.联合国.1 » du volume des prolexèmes chinois.
+\end{itemize}
+\end{itemize}Les liens entre l'entrée de proaxie et les entrées de prolexèmes sont bi-directions.\\\\
 
 \begin{figure}[htbp] 
 \begin{center} 
