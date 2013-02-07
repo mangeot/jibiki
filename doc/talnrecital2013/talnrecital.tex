@@ -99,46 +99,44 @@ Cette structure ainsi constituée est une structure pivax ou structure pivot à 
 % utilise les concepts présentés précédemment (structure pivot à étages, multiples volumes dans la même langue, lexies, axies, axemes)
 % utilise le concept de prolexème (au même niveau que les axèmes)
 % présente le concept de proaxie
-Ce macrostructure a pour but de résoudre le problème de faire le lien entre plusieurs termes qui désignent un même et unique référent. Pour les gestions des acronymes, les liens riches sont plus répandu et plus complexe. Dans l'article introduisant la notion de Prolexème […], il a été discuté qu’il y a des lexies ayant des acronymes dans certaines langues, mais pas dans d'autres. Par exemple, en français, il y a « organisation des nations unies », on peut aussi dire « Nations unies », « ONU », « onusien ». En anglais, on a « United Nations » et son acronyme « UN ». En chinois, on a 联合国 qui est la seule lexie pour cette signification, et il n’y a pas d’acronyme. Quand on construit des ressources lexicales, comment créer les liens entre les acronymes et les mots de définition ? \\
+Ce macrostructure a pour but de résoudre le problème de faire le lien entre plusieurs termes qui désignent un même et unique référent. Pour les gestions des acronymes, les liens riches sont plus répandu et plus complexe. Dans l'article introduisant la notion de Prolexème […], il a été discuté qu’il y a des lexies ayant des acronymes dans certaines langues, mais pas dans d'autres. Par exemple, en français, il y a « organisation des nations unies », on peut aussi dire « Nations unies », « ONU », « onusien ». En anglais, on a « United Nations » et son acronyme « UN ». En chinois, on a « 联合国 » qui est la seule lexie pour cette signification, et il n’y a pas d’acronyme. Quand on construit des ressources lexicales, comment créer les liens entre les acronymes et les mots de définition ? \\
 Donc, la macrostructure de la gestion des acronymes faudra nous permettre de 
 \begin{itemize}
 \begin{itemize}
 \item gérer les liens  plus complexe et
 \item gérer les multiples volumes dans la même langue. 
 \end{itemize}
-\end{itemize}
-Pour implémenter la gestion des acronymes, nous avons proposé un nouvelle macrostructure avec deux nouvelles notions: ProAxie et ProLexème. Nous avons certainement besoin des conceptions d’Axie et de Lexie. \\
+\end{itemize}Pour implémenter la gestion des acronymes, nous avons proposé un nouvelle macrostructure avec deux nouvelles notions: ProAxie et ProLexème. Nous avons certainement besoin des conceptions d’Axie et de Lexie. \\
 \\
 \textbf{ProLexème}\\
-Il y a un seul volume de prolexème pour chaque langue. Dans ce volume, les prolexèmes regroupent les lexies. Les liens bi-directions entre les lexies et leurs prolexèmes sont marqués avec une étiquette (alias, acronyme, définition, etc.). Un sens lexical est une entrée de prolexème qui lie les lexies différentes de ce même sens. \\
+Il y a un seul volume de prolexème pour chaque langue. Dans ce volume, les prolexèmes regroupent les lexies. Les liens bidirectionnels entre les lexies et leurs prolexèmes sont marqués avec une étiquette (alias, acronyme, définition, etc.). Un sens lexical est une entrée de prolexème qui lie les lexies différentes de ce même sens. \\
 Par exemple, l’entrée de prolexème est « fr.organisation\_des\_nations\_unies.1 » qui lie l’entrée de lexie 
 \begin{itemize}
 \begin{itemize}
-\item « ONU » avec une étiquette « acronyme »
-\item « nations unies » avec une étiquette « alias »
-\item « onusien » avec une étiquette « alias »
-\item « organisation des nations unies » avec une étiquette « définition ».
+\item « ONU » avec une étiquette « acronyme »\item « nations unies » avec une étiquette « alias »\item « onusien » avec une étiquette « alias »\item « organisation des nations unies » avec une étiquette « définition ».
 \end{itemize}
 \end{itemize}
 \quad  \\
 \textbf{ProAxie}\\
 Il y a un seul volume de proaxie dans un dictionnaire. Les proaxies regroupent les prolexèmes de langues différentes dans un même sens. Par exemple, un dictionnaire trilingue : français, anglais et chinois. L’entrée de proaxie « proaxie.united\_nations.1 » lie avec 
 \begin{itemize}
-\begin{itemize}
-\item l’entrée « fra.organisation\_des\_nations\_unies.1 » du volume des prolexèmes français et 
-\item l’entrée « eng.united\_nations.1 » du volume des prolexèmes anglais et
-\item l’entrée « zho.联合国.1 » du volume des prolexèmes chinois.
+\begin{itemize}\item l’entrée « fra.organisation\_des\_nations\_unies.1 » du volume des prolexèmes français et \item l’entrée « eng.united\_nations.1 » du volume des prolexèmes anglais et
+% verifie les choinois s'ils affichent correctement\item l’entrée « zho.联合国.1 » du volume des prolexèmes chinois.
 \end{itemize}
-\end{itemize}
-Les liens entre l'entrée de proaxie et les entrées de prolexèmes sont bi-directions.\\
-\\
-
+\end{itemize}Les liens entre l'entrée de proaxie et les entrées de prolexèmes sont bidirectionnels.\\\\\textbf{Conception globale}\\Dans cette macrostructure, nous avons deux couches : une couche basique et une couche « Pro ».  Dans la couche basique, nous avons deux types de volume : volume des lexies et volume des axies. Dans la couche « Pro », nous avons également deux types de volume : volume des prolexèmes et volume des proaxies.Grâce au volume d’axie, nous pouvons faire les liens entre les lexies exactement correspondus, comme l’acronyme français « ONU » lie avec l’acronyme anglais « UN ». Grâce à la couche « PRO »,  nous pouvons proposer les lexies des langues cibles de même sens.  Voir le figure ci-dessous.\\\begin{figure}[htbp] 
+\begin{center} 
+\includegraphics[width=14cm]{images/proaxie_2-etages.jpg}
+\end{center} 
+\caption{Exemple de ProAxie} \label{image} \
+\end{figure}
+La notion d’étiquette a pour but de proposer les meilleures traductions. Par exemple, le japonais « 国際連合 » est la lexie de sens de « Organisation des nations unies », son acronyme est « 国連 ».  Cet acronyme utilise le premier et le troisième caractère de kanji, ce n’est pas utilisé les initiales de lexie de définition. Il existe sans-doute une langue qui a deux acronymes, un correspond à l’acronyme initiales, un autre correspond à la sélection de caractère ou de mot.  Donc, nous avons décidé de ne pas lier ces deux types acronymes avec un même axie.  Quand on cherche les liens de « ONU » de français vers le chinois et vers le japonais. L’étiquette est très utile. Pour le japonais, nous avons une lexie avec étiquette « ACRO », donc la lexie proposée du niveau haut de langue cible est cet acronyme. Par contre pour le chinois, nous ne pouvons pas trouver une lexie avec une étiquette « ACRO », donc il n’existe pas la proposition de niveau haut. La lexie proposée est la lexie de définition en niveau bas. \\Dans certains situations, un dictionnaire a plusieurs volumes dans une seule langue. Par exemple, il y a plusieurs versions d'édition, ou le dictionnaire est créé par les système de TA, un volume de Systran, un volume de Google, un volume de IATE, etc..    Notre macrostructure permet de gérer multivolume dans une langue. Voir le figure de macrostructure de proaxie ci-dessous.\\
 \begin{figure}[htbp] 
 \begin{center} 
-\includegraphics[width=14cm]{images/proaxie.jpg}
+\includegraphics[width=10cm]{images/proaxie.png}
 \end{center} 
 \caption{Macrostructure de ProAxie} \label{image} \
 \end{figure}
+
 
 
 \section{Outils nécessaires : plateformes de manipulation}
