@@ -29,7 +29,7 @@
 
 %% In an English article, use \resumeEn with 2 arguments (french title and french summary)
 \resume{
-La gestion des terminologies est un domaine de recherche à long terme. En particulier pour les situations compliquées comme les acronymes, la recherche n’est jamais interrompue. Dans cet article, nous parlerons de lier plusieurs termes différents à un seul référent via les notions de pivot et de prolexème. Ces notions permettent par exemple de faire le lien entre plusieurs termes qui désignent un même et unique référent : nations unies, ONU, organisation des nations unies et onusien. Il existe Jibiki, une plate-forme générique de gestion de bases lexicales permettant de gérer n’importe quel type de structure (macro et microstructure). Nous avons implémenté la notion de prolexème[…] dans la plate-forme Jibiki pour réaliser les gestions des terminologies riches comme les acronymes.
+La gestion des terminologies est un domaine de recherche à long terme. En particulier pour les situations compliquées comme les acronymes, la recherche n’est jamais interrompue. Dans cet article, nous parlerons de lier plusieurs termes différents à un seul référent via les notions de pivot et de prolexème. Ces notions permettent par exemple de faire le lien entre plusieurs termes qui désignent un même et unique référent : nations unies, ONU, organisation des nations unies et onusien. Il existe Jibiki, une plate-forme générique de gestion de bases lexicales permettant de gérer n’importe quel type de structure (macro et microstructure). Nous avons implémenté la notion de prolexème[…] dans la plate-forme Jibiki pour réaliser les gestions des terminologies riches comme les acronymes.
 }
 
 %% In an English article, use \abstractEn with 1 arguments (english summary)
@@ -62,25 +62,37 @@ L
 \section{Problématique}
 
 % reprendre l'explication du cahier des charges des acronymes
-Les liens entre les termes sont compliqués. Il existe la possibilité de lier plusieurs termes différents à un seul référent : Jean‐Paul II et Karol Jozef Wojtyla en français, ou en anglais John Paul II et Karol Jozef Wojtyla. De même, certains liens évoluent avec le temps : le pape désignait Jean­‐Paul II en 2004 et Benoît XVI en 2012. Des pays parlant la même langue (ex : France et Suisse romande) peuvent également utiliser des mots différents pour le même concept. Ex : "chien renifleur" et "chien drogue". Inversement, le même terme peut désigner des concepts différents : Dans la province de langue allemande de Bolzano en Italie, le Landeshauptmann est le président du conseil provincial, avec des compétences beaucoup plus limitées que le Landeshauptmann autrichien, qui est à la tête de l'un des Etats (Land) de la fédération autrichienne.\\
-Pour les gestions des acronymes, les liens riches sont plus répandu et plus complexe. Dans l'article introduisant la notion de Prolexème, il a été discuté qu’il y a des lexies ayant des acronymes dans certaines langues, mais pas dans d'autres. Par exemple, en français, il y a « organisation des nations unies », on peut aussi dire « Nations unies », « ONU », « onusien ». En anglais, on a « United Nations » et son acronyme « UNO ». En chinois, on a 联合国 qui est la seule lexie pour cette signification, et il n’y a pas d’acronyme. Quand on construit des ressources lexicales, comment créer les liens entre les acronymes et les mots standard ?\\
+Les liens entre les termes sont compliqués. Il existe la possibilité de lier plusieurs termes différents à un seul référent : Jean-Paul II et Karol Jozef Wojtyla en français, ou en anglais John Paul II et Karol Jozef Wojtyla. De même, certains liens évoluent avec le temps : le pape désignait Jean-Paul II en 2004 et Benoît XVI en 2012. Des pays parlant la même langue (p. ex : France et Suisse romande) peuvent également utiliser des mots différents pour le même concept. Ex : "chien renifleur" et "chien drogue". Inversement, le même terme peut désigner des concepts différents : Dans la province de langue allemande de Bolzano en Italie, le Landeshauptmann est le président du conseil provincial, avec des compétences beaucoup plus limitées que le Landeshauptmann autrichien, qui est à la tête de l'un des Etats (Land) de la fédération autrichienne.
+Pour les gestions des acronymes, les liens riches sont plus répandu et plus complexe. Dans l'article introduisant la notion de Prolexème, il a été discuté qu’il y a des lexies ayant des acronymes dans certaines langues, mais pas dans d'autres. Par exemple, en français, il y a « organisation des nations unies », on peut aussi dire « Nations unies », « ONU », « onusien ». En anglais, on a « United Nations » et son acronyme « UNO ». En chinois, on a 联合国 qui est la seule lexie pour cette signification, et il n’y a pas d’acronyme. Quand on construit des ressources lexicales, comment créer les liens entre les acronymes et les mots standard ?\\
 Dans les chapitres suivants, nous parlerons des idées pour résoudre les problèmes décrits ci-dessus. 
 
 \section{Données : choix de la macrostructure}
-
 % dans cet article, on ne détaille pas la microstructure. On l'évoquera seulement
-La macrostructure est la structure de dictionnaire, il est l’organisation des volumes. Les volumes sont les ressources lexicales, un dictionnaire comprend un ou plusieurs volumes.\\Nous avons plusieurs types de macrostructure qui correspond aux les types différents de dictionnaire.  Ici, nous présenterons trois macrostructures principales.\\
+Lors de toute discussion scientifique, il est primordial de bien s'entendre sur les termes utilisés. C'est pourquoi nous commencerons par définir les termes et concepts principaux que nous utiliserons par la suite.
 
-\subsection{Macrostructure Papillon}
+Un dictionnaire est composé d'un ou plusieurs volumes reliés entre eux par des liens qui sont le plus souvent des liens de traduction. Un volume est un ensemble d'articles comportant des mots-vedette de la même langue. Un article comporte au moins un mot-vedette et le plus souvent d'autres informations (prononciation, classe grammaticale, définition, exemples, etc.). La structure des articles est appelée microstructure. L'organisation des volumes qui compose la structure d'un dictionnaire est appelée macrostructure. La macrostructure la plus simple est celle d'un dictionnaire monolingue ne comportant qu'un seul volume. Pour les dictionnaires bilingues langue A <-> langue B, on peut trouver des macrostructures avec deux volumes : un volume langue A -> langue B et un volume miroir langue B -> langue A. Ces macrostructures constituent l'essentiel des dictionnaires imprimés. L'avènement de l'outil électronique permet de s'abstraire des contraintes liées à l'impression, notamment la représentation restreinte à deux dimensions. Il est alors possible de concevoir des macrostructures plus complexes utilisant par exemple des volumes pivot. Le dictionnaire devient alors une base lexicale à plusieurs dimensions d'où il est ensuite possible d'extraire des vues spécifiques permettant de retrouver le format initial des dictionnaires imprimés.
+Nous détaillerons trois macrostructures de ce type par la suite.
+
+\subsection{Macrostructure pivot}
 
 % utilise le concept de lexies (TST, Mel'cuk)
 % présente le concept de structure pivot et d'axie
-L \cite{GSMM01a}
+Le projet Papillon, lancé en 2000 \cite{MTMMEP00} avait pour but de construire une ressource lexicale pour plusieurs langues dont au moins l'anglais, le français et le japonais. Les macrostructures bilingues traditionnelles obligeant à construire un dictionnaire par couple de langues, le nombre de dictionnaires croit de manière factorielle par rapport au nombre de langues en présence. Cette solution devient rapidement ingérable. Il fallait donc trouver une nouvelle solution, un dictionnaire multilingue à structure pivot : un volume monolingue pour chaque langue et un volume pivot (ou volume interlingue) au centre regroupant les liens entre les articles \cite{GSMM01a}. La microstructure des article monolingues reprend le concept de lexie défini dans la lexicographie explicative et combinatoire \cite{MelcukClasPolguere95} issue de la théorie sens-texte. Chaque article décrit une lexie. Une lexie est une unité lexicale (ou sens de mot) qui est représentée soit par un lexème (regroupement de mots-forme), soit par une locution nominale.
+
+Chaque lexie est reliée par un lien interlingue à une axie (ou acception interlingue). Les axies sont contenues dans le volume pivot. Chaque axie regroupe les équivalents dans plusieurs langues d'une même lexie (ou sens de mot).
+Les concepts d'axie et de structure pivot ont été définis pour le projet Papillon et ensuite repris dans la norme Lexical Markup Framework \cite{Francopoulo09}.
+
+%## illustration structure pivot et lexies/axies
+%## mettre en valeur les concepts définis et harmoniser avec la partie ProAxie
 
 \subsection{Macrostructure Pivax}
 
 % présente le concept d'axème, de multiples volumes dans la même langue et de structure pivot à étages
-L \cite{MMHTN09}
+La macrostructure pivot vue précédemment permet de résoudre le problème posé par une situation multilingue. Au niveau monolingue, par contre, on doit se contenter d'un seul volume pour chaque langue, ce qui constitue une limitation importante. Dans sa thèse, Hong-Thai Nguyen \cite{thèseHTN} avait le projet de construire une base lexicale avec des ressources issues de systèmes de traduction. Chaque système de traduction utilise un format qui lui est propre pour ses dictionnaires lui permettant de stocker des variables spécifiques. Si l'on veut regrouper ces dictionnaires, il n'est pas souhaitable de fusionner tous les dictionnaires de chaque langue. On peut par contre regrouper les lexies identiques D'une même langue dans un même objet. C'est le rôle des axèmes, ou acceptions monolingues.
+
+Pour chaque langue ou espace lexical, ou aura alors un volume pour chaque système de traduction présent (Systran, Ariane, etc.) et un seul volume d'axème. Chaque lexie de chaque volume est reliée à un axème. Chaque axème est à son tour relié à une axie dans le volume pivot central.
+Cette structure ainsi constituée est une structure pivax ou structure pivot à étages \cite{MMHTN09}. Elle peut être utilisée également pour gérer différentes version d'un même volume dans un espace lexical.
+%## illustration structure Pivax
 
 \subsection{Macrostructure ProAxies}
 
@@ -94,23 +106,32 @@ Donc, la macrostructure de la gestion des acronymes faudra nous permettre de
 \item gérer les liens  plus complexe et
 \item gérer les multiples volumes dans la même langue. 
 \end{itemize}
-\end{itemize}Pour implémenter la gestion des acronymes, nous avons proposé un nouvelle macrostructure avec deux nouvelles notions: ProAxie et ProLexème. Nous avons certainement besoin des conceptions d’Axie et de Lexie. \\
+\end{itemize}
+Pour implémenter la gestion des acronymes, nous avons proposé un nouvelle macrostructure avec deux nouvelles notions: ProAxie et ProLexème. Nous avons certainement besoin des conceptions d’Axie et de Lexie. \\
 \\
 \textbf{ProLexème}\\
 Il y a un seul volume de prolexème pour chaque langue. Dans ce volume, les prolexèmes regroupent les lexies. Les liens bi-directions entre les lexies et leurs prolexèmes sont marqués avec une étiquette (alias, acronyme, définition, etc.). Un sens lexical est une entrée de prolexème qui lie les lexies différentes de ce même sens. \\
 Par exemple, l’entrée de prolexème est « fr.organisation\_des\_nations\_unies.1 » qui lie l’entrée de lexie 
 \begin{itemize}
 \begin{itemize}
-\item « ONU » avec une étiquette « acronyme »\item « nations unies » avec une étiquette « alias »\item « onusien » avec une étiquette « alias »\item « organisation des nations unies » avec une étiquette « définition ».
+\item « ONU » avec une étiquette « acronyme »
+\item « nations unies » avec une étiquette « alias »
+\item « onusien » avec une étiquette « alias »
+\item « organisation des nations unies » avec une étiquette « définition ».
 \end{itemize}
 \end{itemize}
 \quad  \\
 \textbf{ProAxie}\\
 Il y a un seul volume de proaxie dans un dictionnaire. Les proaxies regroupent les prolexèmes de langues différentes dans un même sens. Par exemple, un dictionnaire trilingue : français, anglais et chinois. L’entrée de proaxie « proaxie.united\_nations.1 » lie avec 
 \begin{itemize}
-\begin{itemize}\item l’entrée « fra.organisation\_des\_nations\_unies.1 » du volume des prolexèmes français et \item l’entrée « eng.united\_nations.1 » du volume des prolexèmes anglais et\item l’entrée « zho.联合国.1 » du volume des prolexèmes chinois.
+\begin{itemize}
+\item l’entrée « fra.organisation\_des\_nations\_unies.1 » du volume des prolexèmes français et 
+\item l’entrée « eng.united\_nations.1 » du volume des prolexèmes anglais et
+\item l’entrée « zho.联合国.1 » du volume des prolexèmes chinois.
 \end{itemize}
-\end{itemize}Les liens entre l'entrée de proaxie et les entrées de prolexèmes sont bi-directions.\\\\
+\end{itemize}
+Les liens entre l'entrée de proaxie et les entrées de prolexèmes sont bi-directions.\\
+\\
 
 \begin{figure}[htbp] 
 \begin{center} 
@@ -150,7 +171,7 @@ Il y a un seul volume de proaxie dans un dictionnaire. Les proaxies regroupent l
 
 % scénario 1 : montre si une axie est dispo ONU => ONU en chinois 
 % scénario 2 : montre s'il n'y a pas d'axie de dispo, on passe par la proaxie et on utilise l'étiquette (label) Organisation des Nations Unies => United Nations
-% scénario 3 : montre s'il n'y a pas d'axie de dispo et pas d'étiquette correspondante. On utilise seulement la proaxie : Trouver un exemple avec un acronyme dans une langue et pas dans une autre (onusien vers chinois et vers anglais )
+% scénario 3 : montre s'il n'y a pas d'axie de dispo et pas d'étiquette correspondante. On utilise seulement la proaxie : Trouver un exemple avec un acronyme dans une langue et pas dans une autre (onusien vers chinois et vers anglais)
 
 \section{Conclusion}
 
