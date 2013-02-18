@@ -265,15 +265,13 @@ Nous prévoyons d'étendre ce concept d'entrepôt de données à celui d'entrep�
 % table de liens séparée
 % algorithme de collecte des liens dans DictionariesFactory.java (expandResults)
 % algorithme de construction du résultat : parcours montant vers les axies puis descendant vers les lexies cibles
-La gestion des liens riches correspond aux liens avec des attributs compliqués, comme volume de destination, poids, type (axi, final), langue, étiquette libre, etc. Pour réaliser l’implémentation de lien riche,  nous avons séparé la table d’index en deux tables : une table d’index (sauf les liens) et une table des liens riches (voir le figure table des liens riches). 
-\begin{figure}[htbp] 
-\begin{center} 
-\includegraphics[width=14cm]{images/table_lien_riche.jpg}
-\end{center} 
-\caption{Table des liens riches} \label{image} \
-\end{figure}
-
-La réalisation de programme est associée deux algorithmes. Le premier est l’algorithme de collecte des liens, le deuxième est l’algorithme de construction du résultat. 
+La gestion des liens riches correspond aux liens avec des attributs compliqués, comme volume de destination, poids, type (axi, final), langue, étiquette libre, etc. Pour réaliser l’implémentation de lien riche,  nous avons séparé la table d’index en deux tables : une table d’index (sauf les liens) et une table des liens riches. \\ 
+La réalisation de programme est associée deux algorithmes. Le premier est l’algorithme de collecte des liens, le deuxième est l’algorithme de construction du résultat.  Le premier algorithme nous permet de chercher tous les liens possibles dans les tables des liens riches de tous les volumes pour une entrée de recherche. Le deuxième algorithme nous permet de réaliser le parcours des liens riches. Il s’agit de deux étapes :
+\begin{itemize}
+\begin{itemize}\item chercher le lien vers les axies puis vers les lexies cibles.\item chercher le lien vers les prolexèmes de langue source puis vers les proaxies, ensuite vers les prolexèmes de langue cible, à la fin vers les lexies cibles.
+\item traiter l'étiquette.
+\end{itemize}
+\end{itemize}
 
 \section{Résultats préliminaires}
 
