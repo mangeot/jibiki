@@ -213,7 +213,7 @@ Dans certaines situations, une base lexicale (un dictionnaire) a plusieurs volum
 % présente la plateforme : CDM et table d'index, édition générique, opensource, licence GPLv3, dispo publiquement et gratuitement sur ligforge en SVN, sert pour de multiples projets
 %## illustration CDM
 Pour implémenter la macrostructure de ProAxie, nous avons choisi la plat-forme Jibiki. Elle permet la construction de sites web de communauté dédiées à la constructions de bases lexicales multilingues. Cette plate-forme a été développée principalement par Mathieu Mangeot et Gilles Sérasset […]. Cette plate-forme est utilisée dans divers serveurs (projet LexALP, projet Papillon, projet GDEF, etc.). Elle est un projet de source ouvert. Nous pouvons télécharger gratuitement sur ligforge en SVN. Avec cette plate-forme, on peut faire les manipulations des import, export, édit, modification et recherche de base lexicale. On peut aussi gérer les contributions. \\
-C’est une plate-forme générique, elle permet de traiter presque toutes les ressources lexicales de type XML en utilisant les stratégies de microstructure et macrostructure. La microstructure est la structure des entrées. On utilise des pointeurs CDM (Common Dictionary Markup) […] pour gérer n’importe quel type de microstructure sans la modifier. Cette structure est stockée dans un fichier de métadonnées sous forme XML. On réalise les programmes d’import des chemins Xpath des éléments correspondant à des éléments de CDM dans le fichier XML à importer. Voir le figure 4 - « Exemple de CDM ». \\
+Jibiki est une plate-forme générique, elle permet de traiter presque toutes les ressources lexicales de type XML en utilisant les stratégies de microstructure et macrostructure. Nous avons déjà parlé de la macrostructure dans les chapitres ci-dessus. La microstructure est la structure des entrées. On utilise des pointeurs CDM (Common Dictionary Markup) […] pour gérer n’importe quel type de microstructure sans la modifier. Cette structure est stockée dans un fichier de métadonnées sous forme XML. Les fichiers de métadonnées ont pour but de faciliter à importer les ressources lexicales.  Il y a un fichier de métadonnées pour une ressource entière.  Dans ce fichier, il a décrit les informations de cette ressource : comme les langues source et cibles, l’auteur, les noms et fichiers de volumes, etc. Pour chaque volume, il existe un fichier de métadonnées. Dans ces fichiers, ils ont décrit tous les informations des volumes, y compris les CDM. On réalise les programmes d’import des chemins Xpath des éléments correspondant à des éléments de CDM dans le fichier XML à importer. Voir le figure 4 - « Exemple de CDM ». Nous avons utilisé une table d’index pour sauvegarder tous les variables de CDM, y compris les liens de traduction (voir la figure 4, cdm-translation-ref). \\
 \begin{figure}[htbp] 
 \begin{center} 
 \includegraphics[width=14cm]{images/CDM.jpg}
@@ -222,6 +222,11 @@ C’est une plate-forme générique, elle permet de traiter presque toutes les r
 \end{figure}
 
 % explique les limitations : pas de liens entre plusieurs volumes différents, macrostructures complexes (pivot, pivax, etc.) codées en dur, difficultés de création de méta-données
+Jibiki v1 existe plusieurs limitations:
+\begin{itemize}
+\begin{itemize}\item Les fichiers de métadonnées sont utilisés les méthodes de Xpath de fichier XML. Donc la création de métadonnées est difficile, en particulier pour un non-informaticien.\item Nous avons utilisé la table d'index pour sauvegarder les liens de traduction, Ces liens sont simples. Il n'y a pas de liens entre plusieurs volumes différents, on n'a plus pu ajouter les attributs (poids, étiquette, type, volume cible etc.) sur les liens. \item Jibiki sert à plusieurs macrostructures. Pour chaque macrostructures, il faudra re-coder une partie de programme pour réaliser les différents types de liens.
+\end{itemize}
+\end{itemize}
 
 
 \cite{MMAC06}
@@ -260,6 +265,15 @@ Nous prévoyons d'étendre ce concept d'entrepôt de données à celui d'entrep�
 % table de liens séparée
 % algorithme de collecte des liens dans DictionariesFactory.java (expandResults)
 % algorithme de construction du résultat : parcours montant vers les axies puis descendant vers les lexies cibles
+La gestion des liens riches correspond aux liens avec des attributs compliqués, comme volume de destination, poids, type (axi, final), langue, étiquette libre, etc. Pour réaliser l’implémentation de lien riche,  nous avons séparé la table d’index en deux tables : une table d’index (sauf les liens) et une table des liens riches (voir le figure table des liens riches). 
+\begin{figure}[htbp] 
+\begin{center} 
+\includegraphics[width=14cm]{images/table_lien_riche.jpg}
+\end{center} 
+\caption{Table des liens riches} \label{image} \
+\end{figure}
+
+La réalisation de programme est associée deux algorithmes. Le premier est l’algorithme de collecte des liens, le deuxième est l’algorithme de construction du résultat. 
 
 \section{Résultats préliminaires}
 
@@ -269,7 +283,7 @@ Nous avons divisé trois niveaux de traduction pour afficher les résultats de r
 \begin{itemize}
 \item d’afficher l’étiquette, la langue et le mot-vedette dans le 1er et le 2ème niveaux, 
 \item d’afficher tous les détails dans le 3ème niveau, y compris les lexies de la langue source
-\item de ne pas afficher la traduction dans le 2ème niveau si elle a déjà trouvé et est déjà affichée dans 1er niveau,
+\item de ne pas afficher la traduction dans le 2ème niveau si elle a déjà trouvé et est déjà affichée dans 1er niveau.
 \end{itemize}
 \end{itemize}
 
@@ -333,7 +347,7 @@ Nous avons divisé trois niveaux de traduction pour afficher les résultats de r
 \begin{center} 
 \includegraphics[width=14cm]{images/scenario2.jpg}
 \end{center} 
-\caption{Affichage complet - UN d'anglais vers toutes les langues} \label{image} \
+\caption{国連 de japonais vers toutes les langues} \label{image} \
 \end{figure}
 
 
@@ -360,7 +374,7 @@ Nous avons divisé trois niveaux de traduction pour afficher les résultats de r
 \begin{center} 
 \includegraphics[width=14cm]{images/scenario3.jpg}
 \end{center} 
-\caption{Affichage complet - UN d'anglais vers toutes les langues} \label{image} \
+\caption{onusien de français vers toutes les langues} \label{image} \
 \end{figure}
 \section{Conclusion}
 
