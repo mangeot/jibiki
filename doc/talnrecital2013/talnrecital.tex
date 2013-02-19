@@ -49,11 +49,13 @@ The translation of the title in English is mandatory to enhance visibility of th
 \section{Introduction}
 
 \subsection{Situation}
-L
+
+Cet article concerne la gestion de terminologies multilingues. Le problème abordé dans cet article est celui de l'association de plusieurs termes d'une même langue à un même référent. Par exemple un terme et son acronyme désignent le même référent. Dans un contexte multilingue, la difficulté est d'établir une correspondance entre ces termes. Il peut par exemple y avoir dans une même langue plusieurs acronymes pour un même terme, voire aucun. Quelles solutions mettre en place de façon à choisir, pour un terme donné dans une langue donnée, le meilleur équivalent dans une langue cible ?
+Cette recherche est motivée par un besoin réel d'une entreprise dans la gestion de sa terminologie multilingue.
 
 \subsection{Intérêt}
 
-L
+L'intérêt de cette recherche est de définir un cadre théorique composé d'une nouvelle macrostructure basée sur des concepts existants et sur la définition de nouveaux concepts. Ce cadre sera validé ensuite par une expérimentation pratique à l'aide d'un outil générique de gestion de bases lexicales.
 
 \subsection{Présentation}
 
@@ -224,7 +226,10 @@ Jibiki est une plate-forme générique, elle permet de traiter presque toutes le
 % explique les limitations : pas de liens entre plusieurs volumes différents, macrostructures complexes (pivot, pivax, etc.) codées en dur, difficultés de création de méta-données
 Jibiki v1 existe plusieurs limitations:
 \begin{itemize}
-\begin{itemize}\item Les fichiers de métadonnées sont utilisés les méthodes de Xpath de fichier XML. Donc la création de métadonnées est difficile, en particulier pour un non-informaticien.\item Nous avons utilisé la table d'index pour sauvegarder les liens de traduction, Ces liens sont simples. Il n'y a pas de liens entre plusieurs volumes différents, on n'a plus pu ajouter les attributs (poids, étiquette, type, volume cible etc.) sur les liens. \item Jibiki sert à plusieurs macrostructures. Pour chaque macrostructures, il faudra re-coder une partie de programme pour réaliser les différents types de liens.
+\begin{itemize}
+\item Les fichiers de métadonnées sont utilisés les méthodes de Xpath de fichier XML. Donc la création de métadonnées est difficile, en particulier pour un non-informaticien.
+\item Nous avons utilisé la table d'index pour sauvegarder les liens de traduction, Ces liens sont simples. Il n'y a pas de liens entre plusieurs volumes différents, on n'a plus pu ajouter les attributs (poids, étiquette, type, volume cible etc.) sur les liens. 
+\item Jibiki sert à plusieurs macrostructures. Pour chaque macrostructures, il faudra re-coder une partie de programme pour réaliser les différents types de liens.
 \end{itemize}
 \end{itemize}
 
@@ -268,10 +273,13 @@ Nous prévoyons d'étendre ce concept d'entrepôt de données à celui d'entrep�
 La gestion des liens riches correspond aux liens avec des attributs compliqués, comme volume de destination, poids, type (axi, final), langue, étiquette libre, etc. Pour réaliser l’implémentation de lien riche,  nous avons séparé la table d’index en deux tables : une table d’index (sauf les liens) et une table des liens riches. \\ 
 La réalisation de programme est associée deux algorithmes. Le premier est l’algorithme de collecte des liens, le deuxième est l’algorithme de construction du résultat.  Le premier algorithme nous permet de chercher tous les liens possibles dans les tables des liens riches de tous les volumes pour une entrée de recherche. Le deuxième algorithme nous permet de réaliser le parcours des liens riches. Il s’agit de deux étapes :
 \begin{itemize}
-\begin{itemize}\item chercher le lien vers les axies puis vers les lexies cibles.\item chercher le lien vers les prolexèmes de langue source puis vers les proaxies, ensuite vers les prolexèmes de langue cible, à la fin vers les lexies cibles.
+\begin{itemize}
+\item chercher le lien vers les axies puis vers les lexies cibles.
+\item chercher le lien vers les prolexèmes de langue source puis vers les proaxies, ensuite vers les prolexèmes de langue cible, à la fin vers les lexies cibles.
 \item traiter l'étiquette.
 \end{itemize}
-\end{itemize}
+\end{itemize}
+
 
 \section{Résultats préliminaires}
 
