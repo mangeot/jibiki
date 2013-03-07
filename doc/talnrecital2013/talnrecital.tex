@@ -40,7 +40,7 @@ La gestion des terminologies est un domaine de recherche à long terme. En parti
 }
 
 %% In an English article, use \abstractEn with 1 arguments (english summary)
-\abstract{TALN-RECITAL2013 template (English translation of the article title)}{
+\abstract{Multilingual lexical databases: acronyms handling}{
 The translation of the title in English is mandatory to enhance visibility of the online version of the papers in international scientific article databases (DBLP, citeseer, etc.). Here an abstract in English (max. 150 words).\\
 }
 
@@ -98,7 +98,7 @@ Les concepts d'axie et de structure pivot ont été définis pour le projet Papi
 \subsection{Macrostructure Pivax}
 
 % présente le concept d'axème, de multiples volumes dans la même langue et de structure pivot à étages
-La macrostructure pivot vue précédemment permet de résoudre le problème posé par une situation multilingue. Au niveau monolingue, par contre, on doit se contenter d'un seul volume pour chaque langue, ce qui constitue une limitation importante. Dans sa thèse, Hong-Thai Nguyen \cite{thèseHTN} avait le projet de construire une base lexicale avec des ressources issues de systèmes de traduction. Chaque système de traduction utilise un format qui lui est propre pour ses dictionnaires lui permettant de stocker des variables spécifiques. Si l'on veut regrouper ces dictionnaires, il n'est pas souhaitable de fusionner tous les dictionnaires de chaque langue. On peut par contre regrouper les lexies identiques D'une même langue dans un même objet. C'est le rôle des axèmes, ou acceptions monolingues.
+La macrostructure pivot vue précédemment permet de résoudre le problème posé par une situation multilingue. Au niveau monolingue, par contre, on doit se contenter d'un seul volume pour chaque langue, ce qui constitue une limitation importante. Dans sa thèse, Hong-Thai Nguyen \cite{HTN09} avait le projet de construire une base lexicale avec des ressources issues de systèmes de traduction. Chaque système de traduction utilise un format qui lui est propre pour ses dictionnaires lui permettant de stocker des variables spécifiques. Si l'on veut regrouper ces dictionnaires, il n'est pas souhaitable de fusionner tous les dictionnaires de chaque langue. On peut par contre regrouper les lexies identiques D'une même langue dans un même objet. C'est le rôle des axèmes, ou acceptions monolingues.
 
 Pour chaque langue ou espace lexical, ou aura alors un volume pour chaque système de traduction présent (Systran, Ariane, etc.) et un seul volume d'axème. Chaque lexie de chaque volume est reliée à un axème. Chaque axème est à son tour relié à une axie dans le volume pivot central.
 Cette structure ainsi constituée est une structure pivax ou structure pivot à étages \cite{MMHTN09}. Elle peut être utilisée également pour gérer différentes version d'un même volume dans un espace lexical.
@@ -109,8 +109,8 @@ Cette structure ainsi constituée est une structure pivax ou structure pivot à 
 % utilise les concepts présentés précédemment (structure pivot à étages, multiples volumes dans la même langue, lexies, axies, axemes)
 % utilise le concept de prolexème (au même niveau que les axèmes)
 % présente le concept de proaxie
-Cette macrostructure a pour but de résoudre le problème de faire le lien entre plusieurs termes qui désignent un même et unique référent. Pour les gestions des acronymes, les liens riches sont plus répandu et plus complexe. Dans l'article introduisant la notion de Prolexème […], il a été discuté qu’il y a des lexies ayant des acronymes dans certaines langues, mais pas dans d'autres. Par exemple, en français, il y a « organisation des nations unies »\footnotemark[1], on peut aussi dire « Nations unies », « ONU », « onusien ». En anglais, on a « United Nations » et son acronyme « UN ». En chinois, on a «\Chinois{ 联合国 }» qui est la seule lexie pour ce sens, et il n’y a pas d’acronyme. Quand on construit des ressources lexicales, comment créer les liens entre les acronymes et les mots de définition ? \\
-\footnotetext[1] {Nous avons repris exactement la terminologie français de Prolexbase et les concepts.}
+Cette macrostructure a pour but de résoudre le problème de faire le lien entre plusieurs termes qui désignent un même et unique référent. Pour les gestions des acronymes, les liens riches sont plus répandu et plus complexe. Dans l'article introduisant la notion de Prolexème […], il a été discuté qu’il y a des lexies ayant des acronymes dans certaines langues, mais pas dans d'autres. Par exemple, en français, il y a « organisation des nations unies »\footnote{Nous avons repris exactement la terminologie français de Prolexbase et les concepts.}, on peut aussi dire « Nations unies », « ONU », « onusien ». En anglais, on a « United Nations » et son acronyme « UN ». En chinois, on a «\Chinois{ 联合国 }» qui est la seule lexie pour ce sens, et il n’y a pas d’acronyme. Quand on construit des ressources lexicales, comment créer les liens entre les acronymes et les mots de définition ? \\
+
 Donc, la macrostructure de la gestion des acronymes faudra nous permettre de 
 \begin{itemize}
 \item gérer les liens  plus complexe et
@@ -133,21 +133,21 @@ Il y a un seul volume de proaxie dans un dictionnaire. Les proaxies regroupent l
 \begin{itemize}
 \item l’entrée « fra.organisation\_des\_nations\_unies.1 » du volume des prolexèmes français et 
 \item l’entrée « eng.united\_nations.1 » du volume des prolexèmes anglais et
-% verifie les choinois s'ils affichent correctement
 \item l’entrée « zho.\Chinois{联合国}.1 » du volume des prolexèmes chinois.
 \end{itemize}
 Les liens entre l'entrée de proaxie et les entrées de prolexèmes sont bidirectionnels.\\
-\\
+
 \textbf{Conception globale}\\
 Dans cette macrostructure, nous avons deux couches : une couche basique et une couche « Pro ».  Dans la couche basique, nous avons deux types de volume : volume des lexies et volume des axies. Dans la couche « Pro », nous avons également deux types de volume : volume des prolexèmes et volume des proaxies.
-Grâce au volume d’axie, nous pouvons faire les liens entre les lexies exactement correspondus, comme l’acronyme français « ONU » lie avec l’acronyme anglais « UN ». Grâce à la couche « PRO »,  nous pouvons proposer les lexies des langues cibles de même sens.  Voir le figure 1 - « Exemple de ProAxie ».\\
+Grâce au volume d’axie, nous pouvons faire les liens entre les lexies exactement correspondus, comme l’acronyme français « ONU » lie avec l’acronyme anglais « UN ». Grâce à la couche « PRO »,  nous pouvons proposer les lexies des langues cibles de même sens.  Voir la figure \ref{image-proaxie}.
+
 \begin{figure}[htbp] 
 \begin{center} 
 \includegraphics[width=14cm]{images/proaxie_2-etages.jpg}
 \end{center} 
-\caption{Exemple de ProAxie} \label{image} \
+\caption{Exemple de ProAxie} \label{image-proaxie} \
 \end{figure}
-La notion d’étiquette a pour but de proposer les meilleures traductions. Par exemple, le japonais «\Japonais{ 国際連合 }» est la lexie de sens de « Organisation des nations unies », son acronyme est «\Japonais{ 国連 } » comme le table 1 - « Exemple de quatre langues pour le sens "Organisation des nations unies" ». Cet acronyme utilise le premier et le troisième caractère de kanji, ce n’est pas utilisé les initiales de lexie de définition. Il existe sans-doute une langue qui a deux acronymes, un correspond à l’acronyme initiales, un autre correspond à la sélection de caractère ou de mot.  Donc, nous avons décidé de ne pas lier ces deux types acronymes avec un même axie. Voir le figure 2 - « Liens entre les lexies et les axies » \\
+La notion d’étiquette a pour but de proposer les meilleures traductions. Par exemple, le japonais «\Japonais{ 国際連合 }» est la lexie de sens de « Organisation des nations unies », son acronyme est « \Japonais{国連} » comme la table 1 - « Exemple de quatre langues pour le sens « Organisation des nations unies ». Cet acronyme utilise le premier et le troisième caractère de kanji, ce n’est pas utilisé les initiales de lexie de définition. Il existe sans-doute une langue qui a deux acronymes, un correspond à l’acronyme initiales, un autre correspond à la sélection de caractère ou de mot.  Donc, nous avons décidé de ne pas lier ces deux types acronymes avec un même axie. Voir la figure \ref{image-liens-lexies-axies}. \\
 \begin{table}[!h]
 \centering
 	\begin{tabular}{|l|l|l|l|l|}
@@ -161,24 +161,24 @@ La notion d’étiquette a pour but de proposer les meilleures traductions. Par 
 	\textbf{Alias} & & onusien, nations unies & &  \\
 	\hline
 	\end{tabular}
-\caption{ Exemple de quatre langues pour le sens "Organisation des nations unies" }\label{table}
+\caption{Exemple de quatre langues pour le sens << Organisation des nations unies >>}\label{table-liens-lexies-axies}
 \end{table}
 
 \begin{figure}[htbp] 
 \begin{center} 
 \includegraphics[width=14cm]{images/lexies-axies.jpg}
 \end{center} 
-\caption{Liens entre les lexies et les axies} \label{image} \
+\caption{Liens entre les lexies et les axies} \label{image-liens-lexies-axies}
 \end{figure}
 
 Quand on cherche les liens de « ONU » de français vers l’anglais,  vers le japonais et vers le chinois. Nous avons proposé trois niveaux de traduction :\\
 
 \begin{itemize}
-\item Vers l’anglais : ONU->UN. Le système trouve une lexie directe par le volume des axies. C’est le \textbf{premier niveau} de traduction.
-\item Vers le japonais : ONU->\Japonais{国連}. Le système cherche le lien dans le volume des prolexèmes français avec l’étiquette « Acro ». Puis il trouve le lien dans proaxies, ensuite il suit le lien de prolexème japonais, enfin il arrive le volume des lexies japonais, et il trouve une lexie avec l’étiquette « Acro ». Donc la lexie proposée du \textbf{deuxième niveau} de langue cible est cet acronyme.  Le deuxième niveau de traduction toujours comprend le premier niveau de traduction.
-\item Vers le chinois : ONU->\Chinois{联合国}.  Le système trouve les lexies par prolexeme et proaxie sans étiquette. Ces lexies proposées est le \textbf{troisième niveau}. Le troisième niveau de traduction comprend le premier et le deuxième niveau de tradcution.
+\item Vers l’anglais : ONU\ensuremath{\to}UN. Le système trouve une lexie directe par le volume des axies. C’est le \textbf{premier niveau} de traduction.
+\item Vers le japonais : ONU\ensuremath{\to}\Japonais{国連}. Le système cherche le lien dans le volume des prolexèmes français avec l’étiquette « Acro ». Puis il trouve le lien dans proaxies, ensuite il suit le lien de prolexème japonais, enfin il arrive le volume des lexies japonais, et il trouve une lexie avec l’étiquette « Acro ». Donc la lexie proposée du \textbf{deuxième niveau} de langue cible est cet acronyme.  Le deuxième niveau de traduction toujours comprend le premier niveau de traduction.
+\item Vers le chinois : ONU\ensuremath{\to}\Chinois{联合国}.  Le système trouve les lexies par prolexeme et proaxie sans étiquette. Ces lexies proposées est le \textbf{troisième niveau}. Le troisième niveau de traduction comprend le premier et le deuxième niveau de tradcution.
 \end{itemize}
-La quantité de lexie de résultat est augmentée suivant les niveaux de traduction de haut vers bas. Nous avons également utilisé l’exemple de « ONU » comme la table 2 - « Trois niveaux de traduction ».\\
+La quantité de lexie de résultat est augmentée suivant les niveaux de traduction de haut vers bas. Nous avons également utilisé l’exemple de « ONU » comme pour la table \ref{table-liens-lexies-axies}.
 
 \begin{table}[!h]
 \centering
@@ -193,16 +193,16 @@ La quantité de lexie de résultat est augmentée suivant les niveaux de traduct
 	\textbf{Chinois} & & &\Chinois{联合国}  \\
 	\hline
 	\end{tabular}
-\caption{ Trois niveaux de traduction }\label{table}
+\caption{ Trois niveaux de traduction }\label{table-3-niveaux-traduction}
 \end{table}
 
+Dans certaines situations, une base lexicale (un dictionnaire) a plusieurs volumes dans une seule langue. Par exemple, il y a plusieurs versions d’édition. Ou la ressource lexicale est créé par les système de TA, alors il existe un volume de Systran, un volume de Google, un volume d’IATE, etc. Notre macrostructure permet de gérer multivolume dans une langue. Voir la figure \ref{image-macrostructure-proaxie}.
 
-Dans certaines situations, une base lexicale (un dictionnaire) a plusieurs volumes dans une seule langue. Par exemple, il y a plusieurs versions d’édition. Ou la ressource lexicale est créé par les système de TA, alors il existe un volume de Systran, un volume de Google, un volume d’IATE, etc.. Notre macrostructure permet de gérer multivolume dans une langue. Voir la figure 3 « macrostructure de proaxie ».\\
 \begin{figure}[htbp] 
 \begin{center} 
 \includegraphics[width=12cm]{images/proaxie.png}
 \end{center} 
-\caption{Macrostructure de ProAxie} \label{image} \
+\caption{Macrostructure de ProAxie} \label{image-macrostructure-proaxie} \
 \end{figure}
 
 \section{Outils nécessaires : plateformes de manipulation}
@@ -214,12 +214,12 @@ Dans certaines situations, une base lexicale (un dictionnaire) a plusieurs volum
 % présente la plateforme : CDM et table d'index, édition générique, opensource, licence GPLv3, dispo publiquement et gratuitement sur ligforge en SVN, sert pour de multiples projets
 %## illustration CDM
 Pour implémenter la macrostructure de ProAxie, nous avons choisi la plat-forme Jibiki. Elle permet la construction de sites web de communauté dédiées à la constructions de bases lexicales multilingues. Cette plate-forme a été développée principalement par Mathieu Mangeot et Gilles Sérasset […]. Cette plate-forme est utilisée dans divers serveurs (projet LexALP, projet Papillon, projet GDEF, etc.). Elle est un projet de source ouvert. Nous pouvons télécharger gratuitement sur ligforge en SVN. Avec cette plate-forme, on peut faire les manipulations des import, export, édit, modification et recherche de base lexicale. On peut aussi gérer les contributions. \\
-Jibiki est une plate-forme générique, elle permet de traiter presque toutes les ressources lexicales de type XML en utilisant les stratégies de microstructure et macrostructure. Nous avons déjà parlé de la macrostructure dans les chapitres ci-dessus. La microstructure est la structure des entrées. On utilise des pointeurs CDM (Common Dictionary Markup) […] pour gérer n’importe quel type de microstructure sans la modifier. Cette structure est stockée dans un fichier de métadonnées sous forme XML. Les fichiers de métadonnées ont pour but de faciliter à importer les ressources lexicales.  Il y a un fichier de métadonnées pour une ressource entière.  Dans ce fichier, il a décrit les informations de cette ressource : comme les langues source et cibles, l’auteur, les noms et fichiers de volumes, etc. Pour chaque volume, il existe un fichier de métadonnées. Dans ces fichiers, ils ont décrit tous les informations des volumes, y compris les CDM. On réalise les programmes d’import des chemins Xpath des éléments correspondant à des éléments de CDM dans le fichier XML à importer. Voir le figure 4 - « Exemple de CDM ». Nous avons utilisé une table d’index pour sauvegarder tous les variables de CDM, y compris les liens de traduction (voir la figure 4, cdm-translation-ref). \\
+Jibiki est une plate-forme générique, elle permet de traiter presque toutes les ressources lexicales de type XML en utilisant les stratégies de microstructure et macrostructure. Nous avons déjà parlé de la macrostructure dans les chapitres ci-dessus. La microstructure est la structure des entrées. On utilise des pointeurs CDM (Common Dictionary Markup) […] pour gérer n’importe quel type de microstructure sans la modifier. Cette structure est stockée dans un fichier de métadonnées sous forme XML. Les fichiers de métadonnées ont pour but de faciliter à importer les ressources lexicales.  Il y a un fichier de métadonnées pour une ressource entière.  Dans ce fichier, il a décrit les informations de cette ressource : comme les langues source et cibles, l’auteur, les noms et fichiers de volumes, etc. Pour chaque volume, il existe un fichier de métadonnées. Dans ces fichiers, ils ont décrit tous les informations des volumes, y compris les CDM. On réalise les programmes d’import des chemins Xpath des éléments correspondant à des éléments de CDM dans le fichier XML à importer. Voir la figure \ref{image-CDM}. Nous avons utilisé une table d’index pour sauvegarder tous les variables de CDM, y compris les liens de traduction. \\
 \begin{figure}[htbp] 
 \begin{center} 
 \includegraphics[width=14cm]{images/CDM.jpg}
 \end{center} 
-\caption{Exemple de CDM} \label{image} \
+\caption{Exemple de CDM} \label{image-CDM} \
 \end{figure}
 
 % explique les limitations : pas de liens entre plusieurs volumes différents, macrostructures complexes (pivot, pivax, etc.) codées en dur, difficultés de création de méta-données
@@ -304,21 +304,21 @@ Nous avons divisé trois niveaux de traduction pour afficher les résultats de r
 	\textbf{3} & \raggedright ONU, Nations unies, onusien, Organisation de nations unies & \raggedright  & \raggedright \Chinois{联合国} & \raggedright \Japonais{国際連合}, \Japonais{国連} & \raggedright ONU, Nations unies, onusien, Organisation de nations unies  & \raggedright UN, United Nations &  \raggedright \Chinois{联合国} & \Japonais{国際連合}, \Japonais{国連} \\
 	\hline
 	\end{tabular}
-\caption{ Trois niveaux de traduction et affichage : UN d'anglais vers toutes les langues}\label{table}
+\caption{ Trois niveaux de traduction et affichage : UN d'anglais vers toutes les langues}\label{table-scenario1}
 \end{table}
 
 \begin{figure}[htbp] 
 \begin{center} 
 \includegraphics[width=14cm]{images/scenario1-1.jpg}
 \end{center} 
-\caption{UN d'anglais vers toutes les langues} \label{image} \
+\caption{UN d'anglais vers toutes les langues} \label{image-scenario1-1} \
 \end{figure}
 
 \begin{figure}[htbp] 
 \begin{center} 
 \includegraphics[width=14cm]{images/scenario1-2.jpg}
 \end{center} 
-\caption{Affichage complet - UN d'anglais vers toutes les langues} \label{image} \
+\caption{Affichage complet - UN d'anglais vers toutes les langues} \label{image-scenario1-2} \
 \end{figure}
 
 % scénario 2 : montre s'il n'y a pas d'axie de dispo, on passe par la proaxie et on utilise l'étiquette (label) Organisation des Nations Unies => United Nations
@@ -339,14 +339,14 @@ Nous avons divisé trois niveaux de traduction pour afficher les résultats de r
 	\textbf{3} & \raggedright ONU, Nations unies, onusien, Organisation de nations unies & \raggedright UN, United Nations & \raggedright \Chinois{联合国} & & \raggedright ONU, Nations unies, onusien, Organisation de nations unies  & \raggedright UN, United Nations &  \raggedright \Chinois{联合国} & \Japonais{国際連合}, \Japonais{国連} \\
 	\hline
 	\end{tabular}
-\caption{Trois niveaux de traduction et affichage : \Japonais{国連} de japonais vers toutes les langues}\label{table}
+\caption{Trois niveaux de traduction et affichage : \Japonais{国連} de japonais vers toutes les langues}\label{table-scenario2}
 \end{table}
 
 \begin{figure}[htbp] 
 \begin{center} 
 \includegraphics[width=14cm]{images/scenario2.jpg}
 \end{center} 
-\caption{\Japonais{国連} de japonais vers toutes les langues} \label{image} \
+\caption{\Japonais{国連} de japonais vers toutes les langues} \label{image-scenario2} \
 \end{figure}
 
 
@@ -367,13 +367,14 @@ Nous avons divisé trois niveaux de traduction pour afficher les résultats de r
 	\textbf{3} &  & \raggedright UN, United Nations & \raggedright \Chinois{联合国} &\raggedright \Japonais{国際連合}, \Japonais{国連} & \raggedright ONU, Nations unies, onusien, Organisation de nations unies  & \raggedright UN, United Nations &  \raggedright \Chinois{联合国} & \Japonais{国際連合}, \Japonais{国連} \\
 	\hline
 	\end{tabular}
-\caption{Trois niveaux de traduction et affichage : onusien de français vers toutes les langues}\label{table}
+\caption{Trois niveaux de traduction et affichage : onusien de français vers toutes les langues}\label{table-scenario3}
 \end{table}
+
 \begin{figure}[htbp] 
 \begin{center} 
 \includegraphics[width=14cm]{images/scenario3.jpg}
 \end{center} 
-\caption{onusien de français vers toutes les langues} \label{image} \
+\caption{onusien de français vers toutes les langues} \label{image-scenario3} \
 \end{figure}
 
 \section{Conclusion et Perspectives}
