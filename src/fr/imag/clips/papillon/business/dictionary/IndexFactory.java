@@ -143,6 +143,7 @@ import fr.imag.clips.papillon.data.IndexDO;
 import fr.imag.clips.papillon.data.IndexQuery;
 import fr.imag.clips.papillon.papillon_data.ManageDatabase;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -324,13 +325,13 @@ public class IndexFactory {
 		return theIndex;
 	}
 	
-	public static Vector getIndexEntriesVector(String indexTableName, Vector Keys, String order, int limit) throws PapillonBusinessException {
+	public static ArrayList getIndexEntriesVector(String indexTableName, Vector Keys, String order, int limit) throws PapillonBusinessException {
 		return getIndexEntriesVector(indexTableName, Keys, order, limit,0);
 	}
 
 	
-	public static Vector getIndexEntriesVector(String indexTableName, Vector Keys, String order, int limit, int offset) throws PapillonBusinessException {
-        Vector theEntries = new Vector();
+	public static ArrayList getIndexEntriesVector(String indexTableName, Vector Keys, String order, int limit, int offset) throws PapillonBusinessException {
+        ArrayList theEntries = new ArrayList();
 		
 		if (null != indexTableName) {
 			try {
@@ -386,7 +387,48 @@ public class IndexFactory {
 		return theEntries;
 	}
 	
+	public static ArrayList getIndexEntriesVector(String indexTableName, String msort, String operator, String order, int limit) throws PapillonBusinessException {
+		return getIndexEntriesVector(indexTableName, msort, operator, order, limit,0);
+	}
 	
+	public static ArrayList getIndexEntriesVector(String indexTableName, String msort, String operator, String order, int limit, int offset) throws PapillonBusinessException {
+        ArrayList theEntries = new ArrayList();
+		
+		if (null != indexTableName) {
+			try {
+				com.lutris.dods.builder.generator.query.RDBColumn keyColumn = IndexDO.getKeyColumn(indexTableName);
+				com.lutris.dods.builder.generator.query.RDBColumn msortColumn = IndexDO.getMsortColumn(indexTableName);
+				IndexQuery query = new IndexQuery(indexTableName, CurrentDBTransaction.get());
+				
+				query.getQueryBuilder().addWhere(keyColumn, Volume.CDM_headword, QueryBuilder.EQUAL);
+				query.getQueryBuilder().addWhere(msortColumn, msort,  operator);
+
+				query.getQueryBuilder().setMaxRows((0 == limit) ? DictionariesFactory.MaxRetrievedEntries : limit);
+				if (offset!=0) {
+					query.getQueryBuilder().addEndClause("OFFSET " + offset);
+				}
+				if (order==null || !order.equalsIgnoreCase(ORDER_DESCENDING)) {
+					order = "";
+				}
+				query.getQueryBuilder().addOrderByColumn(MSORT_FIELD,order);
+				// debug
+				//query.getQueryBuilder().debug();
+				
+				IndexDO[] DOarray = query.getDOArray();
+				if (null != DOarray) {
+					for (int j=0; j < DOarray.length; j++) {
+						Index tempIndex = new Index(DOarray[j]);
+						theEntries.add(tempIndex);
+					}
+				}
+			}
+			catch(Exception ex) {
+				throw new PapillonBusinessException("Exception in getIndexEntriesVector()", ex);
+			}
+		}
+		return theEntries;
+	}
+
 	protected static boolean createIndexForLexiesHashtable(String indexDbname, Axie myAxie)
 		throws PapillonBusinessException {
 			Hashtable lexies = myAxie.getLexies();

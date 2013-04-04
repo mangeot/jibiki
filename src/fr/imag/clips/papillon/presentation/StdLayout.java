@@ -134,10 +134,32 @@ public interface StdLayout {
     public Document getLayout();
     
     /**
-        *  Returns the node that will hold the main content of the page.
+	 *  Returns the node that will hold the main content of the page.
      *
      * @return    The layout value
      */    
     public Node getContentPlaceHolder();
+
+    /**
+	 *  Returns the node that will hold the main content of the page.
+     *
+     * @return    The layout value
+     */    
+    public Node getContextualMenuPlaceHolder();
+	
+	/**
+	 *  Returns the node that will hold the main content of the page.
+     *
+     * @return    The layout value
+     */    
+    public Node getBannerPlaceHolder();
+	
+	/**
+	 *  Returns the node that will hold the main content of the page.
+     *
+     * @return    The layout value
+     */    
+    public Node getBannerContent();
+	
     
 }

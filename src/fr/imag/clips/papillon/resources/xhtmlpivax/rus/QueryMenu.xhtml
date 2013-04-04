@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru-RU" lang="ru-RU">
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <title>Меню</title>
   </head>
   <body>
-    <div id="QueryMenu" lang="ru-RU" class="menuBlock">
+    <div id="QueryMenu" lang="ru" xml:lang="ru" class="menuBlock">
       <h2 class="menuTitle">
         <a title="Поиск слов в имеющихся словарях" href="javascript:void(0)">Поиск в словаре:</a>
       </h2>
       <!--<form id="ConsultForm" action="Home.po">
         <div>
         <input type="hidden" name="RESOURCES" value="*ANY*" />
-        
         <label for="HeadwordInput" accesskey="w">
           <span class="accesskey">W</span>ord:</label>
         <input type="text" id="HeadwordInput" name="HEADWORD" size="14" maxlength="40" />
@@ -35,7 +34,7 @@
         <input type="submit" name="lookup" value="Go" />
         </div>
       </form>-->
-               <form id="ConsultForm" method="get" action="Home.po"  onsubmit="filterVolumes();">
+               <form id="ConsultForm" method="get" action="Home.po" onsubmit="filterVolumes();">
         <div>
                 <div>
                     <div class="menuColumnSize">
@@ -45,7 +44,7 @@
                         <div class="menuVariableValue">
                             <input type="hidden" id="Facet" name="FACET.0" value="cdm-headword"/>
                             <input type="hidden" id="Operator" name="OPERATOR.0" value="0"/>
-                            <input id="ValueField" name="FACETVALUE.0" type="text" size="15" class="menuVariableValueWidth"/>
+                            <input id="ValueField" name="FACETVALUE.0" size="15" type="text" class="menuVariableValueWidth"/>
                         </div>
                     </div>
                     <div class="menuColumnSize">
@@ -70,12 +69,12 @@
                         </div>
                     </div>
                 </div>
+                <div>
  					<div id="VolumesDiv">
 						<div id="VolumesLang">
-							<input type="hidden" id="VolumesInput" name="VOLUMES" value="*ALL*"/>
+							<input type="hidden" id="VolumesInput" name="VOLUMES" value="*ВСЕ*"/>
 						</div>
 					</div>
-                <div>
                     <input type="hidden" name="XSL" value="Стандарт"/>
                     <input type="hidden" name="NB_RESULT_PER_PAGE" value="5"/>
                     <input type="hidden" name="OFFSET"/>
@@ -84,8 +83,8 @@
                 </div>
                 </div>
             </form>
-      <a title="Открыть форму расширенного поиска" href="AdvancedSearch.po">Расширенный поиск</a> <br/> 
-      <a title="Показать список словарей" href="ViewDictionaries.po">Список словарей</a>
+
+      <a title="Открыть форму расширенного поиска" href="AdvancedSearch.po">Расширенный поиск</a> <br/> <a title="Показать список словарей" href="ViewDictionaries.po">Список словарей</a>
     </div>
   </body>
 </html>

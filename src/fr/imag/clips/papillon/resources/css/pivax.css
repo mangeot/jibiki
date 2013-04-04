@@ -2,7 +2,7 @@
  * Stylesheet for Papillon Web site 
  *
  * Style sheet for the xhtml Papillon pages
- * $Id$
+ * $Id: papillon-home.css 1358 2012-08-12 16:36:53Z mangeot $
  * ---------------------------------------------------
  *
  * $Log$
@@ -87,7 +87,8 @@
 
 body {
     font-family: Helvetica, Arial, sans-serif;
-	background: white url(../media/papillon-background-fuzzy.png) 0 0 no-repeat fixed;
+	background: white;
+	font-size:1.1em;
 }
 
 /*--------------------------------------*/
@@ -135,17 +136,17 @@ td.block {
 
 .menuColumn {
    float: left;
-   width: 150px;
+   width: 200px;
    margin-top:0.3em;
 }
 
 .mainColumn {
-   background: white url(../media/papillon-background-fuzzy-lighter.png) 0 0 no-repeat fixed;
+   background: white;
    color: #000;
 /*   position: absolute;
    left: 0; 
    width: 100%; */
-   margin-left: 160px;
+   margin-left: 210px;
    margin-right: 0.3em;
    margin-top:0.3em;
 }
@@ -155,13 +156,13 @@ td.block {
 }
 
 .editing {
-   background: white url(../media/papillon-background-fuzzy-lighter.png) 0 0 no-repeat fixed;
+   background: white;
    color: #000;
 /*   position: absolute;
    left: 0; */
    width: 70%;
-   margin-left: 170px;
-   margin-right: 170px;
+   margin-left: 210px;
+   margin-right: 210px;
    margin-top:0.3em;
 }
 
@@ -194,7 +195,7 @@ table.center {
 	font-style: italic;
 	font-size: 2.5em;
 	font-weight: normal;
-	background: white url(../media/papillon-background-fuzzy-lighter.png) 0 0 no-repeat fixed;   
+	background: white;   
 	border-left: 1px solid black;
 }
 
@@ -208,7 +209,7 @@ table.center {
 /*-------------------------*/
 
 #MenuBar {
-	background: white url(../media/papillon-background-fuzzy-lighter.png) 0 0 no-repeat fixed;
+	background: white;
 	height: 1.5em;
 	line-height: 1.2em;
 	z-index:10;
@@ -307,12 +308,11 @@ div.popupMenu ul li:hover {
     } */
 	
 .menuBlock {
-	background: white url(../media/papillon-background-fuzzy-light.png) 0 0 no-repeat fixed;
+	background: white;
     color: #000;
     padding-bottom: 0.2em;
-    border: 1px solid black;
-    font-size: 13px;
     margin-bottom: .5em;
+	margin-left: .2px;
 }
 
 .menuBlock h2.menuTitle {
@@ -502,8 +502,6 @@ div#firefox img {
     padding-right: 3px;
 }
 
-/* Styles for Motamot dict */
-
 .motamot-entry {
     border:1px solid #898989;
     margin-bottom:5px;
@@ -511,32 +509,6 @@ div#firefox img {
     padding:7px;
 }
 
-.motamot-entry-selected {
-    border:2px solid black;
-    margin-bottom:4px;
-    margin-top:0px;
-    padding:7px;
-	background-color: red;
-}
-
-.motamot-sense {
-    border:1px solid #898989;
-    margin-bottom:5px;
-    margin-top:-1px;
-    margin-left:15px;
-    padding:7px;
-}
-
-.motamot-sense-selected {
-    border:2px solid black;
-    margin-bottom:4px;
-    margin-top:-2px;
-    margin-left:14px;
-    padding: 7px;
-	background-color: yellow;
-}
-
-/* Styles from LexAlp project */
 .entry {
 /*	border: 1px solid #898989;*/
 /*	padding: 5px 5px 5px 5px; */
@@ -788,11 +760,6 @@ h4.blockTitle {
 	color: #FF0099;
 	}
 
-.khm {
-	font-family: sans-serif;
-	color: #000099;
-	}
-
 .msa	{
 	font-family: sans-serif;
 	color: #009900;
@@ -806,11 +773,6 @@ h4.blockTitle {
 .tha	{
 	font-family: sans-serif;
 	color: #6600FF;
-	}
-
-.unl	{
-	font-family: courier, sans-serif;
-	color: #1B1464;
 	}
 
 .sin	{

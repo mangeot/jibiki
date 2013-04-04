@@ -171,7 +171,7 @@ public class Index {
 			try {
 				return myDO.getLang();
 			} catch(DataObjectException ex) {
-				throw new PapillonBusinessException("Error getting index's lang", ex);
+				throw new PapillonBusinessException("Error getting index lang", ex);
 			}
 		}
 
@@ -191,6 +191,24 @@ public class Index {
                 throw new PapillonBusinessException("Error setting index lang", ex);
             }
         }
+
+	/**
+	 * Gets the msort of the key
+     *
+     * @return the msort key
+     * @exception PapillonBusinessException if an error occurs
+     *   retrieving data (usually due to an underlying data layer
+	 *   error).
+     */
+	public String getMsort()
+	throws PapillonBusinessException {
+		try {
+			return myDO.getMsort();
+		} catch(DataObjectException ex) {
+			throw new PapillonBusinessException("Error getting index msort", ex);
+		}
+	}
+	
 
     /**
 		* Gets the value of the key

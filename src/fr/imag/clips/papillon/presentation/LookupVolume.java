@@ -44,18 +44,21 @@
 package fr.imag.clips.papillon.presentation;
 
 import com.lutris.appserver.server.httpPresentation.HttpPresentationException;
-//import com.lutris.dods.builder.generator.query.QueryBuilder;
+import com.lutris.dods.builder.generator.query.QueryBuilder;
 
 import fr.imag.clips.papillon.business.PapillonLogger;
+import fr.imag.clips.papillon.business.dictionary.DictionariesFactory;
+import fr.imag.clips.papillon.business.dictionary.Index;
+import fr.imag.clips.papillon.business.dictionary.IndexFactory;
 import fr.imag.clips.papillon.business.dictionary.QueryCriteria;
 import fr.imag.clips.papillon.business.dictionary.QueryRequest;
 import fr.imag.clips.papillon.business.dictionary.QueryResult;
 import fr.imag.clips.papillon.business.dictionary.Volume;
 import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
-import fr.imag.clips.papillon.business.dictionary.DictionariesFactory;
 import fr.imag.clips.papillon.business.transformation.ResultFormatter;
 import fr.imag.clips.papillon.business.transformation.ResultFormatterFactory;
 import fr.imag.clips.papillon.business.xml.XMLServices;
+import fr.imag.clips.papillon.business.utility.Utility;
 
 
 
@@ -65,7 +68,7 @@ import fr.imag.clips.papillon.business.xml.XMLServices;
  * @author     mangeot
  * @created    February 24, 2006
  */
-public class LookupVolume extends XmlBasePO {
+public class LookupVolume extends AbstractPO {
     
 	protected static final String ALL_STATUS = "*ALL*";
 	
@@ -109,8 +112,8 @@ public class LookupVolume extends XmlBasePO {
      * @exception  HttpPresentationException  Description of the Exception
      * @exception  IOException                Description of the Exception
      */
-    public org.w3c.dom.Document getContent()
-        throws HttpPresentationException, java.io.IOException, Exception {
+    public org.w3c.dom.Node getDocument()
+	throws HttpPresentationException, java.io.IOException, Exception {
 			
 			/* initilaize response */
 			java.util.Collection EntryCollection = null;
@@ -120,56 +123,76 @@ public class LookupVolume extends XmlBasePO {
 			String volume = myGetParameter("VOLUME");
 			String headword = myGetParameter("HEADWORD");
 			String handle = myGetParameter("HANDLE");
+			String msort = myGetParameter("MSORT");
 			if (volume != null && !volume.equals("") && 
-				headword != null && !headword.equals("")) {
+				(headword != null && !headword.equals("") || msort != null && !msort.equals(""))) {
 				Volume myVolume = VolumesFactory.getVolumeByName(volume);
-				QueryRequest query = new QueryRequest(myVolume);
-				//query.setTargets(targets);
-				//query.setOffset(offset);
-				
-				/* Limit */
-				//String limitString = myGetParameter("LIMIT");			
-				String limit = "5";
-				/*if (limitString!=null && !limitString.equals("")) {
-					limit =Integer.parseInt(limitString);
-				}*/
-				query.setLimit(limit);	
-				
-				/* headword criteria */
-				QueryCriteria criteria = new QueryCriteria();
-				criteria.add("key", QueryCriteria.EQUAL, Volume.CDM_headword);
-				criteria.add("value", QueryCriteria.CASE_SENSITIVE_STARTS_WITH, headword);               // match headword (no case sensitive)
-				query.addCriteria(criteria);
-				
-				/* status criteria */
-				String status = myGetParameter("STATUS");
-				if (status==null || status.equals("")) {
-					status="validated";
+				int limit = 100;
+				String limitString = myGetParameter("LIMIT");
+				if (limitString!=null && !limitString.equals("")) {
+					limit = Integer.parseInt(limitString);
 				}
-				if (status!=null && !status.equals(ALL_STATUS)) {
-					QueryCriteria criteriaStatus = new QueryCriteria();
-					criteriaStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);
-					criteriaStatus.add("value", QueryCriteria.EQUAL, status);
-					query.addCriteria(criteriaStatus);
-				}	
-				EntryCollection = query.findLexieAndTranslation(this.getUser());
+				String order = myGetParameter("DIRECTION");
+				String strategy = QueryBuilder.GREATER_THAN;
+
+				if (order==null || order.equals("")) {
+					order = IndexFactory.ORDER_ASCENDING;
+				}
+				if (order.equals(IndexFactory.ORDER_DESCENDING)) {
+					strategy = QueryBuilder.LESS_THAN;
+				}
+				String source = myVolume.getSourceLanguage();
+				
+				//$headword = !empty($_REQUEST['HEADWORD']) ? 'msort > multilingual_sort(\'est\',\'' . $_REQUEST['HEADWORD'] . '\')' : 'true';
+				//$operator = $direction=='asc' ? '>' : '<';
+				//$msort = !empty($_REQUEST['MSORT']) ? 'msort ' . $operator . ' \'' . $_REQUEST['MSORT'] . '\'' : 'true';
+				
+				if (headword != null && !headword.equals("")) {
+					java.util.Vector myKeys = new java.util.Vector();
+					String[] Headword = new String[4];
+					Headword[0] = Volume.CDM_headword;
+					Headword[1] = source;
+					Headword[2] = headword;
+					Headword[3] = strategy;
+					myKeys.add(Headword);
+					EntryCollection = IndexFactory.getIndexEntriesVector(myVolume.getIndexDbname(), myKeys, order,limit);
+				}
+				else if (msort != null && !msort.equals("")) {
+					EntryCollection = IndexFactory.getIndexEntriesVector(myVolume.getIndexDbname(), msort, strategy, order,limit);
+				
+				}
+				if (EntryCollection!=null) {
+					String stringResponse = "";
+					for (java.util.Iterator myIterator = EntryCollection.iterator(); myIterator.hasNext(); ) {
+						Index myIndex = (Index) myIterator.next();
+						String entry = "<div class='lookupentry' title='"+ Utility.encodeXMLEntities(myIndex.getMsort())+"'><a href='javascript:void(0);' style='display:block; margin:5px;' onclick=\"lookupVolume('VOLUME="+volume+"&amp;HANDLE="+myIndex.getEntryId()+"');$(this).parent().css('font-weight','bold')\">"+Utility.encodeXMLEntities(myIndex.getValue())+"</a></div>";
+						if (order.equals(IndexFactory.ORDER_DESCENDING)) {
+							stringResponse = entry + stringResponse;
+						}
+						else {
+							stringResponse += entry;
+						}
+					}
+					stringResponse = "<?xml version='1.0' encoding='UTF-8' ?><div class='entries'>" + stringResponse + "</div>";
+					docResponse = XMLServices.buildDOMTree(stringResponse);
+				}
 			}
 			else if (volume != null && !volume.equals("") && 
 					 handle != null && !handle.equals("")) {
-				EntryCollection = DictionariesFactory.findAnswerAndTranslations(volume, handle, null, this.getUser());
-
-			}
-			if (EntryCollection!=null) {
-				org.w3c.dom.Element rootElement = docResponse.getDocumentElement();
-				for (java.util.Iterator myIterator = EntryCollection.iterator(); myIterator.hasNext(); ) {
-					QueryResult myQueryResult = (QueryResult) myIterator.next();
-					ResultFormatter myResultFormater = ResultFormatterFactory.getFormatter(myQueryResult, null, ResultFormatterFactory.XHTML_DIALECT,null);
-					org.w3c.dom.Element newEntry = (org.w3c.dom.Element)myResultFormater.getFormattedResult(myQueryResult, this.getUser());
-					rootElement.appendChild(docResponse.importNode(newEntry, true));
+				Volume myVolume = VolumesFactory.getVolumeByName(volume);
+				java.util.Collection targets = myVolume.getTargetLanguagesArray();
+				EntryCollection = DictionariesFactory.findAnswerAndTranslations(volume, handle, targets, this.getUser());
+				
+				if (EntryCollection!=null) {
+					org.w3c.dom.Element rootElement = docResponse.getDocumentElement();
+					for (java.util.Iterator myIterator = EntryCollection.iterator(); myIterator.hasNext(); ) {
+						QueryResult myQueryResult = (QueryResult) myIterator.next();
+						ResultFormatter myResultFormater = ResultFormatterFactory.getFormatter(myQueryResult, null, ResultFormatterFactory.XHTML_DIALECT,null);
+						org.w3c.dom.Element newEntry = (org.w3c.dom.Element)myResultFormater.getFormattedResult(myQueryResult, this.getUser());
+						rootElement.appendChild(docResponse.importNode(newEntry, true));
+					}
 				}
 			}
-			
-
 			return docResponse;			
         }
 }

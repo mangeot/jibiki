@@ -99,29 +99,33 @@
 /*<group=page layout>*/
 
 body {
-	background : #DA9673;
-	font: 10pt   'Lucida Grande', LucidaGrande, Lucida, Helvetica, Arial, sans-serif;
-	color: #283310;
+	background : #DFF9C3;
+	font-size: 1.2 em;
+	font-family: 'Lucida Grande', Helvetica, Arial, sans-serif;
+	color: black;
+}
+
+h1,h2,h3,h4 {
+	color: #4C1900;
+}
+
+h1 {
+	font-size: 2em;
 }
 
 /*-------------------------*/
 /* CSS only popup menus    */
 /*-------------------------*/
 
-#MenuBar {
-	height: 1.4em;
-	line-height: 1.2em;
-	z-index:10;
-	text-align: left;
-}
-
 .popupMenu {
-	width: auto;
-	float: left;
-	padding: 0.1em 0em 0.1em 0em;
+	font-size: 2em;
+	width: 20%;
+	padding: 0.3em;
+	text-align: center;
 	cursor: default;
-	border-left: 1px solid black;
-	border-bottom: 1px solid black;
+	background-color: #FFFDDA;
+	border: 7px solid #689443;
+	border-radius: 20px;
 }
 
 .popupMenu:hover {
@@ -135,15 +139,15 @@ body {
 }
 
 .popupMenu  a:link {
-   color:#00a;
+   color:#4C1900;
 }
 
 .popupMenu  a:visited {
-   color:#00a;
+   color:#4C1900;
 }
 
 .popupMenu  a:active {
-   color:#00a;
+   color:#4C1900;
 }
 
 .popupMenu  a:hover {
@@ -168,118 +172,122 @@ body {
    font-size:0.9em;
 }
 
-div.popupMenu:hover ul {
+.popupMenu:hover ul {
     display: block;
     margin: 0;
     padding: 0;
 
 }
 
-div.popupMenu ul li:hover {
+.popupMenu ul li:hover {
    background: #887;
    color: #fff;
 }
 
 /*-----------------------------------*/
-/* MenuBlock (left) part of the page */
+/* Banner part of the page */
 /*-----------------------------------*/
 
-/*.menuVariableName {
-    float: left; 
-    width: 50px;
-    }
-    
-.menuVariableValue {
-    margin-right: 7px;
-    float: right; 
-    width: 90px;
-    }
-        
-.menuVariableValueWidth {
-    width: 100%;
-    }
+div#BannerContent {
+	display: table;
+	border-spacing: 10px;
+}
 
-.menuGo {
-    width: 50px;
-    margin-left:auto; 
-    margin-right:auto;
-    margin-top: 5px;
-    } */
+#projectTitle {
+	display: table-cell;
+	padding-left: 1em;
+	padding-right: 1em;
+	width: 65%;
+}
+
+.projectName h1,.projectName h2, .projectName h3  {
+	margin: 2px;
+}
+
+#caseRecherche  {
+	display: table-cell;
+	padding: 0.3em;
+	/*background-color: #FFFDDA;
+	border: 7px solid #689443;
+	border-radius: 20px;*/
+}
+
+#caseRechercheAvancee  {
+	display: table-cell;
+	padding: 0.3em;
+	/*background-color: #FFFDDA;
+	border: 7px solid #689443;
+	border-radius: 20px;*/
+}
+
+
+/*-----------------------------------*/
+/* MenuBlock (left) part of the page */
+/*-----------------------------------*/
 	
-.menuBlock {
-	background: white url(/media/papillon-background-fuzzy-light.png) 0 0 no-repeat fixed;
-    color: #000;
-    padding-bottom: 0.2em;
-    border: 1px solid black;
-    font-size: 13px;
-    margin-bottom: .5em;
+#ContextualMenuContent {
+	float: left;
+	width: 200px;
+	margin-top: 0px;
+	background: #FFFDDA;
+	border: 7px solid #689443;
+	border-radius: 15px;
+	height: 515px;
 }
 
-.menuBlock h2.menuTitle {
-   background: #aa7;
-   color: #fff;
-   border: none;
-   border-bottom : 1px solid grey;
-   width: 100%;
-   font-weight: bold;
-   font-size: medium;
-   text-indent: 0.5em;
-   margin-top: 0;
-   padding: 0.1em 0;
-   font-variant: small-caps;
+#lookupentries 
+{
+height:515px;
+width:200px;
+overflow-y: scroll;
 }
 
-.menuBlock a:link {
-    text-decoration: none; 
-    color: blue;
+.lookupentry {
+	border:1px solid grey;
 }
 
-.menuBlock a:visited {
-    text-decoration: none; 
-    color: blue;
+
+/*--------------------------------------*/
+/* Main column */
+/*--------------------------------------*/
+	
+.mainColumn {
+	margin-left: 220px;
+	margin-right: 220px;
+	margin-top: 20px;
+	padding: 0.5em;
+	background: #FFFDDA;
+	border: 7px solid #689443;
+	border-radius: 15px;
+	min-height: 500px;
 }
 
-.menuBlock a:active {
-    text-decoration: none; 
-    color: blue;
+.dicos {
+	float:left;
+	width: 250px;
+	margin-left: -100px;
 }
 
-.menuBlock a:hover {
-    text-decoration: none; 
-    color: #000070;
+.dico {
+	font-size: 1.5em;
+	/*position: relative;*/
+	margin-top: 20px;
+	margin-bottom: 20px;
+	padding: 0.5em;
+	background: #FFFDDA;
+	border: 7px solid #689443;
+	border-radius: 15px;
 }
 
-.menuBlock h2, .menuBlock div, .menuBlock p, .menuBlock ul {
-   color: #000;
+.downloads {
+	padding-left: 200px;
+	padding-top: 10px;
 }
 
-.menuBlock div, .menuBlock p, .menuBlock ul {
-   margin-top: 0.2em;
+.download {
+	font-size: 1.5em;
+	padding: 29px;
 }
-
-.menuBlock li {
-   margin-left: 0;
-   color: #aa7;
-}
-
-.menuBlock p, .menuBlock div {
-   text-indent: 0.3em;
-}
-
-.menuBlock form {
-   margin-top: 0;
-   padding-left: 0.2em;
-   padding-right: 0.2em;
-}
-
-.menuBlock h2.menuTitle a {
-   color: #fff;
-}
-
-.menuBlock h2.menuTitle a:hover {
-   text-decoration: none;
-}
-
 
 /*--------------------------------------*/
 /* For the api */
@@ -303,7 +311,6 @@ pre.api {
     background-color:#E8E8E8;
 }
 
-
 .titlePane {
 	color: #1cabed;
 	font-variant: small-caps;
@@ -322,207 +329,10 @@ pre.api {
 	vertical-align: middle;
 }
 
-/*<group=Quick Links>*/
-
-.quickLinks {
-	display: block;
-	position: absolute;
-	right: 5px;
-	top: 5px;
-	font-size: small;
-	font-style: normal;
-	font-weight: normal;
-	border-bottom: 1px dotted #3b63b5;
-	font-variant: normal;
-}
-
-.quickLinks a:link {
-    text-decoration: none; 
-    color: blue;
-}
-
-.quickLinks a:visited {
-    text-decoration: none; 
-    color: blue;
-}
-
-.quickLinks a:active {
-    text-decoration: none; 
-    color: blue;
-}
-
-.quickLinks a:hover {
-    text-decoration: none; 
-    color: #000070;
-}
+/*--------------------------------------*/
+/* Other */
+/*--------------------------------------*/
 	
-/*</group>*/
-
-/*<group=Menus>*/
-
-.menuColumn {
-	float: left;
-	width: 150px;
-	/*margin-top: 0.3em;*/
-	font-size: 8pt;
-	background: transparent;
-}
-
-.menuColumnSize {
-	width: 150px;
-    display: table;
-}
-
-.menuVariableName {
-    float: left; 
-    width: 45px;
-    }
-    
-.menuVariableValue {
-    margin-left: 50px;
-    width: 90px;
-    }
-        
-.menuVariableValueWidth {
-    width: 100%;
-    }
-
-.menuGo {
-    width: 50px;
-    margin-left:auto; 
-    margin-right:auto;
-    margin-top: 5px;
-    }
-
-.menuBlock {
-    padding-bottom: 0.2em;
-    /*border: 1px solid #3b63b5;*/
-    border: 1px solid #898989;
-    margin-bottom: .5em;
-	/*background: #fffcd3;*/
-	background: #F0F0F0;
-}
-
-.menuBlock h2.menuTitle {
-   background: #3a66a7;
-   color: #fff;
-   border: none;
-   border-bottom : 1px solid grey;
-   width: 100%;
-   font-weight: bold;
-   font-size: 9pt;
-   text-indent: 0.5em;
-   margin-top: 0;
-   padding: 0.1em 0;
-   font-variant: normal;
-}
-
-.menuBlock a:link {
-    text-decoration: none; 
-    /*color: blue;*/
-}
-
-.menuBlock a:visited {
-    text-decoration: none; 
-    /*color: blue;*/
-    color: #000394;
-}
-
-.menuBlock a:active {
-    text-decoration: none; 
-    /*color: blue;*/
-    color: #000394;
-}
-
-.menuBlock a:hover {
-    text-decoration: none; 
-    color: #000070;
-}
-
-.menuBlock h2, .menuBlock div, .menuBlock p, .menuBlock ul {
-   color: #000;
-}
-
-.menuBlock div, .menuBlock p, .menuBlock ul {
-   margin-top: 0.2em;
-}
-
-.menuBlock li {
-   margin-left: 0;
-   color: #3b63b5;
-}
-
-.menuBlock p, .menuBlock div {
-   text-indent: 0.0em;
-}
-
-.menuBlock form {
-   margin-top: 0;
-   padding-left: 0.2em;
-   padding-right: 0.2em;
-}
-
-.menuBlock h2.menuTitle a {
-   /*color: #fff;*/
-   color: #F0F0F0;
-}
-
-.europaLogos {
-    padding-bottom: 0.2em;
-    border: transparent;
-    margin-bottom: .5em;
-	background: transparent;
-}
-
-.europaLogos a img {
-    border: 0;
-}
-
-.menuBlock h2.menuTitle a:hover {
-   text-decoration: none;
-}
-
-.menuBlock input, textarea, select { font-size: 8pt; color: #000000; background-color: white; border: 1px solid #808080; }
-	
-/*</group>*/
-
-/*<group=GetFirefox>*/
-
-div#firefox {
-   float:right;
-   background-color: #e0e0e0;
-   margin-right: 12px;
-   font-size: x-small;
-   padding-top: 3px;
-   padding-bottom: 3px;
-   padding-left: 3px;
-   padding-right:3px;
-   text-align: right;
-   width:300px;
-}
-
-div#firefox span {
-
-}
-
-div#firefox a {
-   float:right;
-   padding-left:5px;
-}
-
-div#firefox img {
-   border: none;
-}
-
-/*</group>*/
-
-.mainColumn {
-	margin-left: 170px;
-	margin-top: 0.3em;
-	/*background: #f2f2f2;*/
-	color: #000394;
-}
-
 .editEntry {
    /*background: white url(/media/lexalp/logo2-small.jpg) top right no-repeat scroll;*/
    background-color: white;
@@ -595,13 +405,6 @@ pre.userMessage {
 
 /*<group=Details>*/
 
-h1 {
-    font-family: Helvetica, Arial, sans-serif;
-    font-size: 1.5em;
-    font-weight: bold;
-    text-align: center;
-}
-
 p.standard {
     text-align: justify;
 }
@@ -629,9 +432,10 @@ A:hover {
 .accesskey {text-decoration: underline; }
 
 .copyright {
-	font-size: xx-small;
+	clear: both;
+	font-size: .8em;
     margin-top: 20px;
-	margin-left: 170px;
+	margin-left: 20px;
 }
 	
 /*</group>*/
@@ -728,163 +532,13 @@ A:hover {
 	}
 
 	
-/*</group>*/
-
-/*<group=LexALP entries>*/
-
-.axie {
-    background-color:#E0E0E0;
-    border:1px solid #898989;
-    display:block;
-    margin-top:-1px;
-}
-
-.axieList {
-	margin-left: 10px;
-	display: block;
-}
-
-.axieTerm {
-	margin-right:10px;
-    margin-left:10px;
-    /*display: block;*/
-}
-
-.axieSeparator {
-	margin-right:10px;
-}
-
-.axieTermInfo {
-    text-align: justify;
-	position: fixed;
-	right: 100px;
-	top: 104px;
-	width: 380px;
-	background-color: #FFFFCC;
-	color: black;
-	visibility: hidden;
-	border: 1px dashed #000000;
-	padding: 5px 5px 5px 5px;
-}
-
-/*  */
-
-.term {
-	font-weight: bold;
-    margin-right:20px;
-	/*font-variant: small-caps;*/
-}
-
-.synonym {
-	/*margin-left:10px;
-	font-style: italic;
-	font-variant: small-caps;*/
-}
-
-.status {
-	font-size: xx-small;
-}
-
-.idTerm {
-	font-size: xx-small;
-	margin-left:10px;
-	margin-right: 10px;
-}
-
-.phraseologicalUnit {
-	font-size: xx-small;
-}
-
-.grammar {
-}	
-
-.kwic {
-    float: right;
-    font-size: xx-small;
-    margin-right:10px;
-}
-
-.legal {
-float: right;
-/*background-color: #bbbbbb*/;
-margin-right:10px;
-/*padding-right:10px;*/
-/*margin-left:10px;*/
-/*padding-left:10px;*/
-}
-
-.lang {
-    float: right;
-    font-size: xx-small;
-    text-transform: uppercase;
-    margin-right:10px;
-    margin-left:10px;
-}
-
-
-.relatedTermView {
-    margin-left:10px;
-}
-
-.relatedFormView {
-    margin-left:10px;
-}
-
-.frequencyView {
-    text-align: justify;
-	margin-left: 10px;
-}
-
-.domainView {
-    text-align: justify;
-	margin-left: 10px;
-}
-
-.sourceView {
-    text-align: justify;
-    /*font-size:xx-small;*/
-    margin-left: 5px;
-}
-
-.definitionView {
-    text-align: justify;
-	margin-left: 10px;
-}
-
-
-.contextView {
-    text-align: justify;
-	margin-left: 10px;
-}
-
-.noteView {
-    text-align: justify;
-	margin-left: 10px;
-}
-
-.historyColumn {
-	width: 150px;
-    font-size: 1em;
-    text-align: center;
-    vertical-align: bottom;
-}
-
-.quick_search {
-	border: 1px dashed #898989;
-    padding: 5px 5px 5px 5px;
-}
-
-.quick_link {
-	font-style: italic;
-	margin-left: 10px;
-}
-
 /* lexie status */
 
 .entry {
 /*	border: 1px solid #898989;*/
 /*	padding: 5px 5px 5px 5px; */
-	background: #F0F0F0;
+	/*background: #F0F0F0;*/
+	font-size:1.2em;
 }
 
 .finishedEntry {
@@ -1042,11 +696,10 @@ margin-right:10px;
 }
 
 .entry_navigation {
-	background-color: #E0E0E0;
 	border-left: 1px solid #898989;
 	border-right: 1px solid #898989;
 	border-top: 1px solid #898989;
-	font-size: small;
+	/*font-size: small;*/
 	font-weight: bold;
 }
 
@@ -1054,8 +707,7 @@ margin-right:10px;
 	border-top: 1px solid #898989;
 	border-right: 1px solid #898989;
 	border-left: 1px solid #898989;
-	font-size:x-small;
-    background-color: #E0E0E0;
+	font-size:small;
 }
 
 .action {
@@ -1075,17 +727,6 @@ margin-right:10px;
 border: 1px solid #898989;
 	padding: 5px 5px 5px 5px;
 	background: #F0F0F0;
-}
-
-h1.title {
-   background: #3a66a7;
-   /*color: #fff;*/
-   color: #F0F0F0;
-   border: none;
-   border-bottom : 1px solid grey;
-   width: 100%;
-   padding-top: 5px;
-   padding-bottom: 5px;
 }
 
 #ProjectDescription a {

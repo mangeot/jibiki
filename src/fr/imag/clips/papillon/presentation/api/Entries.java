@@ -251,13 +251,13 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 				Word[2] = word;
 				Word[3] = strategy;
 				myKeys.add(Word);
-				java.util.Vector resultsVector = IndexFactory.getIndexEntriesVector(theVolume.getIndexDbname(),
+				java.util.Collection resultsVector = IndexFactory.getIndexEntriesVector(theVolume.getIndexDbname(),
 																					myKeys,
 																					IndexFactory.ORDER_DESCENDING,
 																					limit,
 																					offset);
-				for (int i=0; i<resultsVector.size(); i++) {
-					Index myEntry = (Index) resultsVector.elementAt(i);
+				for (java.util.Iterator myIterator = resultsVector.iterator(); myIterator.hasNext(); ) {
+					Index myEntry = (Index) myIterator.next();
 					allEntries.append(entryString);
 					allEntries.append(myEntry.getValue());
 					allEntries.append("</criteria>");
@@ -298,8 +298,8 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 			if (volumesCollection !=null && volumesCollection.size()>0) {
 				StringBuffer allEntries = new StringBuffer(160 * (limit+1) * volumesCollection.size());	
 				allEntries.append(ENTRIES_HEAD_XMLSTRING);
-				for (java.util.Iterator iterator = volumesCollection.iterator(); iterator.hasNext(); ) {
-					theVolume = (Volume) iterator.next();
+				for (java.util.Iterator myIterator = volumesCollection.iterator(); myIterator.hasNext(); ) {
+					theVolume = (Volume) myIterator.next();
 					PapillonLogger.writeDebugMsg("Entries: volume: " + theVolume.getName());
 					allEntries.append("\n<entry lang='");
 					allEntries.append(theVolume.getSourceLanguage());
@@ -326,10 +326,10 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 		if (key.equals("*")) {
 			key=null;
 		}
-		java.util.Vector resultsVector = IndexFactory.getIndexVectorByEntryId(theVolume, handle);
+		java.util.Collection resultsVector = IndexFactory.getIndexVectorByEntryId(theVolume, handle);
 		StringBuffer allIndexes = new StringBuffer(160 * (resultsVector.size()+1));	
-		for (int i=0; i<resultsVector.size(); i++) {
-			Index myEntry = (Index) resultsVector.elementAt(i);
+		for (java.util.Iterator myIterator = resultsVector.iterator(); myIterator.hasNext(); ) {
+			Index myEntry = (Index) myIterator.next();
 			if (key ==null || (key !=null && myEntry.getKey().equals(key))) {
 				allIndexes.append("<key value='");
 				allIndexes.append(myEntry.getKey());
@@ -537,17 +537,17 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 		Word[2] = word;
 		Word[3] = strategy;
 		myKeys.add(Word);
-		java.util.Vector lexiesVector = IndexFactory.getIndexEntriesVector(lexieVolume.getIndexDbname(),
+		java.util.Collection lexiesVector = IndexFactory.getIndexEntriesVector(lexieVolume.getIndexDbname(),
 																			myKeys,
 																			IndexFactory.ORDER_DESCENDING,
 																			limit,
 																			0);
-		for (int i=0; i<lexiesVector.size(); i++) {
-			Index lexieEntry = (Index) lexiesVector.elementAt(i);
+		for (java.util.Iterator myIterator = lexiesVector.iterator(); myIterator.hasNext(); ) {
+			Index lexieEntry = (Index) myIterator.next();
 			//PapillonLogger.writeDebugMsg("Pivax entries: volume lexies: " + lexieVolume.getName() + " lexieId: " + lexieEntry.getEntryId());
-			java.util.Vector lexiesResultVector = IndexFactory.getIndexVectorByEntryId(lexieVolume, ""+ lexieEntry.getEntryId());
-			for (int p=0; p<lexiesResultVector.size(); p++) {
-				Index lexieResultEntry = (Index) lexiesResultVector.elementAt(p);
+			java.util.Collection lexiesResultVector = IndexFactory.getIndexVectorByEntryId(lexieVolume, ""+ lexieEntry.getEntryId());
+			for (java.util.Iterator myIterator2 = lexiesResultVector.iterator(); myIterator.hasNext(); ) {
+				Index lexieResultEntry = (Index) myIterator2.next();
 				if (lexieResultEntry.getKey().equals(Volume.CDM_entryId)) {
 			java.util.Collection axemesVolumesCollection = VolumesFactory.getVolumesArray(dictName,axemeLang,null);
 			if (axemesVolumesCollection !=null && axemesVolumesCollection.size()>0) {
@@ -560,17 +560,17 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 				Word[2] = lexieResultEntry.getValue();
 				Word[3] = QueryBuilder.EQUAL;
 				myKeys.add(Word);
-				java.util.Vector axemesVector = IndexFactory.getIndexEntriesVector(axemeVolume.getIndexDbname(),
+				java.util.Collection axemesVector = IndexFactory.getIndexEntriesVector(axemeVolume.getIndexDbname(),
 																					myKeys,
 																					IndexFactory.ORDER_DESCENDING,
 																					1,
 																					0);
-				for (int j=0; j<axemesVector.size(); j++) {
-					Index axemeEntry = (Index) axemesVector.elementAt(j);
+				for (java.util.Iterator myIterator3 = axemesVector.iterator(); myIterator.hasNext(); ) {
+					Index axemeEntry = (Index) myIterator3.next();
 					//PapillonLogger.writeDebugMsg("Pivax entries: volume axemes: " + axemeVolume.getName() + " axemeId: " + axemeEntry.getEntryId());
-					java.util.Vector axemesResultVector = IndexFactory.getIndexVectorByEntryId(axemeVolume, ""+ axemeEntry.getEntryId());
-					for (int q=0; q<axemesResultVector.size(); q++) {
-						Index axemeResultEntry = (Index) axemesResultVector.elementAt(q);
+					java.util.Collection axemesResultVector = IndexFactory.getIndexVectorByEntryId(axemeVolume, ""+ axemeEntry.getEntryId());
+					for (java.util.Iterator myIterator4 = axemesResultVector.iterator(); myIterator.hasNext(); ) {
+						Index axemeResultEntry = (Index) myIterator4.next();
 						if (axemeResultEntry.getKey().equals(Volume.CDM_entryId)) {
 					java.util.Collection axiesVolumesCollection = VolumesFactory.getVolumesArray(dictName,axiLang,null);
 					if (axiesVolumesCollection !=null && axiesVolumesCollection.size()>0) {
@@ -583,16 +583,16 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 						Word[2] = axemeResultEntry.getValue();
 						Word[3] = QueryBuilder.EQUAL;
 						myKeys.add(Word);
-						java.util.Vector axiesVector = IndexFactory.getIndexEntriesVector(axieVolume.getIndexDbname(),
+						java.util.Collection axiesVector = IndexFactory.getIndexEntriesVector(axieVolume.getIndexDbname(),
 																						   myKeys,
 																						   IndexFactory.ORDER_DESCENDING,
 																						   1,
 																						   0);
-						for (int k=0; k<axiesVector.size(); k++) {
-							Index axieEntry = (Index) axiesVector.elementAt(k);
-							java.util.Vector axiesResultVector = IndexFactory.getIndexVectorByEntryId(axieVolume, ""+ axieEntry.getEntryId());
-							for (int l=0; l<axiesResultVector.size(); l++) {
-								Index axieResultEntry = (Index) axiesResultVector.elementAt(l);
+						for (java.util.Iterator myIterator5 = axiesVector.iterator(); myIterator5.hasNext(); ) {
+							Index axieEntry = (Index) myIterator5.next();
+							java.util.Collection axiesResultVector = IndexFactory.getIndexVectorByEntryId(axieVolume, ""+ axieEntry.getEntryId());
+							for (java.util.Iterator myIterator6 = axiesResultVector.iterator(); myIterator6.hasNext(); ) {
+								Index axieResultEntry = (Index) myIterator6.next();
 								if (axieResultEntry.getKey().equals(Volume.CDM_translationReflexie) && axieResultEntry.getLang().equals(unlAxemeLang)) {
 									java.util.Collection unlAxemesVolumesCollection = VolumesFactory.getVolumesArray(dictName,unlAxemeLang,null);
 									if (unlAxemesVolumesCollection !=null && unlAxemesVolumesCollection.size()>0) {
@@ -605,17 +605,17 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 										Word[2] = axieResultEntry.getValue();
 										Word[3] = QueryBuilder.EQUAL;
 										myKeys.add(Word);
-										java.util.Vector unlAxemesVector = IndexFactory.getIndexEntriesVector(unlAxemeVolume.getIndexDbname(),
+										java.util.Collection unlAxemesVector = IndexFactory.getIndexEntriesVector(unlAxemeVolume.getIndexDbname(),
 																										  myKeys,
 																										  IndexFactory.ORDER_DESCENDING,
 																										  1,
 																										  0);
-										for (int m=0; m<unlAxemesVector.size(); m++) {
-											Index unlAxemeEntry = (Index) unlAxemesVector.elementAt(m);
-											java.util.Vector unlAxemesResultVector = IndexFactory.getIndexVectorByEntryId(unlAxemeVolume, ""+unlAxemeEntry.getEntryId());
+										for (java.util.Iterator myIterator7 = unlAxemesVector.iterator(); myIterator7.hasNext(); ) {
+											Index unlAxemeEntry = (Index) myIterator7.next();
+											java.util.Collection unlAxemesResultVector = IndexFactory.getIndexVectorByEntryId(unlAxemeVolume, ""+unlAxemeEntry.getEntryId());
 											//PapillonLogger.writeDebugMsg("Pivax entries: volume unl axeme: " + unlAxemeVolume.getName() + " unlAxemeId: " + unlAxemeEntry.getEntryId());
-											for (int n=0; n<unlAxemesResultVector.size(); n++) {
-												Index unlAxemeResultEntry = (Index) unlAxemesResultVector.elementAt(n);
+											for (java.util.Iterator myIterator8 = unlAxemesResultVector.iterator(); myIterator8.hasNext(); ) {
+												Index unlAxemeResultEntry = (Index) myIterator8.next();
 												if (unlAxemeResultEntry.getKey().equals(Volume.CDM_translationReflexie) && unlAxemeResultEntry.getLang().equals(unlLang)) {
 													java.util.Collection unlVolumesCollection = VolumesFactory.getVolumesArray(dictName,unlLang,null);
 													if (unlVolumesCollection !=null && unlVolumesCollection.size()>0) {
@@ -628,13 +628,13 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 														Word[2] = unlAxemeResultEntry.getValue();
 														Word[3] = QueryBuilder.EQUAL;
 														myKeys.add(Word);
-														java.util.Vector unlLexiesVector = IndexFactory.getIndexEntriesVector(unlVolume.getIndexDbname(),
+														java.util.Collection unlLexiesVector = IndexFactory.getIndexEntriesVector(unlVolume.getIndexDbname(),
 																															  myKeys,
 																															  IndexFactory.ORDER_DESCENDING,
 																															  1,
 																															  0);
-														for (int o=0; o<unlLexiesVector.size(); o++) {
-															Index unlIndexEntry = (Index) unlLexiesVector.elementAt(o);
+														for (java.util.Iterator myIterator9 = unlLexiesVector.iterator(); myIterator9.hasNext(); ) {
+															Index unlIndexEntry = (Index) myIterator9.next();
 															VolumeEntry unlEntry = VolumeEntriesFactory.findEntryByHandle(unlVolume.getName(), ""+unlIndexEntry.getEntryId());
 															if (unlEntry != null && !unlEntry.isEmpty()) {
 																PapillonLogger.writeDebugMsg("API: Pivax entries: trg entry: headword: " + unlEntry.getHeadword());
