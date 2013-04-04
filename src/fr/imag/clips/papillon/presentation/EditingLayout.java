@@ -110,13 +110,7 @@ public class EditingLayout implements StdLayout {
                 scriptParent.appendChild(layout.importNode(script, true));
             }
             scriptElement.removeAttribute("id");
-            
-            // gestion spécifique à IExplorer
-            if (!sessionData.getClientWithLabelDisplayProblems()) {
-                XHTMLElement removeIfNotIE = layout.getElementRemoveIfNotIE();
-                removeIfNotIE.getParentNode().removeChild(removeIfNotIE);
-            }
-            
+                        
             // Insertion du header et du footer
             //layout.getElementHeaderPlace().appendChild(layout.importNode(menuBar, true));
     }
@@ -134,4 +128,18 @@ public class EditingLayout implements StdLayout {
     public Node getContentPlaceHolder() {
         return layout.getElementMainColumn();
     }
+	
+	public Node getBannerPlaceHolder() {
+        return layout.getElementBannerPlaceHolder();
+    }
+    
+	public Node getContextualMenuPlaceHolder() {
+        return layout.getElementMenuColumn();
+    }
+    
+	public Node getBannerContent() {
+        return layout.getElementBannerContent();
+    }
+	
+	
 }

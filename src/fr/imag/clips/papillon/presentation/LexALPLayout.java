@@ -179,6 +179,18 @@ public class LexALPLayout implements StdLayout {
         return layout.getElementMainColumn();
     }
     
+	public Node getBannerPlaceHolder() {
+        return layout.getElementBannerPlaceHolder();
+    }
+    
+	public Node getContextualMenuPlaceHolder() {
+        return layout.getElementMenuColumn();
+    }
+    
+	public Node getBannerContent() {
+        return layout.getElementBannerContent();
+    }
+	
     
     /**
         *  Description of the Method
