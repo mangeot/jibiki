@@ -14,6 +14,7 @@ EXEC=nohup
 while [ $# -gt 0 ]; do
   case "$1" in 
    --debug ) MULTISERVER_CONF="./conf/monoserver.conf" ; shift 1 ;;
+   --multimono ) MULTISERVER_CONF="./conf/multimono.conf" ; shift 1 ;;
    --exec ) EXEC=exec ; shift 1 ;;
    --help | -h ) echo "Usage: $0 [--help] [--debug] [--exec]"
    				 echo "  --help : display this help message and exits."; 

@@ -126,7 +126,7 @@ SessionManager.MaxIdleTime = 120
 # redirected to this URL. This should be a relative URL.
 #
 Application.DefaultUrl = "Home.po"
-Application.Prefix = "/dilaf"
+Application.Prefix = "/"
 #
 PresentationManager.CacheFiles = true
 #
@@ -274,7 +274,7 @@ Papillon.Users.Groups.Password.validator = "@JIBIKI_VALIDATOR_PASSWORD@"
 # Class name of the layout for pages of the application
 Papillon.Presentation.PriorityPackage = "fr.imag.clips.papillon.presentation.xhtmldilaf"
 Papillon.LayoutClassName = "fr.imag.clips.papillon.presentation.PapillonLayout"
-Papillon.LoginCookieName = "PapillonLoginCookie"
+Papillon.LoginCookieName = "DiLAFLoginCookie"
 
 
 ###
