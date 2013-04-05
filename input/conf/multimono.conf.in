@@ -53,6 +53,6 @@ Connection.httpd.Port = 8123
 # Connect the port to the application.
 #
 Channel.httpd.channel.Servlet = DiLAF
-Channel.httpd.channel.Url = /dilaf
+Channel.httpd.channel.Url = /
 Channel.httpd.channel.Enabled = yes
 
