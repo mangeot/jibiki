@@ -291,9 +291,8 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>45</integer>
-									<integer>12</integer>
-									<integer>11</integer>
+									<integer>119</integer>
+									<integer>79</integer>
 									<integer>10</integer>
 									<integer>9</integer>
 									<integer>8</integer>
@@ -303,7 +302,7 @@
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 447}, {369, 870}}</string>
+							<string>{{0, 1571}, {369, 870}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -322,7 +321,7 @@
 							<real>369</real>
 						</array>
 						<key>RubberWindowFrame</key>
-						<string>119 99 1512 929 0 0 1680 1028 </string>
+						<string>67 99 1512 929 0 0 1680 1028 </string>
 					</dict>
 					<key>Module</key>
 					<string>PBXSmartGroupTreeModule</string>
@@ -352,7 +351,7 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>A310E026170F622B0051B7DC</string>
+										<string>A310E032170F63200051B7DC</string>
 										<key>history</key>
 										<array>
 											<string>A3469E1C170DA8C5006DE82A</string>
@@ -380,7 +379,9 @@
 											<string>A310E021170F61970051B7DC</string>
 											<string>A310E022170F61970051B7DC</string>
 											<string>A310E023170F61970051B7DC</string>
-											<string>A310E024170F61970051B7DC</string>
+											<string>A310E02F170F63200051B7DC</string>
+											<string>A310E030170F63200051B7DC</string>
+											<string>A310E031170F63200051B7DC</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -394,7 +395,7 @@
 								<key>Frame</key>
 								<string>{{0, 0}, {1121, 724}}</string>
 								<key>RubberWindowFrame</key>
-								<string>119 99 1512 929 0 0 1680 1028 </string>
+								<string>67 99 1512 929 0 0 1680 1028 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
@@ -414,7 +415,7 @@
 								<key>Frame</key>
 								<string>{{0, 729}, {1121, 159}}</string>
 								<key>RubberWindowFrame</key>
-								<string>119 99 1512 929 0 0 1680 1028 </string>
+								<string>67 99 1512 929 0 0 1680 1028 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
@@ -578,11 +579,12 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
+		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>A3D629281485232300B7780F</string>
 		<string>/Projects/jibiki/branches/LINKS_1_0/JibikiLinks.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
-	<string>119 99 1512 929 0 0 1680 1028 </string>
+	<string>67 99 1512 929 0 0 1680 1028 </string>
 	<key>WindowToolsV3</key>
 	<array>
 		<dict>
@@ -814,12 +816,14 @@
 							<key>Dock</key>
 							<array>
 								<dict>
+									<key>BecomeActive</key>
+									<true/>
 									<key>ContentConfiguration</key>
 									<dict>
 										<key>PBXProjectModuleGUID</key>
 										<string>1CDD528C0622207200134675</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>AbstractPO.java</string>
+										<string>ReviewContributions.java</string>
 										<key>StatusBarVisibility</key>
 										<true/>
 									</dict>
@@ -840,8 +844,6 @@
 							<string>598pt</string>
 						</dict>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -877,8 +879,8 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C530D57069F1CE1000CFCEE</string>
-				<string>A39F13C516B32CDE002E25A5</string>
-				<string>A39F13C616B32CDE002E25A5</string>
+				<string>A310E02D170F63070051B7DC</string>
+				<string>A310E02E170F63070051B7DC</string>
 				<string>1CDD528C0622207200134675</string>
 				<string>1CD0528E0623707200166675</string>
 			</array>
@@ -887,7 +889,7 @@
 			<key>WindowToolGUID</key>
 			<string>1C530D57069F1CE1000CFCEE</string>
 			<key>WindowToolIsVisible</key>
-			<true/>
+			<false/>
 		</dict>
 		<dict>
 			<key>Identifier</key>

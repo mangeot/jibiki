@@ -62,6 +62,7 @@ public class Download extends PapillonBasePO {
 	//content = (InfosTmplHTML)this.getComms().xmlcFactory.create(InfosTmplHTML.class);
         content = (DownloadTmplXHTML)MultilingualXHtmlTemplateFactory.createTemplate("DownloadTmplXHTML", this.getComms(), this.getSessionData());
       
+		String volume = myGetParameter("VOLUME");
 			
 				// Adding the volume list
 				org.enhydra.xml.xhtml.dom.XHTMLSelectElement volumeSelect = content.getElementFileName();
@@ -77,6 +78,7 @@ public class Download extends PapillonBasePO {
 					// Je dois ici mettre un text dans l'OPTION, car les browser PC ne sont pas conformes aux
 					// specs W3C.
 					volumeTextTemplate.setData(myDict.getFullName() + " " + myVolume.getName());
+					volumeOptionTemplate.setSelected(myVolume.getName().equals(volume));
 					volumeSelect.appendChild(volumeOptionTemplate.cloneNode(true));
 				}
 				volumeSelect.removeChild(volumeOptionTemplate);
