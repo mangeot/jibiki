@@ -73,10 +73,10 @@ public class Download extends PapillonBasePO {
 					fr.imag.clips.papillon.business.dictionary.Volume myVolume = (fr.imag.clips.papillon.business.dictionary.Volume)iter.next();
 					volumeOptionTemplate.setValue(myVolume.getName());
 					fr.imag.clips.papillon.business.dictionary.Dictionary myDict = fr.imag.clips.papillon.business.dictionary.DictionariesFactory.getDictionaryByName(myVolume.getDictname());
-					volumeOptionTemplate.setLabel(myDict.getFullName());
+					volumeOptionTemplate.setLabel(myVolume.getName());
 					// Je dois ici mettre un text dans l'OPTION, car les browser PC ne sont pas conformes aux
 					// specs W3C.
-					volumeTextTemplate.setData(myDict.getFullName());
+					volumeTextTemplate.setData(myDict.getFullName() + " " + myVolume.getName());
 					volumeSelect.appendChild(volumeOptionTemplate.cloneNode(true));
 				}
 				volumeSelect.removeChild(volumeOptionTemplate);

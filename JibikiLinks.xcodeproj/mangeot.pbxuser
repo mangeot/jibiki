@@ -131,9 +131,9 @@
 	};
 	A307223F0EC89B1E00733910 /* Volume.java */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1108, 21525}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1660, 21315}}";
 			sepNavSelRange = "{37835, 0}";
-			sepNavVisRange = "{37092, 1226}";
+			sepNavVisRange = "{37085, 1480}";
 		};
 	};
 	A30722400EC89B1E00733910 /* EntryCache.java */ = {
@@ -819,6 +819,56 @@
 		vrLen = 1912;
 		vrLoc = 1881;
 	};
+	A310E021170F61970051B7DC /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = A399569116B11F57007922CD /* DownloadTmpl.xhtml */;
+		name = "DownloadTmpl.xhtml: 25";
+		rLen = 0;
+		rLoc = 1918;
+		rType = 0;
+		vrLen = 2293;
+		vrLoc = 0;
+	};
+	A310E022170F61970051B7DC /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = A31ED37D16AD7F1600B642C7 /* Layout.xhtml */;
+		name = "Layout.xhtml: 108";
+		rLen = 0;
+		rLoc = 4799;
+		rType = 0;
+		vrLen = 1444;
+		vrLoc = 4024;
+	};
+	A310E023170F61970051B7DC /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = A307223F0EC89B1E00733910 /* Volume.java */;
+		name = "Volume.java: 1039";
+		rLen = 0;
+		rLoc = 37835;
+		rType = 0;
+		vrLen = 1480;
+		vrLoc = 37085;
+	};
+	A310E024170F61970051B7DC /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = A399568616B11ED2007922CD /* Download.java */;
+		name = "Download.java: 74";
+		rLen = 8;
+		rLoc = 3300;
+		rType = 0;
+		vrLen = 1976;
+		vrLoc = 2177;
+	};
+	A310E025170F61970051B7DC /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = A399568616B11ED2007922CD /* Download.java */;
+		name = "Download.java: 79";
+		rLen = 0;
+		rLoc = 3724;
+		rType = 0;
+		vrLen = 2000;
+		vrLoc = 2178;
+	};
 	A319ABDA1290A80900EF68FC /* HomeContent.xhtml */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1175, 1032}}";
@@ -856,9 +906,9 @@
 	};
 	A31ED37D16AD7F1600B642C7 /* Layout.xhtml */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1452, 1980}}";
-			sepNavSelRange = "{4674, 285}";
-			sepNavVisRange = "{4108, 1080}";
+			sepNavIntBoundsRect = "{{0, 0}, {1452, 2085}}";
+			sepNavSelRange = "{4799, 0}";
+			sepNavVisRange = "{4024, 1444}";
 			sepNavWindowFrame = "{{15, 445}, {1654, 578}}";
 		};
 	};
@@ -915,7 +965,7 @@
 				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
 				PBXFileTableDataSourceColumnWidthsKey = (
 					20,
-					715,
+					882,
 					20,
 					48,
 					43,
@@ -939,6 +989,11 @@
 			A310E01B170F497B0051B7DC /* PBXTextBookmark */ = A310E01B170F497B0051B7DC /* PBXTextBookmark */;
 			A310E01C170F497B0051B7DC /* PBXBookmark */ = A310E01C170F497B0051B7DC /* PBXBookmark */;
 			A310E01D170F497B0051B7DC /* PBXTextBookmark */ = A310E01D170F497B0051B7DC /* PBXTextBookmark */;
+			A310E021170F61970051B7DC /* PBXTextBookmark */ = A310E021170F61970051B7DC /* PBXTextBookmark */;
+			A310E022170F61970051B7DC /* PBXTextBookmark */ = A310E022170F61970051B7DC /* PBXTextBookmark */;
+			A310E023170F61970051B7DC /* PBXTextBookmark */ = A310E023170F61970051B7DC /* PBXTextBookmark */;
+			A310E024170F61970051B7DC /* PBXTextBookmark */ = A310E024170F61970051B7DC /* PBXTextBookmark */;
+			A310E025170F61970051B7DC /* PBXTextBookmark */ = A310E025170F61970051B7DC /* PBXTextBookmark */;
 			A3469E1C170DA8C5006DE82A = A3469E1C170DA8C5006DE82A /* PBXTextBookmark */;
 			A35B46B6170DAC0F008291E5 = A35B46B6170DAC0F008291E5 /* PBXTextBookmark */;
 			A35B46BD170DD2E9008291E5 = A35B46BD170DD2E9008291E5 /* PBXTextBookmark */;
@@ -1002,7 +1057,7 @@
 		isa = PBXTextBookmark;
 		fRef = A31ED37D16AD7F1600B642C7 /* Layout.xhtml */;
 		name = "Layout.xhtml: 105";
-		rLen = 285;
+		rLen = 308;
 		rLoc = 4674;
 		rType = 0;
 		vrLen = 1080;
@@ -1327,9 +1382,16 @@
 	};
 	A399568616B11ED2007922CD /* Download.java */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1532, 1365}}";
-			sepNavSelRange = "{0, 0}";
-			sepNavVisRange = "{1881, 1912}";
+			sepNavIntBoundsRect = "{{0, 0}, {1532, 1515}}";
+			sepNavSelRange = "{3724, 0}";
+			sepNavVisRange = "{2178, 2000}";
+		};
+	};
+	A399569116B11F57007922CD /* DownloadTmpl.xhtml */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {2068, 692}}";
+			sepNavSelRange = "{1918, 0}";
+			sepNavVisRange = "{0, 2293}";
 		};
 	};
 	A3AB8B3715C7CBE800929F98 /* Link.java */ = {
