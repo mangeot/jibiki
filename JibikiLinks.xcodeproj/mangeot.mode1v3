@@ -229,8 +229,6 @@
 			<key>Layout</key>
 			<array>
 				<dict>
-					<key>BecomeActive</key>
-					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -276,6 +274,7 @@
 								<string>A30722C20EC89B2100733910</string>
 								<string>A30723380EC89B2300733910</string>
 								<string>A307247B0EC89B2600733910</string>
+								<string>A307252E0EC89B2700733910</string>
 								<string>A31ED36716AD7F1600B642C7</string>
 								<string>A31ED37016AD7F1600B642C7</string>
 								<string>A307260C0EC89B2900733910</string>
@@ -293,8 +292,10 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>119</integer>
-									<integer>79</integer>
+									<integer>247</integer>
+									<integer>188</integer>
+									<integer>181</integer>
+									<integer>175</integer>
 									<integer>10</integer>
 									<integer>9</integer>
 									<integer>8</integer>
@@ -304,7 +305,7 @@
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 1571}, {369, 870}}</string>
+							<string>{{0, 3346}, {369, 870}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -323,7 +324,7 @@
 							<real>369</real>
 						</array>
 						<key>RubberWindowFrame</key>
-						<string>76 49 1512 929 0 0 1680 1028 </string>
+						<string>-18 99 1512 929 0 0 1680 1028 </string>
 					</dict>
 					<key>Module</key>
 					<string>PBXSmartGroupTreeModule</string>
@@ -334,12 +335,14 @@
 					<key>Dock</key>
 					<array>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>ExportVolume.java</string>
+								<string>DownloadTmpl.xhtml</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -347,41 +350,18 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>ExportVolume.java</string>
+										<string>DownloadTmpl.xhtml</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>A310E035170F71FA0051B7DC</string>
+										<string>A3B5400317184EE200B27732</string>
 										<key>history</key>
 										<array>
-											<string>A3469E1C170DA8C5006DE82A</string>
-											<string>A35B46B6170DAC0F008291E5</string>
-											<string>A35B46BD170DD2E9008291E5</string>
-											<string>A35B46BE170DD2E9008291E5</string>
-											<string>A35B46C0170DD2E9008291E5</string>
-											<string>A35B46C1170DD2E9008291E5</string>
-											<string>A35B46C2170DD2E9008291E5</string>
-											<string>A35B46C3170DD2E9008291E5</string>
-											<string>A35B46C4170DD2E9008291E5</string>
-											<string>A35B46C5170DD2E9008291E5</string>
-											<string>A35B46C6170DD2E9008291E5</string>
-											<string>A35B46C7170DD2E9008291E5</string>
-											<string>A35B46C8170DD2E9008291E5</string>
-											<string>A35B46C9170DD2E9008291E5</string>
-											<string>A35B46CA170DD2E9008291E5</string>
-											<string>A35B46CB170DD2E9008291E5</string>
-											<string>A35B46CC170DD2E9008291E5</string>
-											<string>A35B46CD170DD2E9008291E5</string>
-											<string>A35B46CE170DD2E9008291E5</string>
-											<string>A35B46CF170DD2E9008291E5</string>
-											<string>A35B46D0170DD2E9008291E5</string>
-											<string>A310E01B170F497B0051B7DC</string>
-											<string>A310E021170F61970051B7DC</string>
-											<string>A310E022170F61970051B7DC</string>
-											<string>A310E023170F61970051B7DC</string>
-											<string>A310E030170F63200051B7DC</string>
-											<string>A310E034170F71FA0051B7DC</string>
-											<string>A310E02F170F63200051B7DC</string>
+											<string>A342344E17181D030014A555</string>
+											<string>A342344F17181D030014A555</string>
+											<string>A3B53FF617184E3800B27732</string>
+											<string>A3B53FFC17184E8000B27732</string>
+											<string>A3B53FFD17184E8000B27732</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -393,14 +373,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {1121, 724}}</string>
+								<string>{{0, 0}, {1121, 716}}</string>
 								<key>RubberWindowFrame</key>
-								<string>76 49 1512 929 0 0 1680 1028 </string>
+								<string>-18 99 1512 929 0 0 1680 1028 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>724pt</string>
+							<string>716pt</string>
 						</dict>
 						<dict>
 							<key>ContentConfiguration</key>
@@ -413,14 +393,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 729}, {1121, 159}}</string>
+								<string>{{0, 721}, {1121, 167}}</string>
 								<key>RubberWindowFrame</key>
-								<string>76 49 1512 929 0 0 1680 1028 </string>
+								<string>-18 99 1512 929 0 0 1680 1028 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
 							<key>Proportion</key>
-							<string>159pt</string>
+							<string>167pt</string>
 						</dict>
 					</array>
 					<key>Proportion</key>
@@ -439,9 +419,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>A310E01E170F497B0051B7DC</string>
+				<string>A3B53FF917184E3800B27732</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>A310E01F170F497B0051B7DC</string>
+				<string>A3B53FFA17184E3800B27732</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -579,12 +559,11 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>A3D629281485232300B7780F</string>
 		<string>/Projects/jibiki/branches/LINKS_1_0/JibikiLinks.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
-	<string>76 49 1512 929 0 0 1680 1028 </string>
+	<string>-18 99 1512 929 0 0 1680 1028 </string>
 	<key>WindowToolsV3</key>
 	<array>
 		<dict>
@@ -661,7 +640,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>A3D629281485232300B7780F</string>
-				<string>A310E020170F497B0051B7DC</string>
+				<string>A3B53FFB17184E3800B27732</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
