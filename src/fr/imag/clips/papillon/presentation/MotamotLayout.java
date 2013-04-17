@@ -443,13 +443,6 @@ public class MotamotLayout implements StdLayout {
      */
     protected void handleHelpMenu(HttpPresentationComms comms, PapillonSessionData sessionData)
         throws com.lutris.appserver.server.httpPresentation.HttpPresentationException {
-            // If the user is logged in add the help menu
-            User myUser = sessionData.getUser();
-            if (null != myUser && !myUser.isEmpty()) {
-                HelpMenuXHTML helpMenu = (HelpMenuXHTML) MultilingualXHtmlTemplateFactory.createTemplate("HelpMenuXHTML", comms, sessionData);
-                
-                layout.getElementHelpMenuHolder().appendChild(layout.importNode(helpMenu.getElementHelpMenu(), true));
-            }
         }
     
         

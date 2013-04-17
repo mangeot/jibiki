@@ -331,7 +331,8 @@ public class XslTransformation implements ResultFormatter {
 			direction = Link.DIRECTION_UP;
 		}
 		java.util.HashMap linkedEntries = qr.getLexiesHashMap();
-
+		//PapillonLogger.writeDebugMsg("linkedEntries: " + linkedEntries.toString());
+					
 		insertLinkedEntries(myAnswer, linkedEntries, direction);
 		if (null != dictXsl && !dictXsl.isEmpty()) {
 			// Format document source
@@ -343,7 +344,7 @@ public class XslTransformation implements ResultFormatter {
 				resultNode = myAnswer.getDom().getDocumentElement();
 				
 			}
-			PapillonLogger.writeDebugMsg("ResultNode: " + qr.getSourceEntry().getHeadword() + " node: " + XMLServices.NodeToString(resultNode)+", "+resultNode.getNodeValue());
+			//PapillonLogger.writeDebugMsg("ResultNode: " + qr.getSourceEntry().getHeadword() + " node: " + XMLServices.NodeToString(resultNode)+", "+resultNode.getNodeValue());
 				
 				rootdiv.appendChild(res.importNode(resultNode, true));
 					//PapillonLogger.writeDebugMsg("rootdiv:"+rootdiv.getTextContent());
@@ -373,7 +374,7 @@ public class XslTransformation implements ResultFormatter {
      */
 	protected static void insertLinkedEntries (VolumeEntry theEntry, java.util.HashMap linkedEntries, String direction) 
 	throws PapillonBusinessException {
-		//PapillonLogger.writeDebugMsg("insertLinkedEntries for: " +theEntry.getEntryId());
+		//PapillonLogger.writeDebugMsg("insertLinkedEntries for: " +theEntry.getEntryId() + ", direction: " + direction);
 		org.apache.xml.utils.PrefixResolver thePrefixResolver = theEntry.getVolume().getPrefixResolver();
 		java.util.HashMap linksTable = theEntry.getVolume().getLinksTable();
 		org.w3c.dom.Document theEntryDoc = theEntry.getDom();
@@ -383,27 +384,38 @@ public class XslTransformation implements ResultFormatter {
 			if (linkTable != null) {
 				ArrayList eltVector =  (ArrayList) linkTable.get(Volume.LINK_ELEMENT_TYPE);											
 				ArrayList valueVector =  (ArrayList) linkTable.get(Volume.CDM_linkValue);											
-				ArrayList typeVector =  (ArrayList) linkTable.get(Volume.CDM_linkType);											
-				if (eltVector != null && eltVector.size() > 1 && valueVector != null && valueVector.size() > 1 && typeVector != null && typeVector.size() > 1) {
+				ArrayList typeVector =  (ArrayList) linkTable.get(Volume.CDM_linkType);
+
+				if (eltVector != null && eltVector.size() > 1 && valueVector != null && valueVector.size() > 1) {
 					org.apache.xpath.XPath eltXPath =  (org.apache.xpath.XPath) eltVector.get(1);											
 					org.apache.xpath.XPath valueXPath =  (org.apache.xpath.XPath) valueVector.get(1);		
-					org.apache.xpath.XPath typeXPath =  (org.apache.xpath.XPath) typeVector.get(1);		
+					org.apache.xpath.XPath typeXPath =  null;
+					if (typeVector != null && typeVector.size() > 1) {
+						typeXPath = (org.apache.xpath.XPath) typeVector.get(1);
+					}		
 					NodeList linksElements = IndexEntry.getNodeListFromXPath(theEntryDoc.getDocumentElement(), eltXPath, thePrefixResolver);
 					if ((linksElements != null) && (linksElements.getLength() > 0)) {
 						for (int n = 0; n < linksElements.getLength(); n++) {
 							org.w3c.dom.Node myNode = linksElements.item(n);
-							NodeList typeNodeList = IndexEntry.getNodeListFromXPath((Element) myNode, typeXPath, thePrefixResolver);
-							if (typeNodeList != null && typeNodeList.getLength() > 0) {
-								Node typeNode = typeNodeList.item(0);
-								String typeString = typeNode.getNodeValue();
+							String typeString = null;
+							if (typeXPath != null) {
+								NodeList typeNodeList = IndexEntry.getNodeListFromXPath((Element) myNode, typeXPath, thePrefixResolver);
+								if (typeNodeList != null && typeNodeList.getLength() > 0) {
+									Node typeNode = typeNodeList.item(0);
+									typeString = typeNode.getNodeValue();
+								}
+							}
+								//PapillonLogger.writeDebugMsg("insertLinkedEntries: typeString: " +typeString + " direction: " + direction);
 								if ((direction.equals(Link.DIRECTION_UP) && (typeString == null || typeString.equals(Link.AXEME_TYPE) || typeString.equals(Link.AXIE_TYPE)))
-									 || (direction.equals(Link.DIRECTION_DOWN) && ((typeString == null || typeString.equals(Link.AXEME_TYPE) || typeString.equals(Link.FINAL_TYPE))))) {
+									 || (direction.equals(Link.DIRECTION_DOWN) && ((typeString == null || typeString.equals(Link.INDIRECT_TYPE) || typeString.equals(Link.AXEME_TYPE) || typeString.equals(Link.FINAL_TYPE))))) {
 									NodeList valueNodeList = IndexEntry.getNodeListFromXPath((Element) myNode, valueXPath, thePrefixResolver);
 									if (valueNodeList != null && valueNodeList.getLength() > 0) {
 										Node valueNode = valueNodeList.item(0);
 										if (valueNode!=null) {
+											//PapillonLogger.writeDebugMsg("getLinkedEntry: " + valueNode.getNodeValue());
 											VolumeEntry linkedEntry = (VolumeEntry) linkedEntries.get(valueNode.getNodeValue());
 											if (linkedEntry != null && !linkedEntry.isEmpty()) {
+												//PapillonLogger.writeDebugMsg("getLinkedEntry: not null: " + valueNode.getNodeValue());
 												NodeList childNodes = myNode.getChildNodes();
 												for(int c=0;c<childNodes.getLength();c++) {
 													Node childNode = childNodes.item(c);
@@ -412,15 +424,32 @@ public class XslTransformation implements ResultFormatter {
 													}
 												}
 												String newDir = direction;
-												if (typeString.equals(Link.AXIE_TYPE)) {
+												if (typeString!= null && typeString.equals(Link.AXIE_TYPE)) {
 													if (newDir.equals(Link.DIRECTION_UP)) {
 														newDir = Link.DIRECTION_DOWN;
 													}
 												}
-												if (typeString.equals(Link.AXIE_TYPE) || typeString.equals(Link.EQU_TYPE) || typeString.equals(Link.CNT_TYPE)) {
+												if ((typeString!= null && typeString.equals(Link.AXIE_TYPE)) || (typeString!= null && typeString.equals(Link.EQU_TYPE)) || (typeString!= null && typeString.equals(Link.CNT_TYPE))) {
 													linkedEntries.remove(linkedEntry.getEntryId());
 												}
-												if ((direction.equals(Link.DIRECTION_UP) && !typeString.equals(Link.FINAL_TYPE)) || (direction.equals(Link.DIRECTION_DOWN) && !typeString.equals(Link.AXIE_TYPE) && !typeString.equals(Link.FINAL_TYPE))) {
+												if (
+													(direction.equals(Link.DIRECTION_UP) && 
+													 (
+													  typeString == null || !typeString.equals(Link.FINAL_TYPE)
+													 )
+													) 
+													|| 
+													(direction.equals(Link.DIRECTION_DOWN) && 
+													 (
+													  typeString == null 
+													  || 
+													  (
+													   !typeString.equals(Link.AXIE_TYPE) && !typeString.equals(Link.FINAL_TYPE)
+													  )
+													 )
+													)
+												   ) 
+												{
 													insertLinkedEntries(linkedEntry, linkedEntries, newDir);
 												}			
 												Node tempNode = theEntryDoc.importNode((Node) linkedEntry.getDom().getDocumentElement(), true);
@@ -430,7 +459,6 @@ public class XslTransformation implements ResultFormatter {
 										}
 									}
 								}
-							}
 						}
 					}
 				}

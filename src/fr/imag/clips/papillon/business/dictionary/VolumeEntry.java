@@ -1584,11 +1584,16 @@ public class VolumeEntry
      *                                   replacing data (usually due to an underlying data layer
      *                                   error).
      */
-    public String getParticule()
-            throws fr.imag.clips.papillon.business.PapillonBusinessException {
-        return IndexEntry.getCdmString(this, Volume.CDM_gdefEstParticule, this.getSourceLanguage());
-    }
+	public String getParticule()
+		throws fr.imag.clips.papillon.business.PapillonBusinessException {
+		return IndexEntry.getCdmString(this, Volume.CDM_gdefEstParticule, this.getSourceLanguage());
+	}
 
+	public String getCdmString(String cdm_element)
+		throws fr.imag.clips.papillon.business.PapillonBusinessException {
+			return IndexEntry.getCdmString(this, cdm_element, this.getSourceLanguage());
+	}
+			
 	public Volume getAxieVolume() 
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 		Volume resVolume = null;

@@ -44,6 +44,7 @@
 package fr.imag.clips.papillon.presentation;
 
 import com.lutris.appserver.server.httpPresentation.HttpPresentationException;
+import com.lutris.appserver.server.httpPresentation.ClientPageRedirectException;
 import com.lutris.dods.builder.generator.query.QueryBuilder;
 
 import fr.imag.clips.papillon.business.PapillonLogger;
@@ -93,18 +94,7 @@ public class LookupVolume extends AbstractPO {
     protected boolean userMayUseThisPO() {
         return true;
     }
-	
-	protected static org.w3c.dom.Document emptyDoc = null;
-	
-	static {
-		try {
-			emptyDoc = XMLServices.buildDOMTree("<?xml version='1.0' encoding='UTF-8' ?><div id='entries'></div>");
-		}
-		catch (Exception ex) {
-			;
-		}
-	}
-	
+		
     /**
         *  Returns the complete document.
      *
@@ -117,48 +107,67 @@ public class LookupVolume extends AbstractPO {
 			
 			/* initilaize response */
 			java.util.Collection EntryCollection = null;
-			org.w3c.dom.Document docResponse = (org.w3c.dom.Document)emptyDoc.cloneNode(true);
+			org.w3c.dom.Document docResponse = XMLServices.buildDOMTree("<?xml version='1.0' encoding='UTF-8' ?><div id='entries'></div>");
 			// Intialize QueryRequest
 			/* volume */
 			String volume = myGetParameter("VOLUME");
-			String headword = myGetParameter("HEADWORD");
+			String key = myGetParameter("KEY");
+			String word = myGetParameter("WORD");
 			String handle = myGetParameter("HANDLE");
+			String oneentry = myGetParameter("ENTRY");
 			String msort = myGetParameter("MSORT");
-			if (volume != null && !volume.equals("") && 
-				(headword != null && !headword.equals("") || msort != null && !msort.equals(""))) {
+			String action = myGetParameter("action");
+		
+			//PapillonLogger.writeDebugMsg("LookupVolume: " + volume + " WORD: " + word + " KEY: " + key);
+			if (action != null && !action.equals("")) {
+				throw new ClientPageRedirectException("Home.po?" + this.getComms().request.getQueryString());
+			}
+		
+			else if (volume != null && !volume.equals("") && 
+				(word != null && !word.equals("") || msort != null && !msort.equals(""))) {
 				Volume myVolume = VolumesFactory.getVolumeByName(volume);
 				int limit = 100;
 				String limitString = myGetParameter("LIMIT");
 				if (limitString!=null && !limitString.equals("")) {
 					limit = Integer.parseInt(limitString);
 				}
-				String order = myGetParameter("DIRECTION");
-				String strategy = QueryBuilder.GREATER_THAN;
+				String strategy = myGetParameter("STRATEGY");
+				if (strategy==null || strategy.equals("")) {
+					strategy = QueryBuilder.GREATER_THAN;
+				}
+				/* bug when I send strategy >= it is equals to QueryBuilder.GREATER_THAN_OR_EQUAL but does not work! */
+				else if (strategy!=null && !strategy.equals("") && strategy.equals(QueryBuilder.GREATER_THAN_OR_EQUAL)) {
+					//PapillonLogger.writeDebugMsg("strategy: "+ strategy + " = " + strategy.equals(QueryBuilder.GREATER_THAN_OR_EQUAL));
+					strategy = QueryBuilder.GREATER_THAN_OR_EQUAL;
+				}
 
+				String order = myGetParameter("DIRECTION");
 				if (order==null || order.equals("")) {
 					order = IndexFactory.ORDER_ASCENDING;
 				}
 				if (order.equals(IndexFactory.ORDER_DESCENDING)) {
 					strategy = QueryBuilder.LESS_THAN;
 				}
+				//PapillonLogger.writeDebugMsg("LookupVolume: " + volume + " WORD: " + word + " KEY: " + key + " Order: " + order + " Strategy: " + strategy);
 				String source = myVolume.getSourceLanguage();
 				
-				//$headword = !empty($_REQUEST['HEADWORD']) ? 'msort > multilingual_sort(\'est\',\'' . $_REQUEST['HEADWORD'] . '\')' : 'true';
-				//$operator = $direction=='asc' ? '>' : '<';
-				//$msort = !empty($_REQUEST['MSORT']) ? 'msort ' . $operator . ' \'' . $_REQUEST['MSORT'] . '\'' : 'true';
+				if (key==null || key.equals("HEADWORD")|| key.equals("")) {
+					key=Volume.CDM_headword;
+				}
 				
-				if (headword != null && !headword.equals("")) {
+				if (word != null && !word.equals("")) {
 					java.util.Vector myKeys = new java.util.Vector();
 					String[] Headword = new String[4];
-					Headword[0] = Volume.CDM_headword;
+					Headword[0] = key;
 					Headword[1] = source;
-					Headword[2] = headword;
+					Headword[2] = word;
 					Headword[3] = strategy;
 					myKeys.add(Headword);
+					//PapillonLogger.writeDebugMsg("LookupVolume: [" + myVolume.getIndexDbname() + "] source: [" + source + "] WORD: [" + word + "] KEY: [" + key + "] strat: [" + strategy + "] order: [" + order + "] limit: [" + limit + "]");
 					EntryCollection = IndexFactory.getIndexEntriesVector(myVolume.getIndexDbname(), myKeys, order,limit);
 				}
 				else if (msort != null && !msort.equals("")) {
-					EntryCollection = IndexFactory.getIndexEntriesVector(myVolume.getIndexDbname(), msort, strategy, order,limit);
+					EntryCollection = IndexFactory.getIndexEntriesVector(myVolume.getIndexDbname(), key, msort, strategy, order,limit,0);
 				
 				}
 				if (EntryCollection!=null) {
@@ -173,6 +182,7 @@ public class LookupVolume extends AbstractPO {
 							stringResponse += entry;
 						}
 					}
+					//PapillonLogger.writeDebugMsg("stringResponse.length(): "+ stringResponse.length());
 					stringResponse = "<?xml version='1.0' encoding='UTF-8' ?><div class='entries'>" + stringResponse + "</div>";
 					docResponse = XMLServices.buildDOMTree(stringResponse);
 				}
@@ -193,6 +203,45 @@ public class LookupVolume extends AbstractPO {
 					}
 				}
 			}
+			else if (volume != null && !volume.equals("") && 
+					 oneentry != null && !oneentry.equals("")) {
+
+				if (key==null || key.equals("HEADWORD")|| key.equals("")) {
+					key=Volume.CDM_headword;
+				}
+				
+				Volume myVolume = VolumesFactory.getVolumeByName(volume);
+				java.util.Collection targets = myVolume.getTargetLanguagesArray();
+				String source = myVolume.getSourceLanguage();
+				java.util.Vector myKeys = new java.util.Vector();
+				String[] Headword = new String[4];
+				//PapillonLogger.writeDebugMsg("LookupVolume entry: " + oneentry + " key: " + key);
+				Headword[0] = key;
+				Headword[1] = source;
+				Headword[2] = oneentry;
+				Headword[3] = QueryBuilder.EQUAL;
+				myKeys.add(Headword);
+
+				EntryCollection = DictionariesFactory.getDictionaryNameEntriesCollection(myVolume.getDictname(),
+																			source,
+																			targets,
+																			myKeys,
+																			null,
+																			null,
+																			this.getUser(),
+																						 0);
+				
+				
+				if (EntryCollection!=null) {
+					org.w3c.dom.Element rootElement = docResponse.getDocumentElement();
+					for (java.util.Iterator myIterator = EntryCollection.iterator(); myIterator.hasNext(); ) {
+						QueryResult myQueryResult = (QueryResult) myIterator.next();
+						ResultFormatter myResultFormater = ResultFormatterFactory.getFormatter(myQueryResult, null, ResultFormatterFactory.XHTML_DIALECT,null);
+						org.w3c.dom.Element newEntry = (org.w3c.dom.Element)myResultFormater.getFormattedResult(myQueryResult, this.getUser());
+						rootElement.appendChild(docResponse.importNode(newEntry, true));
+					}
+				}
+			}		
 			return docResponse;			
         }
 }

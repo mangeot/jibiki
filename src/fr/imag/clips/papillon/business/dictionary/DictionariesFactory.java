@@ -722,7 +722,7 @@ public class DictionariesFactory {
                 // FIXME: get the limit argument
                 Vector entriesVector = VolumeEntriesFactory.getVolumeEntriesVector(dict, myVolume, Keys1, Keys2, anyContains, offset, 0);
 				
-				System.out.println("entriesVector.size: " + entriesVector.size());
+				//System.out.println("entriesVector.size: " + entriesVector.size());
                 //FIXME: hack for targets array. If the array is null, it means that all targets are asked
                 if (targets == null) {
                     targets = myVolume.getTargetLanguagesArray();
@@ -735,7 +735,7 @@ public class DictionariesFactory {
                 }
             }
         }
-		System.out.println("qrset.size: " + qrset.size());
+		//System.out.println("qrset.size: " + qrset.size());
         
         return qrset;
     }
@@ -1101,7 +1101,7 @@ public class DictionariesFactory {
 		String direction = Link.DIRECTION_DOWN;
  
 		VolumeEntry ve = theQR.getSourceEntry();
-        PapillonLogger.writeDebugMsg("expandResult: " + ve.getHeadword());
+        //PapillonLogger.writeDebugMsg("expandResult: " + ve.getHeadword());
 		Collection realTargets = Utility.ArrayIntersection(ve.getDictionary().getTargetLanguagesArray(), targets);
 		String type = ve.getDictionary().getType();
             
@@ -1112,19 +1112,6 @@ public class DictionariesFactory {
 		else {
 			realTargets.remove(ve.getSourceLanguage());
 		}
-			/*
-			HashMap axies = LinkFactory.getLinkedAxiesByEntry(ve,allLinks, user);
-			for (Iterator iter = axies.keySet().iterator(); iter.hasNext();) {
-				String entryId = (String) iter.next();
-				VolumeEntry axie = (VolumeEntry) axies.get(entryId);
-				//PapillonLogger.writeDebugMsg("expandResult: " + entryId + " hw:" +axie.getHeadword());
-				ArrayList tempLinks = new ArrayList();
-				LinkFactory.getLinkedEntriesByAxie(axie, tempLinks, allLinks, user);
-				QueryResult qr = new QueryResult();
-				qr.addSourceEntry(axie);
-				qr.setLexiesHashMap(allLinks);
-				myArrayList.add(qr);
-			} */
 		ArrayList axieLinks = new ArrayList();
 		LinkFactory.getLinkedEntriesByEntry(ve, axieLinks, allLinks, realTargets, direction, user);
 		theQR.setLexiesHashMap(allLinks);

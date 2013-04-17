@@ -158,7 +158,7 @@ public class IndexEntry {
 
 	public static ArrayList indexEntryLinks(java.util.HashMap linksTable, Volume theVolume, org.w3c.dom.Element theRootElement, String theHandle)
 	throws PapillonBusinessException {
-		PapillonLogger.writeDebugMsg("indexEntryLinks on: " + theVolume.getName() + " linksTable.size: " + linksTable.size());
+		//PapillonLogger.writeDebugMsg("indexEntryLinks on: " + theVolume.getName() + " linksTable.size: " + linksTable.size());
 		ArrayList linksArray = new ArrayList();
 		String linkDbtableName = theVolume.getLinkDbname();
 		org.apache.xml.utils.PrefixResolver  thePrefixResolver = theVolume.getPrefixResolver();
@@ -183,7 +183,7 @@ public class IndexEntry {
 			if (resNodeList != null) {
 				for (int i = 0; i < resNodeList.getLength(); i++) {
 					org.w3c.dom.Node myNode = resNodeList.item(i);
-					PapillonLogger.writeDebugMsg("Index entry link, Node " + myNode.getNodeName());
+					//PapillonLogger.writeDebugMsg("Index entry link, Node " + myNode.getNodeName());
 					Link myLink = LinkFactory.newLink(linkDbtableName, linkName, theLang, theHandle);
 					
 					for (Iterator linkKeys = linkTable.keySet().iterator(); linkKeys.hasNext();) {
@@ -203,7 +203,7 @@ public class IndexEntry {
 						if (linkNodeList != null && linkNodeList.getLength()>0) {
 							org.w3c.dom.Node typeNode = linkNodeList.item(0);
 							String value = typeNode.getNodeValue();
-							PapillonLogger.writeDebugMsg("Index entry link, node " + typeNode.getNodeName() + " /value: " + value);
+							//PapillonLogger.writeDebugMsg("Index entry link, node " + typeNode.getNodeName() + " /value: " + value);
 							if (value != null) {
 								value = value.trim();
 								if (!value.equals("")) {
@@ -237,10 +237,11 @@ public class IndexEntry {
 					if (myLink.getVolumeTarget() == null || myLink.getVolumeTarget().equals("")) {
 						String targetVolumeName = theVolume.getDefaultTargetVolumeName(myLink.getLang());
 						myLink.setVolumeTarget(targetVolumeName);
-					}						
-					if (myLink.getType() == null || myLink.getType().equals("")) {
+					}	
+					/* Attention! des fois le lien peut être vide et non final! */
+					/*if (myLink.getType() == null || myLink.getType().equals("")) {
 						myLink.setType(Link.FINAL_TYPE);
-					}
+					}*/
 					if (myLink.getTargetId() != null && !myLink.getTargetId().equals("")) {
 						linksArray.add(myLink);
 					}

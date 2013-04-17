@@ -6,24 +6,11 @@
     <title>Menu</title>
   </head>
   <body>
-    <div id="UserMenu"  xml:lang="en-US" lang="en-US" class="menuBlock">
-      <h2 class="menuTitle">
-        <a title="User Information Management" href="javascript:void(0)">User:</a>
-      </h2>
-      <span id="UserLogin">UserLogin</span>
-      <br/>
-      <span id="LoginAnchor">
-        <a title="Identify yourself to the Papillon website"
-            href="LoginUser.po">Sign In</a><br/>
-      </span>
-      <span id="UserProfileAnchor">
-        <a title="View/Change your user name/password/address..."
-            href="UserProfile.po">User Profile</a><br/>
-      </span>
-      <span id="LogoutAnchor">
-        <a title="Sign out from the Papillon website"
-            href="LoginUser.po?Logout=yes" onclick="return confirm('Are you sure you want to sign out?')">Sign out</a>
-      </span>
+    <div id="UserMenu"  xml:lang="fr" lang="fr">
+        <span id="UserLogin"><a href="UserProfile.po">userLogin</a></span>
+        <span id="LoginAnchor"><a href="LoginUser.po">Connexion</a></span>
+		<span id="UserProfileAnchor" style="display:none;"><a href="UserProfile.po">Mon compte</a></span>
+		<span id="LogoutAnchor"  style="display:none;"><a href="LoginUser.po?Logout=yes">Déconnexion</a></span>
     </div>
   </body>
 </html>

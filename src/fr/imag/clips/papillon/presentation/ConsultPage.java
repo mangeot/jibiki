@@ -17,18 +17,33 @@ package fr.imag.clips.papillon.presentation;
 // Enhydra SuperServlet imports
 import com.lutris.appserver.server.httpPresentation.HttpPresentation;
 import com.lutris.appserver.server.httpPresentation.HttpPresentationException;
+import com.lutris.appserver.server.httpPresentation.ClientPageRedirectException;
 import org.enhydra.xml.xmlc.XMLObject;
 
 // Standard imports
 import java.io.IOException;
+
+import com.lutris.dods.builder.generator.query.QueryBuilder;
+
+import fr.imag.clips.papillon.business.PapillonLogger;
+import fr.imag.clips.papillon.business.dictionary.DictionariesFactory;
+import fr.imag.clips.papillon.business.dictionary.Index;
+import fr.imag.clips.papillon.business.dictionary.IndexFactory;
+import fr.imag.clips.papillon.business.dictionary.QueryResult;
+import fr.imag.clips.papillon.business.dictionary.Volume;
+import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
+import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
+import fr.imag.clips.papillon.business.transformation.ResultFormatter;
+import fr.imag.clips.papillon.business.transformation.ResultFormatterFactory;
+import fr.imag.clips.papillon.business.utility.Utility;
+import fr.imag.clips.papillon.business.xml.XMLServices;
 
 import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
 public class ConsultPage extends DilafBasePO {
 
 	private ConsultPageXHTML content = null;
-	private String volume = "";
-
+	private String volume = null;
 
     protected boolean loggedInUserRequired() {
         return false;
@@ -48,40 +63,189 @@ public class ConsultPage extends DilafBasePO {
 	{
 		String status = myGetParameter(ConsultPageXHTML.NAME_STATUS);
 		volume = myGetParameter(ConsultPageXHTML.NAME_VOLUME);
-
-        // Création du contenu
+		String word = myGetParameter(ConsultPageXHTML.NAME_HEADWORD);
+		
+		// Création du contenu
 		content =
-            (ConsultPageXHTML)MultilingualXHtmlTemplateFactory.createTemplate("ConsultPageXHTML", this.getComms(), this.getSessionData());
-
+		(ConsultPageXHTML)MultilingualXHtmlTemplateFactory.createTemplate("ConsultPageXHTML", this.getComms(), this.getSessionData());
+		
 		org.enhydra.xml.xhtml.dom.XHTMLElement volumeLabel = content.getElementVolumeLabel();
 		
-			// Adding the volume list
-			org.enhydra.xml.xhtml.dom.XHTMLSelectElement volumeSelect = content.getElementVOLUME();
-			org.enhydra.xml.xhtml.dom.XHTMLOptionElement volumeOptionTemplate = content.getElementVolumeOptionTemplate();
-			volumeOptionTemplate.removeAttribute("id");
-			org.w3c.dom.Text volumeTextTemplate = (org.w3c.dom.Text)volumeOptionTemplate.getFirstChild();
-			java.util.Collection AllVolumes = fr.imag.clips.papillon.business.dictionary.VolumesFactory.getVolumesArray();
-			for (java.util.Iterator iter = AllVolumes.iterator(); iter.hasNext(); ) {
-				fr.imag.clips.papillon.business.dictionary.Volume myVolume = (fr.imag.clips.papillon.business.dictionary.Volume)iter.next();
-				volumeOptionTemplate.setValue(myVolume.getName());
-				volumeOptionTemplate.setLabel(myVolume.getName());
-				// Je dois ici mettre un text dans l'OPTION, car les browser PC ne sont pas conformes aux
-				// specs W3C.
-				volumeTextTemplate.setData(myVolume.getName());
-				if (myVolume.getName().equals(volume)) {
-					volumeOptionTemplate.setAttribute("selected","selected");
-				}
-				else {
-					volumeOptionTemplate.removeAttribute("selected");
-				}
-				volumeSelect.appendChild(volumeOptionTemplate.cloneNode(true));
-            }
-			volumeSelect.removeChild(volumeOptionTemplate);
+		// Adding the volume list
+		//org.enhydra.xml.xhtml.dom.XHTMLSelectElement volumeSelect = content.getElementVOLUME();
+		org.enhydra.xml.xhtml.dom.XHTMLOptionElement volumeOptionTemplate = content.getElementVolumeOptionTemplate();
+		org.enhydra.xml.xhtml.dom.XHTMLSelectElement volumeSelect = (org.enhydra.xml.xhtml.dom.XHTMLSelectElement) volumeOptionTemplate.getParentNode();
+		volumeOptionTemplate.removeAttribute("id");
+		org.w3c.dom.Text volumeTextTemplate = (org.w3c.dom.Text)volumeOptionTemplate.getFirstChild();
+		java.util.Collection AllVolumes = fr.imag.clips.papillon.business.dictionary.VolumesFactory.getVolumesArray();
+		for (java.util.Iterator iter = AllVolumes.iterator(); iter.hasNext(); ) {
+			fr.imag.clips.papillon.business.dictionary.Volume iterVolume = (fr.imag.clips.papillon.business.dictionary.Volume)iter.next();
+			volumeOptionTemplate.setValue(iterVolume.getName());
+			volumeOptionTemplate.setLabel(iterVolume.getName());
+			// Je dois ici mettre un text dans l'OPTION, car les browser PC ne sont pas conformes aux
+			// specs W3C.
+			volumeTextTemplate.setData(iterVolume.getName());
+			if (iterVolume.getName().equals(volume)) {
+				volumeOptionTemplate.setAttribute("selected","selected");
+			}
+			else {
+				volumeOptionTemplate.removeAttribute("selected");
+			}
+			volumeSelect.appendChild(volumeOptionTemplate.cloneNode(true));
+		}
+		volumeSelect.removeChild(volumeOptionTemplate);
 		
 		if (status != null && !status.equals("")) {
 			org.enhydra.xml.xhtml.dom.XHTMLInputElement statusInput = content.getElementSTATUS();
 			statusInput.setValue(status);
 		}
+		
+
+		// Établissement de la requête
+			
+			/* initilaize response */
+			java.util.Collection EntryCollection = null;
+		Volume myVolume = null;
+			org.w3c.dom.Document docResponse = XMLServices.buildDOMTree("<?xml version='1.0' encoding='UTF-8' ?><div id='entries'></div>");
+			// Intialize QueryRequest
+			/* volume */
+			String key = myGetParameter("KEY");
+			String handle = myGetParameter("HANDLE");
+			String action = myGetParameter("action");
+			String source = null;
+			if (key==null || key.equals("HEADWORD")|| key.equals("")) {
+				key=Volume.CDM_headword;
+			}			
+		
+			//PapillonLogger.writeDebugMsg("ConsultPage: " + volume + " WORD: " + word + " KEY: " + key);
+			if (action != null && !action.equals("")) {
+				throw new ClientPageRedirectException("Home.po?" + this.getComms().request.getQueryString());
+			}
+			if (volume != null && volume.equals("Motamot_khm_api")) {
+				volume = "Motamot_khm";
+				key=Volume.CDM_pronunciation;
+			}
+			if (volume != null) {
+				myVolume = VolumesFactory.getVolumeByName(volume);
+				source = myVolume.getSourceLanguage();
+			}
+		// Query an entry from its headword
+			if (myVolume != null && 
+				word != null && !word.equals("")) {
+						java.util.Collection targets = myVolume.getTargetLanguagesArray();
+			java.util.Vector myKeys = new java.util.Vector();
+			String[] Headword = new String[4];
+			//PapillonLogger.writeDebugMsg("ConsultPage entry: " + word + " key: " + key);
+			Headword[0] = key;
+			Headword[1] = source;
+			Headword[2] = word;
+			Headword[3] = QueryBuilder.EQUAL;
+			myKeys.add(Headword);
+			
+			EntryCollection = DictionariesFactory.getDictionaryNameEntriesCollection(myVolume.getDictname(),
+																					 source,
+																					 targets,
+																					 myKeys,
+																					 null,
+																					 null,
+																					 this.getUser(),
+																					 0);
+			
+			
+			if (EntryCollection!=null) {
+				for (java.util.Iterator myIterator = EntryCollection.iterator(); myIterator.hasNext(); ) {
+					QueryResult myQueryResult = (QueryResult) myIterator.next();
+					ResultFormatter myResultFormater = ResultFormatterFactory.getFormatter(myQueryResult, null, ResultFormatterFactory.XHTML_DIALECT,null);
+					org.w3c.dom.Element newEntry = (org.w3c.dom.Element)myResultFormater.getFormattedResult(myQueryResult, this.getUser());
+					content.getElementLookupcontent().appendChild(content.importNode(newEntry, true));
+					content.getElementLookupcontent().removeChild(content.getElementWelcomeMessage());
+				}
+			}
+		}
+		// Query an entry from its database handle
+			if (myVolume != null && handle != null && !handle.equals("")) {
+				java.util.Collection targets = myVolume.getTargetLanguagesArray();
+				EntryCollection = DictionariesFactory.findAnswerAndTranslations(volume, handle, targets, this.getUser());
+				
+				if (EntryCollection!=null) {
+					for (java.util.Iterator myIterator = EntryCollection.iterator(); myIterator.hasNext(); ) {
+						QueryResult myQueryResult = (QueryResult) myIterator.next();
+						VolumeEntry firstEntry = myQueryResult.getFirstSourceEntry();
+						if (firstEntry != null) {
+							if (key !=null && key.equals(Volume.CDM_pronunciation)) {
+								word = myQueryResult.getFirstSourceEntry().getCdmString(Volume.CDM_pronunciation);
+							}
+							else {
+								word = myQueryResult.getFirstSourceEntry().getHeadword();
+							}
+						}
+						ResultFormatter myResultFormater = ResultFormatterFactory.getFormatter(myQueryResult, null, ResultFormatterFactory.XHTML_DIALECT,null);
+						org.w3c.dom.Element newEntry = (org.w3c.dom.Element)myResultFormater.getFormattedResult(myQueryResult, this.getUser());
+						content.getElementLookupcontent().appendChild(content.importNode(newEntry, true));
+					}
+				}
+			}
+		
+		// Query an alphabetical list of entries from a word prefix
+			if (myVolume != null && 
+					 (word != null && !word.equals(""))) {
+				int limit = 30;
+				/*String limitString = myGetParameter("LIMIT");
+				if (limitString!=null && !limitString.equals("")) {
+					limit = Integer.parseInt(limitString);
+				}*/
+				String strategy = QueryBuilder.GREATER_THAN_OR_EQUAL;
+				String order = IndexFactory.ORDER_ASCENDING;
+				
+				java.util.Vector myKeys = new java.util.Vector();
+				String[] Headword = new String[4];
+				Headword[0] = key;
+				Headword[1] = source;
+				Headword[2] = word;
+				Headword[3] = strategy;
+				myKeys.add(Headword);
+				//PapillonLogger.writeDebugMsg("ConsultPage: [" + myVolume.getIndexDbname() + "] source: [" + source + "] WORD: [" + word + "] KEY: [" + key + "] strat: [" + strategy + "] order: [" + order + "] limit: [" + limit + "]");
+				EntryCollection = IndexFactory.getIndexEntriesVector(myVolume.getIndexDbname(), myKeys, order,limit);
+				String stringResponse = "";
+				if (EntryCollection!=null) {
+					for (java.util.Iterator myIterator = EntryCollection.iterator(); myIterator.hasNext(); ) {
+						Index myIndex = (Index) myIterator.next();
+						String entry = "<div class='lookupentry' title='"+ Utility.encodeXMLEntities(myIndex.getMsort())+"'><a href='?VOLUME="+volume+"&amp;HANDLE="+myIndex.getEntryId()+"&amp;KEY="+key+"' style='display:block; margin:5px;'>"+Utility.encodeXMLEntities(myIndex.getValue())+"</a></div>";
+						if (order.equals(IndexFactory.ORDER_DESCENDING)) {
+							stringResponse = entry + stringResponse;
+						}
+						else {
+							stringResponse += entry;
+						}
+					}
+				}
+				strategy = QueryBuilder.LESS_THAN;
+				order = IndexFactory.ORDER_DESCENDING;
+				myKeys = new java.util.Vector();
+				Headword[3] = strategy;
+				myKeys.add(Headword);
+					//PapillonLogger.writeDebugMsg("ConsultPage: [" + myVolume.getIndexDbname() + "] source: [" + source + "] WORD: [" + word + "] KEY: [" + key + "] strat: [" + strategy + "] order: [" + order + "] limit: [" + limit + "]");
+				EntryCollection = IndexFactory.getIndexEntriesVector(myVolume.getIndexDbname(), myKeys, order,limit);
+				String stringResponse2 = "";
+				if (EntryCollection!=null) {
+					for (java.util.Iterator myIterator = EntryCollection.iterator(); myIterator.hasNext(); ) {
+						Index myIndex = (Index) myIterator.next();
+						String entry = "<div class='lookupentry' title='"+ Utility.encodeXMLEntities(myIndex.getMsort())+"'><a href='?VOLUME="+volume+"&amp;HANDLE="+myIndex.getEntryId()+"&amp;KEY="+key+"' style='display:block; margin:5px;'>"+Utility.encodeXMLEntities(myIndex.getValue())+"</a></div>";
+						if (order.equals(IndexFactory.ORDER_DESCENDING)) {
+							stringResponse2 = entry + stringResponse2;
+						}
+						else {
+							stringResponse2 += entry;
+						}
+					}
+				}
+				
+				//PapillonLogger.writeDebugMsg("stringResponse.length(): "+ stringResponse.length());
+				stringResponse = "<?xml version='1.0' encoding='UTF-8' ?><div class='entries'>" + stringResponse2 + stringResponse + "</div>";
+				docResponse = XMLServices.buildDOMTree(stringResponse);
+				content.getElementLookupentries().appendChild(content.importNode(docResponse.getDocumentElement(), true));
+			}
+
 		//On rend le contenu correct
        return content.getElementMainContent();
     }

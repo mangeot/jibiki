@@ -38,12 +38,17 @@ $(document).ready(function(){ // Quand le document est complètement chargé
 			var msort = (direction=='ASC') ? $('.lookupentry:last').attr('title') : $('.lookupentry:first').attr('title');
  			var lastEntriesSize = $('.lookupentry').size();
 			var volume = $('#VOLUME').val();
- 
+			var key='cdm-headword';
+			if (volume=='Motamot_khm_api') {
+				volume='Motamot_khm';
+				key='cdm-pronunciation';
+			}
+							   
 			//On lance la fonction ajax
 			$.ajax({
 				url: 'LookupVolume.po',
 				type: 'get',
-				data: 'VOLUME='+volume+'&LIMIT='+limit+'&MSORT='+msort+'&DIRECTION='+direction,
+				data: 'VOLUME='+volume+'&LIMIT='+limit+'&KEY='+key+'&MSORT='+msort+'&DIRECTION='+direction,
 				dataType: "html",
  
 				//Succès de la requête
@@ -71,34 +76,69 @@ $(document).ready(function(){ // Quand le document est complètement chargé
 	});
 });
 
-function query_headword(headword) {
+
+function queryPrefixVolume(word, volume) {
 			//On lance la fonction ajax
 			load = true;
-			$('.loadmore').show();
 			$('#lookupentries').children().remove();
-			var volume = $('#VOLUME').val();
+	var halflimit = Math.floor(limit/2);
+	var key='cdm-headword';
+	if (volume=='Motamot_khm_api') {
+		volume='Motamot_khm';
+		key='cdm-pronunciation';
+		word = replace_api(word);
+	}
+	//alert(volume+' '+ key + ' ' + word);
 			$.ajax({
 				url: 'LookupVolume.po',
 				type: 'get',
-				data: 'VOLUME='+volume+'&LIMIT='+limit+'&HEADWORD='+headword+'&DIRECTION=ASC',
+				data: 'VOLUME='+volume+'&LIMIT='+halflimit+'&KEY='+key+'&WORD='+word+'&DIRECTION=DESC',
 				dataType: "html",
  
 				//Succès de la requête
 				success: function(data) {
- 
-					//On masque le loader
-					$('.loadmore').fadeOut(500);
-					/* On affiche le résultat après
+ 					/* On affiche le résultat après
 					le dernier commentaire */
+				   if ($('.lookupentry').length) {
+					$('.lookupentry:first').before($(data).children());
+				   /* On actualise la valeur offset de la dernière entrée */
+				   lastEntryOffset = $('.lookupentry:last').offset().top - $('.lookupentry:first').offset().top - entriesHeight;
+				   //On remet la valeur à faux car c'est fini
+				   $('#lookupentries').scrollTop((entriesHeight+lastEntryOffset-400) /2);
+				   load = false;
+				   }
+				   else {
 					$('#lookupentries').append($(data).children());
-					/* On actualise la valeur offset de la dernière entrée */
- 					lastEntryOffset = $('.lookupentry:last').offset().top - $('.lookupentry:first').offset().top - entriesHeight;
-					//On remet la valeur à faux car c'est fini
- 					$('#lookupentries').scrollTop(entriesHeight/2);
-					load = false;
+				   }
+				   
 				}
 			});
-	}
+		$.ajax({
+		   url: 'LookupVolume.po',
+		   type: 'get',
+		   data: 'VOLUME='+volume+'&LIMIT='+halflimit+'&KEY='+key+'&WORD='+word+'&DIRECTION=ASC&STRATEGY=>%3D',
+		   //data: 'VOLUME='+volume+'&LIMIT='+halflimit+'&KEY='+key+'&WORD='+word+'&DIRECTION=ASC',
+		   dataType: "html",
+		   
+		   //Succès de la requête
+		   success: function(data) {
+		   /* On affiche le résultat après
+			le dernier commentaire */
+			if ($('.lookupentry').length) {
+			   $('.lookupentry:last').after($(data).children());
+			   /* On actualise la valeur offset de la dernière entrée */
+			   lastEntryOffset = $('.lookupentry:last').offset().top - $('.lookupentry:first').offset().top - entriesHeight;
+			   //On remet la valeur à faux car c'est fini
+			   $('#lookupentries').scrollTop((entriesHeight+lastEntryOffset-400) /2);
+			   load = false;
+			   }
+			   else {
+			   $('#lookupentries').append($(data).children());
+			   }
+
+		   }
+		   });
+}
 			
 function lookupVolume (parameters) {
 			//On lance la fonction ajax
@@ -123,5 +163,47 @@ function lookupVolume (parameters) {
 					load = false;
 				}
 			});
-	}			
+	}
+
+function queryOneEntry (entry, volume) {
+	//On lance la fonction ajax
+	load = true;
+	$('.loadcontent').show();
+	$('#lookupcontent').children().remove();
+	$('.lookupentry').css('font-weight', 'normal');
+
+	var key='cdm-headword';
+	if (volume=='Motamot_khm_api') {
+		volume='Motamot_khm';
+		key='cdm-pronunciation';
+		entry = replace_api(entry);
+	}	
+	
+	$.ajax({
+		   url: 'LookupVolume.po',
+		   type: 'get',
+		   data: 'VOLUME='+volume+'&ENTRY='+entry + '&KEY=' + key,
+		   
+		   //Succès de la requête
+		   success: function(data) {
+		   
+		   //On masque le loader
+		   $('.loadcontent').fadeOut(500);
+		   // On affiche le résultat
+		   //$('#content').text('LookupVolume.po' + parameters);
+		   $('#lookupcontent').append($(data).children());
+		   load = false;
+		   }
+		   });
+}
+
+function replace_api(string) {
+	string.replace('a'+'̄','ā');
+	string.replace('e'+'̄','ē');
+	string.replace('i'+'̄','ī');
+	string.replace('o'+'̄','ō');
+	string.replace('u'+'̄','ū');
+	return string;
+}
+
 // -->

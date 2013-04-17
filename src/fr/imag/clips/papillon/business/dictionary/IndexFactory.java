@@ -392,6 +392,10 @@ public class IndexFactory {
 	}
 	
 	public static ArrayList getIndexEntriesVector(String indexTableName, String msort, String operator, String order, int limit, int offset) throws PapillonBusinessException {
+		return getIndexEntriesVector(indexTableName, Volume.CDM_headword, msort, operator, order, limit, offset);
+	}
+
+	public static ArrayList getIndexEntriesVector(String indexTableName, String key, String msort, String operator, String order, int limit, int offset) throws PapillonBusinessException {
         ArrayList theEntries = new ArrayList();
 		
 		if (null != indexTableName) {
@@ -400,9 +404,9 @@ public class IndexFactory {
 				com.lutris.dods.builder.generator.query.RDBColumn msortColumn = IndexDO.getMsortColumn(indexTableName);
 				IndexQuery query = new IndexQuery(indexTableName, CurrentDBTransaction.get());
 				
-				query.getQueryBuilder().addWhere(keyColumn, Volume.CDM_headword, QueryBuilder.EQUAL);
+				query.getQueryBuilder().addWhere(keyColumn, key, QueryBuilder.EQUAL);
 				query.getQueryBuilder().addWhere(msortColumn, msort,  operator);
-
+				
 				query.getQueryBuilder().setMaxRows((0 == limit) ? DictionariesFactory.MaxRetrievedEntries : limit);
 				if (offset!=0) {
 					query.getQueryBuilder().addEndClause("OFFSET " + offset);
@@ -428,7 +432,8 @@ public class IndexFactory {
 		}
 		return theEntries;
 	}
-
+	
+	
 	protected static boolean createIndexForLexiesHashtable(String indexDbname, Axie myAxie)
 		throws PapillonBusinessException {
 			Hashtable lexies = myAxie.getLexies();

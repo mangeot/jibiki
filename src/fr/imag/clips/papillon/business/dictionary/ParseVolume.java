@@ -403,7 +403,10 @@ public class ParseVolume {
                         entryBuffer = new StringBuffer();
                         entryBuffer.append(xmlHeaderBuffer);
                     }
-                    entryIndex = bufferLine.indexOf("<" + CDM_Entry, entryIndex + CDM_Entry.length() + 1);
+                    entryIndex = bufferLine.indexOf("<" + CDM_Entry + " ", entryIndex + CDM_Entry.length() + 1);
+					entryIndex = (entryIndex<0) ? bufferLine.indexOf("<" + CDM_Entry + "\t", entryIndex + CDM_Entry.length() + 1) : entryIndex;
+					entryIndex = (entryIndex<0) ? bufferLine.indexOf("<" + CDM_Entry + "\n", entryIndex + CDM_Entry.length() + 1) : entryIndex;
+					entryIndex = (entryIndex<0) ? bufferLine.indexOf("<" + CDM_Entry + ">", entryIndex + CDM_Entry.length() + 1) : entryIndex;
                 }
                 entryBuffer.append(bufferLine);
                 bufferLine = buffer.readLine() + "\n";
@@ -444,8 +447,12 @@ public class ParseVolume {
                                         java.util.Vector DiscardedEntries)
             throws PapillonBusinessException {
         boolean result = false;
-       
-        org.w3c.dom.Document myDoc = XMLServices.buildDOMTree(entryString);
+				org.w3c.dom.Document myDoc = null;
+				try {
+					myDoc = XMLServices.buildDOMTree(entryString);
+				}
+				catch (Exception e) {
+				}
         if (myDoc != null) {
             VolumeEntry newEntry = new VolumeEntry(myDict, myVolume);
             newEntry.setDom(myDoc);

@@ -31,6 +31,7 @@ public class Link {
 	
 	public static final String FINAL_TYPE = "final";
 	public static final String AXIE_TYPE = "axi";
+	public static final String INDIRECT_TYPE = "indirect";
 	public static final String AXEME_TYPE = "axeme";
 	public static final String EQU_TYPE = "equ";
 	public static final String CNT_TYPE = "cnt";
