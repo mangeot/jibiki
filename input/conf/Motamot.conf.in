@@ -125,7 +125,7 @@
 	# If the URL "/" for this application is accessed, the user will be
 	# redirected to this URL. This should be a relative URL.
 	#
-	Application.DefaultUrl = "Motamot.po"
+	Application.DefaultUrl = "ConsultPage.po"
 Application.Prefix = "@APPLICATION_PREFIX@"
 #
 PresentationManager.CacheFiles = true
