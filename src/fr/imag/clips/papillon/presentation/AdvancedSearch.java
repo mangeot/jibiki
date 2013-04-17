@@ -206,12 +206,14 @@ public class AdvancedSearch extends PapillonBasePO {
         // Create query request
         QueryRequest queryReq = qf.getQueryRequest();
         
-		if(queryReq.isEmpty()){PapillonLogger.writeDebugMsg("---qr advanced is empty");}
+		if(queryReq.isEmpty()){
+			//PapillonLogger.writeDebugMsg("---qr advanced is empty");
+		}
 		
         // Display query result if query request have criteria
         // Display query result if no action on form (add ou remove criteria)
         if (!queryReq.isEmpty() && !qf.actionOnFormRequested()) {
-    		PapillonLogger.writeDebugMsg("---qr advanced is not empty");
+    		//PapillonLogger.writeDebugMsg("---qr advanced is not empty");
            
             // Add status criteria
             ArrayList listStatus = new ArrayList();
