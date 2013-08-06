@@ -220,6 +220,14 @@ div#BannerContent {
 	border-radius: 20px;*/
 }
 
+div.section {
+ 	display: none;
+}
+ 		
+div.section:target {
+ 	display: block;	
+}
+
 
 /*-----------------------------------*/
 /* MenuBlock (left) part of the page */
