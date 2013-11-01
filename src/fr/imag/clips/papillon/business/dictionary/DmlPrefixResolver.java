@@ -22,6 +22,8 @@
 
 package fr.imag.clips.papillon.business.dictionary;
 
+import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
+
 import org.apache.xml.utils.PrefixResolver;
 import org.apache.xml.utils.PrefixResolverDefault;
 import org.w3c.dom.Node;
@@ -32,10 +34,6 @@ public class DmlPrefixResolver implements PrefixResolver  {
 	// papaillon_dml pour éviter les conflits avec des préfixes définis
 	// dans d'autres dictionnaires
 	
-	public final static String DML_PREFIX = "d";
-	public final static String DML_URI = "http://www-clips.imag.fr/geta/services/dml";
-    public final static String XLINK_URI = "http://www.w3.org/1999/xlink";
-
 	
 	protected static PrefixResolver defaultPrefixResolver = null;
 	
@@ -44,16 +42,16 @@ public class DmlPrefixResolver implements PrefixResolver  {
 	}
 	
 	public java.lang.String getNamespaceForPrefix(java.lang.String prefix) {
-		if (prefix.equals(DML_PREFIX)) {
-			return DML_URI;
+		if (prefix.equals(VolumesFactory.DEFAULT_DML_PREFIX)) {
+			return VolumesFactory.DML_URI;
 		}
 		else 
 			return defaultPrefixResolver.getNamespaceForPrefix(prefix);
 	}
 	
 	public java.lang.String getNamespaceForPrefix(java.lang.String prefix, Node context) {
-		if (prefix.equals(DML_PREFIX)) {
-			return DML_URI;
+		if (prefix.equals(VolumesFactory.DEFAULT_DML_PREFIX)) {
+			return VolumesFactory.DML_URI;
 		}
 		else 
 			return defaultPrefixResolver.getNamespaceForPrefix(prefix, context);

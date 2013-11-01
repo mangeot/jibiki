@@ -103,6 +103,8 @@ import java.util.Vector;
 // internal imports
 import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory;
+import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
+import fr.imag.clips.papillon.business.xml.XMLServices;
 
 // DOM elements
 import org.w3c.dom.Attr;
@@ -160,7 +162,7 @@ public class UIGenerator {
 		UIGenerator.fillTemplate(entryElt, correspItf, itfTemplate);
 	}
 	
-	public static boolean addElement(String elementName, String parentId, Element entryElt, Element entryTemplate, String[] siblingIds) {
+	public static String addElement(String elementName, String parentId, Element entryElt, Element entryTemplate, String[] siblingIds) {
 		//PapillonLogger.writeDebugMsg("addElement: " + elementName + " parent: " + parentId + " entry: " + entryElt + " entryTemplate: " + entryTemplate);
         
         //
@@ -192,16 +194,15 @@ public class UIGenerator {
 			Element parentElt = findElementInEntry(parentName, parentNb, entryElt);
 			if (parentElt!=null) {
 				Element myElement = getTemplateEntryElement(elementName,parentName,entryTemplate);
-				insertEntryElement(parentElt,myElement,siblingElement);
-                return true;
+				return insertEntryElement(parentElt,myElement,siblingElement);
 			}
 		}
-		return false;
+		return null;
 	}
 	
-	public static boolean chooseElement(String elementId, String parentId, Element entryElt, Element entryTemplate) {
+	public static String chooseElement(String elementId, String parentId, Element entryElt, Element entryTemplate) {
 		//PapillonLogger.writeDebugMsg("chooseElement: " + elementId + " parent: " + parentId);	
-		boolean found = false;
+		String found = null;
         
 		nodeMatcher.reset(parentId);
         if (nodeMatcher.find()) {
@@ -216,10 +217,10 @@ public class UIGenerator {
                     String elementNb = nodeMatcher.group(2);
 					Element templateElt = getTemplateEntryElement(elementName,parentName,entryTemplate);
 					if (templateElt!=null) {
-						found = true;
 						Node chooseNode = getChildNode(resultParent,CHOICE_NODE_NAME);
 						Node resNode = resultParent.getOwnerDocument().importNode(templateElt,true);
 						resultParent.replaceChild(resNode,chooseNode);
+						found = createId(resNode,null);
 					}
 				}
 			}
@@ -265,7 +266,8 @@ public class UIGenerator {
         return false;
 	}
 	
-	public static void deleteElements(String elementName, String parentId, String[] elementIds, Element entryElt, Element entryTemplate) {
+	public static String deleteElements(String elementName, String parentId, String[] elementIds, Element entryElt, Element entryTemplate) {
+		String result = null;
 		NodeList myNodeList = entryElt.getElementsByTagName (elementName);
 		Vector removeNodes = new Vector();
 		for (int i=0; i<elementIds.length;i++) {
@@ -284,9 +286,11 @@ public class UIGenerator {
             }
         }
 		Node parentNode = null;
+		Node lastSibling = null;
 		for (int i=0; i<removeNodes.size();i++) {
 			Element removeElt = (Element) removeNodes.elementAt(i);
 			parentNode = removeElt.getParentNode();
+			lastSibling = removeElt.getPreviousSibling();
 			parentNode.removeChild(removeElt);
 		}
 		if (parentNode !=null && parentNode.getNodeType()==Node.ELEMENT_NODE) {
@@ -304,22 +308,25 @@ public class UIGenerator {
 				i++;
 			}
 			if (!oneChild) {
-				addElement(elementName, parentId, entryElt, entryTemplate, null);
+				result = addElement(elementName, parentId, entryElt, entryTemplate, null);
 			}
-			((Element)parentNode).setAttribute(TYPE_ATTR_NAME,NEW_BLOCK_ANCHOR);
+			else {
+				result = createId(lastSibling,null);
+			}
 		}
+		return result;
 	}
 	
-	public static boolean moveElementsUp(String elementName, String parentId, String[] elementIds, Element entryElt) {
+	public static String moveElementsUp(String elementName, String parentId, String[] elementIds, Element entryElt) {
 		return moveElements(elementName, parentId, elementIds, entryElt, true);
 	}
 	
-	public static boolean moveElementsDown(String elementName, String parentId, String[] elementIds, Element entryElt) {
+	public static String moveElementsDown(String elementName, String parentId, String[] elementIds, Element entryElt) {
 		return moveElements(elementName, parentId, elementIds, entryElt, false);
 	}
 	
-	public static boolean moveElements(String elementName, String parentId, String[] elementIds, Element entryElt, boolean up) {
-		boolean result = false;
+	public static String moveElements(String elementName, String parentId, String[] elementIds, Element entryElt, boolean up) {
+		String result = null;
 		//PapillonLogger.writeDebugMsg("moveElement: up " + up + " name: "  + elementName + " parentId: " + parentId + " eltid1: " + elementIds[0]);
 		
 		/* looking for the targeted elements */
@@ -353,8 +360,8 @@ public class UIGenerator {
 					Element beforeElement = null;
 					Element afterElement = null;
 					int i=0;
-					result = false;
-					while (result == false && myChildrenList != null && i<myChildrenList.getLength()) {
+					result = null;
+					while (result == null && myChildrenList != null && i<myChildrenList.getLength()) {
 						Node tmpNode = myChildrenList.item(i);
 						if (tmpNode.getNodeType() == Node.ELEMENT_NODE) {
 							Element currentElt = (Element) tmpNode;
@@ -377,11 +384,11 @@ public class UIGenerator {
 										afterElement = currentElt; 
 									}
 								}
-								if (result == false && beforeElement != null && afterElement != null) {
+								if (result == null && beforeElement != null && afterElement != null) {
 									//PapillonLogger.writeDebugMsg("swapElements: " + afterElement.getTagName());
 									parentElt.removeChild(afterElement);
 									parentElt.insertBefore(afterElement,beforeElement);
-									result = true;
+									result = createId(afterElement,null);
 								}
 							}
 						}
@@ -431,11 +438,12 @@ public class UIGenerator {
 				entryNodeName = ((Attr) entryNode).getOwnerElement().getNodeName() + ATTR_SEPARATOR + entryNodeName;
 			}
             //PapillonLogger.writeDebugMsg("fillTemplate Node: " + entryNodeName + " ID: " + newId);
-			setNameCorrespondingAnchor(entryNode, itfElt, newId);
+			setIdCorrespondingAnchor(entryNodeName, itfElt, newId);
 			setIdCorrespondingSubmitInputs(entryNodeName, itfElt, newId);
 			setIdCorrespondingLabel(entryNodeName, itfElt, newId);
 			setIdCorrespondingSelectCheckbox(entryNodeName,itfElt, newId);
             setClassCorrespondingLinkers(entryNodeName,itfElt, newId);
+
             
 			// special handling of the xsd:choice schema directive
 			Node parentNode = entryNode.getParentNode();
@@ -624,27 +632,19 @@ public class UIGenerator {
 		return resultElt;
 	}
 	
-	protected static boolean setNameCorrespondingAnchor(Node entryNode, Element itfElt, String newId) {
-		//PapillonLogger.writeDebugMsg("setNameCorrespondingAnchor: " + entryNode.getNodeName());
+	protected static boolean setIdCorrespondingAnchor(String entryNodeName, Element itfElt, String newId) {
+		//PapillonLogger.writeDebugMsg("setIdCorrespondingAnchor: " + entryNodeName);
 		boolean found = false;
-		if (entryNode.getNodeType() == Node.ELEMENT_NODE) {
-			Element entryElt = (Element) entryNode;
-			String typeName = entryElt.getTagName();
-			String type = entryElt.getAttribute(TYPE_ATTR_NAME);
-			if (type!=null && !type.equals("")) {
-				NodeList myNodeList = itfElt.getElementsByTagName ("a");
-				int i=0;
-				while (i<myNodeList.getLength () && !found) {
-					Element currentElt = (Element) myNodeList.item(i);
-					String name = currentElt.getAttribute("name");
-					if (name !=null && name.equals(typeName)) {
-						currentElt.setAttribute("name", NEW_BLOCK_ANCHOR);
-						entryElt.removeAttribute(TYPE_ATTR_NAME);
-						found = true;
-					}
-				i++;	
-				}
+		NodeList myNodeList = itfElt.getElementsByTagName ("a");
+		int i=0;
+		while (i<myNodeList.getLength () && !found) {
+			Element currentElt = (Element) myNodeList.item(i);
+			String name = currentElt.getAttribute("name");
+			if (name !=null && name.equals(entryNodeName)) {
+				currentElt.setAttribute("name", newId);
+				found = true;
 			}
+		i++;	
 		}
 		return found;
 	}
@@ -731,7 +731,7 @@ public class UIGenerator {
     
 	
 	protected static boolean setIdValueCorrespondingTextInput(String correspName, Element itfElt, String newId, String value) {
-		//PapillonLogger.writeDebugMsg("findCorrespondingTextInput: " + correspName + " (newId = " + newId + ") (value = " + value + ")");
+		//PapillonLogger.writeDebugMsg("setIdValueCorrespondingTextInput: " + correspName + " (newId = " + newId + ") (value = " + value + ")");
 		boolean found = false;
 		NodeList myNodeList = itfElt.getElementsByTagName ("input");
 		int i=0;
@@ -926,12 +926,12 @@ public class UIGenerator {
 	}
 	
 	
-	protected static Element insertEntryElement(Element parentElement, Element newElement, Element siblingElement) {
-		//PapillonLogger.writeDebugMsg("insertEntryElement: " + newElement.toString() + " parent: " + parentElement.toString());	
+	protected static String insertEntryElement(Element parentElement, Element newElement, Element siblingElement) {
+		PapillonLogger.writeDebugMsg("insertEntryElement: " + newElement.toString() + " parent: " + parentElement.toString());	
 		Vector nodeVector = new Vector();
 		
 		Element resElt = (Element) parentElement.getOwnerDocument().importNode(newElement,true);
-		resElt.setAttribute(TYPE_ATTR_NAME,NEW_BLOCK_ANCHOR);
+		
 		if (siblingElement != null) {
 			parentElement.insertBefore(resElt,siblingElement);
 		}
@@ -965,7 +965,7 @@ public class UIGenerator {
 				parentElement.appendChild(resElt);
 			}
 		}
-		return resElt;
+		return createId(resElt,null);
 	}
 	
 	protected static Element getTemplateEntryElement(String elementName, String parentName, Element entryTemplate) {

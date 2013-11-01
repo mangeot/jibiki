@@ -257,7 +257,8 @@ public class VolumesFactory {
     protected final static String DEFAULT_ATTRIBUTE = "default";
     protected final static String EXTERNAL_ATTRIBUTE = "external";
 	
-	protected final static String XMLNAMESPACE = "xmlns";
+	public final static String XMLNAMESPACE = "xmlns";
+	public final static String DEFAULT_DML_PREFIX = "d";
 
 	
     protected final static String VOLUME_GDEF_est = "GDEF_est";
@@ -1608,10 +1609,10 @@ public class VolumesFactory {
             org.w3c.dom.Document templateDoc = XMLServices.buildDOMTree(tmplEntry);
 			org.w3c.dom.Element rootElement = templateDoc.getDocumentElement();
 			if (getDmlPrefix(rootElement) == null) {
-				String newDmlPrefix = "d";
+				String newDmlPrefix = DEFAULT_DML_PREFIX;
 				ArrayList prefixes = getPrefixes(rootElement);
 				while (prefixes.contains(newDmlPrefix)) {
-					newDmlPrefix += "d";
+					newDmlPrefix += DEFAULT_DML_PREFIX;
 				}
 				rootElement.setAttribute(XMLNAMESPACE + ":" + newDmlPrefix, DML_URI);
 			}

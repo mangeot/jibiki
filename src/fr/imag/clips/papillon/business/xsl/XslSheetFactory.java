@@ -430,13 +430,13 @@ public class XslSheetFactory {
                 //search for an existing
                 //XslSheetFactory XslFactory=new XslSheetFactory();
                 //XslSheet Existe=XslFactory.findXslSheetByName(name, dictionaryName, volumeName);
-                XslSheet Existe = XslSheetFactory.getXslSheet(dictionaryName, volumeName, name);
+				String existName = defaultXsl?"":name;
+                XslSheet Existe = XslSheetFactory.getXslSheet(dictionaryName, volumeName, existName);
                 
                 //
                 if ((Existe != null) && (!Existe.isEmpty())) {
                     PapillonLogger.writeDebugMsg("Delete " + Existe.getName() + " xsl");
                     Existe.delete();
-                    initializeXslSheetCache();
                 }
                 
                 //
@@ -459,7 +459,7 @@ public class XslSheetFactory {
                 
                 
                 //
-                AddXslSheetInCache(mySheet);
+				initializeXslSheetCache();
             }
             else {
                 PapillonLogger.writeDebugMsg("XslSheet ignored");
