@@ -333,27 +333,26 @@ public class XslTransformation implements ResultFormatter {
 		java.util.HashMap linkedEntries = qr.getLexiesHashMap();
 		//PapillonLogger.writeDebugMsg("linkedEntries: " + linkedEntries.toString());
 					
-		insertLinkedEntries(myAnswer, linkedEntries, direction);
+		Document resultDoc = insertLinkedEntries(myAnswer, linkedEntries, direction);
 		if (null != dictXsl && !dictXsl.isEmpty()) {
 			// Format document source
 			//PapillonLogger.writeDebugMsg("Answer: " + qr.getSourceEntry().getHeadword() + " node: " + XMLServices.NodeToString(myAnswer.getDom()));			
             //PapillonLogger.writeDebugMsg("XSLSheet is: " + dictXsl.getName() + " " + dictXsl.getHandle());
-			Node resultNode = formatResult(myAnswer.getDom(), dictXsl, usr);
-			if (resultNode == null) {
+			Node formatedNode = formatResult(resultDoc, dictXsl, usr);
+			if (formatedNode == null) {
 				PapillonLogger.writeDebugMsg("ResultNode empty, problem with the XSL sheet: " + dictXsl.getName() + " " + dictXsl.getHandle());
-				resultNode = myAnswer.getDom().getDocumentElement();
+				formatedNode = resultDoc.getDocumentElement();
 				
 			}
 			//PapillonLogger.writeDebugMsg("ResultNode: " + qr.getSourceEntry().getHeadword() + " node: " + XMLServices.NodeToString(resultNode)+", "+resultNode.getNodeValue());
 				
-				rootdiv.appendChild(res.importNode(resultNode, true));
+				rootdiv.appendChild(res.importNode(formatedNode, true));
 					//PapillonLogger.writeDebugMsg("rootdiv:"+rootdiv.getTextContent());
 			//}				
 		}
 		else {
 			PapillonLogger.writeDebugMsg("XSL sheet empty for dict "+ qr.getSourceEntry().getDictionaryName()+"!");
-			Node resultNode = myAnswer.getDom().getDocumentElement();
-			rootdiv.appendChild(res.importNode(resultNode, true));
+			rootdiv.appendChild(res.importNode(resultDoc.getDocumentElement(), true));
 		}
 		return rootdiv;
 	} 
@@ -372,12 +371,12 @@ public class XslTransformation implements ResultFormatter {
      *   retrieving data (usually due to an underlying data layer
 	 *   error).
      */
-	protected static void insertLinkedEntries (VolumeEntry theEntry, java.util.HashMap linkedEntries, String direction) 
+	protected static org.w3c.dom.Document insertLinkedEntries (VolumeEntry theEntry, java.util.HashMap linkedEntries, String direction) 
 	throws PapillonBusinessException {
 		//PapillonLogger.writeDebugMsg("insertLinkedEntries for: " +theEntry.getEntryId() + ", direction: " + direction);
 		org.apache.xml.utils.PrefixResolver thePrefixResolver = theEntry.getVolume().getPrefixResolver();
 		java.util.HashMap linksTable = theEntry.getVolume().getLinksTable();
-		org.w3c.dom.Document theEntryDoc = theEntry.getDom();
+		org.w3c.dom.Document theEntryDoc = (Document) theEntry.getDom().cloneNode(true);
 		Iterator myVeryOwnIterator = linksTable.keySet().iterator();
 		while(myVeryOwnIterator.hasNext()) {
 			java.util.HashMap linkTable = (java.util.HashMap) linksTable.get(myVeryOwnIterator.next());
@@ -432,6 +431,7 @@ public class XslTransformation implements ResultFormatter {
 												if ((typeString!= null && typeString.equals(Link.AXIE_TYPE)) || (typeString!= null && typeString.equals(Link.EQU_TYPE)) || (typeString!= null && typeString.equals(Link.CNT_TYPE))) {
 													linkedEntries.remove(linkedEntry.getEntryId());
 												}
+												Document linkedEntryNode = linkedEntry.getDom();
 												if (
 													(direction.equals(Link.DIRECTION_UP) && 
 													 (
@@ -450,9 +450,9 @@ public class XslTransformation implements ResultFormatter {
 													)
 												   ) 
 												{
-													insertLinkedEntries(linkedEntry, linkedEntries, newDir);
+													linkedEntryNode = insertLinkedEntries(linkedEntry, linkedEntries, newDir);
 												}			
-												Node tempNode = theEntryDoc.importNode((Node) linkedEntry.getDom().getDocumentElement(), true);
+												Node tempNode = theEntryDoc.importNode((Node) linkedEntryNode.getDocumentElement(), true);
 												//PapillonLogger.writeDebugMsg("insertingLinkedEntry: " + linkedEntry.getEntryId());
 												myNode.appendChild(tempNode);
 											}
@@ -463,7 +463,8 @@ public class XslTransformation implements ResultFormatter {
 					}
 				}
 			}
-		}	
+		}
+		return theEntryDoc;
 	}
 	
 //PapillonLogger.writeDebugMsg("myAnser = "+myAnswer);
