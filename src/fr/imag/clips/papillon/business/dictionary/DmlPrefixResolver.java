@@ -31,8 +31,11 @@ import org.w3c.dom.Node;
 public class DmlPrefixResolver implements PrefixResolver  {
 	
 	//FIXME: le préfixe de DML est d. Il faudrait choisir un préfixe plus élaboré genre
-	// papaillon_dml pour éviter les conflits avec des préfixes définis
+	// papillon_dml pour éviter les conflits avec des préfixes définis
 	// dans d'autres dictionnaires
+	
+	public final static String DML_URI = "http://www-clips.imag.fr/geta/services/dml";
+    public final static String XLINK_URI = "http://www.w3.org/1999/xlink";
 	
 	
 	protected static PrefixResolver defaultPrefixResolver = null;
