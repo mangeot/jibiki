@@ -7,6 +7,156 @@
 CREATE LANGUAGE plpgsql;
 
 
+-- bam Bambara
+-- a b c d e ɛ f g ɲ h i j k l m n ŋ o ɔ p q r s t u v w x y z
+CREATE OR REPLACE FUNCTION bam_sort( varchar )
+ RETURNS varchar AS $PROC$
+
+ DECLARE
+ i		integer;
+  tmp		char;
+  result	varchar := '';
+  length	integer;
+ BEGIN
+ 	length := char_length($1);
+  	FOR i IN 1.. length LOOP
+  		tmp := SUBSTR( $1, i, 1 );
+  IF tmp = 'A'  THEN
+    result:= result || '01';
+  ELSIF tmp = 'a'  THEN
+    result:= result || '01';
+  ELSIF tmp = 'B' THEN
+    result:= result || '02';
+  ELSIF tmp = 'b' THEN
+    result:= result || '02';
+  ELSIF tmp = 'C' THEN
+    result:= result || '03';
+  ELSIF tmp = 'c' THEN
+    result:= result || '03';
+  ELSIF tmp = 'D' THEN
+    result:= result || '04';
+  ELSIF tmp = 'd' THEN
+    result:= result || '04';
+  ELSIF tmp = 'E' THEN
+    result:= result || '05';
+  ELSIF tmp = 'e' THEN
+    result:= result || '05';
+  ELSIF tmp = 'Ɛ' THEN
+    result:= result || '06';
+  ELSIF tmp = 'ɛ' THEN
+    result:= result || '06';
+  ELSIF tmp = 'F' THEN
+    result:= result || '07';
+  ELSIF tmp = 'f' THEN
+    result:= result || '07';
+  ELSIF tmp = 'G' THEN
+    result:= result || '08';
+  ELSIF tmp = 'g' THEN
+    result:= result || '08';
+  ELSIF tmp = 'Ɲ' THEN
+    result:= result || '09';
+  ELSIF tmp = 'ɲ' THEN
+    result:= result || '09';
+  ELSIF tmp = 'H' THEN
+    result:= result || '10';
+  ELSIF tmp = 'h' THEN
+    result:= result || '10';
+  ELSIF tmp = 'I' THEN
+    result:= result || '11';
+  ELSIF tmp = 'i' THEN
+    result:= result || '11';
+  ELSIF tmp = 'J' THEN
+    result:= result || '12';
+  ELSIF tmp = 'j' THEN
+    result:= result || '12';
+  ELSIF tmp = 'K' THEN
+    result:= result || '13';
+  ELSIF tmp = 'k' THEN
+    result:= result || '13';
+  ELSIF tmp = 'L' THEN
+    result:= result || '14';
+  ELSIF tmp = 'l' THEN
+    result:= result || '14';
+  ELSIF tmp = 'M' THEN
+    result:= result || '15';
+  ELSIF tmp = 'm' THEN
+    result:= result || '15';
+  ELSIF tmp = 'N' THEN
+    result:= result || '16';
+  ELSIF tmp = 'n' THEN
+    result:= result || '16';
+  ELSIF tmp = 'Ŋ' THEN
+    result:= result || '17';
+  ELSIF tmp = 'ŋ' THEN
+    result:= result || '17';
+  ELSIF tmp = 'O' THEN
+    result:= result || '18';
+  ELSIF tmp = 'o' THEN
+    result:= result || '18';
+  ELSIF tmp = 'Ɔ' THEN
+    result:= result || '19';
+  ELSIF tmp = 'ɔ' THEN
+    result:= result || '19';
+  ELSIF tmp = 'p' THEN
+    result:= result || '20';
+  ELSIF tmp = 'P' THEN
+    result:= result || '20';
+  ELSIF tmp = 'Q' THEN
+    result:= result || '21';
+  ELSIF tmp = 'q' THEN
+    result:= result || '21';
+  ELSIF tmp = 'R' THEN
+    result:= result || '22';
+  ELSIF tmp = 'r' THEN
+    result:= result || '22';
+  ELSIF tmp = 'S' THEN
+    result:= result || '23';
+  ELSIF tmp = 's' THEN
+    result:= result || '23';
+  ELSIF tmp = 'T' THEN
+    result:= result || '24';
+  ELSIF tmp = 't' THEN
+    result:= result || '24';
+  ELSIF tmp = 'U' THEN
+    result:= result || '25';
+  ELSIF tmp = 'u' THEN
+    result:= result || '25';
+  ELSIF tmp = 'V' THEN
+    result:= result || '26';
+  ELSIF tmp = 'v' THEN
+    result:= result || '26';
+  ELSIF tmp = 'W' THEN
+    result:= result || '27';
+  ELSIF tmp = 'w' THEN
+    result:= result || '27';
+  ELSIF tmp = 'X' THEN
+    result:= result || '28';
+  ELSIF tmp = 'x' THEN
+    result:= result || '28';
+  ELSIF tmp = 'Y' THEN
+    result:= result || '29';
+  ELSIF tmp = 'y' THEN
+    result:= result || '29';
+  ELSIF tmp = 'Z' THEN
+    result:= result || '30';
+  ELSIF tmp = 'z' THEN
+    result:= result || '30';
+  ELSIF tmp = ' ' THEN
+    result:= result;
+  ELSIF tmp = '-' THEN
+    result:= result;
+  ELSIF tmp = '#' THEN
+    result:= result;
+  ELSE
+    result:= result || '99';
+  END IF;
+	END LOOP;
+  return( result );
+ END;
+$PROC$ LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
+
+
+
 -- deu German
 -- (a ä) b c d e f g h i j k l m n (o ö) p q r (s ß) t (u ü) v w x y z
 -- for the moment do nothing
@@ -203,6 +353,171 @@ CREATE OR REPLACE FUNCTION deu_sort( varchar )
   return( result );
  END;
 $PROC$ LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
+
+-- dje Soŋay-zarma
+-- a, b, c, d, e, f, g, h, i, j, k, l, m, n, Ɲ ɲ, ŋ, o, p, r, s, Š š, t, u, w, y, z, Ž ž
+
+CREATE OR REPLACE FUNCTION dje_sort( varchar )
+ RETURNS varchar AS $PROC$
+
+ DECLARE
+ i		integer;
+  tmp		char;
+  result	varchar := '';
+  length	integer;
+ BEGIN
+ 	length := char_length($1);
+  	FOR i IN 1.. length LOOP
+  		tmp := SUBSTR( $1, i, 1 );
+  IF tmp = 'A'  THEN
+    result:= result || '01';
+  ELSIF tmp = 'a'  THEN
+    result:= result || '01';
+  ELSIF tmp = 'B' THEN
+    result:= result || '02';
+  ELSIF tmp = 'b' THEN
+    result:= result || '02';
+  ELSIF tmp = 'C' THEN
+    result:= result || '03';
+  ELSIF tmp = 'c' THEN
+    result:= result || '03';
+  ELSIF tmp = 'D' THEN
+    result:= result || '04';
+  ELSIF tmp = 'd' THEN
+    result:= result || '04';
+  ELSIF tmp = 'E' THEN
+    result:= result || '05';
+  ELSIF tmp = 'e' THEN
+    result:= result || '05';
+  ELSIF tmp = 'F' THEN
+    result:= result || '06';
+  ELSIF tmp = 'f' THEN
+    result:= result || '06';
+  ELSIF tmp = 'G' THEN
+    result:= result || '07';
+  ELSIF tmp = 'g' THEN
+    result:= result || '07';
+  ELSIF tmp = 'H' THEN
+    result:= result || '08';
+  ELSIF tmp = 'h' THEN
+    result:= result || '08';
+  ELSIF tmp = 'I' THEN
+    result:= result || '09';
+  ELSIF tmp = 'i' THEN
+    result:= result || '09';
+  ELSIF tmp = 'J' THEN
+    result:= result || '10';
+  ELSIF tmp = 'j' THEN
+    result:= result || '10';
+  ELSIF tmp = 'K' THEN
+    result:= result || '11';
+  ELSIF tmp = 'k' THEN
+    result:= result || '11';
+  ELSIF tmp = 'L' THEN
+    result:= result || '12';
+  ELSIF tmp = 'l' THEN
+    result:= result || '12';
+  ELSIF tmp = 'M' THEN
+    result:= result || '13';
+  ELSIF tmp = 'm' THEN
+    result:= result || '13';
+  ELSIF tmp = 'N' THEN
+    result:= result || '14';
+  ELSIF tmp = 'n' THEN
+    result:= result || '14';
+  ELSIF tmp = 'Ɲ' THEN
+    result:= result || '15';
+  ELSIF tmp = 'ɲ' THEN
+    result:= result || '15';
+  ELSIF tmp = 'Ŋ' THEN
+    result:= result || '16';
+  ELSIF tmp = 'ŋ' THEN
+    result:= result || '16';
+  ELSIF tmp = 'O' THEN
+    result:= result || '17';
+  ELSIF tmp = 'o' THEN
+    result:= result || '17';
+  ELSIF tmp = 'p' THEN
+    result:= result || '18';
+  ELSIF tmp = 'P' THEN
+    result:= result || '18';
+  ELSIF tmp = 'Q' THEN
+    result:= result || '19';
+  ELSIF tmp = 'q' THEN
+    result:= result || '19';
+  ELSIF tmp = 'R' THEN
+    result:= result || '20';
+  ELSIF tmp = 'r' THEN
+    result:= result || '20';
+  ELSIF tmp = 'S' THEN
+    result:= result || '21';
+  ELSIF tmp = 's' THEN
+    result:= result || '21';
+  ELSIF tmp = 'Š' THEN
+    result:= result || '22';
+  ELSIF tmp = 'š' THEN
+    result:= result || '22';
+  ELSIF tmp = 'T' THEN
+    result:= result || '23';
+  ELSIF tmp = 't' THEN
+    result:= result || '23';
+  ELSIF tmp = 'U' THEN
+    result:= result || '24';
+  ELSIF tmp = 'u' THEN
+    result:= result || '24';
+  ELSIF tmp = 'V' THEN
+    result:= result || '25';
+  ELSIF tmp = 'v' THEN
+    result:= result || '25';
+  ELSIF tmp = 'W' THEN
+    result:= result || '26';
+  ELSIF tmp = 'w' THEN
+    result:= result || '26';
+  ELSIF tmp = 'X' THEN
+    result:= result || '27';
+  ELSIF tmp = 'x' THEN
+    result:= result || '27';
+  ELSIF tmp = 'Y' THEN
+    result:= result || '28';
+  ELSIF tmp = 'y' THEN
+    result:= result || '28';
+  ELSIF tmp = 'Z' THEN
+    result:= result || '29';
+  ELSIF tmp = 'z' THEN
+    result:= result || '29';
+  ELSIF tmp = 'Ž' THEN
+    result:= result || '30';
+  ELSIF tmp = 'ž' THEN
+    result:= result || '30';
+  ELSIF tmp = ' ' THEN
+    result:= result;
+  ELSIF tmp = '-' THEN
+    result:= result;
+  ELSIF tmp = '#' THEN
+    result:= result;
+  ELSE
+    result:= result || '99';
+  END IF;
+	END LOOP;
+  return( result );
+ END;
+$PROC$ LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
+
+
+-- eng English
+--
+-- for the moment do nothing
+CREATE OR REPLACE FUNCTION eng_sort( varchar ) 
+ RETURNS varchar AS '
+
+ DECLARE
+  tmp		char;
+  result	varchar := '''';
+  length	integer;
+ BEGIN
+  return( $1 );
+ END;
+' LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
 
 
 -- est Estonian
@@ -591,6 +906,285 @@ CREATE OR REPLACE FUNCTION fra_sort( varchar )
  END;
 $PROC$ LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
 
+-- hau Hausa
+-- a b ɓ c d ɗ e f fy g gw gy h i j k kw ky ƙ ƙw ƙy l m n o p r s sh t ts u w y ƴ z
+
+CREATE OR REPLACE FUNCTION hau_sort( varchar )
+ RETURNS varchar AS $PROC$
+
+ DECLARE
+  i		integer := 1;
+  tmp		char;
+  tmp2		char = SUBSTR( $1, 1, 1 );
+  tmp3		char;
+  result	varchar := '';
+  length	integer;
+ BEGIN
+ 	length := char_length($1);
+  	WHILE i <= length LOOP
+		tmp := tmp2;
+		tmp2 := SUBSTR( $1, i+1, 1 );
+		tmp3 := SUBSTR( $1, i+2, 1 );
+  IF tmp = 'A'  THEN
+    result:= result || '01';
+  ELSIF tmp = 'a'  THEN
+    result:= result || '01';
+  ELSIF tmp = 'B' THEN
+    result:= result || '02';
+  ELSIF tmp = 'b' THEN
+    result:= result || '02';
+  ELSIF tmp = 'Ɓ' THEN
+    result:= result || '03';
+  ELSIF tmp = 'ɓ' THEN
+    result:= result || '03';
+  ELSIF tmp = 'C' THEN
+    result:= result || '04';
+  ELSIF tmp = 'c' THEN
+    result:= result || '04';
+  ELSIF tmp = 'D' THEN
+    result:= result || '05';
+  ELSIF tmp = 'd' THEN
+    result:= result || '05';
+  ELSIF tmp = 'Ɗ' THEN
+    result:= result || '06';
+  ELSIF tmp = 'ɗ' THEN
+    result:= result || '06';
+  ELSIF tmp = 'E' THEN
+    result:= result || '07';
+  ELSIF tmp = 'e' THEN
+    result:= result || '07';
+  ELSIF tmp = 'F' THEN
+	IF tmp2 = 'Y' THEN
+		tmp2 := tmp3;
+		i := i+1;
+		result:= result || '09';
+	ELSIF tmp2 = 'y' THEN
+		tmp2 := tmp3;
+		i := i+1;
+	    result:= result || '09';
+	ELSE
+		result:= result || '08';
+	END IF;
+  ELSIF tmp = 'f' THEN
+	IF tmp2 = 'y' THEN
+		tmp2 := tmp3;
+		i := i+1;
+	    result:= result || '09';
+	ELSE
+		result:= result || '08';
+	END IF;
+  ELSIF tmp = 'G' THEN
+	IF tmp2 = 'W' THEN
+		tmp2 := tmp3;
+		i := i+1;
+		result:= result || '11';
+	ELSIF tmp2 = 'w' THEN
+		tmp2 := tmp3;
+		i := i+1;
+	    result:= result || '11';
+	ELSIF tmp2 = 'Y' THEN
+		tmp2 := tmp3;
+		i := i+1;
+	    result:= result || '12';
+	ELSIF tmp2 = 'y' THEN
+		tmp2 := tmp3;
+		i := i+1;
+	    result:= result || '12';
+	ELSE
+		result:= result || '10';
+	END IF;
+  ELSIF tmp = 'g' THEN
+	IF tmp2 = 'w' THEN
+		tmp2 := tmp3;
+		i := i+1;
+	    result:= result || '11';
+	ELSIF tmp2 = 'y' THEN
+		tmp2 := tmp3;
+		i := i+1;
+	    result:= result || '12';
+	ELSE
+		result:= result || '10';
+	END IF;
+  ELSIF tmp = 'H' THEN
+    result:= result || '13';
+  ELSIF tmp = 'h' THEN
+    result:= result || '13';
+  ELSIF tmp = 'I' THEN
+    result:= result || '14';
+  ELSIF tmp = 'i' THEN
+    result:= result || '14';
+  ELSIF tmp = 'J' THEN
+    result:= result || '15';
+  ELSIF tmp = 'j' THEN
+    result:= result || '15';
+  ELSIF tmp = 'K' THEN
+	IF tmp2 = 'W' THEN
+		tmp2 := tmp3;
+		i := i+1;
+		result:= result || '17';
+	ELSIF tmp2 = 'w' THEN
+		tmp2 := tmp3;
+		i := i+1;
+	    result:= result || '17';
+	ELSIF tmp2 = 'Y' THEN
+		tmp2 := tmp3;
+		i := i+1;
+	    result:= result || '18';
+	ELSIF tmp2 = 'y' THEN
+		tmp2 := tmp3;
+		i := i+1;
+	    result:= result || '18';
+	ELSE
+		result:= result || '16';
+	END IF;
+  ELSIF tmp = 'k' THEN
+	IF tmp2 = 'w' THEN
+		tmp2 := tmp3;
+		i := i+1;
+	    result:= result || '17';
+	ELSIF tmp2 = 'y' THEN
+		tmp2 := tmp3;
+		i := i+1;
+	    result:= result || '18';
+	ELSE
+		result:= result || '16';
+	END IF;
+  ELSIF tmp = 'Ƙ' THEN
+	IF tmp2 = 'W' THEN
+		tmp2 := tmp3;
+		i := i+1;
+		result:= result || '20';
+	ELSIF tmp2 = 'w' THEN
+		tmp2 := tmp3;
+		i := i+1;
+	    result:= result || '20';
+	ELSIF tmp2 = 'Y' THEN
+		tmp2 := tmp3;
+		i := i+1;
+	    result:= result || '21';
+	ELSIF tmp2 = 'y' THEN
+		tmp2 := tmp3;
+		i := i+1;
+	    result:= result || '21';
+	ELSE
+		result:= result || '19';
+	END IF;
+  ELSIF tmp = 'ƙ' THEN
+	IF tmp2 = 'w' THEN
+		tmp2 := tmp3;
+		i := i+1;
+	    result:= result || '20';
+	ELSIF tmp2 = 'y' THEN
+		tmp2 := tmp3;
+		i := i+1;
+	    result:= result || '21';
+	ELSE
+		result:= result || '19';
+	END IF;
+  ELSIF tmp = 'L' THEN
+    result:= result || '22';
+  ELSIF tmp = 'l' THEN
+    result:= result || '22';
+  ELSIF tmp = 'M' THEN
+    result:= result || '23';
+  ELSIF tmp = 'm' THEN
+    result:= result || '23';
+  ELSIF tmp = 'N' THEN
+    result:= result || '24';
+  ELSIF tmp = 'n' THEN
+    result:= result || '24';
+  ELSIF tmp = 'O' THEN
+    result:= result || '25';
+  ELSIF tmp = 'o' THEN
+    result:= result || '25';
+  ELSIF tmp = 'p' THEN
+    result:= result || '26';
+  ELSIF tmp = 'P' THEN
+    result:= result || '26';
+  ELSIF tmp = 'R' THEN
+    result:= result || '27';
+  ELSIF tmp = 'r' THEN
+    result:= result || '27';
+  ELSIF tmp = 'S' THEN
+	IF tmp2 = 'H' THEN
+		tmp2 := tmp3;
+		i := i+1;
+		result:= result || '29';
+	ELSIF tmp2 = 'h' THEN
+		tmp2 := tmp3;
+		i := i+1;
+	    result:= result || '29';
+	ELSE
+		result:= result || '28';
+	END IF;
+  ELSIF tmp = 's' THEN
+	IF tmp2 = 'h' THEN
+		tmp2 := tmp3;
+		i := i+1;
+	    result:= result || '29';
+	ELSE
+		result:= result || '28';
+	END IF;
+  ELSIF tmp = 'T' THEN
+	IF tmp2 = 'S' THEN
+		tmp2 := tmp3;
+		i := i+1;
+		result:= result || '31';
+	ELSIF tmp2 = 's' THEN
+		tmp2 := tmp3;
+		i := i+1;
+	    result:= result || '31';
+	ELSE
+		result:= result || '30';
+	END IF;
+  ELSIF tmp = 't' THEN
+	IF tmp2 = 's' THEN
+		tmp2 := tmp3;
+		i := i+1;
+	    result:= result || '31';
+	ELSE
+		result:= result || '30';
+	END IF;
+  ELSIF tmp = 'ʦ' THEN
+    result:= result || '31';
+  ELSIF tmp = 'U' THEN
+    result:= result || '32';
+  ELSIF tmp = 'u' THEN
+    result:= result || '32';
+  ELSIF tmp = 'W' THEN
+    result:= result || '33';
+  ELSIF tmp = 'w' THEN
+    result:= result || '33';
+  ELSIF tmp = 'Y' THEN
+    result:= result || '34';
+  ELSIF tmp = 'y' THEN
+    result:= result || '34';
+  ELSIF tmp = 'Ƴ' THEN
+    result:= result || '35';
+  ELSIF tmp = 'Ƴ' THEN
+    result:= result || '35';
+  ELSIF tmp = 'Z' THEN
+    result:= result || '36';
+  ELSIF tmp = 'z' THEN
+    result:= result || '36';
+  ELSIF tmp = ' ' THEN
+    result:= result;
+  ELSIF tmp = '-' THEN
+    result:= result;
+  ELSIF tmp = '+' THEN
+    result:= result;
+  ELSIF tmp = '#' THEN
+    result:= result;
+  ELSE
+    result:= result || '99';
+  END IF;
+  i:=i+1;
+	END LOOP;
+  return( result );
+ END;
+$PROC$ LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
+
+
 -- ita Italian
 -- (a à) b c d (e é è) f g h (i ï ì í) j k l m n (o ò ó Ó Ò) p q r s t (u Ù ù Ú ú) v w x y z
 
@@ -810,23 +1404,6 @@ CREATE OR REPLACE FUNCTION ita_sort( varchar )
  END;
 $PROC$ LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
 
--- eng English
---
--- for the moment do nothing
-CREATE OR REPLACE FUNCTION eng_sort( varchar ) 
- RETURNS varchar AS '
-
- DECLARE
-  tmp		char;
-  result	varchar := '''';
-  length	integer;
- BEGIN
-  return( $1 );
- END;
-' LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
-
-
-
 
 -- jpn Japanese
 --
@@ -845,6 +1422,177 @@ CREATE OR REPLACE FUNCTION jpn_sort( varchar )
  END;
 ' LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
 
+
+-- kau Kanuri 
+-- ‘ a b c d e ə f g h i j k l m n ny o p r ɍ s sh t u w y z
+CREATE OR REPLACE FUNCTION kau_sort( varchar )
+ RETURNS varchar AS $PROC$
+
+ DECLARE
+  i		integer := 1;
+  tmp		char;
+  tmp2		char = SUBSTR( $1, 1, 1 );
+  tmp3		char;
+  result	varchar := '';
+  length	integer;
+ BEGIN
+ 	length := char_length($1);
+  	WHILE i <= length LOOP
+		tmp := tmp2;
+		tmp2 := SUBSTR( $1, i+1, 1 );
+		tmp3 := SUBSTR( $1, i+2, 1 );
+  IF tmp = '‘'  THEN
+    result:= result || '01';
+  ELSIF tmp = '‘'  THEN
+    result:= result || '01';
+  ELSIF tmp = 'A'  THEN
+    result:= result || '02';
+  ELSIF tmp = 'a'  THEN
+    result:= result || '02';
+  ELSIF tmp = 'B' THEN
+    result:= result || '03';
+  ELSIF tmp = 'b' THEN
+    result:= result || '03';
+  ELSIF tmp = 'C' THEN
+    result:= result || '04';
+  ELSIF tmp = 'c' THEN
+    result:= result || '04';
+  ELSIF tmp = 'D' THEN
+    result:= result || '05';
+  ELSIF tmp = 'd' THEN
+    result:= result || '05';
+  ELSIF tmp = 'E' THEN
+    result:= result || '06';
+  ELSIF tmp = 'e' THEN
+    result:= result || '06';
+  ELSIF tmp = 'Ə' THEN
+    result:= result || '07';
+  ELSIF tmp = 'ə' THEN
+    result:= result || '07';
+  ELSIF tmp = 'F' THEN
+	result:= result || '08';
+  ELSIF tmp = 'f' THEN
+	result:= result || '08';
+  ELSIF tmp = 'G' THEN
+	result:= result || '09';
+  ELSIF tmp = 'g' THEN
+	result:= result || '09';
+  ELSIF tmp = 'H' THEN
+    result:= result || '10';
+  ELSIF tmp = 'h' THEN
+    result:= result || '10';
+  ELSIF tmp = 'I' THEN
+    result:= result || '11';
+  ELSIF tmp = 'i' THEN
+    result:= result || '11';
+  ELSIF tmp = 'J' THEN
+    result:= result || '12';
+  ELSIF tmp = 'j' THEN
+    result:= result || '12';
+  ELSIF tmp = 'K' THEN
+	result:= result || '13';
+  ELSIF tmp = 'k' THEN
+	result:= result || '13';
+  ELSIF tmp = 'L' THEN
+    result:= result || '14';
+  ELSIF tmp = 'l' THEN
+    result:= result || '14';
+  ELSIF tmp = 'M' THEN
+    result:= result || '15';
+  ELSIF tmp = 'm' THEN
+    result:= result || '15';
+  ELSIF tmp = 'N' THEN
+	IF tmp2 = 'Y' THEN
+		tmp2 := tmp3;
+		i := i+1;
+		result:= result || '17';
+	ELSIF tmp2 = 'y' THEN
+		tmp2 := tmp3;
+		i := i+1;
+	    result:= result || '17';
+	ELSE
+		result:= result || '16';
+	END IF;
+  ELSIF tmp = 'n' THEN
+	IF tmp2 = 'y' THEN
+		tmp2 := tmp3;
+		i := i+1;
+	    result:= result || '17';
+	ELSE
+		result:= result || '16';
+	END IF;
+  ELSIF tmp = 'O' THEN
+    result:= result || '18';
+  ELSIF tmp = 'o' THEN
+    result:= result || '18';
+  ELSIF tmp = 'p' THEN
+    result:= result || '19';
+  ELSIF tmp = 'P' THEN
+    result:= result || '19';
+  ELSIF tmp = 'R' THEN
+    result:= result || '20';
+  ELSIF tmp = 'r' THEN
+    result:= result || '20';
+  ELSIF tmp = 'Ɍ' THEN
+    result:= result || '21';
+  ELSIF tmp = 'ɍ' THEN
+    result:= result || '21';
+  ELSIF tmp = 'S' THEN
+	IF tmp2 = 'H' THEN
+		tmp2 := tmp3;
+		i := i+1;
+		result:= result || '23';
+	ELSIF tmp2 = 'h' THEN
+		tmp2 := tmp3;
+		i := i+1;
+	    result:= result || '23';
+	ELSE
+		result:= result || '22';
+	END IF;
+  ELSIF tmp = 's' THEN
+	IF tmp2 = 'h' THEN
+		tmp2 := tmp3;
+		i := i+1;
+	    result:= result || '23';
+	ELSE
+		result:= result || '22';
+	END IF;
+  ELSIF tmp = 'T' THEN
+	result:= result || '24';
+  ELSIF tmp = 't' THEN
+	result:= result || '24';
+  ELSIF tmp = 'U' THEN
+    result:= result || '25';
+  ELSIF tmp = 'u' THEN
+    result:= result || '25';
+  ELSIF tmp = 'W' THEN
+    result:= result || '26';
+  ELSIF tmp = 'w' THEN
+    result:= result || '26';
+  ELSIF tmp = 'Y' THEN
+    result:= result || '27';
+  ELSIF tmp = 'y' THEN
+    result:= result || '27';
+  ELSIF tmp = 'Z' THEN
+    result:= result || '28';
+  ELSIF tmp = 'z' THEN
+    result:= result || '28';
+  ELSIF tmp = ' ' THEN
+    result:= result;
+  ELSIF tmp = '-' THEN
+    result:= result;
+  ELSIF tmp = '+' THEN
+    result:= result;
+  ELSIF tmp = '#' THEN
+    result:= result;
+  ELSE
+    result:= result || '99';
+  END IF;
+  i:=i+1;
+	END LOOP;
+  return( result );
+ END;
+$PROC$ LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
 
 
 -- kor Korean
@@ -1045,6 +1793,186 @@ CREATE OR REPLACE FUNCTION tha_sort( varchar )
  END;
 ' LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
 
+-- tmh Tamajaq
+-- a ǎ b c d ḍ e ə f g ğ h i j ǰ ɣ k x l ḷ m n ŋ o q r s ṣ š t ṭ u w y z ẓ
+CREATE OR REPLACE FUNCTION tmh_sort( varchar )
+ RETURNS varchar AS $PROC$
+
+ DECLARE
+  tmp     char;
+  result  varchar := '';
+  length  integer;
+ BEGIN
+ 	length := char_length($1);
+  	FOR i IN 1.. length LOOP
+  		tmp := SUBSTR( $1, i, 1 );
+  IF tmp = 'A'  THEN
+    result:= result || '01';
+  ELSIF tmp = 'a'  THEN
+    result:= result || '01';
+  ELSIF tmp = 'Ǎ'  THEN
+    result:= result || '02';
+  ELSIF tmp = 'ǎ'  THEN
+    result:= result || '02';
+  ELSIF tmp = 'B' THEN
+    result:= result || '03';
+  ELSIF tmp = 'b' THEN
+    result:= result || '03';
+  ELSIF tmp = 'C' THEN
+    result:= result || '04';
+  ELSIF tmp = 'c' THEN
+    result:= result || '04';
+  ELSIF tmp = 'D' THEN
+    result:= result || '05';
+  ELSIF tmp = 'd' THEN
+    result:= result || '05';
+  ELSIF tmp = 'Ḍ' THEN
+    result:= result || '06';
+  ELSIF tmp = 'ḍ' THEN
+    result:= result || '06';
+  ELSIF tmp = 'E' THEN
+    result:= result || '07';
+  ELSIF tmp = 'e' THEN
+    result:= result || '07';
+  ELSIF tmp = 'Ə' THEN
+    result:= result || '08';
+  ELSIF tmp = 'ə' THEN
+    result:= result || '08';
+  ELSIF tmp = 'F' THEN
+    result:= result || '09';
+  ELSIF tmp = 'f' THEN
+    result:= result || '09'; 
+  ELSIF tmp = 'G' THEN
+    result:= result || '10';
+  ELSIF tmp = 'g' THEN
+    result:= result || '10';
+  ELSIF tmp = 'Ğ' THEN
+    result:= result || '11';
+  ELSIF tmp = 'ğ' THEN
+    result:= result || '11';
+  ELSIF tmp = 'H' THEN
+    result:= result || '12';
+  ELSIF tmp = 'h' THEN
+    result:= result || '12';
+  ELSIF tmp = 'I' THEN
+    result:= result || '13';
+  ELSIF tmp = 'i' THEN
+    result:= result || '13';
+  ELSIF tmp = 'J' THEN
+    result:= result || '14';
+  ELSIF tmp = 'j' THEN
+    result:= result || '14';
+  ELSIF tmp = 'J' THEN
+    result:= result || '15';
+  ELSIF tmp = 'ǰ' THEN
+    result:= result || '15'; 
+  ELSIF tmp = 'Ɣ' THEN
+    result:= result || '16';
+  ELSIF tmp = 'ɣ' THEN
+    result:= result || '16'; 
+  ELSIF tmp = 'K' THEN
+    result:= result || '17';
+  ELSIF tmp = 'k' THEN
+    result:= result || '17';
+  ELSIF tmp = 'X' THEN
+    result:= result || '18';
+  ELSIF tmp = 'x' THEN
+    result:= result || '18';
+  ELSIF tmp = 'L' THEN
+    result:= result || '19';
+  ELSIF tmp = 'l' THEN
+    result:= result || '19';
+  ELSIF tmp = 'Ḷ' THEN
+    result:= result || '20';
+  ELSIF tmp = 'ḷ' THEN
+    result:= result || '20';
+  ELSIF tmp = 'M' THEN
+    result:= result || '21';
+  ELSIF tmp = 'm' THEN
+    result:= result || '21';
+  ELSIF tmp = 'N' THEN
+    result:= result || '22';
+  ELSIF tmp = 'n' THEN
+    result:= result || '22';
+  ELSIF tmp = 'Ŋ' THEN
+    result:= result || '23';
+  ELSIF tmp = 'ŋ' THEN
+    result:= result || '23';
+  ELSIF tmp = 'O' THEN
+    result:= result || '24';
+  ELSIF tmp = 'o' THEN
+    result:= result || '24';
+  ELSIF tmp = 'p' THEN
+    result:= result || '25';
+  ELSIF tmp = 'P' THEN
+    result:= result || '25';
+  ELSIF tmp = 'Q' THEN
+    result:= result || '26';
+  ELSIF tmp = 'q' THEN
+    result:= result || '26';
+  ELSIF tmp = 'R' THEN
+    result:= result || '27';
+  ELSIF tmp = 'r' THEN
+    result:= result || '27';
+  ELSIF tmp = 'S' THEN
+    result:= result || '28';
+  ELSIF tmp = 's' THEN
+    result:= result || '28';
+  ELSIF tmp = 'Ṣ' THEN
+    result:= result || '29';
+  ELSIF tmp = 'ṣ' THEN
+    result:= result || '29';
+  ELSIF tmp = 'Š' THEN
+    result:= result || '30';
+  ELSIF tmp = 'š' THEN
+    result:= result || '30';
+  ELSIF tmp = 'T' THEN
+    result:= result || '31';
+  ELSIF tmp = 't' THEN
+    result:= result || '31';
+  ELSIF tmp = 'Ṭ' THEN
+    result:= result || '32';
+  ELSIF tmp = 'ṭ' THEN
+    result:= result || '32';
+  ELSIF tmp = 'U' THEN
+    result:= result || '33';
+  ELSIF tmp = 'u' THEN
+    result:= result || '33';
+  ELSIF tmp = 'V' THEN
+    result:= result || '34';
+  ELSIF tmp = 'v' THEN
+    result:= result || '34';
+  ELSIF tmp = 'W' THEN
+    result:= result || '35';
+  ELSIF tmp = 'w' THEN
+    result:= result || '35';
+  ELSIF tmp = 'Y' THEN
+    result:= result || '36';
+  ELSIF tmp = 'y' THEN
+    result:= result || '36';
+  ELSIF tmp = 'Z' THEN
+    result:= result || '37';
+  ELSIF tmp = 'z' THEN
+    result:= result || '37';
+  ELSIF tmp = 'Ẓ' THEN
+    result:= result || '38';
+  ELSIF tmp = 'ẓ' THEN
+    result:= result || '38';
+  ELSIF tmp = ' ' THEN
+    result:= result;
+  ELSIF tmp = '-' THEN
+    result:= result;
+  ELSIF tmp = '+' THEN
+    result:= result;
+  ELSIF tmp = '#' THEN
+    result:= result;
+  ELSE
+    result:= result || '99';
+  END IF;
+	END LOOP;
+  return( result );
+   END;
+$PROC$ LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
 
 
 -- vie Vietnamese
@@ -1091,18 +2019,26 @@ CREATE OR REPLACE FUNCTION multilingual_sort( varchar,varchar )
  BEGIN
   lang := $1;
   word := $2;
-   IF lang = ''deu'' THEN
+   IF lang = ''bam'' THEN
+    result:= bam_sort(word);
+  ELSIF lang = ''deu'' THEN
     result:= deu_sort(word);
+  ELSIF lang = ''dje'' THEN
+    result:= dje_sort(word);
   ELSIF lang = ''eng'' THEN
     result:= eng_sort(word);
   ELSIF lang = ''est'' THEN
     result:= est_sort(word);
   ELSIF lang = ''fra'' THEN
     result:= fra_sort(word);
+  ELSIF lang = ''hau'' THEN
+    result:= hau_sort(word);
   ELSIF lang = ''ita'' THEN
     result:= ita_sort(word);
   ELSIF lang = ''jpn'' THEN
     result:= jpn_sort(word);
+  ELSIF lang = ''kau'' THEN
+    result:= kau_sort(word);
   ELSIF lang = ''kor'' THEN
     result:= kor_sort(word);
  ELSIF lang = ''msa'' THEN
@@ -1111,6 +2047,8 @@ CREATE OR REPLACE FUNCTION multilingual_sort( varchar,varchar )
     result:= slv_sort(word);
  ELSIF lang = ''tha'' THEN
     result:= tha_sort(word);
+ ELSIF lang = ''tmh'' THEN
+    result:= tmh_sort(word);
  ELSIF lang = ''vie'' THEN
     result:= vie_sort(word);
  ELSIF lang = ''zho'' THEN
