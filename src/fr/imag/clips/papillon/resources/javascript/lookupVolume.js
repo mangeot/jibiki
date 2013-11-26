@@ -4,14 +4,62 @@
 	var entriesHeight = 0;
  	var nbentries = 0;
  	var lastEntryOffset = 0;
- 	var entriesSize = 0;
+	var lastEntriesSize = 0;
+	var entriesSize = 0;
  	var listTop = false;
  	var listBottom = false;
+
+function lookupIndex (parameters, direction) {
+	load = true;
+	$('.loadmore').show();
+		
+	//On lance la fonction ajax
+	$.ajax({
+		   url: 'LookupVolume.po',
+		   type: 'get',
+		   data: parameters+'&DIRECTION='+direction,
+		   dataType: "html",
+		   
+		   //Succès de la requête
+		   success: function(data) {
+		   //On masque le loader
+		   $('.loadmore').fadeOut(500);
+		  // if ($(data).children().length) {
+			/* On affiche le résultat s'il n'est pas nul */
+			if (direction=='ASC') {
+				$('.lookupentry:last').after($(data).children());
+				listBottom = ($('.lookupentry').size()-lastEntriesSize<limit);
+			}
+			else {
+				$('.lookupentry:first').before($(data).children());
+				listTop = ($('.lookupentry').size()-lastEntriesSize<limit);
+				$('#lookupentries').scrollTop(entriesHeight/2);
+			}
+		   //}
+		   //je rajoute un offset
+		   if (direction=='ASC' && parameters.indexOf('action=advancedLookup')>=0 && $(data).children().length) {
+			var regex = /OFFSET=(\d+)/;
+			var matches = parameters.match(regex);
+			if (matches) {
+				var newOffset = parseInt(matches[1])+limit;
+				parameters = parameters.replace(regex,"OFFSET="+newOffset);
+				$('#QueryString').attr('data-query-string',parameters+'&OFFSET2='+limit);
+			}
+		   }
+		   /* On actualise la valeur offset de la dernière entrée */
+			lastEntryOffset = $('.lookupentry:last').offset().top - $('.lookupentry:first').offset().top - entriesHeight;
+			//On remet la valeur à faux car c'est fini
+			load = false;
+		   }
+		   });
+}
+
 
 $(document).ready(function(){ // Quand le document est complètement chargé
 	//on cache le loader
 	$('.loadmore').hide();
 	$('.loadcontent').hide();
+	action = $('#actionJS').val();
 	limit = parseInt($('#LIMIT').val(),10);
   	entriesHeight = $('#lookupentries').height();
  	lastEntryOffset = entriesHeight;
@@ -27,16 +75,12 @@ $(document).ready(function(){ // Quand le document est complètement chargé
  			var direction = (scrollTop >= lastEntryOffset) ? 'ASC': 'DESC';
  			if ((direction=='ASC' && !listBottom) || (direction=='DESC' && !listTop)) {
 
-			// la valeur passe à vrai, on va charger
-			load = true;
-			//On affiche un loader
-			$('.loadmore').show();
 
 			//console.log('load: lastEntryOffset: ' + lastEntryOffset + ' scrollTop: ' +scrollTop + ' listTop: ' +listTop);
 
 			//On récupère le headword du dernier entrée affiché
 			var msort = (direction=='ASC') ? $('.lookupentry:last').attr('title') : $('.lookupentry:first').attr('title');
- 			var lastEntriesSize = $('.lookupentry').size();
+ 			lastEntriesSize = $('.lookupentry').size();
 			var volume = $('#VOLUME').val();
 			var key='cdm-headword';
 			if (volume=='Motamot_khm_api') {
@@ -44,33 +88,8 @@ $(document).ready(function(){ // Quand le document est complètement chargé
 				key='cdm-pronunciation';
 			}
 							   
-			//On lance la fonction ajax
-			$.ajax({
-				url: 'LookupVolume.po',
-				type: 'get',
-				data: 'VOLUME='+volume+'&LIMIT='+limit+'&KEY='+key+'&MSORT='+msort+'&DIRECTION='+direction,
-				dataType: "html",
- 
-				//Succès de la requête
-				success: function(data) {
-					//On masque le loader
-					$('.loadmore').fadeOut(500);
- 					/* On affiche le résultat */
-					if (direction=='ASC') {
-						$('.lookupentry:last').after($(data).children());
-						listBottom = ($('.lookupentry').size()-lastEntriesSize<limit);
-					}
-					else {
-						$('.lookupentry:first').before($(data).children());
-						listTop = ($('.lookupentry').size()-lastEntriesSize<limit);
- 						$('#lookupentries').scrollTop(entriesHeight/2);
-					}
-					/* On actualise la valeur offset de la dernière entrée */
- 					lastEntryOffset = $('.lookupentry:last').offset().top - $('.lookupentry:first').offset().top - entriesHeight;
-					//On remet la valeur à faux car c'est fini
-					load = false;
-				}
-			});
+			var queryString = (action=='lookupVolume')?'action='+action+'&VOLUME='+volume+'&LIMIT='+limit+'&KEY='+key+'&MSORT='+msort:$('#QueryString').attr('data-query-string');
+			lookupIndex(queryString, direction);
 			}
 		}
 	});
@@ -92,13 +111,12 @@ function queryPrefixVolume(word, volume) {
 			$.ajax({
 				url: 'LookupVolume.po',
 				type: 'get',
-				data: 'VOLUME='+volume+'&LIMIT='+halflimit+'&KEY='+key+'&WORD='+word+'&DIRECTION=DESC',
+				data: 'action=lookupVolume&VOLUME='+volume+'&LIMIT='+halflimit+'&KEY='+key+'&WORD='+word+'&DIRECTION=DESC',
 				dataType: "html",
  
 				//Succès de la requête
 				success: function(data) {
- 					/* On affiche le résultat après
-					le dernier commentaire */
+ 					/* On affiche le résultat après la dernière entrée */
 				   if ($('.lookupentry').length) {
 					$('.lookupentry:first').before($(data).children());
 				   /* On actualise la valeur offset de la dernière entrée */
@@ -110,20 +128,17 @@ function queryPrefixVolume(word, volume) {
 				   else {
 					$('#lookupentries').append($(data).children());
 				   }
-				   
 				}
 			});
 		$.ajax({
 		   url: 'LookupVolume.po',
 		   type: 'get',
-		   data: 'VOLUME='+volume+'&LIMIT='+halflimit+'&KEY='+key+'&WORD='+word+'&DIRECTION=ASC&STRATEGY=>%3D',
-		   //data: 'VOLUME='+volume+'&LIMIT='+halflimit+'&KEY='+key+'&WORD='+word+'&DIRECTION=ASC',
+		   data: 'action=lookupVolume&VOLUME='+volume+'&LIMIT='+halflimit+'&KEY='+key+'&WORD='+word+'&DIRECTION=ASC&STRATEGY=>%3D',
 		   dataType: "html",
 		   
 		   //Succès de la requête
 		   success: function(data) {
-		   /* On affiche le résultat après
-			le dernier commentaire */
+		   /* On affiche le résultat après la dernière entrée */
 			if ($('.lookupentry').length) {
 			   $('.lookupentry:last').after($(data).children());
 			   /* On actualise la valeur offset de la dernière entrée */
@@ -135,11 +150,11 @@ function queryPrefixVolume(word, volume) {
 			   else {
 			   $('#lookupentries').append($(data).children());
 			   }
-
 		   }
 		   });
 }
-			
+
+
 function lookupVolume (parameters) {
 			//On lance la fonction ajax
 			load = true;
@@ -150,7 +165,7 @@ function lookupVolume (parameters) {
 			$.ajax({
 				url: 'LookupVolume.po',
 				type: 'get',
-				data: parameters,
+				data: 'action=queryHandle&'+parameters,
  
 				//Succès de la requête
 				success: function(data) {
@@ -164,6 +179,7 @@ function lookupVolume (parameters) {
 				}
 			});
 	}
+
 
 function queryOneEntry (entry, volume) {
 	//On lance la fonction ajax
@@ -182,7 +198,7 @@ function queryOneEntry (entry, volume) {
 	$.ajax({
 		   url: 'LookupVolume.po',
 		   type: 'get',
-		   data: 'VOLUME='+volume+'&ENTRY='+entry + '&KEY=' + key,
+		   data: 'action=queryOneEntry&VOLUME='+volume+'&ENTRY='+entry + '&KEY=' + key,
 		   
 		   //Succès de la requête
 		   success: function(data) {

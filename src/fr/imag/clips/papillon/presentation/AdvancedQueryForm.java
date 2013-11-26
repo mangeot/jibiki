@@ -140,16 +140,17 @@ import org.w3c.dom.Element;
 
 // Papillon imports
 import fr.imag.clips.papillon.presentation.xhtml.orig.AdvancedQueryFormXHTML;
-import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
-import fr.imag.clips.papillon.business.dictionary.Volume;
-import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
-import fr.imag.clips.papillon.business.dictionary.QueryRequest;
-import fr.imag.clips.papillon.business.dictionary.QueryCriteria;
-import fr.imag.clips.papillon.business.dictionary.IQuery;
-import fr.imag.clips.papillon.business.dictionary.QueryParameter;
+import fr.imag.clips.papillon.business.dictionary.AvailableLanguages;
 import fr.imag.clips.papillon.business.dictionary.Dictionary;
 import fr.imag.clips.papillon.business.dictionary.DictionariesFactory;
-import fr.imag.clips.papillon.business.dictionary.AvailableLanguages;
+import fr.imag.clips.papillon.business.dictionary.IQuery;
+import fr.imag.clips.papillon.business.dictionary.QueryParameter;
+import fr.imag.clips.papillon.business.dictionary.QueryRequest;
+import fr.imag.clips.papillon.business.dictionary.QueryCriteria;
+import fr.imag.clips.papillon.business.dictionary.VolumeCache;
+import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
+import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
+import fr.imag.clips.papillon.business.dictionary.Volume;
 import fr.imag.clips.papillon.business.utility.Utility;
 import fr.imag.clips.papillon.business.utility.StringNormalizer;
 import fr.imag.clips.papillon.business.locales.Languages;
@@ -167,6 +168,8 @@ public class AdvancedQueryForm {
     protected Node queryForm;
     
     public final static String ALL_TARGETS = "*ALL*";
+	/*public final static String OFFSET_PARAMETER = AdvancedQueryFormXHTML.NAME_OFFSET*/
+	public final static String OFFSET_PARAMETER = "OFFSET";
     
     protected static final String actionPatternString = "^(\\+|\\-)([^\\.]+)\\.(\\d+)$";
     protected static Pattern actionPattern = Pattern.compile(actionPatternString);
@@ -291,7 +294,7 @@ public class AdvancedQueryForm {
         throws java.io.UnsupportedEncodingException,
         com.lutris.appserver.server.httpPresentation.HttpPresentationException
     {
-        String nbr = AbstractPO.myGetParameter(req, AdvancedQueryFormXHTML.NAME_NB_RESULT_PER_PAGE);
+        String nbr = AbstractPO.myGetParameter(req, AdvancedQueryFormXHTML.NAME_LIMIT);
         if (null == nbr || nbr.equals("")) {
             nbr = "10";         // all (0)
         }
@@ -304,7 +307,7 @@ public class AdvancedQueryForm {
         throws java.io.UnsupportedEncodingException,
         com.lutris.appserver.server.httpPresentation.HttpPresentationException
     {
-        String nbr = AbstractPO.myGetParameter(req, AdvancedQueryFormXHTML.NAME_NB_RESULT_PER_PAGE);
+        String nbr = AbstractPO.myGetParameter(req, AdvancedQueryFormXHTML.NAME_LIMIT);
         if (null == nbr || nbr.equals("")) {
             nbr = "10";         // all (0)
         }
@@ -316,7 +319,7 @@ public class AdvancedQueryForm {
         throws java.io.UnsupportedEncodingException,
         com.lutris.appserver.server.httpPresentation.HttpPresentationException
     {
-        String ofs = AbstractPO.myGetParameter(req, AdvancedQueryFormXHTML.NAME_OFFSET);
+        String ofs = AbstractPO.myGetParameter(req, OFFSET_PARAMETER);
         return (null == ofs || ofs.equals("")) ? "0" : ofs;
     }
     
@@ -324,7 +327,7 @@ public class AdvancedQueryForm {
         throws java.io.UnsupportedEncodingException,
         com.lutris.appserver.server.httpPresentation.HttpPresentationException
     {
-        String ofs = AbstractPO.myGetParameter(req, AdvancedQueryFormXHTML.NAME_OFFSET);
+        String ofs = AbstractPO.myGetParameter(req, OFFSET_PARAMETER);
         return (null == ofs || ofs.equals("")) ? 0 : Integer.valueOf(ofs).intValue();
     }
     
@@ -516,6 +519,22 @@ public class AdvancedQueryForm {
         }
         dictOption.getParentNode().removeChild(dictOption);
         
+		
+		//populate form with non standard indexed CDM elements in the facet list 
+		XHTMLSelectElement facet = queryDoc.getElementFacet();
+		XHTMLOptionElement templateOption = (XHTMLOptionElement) facet.getLastChild();
+        Iterator iterCdmElements = fr.imag.clips.papillon.business.dictionary.VolumeCache.getNonStandardCDMElements().iterator();
+        while ( iterCdmElements.hasNext() ) {
+            String CdmElement = (String)iterCdmElements.next();
+			templateOption = (XHTMLOptionElement) templateOption.cloneNode(true);
+			Text optionTextTemplate = (Text)templateOption.getFirstChild();             
+            templateOption.setValue(CdmElement);
+            templateOption.setLabel(CdmElement);
+			optionTextTemplate.setData(CdmElement);
+			facet.appendChild(templateOption);
+        }
+		
+		
         // Populate form with all know target languages
         XHTMLOptionElement targetOption = queryDoc.getElementTargetTmpl();
         targetOption.removeAttribute("id");
@@ -551,7 +570,7 @@ public class AdvancedQueryForm {
         // put parameters back into form
         //queryDoc.getElementOffset().setValue(Integer.toString(qp.getOffset()));
         
-        AbstractPO.setSelected(queryDoc.getElementNumberOfResultPerPage(), Integer.toString(qp.getLimit()));
+        AbstractPO.setSelected(queryDoc.getElementLIMITSelect(), Integer.toString(qp.getLimit()));
         		
 			for (Iterator iter = qp.getDictionaries().iterator(); iter.hasNext();) {
 				Dictionary dict = (Dictionary)iter.next();
@@ -571,7 +590,6 @@ public class AdvancedQueryForm {
         Element criterion = queryDoc.getElementCriterion();
         XHTMLImageElement minus = queryDoc.getElementMinus();
         XHTMLImageElement plus = queryDoc.getElementPlus();
-        XHTMLSelectElement facet = queryDoc.getElementFacet();
         XHTMLSelectElement oper = queryDoc.getElementOperator();
         XHTMLInputElement valuefield = queryDoc.getElementValueField();
         //Element sourceLangSelectArea = queryDoc.getElementSourceLanguageSelection();
@@ -604,11 +622,11 @@ public class AdvancedQueryForm {
         } else {
             // Quick links
             XHTMLElement MyFinishedContributionsElement = queryDoc.getElementMyFinishedContributions();
-            String href = "EditEntryInit.po?CRITERIA_NB=2&FACET.0=cdm-modification-author&OPERATOR.0=2&FACETVALUE.0=" + sessionData.getUser().getLogin() + "&SOURCE.0=All&FACET.1=cdm-contribution-status&OPERATOR.1=2&FACETVALUE.1=" + VolumeEntry.FINISHED_STATUS + "&SOURCE.1=All&NB_RESULT_PER_PAGE=10&XSL=&OFFSET=&lookup=Go";
+            String href = "EditEntryInit.po?CRITERIA_NB=2&FACET.0=cdm-modification-author&OPERATOR.0=2&FACETVALUE.0=" + sessionData.getUser().getLogin() + "&SOURCE.0=All&FACET.1=cdm-contribution-status&OPERATOR.1=2&FACETVALUE.1=" + VolumeEntry.FINISHED_STATUS + "&SOURCE.1=All&LIMIT=10&lookup=Go";
             MyFinishedContributionsElement.setAttribute("href", href);
             
             XHTMLElement MyNotFinishedContributionsElement = queryDoc.getElementMyNotFinishedContributions();
-            href = "EditEntryInit.po?&CRITERIA_NB=2&FACET.0=cdm-modification-author&OPERATOR.0=2&FACETVALUE.0=" + sessionData.getUser().getLogin() + "&SOURCE.0=All&FACET.1=cdm-contribution-status&OPERATOR.1=2&FACETVALUE.1=" + VolumeEntry.NOT_FINISHED_STATUS + "&SOURCE.1=All&NB_RESULT_PER_PAGE=10&XSL=&OFFSET=&lookup=Go";
+            href = "EditEntryInit.po?&CRITERIA_NB=2&FACET.0=cdm-modification-author&OPERATOR.0=2&FACETVALUE.0=" + sessionData.getUser().getLogin() + "&SOURCE.0=All&FACET.1=cdm-contribution-status&OPERATOR.1=2&FACETVALUE.1=" + VolumeEntry.NOT_FINISHED_STATUS + "&SOURCE.1=All&LIMIT=10&lookup=Go";
             MyNotFinishedContributionsElement.setAttribute("href", href);
         }
         
@@ -715,7 +733,6 @@ public class AdvancedQueryForm {
         Iterator iter = fr.imag.clips.papillon.business.dictionary.AvailableLanguages.getCdmElementsWithDefaultLanguage().iterator();
         while ( iter.hasNext() ) {
             String CdmElement = (String)iter.next();
-            
             //
             NodeList list = (NodeList) rowShowHideTemplate.getChildNodes();
             Text parametersToHide = (Text) list.item(0).getFirstChild();
@@ -723,8 +740,7 @@ public class AdvancedQueryForm {
             rowShowHideTemplate.getParentNode().appendChild(rowShowHideTemplate.cloneNode(true));
         }
         rowShowHideTemplate.getParentNode().removeChild(rowShowHideTemplate);
-        
-        //
+        		
         queryForm = queryDoc.getElementAdvancedSearchForm();
 	}
         
@@ -740,23 +756,23 @@ public class AdvancedQueryForm {
         
         // View
         String url = AdvancedQueryFormXHTML.NAME_XSL + "=" + qp.getXsl();
-        url += "&" + AdvancedQueryFormXHTML.NAME_NB_RESULT_PER_PAGE + "=" + qp.getLimit();
-        url += "&" + AdvancedQueryFormXHTML.NAME_OFFSET + "=" + qp.getOffset();
+        url += "&amp;" + AdvancedQueryFormXHTML.NAME_LIMIT + "=" + qp.getLimit();
+        url += "&amp;" + OFFSET_PARAMETER + "=" + qp.getOffset();
         
         // Dictionnaries
         for (Iterator iter = qp.getDictionaries().iterator(); iter.hasNext();) {
             Dictionary dict = (Dictionary)iter.next();
-            url += "&" + AdvancedQueryFormXHTML.NAME_DICTIONARIES  + "=" +  dict.getName();
+            url += "&amp;" + AdvancedQueryFormXHTML.NAME_DICTIONARIES  + "=" +  dict.getName();
         }
         
         // target languages
         for (Iterator iter = qp.getTargets().iterator(); iter.hasNext();) {
-            url += "&" + AdvancedQueryFormXHTML.NAME_TARGETS  + "=" +  (String)iter.next();
+            url += "&amp;" + AdvancedQueryFormXHTML.NAME_TARGETS  + "=" +  (String)iter.next();
         }
         
         // CriteriaS
         List criteria = qp.getCriteria();
-        url+= "&" + AdvancedQueryFormXHTML.NAME_CRITERIA_NB + "=" + criteria.size();
+        url+= "&amp;" + AdvancedQueryFormXHTML.NAME_CRITERIA_NB + "=" + criteria.size();
         
         //
         int i = 0;
@@ -764,13 +780,13 @@ public class AdvancedQueryForm {
             String[] key = (String[])iter.next();    
             
             //
-            url += "&" + AdvancedQueryFormXHTML.NAME_FACET + "." + Integer.toString(i) + "=" + key[0];
+            url += "&amp;" + AdvancedQueryFormXHTML.NAME_FACET + "." + Integer.toString(i) + "=" + key[0];
             if (null != key[1])
-                url += "&" + AdvancedQueryFormXHTML.NAME_SOURCE + "." + Integer.toString(i) + "=" + key[1];
-            url += "&" + AdvancedQueryFormXHTML.NAME_FACETVALUE + "." + Integer.toString(i) + "=" + AbstractPO.myUrlEncode(key[2]);
+                url += "&amp;" + AdvancedQueryFormXHTML.NAME_SOURCE + "." + Integer.toString(i) + "=" + key[1];
+            url += "&amp;" + AdvancedQueryFormXHTML.NAME_FACETVALUE + "." + Integer.toString(i) + "=" + AbstractPO.myUrlEncode(key[2]);
             //int operValue = index(IQuery.QueryBuilderStrategy, key[3]);
             //url += "&" + AdvancedQueryFormXHTML.NAME_OPERATOR + "." + Integer.toString(i) + "=" + Integer.toString(operValue); 
-            url += "&" + AdvancedQueryFormXHTML.NAME_OPERATOR + "." + Integer.toString(i) + "=" + key[3]; 
+            url += "&amp;" + AdvancedQueryFormXHTML.NAME_OPERATOR + "." + Integer.toString(i) + "=" + key[3]; 
             
             //
             i++;

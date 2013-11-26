@@ -162,7 +162,7 @@ public class IndexFactory {
 	public final static String ENTRYID_FIELD = "entryid";
 	public final static String MSORT_FIELD = "msort";
 	
-	public final static String ORDER_ASCENDING = "";
+	public final static String ORDER_ASCENDING = "ASC";
 	public final static String ORDER_DESCENDING = "DESC";
 	
 	protected final static String databaseName = IndexDO.get_logicalDBName();

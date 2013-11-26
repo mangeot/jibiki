@@ -209,6 +209,7 @@ import com.lutris.appserver.server.sql.DBTransaction;
 import fr.imag.clips.papillon.CurrentDBTransaction;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.PapillonLogger;
+import fr.imag.clips.papillon.business.edition.GenerateTemplate;
 import fr.imag.clips.papillon.business.user.User;
 import fr.imag.clips.papillon.business.xml.XMLServices;
 import fr.imag.clips.papillon.business.xsl.XslSheetFactory;
@@ -625,6 +626,20 @@ public class VolumesFactory {
         */
     }
 
+	/**
+     * Find volume by name
+     *
+     * @param String
+     * @return Volume
+     * @throws PapillonBusinessException
+     */
+    public static Volume getVolumeByIndexDbname(String indexDbname)
+	throws PapillonBusinessException {
+		
+        //
+        return VolumeCache.getVolumeInCacheByIndexDbname(indexDbname);
+    }
+	
 
     /**
      * Get volume by handle
@@ -707,6 +722,9 @@ public class VolumesFactory {
             resVolume = VolumesFactory.newVolume(dict.getName(), volume, fileURL);
 			//PapillonLogger.writeDebugMsg("parseVolumeMetadata: linksTable size: " + resVolume.getLinksTable().size());
             if (null != resVolume) {
+				if ((resVolume.getTemplateInterface() == null || resVolume.getTemplateInterface() == "") && resVolume.getTemplateEntry() !=null && resVolume.getTemplateEntry() != "" && resVolume.getXmlSchema() !=null && resVolume.getXmlSchema() !="") {
+					GenerateTemplate.generateInterfaceTemplate(resVolume);
+				}
                 resVolume.save();
 
                 NodeList stylesheets = (NodeList) docXml.getElementsByTagName(XSLSHEET_TAG);

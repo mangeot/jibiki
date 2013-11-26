@@ -255,11 +255,14 @@ public class HandleEntryModifications extends EditingBasePO {
 			//ResultPreProcessor preProcessor = ResultPreProcessorFactory.getPreProcessor(newVolumeEntry);
 			//preProcessor.transformation(newVolumeEntry, this.getUser());
 			
+			
             // Get document element
 			Element myEntry = newVolumeEntry.getDom().getDocumentElement();
             
             // Get template entry
 			Element myTemplateEntry = UITemplates.getTemplateEntry(volumeName);
+			
+			String anchor = "";
 			
 			// Fill DOM structure
 			if (newVolumeEntry!=null) {
@@ -276,7 +279,7 @@ public class HandleEntryModifications extends EditingBasePO {
 					String parentElement = submitAdd.substring(plus+1);
 					String[] siblingElements = myGetParameterValues(Select_PARAMETER);
 					if (DEBUG) PapillonLogger.writeDebugMsg ("HandleEntryModifications : + " + elementName);   
-					UIGenerator.addElement(elementName, parentElement, myEntry, myTemplateEntry, siblingElements);
+					anchor = UIGenerator.addElement(elementName, parentElement, myEntry, myTemplateEntry, siblingElements);
 				}
 			}
 			// Delete elements (MUST be after updateElement because it modifies the element ids.)
@@ -287,7 +290,7 @@ public class HandleEntryModifications extends EditingBasePO {
 					String elementName = submitDelete.substring(0,plus);
 					String parentElement = submitDelete.substring(plus+1);
 					String[] selectedElements = myGetParameterValues(Select_PARAMETER);
-					UIGenerator.deleteElements(elementName, parentElement, selectedElements, myEntry, myTemplateEntry);
+					anchor = UIGenerator.deleteElements(elementName, parentElement, selectedElements, myEntry, myTemplateEntry);
 				}
 			}
 			// Move elements up
@@ -298,7 +301,7 @@ public class HandleEntryModifications extends EditingBasePO {
 					String elementName = submitMoveUp.substring(0,plus);
 					String parentElement = submitMoveUp.substring(plus+1);
 					String[] selectedElements = myGetParameterValues(Select_PARAMETER);
-					UIGenerator.moveElementsUp(elementName, parentElement, selectedElements, myEntry);
+					anchor = UIGenerator.moveElementsUp(elementName, parentElement, selectedElements, myEntry);
 				}
 			}
 			// Move elements Down
@@ -309,7 +312,7 @@ public class HandleEntryModifications extends EditingBasePO {
 					String elementName = submitMoveDown.substring(0,plus);
 					String parentElement = submitMoveDown.substring(plus+1);
 					String[] selectedElements = myGetParameterValues(Select_PARAMETER);
-					UIGenerator.moveElementsDown(elementName, parentElement, selectedElements, myEntry);
+					anchor = UIGenerator.moveElementsDown(elementName, parentElement, selectedElements, myEntry);
 				}
 			}
 			// Choose elements 
@@ -319,7 +322,7 @@ public class HandleEntryModifications extends EditingBasePO {
 				if (plus > 0) {
 					String elementId = submitChoose.substring(0,plus);
 					String parentId = submitChoose.substring(plus+1);
-					UIGenerator.chooseElement(choose,parentId,myEntry, myTemplateEntry);
+					anchor = UIGenerator.chooseElement(choose,parentId,myEntry, myTemplateEntry);
 				}
 			}
 			
@@ -336,7 +339,8 @@ public class HandleEntryModifications extends EditingBasePO {
                                                   EditEntryURL + "?" + 
                                                   EditEntry.VolumeName_PARAMETER + "=" + newVolumeEntry.getVolumeName() + "&" + 
                                                   EditEntry.EntryHandle_PARAMETER + "=" + newVolumeEntry.getHandle() + "&" +
-                                                  EditEntry.Referrer_PARAMETER + "=" + myUrlEncode(referrer));
+                                                  EditEntry.Referrer_PARAMETER + "=" + myUrlEncode(referrer) + "#" + anchor
+												  );
 	}
 	
 	//

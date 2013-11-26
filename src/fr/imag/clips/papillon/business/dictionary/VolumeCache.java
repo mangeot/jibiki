@@ -43,6 +43,8 @@ public class VolumeCache {
     
     // Volume cache
     private static java.util.TreeMap volumeCache;
+    private static java.util.TreeMap volumeCacheByIndexDbname;
+    private static java.util.TreeMap nonStandardCDMElements;
     private static Hashtable volumeCacheByHandle;
     private static Hashtable volumeCacheByDictionaryName;
     private static Hashtable volumeCacheBySource;
@@ -55,14 +57,41 @@ public class VolumeCache {
     * 
     */
     public static void volumeCacheInit() {            
-                volumeCache = new java.util.TreeMap();
-                volumeCacheByHandle = new Hashtable();
-                volumeCacheByDictionaryName = new Hashtable();
-                volumeCacheBySource = new Hashtable();
-                volumeCacheByTarget = new Hashtable();
-        }
+		volumeCache = new java.util.TreeMap();
+		volumeCacheByIndexDbname = new java.util.TreeMap();
+		volumeCacheByHandle = new Hashtable();
+		volumeCacheByDictionaryName = new Hashtable();
+		volumeCacheBySource = new Hashtable();
+		volumeCacheByTarget = new Hashtable();
+		nonStandardCDMElements = new java.util.TreeMap();
+	}
     
     
+	
+	protected static void putNonStandardCDMElementsInCache(java.util.HashMap CdmElementsTable)  {
+		
+		for (Iterator langKeys = CdmElementsTable.keySet().iterator(); langKeys.hasNext();) {
+			String lang = (String) langKeys.next();
+			
+			java.util.HashMap tmpTable = (java.util.HashMap) CdmElementsTable.get(lang);
+			for (Iterator keys = tmpTable.keySet().iterator(); keys.hasNext();) {
+				String CdmElement = (String) keys.next();
+				
+				if (CdmElement.length()<4 || (CdmElement.length()>=4 && !CdmElement.substring(0,4).equals("cdm-"))) {
+					ArrayList myArrayList = (ArrayList) tmpTable.get(CdmElement);
+					boolean isIndex = false;
+					if (myArrayList != null) {
+						isIndex = ((Boolean) myArrayList.get(1)).booleanValue();
+						if (isIndex) {
+							PapillonLogger.writeDebugMsg("putNonStandardCDMElementInCache, key " + CdmElement + ":");
+							nonStandardCDMElements.put(CdmElement,lang);
+						}
+					}
+				}
+			}
+		}		
+	}
+	
     /** 
         * Put volume in caches
         *
@@ -79,6 +108,10 @@ public class VolumeCache {
                 
                 // Key is equal to volume name
                 volumeCache.put(volumeName, vol);
+				putNonStandardCDMElementsInCache(vol.getCdmElements());
+                
+                // Key is equal to volume name
+                volumeCacheByIndexDbname.put(vol.getIndexDbname(), vol);
                 
                 // Key is equal to 'handle' (database object id)
                 volumeCacheByHandle.put(vol.getHandle(), vol);
@@ -216,6 +249,28 @@ public class VolumeCache {
             }
         }
     
+	/** 
+	 * Get volume by 'indexdbname' (database object id)
+	 *
+	 * @return Volume
+	 *
+	 * @exception PapillonBusinessException
+	 * 
+	 */
+    public static Volume getVolumeInCacheByIndexDbname(String indexDbname) 
+	throws PapillonBusinessException {
+		
+		try {
+			
+			//
+			return (Volume)volumeCacheByIndexDbname.get(indexDbname);
+			
+		} catch(Exception ex) {
+			throw new PapillonBusinessException("Exception in getVolumeInCacheByHandle()", ex);
+		}
+	}
+    
+
     /** 
         * Get volumes by dictionary name
         *
@@ -345,5 +400,18 @@ public class VolumeCache {
             }
         }
     
+	
+	public static Collection getNonStandardCDMElements() 
+		throws PapillonBusinessException {
+		try {
+			
+			//
+			return nonStandardCDMElements.keySet();
+			
+		} catch(Exception ex) {
+			throw new PapillonBusinessException("Exception in getNonStandardCDMElements()", ex);
+		}
+	}
+	
 }
 

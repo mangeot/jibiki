@@ -137,6 +137,9 @@ public class XslSheet {
                 // Create template
                 TransformerFactory myTransformerFactory = TransformerFactory.newInstance();
                 myTemplate = myTransformerFactory.newTemplates(new StreamSource(new StringReader (this.getCode())));
+				//PapillonLogger.writeDebugMsg("template created: " + this.getName() + " " + this.getHandle());
+
+				if (myTemplate==null) {PapillonLogger.writeDebugMsg("template null");}
                 
             } catch(javax.xml.transform.TransformerConfigurationException ex) {
                 throw new PapillonBusinessException("Error creating XslSheet", ex);
@@ -465,6 +468,7 @@ public class XslSheet {
             try {
                 
                 //
+				//PapillonLogger.writeDebugMsg("create new transformer: " + this.getName() + " " + this.getHandle());
                 return this.myTemplate.newTransformer();
             
             } catch(Exception ex) {

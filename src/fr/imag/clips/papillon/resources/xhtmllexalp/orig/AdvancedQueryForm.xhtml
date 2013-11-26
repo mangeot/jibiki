@@ -20,6 +20,7 @@
     <div id="AdvancedSearchForm" lang="en" xml:lang="en">
       <form id="SearchForm" action="">
         <div style="display:block; padding:5px;">
+		<input type="hidden" name="action" id="actionJS" value="advancedLookup" />
           <table border="0" cellpadding="0" cellspacing="0" summary="Search Form" width="100%">
             <tr valign="top">
               <td>
@@ -93,15 +94,17 @@
               </td>
               <td>
                 <div id="TargetLanguagesSelection" class="quick_search">
-                  <b>Show target languages :</b><br/>
+                  <b>Show targets:</b><br/>
                   <select id="Targets" name="TARGETS" multiple="multiple" style="width: 120px;">
                     <option id="TargetTmpl" label="All languages" value="*All*">All languages</option>
                   </select>
                 </div>
-              </td>
+ 				<input type="submit" value="➡" />
+				<input type="hidden" id="LIMIT" name="LIMIT" value="100" />
+             </td>
                <td>
                     <div id="QuickLink" class="quick_search">
-                        <b>Quick search :</b><br/>
+                        <b>Quick search:</b><br/>
                         <a id="MyFinishedContributions" class="quick_link" href="">My finished contributions</a><br/>
                         <a id="MyNotFinishedContributions" class="quick_link" href="">My unfinished contributions</a>
                     </div>
@@ -109,9 +112,9 @@
             </tr>
           </table>
           </div>
-          <div style="display:block; padding: 5px;">
+          <div style="display:none; padding: 5px;">
             <b>Display </b>
-            <select id="NumberOfResultPerPage" name="NB_RESULT_PER_PAGE">
+            <select id="LIMITSelect" name="LIMIT">
               <option label="10" value="5">5</option>
               <option label="10" value="10">10</option>
               <option label="20" value="20">20</option>
@@ -124,7 +127,6 @@
               <option label="Default" value="">Default</option>
               <option id="XslTmpl" label="Default" value="">Default</option>
             </select>
-            <input type="hidden" id="Offset" name="OFFSET" />
             <input type="hidden" id="Action" name="ACTION" value=""/>
             <input type="submit" value="Go" />
           </div>

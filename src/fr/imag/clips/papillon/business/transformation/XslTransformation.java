@@ -322,8 +322,7 @@ public class XslTransformation implements ResultFormatter {
             throws PapillonBusinessException {
 
         Document res = myDocumentBuilder.newDocument();
-        Element rootdiv = res.createElement("div");
-        rootdiv.setAttribute("class", "entry");
+        Element rootdiv = res.createElement("article");
         res.appendChild(rootdiv);
 		VolumeEntry myAnswer = qr.getSourceEntry();
 		String direction = Link.DIRECTION_DOWN;
@@ -928,21 +927,3 @@ public class XslTransformation implements ResultFormatter {
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -52,16 +52,19 @@ import fr.imag.clips.papillon.business.dictionary.DictionariesFactory;
 import fr.imag.clips.papillon.business.dictionary.Index;
 import fr.imag.clips.papillon.business.dictionary.IndexFactory;
 import fr.imag.clips.papillon.business.dictionary.QueryCriteria;
+import fr.imag.clips.papillon.business.dictionary.QueryParameter;
 import fr.imag.clips.papillon.business.dictionary.QueryRequest;
 import fr.imag.clips.papillon.business.dictionary.QueryResult;
 import fr.imag.clips.papillon.business.dictionary.Volume;
+import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
 import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
 import fr.imag.clips.papillon.business.transformation.ResultFormatter;
 import fr.imag.clips.papillon.business.transformation.ResultFormatterFactory;
 import fr.imag.clips.papillon.business.xml.XMLServices;
 import fr.imag.clips.papillon.business.utility.Utility;
 
-
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
 *  Description of the Class
@@ -117,13 +120,57 @@ public class LookupVolume extends AbstractPO {
 			String oneentry = myGetParameter("ENTRY");
 			String msort = myGetParameter("MSORT");
 			String action = myGetParameter("action");
+			String order = myGetParameter("DIRECTION");
+
 		
-			//PapillonLogger.writeDebugMsg("LookupVolume: " + volume + " WORD: " + word + " KEY: " + key);
-			if (action != null && !action.equals("")) {
-				throw new ClientPageRedirectException("Home.po?" + this.getComms().request.getQueryString());
-			}
-		
-			else if (volume != null && !volume.equals("") && 
+		//PapillonLogger.writeDebugMsg("LookupVolume: action: " + action + " VOLUME: " + volume + " WORD: " + word + " KEY: " + key + " ORDER: " + order);
+		// advanced lookup
+			if (action!=null && action.equals("advancedLookup")) {
+				if (order!=null && order.equals(IndexFactory.ORDER_ASCENDING)) {
+				AdvancedQueryForm qf = new AdvancedQueryForm(this.getComms(), this.getSessionData(), true, false);
+				QueryRequest queryReq = qf.getQueryRequest();
+				if (!queryReq.isEmpty() && !qf.actionOnFormRequested()) {
+					//PapillonLogger.writeDebugMsg("---qr advanced is not empty");
+					
+					// Add status criteria
+					ArrayList listStatus = new ArrayList();
+					
+					QueryCriteria criteriaStatus = new QueryCriteria();
+					criteriaStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);
+					criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.CLASSIFIED_FINISHED_STATUS);
+					criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.CLASSIFIED_NOT_FINISHED_STATUS);
+					criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.DELETED_STATUS);
+					criteriaStatus.add("lang", QueryCriteria.EQUAL, Volume.DEFAULT_LANG);
+					listStatus.add(criteriaStatus);
+					
+					queryReq.addOrCriteriaList(listStatus);
+					
+					// Perform the request
+					Collection qrset = queryReq.findIndex(this.getUser());
+					
+					// Display result
+					String stringResponse = "<?xml version='1.0' encoding='UTF-8' ?><div class='entries'>";
+					String volumeName = null;
+					
+					if (qrset!=null) {
+						for (java.util.Iterator myIterator = qrset.iterator(); myIterator.hasNext(); ) {
+							Index myIndex = (Index) myIterator.next();
+							if (volumeName==null) {
+								Volume tempVolume = VolumesFactory.getVolumeByIndexDbname(myIndex.getTableName());
+								volumeName = tempVolume.getName();
+							}
+							String entry = "<div class='lookupentry' title='"+ Utility.encodeXMLEntities(myIndex.getMsort())+"'><a href='javascript:void(0);' style='display:block; margin:5px;' onclick=\"lookupVolume('VOLUME="+volumeName+"&amp;HANDLE="+myIndex.getEntryId()+"');$(this).parent().css('font-weight','bold')\">"+Utility.encodeXMLEntities(myIndex.getValue())+"</a></div>";
+							stringResponse += entry;
+						}
+					}					
+					//PapillonLogger.writeDebugMsg("stringResponse.length(): "+ stringResponse.length());
+					stringResponse +=  "</div>";
+					docResponse = XMLServices.buildDOMTree(stringResponse);					
+				}
+				}
+			}		
+			//alphabetical lookup
+			else if (action!=null && action.equals("lookupVolume") && volume != null && !volume.equals("") && 
 				(word != null && !word.equals("") || msort != null && !msort.equals(""))) {
 				Volume myVolume = VolumesFactory.getVolumeByName(volume);
 				int limit = 100;
@@ -141,7 +188,6 @@ public class LookupVolume extends AbstractPO {
 					strategy = QueryBuilder.GREATER_THAN_OR_EQUAL;
 				}
 
-				String order = myGetParameter("DIRECTION");
 				if (order==null || order.equals("")) {
 					order = IndexFactory.ORDER_ASCENDING;
 				}
@@ -187,7 +233,8 @@ public class LookupVolume extends AbstractPO {
 					docResponse = XMLServices.buildDOMTree(stringResponse);
 				}
 			}
-			else if (volume != null && !volume.equals("") && 
+			// one entry by handle lookup
+			else if (action!=null && action.equals("queryHandle") && volume != null && !volume.equals("") && 
 					 handle != null && !handle.equals("")) {
 				Volume myVolume = VolumesFactory.getVolumeByName(volume);
 				java.util.Collection targets = myVolume.getTargetLanguagesArray();
@@ -203,7 +250,8 @@ public class LookupVolume extends AbstractPO {
 					}
 				}
 			}
-			else if (volume != null && !volume.equals("") && 
+			// one entry by headword lookup
+			else if (action!=null && action.equals("queryOneEntry") && volume != null && !volume.equals("") && 
 					 oneentry != null && !oneentry.equals("")) {
 
 				if (key==null || key.equals("HEADWORD")|| key.equals("")) {
@@ -241,7 +289,11 @@ public class LookupVolume extends AbstractPO {
 						rootElement.appendChild(docResponse.importNode(newEntry, true));
 					}
 				}
-			}		
+			}
+			else if (action != null && !action.equals("")) {
+						 throw new ClientPageRedirectException("Home.po?" + this.getComms().request.getQueryString());
+			}
+					 
 			return docResponse;			
         }
 }

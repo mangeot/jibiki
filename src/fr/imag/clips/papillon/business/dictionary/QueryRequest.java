@@ -18,6 +18,8 @@ import fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory;
 import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.user.User;
+import fr.imag.clips.papillon.data.IndexDO;
+import fr.imag.clips.papillon.data.IndexQuery;
 import fr.imag.clips.papillon.data.VolumeEntryDO;
 import fr.imag.clips.papillon.data.VolumeEntryQuery;
 
@@ -248,7 +250,7 @@ import javax.swing.JOptionPane;
          from  lexalpfra 
          WHERE  lexalpfra.ObjectId IN (select idxlexalpfra.entryId from idxlexalpfra where ...)
          */
-        private void findLexie(QueryBuilder query, String volumeDbName, String volumeIndexDbName)  throws PapillonBusinessException {
+        private void addVolumeEntryCriteria(QueryBuilder query, String volumeDbName, String volumeIndexDbName)  throws PapillonBusinessException {
             try {
  				mergeCriteriaSubtrees();
                RDBTable table = new RDBTable(volumeDbName);
@@ -305,6 +307,79 @@ import javax.swing.JOptionPane;
         }
         
 
+		// find(QueryBuilder query, String volumeDbName, String volumeIndexDbName) 
+        // - add to query new criteria
+        // - find in volumeDbName and its index
+        /* For example :
+         select *
+         from  lexalpfra 
+         WHERE  lexalpfra.ObjectId IN (select idxlexalpfra.entryId from idxlexalpfra where ...)
+         */
+        private void addIndexCriteria(QueryBuilder query, String volumeIndexDbName) throws PapillonBusinessException {
+            try {
+ 				mergeCriteriaSubtrees();
+                if (criteriaTree.size() != 0) {
+					query.distinct();
+					Iterator criteriaTreeIterator = criteriaTree.iterator();
+					if (isAndTree) {    // AND(OR)
+						ArrayList firstOrNode = (ArrayList)criteriaTreeIterator.next();
+						Iterator firstIterOr = firstOrNode.iterator();
+						while (firstIterOr.hasNext()) {
+							QueryCriteria criteria = (QueryCriteria)firstIterOr.next();
+							if (criteria.getFullClause() != null && criteria.getFullClause() != "") {
+								query.addWhereOpenParen();
+								//PapillonLogger.writeDebugMsg("isAndTree criteria: " + criteria.getFullClause());
+								query.addWhere(criteria.getFullClause());
+								query.addWhereCloseParen();
+								if ( firstIterOr.hasNext() ) { query.addWhereOr(); }
+							}
+						}
+						if (criteriaTreeIterator.hasNext())  {
+							RDBTable tableIndex = new RDBTable(volumeIndexDbName);
+							RDBColumn entryIdRDB = new RDBColumn( tableIndex, "entryId", false );
+							RDBColumn[] tableIndexRDBList = new RDBColumn[1];
+							tableIndexRDBList[0] = entryIdRDB;
+						while (criteriaTreeIterator.hasNext()) {
+							QueryBuilder querySearch = new QueryBuilder(tableIndexRDBList);
+							ArrayList orNode = (ArrayList)criteriaTreeIterator.next();
+							Iterator iterOr = orNode.iterator();
+							while (iterOr.hasNext()) {
+								QueryCriteria criteria = (QueryCriteria)iterOr.next();
+								if (criteria.getFullClause() != null && criteria.getFullClause() != "") {
+									querySearch.addWhereOpenParen();
+									//PapillonLogger.writeDebugMsg("isAndTree criteria: " + criteria.getFullClause());
+									querySearch.addWhere(criteria.getFullClause());
+									querySearch.addWhereCloseParen();
+									if ( iterOr.hasNext() ) { querySearch.addWhereOr(); }
+								}
+							}
+							query.addWhereIn(entryIdRDB,querySearch);
+						}
+						}
+					} else {    // OR(AND)
+						while (criteriaTreeIterator.hasNext()) {
+							ArrayList andNode = (ArrayList)criteriaTreeIterator.next();
+							Iterator iterAnd = andNode.iterator();
+							while (iterAnd.hasNext()) {
+								QueryCriteria criteria = (QueryCriteria)iterAnd.next();
+								if (criteria.getFullClause() != null && criteria.getFullClause() != "") {
+									query.addWhereOpenParen();
+									//PapillonLogger.writeDebugMsg("isOrTree criteria: " + criteria.getFullClause());
+									query.addWhere(criteria.getFullClause());
+									query.addWhereCloseParen();
+								}
+							}
+							if (criteriaTreeIterator.hasNext()) { query.addWhereOr(); }
+						}                    
+					}
+				}                    
+                
+            } catch(Exception ex) {
+                throw new PapillonBusinessException("Exception in addIndexCriteria() ", ex);
+            }
+        }
+		
+		
 		
 		
 /*        
@@ -335,7 +410,53 @@ import javax.swing.JOptionPane;
             
         //=========================== Public Methods ===========================
         
-         
+  
+		/**
+         * Find index
+         * @param user
+         *
+         * @return Index arraylist
+         * @exception PapillonBusinessException if database error
+         */
+        public ArrayList findIndex(User user)  throws PapillonBusinessException {
+            try {
+                ArrayList result = new ArrayList();
+				filterVolumes();
+                for (Iterator iter = volumes.iterator(); iter.hasNext();) {
+                    Volume volume = (Volume)iter.next();
+					
+                    //
+                    IndexQuery indexQuery = new IndexQuery(volume.getIndexDbname(), CurrentDBTransaction.get());
+					addIndexCriteria(indexQuery.getQueryBuilder(), volume.getIndexDbname());
+					
+                    // limit/offset and sort
+                    if ((limit != null) && (offset != null) && ((!limit.equals("0")) || (!offset.equals("0")))) {
+                        indexQuery.getQueryBuilder().addEndClause(" LIMIT " + limit + " OFFSET " + offset);
+                    }
+					indexQuery.getQueryBuilder().addOrderByColumn(IndexFactory.MSORT_FIELD,"");
+					
+                    // Debug
+                    if (DEBUG) indexQuery.getQueryBuilder().debug();
+                   // PapillonLogger.writeDebugMsg("findIndex debug");
+					//indexQuery.getQueryBuilder().debug();
+					
+                    //
+                    IndexDO[] DOarray = indexQuery.getDOArray();
+                    if (null != DOarray) {
+                        for (int j=0; j < DOarray.length; j++) {
+                            Index tempIndex = new Index(DOarray[j]);
+                            result.add(tempIndex);
+                        }
+                    }
+                }
+                return result;
+				
+            } catch(Exception ex) {
+                throw new PapillonBusinessException("Exception in findIndex() ", ex);
+            }
+        }
+		
+		
         /**
          * Find lexies
          * @param user      add contraints to find lexies FIXME: not use actually 
@@ -352,7 +473,7 @@ import javax.swing.JOptionPane;
 
                     //
                     VolumeEntryQuery veQuery = new VolumeEntryQuery(volume.getDbname(), CurrentDBTransaction.get());
-					findLexie(veQuery.getQueryBuilder(), volume.getDbname(), volume.getIndexDbname());
+					addVolumeEntryCriteria(veQuery.getQueryBuilder(), volume.getDbname(), volume.getIndexDbname());
 
                     // limit/offset and sort
                     if ((limit != null) && (offset != null) && ((!limit.equals("0")) || (!offset.equals("0")))) {
@@ -384,8 +505,8 @@ import javax.swing.JOptionPane;
             } catch(Exception ex) {
                 throw new PapillonBusinessException("Exception in findLexie() ", ex);
             }
-        }
-                
+        }		
+		
         /**
          * Find lexies and their translations
          * @param user      add contraints to find lexies FIXME: not use actually 

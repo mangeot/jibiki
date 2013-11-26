@@ -18,7 +18,7 @@ import java.util.Iterator;
 
 public class DictionaryIndexBrowser extends PapillonBasePO {
 
-    private static final String ENTRY_URL = "Home.po?FACET.0=cdm-headword&OPERATOR.0=2&FACETVALUE.0={0}&SOURCE.0={1}&TARGETS=*ALL*&XSL=Default&NB_RESULT_PER_PAGE=5&OFFSET=&action=lookup";
+    private static final String ENTRY_URL = "Home.po?FACET.0=cdm-headword&OPERATOR.0=2&FACETVALUE.0={0}&SOURCE.0={1}&TARGETS=*ALL*&XSL=Default&LIMIT=5&OFFSET=&action=lookup";
     private static final String KEY_INDEX_URL = "DictionaryIndexBrowser.po?SAMPLESIZE=0&KEY={0}&LANGUAGE={1}";
     private static final String LANG_INDEX_URL = "DictionaryIndexBrowser.po?LANGUAGE={0}";
 

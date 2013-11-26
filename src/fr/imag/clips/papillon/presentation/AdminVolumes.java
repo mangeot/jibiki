@@ -349,8 +349,8 @@ public class AdminVolumes extends PapillonBasePO {
     }
     
 	protected String handleVolumeAddition(HttpPresentationRequest req, URL myURL) throws PapillonBusinessException, HttpPresentationException, java.net.MalformedURLException {
-        String userMessage;
-        PapillonLogger.writeDebugMsg(myURL.toString());
+        String userMessage = "";
+        PapillonLogger.writeDebugMsg("Adding volume metadata: " + myURL.toString());
 		String logContribsString = req.getParameter(AdminVolumesXHTML.NAME_LogContributions);
 		boolean logContribs = (logContribsString!=null && !logContribsString.equals(""));
 		String parseEntriesString = req.getParameter(AdminVolumesXHTML.NAME_AddVolumesAndEntries);
@@ -362,9 +362,9 @@ public class AdminVolumes extends PapillonBasePO {
         try {
 			Dictionary dict = DictionariesFactory.getDictionaryByName(req.getParameter(AdminVolumesXHTML.NAME_Dictionary));
 			myVolume = VolumesFactory.parseVolumeMetadata(dict, myURL, parseEntries, logContribs);
-
+			
             if (null != myVolume && !myVolume.isEmpty()) {
-				userMessage = "adding " + myVolume.getName() + " volume" + " // " + myVolume.getDictname() + " // "  + myVolume.getDbname() + " // " + myVolume.getSourceLanguage() + " // " + myVolume.getTargetLanguages() + " // " + myVolume.getVolumeRef();
+				userMessage = "adding " + myVolume.getName() + " volume: " + myVolume.getDictname() + " // "  + myVolume.getDbname() + " // " + myVolume.getSourceLanguage() + " // " + myVolume.getTargetLanguages() + " // " + myVolume.getVolumeRef();
 				myVolume.save();
 				fr.imag.clips.papillon.business.edition.UITemplates.resetCache();
             } else {

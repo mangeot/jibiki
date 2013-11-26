@@ -126,10 +126,10 @@ public class XslSheetCache {
                 //
                 XslSheet theXslSheet =  (XslSheet)xslSheetCache.get(key);
 				if (theXslSheet != null && !theXslSheet.isEmpty()) {
-					PapillonLogger.writeDebugMsg("XslSheet " + key +" gotFromCache");				
+					//PapillonLogger.writeDebugMsg("XslSheet " + key +" gotFromCache");				
 				}
 				else {
-					PapillonLogger.writeDebugMsg("XslSheet " + key +" notFoundInCache");				
+					//PapillonLogger.writeDebugMsg("XslSheet " + key +" notFoundInCache");				
 				}
 				return theXslSheet;
                 

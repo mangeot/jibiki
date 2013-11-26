@@ -191,34 +191,43 @@ h1 {
 div#BannerContent {
 	display: table;
 	border-spacing: 10px;
+	width: 100%;
 }
 
 #projectTitle {
 	display: table-cell;
 	padding-left: 1em;
 	padding-right: 1em;
-	width: 65%;
+	vertical-align:middle;
 }
 
 .projectName h1,.projectName h2, .projectName h3  {
 	margin: 2px;
 }
 
-#caseRecherche  {
-	display: table-cell;
-	padding: 0.3em;
-	/*background-color: #FFFDDA;
-	border: 7px solid #689443;
-	border-radius: 20px;*/
+#QueryMenuHolder {
+    display: table-cell;
+    padding: 0.5em;
+	vertical-align:middle;
 }
 
-#caseRechercheAvancee  {
-	display: table-cell;
-	padding: 0.3em;
-	/*background-color: #FFFDDA;
-	border: 7px solid #689443;
-	border-radius: 20px;*/
+.cellVolumeLookup {
+    display: table-cell;
+    padding: 0.5em;
+	vertical-align:middle;
 }
+
+.cellAdvancedLookup, #cellAdvancedLookup {
+    display: table-cell;
+    padding: 0.5em;
+	vertical-align:middle;
+}
+.cellLookup, #cellLookup {
+    display: table-cell;
+    padding: 0.5em;
+	vertical-align:middle;
+}
+
 
 div.section {
  	display: none;
@@ -732,9 +741,9 @@ A:hover {
 
 
 .QueryForm {
-border: 1px solid #898989;
+	border: 1px solid #898989;
 	padding: 5px 5px 5px 5px;
-	background: #F0F0F0;
+	background: #FFFDDA;
 }
 
 #ProjectDescription a {

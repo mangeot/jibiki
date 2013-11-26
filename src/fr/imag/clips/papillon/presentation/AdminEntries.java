@@ -193,7 +193,7 @@ public class AdminEntries extends PapillonBasePO {
 		
 		boolean logContribs = (logContributions!=null && !logContributions.equals(""));
         
-		String userMessage = null;
+		String userMessage = "";
 
 		if (volumeString!=null && !volumeString.equals("") &&
 			urlString!=null && !urlString.equals("") &&
@@ -211,7 +211,7 @@ public class AdminEntries extends PapillonBasePO {
 			if (myURL != null) {
 				userMessage += handleVolumeAddition(volumeString, myURL, defaultStatus, replaceExistingEntries, replaceExistingContributions, logContribs);
 			}
-			if (userMessage != null) {
+			if (userMessage != "") {
 				this.getSessionData().writeUserMessage(userMessage);
 				PapillonLogger.writeDebugMsg(userMessage);
 			}
@@ -224,7 +224,7 @@ public class AdminEntries extends PapillonBasePO {
 	protected String handleVolumeAddition(String volumeString, java.net.URL myURL, String defaultStatus, int replaceExistingEntries, int replaceExistingContributions, boolean logContribs) 
 		throws fr.imag.clips.papillon.business.PapillonBusinessException, 
 			HttpPresentationException {
-        String userMessage;
+        String userMessage ="";
         
         // Create and Register the transaction
   //      CurrentDBTransaction.registerNewDBTransaction();

@@ -20,6 +20,7 @@
     <div id="AdvancedSearchForm" lang="en" xml:lang="en">
       <form id="SearchForm" action="">
         <div style="display:block; padding:5px;">
+		<input type="hidden" name="action" id="actionJS" value="advancedLookup" />
           <table border="0" cellpadding="0" cellspacing="0" summary="Search Form" width="100%">
             <tr valign="top">
               <td>
@@ -96,6 +97,7 @@
                     <option id="TargetTmpl" label="All languages" value="*All*">All languages</option>
                   </select>
                 </div>
+				<input id="LIMIT" name="LIMIT" type="hidden" />
               </td>
                 <td>
                     <div id="QuickLink" class="quick_search">
@@ -109,7 +111,7 @@
           </div>
           <div style="display:block; padding: 5px;">
             <b>Display </b>
-            <select id="NumberOfResultPerPage" name="NB_RESULT_PER_PAGE">
+            <select id="LIMITSelect" name="LIMIT">
               <option label="10" value="10">10</option>
               <option label="20" value="20">20</option>
               <option label="50" value="50">50</option>

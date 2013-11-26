@@ -23,8 +23,9 @@
 			<h2>Projet MotÀMot : </h2><h2>dictionnaire français↔khmer</h2>
 	 </div>
 	 </div>
-	<form action="#" method="post" id="caseRecherche" onsubmit="queryPrefixVolume(this.HEADWORD.value, this.VOLUME.options[this.VOLUME.selectedIndex].value); queryOneEntry(this.HEADWORD.value, this.VOLUME.options[this.VOLUME.selectedIndex].value); return false;"><div>
+	<form  class="cellVolumeLookup" action="#" method="post" onsubmit="queryPrefixVolume(this.HEADWORD.value, this.VOLUME.options[this.VOLUME.selectedIndex].value); queryOneEntry(this.HEADWORD.value, this.VOLUME.options[this.VOLUME.selectedIndex].value); return false;"><div>
 	    <h3 style="margin-bottom:0.5em;">Recherche :</h3>
+		<input type="hidden" name="action" id="actionJS" value="lookupVolume" />
    		<input id="LIMIT" name="LIMIT" type="hidden" value="100"/>
     		<input id="STATUS" name="STATUS" type="hidden" value="finished"/>
  	     <input id="HEADWORD" name="HEADWORD" type="text"/>
@@ -40,9 +41,10 @@
     		 </select>
 	     <input type="submit" value="→"/>
 	   </div></form>
-	<div id="caseRechercheAvancee">
+	<div id="cellAdvancedLookup">
 		<a href="AdvancedSearch.po">Recherche avancée</a>
 	</div>
+		<div id="cellLookup" style="display:none;"></div>
  </div>
   <div id="CentralContent">
   <div id="ContextualMenuContent">

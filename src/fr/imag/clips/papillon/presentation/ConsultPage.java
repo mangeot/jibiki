@@ -69,6 +69,9 @@ public class ConsultPage extends DilafBasePO {
 		content =
 		(ConsultPageXHTML)MultilingualXHtmlTemplateFactory.createTemplate("ConsultPageXHTML", this.getComms(), this.getSessionData());
 		
+//		org.enhydra.xml.xhtml.dom.XHTMLSpanElement queryString = content.getElementQueryString();
+//		queryString.setAttribute("data-query-string",this.getComms().request.getQueryString());
+		
 		org.enhydra.xml.xhtml.dom.XHTMLElement volumeLabel = content.getElementVolumeLabel();
 		
 		// Adding the volume list
@@ -103,7 +106,7 @@ public class ConsultPage extends DilafBasePO {
 
 		// Établissement de la requête
 			
-			/* initilaize response */
+			/* initialize response */
 			java.util.Collection EntryCollection = null;
 		Volume myVolume = null;
 			org.w3c.dom.Document docResponse = XMLServices.buildDOMTree("<?xml version='1.0' encoding='UTF-8' ?><div id='entries'></div>");
@@ -278,6 +281,4 @@ public class ConsultPage extends DilafBasePO {
 		return content.getElementContextualMenuContent();
 		//return null;
     }
-	
-
 }
