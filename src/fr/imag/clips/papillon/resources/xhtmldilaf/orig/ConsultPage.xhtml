@@ -26,38 +26,30 @@
 			<h2>langue africaine-français</h2>
 		</div>
         <div id="Description_DiLAF_bam_fra" class="projectName" style="display:none">
-		  <h2>Dictionnaire</h2>
-		  <h1>bambara-français</h1>
-		  <h2>du Père Charles Bailleul éd. 1996</h2>
+		  <h1><span style="font-size:smaller;">Dictionnaire</span> bambara-français</h1>
+		  <h2>du Père Charles Bailleul, éd. 1996</h2>
 		</div>
         <div id="Description_DiLAF_hau_fra" class="projectName" style="display:none">
-		  <h2>Dictionnaire</h2>
-		  <h1>haoussa-français</h1>
-		  <h2>enseignement du cycle de base 1</h2>
-		  <h2>2008, Soutéba</h2>
+		  <h1><span style="font-size:smaller;">Dictionnaire</span> haoussa-français</h1>
+		  <h2>Enseignement du cycle de base 1, 2008, Soutéba</h2>
 		</div>
         <div id="Description_DiLAF_kau_fra" class="projectName" style="display:none">
-		  <h2>Dictionnaire</h2>
-		  <h1>kanouri-français</h1>
-		  <h2>enseignement du cycle de base 1</h2>
-		  <h2>2004, Soutéba</h2>
+		  <h1><span style="font-size:smaller;">Dictionnaire</span> kanouri-français</h1>
+		  <h2>Enseignement du cycle de base 1, 2004, Soutéba</h2>
 		</div>
         <div id="Description_DiLAF_tmh_fra" class="projectName" style="display:none">
-		  <h2>Dictionnaire</h2>
-		  <h1>tamajaq-français</h1>
-		  <h2>enseignement du cycle de base 1</h2>
-		  <h2>2007, Soutéba</h2>
+		  <h1><span style="font-size:smaller;">Dictionnaire</span> tamajaq-français</h1>
+		  <h2>Enseignement du cycle de base 1, 2007, Soutéba</h2>
 		</div>
         <div id="Description_DiLAF_dje_fra" class="projectName" style="display:none">
-		  <h2>Dictionnaire</h2>
-		  <h1>zarma-français</h1>
-		  <h2>enseignement du cycle de base 1</h2>
-		  <h2>2007, Soutéba</h2>
+		  <h1><span style="font-size:smaller;">Dictionnaire</span> zarma-français</h1>
+		  <h2>Enseignement du cycle de base 1, 2007, Soutéba</h2>
 		</div>
 	</div>
-	<form id="caseRecherche" onsubmit="queryPrefixVolume(this.HEADWORD.value, this.VOLUME.options[this.VOLUME.selectedIndex].value); queryOneEntry(this.HEADWORD.value, this.VOLUME.options[this.VOLUME.selectedIndex].value); return false;" action="LookupVolume.po">
-	  <div>
-	    <h3>Recherche :</h3>
+	<form class="cellVolumeLookup" onsubmit="queryPrefixVolume(this.HEADWORD.value, this.VOLUME.options[this.VOLUME.selectedIndex].value); queryOneEntry(this.HEADWORD.value, this.VOLUME.options[this.VOLUME.selectedIndex].value); return false;" action="LookupVolume.po">
+	    <div>
+		<h3>Recherche :</h3>
+		<input type="hidden" name="action" id="actionJS" value="lookupVolume" />
    		<input id="LIMIT" name="LIMIT" type="hidden" value="100"/>
     		<input id="STATUS" name="STATUS" type="hidden" value="finished"/>
 			<label id="VolumeLabel" style="display:none" accesskey="v" for="VOLUME"><span class="accesskey">V</span>olume:
@@ -67,11 +59,12 @@
 			</label>
  	     <input id="HEADWORD" name="HEADWORD" type="text" />
 	     <input type="submit" value="→" />
-	   </div>
+		 </div>
 	</form>
-	<div id="caseRechercheAvancee">
-		<a href="AdvancedSearch.po">Recherche avancée</a>
+	<div id="cellAdvancedLookup">
+		<a href="AdvancedLookup.po">Recherche avancée</a>
 	</div>
+	<div id="cellLookup" style="display:none;"></div>
  </div>
  <div id="CentralContent">
   <div id="ContextualMenuContent">
@@ -81,15 +74,16 @@
  	<p>&#xA0;<span class="loadmore">Chargement des vedettes en cours...</span>&#xA0;
 	<span class="loadcontent">Chargement des données en cours...</span></p>
  <div id="lookupcontent">
- <p id="WelcomeMessage" style="display:none;"><!-- // --></p>
- <div class="entry"><div class="contribution" xmlns="http://www.w3.org/1999/xhtml"><div class="collapsable"><div style="float:left;">
- <span class="entry_navigation">DiLAF</span><a class="entry_navigation" href="Home.po?FACET.0=cdm-headword&amp;OPERATOR.0=0&amp;search_type=previous_entry&amp;action=lookup&amp;TARGETS=*ALL*&amp;SOURCE.0=dje&amp;VOLUME=DiLAF_dje_fra&amp;FACETVALUE.0=a">↩</a><a class="entry_navigation" href="Home.po?FACET.0=cdm-headword&amp;OPERATOR.0=0&amp;search_type=next_entry&amp;action=lookup&amp;TARGETS=*ALL*&amp;SOURCE.0=dje&amp;VOLUME=DiLAF_dje_fra&amp;FACETVALUE.0=a">↪</a></div>&nbsp;
-	  			<div class="level"><!-- // --></div></div><div class="motamot-entry"><span class="headword">a</span>&nbsp;
-				<span class="pronunciation">[â]</span>&nbsp;<span class="pos">m.</span>&nbsp;
-				<span class="fra">a</span><blockquote><div>zarma ciine abajadaa hantumiize jina ; masida no</div></blockquote></div></div></div> 
- </div>
-	<p>&#xA0;<span class="loadmore">Chargement des vedettes en cours...</span>&#xA0;
+ <p id="WelcomeMessage" style="display:none;"><!-- // --><script type="text/javascript">
+ <!--
+ limit = parseInt($('#LIMIT').val(),10);
+ queryOneEntry('a', $('#VOLUME').val());
+ queryPrefixVolume('a',$('#VOLUME').val());
+  // -->
+</script></p>
+ 	<p>&#xA0;<span class="loadmore">Chargement des vedettes en cours...</span>&#xA0;
 	<span class="loadcontent">Chargement des données en cours...</span></p>
+</div>
 </div>
 </div>
 
