@@ -272,6 +272,7 @@
 								<string>A30722C20EC89B2100733910</string>
 								<string>A30723380EC89B2300733910</string>
 								<string>A30723390EC89B2300733910</string>
+								<string>A30724320EC89B2500733910</string>
 								<string>A307247B0EC89B2600733910</string>
 								<string>A30724E80EC89B2700733910</string>
 								<string>A307252E0EC89B2700733910</string>
@@ -282,8 +283,10 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>82</integer>
-									<integer>18</integer>
+									<integer>285</integer>
+									<integer>277</integer>
+									<integer>276</integer>
+									<integer>115</integer>
 									<integer>10</integer>
 									<integer>9</integer>
 									<integer>8</integer>
@@ -293,7 +296,7 @@
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 936}, {368, 740}}</string>
+							<string>{{0, 4666}, {368, 740}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -330,7 +333,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>LookupVolume.java</string>
+								<string>DownloadTmpl.xhtml</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -338,15 +341,18 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>LookupVolume.java</string>
+										<string>DownloadTmpl.xhtml</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>A3EC4B571845603F00CEBA9C</string>
+										<string>A342C4DE18456879000397B2</string>
 										<key>history</key>
 										<array>
 											<string>A3EC4B551845603F00CEBA9C</string>
-											<string>A3EC4B561845603F00CEBA9C</string>
+											<string>A3EC4B5B1845655E00CEBA9C</string>
+											<string>A3EC4B5C1845655E00CEBA9C</string>
+											<string>A342C4D518456700000397B2</string>
+											<string>A342C4D618456700000397B2</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -358,14 +364,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {1227, 578}}</string>
+								<string>{{0, 0}, {1227, 573}}</string>
 								<key>RubberWindowFrame</key>
 								<string>59 179 1617 799 0 0 1680 1028 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>578pt</string>
+							<string>573pt</string>
 						</dict>
 						<dict>
 							<key>ContentConfiguration</key>
@@ -378,14 +384,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 583}, {1227, 175}}</string>
+								<string>{{0, 578}, {1227, 180}}</string>
 								<key>RubberWindowFrame</key>
 								<string>59 179 1617 799 0 0 1680 1028 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
 							<key>Proportion</key>
-							<string>175pt</string>
+							<string>180pt</string>
 						</dict>
 					</array>
 					<key>Proportion</key>
@@ -404,9 +410,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>A3EC4B581845603F00CEBA9C</string>
+				<string>A342C4D118456677000397B2</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>A3EC4B591845603F00CEBA9C</string>
+				<string>A342C4D218456677000397B2</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -625,7 +631,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>A3D629281485232300B7780F</string>
-				<string>A3EC4B5A1845603F00CEBA9C</string>
+				<string>A342C4D318456677000397B2</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>

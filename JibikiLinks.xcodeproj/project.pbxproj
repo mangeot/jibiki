@@ -1198,6 +1198,7 @@
 		A31F1D67182FBA0C00E68B44 /* AdvancedLookup.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = AdvancedLookup.java; sourceTree = "<group>"; };
 		A3216DE90ED17C22009BC773 /* LexalpEditEntryInit.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = LexalpEditEntryInit.xhtml; sourceTree = "<group>"; };
 		A3376029100241C4002281AF /* MotamotPostUpdateProcessor.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = MotamotPostUpdateProcessor.java; sourceTree = "<group>"; };
+		A342C4D418456690000397B2 /* DownloadTmpl.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = DownloadTmpl.xhtml; sourceTree = "<group>"; };
 		A3469DFC170DA3F7006DE82A /* AdminEntriesTmpl.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdminEntriesTmpl.xhtml; sourceTree = "<group>"; };
 		A3469DFD170DA3F7006DE82A /* AdminEntriesTmpl.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AdminEntriesTmpl.xmlc; sourceTree = "<group>"; };
 		A3469DFE170DA3F7006DE82A /* AdministrationMenu.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdministrationMenu.xhtml; sourceTree = "<group>"; };
@@ -1407,7 +1408,6 @@
 		A39A472E0FF922610090E5C0 /* FrajpnContent.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = FrajpnContent.xhtml; sourceTree = "<group>"; };
 		A39A473B0FF923430090E5C0 /* Motamot.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = Motamot.java; sourceTree = "<group>"; };
 		A39FEC8210A06FD400D99EB4 /* Metadata.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = Metadata.java; sourceTree = "<group>"; };
-		A3A1E2A1171CB7B900559C1F /* DownloadTmpl.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = DownloadTmpl.xhtml; sourceTree = "<group>"; };
 		A3A1E2A9171CB83500559C1F /* ProjectTmpl.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ProjectTmpl.xhtml; sourceTree = "<group>"; };
 		A3A1E2BE171CC04000559C1F /* HelpContent.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = HelpContent.xhtml; sourceTree = "<group>"; };
 		A3A1E2CE171CC58300559C1F /* AdvancedSearch.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdvancedSearch.xhtml; sourceTree = "<group>"; };
@@ -2746,7 +2746,6 @@
 				A30725480EC89B2800733910 /* CreateEntryInit.xhtml */,
 				A30725490EC89B2800733910 /* DictionaryIndex.xhtml */,
 				A307254A0EC89B2800733910 /* DistributeWorkTmpl.xhtml */,
-				A3A1E2A1171CB7B900559C1F /* DownloadTmpl.xhtml */,
 				A307254B0EC89B2800733910 /* EditAxieTmpl.xhtml */,
 				A307254C0EC89B2800733910 /* EditEntry.xhtml */,
 				A307254D0EC89B2800733910 /* EditEntryInit.xhtml */,
@@ -3352,6 +3351,7 @@
 				A35D6A4F171C55730031534B /* ConsultPage.xhtml */,
 				A31ED37316AD7F1600B642C7 /* ContactsContent.xhtml */,
 				A31ED37416AD7F1600B642C7 /* ContactsContent.xmlc */,
+				A342C4D418456690000397B2 /* DownloadTmpl.xhtml */,
 				A3CFEC641844F962008F6C62 /* HelpContent.xhtml */,
 				A31ED37616AD7F1600B642C7 /* HelpContent.xmlc */,
 				A31ED37716AD7F1600B642C7 /* HomeContent.xhtml */,
