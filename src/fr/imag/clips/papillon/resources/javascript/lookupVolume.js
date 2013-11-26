@@ -43,7 +43,7 @@ function lookupIndex (parameters, direction) {
 			if (matches) {
 				var newOffset = parseInt(matches[1])+limit;
 				parameters = parameters.replace(regex,"OFFSET="+newOffset);
-				$('#QueryString').attr('data-query-string',parameters+'&OFFSET2='+limit);
+				$('#QueryString').attr('data-query-string',parameters);
 			}
 		   }
 		   /* On actualise la valeur offset de la dernière entrée */
@@ -89,7 +89,9 @@ $(document).ready(function(){ // Quand le document est complètement chargé
 			}
 							   
 			var queryString = (action=='lookupVolume')?'action='+action+'&VOLUME='+volume+'&LIMIT='+limit+'&KEY='+key+'&MSORT='+msort:$('#QueryString').attr('data-query-string');
-			lookupIndex(queryString, direction);
+			if (queryString !== undefined) {
+				lookupIndex(queryString, direction);
+			}
 			}
 		}
 	});

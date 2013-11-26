@@ -282,7 +282,7 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>28</integer>
+									<integer>82</integer>
 									<integer>18</integer>
 									<integer>10</integer>
 									<integer>9</integer>
@@ -293,7 +293,7 @@
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 326}, {368, 740}}</string>
+							<string>{{0, 936}, {368, 740}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -312,7 +312,7 @@
 							<real>368</real>
 						</array>
 						<key>RubberWindowFrame</key>
-						<string>85 179 1617 799 0 0 1680 1028 </string>
+						<string>59 179 1617 799 0 0 1680 1028 </string>
 					</dict>
 					<key>Module</key>
 					<string>PBXSmartGroupTreeModule</string>
@@ -330,7 +330,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>AdminVolumes.java</string>
+								<string>LookupVolume.java</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -338,35 +338,15 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>AdminVolumes.java</string>
+										<string>LookupVolume.java</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>A3A2ED6918455B5500785800</string>
+										<string>A3EC4B571845603F00CEBA9C</string>
 										<key>history</key>
 										<array>
-											<string>A3CFEC7D18454747008F6C62</string>
-											<string>A3CFEC7E18454747008F6C62</string>
-											<string>A3A2ECC218454A4A00785800</string>
-											<string>A3A2ECC318454A4A00785800</string>
-											<string>A3A2ECE318454D7B00785800</string>
-											<string>A3A2ECE418454D7B00785800</string>
-											<string>A3A2ECE818454DE800785800</string>
-											<string>A3A2ECE918454DE800785800</string>
-											<string>A3A2ECEE18454F4E00785800</string>
-											<string>A3A2ECF018454F4E00785800</string>
-											<string>A3A2ECFB184552F100785800</string>
-											<string>A3A2ECFE1845534D00785800</string>
-											<string>A3A2ED00184553CE00785800</string>
-											<string>A3A2ED01184553CE00785800</string>
-											<string>A3A2ED061845543D00785800</string>
-											<string>A3A2ED071845543D00785800</string>
-											<string>A3A2ED601845596400785800</string>
-											<string>A3A2ED611845596400785800</string>
-											<string>A3A2ED621845596400785800</string>
-											<string>A3A2ED631845596400785800</string>
-											<string>A3A2ED641845596400785800</string>
-											<string>A3A2ED651845596400785800</string>
+											<string>A3EC4B551845603F00CEBA9C</string>
+											<string>A3EC4B561845603F00CEBA9C</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -378,14 +358,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {1227, 583}}</string>
+								<string>{{0, 0}, {1227, 578}}</string>
 								<key>RubberWindowFrame</key>
-								<string>85 179 1617 799 0 0 1680 1028 </string>
+								<string>59 179 1617 799 0 0 1680 1028 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>583pt</string>
+							<string>578pt</string>
 						</dict>
 						<dict>
 							<key>ContentConfiguration</key>
@@ -398,14 +378,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 588}, {1227, 170}}</string>
+								<string>{{0, 583}, {1227, 175}}</string>
 								<key>RubberWindowFrame</key>
-								<string>85 179 1617 799 0 0 1680 1028 </string>
+								<string>59 179 1617 799 0 0 1680 1028 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
 							<key>Proportion</key>
-							<string>170pt</string>
+							<string>175pt</string>
 						</dict>
 					</array>
 					<key>Proportion</key>
@@ -424,9 +404,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>A3A2ED671845596400785800</string>
+				<string>A3EC4B581845603F00CEBA9C</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>A3A2ED681845596400785800</string>
+				<string>A3EC4B591845603F00CEBA9C</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -564,12 +544,11 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>A3D629281485232300B7780F</string>
 		<string>/Projects/jibiki/branches/LINKS_1_0/JibikiLinks.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
-	<string>85 179 1617 799 0 0 1680 1028 </string>
+	<string>59 179 1617 799 0 0 1680 1028 </string>
 	<key>WindowToolsV3</key>
 	<array>
 		<dict>
@@ -646,7 +625,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>A3D629281485232300B7780F</string>
-				<string>A3A2ED591845596100785800</string>
+				<string>A3EC4B5A1845603F00CEBA9C</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>

@@ -132,7 +132,6 @@ public class AdvancedLookup extends DilafBasePO {
 				QueryParameter qp = qf.getQueryParameter();
 				int newOffset = qp.getOffset() + qp.getLimit();
 				qp.setOffset(newOffset);
-				//content.getElementOffset().setValue(Integer.toString(qp.getOffset()));
 				org.enhydra.xml.xhtml.dom.XHTMLSpanElement queryString = content.getElementQueryString();
 				queryString.setAttribute("data-query-string",this.getComms().request.getQueryString()+"&OFFSET="+newOffset);
 			}
