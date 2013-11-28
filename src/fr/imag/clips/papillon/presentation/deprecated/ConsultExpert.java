@@ -787,12 +787,12 @@ public class ConsultExpert extends PapillonBasePO {
 					Headword[2] = Headwords[i];
 					Headword[3] = IQuery.QueryBuilderStrategy[strategy1+1];
 					myKeys.add(Headword);
-					EntryCollection.addAll(DictionariesFactory.getDictionariesEntriesCollection(resources, source, targets, myKeys, myClauses, anyContains, myUser, offset));
+					EntryCollection.addAll(DictionariesFactory.getDictionariesEntriesCollection(resources, source, targets, myKeys, myClauses, anyContains, myUser, offset, DictionariesFactory.MaxRetrievedEntries));
 					myKeys.remove(Headword);
 				}
 			}
 			else {
-				EntryCollection = DictionariesFactory.getDictionariesEntriesCollection(resources, source, targets, myKeys, myClauses, anyContains, myUser, offset);
+				EntryCollection = DictionariesFactory.getDictionariesEntriesCollection(resources, source, targets, myKeys, myClauses, anyContains, myUser, offset, DictionariesFactory.MaxRetrievedEntries);
 			}
  			if (EntryCollection==null || EntryCollection.size()==0) {
 				PapillonLogger.writeDebugMsg("EntryCollection null, getDictionariesReverseEntriesCollection");

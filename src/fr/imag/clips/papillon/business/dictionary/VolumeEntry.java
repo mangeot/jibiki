@@ -637,8 +637,6 @@ public class VolumeEntry
      */
     public String getXmlCode()
             throws PapillonBusinessException {
-        // FIXME: Warning, the xmlcode is the code as available in the db, it does not correspond
-        // FIXME: ... to the dom that may have been changed since the entry has been retrieved from the db.
         try {
             return this.myDO.getXmlCode();
         } catch (DataObjectException ex) {

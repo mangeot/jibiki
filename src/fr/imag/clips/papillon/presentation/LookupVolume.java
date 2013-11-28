@@ -277,7 +277,7 @@ public class LookupVolume extends AbstractPO {
 																			null,
 																			null,
 																			this.getUser(),
-																						 0);
+																						 0, DictionariesFactory.MaxRetrievedEntries);
 				
 				
 				if (EntryCollection!=null) {

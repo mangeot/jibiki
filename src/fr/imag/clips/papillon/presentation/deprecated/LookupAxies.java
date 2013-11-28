@@ -177,7 +177,7 @@ public class LookupAxies extends PapillonBasePO {
                     myAxies = PapillonPivotFactory.getAxiesCollection(papillonDictionary, papillonAxiVolume, entryId, null);
 						}
 						else if (null != req.getParameter(content.NAME_LookupLexie) && null != headword) {
-                    myAxies = DictionariesFactory.getAxiesCollectionByHeadword(papillonDictionary, sourceLanguage, this.getUser(), headword, strategy);
+                    myAxies = DictionariesFactory.getAxiesCollectionByHeadword(papillonDictionary, sourceLanguage, this.getUser(), headword, strategy, 0, DictionariesFactory.MaxRetrievedEntries);
 						}
             // looking for an axie with its id
             else if (null != req.getParameter(VIEW_AXIE_PARAMETER) &&

@@ -33,6 +33,7 @@ public class DictEngine implements IDictEngine {
 	protected String view = "";
 	protected static final IAnswer errorAnswer = new ErrorAnswer();
 	protected static final IAnswer[] errorAnswers = {errorAnswer};
+	protected static final int DEFAULT_LIMIT = 100;
 
     /**
         * DatabaseFactory constructor comment.
@@ -225,7 +226,9 @@ public class DictEngine implements IDictEngine {
             Answers = DictionariesFactory.getAllDictionariesEntriesCollection(myVector,
 																	null,
                                                                      null,
-                                                                     this.getUser());
+                                                                     this.getUser(),
+																			  0,
+																			  DEFAULT_LIMIT);
         }
         catch (Exception e) {
 			System.out.println("Error in LookupAll: " + e.toString());
@@ -281,7 +284,7 @@ public class DictEngine implements IDictEngine {
                                                                      null,
 																	 null,
                                                                      this.getUser(),
-																	 0);
+																	 0,DEFAULT_LIMIT);
     }
 
     public String authenticate(String login, String password) {

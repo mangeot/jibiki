@@ -48,6 +48,7 @@ import fr.imag.clips.papillon.business.dictionary.Dictionary;
 import fr.imag.clips.papillon.business.dictionary.DictionariesFactory;
 import fr.imag.clips.papillon.business.dictionary.Index;
 import fr.imag.clips.papillon.business.dictionary.IndexFactory;
+import fr.imag.clips.papillon.business.dictionary.QueryResult;
 import fr.imag.clips.papillon.business.dictionary.Volume;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory;
@@ -70,6 +71,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 	protected static final String DICTIONARY_PARAMETER = "DICTIONARY";
 	protected static final String LANG_PARAMETER = "LANG";
 	protected static final String ID_PARAMETER = "ID";
+	protected static final int DEFAULT_LIMIT = 100;
 	
 	protected static final String ENTRIES_HEAD_XMLSTRING = "<?xml version='1.0' encoding='UTF-8'?><entry-list xmlns='http://www-clips.imag.fr/geta/services/dml'>";
 	protected static final String ENTRIES_TAIL_XMLSTRING ="\n</entry-list>";
@@ -138,9 +140,10 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 		return resultDoc;			
 	}
 
-	public static org.w3c.dom.Document getEntries(String dictName, String lang, String criteria, String word, String key, String strategy, String limitString, String offsetString) 
+	public static org.w3c.dom.Document getEntries(String dictName, String lang, String criteria, String word, String key, String strategy, String limitString, String offsetString, String login, String password) 
 	throws HttpPresentationException, java.io.IOException, Exception {
-		int limit = 40;
+		User theUser = getUser(login, password);
+		int limit = DEFAULT_LIMIT;
 		if (limitString!=null) {
 			limit = Integer.parseInt(limitString);
 		}
@@ -236,14 +239,15 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 				theVolume = (Volume) iterator.next();
 				PapillonLogger.writeDebugMsg("Entries: volume: " + theVolume.getName());
 				String sourceLang = theVolume.getSourceLanguage();
-				String entryString = "\n<entry lang='"+sourceLang+"' dictionary='"+theVolume.getDictname()+"'><criteria value='"+criteria+"'>"; 
+				String entryString = "\n<entry lang='"+sourceLang+"' dictionary='"+theVolume.getDictname()+"'>";
+				String criteriaString = "<criteria value='"+criteria+"'>"; 
 				String langCriteria = null;
 				if (Volume.isSourceLangCDMElement(criteria)) {
 					langCriteria = sourceLang;
 				}
 				else if (Volume.isDefaultLangCDMElement(criteria)) {
 					langCriteria=Volume.DEFAULT_LANG;
-				}
+				}				
 				java.util.Vector myKeys = new java.util.Vector();
 				String[] Word = new String[4];
 				Word[0] = criteria;
@@ -251,6 +255,29 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 				Word[2] = word;
 				Word[3] = strategy;
 				myKeys.add(Word);
+				if (key != null && key.equals("entries")) {
+					java.util.Collection targets = theVolume.getTargetLanguagesArray();
+					java.util.Collection EntryCollection = DictionariesFactory.getDictionaryNameEntriesCollection(theVolume.getDictname(),
+																							 sourceLang,
+																							 targets,
+																							 myKeys,
+																							 null,
+																							 null,
+																							 theUser,
+																							 offset,
+																							limit);
+					
+					
+					if (EntryCollection!=null) {
+						for (java.util.Iterator myIterator = EntryCollection.iterator(); myIterator.hasNext(); ) {
+							QueryResult myQueryResult = (QueryResult) myIterator.next();
+							allEntries.append(entryString);
+							allEntries.append(myQueryResult.getSourceEntry().getXmlCode());
+							allEntries.append("</entry>");
+						}						
+					}
+				} 
+				else {
 				java.util.Collection resultsVector = IndexFactory.getIndexEntriesVector(theVolume.getIndexDbname(),
 																					myKeys,
 																					IndexFactory.ORDER_DESCENDING,
@@ -259,6 +286,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 				for (java.util.Iterator myIterator = resultsVector.iterator(); myIterator.hasNext(); ) {
 					Index myEntry = (Index) myIterator.next();
 					allEntries.append(entryString);
+					allEntries.append(criteriaString);
 					allEntries.append(myEntry.getValue());
 					allEntries.append("</criteria>");
 					if (key !=null) {
@@ -266,7 +294,9 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 					}
 					allEntries.append("<handle>");
 					allEntries.append(myEntry.getEntryId());
-					allEntries.append("</handle></entry>");
+					allEntries.append("</handle>");
+					allEntries.append("</entry>");
+				}
 				}
 			}
 			allEntries.append(ENTRIES_TAIL_XMLSTRING);
@@ -445,6 +475,16 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 			}
 		}
 		return answer;
+	}
+	
+	protected static User getUser(String login, String password) 
+	throws fr.imag.clips.papillon.business.PapillonBusinessException {
+		User user = null;
+		if (null != login && !login.equals("") &&
+			null != password && !password.equals("")) {
+			user = UsersFactory.findUserByLogin(login);
+		}
+		return user;
 	}
 	
 	public static org.w3c.dom.Document deleteEntry(String dictName, String lang, String entryId) 

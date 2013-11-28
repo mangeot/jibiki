@@ -298,7 +298,7 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
 								}
 							}
 						}						*/
-						content = Entries.getEntries(restStrings[0], restStrings[1], restStrings[2], restStrings[3], key, strategy, limit, offset);
+						content = Entries.getEntries(restStrings[0], restStrings[1], restStrings[2], restStrings[3], key, strategy, limit, offset, login, password);
 						if (content==null) {
 							String errorMsg = "Error: search: " + restStrings[0] + " lang: " +  restStrings[1] + " method: " + restStrings[2] +" does not exist!";
 							System.out.println(errorMsg);

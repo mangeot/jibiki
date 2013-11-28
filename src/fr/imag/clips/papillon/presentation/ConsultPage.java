@@ -42,8 +42,8 @@ import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
 public class ConsultPage extends DilafBasePO {
 
-	private ConsultPageXHTML content = null;
-	private String volume = null;
+	protected ConsultPageXHTML content = null;
+	protected String volume = null;
 
     protected boolean loggedInUserRequired() {
         return false;
@@ -152,7 +152,7 @@ public class ConsultPage extends DilafBasePO {
 																					 null,
 																					 null,
 																					 this.getUser(),
-																					 0);
+																					 0, DictionariesFactory.MaxRetrievedEntries);
 			
 			
 			if (EntryCollection!=null) {

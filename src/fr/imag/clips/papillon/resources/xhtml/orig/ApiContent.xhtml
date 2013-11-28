@@ -144,7 +144,7 @@
     <tr><td rowspan="3">Querystring</td><td>strategy=</td><td>strategy</td></tr>
     <tr><td>count=</td><td>count</td></tr>
     <tr><td>startIndex=</td><td>startIndex</td></tr>
-    <tr><td rowspan="2">Returns</td><td colspan="2">200 OK &amp; XML (entry)</td></tr>
+    <tr><td rowspan="2">Returns</td><td colspan="2">200 OK &amp; XML (entry handle, key value or full XML)</td></tr>
     <tr><td colspan="2">404 Not Found</td></tr>
  </tbody>
 </table>
@@ -159,7 +159,7 @@ It is also possible to do the same for the [lang] and [key] part of the URL.</p>
 <p>The <b>handle</b> criteria is special as it does not give a list of entry handles but the full entry XML
  content.</p>
 
-<p>Example of query: <a href="api/FeM/fra/cdm-headword/abandonner">api/FeM/fra/cdm-headword/abandonner</a></p>
+<p>Example of query: <a href="api/FeM/fra/cdm-headword/abandonner">api/FeM/fra/cdm-headword/abandonner?strategy=equal</a></p>
 <p>Answer:</p>
 <pre>
 &lt;?xml version="1.0" encoding="UTF-8"?&gt;
@@ -215,13 +215,22 @@ It is also possible to do the same for the [lang] and [key] part of the URL.</p>
 &lt;/volume>
 </pre>
 
-<p>Criteria and key are one of the following:</p>
+<p>Criteria only are one of the following:</p>
 
 <table class="api">
  <tbody>
     <tr><td>handle</td><td>unique entry handle specific to the server database</td></tr>
-    <tr><td>previous</td><td>previous entry before the headword</td></tr>
-    <tr><td>next</td><td>previous entry after the headword</td></tr>
+    <tr><td>previous</td><td>previous entry following the volume lexicographic order</td></tr>
+    <tr><td>next</td><td>previous entry following the volume lexicographic order</td></tr>
+ </tbody>
+</table>
+
+<p>For the above criteria, the string must be an entry handle.</p>
+
+<p>Criteria and keys are one of the following:</p>
+
+<table class="api">
+ <tbody>
     <tr><td>cdm-entry-id</td><td>entry id</td></tr>
     <tr><td>cdm-headword</td><td>entry headword</td></tr>
     <tr><td>cdm-headword-variant</td><td>entry headword variant</td></tr>
@@ -237,14 +246,23 @@ It is also possible to do the same for the [lang] and [key] part of the URL.</p>
     <tr><td>cdm-contribution-creation-date</td><td>contribution creation date</td></tr>
     <tr><td>cdm-contribution-finition-date</td><td>contribution finition date</td></tr>
     <tr><td>cdm-contribution-status</td><td>contribution status</td></tr>
+ </tbody>
+</table>
+
+<p>Note: criteria and keys depend on the resource. A criteria or a key might not be available for one specific resource.
+Other criteria and keys not in the list may exist only for one specific resource.</p>
+
+<p>cdm stands for Common Dictionary Markup</p>
+
+<p>Keys only are one of the following:</p>
+
+<table class="api">
+ <tbody>
+    <tr><td>entries</td><td>XML code of the 100 first entries satisfying the criteria</td></tr>
     <tr><td>pivax</td><td>UNL translations of a word via axemes and axies</td></tr>
  </tbody>
 </table>
 
-<p>Note: the criteria and key depend on the resource. A criteria or a key might not be available for one specific resource.
-Other criteria and keys not in the list may exist only for one specific resource.</p>
-
-<p>cdm stands for Common dictionary Markup</p>
 
 <p>Strategy is one of the following:</p>
 
@@ -266,6 +284,8 @@ Other criteria and keys not in the list may exist only for one specific resource
  </tbody>
 </table>
 
+<p>Default strategy is <code>CASE_INSENSITIVE_STARTS_WITH</code></p>
+
 <ul>
 	<li>All the answers are in XML and encoded in UTF-8.</li>
 	<li><em>lang</em> is the ISO 639-2/T 3 letter code of the language (eg: 'eng' for English,'esp' for Spanish,'fra' for French, etc.)</li>
@@ -274,7 +294,7 @@ Other criteria and keys not in the list may exist only for one specific resource
  
 <h2>Misc</h2>
 <p>If you need more help, send an email to
-<a href="mailto:mathieu.mangeotATimag.fr?subject=jibikiServer&amp;body=replace&nbsp;AT&nbsp;by&nbsp;@&nbsp;in&nbsp;the&nbsp;email&nbsp;address">Mathieu Mangeot-Nagata</a>.</p>
+<a href="mailto:mathieu.mangeotATimag.fr?subject=jibikiServer&amp;body=replace&nbsp;AT&nbsp;by&nbsp;@&nbsp;in&nbsp;the&nbsp;email&nbsp;address">Mathieu Mangeot</a>.</p>
 </div>
 </body>
 </html>

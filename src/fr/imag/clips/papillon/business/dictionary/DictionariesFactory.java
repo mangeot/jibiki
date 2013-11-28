@@ -251,7 +251,7 @@ import java.util.*;
 public class DictionariesFactory {
 	
 	public final static int MaxDisplayedEntries = 5;
-	public final static int MaxRetrievedEntries = 500;
+	public final static int MaxRetrievedEntries = 100;
     protected final static String DML_URI = DmlPrefixResolver.DML_URI;
     protected final static String XLINK_URI = DmlPrefixResolver.XLINK_URI;
     protected final static String DICTIONARY_TAG="dictionary-metadata";
@@ -578,7 +578,9 @@ public class DictionariesFactory {
     public static Collection getAllDictionariesEntriesCollection(Vector Keys1,
 																 Vector Keys2,
 																 String anyContains,
-																 User user)
+																 User user,
+																 int offset,
+																 int limit)
 	throws PapillonBusinessException {
 		Vector entries = new Vector();
 		Collection resources = getDictionariesArray();
@@ -591,7 +593,8 @@ public class DictionariesFactory {
 														  Keys2,
 														  anyContains,
 														  user,
-														  0));
+														  offset,
+														  limit));
 		}
 		
 		//
@@ -624,7 +627,7 @@ public class DictionariesFactory {
 															  Vector Keys2,
 															  String anyContains,
 															  User user,
-															  int offset)
+															  int offset, int limit)
 	throws PapillonBusinessException {
 		Vector entries = new Vector();
 		
@@ -637,7 +640,8 @@ public class DictionariesFactory {
 																	   Keys2,
 																	   anyContains,
 																	   user,
-																	   offset);
+																	   offset,
+																	   limit);
 				if (myColl!=null) {
 					entries.addAll(myColl);
 				}
@@ -671,13 +675,14 @@ public class DictionariesFactory {
 																Vector Keys2,
 																String anyContains,
 																User user,
-																int offset) 
+																int offset,
+																int limit) 
 	throws PapillonBusinessException {
 		Dictionary dict = getDictionaryByName(resource);
 		return getDictionaryEntriesCollection(dict, source,
 											  targets,Keys1, 
 											  Keys2, anyContains, 
-											  user, offset);
+											  user, offset, limit);
 	}
 	
     
@@ -706,7 +711,8 @@ public class DictionariesFactory {
                                                             Vector Keys2,
                                                             String anyContains,
                                                             User user,
-                                                            int offset)
+                                                            int offset,
+															int limit)
 	throws PapillonBusinessException {
         //	Collection qrset = new HashSet();				
         Collection qrset = new Vector();
@@ -720,7 +726,7 @@ public class DictionariesFactory {
                 Volume myVolume = (Volume) iter.next();
 				
                 // FIXME: get the limit argument
-                Vector entriesVector = VolumeEntriesFactory.getVolumeEntriesVector(dict, myVolume, Keys1, Keys2, anyContains, offset, 0);
+                Vector entriesVector = VolumeEntriesFactory.getVolumeEntriesVector(dict, myVolume, Keys1, Keys2, anyContains, offset, limit);
 				
 				//System.out.println("entriesVector.size: " + entriesVector.size());
                 //FIXME: hack for targets array. If the array is null, it means that all targets are asked
@@ -1017,7 +1023,7 @@ public class DictionariesFactory {
      * @exception PapillonBusinessException
      */ 
 	// FIXME: find in lookupAxies, this page is used ?
-	public static Collection getAxiesCollectionByHeadword(Dictionary dict, String source, User user, String headword, int strategy) throws PapillonBusinessException {
+	public static Collection getAxiesCollectionByHeadword(Dictionary dict, String source, User user, String headword, int strategy, int offset, int limit) throws PapillonBusinessException {
 		Collection axies = new Vector();
 		String[] Headword = new String[4];
 		//Headword[0] = key
@@ -1038,7 +1044,8 @@ public class DictionariesFactory {
 															null,
 															null,
 															user,
-															0);
+															offset,
+															limit);
 		//		if (entries != null && entries.size()>0) {
 		//			for (Iterator myIterator = entries.iterator(); myIterator.hasNext();) {
 		//				axies.addAll(PapillonPivotFactory.findAxiesByLexie((IAnswer)myIterator.next(),user));
