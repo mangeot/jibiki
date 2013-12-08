@@ -1469,6 +1469,10 @@ CREATE OR REPLACE FUNCTION kau_sort( varchar )
     result:= result || '07';
   ELSIF tmp = 'ə' THEN
     result:= result || '07';
+  ELSIF tmp = 'Ǝ' THEN
+    result:= result || '07';
+  ELSIF tmp = 'ǝ' THEN
+    result:= result || '07';
   ELSIF tmp = 'F' THEN
 	result:= result || '08';
   ELSIF tmp = 'f' THEN
@@ -1837,6 +1841,10 @@ CREATE OR REPLACE FUNCTION tmh_sort( varchar )
   ELSIF tmp = 'Ə' THEN
     result:= result || '08';
   ELSIF tmp = 'ə' THEN
+    result:= result || '08';
+  ELSIF tmp = 'Ǝ' THEN
+    result:= result || '08';
+  ELSIF tmp = 'ǝ' THEN
     result:= result || '08';
   ELSIF tmp = 'F' THEN
     result:= result || '09';
