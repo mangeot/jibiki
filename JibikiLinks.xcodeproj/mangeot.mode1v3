@@ -278,14 +278,21 @@
 								<string>A30723380EC89B2300733910</string>
 								<string>A30723390EC89B2300733910</string>
 								<string>A30724320EC89B2500733910</string>
+								<string>A307247B0EC89B2600733910</string>
+								<string>A30724A60EC89B2600733910</string>
+								<string>A30724E80EC89B2700733910</string>
+								<string>A307252E0EC89B2700733910</string>
+								<string>A30725740EC89B2800733910</string>
 								<string>A30727730EC89B2D00733910</string>
 								<string>1C37FABC05509CD000000102</string>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>50</integer>
-									<integer>49</integer>
+									<integer>349</integer>
+									<integer>277</integer>
+									<integer>174</integer>
+									<integer>150</integer>
 									<integer>10</integer>
 									<integer>9</integer>
 									<integer>8</integer>
@@ -295,7 +302,7 @@
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 542}, {368, 724}}</string>
+							<string>{{0, 5562}, {368, 724}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -314,7 +321,7 @@
 							<real>368</real>
 						</array>
 						<key>RubberWindowFrame</key>
-						<string>118 245 1480 783 0 0 1680 1028 </string>
+						<string>46 245 1480 783 0 0 1680 1028 </string>
 					</dict>
 					<key>Module</key>
 					<string>PBXSmartGroupTreeModule</string>
@@ -332,7 +339,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>DataLayerVersion.java</string>
+								<string>ViewQueryResult.xhtml</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -340,11 +347,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>DataLayerVersion.java</string>
+										<string>ViewQueryResult.xhtml</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>A3A4AD5618AD61AF00412841</string>
+										<string>A35E9E6318AD687D000E2B1A</string>
 										<key>history</key>
 										<array>
 											<string>A3EC4B5C1845655E00CEBA9C</string>
@@ -383,7 +390,29 @@
 											<string>A3CE8D9818AD4ED4005E6F5B</string>
 											<string>A3CE8D9918AD4ED4005E6F5B</string>
 											<string>A3CE8D9A18AD4ED4005E6F5B</string>
-											<string>A3CE8D9C18AD4ED4005E6F5B</string>
+											<string>A3A4AD5A18AD665200412841</string>
+											<string>A3A4AD5B18AD665200412841</string>
+											<string>A3A4AD5C18AD665200412841</string>
+											<string>A3A4AD5D18AD665200412841</string>
+											<string>A3A4AD5E18AD665200412841</string>
+											<string>A3A4AD5F18AD665200412841</string>
+											<string>A3A4AD6018AD665200412841</string>
+											<string>A3A4AD6118AD665200412841</string>
+											<string>A3A4AD6218AD665200412841</string>
+											<string>A3A4AD6318AD665200412841</string>
+											<string>A3A4AD6418AD665200412841</string>
+											<string>A3A4AD6518AD665200412841</string>
+											<string>A3A4AD6618AD665200412841</string>
+											<string>A3A4AD6718AD665200412841</string>
+											<string>A3A4AD6818AD665200412841</string>
+											<string>A3A4AD6918AD665200412841</string>
+											<string>A3A4AD6A18AD665200412841</string>
+											<string>A3A4AD6B18AD665200412841</string>
+											<string>A35E9E5E18AD687D000E2B1A</string>
+											<string>A35E9E5F18AD687D000E2B1A</string>
+											<string>A35E9E6018AD687D000E2B1A</string>
+											<string>A35E9E6118AD687D000E2B1A</string>
+											<string>A35E9E6218AD687D000E2B1A</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -395,14 +424,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {1090, 507}}</string>
+								<string>{{0, 0}, {1090, 500}}</string>
 								<key>RubberWindowFrame</key>
-								<string>118 245 1480 783 0 0 1680 1028 </string>
+								<string>46 245 1480 783 0 0 1680 1028 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>507pt</string>
+							<string>500pt</string>
 						</dict>
 						<dict>
 							<key>ContentConfiguration</key>
@@ -415,14 +444,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 512}, {1090, 230}}</string>
+								<string>{{0, 505}, {1090, 237}}</string>
 								<key>RubberWindowFrame</key>
-								<string>118 245 1480 783 0 0 1680 1028 </string>
+								<string>46 245 1480 783 0 0 1680 1028 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
 							<key>Proportion</key>
-							<string>230pt</string>
+							<string>237pt</string>
 						</dict>
 					</array>
 					<key>Proportion</key>
@@ -441,9 +470,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>A3A4AD5718AD61AF00412841</string>
+				<string>A35E9E6418AD687D000E2B1A</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>A3A4AD5818AD61AF00412841</string>
+				<string>A35E9E6518AD687D000E2B1A</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -581,11 +610,12 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
+		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>A3D629281485232300B7780F</string>
 		<string>/Projects/jibiki/branches/LINKS_1_0/JibikiLinks.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
-	<string>118 245 1480 783 0 0 1680 1028 </string>
+	<string>46 245 1480 783 0 0 1680 1028 </string>
 	<key>WindowToolsV3</key>
 	<array>
 		<dict>
@@ -662,7 +692,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>A3D629281485232300B7780F</string>
-				<string>A3A4AD5918AD61AF00412841</string>
+				<string>A35E9E5718AD682B000E2B1A</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
@@ -817,12 +847,14 @@
 							<key>Dock</key>
 							<array>
 								<dict>
+									<key>BecomeActive</key>
+									<true/>
 									<key>ContentConfiguration</key>
 									<dict>
 										<key>PBXProjectModuleGUID</key>
 										<string>1CDD528C0622207200134675</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>papillon_static_objects.doml</string>
+										<string>ViewQueryResult.xhtml</string>
 										<key>StatusBarVisibility</key>
 										<true/>
 									</dict>
@@ -831,7 +863,7 @@
 										<key>Frame</key>
 										<string>{{0, 0}, {1387, 405}}</string>
 										<key>RubberWindowFrame</key>
-										<string>263 114 1387 850 0 0 1680 1028 </string>
+										<string>505 114 1387 850 0 0 1680 1028 </string>
 									</dict>
 									<key>Module</key>
 									<string>PBXNavigatorGroup</string>
@@ -855,7 +887,7 @@
 								<key>Frame</key>
 								<string>{{0, 410}, {1387, 399}}</string>
 								<key>RubberWindowFrame</key>
-								<string>263 114 1387 850 0 0 1680 1028 </string>
+								<string>505 114 1387 850 0 0 1680 1028 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXProjectFindModule</string>
@@ -878,17 +910,17 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C530D57069F1CE1000CFCEE</string>
-				<string>A369D51D18AD0F470023314A</string>
-				<string>A369D51E18AD0F470023314A</string>
+				<string>A35E9E5B18AD682B000E2B1A</string>
+				<string>A35E9E5C18AD682B000E2B1A</string>
 				<string>1CDD528C0622207200134675</string>
 				<string>1CD0528E0623707200166675</string>
 			</array>
 			<key>WindowString</key>
-			<string>263 114 1387 850 0 0 1680 1028 </string>
+			<string>505 114 1387 850 0 0 1680 1028 </string>
 			<key>WindowToolGUID</key>
 			<string>1C530D57069F1CE1000CFCEE</string>
 			<key>WindowToolIsVisible</key>
-			<true/>
+			<false/>
 		</dict>
 		<dict>
 			<key>Identifier</key>
