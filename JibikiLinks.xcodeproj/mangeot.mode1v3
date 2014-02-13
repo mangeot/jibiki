@@ -229,8 +229,6 @@
 			<key>Layout</key>
 			<array>
 				<dict>
-					<key>BecomeActive</key>
-					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -273,7 +271,10 @@
 								<string>A30722200EC89B1E00733910</string>
 								<string>A30722210EC89B1E00733910</string>
 								<string>A30722220EC89B1E00733910</string>
+								<string>A30722B70EC89B2100733910</string>
+								<string>A30722BC0EC89B2100733910</string>
 								<string>A30722BF0EC89B2100733910</string>
+								<string>A30722C20EC89B2100733910</string>
 								<string>A30723380EC89B2300733910</string>
 								<string>A30723390EC89B2300733910</string>
 								<string>A30724320EC89B2500733910</string>
@@ -283,7 +284,7 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>38</integer>
+									<integer>37</integer>
 									<integer>12</integer>
 									<integer>11</integer>
 									<integer>10</integer>
@@ -295,7 +296,7 @@
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 286}, {368, 740}}</string>
+							<string>{{0, 401}, {368, 740}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -325,12 +326,14 @@
 					<key>Dock</key>
 					<array>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>PapillonPivotFactory.java</string>
+								<string>ParseVolume.java</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -338,11 +341,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>PapillonPivotFactory.java</string>
+										<string>ParseVolume.java</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>A369D50A18AD091B0023314A</string>
+										<string>A369D52618AD0F580023314A</string>
 										<key>history</key>
 										<array>
 											<string>A3EC4B5C1845655E00CEBA9C</string>
@@ -372,8 +375,13 @@
 											<string>A31DEB4118ACFC8F000196C2</string>
 											<string>A31DEB4218ACFC8F000196C2</string>
 											<string>A31DEB4318ACFC8F000196C2</string>
-											<string>A369D50818AD091B0023314A</string>
-											<string>A369D50918AD091B0023314A</string>
+											<string>A369D51F18AD0F580023314A</string>
+											<string>A369D52018AD0F580023314A</string>
+											<string>A369D52118AD0F580023314A</string>
+											<string>A369D52218AD0F580023314A</string>
+											<string>A369D52318AD0F580023314A</string>
+											<string>A369D52418AD0F580023314A</string>
+											<string>A369D52518AD0F580023314A</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -571,6 +579,7 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
+		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>A3D629281485232300B7780F</string>
 		<string>/Projects/jibiki/branches/LINKS_1_0/JibikiLinks.xcodeproj</string>
 	</array>
@@ -807,12 +816,14 @@
 							<key>Dock</key>
 							<array>
 								<dict>
+									<key>BecomeActive</key>
+									<true/>
 									<key>ContentConfiguration</key>
 									<dict>
 										<key>PBXProjectModuleGUID</key>
 										<string>1CDD528C0622207200134675</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>Entries.java</string>
+										<string>IndexFactory.java</string>
 										<key>StatusBarVisibility</key>
 										<true/>
 									</dict>
@@ -833,8 +844,6 @@
 							<string>405pt</string>
 						</dict>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -870,8 +879,8 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C530D57069F1CE1000CFCEE</string>
-				<string>A32B9B0918478C84004B2A24</string>
-				<string>A32B9B0A18478C84004B2A24</string>
+				<string>A369D51D18AD0F470023314A</string>
+				<string>A369D51E18AD0F470023314A</string>
 				<string>1CDD528C0622207200134675</string>
 				<string>1CD0528E0623707200166675</string>
 			</array>

@@ -26,7 +26,6 @@
 		A307221C0EC89B1E00733910 /* TODO.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = TODO.rtf; sourceTree = "<group>"; };
 		A30722230EC89B1E00733910 /* AvailableLanguages.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = AvailableLanguages.java; sourceTree = "<group>"; };
 		A30722240EC89B1E00733910 /* AvailableValuesQuery.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = AvailableValuesQuery.java; sourceTree = "<group>"; };
-		A30722250EC89B1E00733910 /* Axie.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = Axie.java; sourceTree = "<group>"; };
 		A30722260EC89B1E00733910 /* ChangeAuthorProcessor.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = ChangeAuthorProcessor.java; sourceTree = "<group>"; };
 		A30722270EC89B1E00733910 /* ContributionLog.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = ContributionLog.java; sourceTree = "<group>"; };
 		A30722280EC89B1E00733910 /* ContributionsFactory.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = ContributionsFactory.java; sourceTree = "<group>"; };
@@ -1234,6 +1233,7 @@
 		A35D6A69171C60F60031534B /* DownloadTmpl.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = DownloadTmpl.xhtml; sourceTree = "<group>"; };
 		A35D6A7C171C67540031534B /* UserProfile.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = UserProfile.xhtml; sourceTree = "<group>"; };
 		A35D6A85171C6CC10031534B /* ConsultPage.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ConsultPage.xhtml; sourceTree = "<group>"; };
+		A369D51118AD0E820023314A /* LexalpEditEntryInit.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = LexalpEditEntryInit.java; sourceTree = "<group>"; };
 		A37C02CE128C62BD0047A982 /* Base64Coder.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = Base64Coder.java; sourceTree = "<group>"; };
 		A37C02CF128C62BD0047A982 /* DBConnection.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = DBConnection.java; sourceTree = "<group>"; };
 		A37C02D0128C62BD0047A982 /* PivaxFormatter.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = PivaxFormatter.java; sourceTree = "<group>"; };
@@ -1644,7 +1644,6 @@
 			children = (
 				A30722230EC89B1E00733910 /* AvailableLanguages.java */,
 				A30722240EC89B1E00733910 /* AvailableValuesQuery.java */,
-				A30722250EC89B1E00733910 /* Axie.java */,
 				A30722260EC89B1E00733910 /* ChangeAuthorProcessor.java */,
 				A30722270EC89B1E00733910 /* ContributionLog.java */,
 				A30722280EC89B1E00733910 /* ContributionsFactory.java */,
@@ -1999,6 +1998,7 @@
 				A30722FB0EC89B2200733910 /* LaunchAction.java */,
 				A30722FC0EC89B2200733910 /* LaunchSaxon8bTransformation.java */,
 				A30722FD0EC89B2200733910 /* LexALP.java */,
+				A369D51118AD0E820023314A /* LexalpEditEntryInit.java */,
 				A30722FE0EC89B2200733910 /* EditEntryInit.java */,
 				A37C0330128C73980047A982 /* EditEntryInitFactory.java */,
 				A30722FF0EC89B2200733910 /* LexALPLayout.java */,

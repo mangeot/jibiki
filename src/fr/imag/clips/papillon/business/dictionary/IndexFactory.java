@@ -398,28 +398,6 @@ public class IndexFactory {
 	}
 	
 	
-	protected static boolean createIndexForLexiesHashtable(String indexDbname, Axie myAxie)
-		throws PapillonBusinessException {
-			Hashtable lexies = myAxie.getLexies();
-			if (lexies != null) {
-				Iterator myIterator = lexies.values().iterator();
-				while (myIterator.hasNext()) {
-					Vector myVector = (Vector) myIterator.next();
-					if (myVector != null && myVector.size()>0) {
-						for (int i=0;i<myVector.size();i++) {
-							String myString = (String) myVector.elementAt(i);
-							if (myString != null && !myString.equals("")) {
-								Index myIndex = IndexFactory.newIndex(indexDbname, Volume.CDM_entryId, Axie.LANG,myString,myAxie.getHandle());
-								myIndex.save();
-							}
-						}
-					}
-				}				
-			}
-			return true;
-		}	
-	
-	
 	protected static void deleteIndexForEntryId(String indexDbname, String entryId) throws 	PapillonBusinessException {
 		Vector theIndex = new Vector();
 		

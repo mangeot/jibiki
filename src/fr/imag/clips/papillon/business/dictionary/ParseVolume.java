@@ -568,15 +568,4 @@ public class ParseVolume {
         return result;
     }
     
-    /**
-     * @param myEntry the axie
-     * @return true if axie has a valid xmldoc
-     * @throws PapillonBusinessException if any exception is received
-     * @deprecated Axie should not be used anymore
-     */
-    public static boolean parseAxie(Axie myEntry)
-            throws PapillonBusinessException {
-				return false;
-			}
- 
 }
