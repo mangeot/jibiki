@@ -296,7 +296,7 @@
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 401}, {368, 740}}</string>
+							<string>{{0, 597}, {368, 740}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -345,7 +345,7 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>A369D52618AD0F580023314A</string>
+										<string>A3CE8D9118AD2A3F005E6F5B</string>
 										<key>history</key>
 										<array>
 											<string>A3EC4B5C1845655E00CEBA9C</string>
@@ -366,7 +366,6 @@
 											<string>A32B9B2418478E43004B2A24</string>
 											<string>A32B9B2518478E43004B2A24</string>
 											<string>A32B9B2618478E43004B2A24</string>
-											<string>A32B9B2818478E43004B2A24</string>
 											<string>A32B9B2A18478E6A004B2A24</string>
 											<string>A32B9B2D18479452004B2A24</string>
 											<string>A36836F61854E1E6006361F6</string>
@@ -381,7 +380,7 @@
 											<string>A369D52218AD0F580023314A</string>
 											<string>A369D52318AD0F580023314A</string>
 											<string>A369D52418AD0F580023314A</string>
-											<string>A369D52518AD0F580023314A</string>
+											<string>A369D52918AD1B3C0023314A</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -393,14 +392,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {1227, 535}}</string>
+								<string>{{0, 0}, {1227, 529}}</string>
 								<key>RubberWindowFrame</key>
 								<string>59 229 1617 799 0 0 1680 1028 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>535pt</string>
+							<string>529pt</string>
 						</dict>
 						<dict>
 							<key>ContentConfiguration</key>
@@ -413,14 +412,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 540}, {1227, 218}}</string>
+								<string>{{0, 534}, {1227, 224}}</string>
 								<key>RubberWindowFrame</key>
 								<string>59 229 1617 799 0 0 1680 1028 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
 							<key>Proportion</key>
-							<string>218pt</string>
+							<string>224pt</string>
 						</dict>
 					</array>
 					<key>Proportion</key>
@@ -439,9 +438,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>A369D50B18AD091B0023314A</string>
+				<string>A3CE8D9218AD2A3F005E6F5B</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>A369D50C18AD091B0023314A</string>
+				<string>A3CE8D9318AD2A3F005E6F5B</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -579,7 +578,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>A3D629281485232300B7780F</string>
 		<string>/Projects/jibiki/branches/LINKS_1_0/JibikiLinks.xcodeproj</string>
 	</array>
@@ -661,7 +659,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>A3D629281485232300B7780F</string>
-				<string>A369D50D18AD091B0023314A</string>
+				<string>A3CE8D9418AD2A3F005E6F5B</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
@@ -816,14 +814,12 @@
 							<key>Dock</key>
 							<array>
 								<dict>
-									<key>BecomeActive</key>
-									<true/>
 									<key>ContentConfiguration</key>
 									<dict>
 										<key>PBXProjectModuleGUID</key>
 										<string>1CDD528C0622207200134675</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>IndexFactory.java</string>
+										<string>papillon_static_objects.doml</string>
 										<key>StatusBarVisibility</key>
 										<true/>
 									</dict>
@@ -889,7 +885,7 @@
 			<key>WindowToolGUID</key>
 			<string>1C530D57069F1CE1000CFCEE</string>
 			<key>WindowToolIsVisible</key>
-			<false/>
+			<true/>
 		</dict>
 		<dict>
 			<key>Identifier</key>
