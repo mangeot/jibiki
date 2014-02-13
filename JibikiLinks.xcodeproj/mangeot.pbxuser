@@ -62,8 +62,8 @@
 	A30722340EC89B1E00733910 /* IndexFactory.java */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1508, 8205}}";
-			sepNavSelRange = "{16637, 0}";
-			sepNavVisRange = "{16482, 858}";
+			sepNavSelRange = "{20847, 0}";
+			sepNavVisRange = "{16612, 728}";
 		};
 	};
 	A30722350EC89B1E00733910 /* IQuery.java */ = {
@@ -2403,8 +2403,8 @@
 	};
 	A3AB8B4015C7CC4700929F98 /* ParseVolume.java */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1166, 8610}}";
-			sepNavSelRange = "{28211, 0}";
+			sepNavIntBoundsRect = "{{0, 0}, {1166, 8655}}";
+			sepNavSelRange = "{28214, 0}";
 			sepNavVisRange = "{27023, 1191}";
 		};
 	};
