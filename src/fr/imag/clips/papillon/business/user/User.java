@@ -246,8 +246,8 @@ public class User implements com.lutris.appserver.server.user.User {
 			try {
                 byte pwd[] = myDO.getPassword();
 				PapillonLogger.writeDebugMsg("Stored pwd:");
-                //for (int i=0; i < pwd.length; i++) System.out.print(Integer.toHexString(pwd[i] & 0xFF));
-                for (int i=0; i < pwd.length; i++) System.out.print("[i:"+pwd[i]+"]");
+                for (int i=0; i < pwd.length; i++) System.out.print(Integer.toHexString(pwd[i] & 0xFF));
+                //for (int i=0; i < pwd.length; i++) System.out.print("[i:"+pwd[i]+"]");
 				PapillonLogger.writeDebugMsg("");
  				return myDO.getPassword();
 				
@@ -600,9 +600,9 @@ public class User implements com.lutris.appserver.server.user.User {
                 if (null != login && !login.equals("")) {
                     byte[] givenPassword = makeDigest(login,password);
 					PapillonLogger.writeDebugMsg("Given pwd:");
-					//	for (int i=0; i < givenPassword.length; i++) System.out.print(Integer.toHexString(givenPassword[i] & 0xFF));
+					for (int i=0; i < givenPassword.length; i++) System.out.print(Integer.toHexString(givenPassword[i] & 0xFF));
 					//for (int i=0; i < givenPassword.length; i++) System.out.print(givenPassword[i]);
-					for (int i=0; i < givenPassword.length; i++) System.out.print("[i:"+givenPassword[i]+"]");
+					//for (int i=0; i < givenPassword.length; i++) System.out.print("[i:"+givenPassword[i]+"]");
 					PapillonLogger.writeDebugMsg("");
                     String givenPasswordString = new String(givenPassword, PASSWORD_ENCODING);
 					PapillonLogger.writeDebugMsg("givenpwd: "+ givenPasswordString);
@@ -612,7 +612,7 @@ public class User implements com.lutris.appserver.server.user.User {
 					// Here we just iterate the char array and print it to our console.
 					for (int i = 0; i < temp.length; i++)
 					{
-						System.out.print("[i:"+temp[i]+"]");
+						//System.out.print("[i:"+temp[i]+"]");
 					}
 					
                     String origPasswordString = new String(this.getPassword(), PASSWORD_ENCODING); 
@@ -622,7 +622,7 @@ public class User implements com.lutris.appserver.server.user.User {
 					// Here we just iterate the char array and print it to our console.
 					for (int i = 0; i < temp2.length; i++)
 					{
-						System.out.print("[i:"+temp2[i]+"]");
+						//System.out.print("[i:"+temp2[i]+"]");
 					}
 					
                     answer = origPasswordString.equals(givenPasswordString);
