@@ -246,7 +246,8 @@ public class User implements com.lutris.appserver.server.user.User {
 			try {
                 byte pwd[] = myDO.getPassword();
 				PapillonLogger.writeDebugMsg("Stored pwd:");
-                for (int i=0; i < pwd.length; i++) System.out.print(Integer.toHexString(pwd[i] & 0xFF));
+                //for (int i=0; i < pwd.length; i++) System.out.print(Integer.toHexString(pwd[i] & 0xFF));
+                for (int i=0; i < pwd.length; i++) System.out.print("[i:"+pwd[i]+"]");
 				PapillonLogger.writeDebugMsg("");
  				return myDO.getPassword();
 				
@@ -258,6 +259,9 @@ public class User implements com.lutris.appserver.server.user.User {
 		throws PapillonBusinessException {
 			try {
 				byte[] myDigest = makeDigest(this.getLogin(), password);
+				PapillonLogger.writeDebugMsg("Set pwd:");
+				//for (int i=0; i < myDigest.length; i++) System.out.print(Integer.toHexString(myDigest[i] & 0xFF));
+				for (int i=0; i < myDigest.length; i++) System.out.print("[i:"+myDigest[i]+"]");
 				myDO.setPassword(myDigest);
 			} catch(DataObjectException ex) {
 				throw new PapillonBusinessException("Error setting user's password", ex);
@@ -596,7 +600,9 @@ public class User implements com.lutris.appserver.server.user.User {
                 if (null != login && !login.equals("")) {
                     byte[] givenPassword = makeDigest(login,password);
 					PapillonLogger.writeDebugMsg("Given pwd:");
-					for (int i=0; i < givenPassword.length; i++) System.out.print(Integer.toHexString(givenPassword[i] & 0xFF));
+					//	for (int i=0; i < givenPassword.length; i++) System.out.print(Integer.toHexString(givenPassword[i] & 0xFF));
+					//for (int i=0; i < givenPassword.length; i++) System.out.print(givenPassword[i]);
+					for (int i=0; i < givenPassword.length; i++) System.out.print("[i:"+givenPassword[i]+"]");
 					PapillonLogger.writeDebugMsg("");
                     String givenPasswordString = new String(givenPassword, PASSWORD_ENCODING);
 					PapillonLogger.writeDebugMsg("givenpwd: "+ givenPasswordString);
