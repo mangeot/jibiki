@@ -105,7 +105,7 @@
               <initialValue>1</initialValue>
           </column>
         </table>
-		       <table id="fr.imag.clips.papillon.data.PapillonAxi" dbTableName="papillonaxi">
+		       <!--table id="fr.imag.clips.papillon.data.PapillonAxi" dbTableName="papillonaxi">
           <column id="id" usedForQuery="true">
             <javadoc>/**
  * the external id
@@ -151,7 +151,7 @@
 		  <index id="id_idx">
           <indexColumn id="id"/>
         </index>
-        </table>
+        </table-->
 
         <table dbTableName="messages" id="fr.imag.clips.papillon.data.Message">
           <column id="date" usedForQuery="true">
