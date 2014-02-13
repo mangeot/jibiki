@@ -852,18 +852,9 @@ public class AdminContributions extends PapillonBasePO {
 											  + "&" + content.NAME_VOLUME + "=" + myContrib.getVolumeName()
 											  + "&" + FORMATTER_PARAMETER + "=" + XML_FORMATTER);
 						
-						// edit contrib
-                        //FIXME: encore un hack de plus pour les axies.
-						//For the moment, we cannot reedit axies
-						if (myContrib.getVolumeName().equals(PapillonPivotFactory.VOLUMENAME)) {
-							content.setTextEditContrib("");
-							
-						}
-						else {
-							editContribAnchor.setHref(EditURL + "?"
+						editContribAnchor.setHref(EditURL + "?"
 														+ EditVolumeParameter + "=" + myContrib.getVolumeName()
 														+ "&"+ EditHandleParameter + "=" + myContrib.getHandle());
-						}
 						
 						// remove contrib
                         removeContribAnchor.setHref(this.getUrl() + "?"

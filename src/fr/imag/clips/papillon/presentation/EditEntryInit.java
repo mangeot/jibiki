@@ -138,7 +138,6 @@ import fr.imag.clips.papillon.business.dictionary.QueryRequest;
 import fr.imag.clips.papillon.business.dictionary.QueryCriteria;
 import fr.imag.clips.papillon.business.dictionary.QueryParameter;
 import fr.imag.clips.papillon.business.dictionary.IQuery;
-import fr.imag.clips.papillon.business.dictionary.PapillonPivotFactory;
 import fr.imag.clips.papillon.business.user.User;
 import fr.imag.clips.papillon.business.user.Group;
 import fr.imag.clips.papillon.business.utility.Utility;
@@ -323,16 +322,6 @@ public class EditEntryInit extends PapillonBasePO {
                 
                 //
                 String itf = myVolume.getTemplateInterface();
-                // FIXME: trick to avoid displaying Papillon axies...
-                if (itf != null && !itf.equals("") && !myVolume.getName().equals(PapillonPivotFactory.VOLUMENAME)) {
-                    volumeOptionTemplate.setValue(myVolume.getName());
-                    volumeOptionTemplate.setLabel(myVolume.getName());
-                    // Je dois ici mettre un text dans l'OPTION, car les browser PC ne sont pas conformes aux
-                    // specs W3C.
-                    volumeOptionTemplate.setSelected(myVolume.getName().equals(volumeName));
-                    volumeTextTemplate.setData(myVolume.getName());
-                    volumeSelect.appendChild(volumeOptionTemplate.cloneNode(true));
-                }
             }
             volumeSelect.removeChild(volumeOptionTemplate);
         }

@@ -970,18 +970,7 @@ public class ReviewContributions extends PapillonBasePO {
                         content.setTextCreationDate(Utility.PapillonShortDateFormat.format(myContrib.getCreationDate()));
                         content.setTextStatus(myContrib.getStatus());
 												
-						// edit contrib
-						// FIXME hack because we cannot reedit yet axies ...
-						if (!myContrib.getVolumeName().equals(PapillonPivotFactory.VOLUMENAME)
-							&& (this.getUser().isInNormalGroups(myContrib.getGroups())
-							|| this.getUser().isValidator())) {
-							editContribAnchor.setHref(EditURL + "?"
-                                                  + EditVolumeParameter + "=" + myContrib.getVolumeName()
-												  + "&" + EditHandleParameter + "=" + myContrib.getHandle());
-						}
-						else {
-							content.setTextEditMessage("");
-						}
+						content.setTextEditMessage("");
 						
 						// IsNewEntry
 						boolean isNewEntry = myContrib.getOriginalContributionId()==null || myContrib.getOriginalContributionId().equals("");

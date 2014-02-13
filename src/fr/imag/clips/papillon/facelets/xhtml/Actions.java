@@ -37,7 +37,6 @@ import com.lutris.appserver.server.httpPresentation.HttpPresentationComms;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 
 import fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory;
-import fr.imag.clips.papillon.business.dictionary.PapillonPivotFactory;
 import fr.imag.clips.papillon.business.dictionary.Volume;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
 import fr.imag.clips.papillon.business.dictionary.QueryParameter;
@@ -103,7 +102,7 @@ public class Actions implements fr.imag.clips.papillon.facelets.api.Actions {
 		//action.equals("AXIE"))
 					XHTMLAnchorElement viewAxieAnchor = content.getElementViewAxieAnchor();
 					viewAxieAnchor.removeAttribute("id");
-					axie(myEntry,url,user, viewAxieAnchor);
+					//axie(myEntry,url,user, viewAxieAnchor);
 				
 		// (action.equals("EDIT"))
 					XHTMLAnchorElement editAnchor = content.getElementEditEntryAnchor();
@@ -186,41 +185,6 @@ public class Actions implements fr.imag.clips.papillon.facelets.api.Actions {
     }
 	
 	
-	private void axie(VolumeEntry myEntry, String url, User user, XHTMLAnchorElement viewAxieAnchor)
-	throws fr.imag.clips.papillon.business.PapillonBusinessException {
-		if (! "axi".equals(myEntry.getVolume().getSourceLanguage())) {
-            Collection axies = PapillonPivotFactory.findAxiesByLexie(myEntry, user);
-            if (axies != null && axies.size() > 0) {
-                // FIXME: Only view ONE axie... we should consider changing the API for it to return only one
-                VolumeEntry myAxie = (VolumeEntry) axies.iterator().next();
-				
-                // View axie
-                QueryParameter qpaxie = new QueryParameter();
-                qpaxie.setXsl("Default");
-                ArrayList adicts = new ArrayList();
-                adicts.add(myEntry.getDictionary());
-                qpaxie.setDictionaries(adicts);
-                ArrayList acrit = new ArrayList();
-                String[] axiec = new String[4];
-                axiec[0] = Volume.CDM_entryId;
-                axiec[1] = null;
-                axiec[2] = myAxie.getEntryId();
-                axiec[3] = QueryCriteria.EQUAL;
-                acrit.add(axiec);
-                qpaxie.setCriteria(acrit);
-                viewAxieAnchor.setHref(
-									   url + "?" + EditEntryInitFactory.ACTION_PARAMETER + "=lookup&" + AdvancedQueryForm.getEncodedUrlForParameter(
-																																					qpaxie));
-                viewAxieAnchor.setAttribute("class", "action");
-            } else {
-                viewAxieAnchor.setHref("");
-                viewAxieAnchor.setAttribute("class", "hidden");
-            }
-        } else {
-			viewAxieAnchor.setHref("");
-			viewAxieAnchor.setAttribute("class", "hidden");
-        }
-	}
         
 	private void edit(VolumeEntry myEntry,String url, User user, XHTMLAnchorElement editAnchor, XHTMLAnchorElement duplicateAnchor,
 	XHTMLAnchorElement deleteAnchor, XHTMLAnchorElement undeleteAnchor) 
@@ -369,42 +333,4 @@ public class Actions implements fr.imag.clips.papillon.facelets.api.Actions {
        return actionsNode;
     }
 	
-	
-	private void target(VolumeEntry myEntry, String url, User user, XHTMLAnchorElement viewTargetAnchor)
-		throws fr.imag.clips.papillon.business.PapillonBusinessException {
-		if (! "axi".equals(myEntry.getVolume().getSourceLanguage())) {
-          Collection axies = PapillonPivotFactory.findAxiesByLexie(myEntry, user);
-            if (axies != null && axies.size() > 0) {
-                // FIXME: Only view ONE axie... we should consider changing the API for it to return only one
-                VolumeEntry myAxie = (VolumeEntry) axies.iterator().next();
-				
-                // View axie
-                QueryParameter qpaxie = new QueryParameter();
-                qpaxie.setXsl("Default");
-                ArrayList adicts = new ArrayList();
-                adicts.add(myEntry.getDictionary());
-                qpaxie.setDictionaries(adicts);
-                ArrayList acrit = new ArrayList();
-                String[] axiec = new String[4];
-                axiec[0] = Volume.CDM_entryId;
-                axiec[1] = null;
-                axiec[2] = myAxie.getEntryId();
-                axiec[3] = QueryCriteria.EQUAL;
-                acrit.add(axiec);
-                qpaxie.setCriteria(acrit);
-                viewTargetAnchor.setHref(
-									   url + "?" + EditEntryInitFactory.ACTION_PARAMETER + "=lookup&" + AdvancedQueryForm.getEncodedUrlForParameter(
-																																					qpaxie));
-                viewTargetAnchor.setAttribute("class", "action");
-            } else {
-                viewTargetAnchor.setHref("");
-                viewTargetAnchor.setAttribute("class", "hidden");
-            }
-        } else {
-			viewTargetAnchor.setHref("");
-			viewTargetAnchor.setAttribute("class", "hidden");
-        }
-	}
-	
-    
 }

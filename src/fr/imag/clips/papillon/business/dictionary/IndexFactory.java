@@ -259,43 +259,7 @@ public class IndexFactory {
 		return theEntries;
 	}
 	
-		
-    // FIXME: dict is not used ! (maybe due to the fact that findAnswerByHandle does not ask for it.)
-	protected static Collection getAxiesPointingTo(Dictionary dict, Volume volume, String lexieId, String sourceLanguage) throws PapillonBusinessException {
-		Vector theEntries = new Vector();
-		
-		String cmp_op = QueryBuilder.EQUAL;
-		
-		if (lexieId != null && !lexieId.equals("")) {
-			try {
-				IndexQuery query = new IndexQuery(volume.getIndexDbname(), CurrentDBTransaction.get());
-				query.getQueryBuilder().addWhereClause(KEY_FIELD, Volume.CDM_axiReflexie, QueryBuilder.EQUAL);
-				query.getQueryBuilder().addWhereClause(LANG_FIELD, sourceLanguage, QueryBuilder.EQUAL);
-				query.getQueryBuilder().addWhereClause(VALUE_FIELD, lexieId, cmp_op);
-				IndexDO[] DOarray = query.getDOArray();
-				if (null != DOarray) {
-					for (int j=0; j < DOarray.length; j++) {
-						Index myIndex = new Index(DOarray[j]);
-                        // FIXME: this findAnswer stuff is just here to let a chance searchin g for the element in the axies tables.
-                        // FIXME: soon, this will only be a findEntryByHandle...
-						IAnswer myAxie = DictionariesFactory.findAnswerByHandle(volume.getName(), ""+myIndex.getEntryId());
-						
-                        // add by Francis
-                        VolumeEntry ve = (VolumeEntry) myAxie;
-                        if (ve.getStatus().equals(VolumeEntry.FINISHED_STATUS)
-                            || ve.getStatus().equals(VolumeEntry.MODIFIED_STATUS)) {
-                            theEntries.add(myAxie);
-                        }
-                    }
-				}
-			}
-			catch(Exception ex) {
-				throw new PapillonBusinessException("Exception in getAxiesPointingTo()", ex);
-			}
-		}
-		return theEntries;
-	}
-        
+		        
 	public static Vector getIndexVectorByEntryId(Volume volume, String entryId) throws PapillonBusinessException {
 		Vector theIndex = new Vector();
 		

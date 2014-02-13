@@ -95,10 +95,16 @@
 		};
 	};
 	A30722380EC89B1E00733910 /* PapillonPivotFactory.java */ = {
+		isa = PBXFileReference;
+		fileEncoding = 4;
+		lastKnownFileType = sourcecode.java;
+		name = PapillonPivotFactory.java;
+		path = /Projects/jibiki/branches/LINKS_1_0/src/fr/imag/clips/papillon/business/dictionary/PapillonPivotFactory.java;
+		sourceTree = "<absolute>";
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1260, 6780}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1260, 6915}}";
 			sepNavSelRange = "{0, 0}";
-			sepNavVisRange = "{0, 2015}";
+			sepNavVisRange = "{3937, 1425}";
 		};
 	};
 	A30722390EC89B1E00733910 /* IndexEntry.java */ = {

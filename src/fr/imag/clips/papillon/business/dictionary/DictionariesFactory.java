@@ -1007,52 +1007,6 @@ public class DictionariesFactory {
     
     //*********************************************
     
-    
-	
-	/** 
-     * The getAxiesCollectionByHeadword method return a collection of entries.
-     *
-     * @param Dictionary
-     * @param String
-     * @param User
-     * @param String
-     * @param int
-     *
-     * @return Collection
-     *
-     * @exception PapillonBusinessException
-     */ 
-	// FIXME: find in lookupAxies, this page is used ?
-	public static Collection getAxiesCollectionByHeadword(Dictionary dict, String source, User user, String headword, int strategy, int offset, int limit) throws PapillonBusinessException {
-		Collection axies = new Vector();
-		String[] Headword = new String[4];
-		//Headword[0] = key
-		//Headword[1] = lang
-		//Headword[2] = value
-		Headword[0] = Volume.CDM_headword;
-		Headword[1] = source;
-		Headword[2] = headword;
-		Headword[3] = "" + strategy;
-		
-		Vector myKey = new Vector();
-		myKey.add(Headword);
-		
-		Collection entries = getDictionaryEntriesCollection(dict,
-															source,
-															null,
-															myKey,
-															null,
-															null,
-															user,
-															offset,
-															limit);
-		//		if (entries != null && entries.size()>0) {
-		//			for (Iterator myIterator = entries.iterator(); myIterator.hasNext();) {
-		//				axies.addAll(PapillonPivotFactory.findAxiesByLexie((IAnswer)myIterator.next(),user));
-		//			}
-		//		}
-		return entries;
-	}
 	
 	
 	/** 
@@ -1153,75 +1107,6 @@ public class DictionariesFactory {
 		return resultsList;
 	}
 	
-	public static Collection addAxiesAndTranslations(Collection ves, Collection targets, User user, boolean mergeAxies) 
-	throws PapillonBusinessException {
-		Collection result = new ArrayList();
-		QueryResult qr;
-		Iterator itve = ves.iterator();
-		PapillonLogger.writeDebugMsg("addAxiesAndTranslations : ");
-        while (itve.hasNext()) {
-			qr = (QueryResult) itve.next() ;
-			VolumeEntry ve = qr.getSourceEntry();
-			String type = ve.getDictionary().getType();
-			//PapillonLogger.writeDebugMsg("Lexie : " + ve.getHeadword() + ", type : " + type);
-			if (type.equals(Dictionary.PIVAX_TYPE)) {
-				qr.setResultKind(QueryResult.AXIE_COLLECTION_RESULT);
-				addPivaxTranslations(qr, targets);
-				result.add(qr);
-			}
-			else if (type.equals(Dictionary.PIVOT_TYPE)) {
-				// qr.setResultKind(QueryResult.AXIE_COLLECTION_RESULT);
-				// myVector = getPivotResults(qr, ve.getSourceLanguage(), realTargets, user);
-				
-				PapillonLogger.writeDebugMsg("addAxiesAndTranslations: findAxiesByLexie ");
-				Collection axies = PapillonPivotFactory.findAxiesByLexie(ve, user);
-				if (axies != null && axies.size() > 0) {
-					// WARN: Here, we assume that a lexie is refered by ONE AND ONLY ONE axie... 
-					// well at least we just take one into account. 
-					Iterator it = axies.iterator();
-					VolumeEntry axie = (VolumeEntry) it.next();
-					qr.setResultAxie(axie);
-					qr.setResultKind(QueryResult.AXIE_COLLECTION_RESULT);
-					// Add it to the result if it is not already here
-					if (mergeAxies) {
-						String axieid = qr.getResultAxie().getEntryId();
-						QueryResult originalQr;
-						if ((originalQr = findQueryResultWithAxieId(result, axieid)) == null) {
-							addPivotTranslations(qr, targets);
-							result.add(qr);
-						} else {
-							originalQr.addSourceEntry(qr.getSourceEntry());
-						}
-					} else {
-						addPivotTranslations(qr, targets);
-						result.add(qr);
-					}
-				} else {
-					result.add(qr);
-				}
-				//
-			}
-			else if (type.equals(Dictionary.DIRECT_TYPE)) {
-				Collection realTargets = Utility.ArrayIntersection(ve.getVolume().getTargetLanguagesArray(), targets);
-				qr.setResultKind(QueryResult.DIRECT_TRANSLATIONS_RESULT);
-				HashMap theHashMap = new HashMap();
-				ArrayList theAxies = new ArrayList();
-				LinkFactory.getLinkedEntriesByEntry(ve, theAxies, theHashMap, realTargets, Link.DIRECTION_DOWN, user);
-				qr.setLexiesHashMap(theHashMap);
-				//qr = getDirectResults(qr, ve.getSourceLanguage(), realTargets, user);
-				result.add(qr);
-			}
-			else {
-				// type monovolume: bilingual in the same file
-				// type monodirectional: bilingual in the same file
-				qr.setResultKind(QueryResult.UNIQUE_RESULT);
-				result.add(qr);
-			}
-		}
-		//PapillonLogger.writeDebugMsg("end of addAxiesAndTranslations");
-		return result;
-	}
-			
 	private static QueryResult findQueryResultWithAxieId(Collection res, String aid) throws PapillonBusinessException {
 		Iterator it = res.iterator();
 		while (it.hasNext()) {
@@ -1231,24 +1116,7 @@ public class DictionariesFactory {
 		}
 		return null;
 	}
-	
-	private static void addPivotTranslations(QueryResult qr, Collection targets) throws PapillonBusinessException {
 		
-		VolumeEntry myAxie = qr.getResultAxie();
-		HashMap resLexies = new HashMap();
-		
-		for (Iterator iter2 = targets.iterator(); iter2.hasNext();) {
-			String target = (String)iter2.next();
-			
-			Collection tempCollection = PapillonPivotFactory.findLexiesByAxie(myAxie, target);
-			for (Iterator iterTarget = tempCollection.iterator(); iterTarget.hasNext();) {
-				VolumeEntry myTargetLexie = (VolumeEntry) iterTarget.next();
-				resLexies.put(myTargetLexie.getEntryId(), myTargetLexie);
-			}
-		}
-		qr.setLexiesHashMap(resLexies);
-	}
-	
 	private static void addPivaxTranslations(QueryResult qr, Collection targets) throws PapillonBusinessException {
 		
 		String dictName = qr.getSourceEntry().getDictionaryName();
@@ -1373,28 +1241,7 @@ public class DictionariesFactory {
 		qr.setLexiesHashMap(resLexies);
 	}
 	
-	
-	/** 
-	 * Find entry by their handle
-	 *
-	 * @param String
-	 * @param String
-	 *
-	 * @return IAnswer
-	 *
-	 * @exception PapillonBusinessException
-	 */   
-	// FIXME: used QueryRequest !!!
-	public static IAnswer findAnswerByHandle(String volumeName, String handle) throws PapillonBusinessException {
-		IAnswer myAnswer = VolumeEntriesFactory.findEntryByHandle(volumeName, handle);
-		// FIXME: Papillon Axies should be treated as ANY other volume entry...
-		if (myAnswer==null || myAnswer.isEmpty()) {
-			myAnswer = PapillonPivotFactory.findAxieByHandle(volumeName, handle);
-		}
-		return myAnswer;
-	}
-	
-	
+		
 	/** 
 	 * Find entry by their entry id
 	 *
@@ -1411,76 +1258,7 @@ public class DictionariesFactory {
 		return myAnswer;
 		
 	}
-	
-	/** 
-	 * Returns a collection of Pivot Query Results. There is one query result by axie linked to the proto lexie.
-	 *
-	 * @param QueryResult proto lexie
-	 * @param String
-	 * @param String []
-	 * @param User
-	 *
-	 * @return Collection
-	 *
-	 * @exception PapillonBusinessException
-	 */   
-	protected static Collection getPivotResults(QueryResult proto, String source, Collection targets, User myUser) 
-	throws PapillonBusinessException {
-		Collection qrset = new HashSet();
 		
-		//
-		if (null != proto && null != proto.getSourceEntry()) {
-			
-			// get all axies pointing to the entries
-			VolumeEntry mySourceEntry = proto.getSourceEntry();
-			//String xmlCode = mySourceEntry.getXmlCode();
-			Collection axies = PapillonPivotFactory.findAxiesByLexie(mySourceEntry, myUser);
-			
-			// If the entry is not connected to an axie, return the proto
-			if (axies == null || axies.size() == 0) {
-				
-				//
-				proto.setResultKind(QueryResult.UNIQUE_RESULT);
-				qrset.add(proto);
-				
-			} else {
-				
-				// For each axie, get the requested set of target lexies.
-				for (Iterator iter = axies.iterator(); iter.hasNext();) {
-					
-					// FIXME: Typecasting will not work for papillon until axies are treated normally...
-					VolumeEntry myAxie = (VolumeEntry) iter.next();
-					HashMap resLexies = new HashMap();
-					
-					//
-					for (Iterator iter2 = targets.iterator(); iter2.hasNext();) {
-						String target = (String)iter2.next();
-						
-						//
-						Collection tempCollection = PapillonPivotFactory.findLexiesByAxie(myAxie, target);
-						for (Iterator iterTarget = tempCollection.iterator(); iterTarget.hasNext();) {
-							VolumeEntry myTargetLexie = (VolumeEntry) iterTarget.next();
-							
-							//
-							resLexies.put(myTargetLexie.getEntryId(), myTargetLexie);
-						}
-					}
-					
-					//
-					QueryResult qr = new QueryResult(proto);
-					qr.setResultAxie(myAxie);
-					qr.setLexiesHashMap(resLexies);
-					qrset.add(qr);
-				}
-				// Return a collection of axieset...
-				
-			}
-		}
-		
-		// 
-		return qrset;
-	}
-	
 	
 	/** 
 	 * Returns a collection of Query Results.

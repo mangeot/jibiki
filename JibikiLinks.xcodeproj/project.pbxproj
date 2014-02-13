@@ -45,7 +45,6 @@
 		A30722350EC89B1E00733910 /* IQuery.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = IQuery.java; sourceTree = "<group>"; };
 		A30722360EC89B1E00733910 /* IVolumeEntryProcessor.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = IVolumeEntryProcessor.java; sourceTree = "<group>"; };
 		A30722370EC89B1E00733910 /* NormalizeHeadwordProcessor.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = NormalizeHeadwordProcessor.java; sourceTree = "<group>"; };
-		A30722380EC89B1E00733910 /* PapillonPivotFactory.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = PapillonPivotFactory.java; sourceTree = "<group>"; };
 		A30722390EC89B1E00733910 /* IndexEntry.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = IndexEntry.java; sourceTree = "<group>"; };
 		A307223A0EC89B1E00733910 /* QueryCriteria.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = QueryCriteria.java; sourceTree = "<group>"; };
 		A307223B0EC89B1E00733910 /* QueryParameter.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = QueryParameter.java; sourceTree = "<group>"; };
@@ -1668,7 +1667,6 @@
 				A3AB8B3715C7CBE800929F98 /* Link.java */,
 				A3AB8B3815C7CBEE00929F98 /* LinkFactory.java */,
 				A30722370EC89B1E00733910 /* NormalizeHeadwordProcessor.java */,
-				A30722380EC89B1E00733910 /* PapillonPivotFactory.java */,
 				A3AB8B4015C7CC4700929F98 /* ParseVolume.java */,
 				A307223A0EC89B1E00733910 /* QueryCriteria.java */,
 				A307223B0EC89B1E00733910 /* QueryParameter.java */,
