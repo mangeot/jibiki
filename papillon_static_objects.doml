@@ -371,7 +371,7 @@
             <javadoc>/**
  * password of the user previously encrypted !
  */</javadoc>
-            <type dbType="VARBINARY" javaType="byte[]"/>
+            <type dbType="VARCHAR" javaType="String" size="255"/>
           </column>
           <column id="email" usedForQuery="true">
             <javadoc>/**

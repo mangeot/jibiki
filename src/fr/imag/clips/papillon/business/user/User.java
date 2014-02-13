@@ -241,14 +241,9 @@ public class User implements com.lutris.appserver.server.user.User {
 	 *   retrieving data (usually due to an underlying data layer
 						  *   error).
 	 */
-	public byte[] getPassword()
+	public String getPassword()
 		throws PapillonBusinessException {
 			try {
-                byte pwd[] = myDO.getPassword();
-				PapillonLogger.writeDebugMsg("Stored pwd:");
-                for (int i=0; i < pwd.length; i++) System.out.print(Integer.toHexString(pwd[i] & 0xFF));
-                //for (int i=0; i < pwd.length; i++) System.out.print("[i:"+pwd[i]+"]");
-				PapillonLogger.writeDebugMsg("");
  				return myDO.getPassword();
 				
 			} catch(DataObjectException ex) {
@@ -259,13 +254,15 @@ public class User implements com.lutris.appserver.server.user.User {
 		throws PapillonBusinessException {
 			try {
 				byte[] myDigest = makeDigest(this.getLogin(), password);
-				PapillonLogger.writeDebugMsg("Set pwd:");
-				//for (int i=0; i < myDigest.length; i++) System.out.print(Integer.toHexString(myDigest[i] & 0xFF));
-				for (int i=0; i < myDigest.length; i++) System.out.print("[i:"+myDigest[i]+"]");
-				myDO.setPassword(myDigest);
+				String passwordString = new String(myDigest, PASSWORD_ENCODING);
+				myDO.setPassword(passwordString);
 			} catch(DataObjectException ex) {
 				throw new PapillonBusinessException("Error setting user's password", ex);
 			}
+			catch(UnsupportedEncodingException uee){
+				throw new PapillonBusinessException("Error in makeDigestString: UnsupportedEncodingException: " + PASSWORD_ENCODING, uee);
+			}
+			
 		}
 	
 	/**
@@ -599,33 +596,8 @@ public class User implements com.lutris.appserver.server.user.User {
             try {
                 if (null != login && !login.equals("")) {
                     byte[] givenPassword = makeDigest(login,password);
-					PapillonLogger.writeDebugMsg("Given pwd:");
-					for (int i=0; i < givenPassword.length; i++) System.out.print(Integer.toHexString(givenPassword[i] & 0xFF));
-					//for (int i=0; i < givenPassword.length; i++) System.out.print(givenPassword[i]);
-					//for (int i=0; i < givenPassword.length; i++) System.out.print("[i:"+givenPassword[i]+"]");
-					PapillonLogger.writeDebugMsg("");
                     String givenPasswordString = new String(givenPassword, PASSWORD_ENCODING);
-					PapillonLogger.writeDebugMsg("givenpwd: "+ givenPasswordString);
-					
-					char[] temp = givenPasswordString.toCharArray();
-					
-					// Here we just iterate the char array and print it to our console.
-					for (int i = 0; i < temp.length; i++)
-					{
-						//System.out.print("[i:"+temp[i]+"]");
-					}
-					
-                    String origPasswordString = new String(this.getPassword(), PASSWORD_ENCODING); 
-					PapillonLogger.writeDebugMsg("origpwd: " +origPasswordString);
-					char[] temp2 = origPasswordString.toCharArray();
-					
-					// Here we just iterate the char array and print it to our console.
-					for (int i = 0; i < temp2.length; i++)
-					{
-						//System.out.print("[i:"+temp2[i]+"]");
-					}
-					
-                    answer = origPasswordString.equals(givenPasswordString);
+                    answer = this.getPassword().equals(givenPasswordString);
                 }
             }
             catch(UnsupportedEncodingException uee){

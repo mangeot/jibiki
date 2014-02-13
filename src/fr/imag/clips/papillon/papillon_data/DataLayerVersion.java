@@ -210,6 +210,14 @@ public class DataLayerVersion {
 				PapillonLogger.writeDebugMsg("'entries' column added in table volumes");                        
 			}
 			
+			//if entryid column type is different from objectid column type
+			if (!ManageDatabase.getColumnType("users","password").equals("_varchar")) {
+				PapillonLogger.writeDebugMsg("change password column type in table users");                        
+				ManageDatabase.executeSql("alter table users alter column password type VARCHAR(255);\n");
+				PapillonLogger.writeDebugMsg("!!!! you must reset all passwords!!!");                        
+			}
+			
+			
 			PapillonLogger.writeDebugMsg("If columns were created or dropped, consider vacuum your database!");
             setDBVersion(currentApplicationVersion);
             PapillonLogger.writeDebugMsg("jibikiversion value incremented.");            
