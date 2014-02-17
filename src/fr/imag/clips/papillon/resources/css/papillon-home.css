@@ -88,6 +88,7 @@
 body {
 	margin: 0;
     font-family: Helvetica, Arial, sans-serif;
+	background-color: #E4E4E4;
 }
 
 /*--------------------------------------*/
@@ -132,6 +133,9 @@ td.block {
 /* Columns */
 /*--------------------------------------*/
 
+#MenuColumn {
+   background-color: white;
+}
 
 .menuColumn {
    float: right;
@@ -141,6 +145,7 @@ td.block {
 }
 
 .mainColumn {
+   background-color: white;
    color: #000;
 /*   position: absolute;
    left: 0; 
@@ -184,27 +189,31 @@ table.center {
 /* Title of the page */
 /*-------------------------*/
 
+div#BannerContent {
+    display: table;
+	width: 100%;
+    border-spacing: 10px;
+	padding-top: 20px;
+	background: #E4E4E4;
+}
+
 #projectTitle {
 	display: table-cell;
 	text-align: left;
 	margin: 0em;
 	padding: 0.3em 0.3em 0em 0.3em;
-	color: #00c;
-	font-family: Times, "Times New Roman", serif;
-	font-style: italic;
+	color: black;
+	font-family: Helvetica, Arial, sans-serif;
 	font-size: 2.5em;
 	font-weight: normal;
+	vertical-align:middle;
 }
 
 #projectTitle span.projectName {
 	font-weight: bold;
-	color: #00d;
+	color: black;
 }
 
-div#BannerContent {
-    display: table;
-    border-spacing: 5px;
-}
 
 #QueryMenuHolder {
     display: table-cell;
@@ -223,57 +232,28 @@ form.cellVolumeLookup {
 	border: 1px solid grey;
 }
 
-.cellAdvancedLookup {
+#cellAdvancedLookup,.cellAdvancedLookup {
     display: table-cell;
     padding: 0.5em;
 	vertical-align:middle;
 }
-.cellLookup {
+#cellLookup, .cellLookup {
     display: table-cell;
     padding: 0.5em;
 	vertical-align:middle;
-}
-
-.homeMenu {
-	background-image: url('../media/icon-home.png');
-	background-repeat:no-repeat;
-	background-position:left; 
-}
-
-.projectMenu {
-	background-image: url('../media/icon-project.png');
-	background-repeat:no-repeat;
-	background-position:left; 
-}
-
-.dataMenu {
-	background-image: url('../media/icon-data.png');
-	background-repeat:no-repeat;
-	background-position:left; 
-}
-
-.contactMenu {
-	background-image: url('../media/icon-contact.png');
-	background-repeat:no-repeat;
-	background-position:left; 
-}
-
-.helpMenu {
-	background-image: url('../media/icon-help.png');
-	background-repeat:no-repeat;
-	background-position:left; 
-}
-
-.userProfileMenu {
-	background-image: url('../media/icon-profile.png');
-	background-repeat:no-repeat;
-	background-position:left; 
 }
 
 
 /*-------------------------*/
 /* CSS only popup menus    */
 /*-------------------------*/
+
+.headerMenu {
+	position: fixed;
+	width: 100%;
+	background-color: black;
+	color: white;
+}
 
 #MenuBar {
 	height: 1.5em;
@@ -295,7 +275,6 @@ form.cellVolumeLookup {
 	border-right: 1px solid black;
 }
 
-
 .popupMenu:hover {
    background: #887;
    color:#fff;
@@ -307,15 +286,15 @@ form.cellVolumeLookup {
 }
 
 .popupMenu  a:link {
-   color:#00a;
+   color:white;
 }
 
 .popupMenu  a:visited {
-   color:#00a;
+   color:white;
 }
 
 .popupMenu  a:active {
-   color:#00a;
+   color:white;
 }
 
 .popupMenu  a:hover {
@@ -327,8 +306,10 @@ form.cellVolumeLookup {
 .popupMenu ul.second-level-menu {
 	display: none;
 	position: absolute;
-	background: #aa7;
-	color: black;
+/*	background: #aa7;*/
+	background: black;
+	
+	color: white;
 	list-style: none;
 }
 
@@ -370,7 +351,7 @@ form.cellVolumeLookup {
 
 .third-level-menu > li
 {
-	background: #aa7;
+	background: black;
 	padding: .2em .5em .2em .5em;
 }
 .third-level-menu > li:hover {
@@ -524,8 +505,9 @@ p.standard {
 
 .copyright {
 	font-size: xx-small;
-    margin-top: 20px;
-	margin-left: 170px;
+    padding-top: 20px;
+	padding-left: 170px;
+	background: #E4E4E4;
 }
 
 .gray {
@@ -1065,6 +1047,31 @@ tr.sense {
 td.result {background: #e6e6fa; font-size: 11px;}
 th.result {background: #fdcfcf;font-family: Arial, sans-serif; font-size: 11px;} 
 
+
+/* Styles for scrollbar 
+#lookupentries::-webkit-scrollbar, #entriesList::-webkit-scrollbar {
+    width: 12px;
+}
+ 
+/* Track 
+#lookupentries::-webkit-scrollbar-track, #entriesList::-webkit-scrollbar-track, {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+}
+ 
+/* Handle 
+#lookupentries::-webkit-scrollbar-thumb, #entriesList::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    background: rgba(176,176,176,0.8); 
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+}
+#lookupentries::-webkit-scrollbar-thumb:window-inactive, #entriesList::-webkit-scrollbar-thumb:window-inactive  {
+	background: rgba(176,176,176,0.4); 
+}
+*/
+
 /* Styles for lookupVolume page */
 #lookupentries, #entriesList 
 {
@@ -1073,14 +1080,30 @@ margin-right: auto;
 margin-top: 1.3em;
 height:600px;
 width:200px;
-overflow-y: scroll;
+overflow:hidden;
 }
+#lookupentries:hover, #entriesList:hover { 
+overflow-y:auto; 
+}
+
 #lookupcontent {
-	height:600px;
+	min-height:600px;
 	margin-left:205px;
 	border:1px solid grey;
 }
 .lookupentry {
 	border:1px solid grey;
+}
+
+#WelcomeMessage {
+	text-align: center;
+}
+.loadingMessageTop {
+	margin:0;
+}
+.loadingMessageBottom {
+	margin-top:0;
+	margin-bottom:0;
+	margin-left:205px;
 }
 

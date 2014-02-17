@@ -1192,7 +1192,6 @@
 		A31ED38516AD7F1600B642C7 /* UserLanguageSelect.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UserLanguageSelect.xmlc; sourceTree = "<group>"; };
 		A31ED38616AD7F1600B642C7 /* ValidatorMenu.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ValidatorMenu.xhtml; sourceTree = "<group>"; };
 		A31ED38716AD7F1600B642C7 /* ValidatorMenu.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ValidatorMenu.xmlc; sourceTree = "<group>"; };
-		A31F1D64182FB79B00E68B44 /* ConsultPage.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ConsultPage.xhtml; sourceTree = "<group>"; };
 		A31F1D67182FBA0C00E68B44 /* AdvancedLookup.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = AdvancedLookup.java; sourceTree = "<group>"; };
 		A3216DE90ED17C22009BC773 /* LexalpEditEntryInit.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = LexalpEditEntryInit.xhtml; sourceTree = "<group>"; };
 		A3376029100241C4002281AF /* MotamotPostUpdateProcessor.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = MotamotPostUpdateProcessor.java; sourceTree = "<group>"; };
@@ -1417,8 +1416,13 @@
 		A3A2ECCB18454A6000785800 /* AdvancedQueryForm.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdvancedQueryForm.xhtml; sourceTree = "<group>"; };
 		A3A2ECCC18454AB000785800 /* AdvancedQueryForm.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdvancedQueryForm.xhtml; sourceTree = "<group>"; };
 		A3A2ECE718454D8300785800 /* AdvancedLookup.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdvancedLookup.xhtml; sourceTree = "<group>"; };
-		A3A2ECEC18454DF000785800 /* AdvancedLookup.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdvancedLookup.xhtml; sourceTree = "<group>"; };
 		A3A2ECED18454E8000785800 /* AdvancedLookup.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdvancedLookup.xhtml; sourceTree = "<group>"; };
+		A3A31A9918B25B7C00A0F7B5 /* AdvancedLookup.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdvancedLookup.xhtml; sourceTree = "<group>"; };
+		A3A31A9A18B25BA900A0F7B5 /* AdvancedLookup.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdvancedLookup.xhtml; sourceTree = "<group>"; };
+		A3A31A9B18B25BB400A0F7B5 /* AdvancedSearchFormTest.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdvancedSearchFormTest.xhtml; sourceTree = "<group>"; };
+		A3A31AA218B25EB400A0F7B5 /* ConsultPage.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ConsultPage.xhtml; sourceTree = "<group>"; };
+		A3A31AB018B2602A00A0F7B5 /* ConsultPage.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ConsultPage.xhtml; sourceTree = "<group>"; };
+		A3A31AB418B2605500A0F7B5 /* ConsultPage.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ConsultPage.xhtml; sourceTree = "<group>"; };
 		A3AB8B3715C7CBE800929F98 /* Link.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = Link.java; sourceTree = "<group>"; };
 		A3AB8B3815C7CBEE00929F98 /* LinkFactory.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = LinkFactory.java; sourceTree = "<group>"; };
 		A3AB8B4015C7CC4700929F98 /* ParseVolume.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = ParseVolume.java; sourceTree = "<group>"; };
@@ -2579,13 +2583,16 @@
 				A30724AA0EC89B2600733910 /* AdminInformationsTmpl.xmlc */,
 				A30724AB0EC89B2600733910 /* AdministrationMenu.xhtml */,
 				A30724AC0EC89B2600733910 /* AdministrationMenu.xmlc */,
+				A3A31A9A18B25BA900A0F7B5 /* AdvancedLookup.xhtml */,
 				A319ABCD1290A74F00EF68FC /* AdvancedQueryForm.xhtml */,
+				A3A31A9B18B25BB400A0F7B5 /* AdvancedSearchFormTest.xhtml */,
 				A30724AD0EC89B2600733910 /* Consult.xhtml */,
 				A30724AE0EC89B2600733910 /* Consult.xmlc */,
 				A30724AF0EC89B2600733910 /* ConsultExpert.xhtml */,
 				A30724B00EC89B2600733910 /* ConsultExpert.xmlc */,
 				A30724B10EC89B2600733910 /* ConsultInformationsTmpl.xhtml */,
 				A30724B20EC89B2600733910 /* ConsultInformationsTmpl.xmlc */,
+				A3A31AA218B25EB400A0F7B5 /* ConsultPage.xhtml */,
 				A30724B30EC89B2600733910 /* ContributorsBoardTmpl.xhtml */,
 				A30724B40EC89B2600733910 /* ContributorsBoardTmpl.xmlc */,
 				A30724B50EC89B2600733910 /* EditEntryInit.xhtml */,
@@ -2658,6 +2665,7 @@
 				A30725000EC89B2700733910 /* ConsultExpert.xmlc */,
 				A30725010EC89B2700733910 /* ConsultInformationsTmpl.xhtml */,
 				A30725020EC89B2700733910 /* ConsultInformationsTmpl.xmlc */,
+				A3A31AB418B2605500A0F7B5 /* ConsultPage.xhtml */,
 				A30725030EC89B2700733910 /* ContributorsBoardTmpl.xhtml */,
 				A30725040EC89B2700733910 /* ContributorsBoardTmpl.xmlc */,
 				A30725050EC89B2700733910 /* CreateEntryInit.xhtml */,
@@ -2725,7 +2733,7 @@
 				A30725380EC89B2700733910 /* AdminUsersTmpl.xhtml */,
 				A30725390EC89B2700733910 /* AdminVolumes.xhtml */,
 				A307253A0EC89B2700733910 /* AdminXslTmpl.xhtml */,
-				A3A2ECEC18454DF000785800 /* AdvancedLookup.xhtml */,
+				A3A31A9918B25B7C00A0F7B5 /* AdvancedLookup.xhtml */,
 				A307253C0EC89B2700733910 /* AdvancedQueryFormAjax.xhtml */,
 				A307253D0EC89B2700733910 /* AdvancedSearch.xhtml */,
 				A319ABCC1290A70900EF68FC /* AdvancedQueryForm.xhtml */,
@@ -2738,7 +2746,7 @@
 				A30725430EC89B2800733910 /* Consult.xhtml */,
 				A30725440EC89B2800733910 /* ConsultExpert.xhtml */,
 				A30725450EC89B2800733910 /* ConsultInformationsTmpl.xhtml */,
-				A31F1D64182FB79B00E68B44 /* ConsultPage.xhtml */,
+				A3A31AB018B2602A00A0F7B5 /* ConsultPage.xhtml */,
 				A30725460EC89B2800733910 /* ContactsContent.xhtml */,
 				A30725470EC89B2800733910 /* ContributorsBoardTmpl.xhtml */,
 				A30725480EC89B2800733910 /* CreateEntryInit.xhtml */,

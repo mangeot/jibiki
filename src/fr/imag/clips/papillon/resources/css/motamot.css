@@ -503,6 +503,7 @@ A:hover {
 }
 
 .motamot-entry {
+    clear: both;
     border:1px solid #898989;
     margin-bottom:5px;
     margin-top:-1px;

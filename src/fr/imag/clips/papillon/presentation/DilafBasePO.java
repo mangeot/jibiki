@@ -273,22 +273,22 @@ public abstract class DilafBasePO extends AbstractPO {
     public Node getDocument()
         throws HttpPresentationException, IOException, Exception {
             
-            StdLayout stdLayout;
+			// Creation du contenu
+            String lang = myGetParameter(LANG_PARAMETER);
+            
+            if (null != lang) {
+                this.setUserPreferredLanguage(lang);
+            }
+
             // I put getContent before stdLayout because I can change dynamically the Lang
 			Node content = getContent();
             Node finalContent;
 			Node contextualMenu = getContextualMenuContent();
 			Node banner = getBannerContent();
             
-            // Creation du contenu
-            String lang = myGetParameter(LANG_PARAMETER);
-            
-            if (null != lang) {
-                this.setUserPreferredLanguage(lang);
-            }
                         
             // Creation du document vide
-            stdLayout = StandardLayoutFactory.createStandardLayout(getComms(), this.getSessionData(), this.getUrl(), this.headerScript);
+            StdLayout stdLayout = StandardLayoutFactory.createStandardLayout(getComms(), this.getSessionData(), this.getUrl(), this.headerScript);
             //stdLayout = new StdLayout(getComms(), this.getSessionData(), this.getUrl(), this.headerScript);
             
             // FIXME: Modification done by Olivier Tache not generic !

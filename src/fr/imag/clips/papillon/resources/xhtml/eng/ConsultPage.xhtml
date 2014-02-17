@@ -20,14 +20,29 @@
   <div id="BannerContent">
   	<div id="projectTitle">
         <div id="Description_Default">
-			The Papillon Project
+			The <span class="projectName">Jibiki</span> platform
 		</div>
 	</div>
-	<div class="QueryForm" id="QueryMenuHolder"><span id="QueryString" style="display:none;"><!-- // --></span>
-	</div>
+	<form class="cellVolumeLookup" onsubmit="queryPrefixVolume(this.HEADWORD.value, this.VOLUME.options[this.VOLUME.selectedIndex].value); queryOneEntry(this.HEADWORD.value, this.VOLUME.options[this.VOLUME.selectedIndex].value); return false;" action="LookupVolume.po">
+	  <div style="display:inline;">
+		<input type="hidden" name="action" id="actionJS" value="lookupVolume" />
+	    Lookup in
+   		<input id="LIMIT" name="LIMIT" type="hidden" value="100"/>
+    		<input id="STATUS" name="STATUS" type="hidden" value="finished"/>
+			<label id="VolumeLabel" style="display:inline;" accesskey="v" for="VOLUME"><span class="accesskey">v</span>olume
+    		<select name="VOLUME" title="sélectionner le volume [v]" id="VOLUME">
+    			<option id="VolumeOptionTemplate" label="tmpl" value="tmpl">tmpl</option>
+    		</select>
+			</label>
+ 	     <input id="HEADWORD" name="HEADWORD" type="text" />
+	     <input type="submit" value="→" />
+	   </div>
+	</form>
 	<div id="cellLookup">
-		<a href="Home.po">Generic lookup</a><br /><br />
-		<a href="ConsultPage.po">Volume lookup</a>
+		<a href="Home.po">Generic lookup</a>
+	</div>
+	<div id="cellAdvancedLookup">
+		<a href="AdvancedLookup.po">Advanced lookup</a>
 	</div>
  </div>
  <div id="CentralContent">
@@ -36,13 +51,13 @@
 <!-- // --></div> 
  </div>
  <div id="MainContent">
- 	<p class="loadingMessageTop">&#xA0;<span class="loadmore">Ongoing headwords loading...</span>&#xA0;
-	<span class="loadcontent">Ongoing data loading...</span></p>
+ 	<p class="loadingMessageTop">&#xA0;<span class="loadmore">Headwords are loading...</span>&#xA0;
+	<span class="loadcontent">Data is loading...</span></p>
  <div id="lookupcontent">
   <p id="WelcomeMessage">After clicking on the arrow →, wait a little bit.</p>
  </div>
-	<p class="loadingMessageBottom">&#xA0;<span class="loadmore">Ongoing headwords loading...</span>&#xA0;
-	<span class="loadcontent">Ongoing data loading...</span></p>
+	<p class="loadingMessageBottom">&#xA0;<span class="loadmore">Headwords are loading...</span>&#xA0;
+	<span class="loadcontent">Data is loading...</span></p>
 </div>
 </div>
 
