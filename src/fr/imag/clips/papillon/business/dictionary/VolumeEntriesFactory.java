@@ -2030,5 +2030,26 @@ public static boolean listExist (ArrayList targetIdList, String newTarget){
 	return false;
 	
 }
+
+
+ public static ArrayList findEntriesByHeadword(String volumeName, String headword)
+	throws PapillonBusinessException {
+    	Volume volume;
+		Dictionary dict;
+		try {
+			volume = VolumesFactory.getVolumeByName(volumeName);
+			dict = DictionariesFactory.getDictionaryByName(volume.getDictname());
+		}
+		catch(Exception ex) {
+			return null;
+		}
+		String[] entriesId = findEntryIdByEntryName (headword, volume);
+		ArrayList volumeEntries = new ArrayList();
+		for(int i=0; i<entriesId.length; i++){
+			VolumeEntry ve = findEntryByHandle(volumeName, entriesId[i]);
+			volumeEntries.add(ve);
+		}
+		return volumeEntries;
+    }
 }
 

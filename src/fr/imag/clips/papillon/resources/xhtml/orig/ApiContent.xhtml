@@ -292,6 +292,37 @@ Other criteria and keys not in the list may exist only for one specific resource
 	<li>All parameters are case sensitive (dictionary, contributionId, string, etc.)</li>
 </ul>
  
+ <h3>Querying entries using link (for pivax data)</h3>
+
+<table class="api">
+ <tbody>
+    <tr><td>URL</td><td colspan="2">api/[dictionary]/[lang]/link/[headword]</td></tr>
+    <tr><td>Method</td><td colspan="2">GET</td></tr>
+    <tr><td rowspan="2">Returns</td><td colspan="2">200 OK &amp; XML (entryId, headword)</td></tr>
+    <tr><td colspan="2">404 Not Found</td></tr>
+ </tbody>
+</table>
+
+<p>Example of query: <a href="api/CommonUNLDict/fra/link/manger">api/CommonUNLDict/fra/link/manger</a></p>
+<p>Answer:</p>
+<pre>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;entry-list>
+	&lt;entry dictionary="CommonUNLDict" lang="eng">
+		&lt;entryId>eng.eat.v&lt;/entryId>
+		&lt;headword>eat&lt;/headword>
+	&lt;/entry>
+	&lt;entry dictionary="CommonUNLDict" lang="fra">
+		&lt;entryId>fra.manger.v&lt;/entryId>
+		&lt;headword>manger&lt;/headword>
+	&lt;/entry>
+		&lt;entry dictionary="CommonUNLDict" lang="unl">
+		&lt;entryId>eat(icl>consume>do,agt>living_thing,obj>concrete_thing,ins>thing)&lt;/entryId>
+		&lt;headword>eat&lt;/headword>
+	&lt;/entry>
+&lt;/entry-list>
+</pre>
+
 <h2>Misc</h2>
 <p>If you need more help, send an email to
 <a href="mailto:mathieu.mangeotATimag.fr?subject=jibikiServer&amp;body=replace&nbsp;AT&nbsp;by&nbsp;@&nbsp;in&nbsp;the&nbsp;email&nbsp;address">Mathieu Mangeot</a>.</p>

@@ -880,5 +880,27 @@ import javax.swing.JOptionPane;
 		}
 				return res;
 		}
+
+		 public HashMap findLexieAndTranslationForRest(String volumeName, String headword, User user)  throws PapillonBusinessException {
+            try {
+				ArrayList lexies = new ArrayList();
+				//VolumeEntry tempEntry = VolumeEntriesFactory.findNextEntryByHeadword(volumeName, headword);
+				ArrayList entriesList = VolumeEntriesFactory.findEntriesByHeadword(volumeName, headword);
+				for(int i=0; i<entriesList.size(); i++){
+					VolumeEntry tempEntry = (VolumeEntry) entriesList.get(i);
+					VolumeEntriesFactory.cutEntryCache();
+					// Add the volume entry in the request context.
+					CurrentRequestContext.get().set(tempEntry.getEntryId(), tempEntry);
+					EntryCache.putEntryInCache(tempEntry);
+					QueryResult queryResult = new QueryResult(QueryResult.UNIQUE_RESULT, tempEntry);
+					lexies.add(queryResult);
+					
+				}
+                // If no target languages, do not merge axies.
+                return DictionariesFactory.expandResultsForRest((Collection)lexies, this.getTargets(), user, this.getTargets().size() > 0);
+            } catch(Exception ex) {
+                throw new PapillonBusinessException("Exception in findLexieAndTranslation() ", ex);
+            }
+        }
     }
     

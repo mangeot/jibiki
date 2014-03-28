@@ -1341,6 +1341,45 @@ public class DictionariesFactory {
 		
 		return qr;
 	}
-	
+
+
+	public static HashMap expandResultsForRest(Collection ves, Collection targets, User user, boolean mergeAxies) 
+	throws PapillonBusinessException {
+		HashMap resultsList = new HashMap();
+		// Add axies and remove duplicates entries
+		//Collection resultsWithAxies = addAxiesAndTranslations(ves, targets, user, mergeAxies);
+		Iterator itve = ves.iterator();
+        while (itve.hasNext()) {
+			QueryResult qr = (QueryResult) itve.next() ;
+			resultsList = expandResultForRest(qr, targets, user);
+		}
+		//
+		return resultsList;
+	}
+
+	private static HashMap expandResultForRest(QueryResult theQR,
+			Collection targets, User user) throws PapillonBusinessException{
+		 HashMap allLinks = new HashMap();
+			String direction = Link.DIRECTION_DOWN;
+	 
+			VolumeEntry ve = theQR.getSourceEntry();
+	        //PapillonLogger.writeDebugMsg("expandResult: " + ve.getHeadword());
+			Collection realTargets = Utility.ArrayIntersection(ve.getDictionary().getTargetLanguagesArray(), targets);
+			String type = ve.getDictionary().getType();
+	            
+			if (type.equals(Dictionary.PIVOT_TYPE)) {
+				allLinks.put(ve.getEntryId(),ve);
+				direction = Link.DIRECTION_UP;
+			}
+			else {
+				realTargets.remove(ve.getSourceLanguage());
+			}
+			ArrayList axieLinks = new ArrayList();
+			LinkFactory.getLinkedMonoEntriesByEntry(ve, axieLinks, allLinks, realTargets, direction, user);
+//			PapillonLogger.writeDebugMsg("axieLinks = "+axieLinks);
+//			PapillonLogger.writeDebugMsg("allLinks = "+allLinks.values());
+			theQR.setLexiesHashMap(allLinks);
+			return allLinks;
+	}
 }
 

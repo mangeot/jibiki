@@ -403,6 +403,7 @@ public class XslTransformation implements ResultFormatter {
 									typeString = typeNode.getNodeValue();
 								}
 							}
+							if(typeString!=null){
 								//PapillonLogger.writeDebugMsg("insertLinkedEntries: typeString: " +typeString + " direction: " + direction);
 								if ((direction.equals(Link.DIRECTION_UP) && (typeString == null || typeString.equals(Link.AXEME_TYPE) || typeString.equals(Link.AXIE_TYPE)))
 									 || (direction.equals(Link.DIRECTION_DOWN) && ((typeString == null || typeString.equals(Link.INDIRECT_TYPE) || typeString.equals(Link.AXEME_TYPE) || typeString.equals(Link.FINAL_TYPE))))) {
@@ -458,6 +459,7 @@ public class XslTransformation implements ResultFormatter {
 										}
 									}
 								}
+							}
 						}
 					}
 				}

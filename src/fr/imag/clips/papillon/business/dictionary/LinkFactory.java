@@ -300,6 +300,59 @@ public class LinkFactory {
 			throw new PapillonBusinessException("Exception in getLinkedEntriesByEntry()", ex);
 		}
 	}
+	
+	public static void getLinkedMonoEntriesByEntry(VolumeEntry theEntry, ArrayList theAxies, HashMap theLinks, Collection targets, String direction, User user) throws PapillonBusinessException {
+		try {
+			//PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: start "+ theEntry.getEntryId() + " direction: " + direction);
+				LinkQuery qr = new LinkQuery(theEntry.getVolume().getLinkDbname(),CurrentDBTransaction.get());
+				qr.setQueryEntryId(Integer.parseInt(theEntry.getHandle()));
+//				qr.setQueryLang(lang);
+				LinkDO[] DOarray = qr.getDOArray();
+				for (int i=0; i<DOarray.length;i++){
+					Link tempLink = new Link(DOarray[i]);
+					String targetId = tempLink.getTargetId();
+					String type = tempLink.getType();
+					//PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: targetId "+ targetId + " type: " + type);
+					if (((direction.equals(Link.DIRECTION_UP) && (type == null || type.equals(Link.AXEME_TYPE) || type.equals(Link.AXIE_TYPE)))
+						|| (direction.equals(Link.DIRECTION_DOWN) && ((type == null || type.equals(Link.AXEME_TYPE)) || 
+																		(type.equals(Link.FINAL_TYPE) && targets.contains(tempLink.getLang())))))
+						&& !theAxies.contains(targetId)) {
+						VolumeEntry linkedEntry = (VolumeEntry) theLinks.get(targetId);
+						if (linkedEntry == null ||linkedEntry.isEmpty()) {
+							Volume myVolume = VolumesFactory.getVolumeByName(tempLink.getVolumeTarget());
+							if (myVolume !=null && !myVolume.isEmpty()) {
+								//PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: call findEntryByEntryId "+ myVolume.getName() + " " + targetId);
+								linkedEntry = VolumeEntriesFactory.findEntryByEntryId(user, myVolume, targetId);
+								if (linkedEntry != null && !linkedEntry.isEmpty() &&!theLinks.containsKey(targetId)) {
+//									PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: linkedEntry not null: " + targetId+" type = "+type+" dirction = "+direction);
+									if(type.equals(Link.FINAL_TYPE)&&direction.equals(Link.DIRECTION_DOWN)) theLinks.put(targetId,linkedEntry);
+								}
+							}
+						}
+						if (linkedEntry != null && !linkedEntry.isEmpty()) {
+							//PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: linkedEntry not null type: " + type);
+							//if (type == null || type.equals(Link.AXIE_TYPE) || type.equals(Link.AXEME_TYPE) || type.equals(Link.EQU_TYPE) || type.equals(Link.CNT_TYPE)) {
+							if (type == null || type.equals(Link.AXIE_TYPE) || type.equals(Link.AXEME_TYPE)) {
+								String newDir = direction;
+								if (type != null && (type.equals(Link.AXIE_TYPE) || type.equals(Link.EQU_TYPE) || type.equals(Link.CNT_TYPE))) {
+									theAxies.add(targetId);
+									if (newDir.equals(Link.DIRECTION_UP)) {
+										newDir = Link.DIRECTION_DOWN;
+									}
+								}
+								//PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: call getLinkedEntriesByEntry "+ linkedEntry.getEntryId()  + " lang: " + tempLink.getLang() + " type: " + tempLink.getType());
+								getLinkedMonoEntriesByEntry(linkedEntry, theAxies, theLinks, targets, newDir, user);
+							}
+						}
+					}
+				}
+//			}
+			
+		} catch(Exception ex){
+			throw new PapillonBusinessException("Exception in getLinkedEntriesByEntry()", ex);
+		}
+	}
+
 
 	public static void getLinkedEntriesByAxie(VolumeEntry theEntry, ArrayList theLinks, HashMap allLinks, User user) throws PapillonBusinessException {
 		try {

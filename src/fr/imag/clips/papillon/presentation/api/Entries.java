@@ -3,7 +3,7 @@
  *
  *  Enhydra super-servlet
  *
- *  © Mathieu Mangeot & Gilles Sérasset - GETA CLIPS IMAG
+ *  ¬© Mathieu Mangeot & Gilles S√©rasset - GETA CLIPS IMAG
  *  Projet Papillon
  *  -----------------------------------------------
  *  $Id: GetXmlDocument.java 700 2006-09-10 09:18:25Z mangeot $
@@ -40,6 +40,11 @@
  */
 package fr.imag.clips.papillon.presentation.api;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+
 import com.lutris.appserver.server.httpPresentation.HttpPresentationException;
 import com.lutris.dods.builder.generator.query.QueryBuilder;
 
@@ -48,6 +53,7 @@ import fr.imag.clips.papillon.business.dictionary.Dictionary;
 import fr.imag.clips.papillon.business.dictionary.DictionariesFactory;
 import fr.imag.clips.papillon.business.dictionary.Index;
 import fr.imag.clips.papillon.business.dictionary.IndexFactory;
+import fr.imag.clips.papillon.business.dictionary.QueryRequest;
 import fr.imag.clips.papillon.business.dictionary.QueryResult;
 import fr.imag.clips.papillon.business.dictionary.Volume;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
@@ -225,6 +231,56 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 			if (volumesCollection !=null && volumesCollection.size()>0) {
 				resultDoc = getPivaxEntries((Volume)volumesCollection.iterator().next(), word, strategy, limit);
 			}
+		}
+		else if (criteria !=null && (criteria.equals("link")||criteria.equals("cdm-link"))){
+			criteria =  Volume.CDM_link;
+			//Dictionary dicEntry = DictionariesFactory.getDictionaryByName(dictName);
+			//Collection targetsCollection = dicEntry.getTargetLanguagesArray();
+			java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null); //return volume collection，if dictName = ＊，then return all volumes
+			if (volumesCollection !=null && volumesCollection.size()>0) {
+				StringBuffer allEntries = new StringBuffer(120 * (limit+1) * volumesCollection.size());	
+				allEntries.append(ENTRIES_HEAD_XMLSTRING);
+				java.util.Iterator iterator = volumesCollection.iterator();
+				while (resultDoc==null && iterator.hasNext()) {
+					theVolume = (Volume) iterator.next();
+					QueryRequest qrset = new QueryRequest(theVolume);
+					Collection targetsCollection = DictionariesFactory.getDictionaryByName(theVolume.getDictname()).getTargetLanguagesArray();
+//					PapillonLogger.writeDebugMsg("targetsCollection = "+targetsCollection);
+					qrset.setTargets(targetsCollection);
+					User user = new User();
+					HashMap translations = qrset.findLexieAndTranslationForRest(theVolume.getName(), word, user);
+//					PapillonLogger.writeDebugMsg("translations : "+translations);
+					ArrayList listValues = new ArrayList();
+					ArrayList listKeys = new ArrayList();
+					Iterator it = translations.keySet().iterator();
+					while(it.hasNext()){
+						String myKey = it.next().toString();
+						listKeys.add(myKey);
+						listValues.add(translations.get(myKey));
+//						PapillonLogger.writeDebugMsg("myKey = "+myKey+", value = "+translations.get(myKey));
+					}
+				
+					
+					for(int i=0; i<listValues.size();i++){
+				
+						allEntries.append("<entry dictionary=\""+((VolumeEntry)listValues.get(i)).getDictionaryName()+"\" lang=\""+((VolumeEntry)listValues.get(i)).getSourceLanguage()+"\">\n");
+						allEntries.append("\t<entryId>");	
+						allEntries.append(listKeys.get(i));
+						allEntries.append("</entryId>\n");
+						allEntries.append("\t<headword>");
+						allEntries.append(((VolumeEntry)listValues.get(i)).getHeadword());
+						allEntries.append("</headword>\n");
+						allEntries.append("</entry>\n");
+					}
+
+					
+				}
+				allEntries.append(ENTRIES_TAIL_XMLSTRING);
+				resultDoc = XMLServices.buildDOMTree(allEntries.toString());
+				
+			}
+			
+			
 		}
 		else if (criteria !=null) {
 			if (criteria.equals("headword")) {
