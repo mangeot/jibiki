@@ -6,16 +6,19 @@
     <title>Menu</title>
   </head>
   <body>
-    <div id="LexiesManagement" lang="fr" xml:lang="fr" class="menuBlock">
-      <h2 class="menuTitle">
-        <a title="Gestion d'un article dans un dictionnaire" href="javascript:void(0)">Articles&nbsp;:</a>
-      </h2>
-      <a title="Créer un nouvel article" href="CreateEntryInit.po">Créer</a>
-      <br/>
-      <a title="Éditer un article" href="EditEntryInit.po">Éditer</a>
-      <!--br/>
-      <a title="Gestion de mes contributions" href="AdminContributions.po">Mes contributions</a>
-      <br/-->
-    </div>
+   <div id="LexiesManagement" lang="fr" style="display:inline;">
+    Mon compte
+	<ul class="third-level-menu">
+	 <li><a href="UserProfile.po">Mon profil</a></li>
+     <li><a href="CreateEntryInit.po">Créer un article</a></li>
+      <li><a href="EditEntryInit.po">Éditer un article</a></li>
+      <!--
+      <a title="Edit an existing lexie" href="EditEntryInit.po">Edit</a>
+      <a title="Export lexies to pdf" href="Export.po">Export</a>
+      <a title="My contributions" href="AdminContributions.po">My Contributions</a>
+      -->
+	  <li style="border-top: 1px solid #143625;"><a href="LoginUser.po?Logout=yes">Déconnexion</a></li>
+    </ul>
+	</div>
   </body>
 </html>

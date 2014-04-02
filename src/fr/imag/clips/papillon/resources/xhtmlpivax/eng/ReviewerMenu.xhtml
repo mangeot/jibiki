@@ -6,18 +6,13 @@
     <title>Menu</title>
   </head>
   <body>
-    <div id="ReviewerMenu" lang="en-US" class="menuBlock">
-      <h2 class="menuTitle">
-        <a title="Reviewing Dictionaries Contributions" href="javascript:void(0)">Review:</a>
-      </h2>
-      <a title="Reviewing Dictionaries Contributions" href="ReviewContributions.po">Contributions</a>
-      <br/>
-      <a title="Alphabetical Lookup of a Word" onclick="window.open('BrowseVolumePage.po?STATUS=*ALL*','Alphabetical lookup of a volume','width=200,height=700,resizable=no,scrollbars=no');return false;" href="BrowseVolumePage.po">Alphabetical Lookup</a>
-      <br/>
-      <a title="Contributors Board" href="ContributorsBoard.po">Contributors Board</a>
-      <br/>
-      <a title="Export a volume into an XML gzipped file" href="ExportVolume.po">Export Volume</a>
-      <br/>
+    <div id="ReviewerMenu" lang="en-US" style="display:inline;">
+		Review
+	  <ul class="third-level-menu">
+		<li><a title="Reviewing Dictionaries Contributions" href="ReviewContributions.po">Contributions</a></li>
+      <li><a title="Contributors Board" href="ContributorsBoard.po">Contributors Board</a></li>
+      <li><a title="Export a volume into an XML gzipped file" href="ExportVolume.po">Export Volume</a></li>
+	  </ul>
     </div>
   </body>
 </html>
