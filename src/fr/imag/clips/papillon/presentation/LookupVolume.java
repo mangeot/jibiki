@@ -140,7 +140,6 @@ public class LookupVolume extends AbstractPO {
 					criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.CLASSIFIED_FINISHED_STATUS);
 					criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.CLASSIFIED_NOT_FINISHED_STATUS);
 					criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.DELETED_STATUS);
-					criteriaStatus.add("lang", QueryCriteria.EQUAL, Volume.DEFAULT_LANG);
 					listStatus.add(criteriaStatus);
 					
 					queryReq.addOrCriteriaList(listStatus);
@@ -261,11 +260,18 @@ public class LookupVolume extends AbstractPO {
 				Volume myVolume = VolumesFactory.getVolumeByName(volume);
 				java.util.Collection targets = myVolume.getTargetLanguagesArray();
 				String source = myVolume.getSourceLanguage();
+				String lang = source;
+				
+				if (myVolume.isDefaultLangCDMElement(key)) {
+					lang = Volume.DEFAULT_LANG;
+				}
+				
+				
 				java.util.Vector myKeys = new java.util.Vector();
 				String[] Headword = new String[4];
-				PapillonLogger.writeDebugMsg("LookupVolume entry: " + oneentry + " key: " + key);
+				//PapillonLogger.writeDebugMsg("LookupVolume entry: " + oneentry + " key: " + key);
 				Headword[0] = key;
-				Headword[1] = source;
+				Headword[1] = lang;
 				Headword[2] = oneentry;
 				Headword[3] = QueryBuilder.EQUAL;
 				myKeys.add(Headword);
