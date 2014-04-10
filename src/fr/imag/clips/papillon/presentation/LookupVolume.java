@@ -263,7 +263,7 @@ public class LookupVolume extends AbstractPO {
 				String source = myVolume.getSourceLanguage();
 				java.util.Vector myKeys = new java.util.Vector();
 				String[] Headword = new String[4];
-				//PapillonLogger.writeDebugMsg("LookupVolume entry: " + oneentry + " key: " + key);
+				PapillonLogger.writeDebugMsg("LookupVolume entry: " + oneentry + " key: " + key);
 				Headword[0] = key;
 				Headword[1] = source;
 				Headword[2] = oneentry;
