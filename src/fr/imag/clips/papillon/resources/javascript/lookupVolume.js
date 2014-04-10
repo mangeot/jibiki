@@ -225,7 +225,7 @@ function queryOneKey (key, value, volume) {
 	$.ajax({
 		   url: 'LookupVolume.po',
 		   type: 'get',
-		   data: 'action=queryOneEntry&VOLUME='+volume+'&ENTRY='+key + '&KEY=' + value,
+		   data: 'action=queryOneEntry&VOLUME='+volume+'&ENTRY='+value + '&KEY=' + key,
 		   
 		   //Succès de la requête
 		   success: function(data) {
