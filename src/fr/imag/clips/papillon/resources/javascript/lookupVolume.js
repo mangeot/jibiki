@@ -215,6 +215,32 @@ function queryOneEntry (entry, volume) {
 		   });
 }
 
+function queryOneKey (key, value, volume) {
+	//On lance la fonction ajax
+	load = true;
+	$('.loadcontent').show();
+	$('#lookupcontent').children().remove();
+	$('.lookupentry').css('font-weight', 'normal');
+		
+	$.ajax({
+		   url: 'LookupVolume.po',
+		   type: 'get',
+		   data: 'action=queryOneEntry&VOLUME='+volume+'&ENTRY='+key + '&KEY=' + value,
+		   
+		   //Succès de la requête
+		   success: function(data) {
+		   
+		   //On masque le loader
+		   $('.loadcontent').fadeOut(500);
+		   // On affiche le résultat
+		   //$('#content').text('LookupVolume.po' + parameters);
+		   $('#lookupcontent').append($(data).children());
+		   load = false;
+		   }
+		   });
+}
+
+
 function replace_api(string) {
 	string.replace('a'+'̄','ā');
 	string.replace('e'+'̄','ē');
