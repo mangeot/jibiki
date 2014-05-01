@@ -1528,7 +1528,7 @@
 	};
 	A31ED37716AD7F1600B642C7 /* HomeContent.xhtml */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {943, 945}}";
+			sepNavIntBoundsRect = "{{0, 0}, {943, 975}}";
 			sepNavSelRange = "{1489, 0}";
 			sepNavVisRange = "{432, 1448}";
 		};
@@ -1536,8 +1536,8 @@
 	A31ED37916AD7F1600B642C7 /* InformationTmpl.xhtml */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {2780, 1425}}";
-			sepNavSelRange = "{2405, 0}";
-			sepNavVisRange = "{943, 3630}";
+			sepNavSelRange = "{2089, 0}";
+			sepNavVisRange = "{1483, 3554}";
 			sepNavWindowFrame = "{{15, 506}, {1035, 517}}";
 		};
 	};
@@ -1689,19 +1689,20 @@
 					PBXFileDataSource_Target_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 420630283;
-			PBXWorkspaceStateSaveDate = 420630283;
+			PBXPerProjectTemplateStateSaveDate = 420649006;
+			PBXWorkspaceStateSaveDate = 420649006;
 		};
 		perUserProjectItems = {
 			A342EC831909022200D8E635 = A342EC831909022200D8E635 /* PBXTextBookmark */;
 			A365C8591912497A0010D311 = A365C8591912497A0010D311 /* PBXTextBookmark */;
-			A365C85A1912497A0010D311 = A365C85A1912497A0010D311 /* PBXTextBookmark */;
-			A365C85F19124A900010D311 = A365C85F19124A900010D311 /* PBXTextBookmark */;
-			A38F56C219124F2800FDD55E /* PBXTextBookmark */ = A38F56C219124F2800FDD55E /* PBXTextBookmark */;
-			A38F56C319124F2800FDD55E /* PBXTextBookmark */ = A38F56C319124F2800FDD55E /* PBXTextBookmark */;
-			A38F56C419124F2800FDD55E /* PBXTextBookmark */ = A38F56C419124F2800FDD55E /* PBXTextBookmark */;
+			A38F56C219124F2800FDD55E = A38F56C219124F2800FDD55E /* PBXTextBookmark */;
+			A38F56C319124F2800FDD55E = A38F56C319124F2800FDD55E /* PBXTextBookmark */;
+			A38F56C81912508400FDD55E = A38F56C81912508400FDD55E /* PBXTextBookmark */;
 			A3C3FEA918F6C18E00026E30 = A3C3FEA918F6C18E00026E30 /* PBXTextBookmark */;
 			A3C3FEAA18F6C18E00026E30 = A3C3FEAA18F6C18E00026E30 /* PBXTextBookmark */;
+			A3F558E9191298470077442A /* PBXTextBookmark */ = A3F558E9191298470077442A /* PBXTextBookmark */;
+			A3F558EA191298470077442A /* PBXTextBookmark */ = A3F558EA191298470077442A /* PBXTextBookmark */;
+			A3F558EB191298470077442A /* PBXTextBookmark */ = A3F558EB191298470077442A /* PBXTextBookmark */;
 		};
 		sourceControlManager = A3F36016137BDF4A000F8617 /* Source Control */;
 		userBookmarkGroup = A3071968182E2683007510F7 /* PBXBookmarkGroup */;
@@ -1745,26 +1746,6 @@
 		rType = 0;
 		vrLen = 2986;
 		vrLoc = 0;
-	};
-	A365C85A1912497A0010D311 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = A31ED37916AD7F1600B642C7 /* InformationTmpl.xhtml */;
-		name = "InformationTmpl.xhtml: 82";
-		rLen = 0;
-		rLoc = 5521;
-		rType = 0;
-		vrLen = 2516;
-		vrLoc = 0;
-	};
-	A365C85F19124A900010D311 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = A31ED37916AD7F1600B642C7 /* InformationTmpl.xhtml */;
-		name = "InformationTmpl.xhtml: 41";
-		rLen = 0;
-		rLoc = 2405;
-		rType = 0;
-		vrLen = 3598;
-		vrLoc = 974;
 	};
 	A369D51118AD0E820023314A /* LexalpEditEntryInit.java */ = {
 		uiCtxt = {
@@ -1870,7 +1851,7 @@
 		fRef = A31ED37916AD7F1600B642C7 /* InformationTmpl.xhtml */;
 		name = "InformationTmpl.xhtml: 41";
 		rLen = 0;
-		rLoc = 2405;
+		rLoc = 2426;
 		rType = 0;
 		vrLen = 3630;
 		vrLoc = 943;
@@ -1885,7 +1866,7 @@
 		vrLen = 1468;
 		vrLoc = 432;
 	};
-	A38F56C419124F2800FDD55E /* PBXTextBookmark */ = {
+	A38F56C81912508400FDD55E /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = A31ED37716AD7F1600B642C7 /* HomeContent.xhtml */;
 		name = "HomeContent.xhtml: 39";
@@ -2288,6 +2269,36 @@
 	A3F36017137BDF4A000F8617 /* Code sense */ = {
 		isa = PBXCodeSenseManager;
 		indexTemplatePath = "";
+	};
+	A3F558E9191298470077442A /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = A31ED37716AD7F1600B642C7 /* HomeContent.xhtml */;
+		name = "HomeContent.xhtml: 39";
+		rLen = 0;
+		rLoc = 1489;
+		rType = 0;
+		vrLen = 1448;
+		vrLoc = 432;
+	};
+	A3F558EA191298470077442A /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = A31ED37916AD7F1600B642C7 /* InformationTmpl.xhtml */;
+		name = "InformationTmpl.xhtml: 41";
+		rLen = 0;
+		rLoc = 2426;
+		rType = 0;
+		vrLen = 3629;
+		vrLoc = 943;
+	};
+	A3F558EB191298470077442A /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = A31ED37916AD7F1600B642C7 /* InformationTmpl.xhtml */;
+		name = "InformationTmpl.xhtml: 39";
+		rLen = 0;
+		rLoc = 2089;
+		rType = 0;
+		vrLen = 3554;
+		vrLoc = 1483;
 	};
 	A3F8DB0818301EE000D2C362 /* ConsultPage.java */ = {
 		uiCtxt = {
