@@ -318,6 +318,16 @@ public class ParseVolume {
         return res;
     }
 
+	/* 
+	 parseEntries split the input stream into entries. Allows to discard malformed entries
+	 
+	 Rebuilds the XML header until the entry tag
+	 
+	 TODO: 
+	 - does not work if the entry tag is inside two comments on the same line
+	 - does not work if an entry tag is in a CDATA section.
+	 
+	 */
     protected static String parseEntries(Dictionary myDict, Volume myVolume, java.net.URL myUrl, String encoding,
                                          String defaultStatus, int replaceExistingEntries,
                                          int replaceExistingContributions, boolean logContribs)
@@ -342,10 +352,57 @@ public class ParseVolume {
             PapillonLogger.writeDebugMsg("parseEntries, CDM_Entry: [" + CDM_Entry + "]");
             PapillonLogger.writeDebugMsg("parseEntries, CDM_Contribution: [" + CDM_Contribution + "]");
             String bufferLine = "";
+			boolean inComment = false;
+            int beginComment = -1;
+            int endComment = -1;
+			boolean inCDATA = false;
+            int beginCDATA = -1;
+            int endCDATA
+			= -1;
             int firstEntryIndex = -1;
             while (buffer.ready() && firstEntryIndex < 0) {
                 bufferLine = buffer.readLine();
-                firstEntryIndex = bufferLine.indexOf("<" + CDM_Contribution);
+				if (!inComment) {
+					beginComment = bufferLine.lastIndexOf("<!--");
+					if (beginComment>=0) {
+						endComment = bufferLine.lastIndexOf("-->");
+						if (endComment>= 0 && endComment > beginComment) {
+							/* The choice for the moment: keeping the comments in the header */
+							/*
+							bufferLine = bufferLine.substring(0,beginComment) + bufferLine.substring(endComment+3);
+							 */
+							inComment = false;
+						}
+						else {
+							/* The choice for the moment: keeping the comments in the header */
+							/*
+							bufferLine = bufferLine.substring(0,beginComment);
+							 */
+							inComment = true;
+						}
+					}
+				}
+				else {
+					endComment = bufferLine.lastIndexOf("-->");
+					if (endComment>= 0) {
+						inComment = false;
+						/* The choice for the moment: keeping the comments in the header */
+						/*bufferLine = bufferLine.substring(endComment+3);*/
+					}
+				}
+				//PapillonLogger.writeDebugMsg("buffer: " + bufferLine.toString());
+				//PapillonLogger.writeDebugMsg("begin: " + beginComment + " end: " + endComment + " in: " + inComment);
+				if (!inComment) {
+                firstEntryIndex = bufferLine.indexOf("<" + CDM_Contribution + " ");
+                if (firstEntryIndex < 0) {
+                    firstEntryIndex = bufferLine.indexOf("<" + CDM_Contribution + "\t");
+                }
+				if (firstEntryIndex<0) {
+					firstEntryIndex = bufferLine.indexOf("<" + CDM_Contribution + "\n");
+				}
+                if (firstEntryIndex < 0) {
+                    firstEntryIndex = bufferLine.indexOf("<" + CDM_Contribution + ">");
+                }
                 isContributionVolume = (firstEntryIndex >= 0);
                 if (firstEntryIndex < 0) {
                     firstEntryIndex = bufferLine.indexOf("<" + CDM_Entry + " ");
@@ -359,16 +416,30 @@ public class ParseVolume {
                 if (firstEntryIndex < 0) {
                     firstEntryIndex = bufferLine.indexOf("<" + CDM_Entry + ">");
                 }
-                if (firstEntryIndex >= 0) {
+				}
+                if (firstEntryIndex>=0 && firstEntryIndex>endComment) {
                     if (firstEntryIndex > 0) {
                         xmlHeaderBuffer.append(bufferLine.substring(0, firstEntryIndex));
-                        xmlHeaderBuffer.append("\n");
+						xmlHeaderBuffer.append("\n");
                         bufferLine = bufferLine.substring(firstEntryIndex);
                     }
-                } else {
+				}
+				else if (firstEntryIndex>=0 && firstEntryIndex<=endComment) {
+					firstEntryIndex = -1;
+				}
+				/* The choice for the moment: keeping the comments in the header */
+				/*
+				else if (inComment) {
+					if (beginComment>=0) {
+						xmlHeaderBuffer.append(bufferLine);
+						beginComment = -1;
+					}
+                }*/
+				else {
                     xmlHeaderBuffer.append(bufferLine);
-                    xmlHeaderBuffer.append("\n");
+					xmlHeaderBuffer.append("\n");
                 }
+				endComment = -1;
             }
             StringBuffer xmlFooterBuffer = new StringBuffer();
             if (isContributionVolume) {
@@ -377,6 +448,7 @@ public class ParseVolume {
                 xmlHeaderBuffer.append(VolumeEntry.getContributionHeader(myVolume.getTemplateEntry()));
                 xmlFooterBuffer.append(VolumeEntry.getContributionFooter(myVolume.getTemplateEntry()));
             }
+			//PapillonLogger.writeDebugMsg("Header [" + xmlHeaderBuffer.toString() + "]");
             PapillonLogger.writeDebugMsg("Will parse [" + CDM_Entry + "]");
             PapillonLogger.writeDebugMsg(" XML footer [" + myVolume.getXmlFooter() + "]");
             xmlFooterBuffer.append(myVolume.getXmlFooter());
