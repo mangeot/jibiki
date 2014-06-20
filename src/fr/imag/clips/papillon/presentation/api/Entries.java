@@ -262,13 +262,23 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 				
 					
 					for(int i=0; i<listValues.size();i++){
-				
+						
 						allEntries.append("<entry dictionary=\""+((VolumeEntry)listValues.get(i)).getDictionaryName()+"\" lang=\""+((VolumeEntry)listValues.get(i)).getSourceLanguage()+"\">\n");
-						allEntries.append("\t<entryId>");	
-						allEntries.append(listKeys.get(i));
+						allEntries.append("\t<entryId>");
+						String id =((String) listKeys.get(i)).replace("&", "&amp;");
+						id = id.replace(">", "&gt;");
+						id = id.replace("<", "&lt;");
+						id = id.replace("'", "&apos;");
+						id = id.replace("\"", "&quot;");
+						allEntries.append(id);
 						allEntries.append("</entryId>\n");
 						allEntries.append("\t<headword>");
-						allEntries.append(((VolumeEntry)listValues.get(i)).getHeadword());
+						String e =((VolumeEntry)listValues.get(i)).getHeadword().replace("&", "&amp;");
+						e = e.replace(">", "&gt;");
+						e = e.replace("<", "&lt;");
+						e = e.replace("'", "&apos;");
+						e = e.replace("\"", "&quot;");
+						allEntries.append(e);
 						allEntries.append("</headword>\n");
 						allEntries.append("</entry>\n");
 					}
