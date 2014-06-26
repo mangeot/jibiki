@@ -286,6 +286,8 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 					
 				}
 				allEntries.append(ENTRIES_TAIL_XMLSTRING);
+		
+				PapillonLogger.writeDebugMsg(allEntries.toString());
 				resultDoc = XMLServices.buildDOMTree(allEntries.toString());
 				
 			}
