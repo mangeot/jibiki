@@ -1119,6 +1119,7 @@ CREATE OR REPLACE FUNCTION kau_sort( varchar )
 	END LOOP;
   return( result );
  END;
+$PROC$ LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
 
 
 -- hau Hausa
