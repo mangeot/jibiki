@@ -912,7 +912,7 @@ $PROC$ LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
 -- a b mb ɓ c d nd ɗ e f  g  ng h  i  j  ǌ  k  l  m  n  ny ŋ  o  p  r  s  t  u  w  y  ƴ
 -- 1 2 3  4 5 6 7  8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31
 
-CREATE OR REPLACE FUNCTION kau_sort( varchar )
+CREATE OR REPLACE FUNCTION ful_sort( varchar )
  RETURNS varchar AS $PROC$
 
  DECLARE
@@ -2257,6 +2257,8 @@ CREATE OR REPLACE FUNCTION multilingual_sort( varchar,varchar )
     result:= est_sort(word);
   ELSIF lang = ''fra'' THEN
     result:= fra_sort(word);
+  ELSIF lang = ''ful'' THEN
+    result:= ful_sort(word);
   ELSIF lang = ''hau'' THEN
     result:= hau_sort(word);
   ELSIF lang = ''ita'' THEN
