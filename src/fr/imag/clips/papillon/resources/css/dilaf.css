@@ -426,6 +426,8 @@ p.standard {
     text-align: justify;
 }
 
+/* désactivation des liens
+
 A:link {
 	text-decoration: none; 
 	color: blue;
@@ -445,7 +447,8 @@ A:hover {
 	text-decoration: underline; 
 	color: blue;
 	}
-
+*/
+ 
 .accesskey {text-decoration: underline; }
 
 .copyright {
@@ -495,7 +498,7 @@ A:hover {
 
 .fra	{
 	font-family: Arial, Helvetica, sans-serif;
-	color: #3366FF;
+	color: #999999;
 	}
 
 .hun	{
@@ -809,7 +812,7 @@ div.contribution {
 }
 
 .pos {
-	font-weight: bold;
+	font-weight: normal;
 	color: black;
 }
 .pronunciation {
