@@ -415,7 +415,9 @@ public class VolumeEntriesFactory {
 	
 	protected static java.util.Hashtable VolumeEntriesCountHashtable = new java.util.Hashtable();
 	protected static String NoStatus = "#NoStatus#";
-	
+
+	protected static java.util.regex.Pattern quotePattern = java.util.regex.Pattern.compile("'");
+
 	protected static com.lutris.dods.builder.generator.query.RDBColumn[] Columns = new com.lutris.dods.builder.generator.query.RDBColumn[1];
 	
     /**
@@ -585,7 +587,9 @@ public class VolumeEntriesFactory {
 									key[3] == QueryBuilder.LESS_THAN_OR_EQUAL ||
 									key[3] == QueryBuilder.GREATER_THAN ||
 									key[3] == QueryBuilder.GREATER_THAN_OR_EQUAL)) {
-								myQueryBuilder.addWhere(MSORT_FIELD + key[3]+ "multilingual_sort('" + key[1] + "','" + key[2] + "')");
+									java.util.regex.Matcher quoteMatcher = quotePattern.matcher(key[2]);
+									String newValue = quoteMatcher.replaceAll("''");
+									myQueryBuilder.addWhere(MSORT_FIELD + key[3]+ "multilingual_sort('" + key[1] + "','" + newValue + "')");
 							}
 							else {
 								myQueryBuilder.addWhere(valueColumn, key[2],  key[3]);
@@ -756,7 +760,9 @@ public class VolumeEntriesFactory {
 									key[3] == QueryBuilder.LESS_THAN_OR_EQUAL ||
 									key[3] == QueryBuilder.GREATER_THAN ||
 									key[3] == QueryBuilder.GREATER_THAN_OR_EQUAL)) {
-								myQueryBuilder.addWhere(MSORT_FIELD + key[3]+ "multilingual_sort('" + key[1] + "','" + key[2] + "')");
+									java.util.regex.Matcher quoteMatcher = quotePattern.matcher(key[2]);
+									String newValue = quoteMatcher.replaceAll("''");
+									myQueryBuilder.addWhere(MSORT_FIELD + key[3]+ "multilingual_sort('" + key[1] + "','" + newValue + "')");
 							}
 							else {
 									myQueryBuilder.addWhere(valueColumn, key[2],  key[3]);

@@ -62,6 +62,8 @@ import fr.imag.clips.papillon.data.IndexDO;
  * Represents a volume index. 
  */
 public class Index {
+
+	protected static java.util.regex.Pattern quotePattern = java.util.regex.Pattern.compile("'");
 	// Beware, for the text database columns, there is an UTF-8 conversion needed
 	// but for the character columns, no need !
     

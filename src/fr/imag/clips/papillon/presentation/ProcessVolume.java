@@ -109,6 +109,8 @@ public class ProcessVolume extends PapillonBasePO {
 	protected final static String DEFAULT="*default*";
 	protected final static String SORTBY_PARAMETER="SortBy";
 	protected final static String AnyContains_PARAMETER="AnyContains";
+	protected static java.util.regex.Pattern quotePattern = java.util.regex.Pattern.compile("'");
+	
 	    
     protected ProcessVolumeTmplXHTML content;
 
@@ -202,7 +204,9 @@ public class ProcessVolume extends PapillonBasePO {
 					strategy1 == IQuery.STRATEGY_LESS_THAN ||
 					strategy1 == IQuery.STRATEGY_LESS_THAN_OR_EQUAL) {
 					String clause = "key='" + search1 + "'";
-					clause += " and multilingual_sort('" + source + "',value)" + IQuery.QueryBuilderStrategy[strategy1+1] + " multilingual_sort('" + source + "','" + search1text +"') "; 
+					java.util.regex.Matcher quoteMatcher = quotePattern.matcher(search1text);
+					String newValue = quoteMatcher.replaceAll("''");
+					clause += " and multilingual_sort('" + source + "',value)" + IQuery.QueryBuilderStrategy[strategy1+1] + " multilingual_sort('" + source + "','" + newValue +"') "; 
 					myClauses.add(clause);
 				}
 				else {
@@ -220,7 +224,9 @@ public class ProcessVolume extends PapillonBasePO {
 					strategy2 == IQuery.STRATEGY_LESS_THAN ||
 					strategy2 == IQuery.STRATEGY_LESS_THAN_OR_EQUAL) {
 					String clause = "key='" + search2 + "'";
-					clause += " and multilingual_sort('" + source + "',value)" + IQuery.QueryBuilderStrategy[strategy2+1] + " multilingual_sort('" + source + "','" + search1text +"') "; 
+					java.util.regex.Matcher quoteMatcher = quotePattern.matcher(search2text);
+					String newValue = quoteMatcher.replaceAll("''");
+					clause += " and multilingual_sort('" + source + "',value)" + IQuery.QueryBuilderStrategy[strategy2+1] + " multilingual_sort('" + source + "','" + newValue +"') "; 
 					myClauses.add(clause);
 				}
 				else {

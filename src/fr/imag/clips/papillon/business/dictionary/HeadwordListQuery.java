@@ -16,7 +16,10 @@ import com.lutris.appserver.server.Enhydra;
  */
 public class HeadwordListQuery {
 
-        public static Collection getHeadwordListForLanguage(String sourceLanguage, String prefix, int limit) throws SQLException {
+	protected static java.util.regex.Pattern quotePattern = java.util.regex.Pattern.compile("'");
+
+	public static Collection getHeadwordListForLanguage(String sourceLanguage, String prefix, int limit) throws SQLException {
+
 
         // FIXME: This gives all headword, even the one that have been deleted...
         // It will be the case as long as the index references all entries...
@@ -90,7 +93,11 @@ public class HeadwordListQuery {
 
                 String sqlQuery = "SELECT DISTINCT value FROM " + volume.getIndexDbname() +
                         " WHERE key='" + Volume.CDM_headword + "' ";
-                if (null != prefix) sqlQuery +=  " AND msort like multilingual_sort('" + sourceLanguage + "','" + prefix + "') || '%' ";
+                if (null != prefix) {
+					java.util.regex.Matcher quoteMatcher = quotePattern.matcher(prefix);
+					String newValue = quoteMatcher.replaceAll("''");
+					sqlQuery +=  " AND msort like multilingual_sort('" + sourceLanguage + "','" + newValue + "') || '%' ";
+				}
                 if (0 != limit) sqlQuery += " LIMIT "+ limit + ";";
 
                 // System.out.println(sqlQuery);

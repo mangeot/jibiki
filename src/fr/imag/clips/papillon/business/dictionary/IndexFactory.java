@@ -165,6 +165,8 @@ public class IndexFactory {
 	public final static String ORDER_ASCENDING = "ASC";
 	public final static String ORDER_DESCENDING = "DESC";
 	
+	protected static java.util.regex.Pattern quotePattern = java.util.regex.Pattern.compile("'");
+
 	protected final static String databaseName = IndexDO.get_logicalDBName();
 	public static String databaseVendor = null;
 	protected static com.lutris.dods.builder.generator.query.RDBColumn[] Columns = new com.lutris.dods.builder.generator.query.RDBColumn[1];
@@ -317,7 +319,11 @@ public class IndexFactory {
 								 key[3] == QueryBuilder.LESS_THAN_OR_EQUAL ||
 								 key[3] == QueryBuilder.GREATER_THAN ||
 								 key[3] == QueryBuilder.GREATER_THAN_OR_EQUAL) {
-								query.getQueryBuilder().addWhere(MSORT_FIELD + key[3]+ "multilingual_sort('" + key[1] + "','" + key[2] + "')");
+								//Replace all apostrophes with double apostrophes
+								java.util.regex.Matcher quoteMatcher = quotePattern.matcher(key[2]);
+								String newValue = quoteMatcher.replaceAll("''");
+								
+								query.getQueryBuilder().addWhere(MSORT_FIELD + key[3]+ "multilingual_sort('" + key[1] + "','" + newValue + "')");
 							}
 							else {
 								query.getQueryBuilder().addWhere(valueColumn, key[2],  key[3]);

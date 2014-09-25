@@ -94,68 +94,7 @@ public class LinkFactory {
 		return theLink;
 	}
 	
-/*////	public static Vector getLinkEntriesVector(String linkTableName, Vector Keys, String order, int limit) throws PapillonBusinessException {
-		return getLinkEntriesVector(linkTableName, Keys, order, limit,0);
-	}
-////*/
-	
-/*////	public static Vector getLinkEntriesVector(String linkTableName, Vector Keys, String order, int limit, int offset) throws PapillonBusinessException {
-        Vector theEntries = new Vector();
-		
-		if (null != linkTableName) {
-			try {
-			////	com.lutris.dods.builder.generator.query.RDBColumn keyColumn = LinkDO.getKeyColumn(linkTableName);
-				com.lutris.dods.builder.generator.query.RDBColumn langColumn = LinkDO.getLangColumn(linkTableName);
-			////	com.lutris.dods.builder.generator.query.RDBColumn valueColumn = LinkDO.getValueColumn(linkTableName);
-				LinkQuery query = new LinkQuery(linkTableName, CurrentDBTransaction.get());
-				//fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Index request table: " + indexTableName);
-	
-				if (Keys != null) {
-					for (java.util.Enumeration enumKeys = Keys.elements(); enumKeys.hasMoreElements();) {
-						String[] key = (String[]) enumKeys.nextElement();
-						if (key!=null && key[2] !=null && !key[2].equals("")) {
-						////	query.getQueryBuilder().addWhere(keyColumn, key[0], QueryBuilder.EQUAL);
-							if (key[1] !=null && !key[1].equals("")) {
-								query.getQueryBuilder().addWhere(langColumn, key[1], QueryBuilder.EQUAL);
-							}
-							if ( key[3] == QueryBuilder.LESS_THAN ||
-								 key[3] == QueryBuilder.LESS_THAN_OR_EQUAL ||
-								 key[3] == QueryBuilder.GREATER_THAN ||
-								 key[3] == QueryBuilder.GREATER_THAN_OR_EQUAL) {
-								query.getQueryBuilder().addWhere(MSORT_FIELD + key[3]+ "multilingual_sort('" + key[1] + "','" + key[2] + "')");
-							}
-							else {
-						////		query.getQueryBuilder().addWhere(valueColumn, key[2],  key[3]);
-							}
-						}
-					}
-				}				
-				query.getQueryBuilder().setMaxRows((0 == limit) ? DictionariesFactory.MaxRetrievedEntries : limit);
-				if (offset!=0) {
-					query.getQueryBuilder().addEndClause("OFFSET " + offset);
-				}
-				if (order==null || !order.equals(ORDER_DESCENDING)) {
-					order = "";
-				}
-				query.getQueryBuilder().addOrderByColumn(MSORT_FIELD,order);
-				// debug
-				//query.getQueryBuilder().debug();
-				
-				LinkDO[] DOarray = query.getDOArray();
-				if (null != DOarray) {
-					for (int j=0; j < DOarray.length; j++) {
-						Link tempLink = new Link(DOarray[j]);
-						theEntries.add(tempLink);
-					}
-				}
-			}
-			catch(Exception ex) {
-				throw new PapillonBusinessException("Exception in getLinkEntriesVector()", ex);
-			}
-		}
-		return theEntries;
-	}
-	////*/
+
 	protected static void deleteLinkForEntryId(String linkDbname, String entryId) throws 	PapillonBusinessException {		
 		String cmp_op = QueryBuilder.EQUAL;
 		

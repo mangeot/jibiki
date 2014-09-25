@@ -77,7 +77,7 @@ public class LookupVolume extends AbstractPO {
 	protected static final String ALL_STATUS = "*ALL*";
 	
 	/* Beware, This feature is Postgresql only!!! */
-	protected static final String DOLLAR_QUOTING = "$LIG$";
+	protected static final String DOLLAR_QUOTING = "$GETA$";
 	
     /**
     *  This method should be implemented in the subclass so that it returns
@@ -208,7 +208,7 @@ public class LookupVolume extends AbstractPO {
 					String[] Headword = new String[4];
 					Headword[0] = key;
 					Headword[1] = source;
-					Headword[2] = DOLLAR_QUOTING + word + DOLLAR_QUOTING;
+					Headword[2] = word;
 					Headword[3] = strategy;
 					myKeys.add(Headword);
 					//PapillonLogger.writeDebugMsg("LookupVolume: [" + myVolume.getIndexDbname() + "] source: [" + source + "] WORD: [" + word + "] KEY: [" + key + "] strat: [" + strategy + "] order: [" + order + "] limit: [" + limit + "]");
@@ -275,7 +275,7 @@ public class LookupVolume extends AbstractPO {
 				//PapillonLogger.writeDebugMsg("LookupVolume entry: " + oneentry + " key: " + key);
 				Headword[0] = key;
 				Headword[1] = lang;
-				Headword[2] = DOLLAR_QUOTING + oneentry + DOLLAR_QUOTING;
+				Headword[2] = oneentry;
 				Headword[3] = QueryBuilder.EQUAL;
 				myKeys.add(Headword);
 
