@@ -281,7 +281,7 @@ overflow-y: scroll;
 
 .dicos {
 	float:left;
-	width: 250px;
+	width: 247px;
 	margin-left: -100px;
 }
 
@@ -296,8 +296,9 @@ overflow-y: scroll;
 	border-radius: 15px;
 }
 
+
 .downloads {
-	padding-left: 200px;
+	padding-left: 140px;
 	padding-top: 10px;
 }
 
