@@ -554,7 +554,8 @@ public abstract class PapillonBasePO extends AbstractPO {
             Cookie myCookie;
             try {
                 myCookie = new Cookie(key, value);
-                myCookie.setMaxAge(365 * 30 * 24 * 60 * 60);// valid for 1 year
+				myCookie.setPath("/");
+                myCookie.setMaxAge(365 * 24 * 60 * 60);// valid for 1 year
                     this.getComms().response.addCookie(myCookie);
             } catch (Exception ex) {
                 throw new PapillonPresentationException("Trouble setting cookie", ex);
