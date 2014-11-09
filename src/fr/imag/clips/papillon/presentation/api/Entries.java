@@ -61,6 +61,7 @@ import fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory;
 import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
 import fr.imag.clips.papillon.business.user.UsersFactory;
 import fr.imag.clips.papillon.business.user.User;
+import fr.imag.clips.papillon.business.utility.Utility;
 import fr.imag.clips.papillon.business.xsl.XslSheet;
 import fr.imag.clips.papillon.business.xsl.XslSheetFactory;
 
@@ -319,7 +320,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 				String[] Words = word.split(",");
 				for (int i=0, len= Words.length; i<len;i++) {
 					String oneWord = Words[i];
-					String criteriaString = "<criteria name='"+criteria+"' strategy='"+strategyString+"' value='"+oneWord+"'>"; 
+					String criteriaString = "<criteria name='"+criteria+"' strategy='"+strategyString+"' value='"+Utility.encodeXMLEntities(oneWord)+"'>"; 
 					java.util.Vector myKeys = new java.util.Vector();
 					String[] Word = new String[4];
 					Word[0] = criteria;
@@ -446,7 +447,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 					allIndexes.append("'");
 				}
 				allIndexes.append(">");
-				allIndexes.append(myEntry.getValue());
+				allIndexes.append(Utility.encodeXMLEntities(myEntry.getValue()));
 				allIndexes.append("</key>");
 			}
 		}
