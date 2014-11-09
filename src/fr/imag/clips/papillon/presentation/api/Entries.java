@@ -146,7 +146,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 		return resultDoc;			
 	}
 
-	public static org.w3c.dom.Document getEntries(String dictName, String lang, String criteria, String word, String key, String strategy, String limitString, String offsetString, String login, String password) 
+	public static org.w3c.dom.Document getEntries(String dictName, String lang, String criteria, String word, String key, String strategyString, String limitString, String offsetString, String login, String password) 
 	throws HttpPresentationException, java.io.IOException, Exception {
 		User theUser = getUser(login, password);
 		int limit = DEFAULT_LIMIT;
@@ -165,7 +165,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 		}
 		Volume theVolume = null;
 		org.w3c.dom.Document resultDoc = null;
-		strategy = getStrategy(strategy);
+		String strategy = getStrategy(strategyString);
 		if (criteria !=null && criteria.equals("handle")) {
 			if (key==null) {
 				java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
@@ -308,7 +308,6 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 				PapillonLogger.writeDebugMsg("Entries: volume: " + theVolume.getName());
 				String sourceLang = theVolume.getSourceLanguage();
 				String entryString = "\n<entry lang='"+sourceLang+"' dictionary='"+theVolume.getDictname()+"'>";
-				String criteriaString = "<criteria value='"+criteria+"'>"; 
 				String langCriteria = null;
 				if (Volume.isSourceLangCDMElement(criteria)) {
 					langCriteria = sourceLang;
@@ -316,55 +315,61 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 				else if (Volume.isDefaultLangCDMElement(criteria)) {
 					langCriteria=Volume.DEFAULT_LANG;
 				}				
-				java.util.Vector myKeys = new java.util.Vector();
-				String[] Word = new String[4];
-				Word[0] = criteria;
-				Word[1] = langCriteria;
-				Word[2] = word;
-				Word[3] = strategy;
-				myKeys.add(Word);
-				if (key != null && key.equals("entries")) {
-					java.util.Collection targets = theVolume.getTargetLanguagesArray();
-					java.util.Collection EntryCollection = DictionariesFactory.getDictionaryNameEntriesCollection(theVolume.getDictname(),
-																							 sourceLang,
-																							 targets,
-																							 myKeys,
-																							 null,
-																							 null,
-																							 theUser,
-																							 offset,
-																							limit);
-					
-					
-					if (EntryCollection!=null) {
-						for (java.util.Iterator myIterator = EntryCollection.iterator(); myIterator.hasNext(); ) {
-							QueryResult myQueryResult = (QueryResult) myIterator.next();
+				
+				String[] Words = word.split(",");
+				for (int i=0, len= Words.length; i<len;i++) {
+					String oneWord = Words[i];
+					String criteriaString = "<criteria name='"+criteria+"' strategy='"+strategyString+"' value='"+oneWord+"'>"; 
+					java.util.Vector myKeys = new java.util.Vector();
+					String[] Word = new String[4];
+					Word[0] = criteria;
+					Word[1] = langCriteria;
+					Word[2] = oneWord;
+					Word[3] = strategy;
+					myKeys.add(Word);
+					if (key != null && key.equals("entries")) {
+						java.util.Collection targets = theVolume.getTargetLanguagesArray();
+						java.util.Collection EntryCollection = DictionariesFactory.getDictionaryNameEntriesCollection(theVolume.getDictname(),
+																													  sourceLang,
+																													  targets,
+																													  myKeys,
+																													  null,
+																													  null,
+																													  theUser,
+																													  offset,
+																													  limit);
+						
+						
+						if (EntryCollection!=null) {
+							for (java.util.Iterator myIterator = EntryCollection.iterator(); myIterator.hasNext(); ) {
+								QueryResult myQueryResult = (QueryResult) myIterator.next();
+								allEntries.append(entryString);
+								allEntries.append(myQueryResult.getSourceEntry().getXmlCode());
+								allEntries.append("</entry>");
+							}						
+						}
+					} 
+					else {
+						java.util.Collection resultsVector = IndexFactory.getIndexEntriesVector(theVolume.getIndexDbname(),
+																								myKeys,
+																								IndexFactory.ORDER_DESCENDING,
+																								limit,
+																								offset);
+						for (java.util.Iterator myIterator = resultsVector.iterator(); myIterator.hasNext(); ) {
+							Index myEntry = (Index) myIterator.next();
 							allEntries.append(entryString);
-							allEntries.append(myQueryResult.getSourceEntry().getXmlCode());
+							allEntries.append(criteriaString);
+							allEntries.append(myEntry.getValue());
+							allEntries.append("</criteria>");
+							if (key !=null) {
+								allEntries.append(getIndexValues(theVolume,""+myEntry.getEntryId(),key));
+							}
+							allEntries.append("<handle>");
+							allEntries.append(myEntry.getEntryId());
+							allEntries.append("</handle>");
 							allEntries.append("</entry>");
-						}						
+						}
 					}
-				} 
-				else {
-				java.util.Collection resultsVector = IndexFactory.getIndexEntriesVector(theVolume.getIndexDbname(),
-																					myKeys,
-																					IndexFactory.ORDER_DESCENDING,
-																					limit,
-																					offset);
-				for (java.util.Iterator myIterator = resultsVector.iterator(); myIterator.hasNext(); ) {
-					Index myEntry = (Index) myIterator.next();
-					allEntries.append(entryString);
-					allEntries.append(criteriaString);
-					allEntries.append(myEntry.getValue());
-					allEntries.append("</criteria>");
-					if (key !=null) {
-						allEntries.append(getIndexValues(theVolume,""+myEntry.getEntryId(),key));
-					}
-					allEntries.append("<handle>");
-					allEntries.append(myEntry.getEntryId());
-					allEntries.append("</handle>");
-					allEntries.append("</entry>");
-				}
 				}
 			}
 			allEntries.append(ENTRIES_TAIL_XMLSTRING);
@@ -582,43 +587,43 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 	public static String getStrategy(String strategy) {
 		String result = QueryBuilder.CASE_SENSITIVE_STARTS_WITH;
 		if (strategy !=null) {
-			if (strategy.equals("EQUAL")) {
+			if (strategy.equalsIgnoreCase("EQUAL")) {
 				result = QueryBuilder.EQUAL;
 			}
-			if (strategy.equals("CASE_SENSITIVE_STARTS_WITH")) {
+			if (strategy.equalsIgnoreCase("CASE_SENSITIVE_STARTS_WITH")) {
 				result = QueryBuilder.CASE_SENSITIVE_STARTS_WITH;
 			}
-			if (strategy.equals("CASE_SENSITIVE_ENDS_WITH")) {
+			if (strategy.equalsIgnoreCase("CASE_SENSITIVE_ENDS_WITH")) {
 				result = QueryBuilder.CASE_SENSITIVE_ENDS_WITH;
 			}
-			if (strategy.equals("CASE_SENSITIVE_CONTAINS")) {
+			if (strategy.equalsIgnoreCase("CASE_SENSITIVE_CONTAINS")) {
 				result = QueryBuilder.CASE_SENSITIVE_CONTAINS;
 			}
-			if (strategy.equals("CASE_INSENSITIVE_EQUAL")) {
+			if (strategy.equalsIgnoreCase("CASE_INSENSITIVE_EQUAL")) {
 				result = QueryBuilder.CASE_INSENSITIVE_EQUAL;
 			}
-			if (strategy.equals("CASE_INSENSITIVE_STARTS_WITH")) {
+			if (strategy.equalsIgnoreCase("CASE_INSENSITIVE_STARTS_WITH")) {
 				result = QueryBuilder.CASE_INSENSITIVE_STARTS_WITH;
 			}
-			if (strategy.equals("CASE_INSENSITIVE_ENDS_WITH")) {
+			if (strategy.equalsIgnoreCase("CASE_INSENSITIVE_ENDS_WITH")) {
 				result = QueryBuilder.CASE_INSENSITIVE_ENDS_WITH;
 			}
-			if (strategy.equals("CASE_INSENSITIVE_CONTAINS")) {
+			if (strategy.equalsIgnoreCase("CASE_INSENSITIVE_CONTAINS")) {
 				result = QueryBuilder.CASE_INSENSITIVE_CONTAINS;
 			}
-			if (strategy.equals("NOT_EQUAL")) {
+			if (strategy.equalsIgnoreCase("NOT_EQUAL")) {
 				result = QueryBuilder.NOT_EQUAL;
 			}
-			if (strategy.equals("GREATER_THAN")) {
+			if (strategy.equalsIgnoreCase("GREATER_THAN")) {
 				result = QueryBuilder.GREATER_THAN;
 			}
-			if (strategy.equals("GREATER_THAN_OR_EQUAL")) {
+			if (strategy.equalsIgnoreCase("GREATER_THAN_OR_EQUAL")) {
 				result = QueryBuilder.GREATER_THAN_OR_EQUAL;
 			}
-			if (strategy.equals("LESS_THAN")) {
+			if (strategy.equalsIgnoreCase("LESS_THAN")) {
 				result = QueryBuilder.LESS_THAN;
 			}
-			if (strategy.equals("LESS_THAN_OR_EQUAL")) {
+			if (strategy.equalsIgnoreCase("LESS_THAN_OR_EQUAL")) {
 				result = QueryBuilder.LESS_THAN_OR_EQUAL;
 			}			
 		}

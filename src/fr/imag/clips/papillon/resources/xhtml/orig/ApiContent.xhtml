@@ -156,16 +156,20 @@ parts-of-speech for the "trial" entry.</p>
 <p>It is possible to query all the dictionaries by putting a <b>*</b> instead of the name of the dictionary.
 It is also possible to do the same for the [lang] and [key] part of the URL.</p>
 
+<p>Several strings can be queried at once. They have to be separated by commas.
+For example, searching an entry with <i>api/*/eng/cdm-headword/trial,essay/</i> will give a list of 
+handles for entries with headwords matching "trial" or "essay".</p>
+
 <p>The <b>handle</b> criteria is special as it does not give a list of entry handles but the full entry XML
  content.</p>
 
-<p>Example of query: <a href="api/FeM/fra/cdm-headword/abandonner?strategy=equal">api/FeM/fra/cdm-headword/abandonner?strategy=equal</a></p>
+<p>Example of query: <a href="api/FeM/fra/cdm-headword/abandon?strategy=EQUAL">api/FeM/fra/cdm-headword/abandon?strategy=EQUAL</a></p>
 <p>Answer:</p>
 <pre>
 &lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;entry-list xmlns="http://www-clips.imag.fr/geta/services/dml">
 	&lt;entry dictionary="FeM" lang="fra"&gt;
-		&lt;criteria value='cdm-headword'&gt;abandonner&lt;/criteria&gt;
+		&lt;criteria value='cdm-headword'&gt;abandon&lt;/criteria&gt;
 		&lt;handle&gt;8814938&lt;/handle&gt;
 	&lt;/entry&gt;
 &lt;/entry-list&gt;
