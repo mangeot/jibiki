@@ -9,13 +9,17 @@
  	var listTop = false;
  	var listBottom = false;
 
+	var scripts = document.getElementsByTagName('script');
+	var myScript = scripts[scripts.length - 1];
+	var scriptStartUrl=myScript.src.substring(0,myScript.src.lastIndexOf("javascript/"));
+
 function lookupIndex (parameters, direction) {
 	load = true;
 	$('.loadmore').show();
 		
 	//On lance la fonction ajax
 	$.ajax({
-		   url: 'LookupVolume.po',
+		   url: scriptStartUrl + 'LookupVolume.po',
 		   type: 'get',
 		   data: parameters+'&DIRECTION='+direction,
 		   dataType: "html",
@@ -111,7 +115,7 @@ function queryPrefixVolume(word, volume) {
 	}
 	//alert(volume+' '+ key + ' ' + word);
 			$.ajax({
-				url: 'LookupVolume.po',
+				url: scriptStartUrl + 'LookupVolume.po',
 				type: 'get',
 				data: 'action=lookupVolume&VOLUME='+volume+'&LIMIT='+halflimit+'&KEY='+key+'&WORD='+word+'&DIRECTION=DESC',
 				dataType: "html",
@@ -133,7 +137,7 @@ function queryPrefixVolume(word, volume) {
 				}
 			});
 		$.ajax({
-		   url: 'LookupVolume.po',
+		   url: scriptStartUrl + 'LookupVolume.po',
 		   type: 'get',
 		   data: 'action=lookupVolume&VOLUME='+volume+'&LIMIT='+halflimit+'&KEY='+key+'&WORD='+word+'&DIRECTION=ASC&STRATEGY=>%3D',
 		   dataType: "html",
@@ -165,7 +169,7 @@ function lookupVolume (parameters) {
 			$('.lookupentry').css('font-weight', 'normal');
 
 			$.ajax({
-				url: 'LookupVolume.po',
+				url: scriptStartUrl + 'LookupVolume.po',
 				type: 'get',
 				data: 'action=queryHandle&'+parameters,
  
@@ -198,7 +202,7 @@ function queryOneEntry (entry, volume) {
 	}	
 	
 	$.ajax({
-		   url: 'LookupVolume.po',
+		   url: scriptStartUrl + 'LookupVolume.po',
 		   type: 'get',
 		   data: 'action=queryOneEntry&VOLUME='+volume+'&ENTRY='+entry + '&KEY=' + key,
 		   
@@ -223,7 +227,7 @@ function queryOneKey (key, value, volume) {
 	$('.lookupentry').css('font-weight', 'normal');
 		
 	$.ajax({
-		   url: 'LookupVolume.po',
+		   url: scriptStartUrl + 'LookupVolume.po',
 		   type: 'get',
 		   data: 'action=queryOneEntry&VOLUME='+volume+'&ENTRY='+value + '&KEY=' + key,
 		   
