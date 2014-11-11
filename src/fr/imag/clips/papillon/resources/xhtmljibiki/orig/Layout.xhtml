@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+  <head>
+    <link href="css/jibiki.css" rel="stylesheet" type="text/css" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="author" content="Mathieu MANGEOT" />
+  <meta name="keywords" content="Jibiki French-Japanese dictionary and corpus project"/>
+  <meta name="description" content="Jibiki French-Japanese dictionary and corpus project" />
+  <title>Jibiki French-Japanese dictionary and corpus project</title>
+    <script src="javascript/jquery-1.8.0.min.js" type="text/javascript"><!-- // --></script>
+    <script src="javascript/lookupVolume.js" type="text/javascript"><!-- // --></script>
+    <script id="Script" type="text/javascript"><!-- --></script>
+    </head>
+  <body>
+    <div class="headerBlock">
+	 <div class="headerMenu" id="headerMenu">
+  <table style="margin:auto; border-spacing: 0px;width:90%">
+    <tbody>
+    	<tr><td class="popupMenu homeMenu"><a href="/blog.php">Home</a></td>
+    	<td class="popupMenu projectMenu"><a href="Project.po">Project</a><ul class="second-level-menu"><li><a href="Project.po#Objectif">Presentation</a></li><li><a href="Project.po#Historique">History</a></li><li><a href="Project.po#Financement">Financement</a></li><li><a href="Project.po#Partenaires">Partenaires</a></li><li><a href="Project.po#Publications">Publications</a></li></ul></td>
+		<td class="popupMenu dataMenu"><a href="Download.po">Data</a></td>
+		<td class="popupMenu contactMenu"><a href="Contacts.po">Contacts</a></td>
+    	<td class="popupMenu helpMenu"><a href="Help.po">Help</a></td>
+    	<td class="popupMenu userProfileMenu"><div id="UserMenuHolder" style="display: inline;" />
+			<ul class="second-level-menu">
+		<li><div id="LexiesManagementHolder" style="display: inline;"/></li>
+		<li><div id="ReviewerMenuHolder"  style="display: inline;" /></li>
+     <li><div id="ValidatorMenuHolder"  style="display: inline;"/></li>
+    <li><div id="AdministrationMenuHolder"  style="display: inline;"/></li></ul>
+   </td>
+   <td class="popupMenu popupMenuEnd"><div id="LangFormHolder" style="display:inline;" /></td>
+   
+   </tr></tbody></table>
+    </div>
+
+
+		<div id="BannerPlaceHolder" style="display:block;">
+		<div id="BannerContent">
+		     <div id="projectTitle">
+        The <span class="projectName">Jibiki</span> project
+      </div>
+      <div id="QueryMenuHolder" style="display:none;"></div>
+	  <form action="/lookupVolume.php" class="cellVolumeLookup"><div style="display:inline;">
+		<input id="actionJS" name="action" type="hidden" value="lookupVolume"/>
+	    Lookup
+   		<input id="LIMIT" name="LIMIT" type="hidden" value="100"/>
+    		<input id="STATUS" name="STATUS" type="hidden" value="finished"/>
+			<!--label accesskey="v" for="VOLUME" id="VolumeLabel" style="display:inline;"><span class="accesskey">v</span>olume-->
+			<input  id="VOLUME" name="VOLUME" value="JMdict_jpn_eng" type="hidden"/>
+    		<!--select id="VOLUME" name="VOLUME" title="sélectionner le volume [v]"><option label="JMdict_jpn_eng" value="JMdict_jpn_eng">JMdict_jpn_eng</option></select-->
+			<!--/label-->
+ 	     <input id="HEADWORD" name="HEADWORD" type="text"/>
+	     <input type="submit" value="→"/>
+	   </div></form>
+	  <div class="cellAdvancedLookup"><a href="AdvancedLookup.po">Advanced Lookup</a></div>
+		</div>
+	</div>
+    </div>
+    
+    <div id="sectionPrincipale">
+    <div id="MenuColumn"></div>
+    <div id="MainColumn" class="mainColumn"></div>
+    </div>
+
+	<div id="footer">
+        <p>
+        <!-- pied de page -->
+        Last update: 24 nov. 2014. 
+        Platform: © 2001-2014, GETA-CLIPS, GETALP-LIG. LGPL license. 
+        Data: <a rel="licence" href="http://creativecommons.org/licenses/by-sa/2.0/">
+		<img alt="Creative Commons License" style="border-width:0" src="http://creativecommons.org/images/public/somerights20.png" />
+		Creative Commons licence (Attribution-Share Alike 2.0 France)</a> 2013.
+		</p>
+<!-- Piwik -->
+<script type="text/javascript">
+  var _paq = _paq || [];
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="//10.31.47.226/piwik/";
+    _paq.push(['setTrackerUrl', u+'piwik.php']);
+    _paq.push(['setSiteId', 1]);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<noscript><p><img src="//10.31.47.226/piwik/piwik.php?idsite=1" style="border:0;" alt="" /></p></noscript>
+<!-- End Piwik Code -->
+
+        </div>
+</body>
+</html>

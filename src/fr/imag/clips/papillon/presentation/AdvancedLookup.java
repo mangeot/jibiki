@@ -127,6 +127,12 @@ public class AdvancedLookup extends DilafBasePO {
 					String entry = "<div class='lookupentry' title='"+ Utility.encodeXMLEntities(myIndex.getMsort())+"'><a href='javascript:void(0);' style='display:block; margin:5px;' onclick=\"lookupVolume('VOLUME="+volumeName+"&amp;HANDLE="+myIndex.getEntryId()+"');$(this).parent().css('font-weight','bold')\">"+Utility.encodeXMLEntities(myIndex.getValue())+"</a></div>";
 					stringResponse += entry;
 				}
+				if (qrset.size()==0) {
+					stringResponse += "<!-- // -->";
+				}
+			}
+			else {
+				stringResponse += "<!-- // -->";
 			}
 			if (qrset.size()==qf.getQueryParameter().getLimit()) {
 				QueryParameter qp = qf.getQueryParameter();

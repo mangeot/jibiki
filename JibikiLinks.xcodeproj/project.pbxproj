@@ -272,7 +272,7 @@
 		A307233C0EC89B2300733910 /* gdef-home.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = "gdef-home.css"; sourceTree = "<group>"; };
 		A307233D0EC89B2300733910 /* motamot.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = motamot.css; sourceTree = "<group>"; };
 		A307233E0EC89B2300733910 /* lexalp_print.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = lexalp_print.css; sourceTree = "<group>"; };
-		A307233F0EC89B2300733910 /* papillon-home.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = "papillon-home.css"; sourceTree = "<group>"; };
+		A307233F0EC89B2300733910 /* jibiki.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = jibiki.css; sourceTree = "<group>"; };
 		A30723400EC89B2300733910 /* papillon.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = papillon.css; sourceTree = "<group>"; };
 		A30723410EC89B2300733910 /* schemas_xml.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = schemas_xml.css; sourceTree = "<group>"; };
 		A30723420EC89B2300733910 /* xml.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = xml.css; sourceTree = "<group>"; };
@@ -2119,7 +2119,7 @@
 				A307233C0EC89B2300733910 /* gdef-home.css */,
 				A307233D0EC89B2300733910 /* motamot.css */,
 				A307233E0EC89B2300733910 /* lexalp_print.css */,
-				A307233F0EC89B2300733910 /* papillon-home.css */,
+				A307233F0EC89B2300733910 /* jibiki.css */,
 				A30723400EC89B2300733910 /* papillon.css */,
 				A30723410EC89B2300733910 /* schemas_xml.css */,
 				A30723420EC89B2300733910 /* xml.css */,
