@@ -178,7 +178,12 @@ public class LookupVolume extends AbstractPO {
 				int limit = 100;
 				String limitString = myGetParameter("LIMIT");
 				if (limitString!=null && !limitString.equals("")) {
-					limit = Integer.parseInt(limitString);
+					try {
+						limit = Integer.parseInt(limitString);
+					}
+					catch (java.lang.NumberFormatException nfe) {
+						PapillonLogger.writeDebugMsg("myGetParameter(LIMIT): " + limitString);
+					}
 				}
 				String strategy = myGetParameter("STRATEGY");
 				if (strategy==null || strategy.equals("")) {
