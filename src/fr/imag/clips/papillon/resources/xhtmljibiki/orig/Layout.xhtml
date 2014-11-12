@@ -17,11 +17,11 @@
 	 <div class="headerMenu" id="headerMenu">
   <table style="margin:auto; border-spacing: 0px;width:90%">
     <tbody>
-    	<tr><td class="popupMenu homeMenu"><a href="/blog.php">Home</a></td>
-    	<td class="popupMenu projectMenu"><a href="Project.po">Project</a><ul class="second-level-menu"><li><a href="Project.po#Objectif">Presentation</a></li><li><a href="Project.po#Historique">History</a></li><li><a href="Project.po#Financement">Financement</a></li><li><a href="Project.po#Partenaires">Partenaires</a></li><li><a href="Project.po#Publications">Publications</a></li></ul></td>
-		<td class="popupMenu dataMenu"><a href="Download.po">Data</a></td>
-		<td class="popupMenu contactMenu"><a href="Contacts.po">Contacts</a></td>
-    	<td class="popupMenu helpMenu"><a href="Help.po">Help</a></td>
+    	<tr><td class="popupMenu homeMenu"><a href="/">Home</a></td>
+        <td class="popupMenu contactMenu"><a href="/corpus/">Corpus</a></td>
+        <td class="popupMenu dataMenu"><a href="/data/">Data</a></td>
+        <td class="popupMenu projectMenu"><a href="/informations.php">Informations</a><ul class="second-level-menu"><li><a href="/informations.php#Objectif">Presentation</a></li><li><a href="/informations.php#Historique">History</a></li><li><a href="/informations.php#Financement">Financement</a></li><li><a href="/informations.php#Partenaires">Partenaires</a></li><li><a href="/informations.php#Publications">Publications</a></li></ul></td>
+    	<td class="popupMenu helpMenu"><a href="/help.php">Help</a></td>
     	<td class="popupMenu userProfileMenu"><div id="UserMenuHolder" style="display: inline;" />
 			<ul class="second-level-menu">
 		<li><div id="LexiesManagementHolder" style="display: inline;"/></li>
@@ -29,7 +29,10 @@
      <li><div id="ValidatorMenuHolder"  style="display: inline;"/></li>
     <li><div id="AdministrationMenuHolder"  style="display: inline;"/></li></ul>
    </td>
-   <td class="popupMenu popupMenuEnd"><div id="LangFormHolder" style="display:inline;" /></td>
+   <td class="popupMenu popupMenuEnd"><div id="LangFormHolder" style="display:none;" />
+       <a href="?lang=fra">français</a>
+       <a href="?lang=jpn">日本語</a>
+   </td>
    
    </tr></tbody></table>
     </div>
@@ -59,7 +62,7 @@
     </div>
     
     <div id="sectionPrincipale">
-    <div id="MenuColumn"></div>
+    <div id="MenuColumn"><!-- // --></div>
     <div id="MainColumn" class="mainColumn"></div>
     </div>
 
