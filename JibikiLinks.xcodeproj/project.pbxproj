@@ -1237,6 +1237,7 @@
 		A3662CFB1A12FC2500C423DF /* Layout.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Layout.xhtml; sourceTree = "<group>"; };
 		A3662CFC1A12FC2500C423DF /* Layout.xmlc */ = {isa = PBXFileReference; lastKnownFileType = text; path = Layout.xmlc; sourceTree = "<group>"; };
 		A3662CFD1A12FC2500C423DF /* options.xmlc */ = {isa = PBXFileReference; lastKnownFileType = text; path = options.xmlc; sourceTree = "<group>"; };
+		A3662CFF1A13490300C423DF /* LangAndUser.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = LangAndUser.xhtml; sourceTree = "<group>"; };
 		A369D51118AD0E820023314A /* LexalpEditEntryInit.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = LexalpEditEntryInit.java; sourceTree = "<group>"; };
 		A37C02CE128C62BD0047A982 /* Base64Coder.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = Base64Coder.java; sourceTree = "<group>"; };
 		A37C02CF128C62BD0047A982 /* DBConnection.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = DBConnection.java; sourceTree = "<group>"; };
@@ -3407,6 +3408,7 @@
 		A3662CF81A12FC2500C423DF /* orig */ = {
 			isa = PBXGroup;
 			children = (
+				A3662CFF1A13490300C423DF /* LangAndUser.xhtml */,
 				A3662CF91A12FC2500C423DF /* AdvancedLookup.xhtml */,
 				A3662CFA1A12FC2500C423DF /* AdvancedLookup.xmlc */,
 				A3662CFB1A12FC2500C423DF /* Layout.xhtml */,
