@@ -277,7 +277,7 @@ input#submit {
 /* Columns */
 /*--------------------------------------*/
 
-section, #sectionPrincipale {
+#sectionPrincipale {
   	display: table;
   	width: 100%;
 }
