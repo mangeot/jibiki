@@ -1232,6 +1232,11 @@
 		A35D6A69171C60F60031534B /* DownloadTmpl.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = DownloadTmpl.xhtml; sourceTree = "<group>"; };
 		A35D6A7C171C67540031534B /* UserProfile.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = UserProfile.xhtml; sourceTree = "<group>"; };
 		A35D6A85171C6CC10031534B /* ConsultPage.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ConsultPage.xhtml; sourceTree = "<group>"; };
+		A3662CF91A12FC2500C423DF /* AdvancedLookup.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = AdvancedLookup.xhtml; sourceTree = "<group>"; };
+		A3662CFA1A12FC2500C423DF /* AdvancedLookup.xmlc */ = {isa = PBXFileReference; lastKnownFileType = text; path = AdvancedLookup.xmlc; sourceTree = "<group>"; };
+		A3662CFB1A12FC2500C423DF /* Layout.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Layout.xhtml; sourceTree = "<group>"; };
+		A3662CFC1A12FC2500C423DF /* Layout.xmlc */ = {isa = PBXFileReference; lastKnownFileType = text; path = Layout.xmlc; sourceTree = "<group>"; };
+		A3662CFD1A12FC2500C423DF /* options.xmlc */ = {isa = PBXFileReference; lastKnownFileType = text; path = options.xmlc; sourceTree = "<group>"; };
 		A369D51118AD0E820023314A /* LexalpEditEntryInit.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = LexalpEditEntryInit.java; sourceTree = "<group>"; };
 		A37C02CE128C62BD0047A982 /* Base64Coder.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = Base64Coder.java; sourceTree = "<group>"; };
 		A37C02CF128C62BD0047A982 /* DBConnection.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = DBConnection.java; sourceTree = "<group>"; };
@@ -1973,7 +1978,6 @@
 				A399568416B11EBC007922CD /* DilafBasePO.java */,
 				A399568516B11EBC007922CD /* DilafLayout.java */,
 				A30722E00EC89B2100733910 /* DistributeWork.java */,
-				A399568616B11ED2007922CD /* Download.java */,
 				A30722E10EC89B2100733910 /* DownloadBasePO.java */,
 				A30722E20EC89B2100733910 /* DRI.java */,
 				A30722E30EC89B2100733910 /* EditEntry.java */,
@@ -2100,6 +2104,7 @@
 				A307247B0EC89B2600733910 /* xhtml */,
 				A31ED36716AD7F1600B642C7 /* xhtmldilaf */,
 				A307260C0EC89B2900733910 /* xhtmlgdef */,
+				A3662CF71A12FC2500C423DF /* xhtmljibiki */,
 				A30726660EC89B2A00733910 /* xhtmllexalp */,
 				A307270F0EC89B2B00733910 /* xhtmlmotamot */,
 				A37C02EC128C62DB0047A982 /* xhtmlpivax */,
@@ -3391,6 +3396,26 @@
 			);
 			sourceTree = "<group>";
 		};
+		A3662CF71A12FC2500C423DF /* xhtmljibiki */ = {
+			isa = PBXGroup;
+			children = (
+				A3662CF81A12FC2500C423DF /* orig */,
+			);
+			path = xhtmljibiki;
+			sourceTree = "<group>";
+		};
+		A3662CF81A12FC2500C423DF /* orig */ = {
+			isa = PBXGroup;
+			children = (
+				A3662CF91A12FC2500C423DF /* AdvancedLookup.xhtml */,
+				A3662CFA1A12FC2500C423DF /* AdvancedLookup.xmlc */,
+				A3662CFB1A12FC2500C423DF /* Layout.xhtml */,
+				A3662CFC1A12FC2500C423DF /* Layout.xmlc */,
+				A3662CFD1A12FC2500C423DF /* options.xmlc */,
+			);
+			path = orig;
+			sourceTree = "<group>";
+		};
 		A37C02CD128C62BD0047A982 /* pivax */ = {
 			isa = PBXGroup;
 			children = (
@@ -3789,6 +3814,8 @@
 /* Begin PBXProject section */
 		A348B7040E7EFB50003F6712 /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+			};
 			buildConfigurationList = A348B7070E7EFB50003F6712 /* Build configuration list for PBXProject "JibikiLinks" */;
 			compatibilityVersion = "Xcode 3.1";
 			developmentRegion = English;
