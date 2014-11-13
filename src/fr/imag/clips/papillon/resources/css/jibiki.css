@@ -189,6 +189,9 @@ input#submit {
 
 .popupMenuEnd {
 	border-right: 1px solid black;
+	background-color: grey; 
+	padding-left: 5px; 
+	padding-right: 5px;
 }
 
 .popupMenu:hover {
@@ -271,6 +274,20 @@ input#submit {
 .third-level-menu > li:hover {
    background: #887;
    color: #fff;
+}
+
+
+a.lang, a.lang:link, a.lang:visited {
+	color:black;
+	background-color:#D3D3D3;
+	border:1px solid black;
+	font-size:.8em;
+}
+
+a.lang:hover {
+	color:black;
+	background-color:#887;
+	
 }
 
 /*--------------------------------------*/
