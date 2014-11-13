@@ -1228,6 +1228,27 @@
 		A3469E19170DA3F7006DE82A /* ViewQueryResult.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ViewQueryResult.xmlc; sourceTree = "<group>"; };
 		A3469E1A170DA89C006DE82A /* PapillonBasePO.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = PapillonBasePO.java; sourceTree = "<group>"; };
 		A3469E1B170DA89C006DE82A /* PapillonLayout.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = PapillonLayout.java; sourceTree = "<group>"; };
+		A35B12441A149A4700CAA58E /* AdvancedLookup.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdvancedLookup.xhtml; sourceTree = "<group>"; };
+		A35B12451A149A4700CAA58E /* AdvancedLookup.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AdvancedLookup.xmlc; sourceTree = "<group>"; };
+		A35B12461A149A4700CAA58E /* LangAndUser.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = LangAndUser.xhtml; sourceTree = "<group>"; };
+		A35B12471A149A4700CAA58E /* LangAndUser.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LangAndUser.xmlc; sourceTree = "<group>"; };
+		A35B12481A149A4700CAA58E /* Layout.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Layout.xhtml; sourceTree = "<group>"; };
+		A35B12491A149A4700CAA58E /* Layout.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Layout.xmlc; sourceTree = "<group>"; };
+		A35B124A1A149A4700CAA58E /* options.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = options.xmlc; sourceTree = "<group>"; };
+		A35B124C1A149A5600CAA58E /* AdvancedLookup.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdvancedLookup.xhtml; sourceTree = "<group>"; };
+		A35B124D1A149A5600CAA58E /* AdvancedLookup.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AdvancedLookup.xmlc; sourceTree = "<group>"; };
+		A35B124E1A149A5600CAA58E /* LangAndUser.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = LangAndUser.xhtml; sourceTree = "<group>"; };
+		A35B124F1A149A5600CAA58E /* LangAndUser.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LangAndUser.xmlc; sourceTree = "<group>"; };
+		A35B12501A149A5600CAA58E /* Layout.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Layout.xhtml; sourceTree = "<group>"; };
+		A35B12511A149A5600CAA58E /* Layout.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Layout.xmlc; sourceTree = "<group>"; };
+		A35B12521A149A5600CAA58E /* options.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = options.xmlc; sourceTree = "<group>"; };
+		A35B125A1A149A6100CAA58E /* AdvancedLookup.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdvancedLookup.xhtml; sourceTree = "<group>"; };
+		A35B125B1A149A6100CAA58E /* AdvancedLookup.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AdvancedLookup.xmlc; sourceTree = "<group>"; };
+		A35B125C1A149A6100CAA58E /* LangAndUser.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = LangAndUser.xhtml; sourceTree = "<group>"; };
+		A35B125D1A149A6100CAA58E /* LangAndUser.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LangAndUser.xmlc; sourceTree = "<group>"; };
+		A35B125E1A149A6100CAA58E /* Layout.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Layout.xhtml; sourceTree = "<group>"; };
+		A35B125F1A149A6100CAA58E /* Layout.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Layout.xmlc; sourceTree = "<group>"; };
+		A35B12601A149A6100CAA58E /* options.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = options.xmlc; sourceTree = "<group>"; };
 		A35D6A4F171C55730031534B /* ConsultPage.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ConsultPage.xhtml; sourceTree = "<group>"; };
 		A35D6A69171C60F60031534B /* DownloadTmpl.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = DownloadTmpl.xhtml; sourceTree = "<group>"; };
 		A35D6A7C171C67540031534B /* UserProfile.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = UserProfile.xhtml; sourceTree = "<group>"; };
@@ -3397,9 +3418,54 @@
 			);
 			sourceTree = "<group>";
 		};
+		A35B12431A149A4700CAA58E /* eng */ = {
+			isa = PBXGroup;
+			children = (
+				A35B12441A149A4700CAA58E /* AdvancedLookup.xhtml */,
+				A35B12451A149A4700CAA58E /* AdvancedLookup.xmlc */,
+				A35B12461A149A4700CAA58E /* LangAndUser.xhtml */,
+				A35B12471A149A4700CAA58E /* LangAndUser.xmlc */,
+				A35B12481A149A4700CAA58E /* Layout.xhtml */,
+				A35B12491A149A4700CAA58E /* Layout.xmlc */,
+				A35B124A1A149A4700CAA58E /* options.xmlc */,
+			);
+			path = eng;
+			sourceTree = "<group>";
+		};
+		A35B124B1A149A5600CAA58E /* fra */ = {
+			isa = PBXGroup;
+			children = (
+				A35B124C1A149A5600CAA58E /* AdvancedLookup.xhtml */,
+				A35B124D1A149A5600CAA58E /* AdvancedLookup.xmlc */,
+				A35B124E1A149A5600CAA58E /* LangAndUser.xhtml */,
+				A35B124F1A149A5600CAA58E /* LangAndUser.xmlc */,
+				A35B12501A149A5600CAA58E /* Layout.xhtml */,
+				A35B12511A149A5600CAA58E /* Layout.xmlc */,
+				A35B12521A149A5600CAA58E /* options.xmlc */,
+			);
+			path = fra;
+			sourceTree = "<group>";
+		};
+		A35B12591A149A6100CAA58E /* jpn */ = {
+			isa = PBXGroup;
+			children = (
+				A35B125A1A149A6100CAA58E /* AdvancedLookup.xhtml */,
+				A35B125B1A149A6100CAA58E /* AdvancedLookup.xmlc */,
+				A35B125C1A149A6100CAA58E /* LangAndUser.xhtml */,
+				A35B125D1A149A6100CAA58E /* LangAndUser.xmlc */,
+				A35B125E1A149A6100CAA58E /* Layout.xhtml */,
+				A35B125F1A149A6100CAA58E /* Layout.xmlc */,
+				A35B12601A149A6100CAA58E /* options.xmlc */,
+			);
+			path = jpn;
+			sourceTree = "<group>";
+		};
 		A3662CF71A12FC2500C423DF /* xhtmljibiki */ = {
 			isa = PBXGroup;
 			children = (
+				A35B12431A149A4700CAA58E /* eng */,
+				A35B124B1A149A5600CAA58E /* fra */,
+				A35B12591A149A6100CAA58E /* jpn */,
 				A3662CF81A12FC2500C423DF /* orig */,
 			);
 			path = xhtmljibiki;
@@ -3816,8 +3882,6 @@
 /* Begin PBXProject section */
 		A348B7040E7EFB50003F6712 /* Project object */ = {
 			isa = PBXProject;
-			attributes = {
-			};
 			buildConfigurationList = A348B7070E7EFB50003F6712 /* Build configuration list for PBXProject "JibikiLinks" */;
 			compatibilityVersion = "Xcode 3.1";
 			developmentRegion = English;
