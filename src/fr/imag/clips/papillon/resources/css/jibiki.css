@@ -391,6 +391,10 @@ pre.api {
     border:1px solid #898989;
 }
 
+.jibiki-entry p {
+	margin-bottom: 1em;
+}
+
 /* Styles for Motamot dict */
 .motamot-entry {
     border:1px solid #898989;
