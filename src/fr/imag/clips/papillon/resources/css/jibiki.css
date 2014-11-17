@@ -353,7 +353,10 @@ footer, #footer {
 	text-align:center;
 	background: #E4E4E4;
 	font-size: .8em;		
-	padding: 17px;
+	padding: 5px;
+	width:100%;
+	position: fixed;
+	bottom: 0;
 }
 
 
