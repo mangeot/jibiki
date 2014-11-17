@@ -77,7 +77,7 @@ public class LookupVolume extends AbstractPO {
 	protected static final String ALL_STATUS = "*ALL*";
 	
 	/* Beware, This feature is Postgresql only!!! */
-	protected static final String DOLLAR_QUOTING = "$GETA$";
+	//protected static final String DOLLAR_QUOTING = "$GETA$";
 	
     /**
     *  This method should be implemented in the subclass so that it returns
@@ -271,14 +271,14 @@ public class LookupVolume extends AbstractPO {
 				Volume myVolume = VolumesFactory.getVolumeByName(volume);
 				String source = myVolume.getSourceLanguage();
 				java.util.Collection targets = myVolume.getTargetLanguagesArray();
-				if (lang==null || lang.equals("")) {
+				/*if (lang==null || lang.equals("")) {
 					if (myVolume.isDefaultLangCDMElement(key)) {
 						lang = Volume.DEFAULT_LANG;
 					}
 					else {
 						lang = source;
 					}
-				}
+				}*/
 				
 				java.util.Vector myKeys = new java.util.Vector();
 				String[] Headword = new String[4];

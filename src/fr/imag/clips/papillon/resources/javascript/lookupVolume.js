@@ -186,22 +186,17 @@ function lookupVolume (parameters) {
 			});
 	}
 
-function queryOneKey (key, lang, value, volume) {
+function queryOneKey (key, value, volume) {
 	//On lance la fonction ajax
 	load = true;
 	$('.loadcontent').show();
 	$('#lookupcontent').children().remove();
 	$('.lookupentry').css('font-weight', 'normal');
 	
-	langParam='';
-	if (lang != null) {
-		langParam='&LANG='+lang;
-	}
-		
 	$.ajax({
 		   url: scriptStartUrl + 'LookupVolume.po',
 		   type: 'get',
-		   data: 'action=queryOneEntry&VOLUME='+volume+'&ENTRY='+value + '&KEY=' + key + langParam,
+		   data: 'action=queryOneEntry&VOLUME='+volume+'&ENTRY='+value + '&KEY=' + key,
 		   
 		   //Succès de la requête
 		   success: function(data) {
@@ -216,9 +211,6 @@ function queryOneKey (key, lang, value, volume) {
 		   });
 }
 
-function queryOneKey (key, value, volume) {
-	queryOneKey(key, null, value, volume);
-}
 
 function queryOneEntry (entry, volume) {
 	//On lance la fonction ajax
