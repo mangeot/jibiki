@@ -620,7 +620,7 @@
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {3076, 4710}}";
 			sepNavSelRange = "{7472, 0}";
-			sepNavVisRange = "{6155, 1992}";
+			sepNavVisRange = "{5070, 2634}";
 		};
 	};
 	A30723040EC89B2200733910 /* LookupVolumePage.java */ = {
@@ -723,9 +723,9 @@
 	};
 	A307233F0EC89B2300733910 /* jibiki.css */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {943, 12090}}";
-			sepNavSelRange = "{6142, 0}";
-			sepNavVisRange = "{5595, 963}";
+			sepNavIntBoundsRect = "{{0, 0}, {943, 11955}}";
+			sepNavSelRange = "{5518, 0}";
+			sepNavVisRange = "{4964, 930}";
 		};
 	};
 	A30723400EC89B2300733910 /* papillon.css */ = {
@@ -1669,9 +1669,9 @@
 	};
 	A32CBB601A198C9300B1D65C /* AdvancedQueryForm.xhtml */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1004, 1830}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1004, 1827}}";
 			sepNavSelRange = "{3179, 0}";
-			sepNavVisRange = "{1050, 3278}";
+			sepNavVisRange = "{1119, 3209}";
 		};
 	};
 	A32CBB631A198C9F00B1D65C /* AdvancedQueryForm.xmlc */ = {
@@ -2301,7 +2301,7 @@
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1388, 1476}}";
 			sepNavSelRange = "{3389, 0}";
-			sepNavVisRange = "{436, 3064}";
+			sepNavVisRange = "{1694, 2478}";
 		};
 	};
 	A35B124C1A149A5600CAA58E /* AdvancedLookup.xhtml */ = {
@@ -2385,7 +2385,7 @@
 		fRef = A307233F0EC89B2300733910 /* jibiki.css */;
 		name = "jibiki.css: 395";
 		rLen = 0;
-		rLoc = 6142;
+		rLoc = 6184;
 		rType = 0;
 		vrLen = 963;
 		vrLoc = 5595;

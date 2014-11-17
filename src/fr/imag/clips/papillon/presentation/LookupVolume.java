@@ -118,6 +118,7 @@ public class LookupVolume extends AbstractPO {
 			/* volume */
 			String volume = myGetParameter("VOLUME");
 			String key = myGetParameter("KEY");
+			String lang = myGetParameter("LANG");
 			String word = myGetParameter("WORD");
 			String handle = myGetParameter("HANDLE");
 			String oneentry = myGetParameter("ENTRY");
@@ -202,7 +203,9 @@ public class LookupVolume extends AbstractPO {
 					strategy = QueryBuilder.LESS_THAN;
 				}
 				//PapillonLogger.writeDebugMsg("LookupVolume: " + volume + " WORD: " + word + " KEY: " + key + " Order: " + order + " Strategy: " + strategy);
-				String source = myVolume.getSourceLanguage();
+				if (lang==null || lang.equals("")) {
+					lang = myVolume.getSourceLanguage();
+				}
 				
 				if (key==null || key.equals("HEADWORD")|| key.equals("")) {
 					key=Volume.CDM_headword;
@@ -212,7 +215,7 @@ public class LookupVolume extends AbstractPO {
 					java.util.Vector myKeys = new java.util.Vector();
 					String[] Headword = new String[4];
 					Headword[0] = key;
-					Headword[1] = source;
+					Headword[1] = lang;
 					Headword[2] = word;
 					Headword[3] = strategy;
 					myKeys.add(Headword);
@@ -266,14 +269,16 @@ public class LookupVolume extends AbstractPO {
 				}
 				
 				Volume myVolume = VolumesFactory.getVolumeByName(volume);
-				java.util.Collection targets = myVolume.getTargetLanguagesArray();
 				String source = myVolume.getSourceLanguage();
-				String lang = source;
-				
-				if (myVolume.isDefaultLangCDMElement(key)) {
-					lang = Volume.DEFAULT_LANG;
+				java.util.Collection targets = myVolume.getTargetLanguagesArray();
+				if (lang==null || lang.equals("")) {
+					if (myVolume.isDefaultLangCDMElement(key)) {
+						lang = Volume.DEFAULT_LANG;
+					}
+					else {
+						lang = source;
+					}
 				}
-				
 				
 				java.util.Vector myKeys = new java.util.Vector();
 				String[] Headword = new String[4];

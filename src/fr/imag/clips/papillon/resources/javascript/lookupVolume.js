@@ -186,25 +186,22 @@ function lookupVolume (parameters) {
 			});
 	}
 
-
-function queryOneEntry (entry, volume) {
+function queryOneKey (key, lang, value, volume) {
 	//On lance la fonction ajax
 	load = true;
 	$('.loadcontent').show();
 	$('#lookupcontent').children().remove();
 	$('.lookupentry').css('font-weight', 'normal');
-
-	var key='cdm-headword';
-	if (volume=='Motamot_khm_api') {
-		volume='Motamot_khm';
-		key='cdm-pronunciation';
-		entry = replace_api(entry);
-	}	
 	
+	langParam='';
+	if (lang != null) {
+		langParam='&LANG='+lang;
+	}
+		
 	$.ajax({
 		   url: scriptStartUrl + 'LookupVolume.po',
 		   type: 'get',
-		   data: 'action=queryOneEntry&VOLUME='+volume+'&ENTRY='+entry + '&KEY=' + key,
+		   data: 'action=queryOneEntry&VOLUME='+volume+'&ENTRY='+value + '&KEY=' + key + langParam,
 		   
 		   //Succès de la requête
 		   success: function(data) {
@@ -220,30 +217,19 @@ function queryOneEntry (entry, volume) {
 }
 
 function queryOneKey (key, value, volume) {
-	//On lance la fonction ajax
-	load = true;
-	$('.loadcontent').show();
-	$('#lookupcontent').children().remove();
-	$('.lookupentry').css('font-weight', 'normal');
-		
-	$.ajax({
-		   url: scriptStartUrl + 'LookupVolume.po',
-		   type: 'get',
-		   data: 'action=queryOneEntry&VOLUME='+volume+'&ENTRY='+value + '&KEY=' + key,
-		   
-		   //Succès de la requête
-		   success: function(data) {
-		   
-		   //On masque le loader
-		   $('.loadcontent').fadeOut(500);
-		   // On affiche le résultat
-		   //$('#content').text('LookupVolume.po' + parameters);
-		   $('#lookupcontent').append($(data).children());
-		   load = false;
-		   }
-		   });
+	queryOneKey(key, null, value, volume);
 }
 
+function queryOneEntry (entry, volume) {
+	//On lance la fonction ajax
+	var key='cdm-headword';
+	if (volume=='Motamot_khm_api') {
+		volume='Motamot_khm';
+		key='cdm-pronunciation';
+		entry = replace_api(entry);
+	}	
+	queryOneKey(key, entry, volume);
+}
 
 function replace_api(string) {
 	string.replace('a'+'̄','ā');
