@@ -1168,7 +1168,7 @@
 		A31151A212452A780042BBC6 /* VolumeComparator.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = VolumeComparator.java; sourceTree = "<group>"; };
 		A31151A312452A800042BBC6 /* HeadwordComparator.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = HeadwordComparator.java; sourceTree = "<group>"; };
 		A319ABCC1290A70900EF68FC /* AdvancedQueryForm.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdvancedQueryForm.xhtml; sourceTree = "<group>"; };
-		A319ABCD1290A74F00EF68FC /* AdvancedQueryForm.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdvancedQueryForm.xhtml; sourceTree = "<group>"; };
+		A319ABCD1290A74F00EF68FC /* AdvancedQueryForm.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = AdvancedQueryForm.xhtml; path = ../../xhtmljibiki/jpn/AdvancedQueryForm.xhtml; sourceTree = "<group>"; };
 		A319ABDA1290A80900EF68FC /* HomeContent.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = HomeContent.xhtml; sourceTree = "<group>"; };
 		A31ED37116AD7F1600B642C7 /* AdministrationMenu.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdministrationMenu.xhtml; sourceTree = "<group>"; };
 		A31ED37216AD7F1600B642C7 /* AdministrationMenu.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AdministrationMenu.xmlc; sourceTree = "<group>"; };
@@ -1194,6 +1194,12 @@
 		A31ED38716AD7F1600B642C7 /* ValidatorMenu.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ValidatorMenu.xmlc; sourceTree = "<group>"; };
 		A31F1D67182FBA0C00E68B44 /* AdvancedLookup.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = AdvancedLookup.java; sourceTree = "<group>"; };
 		A3216DE90ED17C22009BC773 /* LexalpEditEntryInit.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = LexalpEditEntryInit.xhtml; sourceTree = "<group>"; };
+		A32CBB5D1A198C8400B1D65C /* AdvancedQueryForm.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdvancedQueryForm.xhtml; sourceTree = "<group>"; };
+		A32CBB5E1A198C8400B1D65C /* AdvancedQueryForm.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AdvancedQueryForm.xmlc; sourceTree = "<group>"; };
+		A32CBB601A198C9300B1D65C /* AdvancedQueryForm.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdvancedQueryForm.xhtml; sourceTree = "<group>"; };
+		A32CBB611A198C9300B1D65C /* AdvancedQueryForm.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AdvancedQueryForm.xmlc; sourceTree = "<group>"; };
+		A32CBB621A198C9F00B1D65C /* AdvancedQueryForm.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdvancedQueryForm.xhtml; sourceTree = "<group>"; };
+		A32CBB631A198C9F00B1D65C /* AdvancedQueryForm.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AdvancedQueryForm.xmlc; sourceTree = "<group>"; };
 		A3376029100241C4002281AF /* MotamotPostUpdateProcessor.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = MotamotPostUpdateProcessor.java; sourceTree = "<group>"; };
 		A342C4D418456690000397B2 /* DownloadTmpl.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = DownloadTmpl.xhtml; sourceTree = "<group>"; };
 		A3469DFC170DA3F7006DE82A /* AdminEntriesTmpl.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdminEntriesTmpl.xhtml; sourceTree = "<group>"; };
@@ -1228,6 +1234,7 @@
 		A3469E19170DA3F7006DE82A /* ViewQueryResult.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ViewQueryResult.xmlc; sourceTree = "<group>"; };
 		A3469E1A170DA89C006DE82A /* PapillonBasePO.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = PapillonBasePO.java; sourceTree = "<group>"; };
 		A3469E1B170DA89C006DE82A /* PapillonLayout.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = PapillonLayout.java; sourceTree = "<group>"; };
+		A351D9231A198C450073B5BB /* AdvancedQueryForm.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdvancedQueryForm.xhtml; sourceTree = "<group>"; };
 		A35B12441A149A4700CAA58E /* AdvancedLookup.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdvancedLookup.xhtml; sourceTree = "<group>"; };
 		A35B12451A149A4700CAA58E /* AdvancedLookup.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AdvancedLookup.xmlc; sourceTree = "<group>"; };
 		A35B12461A149A4700CAA58E /* LangAndUser.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = LangAndUser.xhtml; sourceTree = "<group>"; };
@@ -1440,7 +1447,7 @@
 		A3A1E2F4171CCBAF00559C1F /* CreateEntryInit.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = CreateEntryInit.xhtml; sourceTree = "<group>"; };
 		A3A1E2F5171CCBB600559C1F /* EditEntryInit.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = EditEntryInit.xhtml; sourceTree = "<group>"; };
 		A3A1E2FE171CCEA900559C1F /* ActionNodes.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ActionNodes.xhtml; sourceTree = "<group>"; };
-		A3A2ECCB18454A6000785800 /* AdvancedQueryForm.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdvancedQueryForm.xhtml; sourceTree = "<group>"; };
+		A3A2ECCB18454A6000785800 /* AdvancedQueryForm.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = AdvancedQueryForm.xhtml; path = ../../xhtmljibiki/fra/AdvancedQueryForm.xhtml; sourceTree = "<group>"; };
 		A3A2ECCC18454AB000785800 /* AdvancedQueryForm.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdvancedQueryForm.xhtml; sourceTree = "<group>"; };
 		A3A2ECE718454D8300785800 /* AdvancedLookup.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdvancedLookup.xhtml; sourceTree = "<group>"; };
 		A3A2ECED18454E8000785800 /* AdvancedLookup.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdvancedLookup.xhtml; sourceTree = "<group>"; };
@@ -3423,6 +3430,8 @@
 			children = (
 				A35B12441A149A4700CAA58E /* AdvancedLookup.xhtml */,
 				A35B12451A149A4700CAA58E /* AdvancedLookup.xmlc */,
+				A32CBB5D1A198C8400B1D65C /* AdvancedQueryForm.xhtml */,
+				A32CBB5E1A198C8400B1D65C /* AdvancedQueryForm.xmlc */,
 				A35B12461A149A4700CAA58E /* LangAndUser.xhtml */,
 				A35B12471A149A4700CAA58E /* LangAndUser.xmlc */,
 				A35B12481A149A4700CAA58E /* Layout.xhtml */,
@@ -3437,6 +3446,7 @@
 			children = (
 				A35B124C1A149A5600CAA58E /* AdvancedLookup.xhtml */,
 				A35B124D1A149A5600CAA58E /* AdvancedLookup.xmlc */,
+				A351D9231A198C450073B5BB /* AdvancedQueryForm.xhtml */,
 				A35B124E1A149A5600CAA58E /* LangAndUser.xhtml */,
 				A35B124F1A149A5600CAA58E /* LangAndUser.xmlc */,
 				A35B12501A149A5600CAA58E /* Layout.xhtml */,
@@ -3451,6 +3461,8 @@
 			children = (
 				A35B125A1A149A6100CAA58E /* AdvancedLookup.xhtml */,
 				A35B125B1A149A6100CAA58E /* AdvancedLookup.xmlc */,
+				A32CBB601A198C9300B1D65C /* AdvancedQueryForm.xhtml */,
+				A32CBB611A198C9300B1D65C /* AdvancedQueryForm.xmlc */,
 				A35B125C1A149A6100CAA58E /* LangAndUser.xhtml */,
 				A35B125D1A149A6100CAA58E /* LangAndUser.xmlc */,
 				A35B125E1A149A6100CAA58E /* Layout.xhtml */,
@@ -3477,6 +3489,8 @@
 				A3662CFF1A13490300C423DF /* LangAndUser.xhtml */,
 				A3662CF91A12FC2500C423DF /* AdvancedLookup.xhtml */,
 				A3662CFA1A12FC2500C423DF /* AdvancedLookup.xmlc */,
+				A32CBB621A198C9F00B1D65C /* AdvancedQueryForm.xhtml */,
+				A32CBB631A198C9F00B1D65C /* AdvancedQueryForm.xmlc */,
 				A3662CFB1A12FC2500C423DF /* Layout.xhtml */,
 				A3662CFC1A12FC2500C423DF /* Layout.xmlc */,
 				A3662CFD1A12FC2500C423DF /* options.xmlc */,

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>Menu</title>
+    <script type="text/javascript">
+    
+        //
+        function addOrRemoveCriterion(caller, action) {
+            document.getElementById('Action').value = action + caller;
+            document.getElementById("SearchForm").submit();
+        }
+
+    </script>
+  </head>
+  <body>
+   <script type="text/javascript">
+                     </script>
+    <div id="AdvancedSearchForm" lang="en" xml:lang="en">
+      <form id="SearchForm" action="">
+        <div style="display:block; padding:5px;">
+		<input type="hidden" name="action" id="actionJS" value="advancedLookup" />
+          <table border="0" cellpadding="0" cellspacing="0" summary="Search Form" width="100%">
+            <tr valign="top">
+              <td  style="vertical-align: middle;">
+                <div id="DictionarySelection" style="padding:5px; ">
+                  <b>エントリを探す</b>
+                  <br/>
+                  <!-- MULTIPLE VALUES: TARGETS, DICTIONARIES -->
+                  <select id="Dictionaries" name="DICTIONARIES" multiple="multiple">
+                    <option id="dictionaryTmpl" label="All dictionaries" value="*All*">All dictionaries</option>
+                  </select>
+				   <select style="display:none;" id="Volumes" name="VOLUMES" multiple="multiple">
+                    <option id="volumeTmpl" label="All volumes" value="*All*">All volumes</option>
+                  </select>
+                </div>
+              </td>
+              <td  style="vertical-align: middle;">
+                <div id="CriteriaZone" style=" padding:5px;">
+                <!-- ADVANCEDQUERYFORM SCRIPT  -->
+                <!-- script src="javascript/AdvancedQueryFormAjax.js" type="text/javascript"></script-->
+                  
+                  <b>どこ</b>
+                  <br/>
+                    <table id="tableShowHideElement" style="display: none;" >
+                        <tr id="rowShowHideTemplate" ><td>cdm-headword</td></tr>
+                    </table>
+                  <input type="hidden" id="NumberOfCriteria" name="CRITERIA_NB"/>
+                  <div id="criterion" style="display:block; margin-left: 10px;">
+                    <img id="minus" onclick="addOrRemoveCriterion(this.id, '-');" src="media/minus.jpg" alt="-" width="15"/>
+                    <img id="plus" onclick="addOrRemoveCriterion(this.id, '+');" src="media/plus.jpg" alt="+" width="15"/>
+                    <select id="Facet" name="FACET" onchange="hideOrNotSourceLang(value, name);" >
+                      <option value="cdm-headword" label="見出し語">見出し語</option>
+                      <!--option value="cdm-headword-variant" label="variant">variant</option-->
+                      <option value="cdm-writing" label="ひらがな">ひらがな</option>
+                      <option value="cdm-pos" label="品詞">品詞</option>
+                      <!--option value="cdm-example" label="example">example</option-->
+                      <!--option value="cdm-definition" label="definition">definition</option-->
+                      <option value="cdm-translation" label="翻訳">翻訳</option>
+                      <!--option value="cdm-contribution-author" label="created by">created by</option>
+                      <option value="cdm-contribution-creation-date" label="at (yyyy/mm/dd)">at (yyyy/mm/dd)</option>
+                      <option value="cdm-modification-author" label="modified by">modified by</option>
+
+                      <option value="cdm-modification-date" label="at (yyyy/mm/dd)">at (yyyy/mm/dd)</option>
+                      <option value="cdm-contribution-status" label="status">status</option-->
+                      <option value="cdm-entry-id" label="エントリのID">エントリのID</option>
+                      <!--option value="cdm-contribution-id" label="contrib id">contrib id</option>
+                      <option value="cdm-contribution-group" label="level">level</option-->
+                    </select>．
+                    <select id="Operator" name="OPERATOR" >
+                      <option value="0" label="＝">＝</option>
+                      <option value="2" label="似ています">似ています</option>
+                      <option value="6" label="始まる">始まる</option>
+                      <!--option value="5" label="ends with">ends with</option>
+                      <option value="4" label="contains">contains</option-->
+                      <option value="10" label="&gt;">&gt;</option>
+                      <option value="11" label="&lt;">&lt;</option>
+                    </select>
+                    <input type="text" id="ValueField" name="FACETVALUE" size="14" maxlength="128"/>
+                    <span style="visibility: visible;">
+                        <!--
+                        <label id="SourceLangLabel" for="SourceLang" accesskey="i" >
+                        <span class="accesskey">I</span>n:</label>
+                        -->
+                        <select id="SourceLang" name="SOURCE">
+                            <option id="SourceOptionTemplate" value="NONE" label="NONE">NONE</option>
+                            <option value="All" label="All">All</option>
+                        </select>
+                    </span>
+                  </div>
+                </div>
+              </td>
+              <td  style="vertical-align: middle;">
+                <div id="TargetLanguagesSelection" style="display: none;">
+                  <b>ターゲット語</b><br/>
+                  <select id="Targets" name="TARGETS" multiple="multiple">
+                    <option id="TargetTmpl" label="All languages" value="*All*" selected="selected">All</option>
+                  </select>
+                </div>
+				<input type="submit" value="➡" />
+				<input type="hidden" id="LIMIT" name="LIMIT" value="100" />
+              </td>
+                <td>
+                    <div id="QuickLink" class="quick_search">
+                        <b>Quick search</b><br/>
+                        <a id="MyFinishedContributions" class="quick_link" href="">My finished contributions</a><br/>
+                        <a id="MyNotFinishedContributions" class="quick_link" href="">My not finished contributions</a>
+                    </div>
+                </td>
+            </tr>
+          </table>
+          </div>
+          <div style="display:none; padding: 5px;">
+            <b>Display </b>
+            <select id="LIMITSelect" name="LIMIT">
+              <option label="10" value="10">10</option>
+              <option label="20" value="20">20</option>
+              <option label="50" value="50">50</option>
+              <option label="100" value="100">100</option>
+              <option label="all" value="0">all</option>
+            </select>
+            <b>results per page using form</b>
+            <select id="Xsl" name="XSL">
+              <option label="Default" value="">Default</option>
+              <option id="XslTmpl" label="Default" value="">Default</option>
+            </select>
+            <input type="hidden" id="Action" name="ACTION" value=""/>
+            <input type="submit" value="Go" />
+          </div>
+      </form>
+    </div>
+  </body>
+</html>
