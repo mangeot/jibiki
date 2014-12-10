@@ -1530,7 +1530,7 @@
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1004, 1995}}";
 			sepNavSelRange = "{6802, 0}";
-			sepNavVisRange = "{4642, 2591}";
+			sepNavVisRange = "{4562, 2671}";
 		};
 	};
 	A319ABCD1290A74F00EF68FC /* AdvancedQueryForm.xhtml */ = {
@@ -1635,9 +1635,9 @@
 	};
 	A32CBB5D1A198C8400B1D65C /* AdvancedQueryForm.xhtml */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1004, 1830}}";
+			sepNavIntBoundsRect = "{{0, 0}, {1004, 1740}}";
 			sepNavSelRange = "{1897, 110}";
-			sepNavVisRange = "{1050, 3545}";
+			sepNavVisRange = "{1689, 3517}";
 		};
 	};
 	A32CBB5E1A198C8400B1D65C /* AdvancedQueryForm.xmlc */ = {
@@ -1649,16 +1649,16 @@
 	};
 	A32CBB601A198C9300B1D65C /* AdvancedQueryForm.xhtml */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1004, 1827}}";
-			sepNavSelRange = "{3179, 0}";
-			sepNavVisRange = "{1119, 3209}";
+			sepNavIntBoundsRect = "{{0, 0}, {1004, 1842}}";
+			sepNavSelRange = "{1999, 0}";
+			sepNavVisRange = "{1653, 3120}";
 		};
 	};
 	A32CBB621A198C9F00B1D65C /* AdvancedQueryForm.xhtml */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1004, 1995}}";
-			sepNavSelRange = "{1926, 35}";
-			sepNavVisRange = "{0, 3111}";
+			sepNavIntBoundsRect = "{{0, 0}, {1004, 1950}}";
+			sepNavSelRange = "{4915, 56}";
+			sepNavVisRange = "{2432, 3937}";
 		};
 	};
 	A32CBB631A198C9F00B1D65C /* AdvancedQueryForm.xmlc */ = {
@@ -1848,9 +1848,9 @@
 	};
 	A351D9231A198C450073B5BB /* AdvancedQueryForm.xhtml */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1004, 1770}}";
-			sepNavSelRange = "{1984, 11}";
-			sepNavVisRange = "{1049, 3682}";
+			sepNavIntBoundsRect = "{{0, 0}, {1004, 1845}}";
+			sepNavSelRange = "{2579, 0}";
+			sepNavVisRange = "{1782, 3674}";
 		};
 	};
 	A35716221A1B043D00C4D6EF /* PBXTextBookmark */ = {
