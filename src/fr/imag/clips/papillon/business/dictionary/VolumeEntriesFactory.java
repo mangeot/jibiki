@@ -1508,8 +1508,9 @@ throws PapillonBusinessException {
         queryReq.addCriteria(criteriaSearch);
         
         // Status : find last contribution (finished ou not finished)
+        // donc on les veut toutes ?
         ArrayList listStatus = new ArrayList();
-        QueryCriteria criteriaFinishedStatus = new QueryCriteria();
+   /*     QueryCriteria criteriaFinishedStatus = new QueryCriteria();
         criteriaFinishedStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);  
         criteriaFinishedStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.FINISHED_STATUS);
         listStatus.add(criteriaFinishedStatus);
@@ -1521,7 +1522,7 @@ throws PapillonBusinessException {
         criteriaDeletedStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);  
         criteriaDeletedStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.DELETED_STATUS);
         listStatus.add(criteriaDeletedStatus);
-        queryReq.addOrCriteriaList(listStatus);
+        queryReq.addOrCriteriaList(listStatus);*/
 		
         //
         ArrayList qrset = queryReq.findLexie(user);

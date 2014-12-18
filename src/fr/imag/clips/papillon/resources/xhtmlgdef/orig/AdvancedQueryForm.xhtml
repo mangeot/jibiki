@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <title>Menu</title>
+        <script type="text/javascript">
+            
+            //
+            function addOrRemoveCriterion(caller, action) {
+            document.getElementById('Action').value = action + caller;
+            document.getElementById("SearchForm").submit();
+            }
+            
+        </script>
+    </head>
+    <body>
+        <script type="text/javascript">
+        </script>
+        <div id="AdvancedSearchForm" lang="fr" xml:lang="fr">
+            <form id="SearchForm" action="">
+                <div style="display:block; padding:5px;">
+                    <input type="hidden" name="action" id="actionJS" value="advancedLookup" />
+                    <table border="0" cellpadding="0" cellspacing="0" summary="Search Form" width="100%">
+                        <tr valign="top">
+                            <td style="vertical-align: middle;">
+                                <div><h2 style="display: inline; font-family: 'garamond', serif;">GDEF</h2> : recherche avancée</div>
+                                <div id="DictionarySelection" style="padding:5px; display: none;">
+                                    <!-- MULTIPLE VALUES: TARGETS, DICTIONARIES -->
+                                    <select id="Dictionaries" name="DICTIONARIES" multiple="multiple">
+                                        <option id="dictionaryTmpl" label="tous dictionnaires" value="*All*">tous dictionnaires</option>
+                                    </select>
+                                    <select style="display:none;" id="Volumes" name="VOLUMES" multiple="multiple">
+                                        <option id="volumeTmpl" label="tous volumes" value="*All*">tous volumes</option>
+                                    </select>
+                                </div>
+                            </td>
+                            <td style="vertical-align: middle;">
+                                <div id="CriteriaZone" style=" padding:5px;">
+                                    <!-- ADVANCEDQUERYFORM SCRIPT  -->
+                                    <script src="javascript/AdvancedQueryFormAjax.js" type="text/javascript"><!-- // --></script>
+                                    
+                                    <b>Chercher</b>
+                                    <table id="tableShowHideElement" style="display: none;" >
+                                        <tr id="rowShowHideTemplate" ><td>cdm-headword</td></tr>
+                                    </table>
+                                    <input type="hidden" id="NumberOfCriteria" name="CRITERIA_NB"/>
+                                    <div id="criterion" style="display:block; margin-left: 10px;">
+                                        <img id="minus" onclick="addOrRemoveCriterion(this.id, '-');" src="media/minus.jpg" alt="-" width="15"/>
+                                        <img id="plus" onclick="addOrRemoveCriterion(this.id, '+');" src="media/plus.jpg" alt="+" width="15"/>
+                                        <select id="Facet" name="FACET" onchange="hideOrNotSourceLang(value, name);">
+                                            <option label="le mot-vedette" selected="selected" value="cdm-headword">le mot-vedette</option>
+                                            <option label="la variante" value="cdm-headword-variant">la variante</option>
+                                            <option label="l'écriture" value="cdm-writing">l'écriture</option>
+                                            <option label="la classe" value="cdm-pos">la classe</option>
+                                            <option label="un exemple" value="cdm-example">un exemple</option>
+                                            <!--option value="cdm-definition" label="la definition">la définition</option-->
+                                            <option label="créé par" value="cdm-contribution-author">créé par</option>
+                                            <option label="à (aaaa/mm/jj)" value="cdm-contribution-creation-date">à (aaaa/mm/jj)</option>
+                                            <option label="modifié par" value="cdm-modification-author">modifié par</option>
+                                            <option label="à (aaaa/mm/jj)" value="cdm-modification-date">à (aaaa/mm/jj)</option>
+                                            <option label="le statut" value="cdm-contribution-status">le status</option>
+                                            <option label="l'id de l'entrée" value="cdm-entry-id">l'ID de l'entrée</option>
+                                            <option label="l'id de la contrib" value="cdm-contribution-id">l'ID de la contrib</option>
+                                            <option label="le niveau" value="cdm-contribution-group">le niveau</option>
+                                            <option label="le domaine" value="gdef-est-domaine">le domaine</option>
+                                            <option label="la fréquence" value="gdef-est-frequence">la fréquence</option>
+                                            <option label="une locution" value="gdef-est-locution">une locution</option>
+                                            <option label="la nomenclature" value="gdef-est-nomenclature">la nomenclature</option>
+                                            <option label="la particule" value="gdef-est-particule">la particule</option>
+                                            <option label="la trad. d'1 exemple" value="gdef-est-traduction-exemple">la trad. d'un exemple</option>
+                                            <option label="la trad. d'1 locution" value="gdef-est-traduction-locution">la trad. d'1 locution</option></select>
+                                        
+                                            <select id="Operator" name="OPERATOR" >
+                                            <option value="0" label="est">est</option>
+                                            <option value="2" label="comme">comme</option>
+                                            <option value="6" label="commence par">commence par</option>
+                                            <option value="10" label="plus grand que">plus grand que</option>
+                                            <option value="11" label="plus petit que">plus petit que</option>
+                                        </select>
+                                        <input type="text" id="ValueField" name="FACETVALUE" size="14" maxlength="128"/>
+                                        <span style="display:none;"><span style="display:none;">
+                                            <!--
+                                             <label id="SourceLangLabel" for="SourceLang" accesskey="i" >
+                                             <span class="accesskey">I</span>n:</label>
+                                             -->
+                                            <select id="SourceLang" name="SOURCE">
+                                                <option id="SourceOptionTemplate" value="NONE" label="NONE">NONE</option>
+                                                <option value="All" label="Toutes">Toutes</option>
+                                            </select>
+                                        </span></span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td  style="vertical-align: middle;">
+                                <div id="TargetLanguagesSelection" style="display: none;">
+                                    <b>langues cibles</b><br/>
+                                    <select id="Targets" name="TARGETS" multiple="multiple">
+                                        <option id="TargetTmpl" label="Toutes" value="*All*" selected="selected">Toutes</option>
+                                    </select>
+                                </div>
+                                <input type="submit" value="➡" />
+                                <input type="hidden" id="LIMIT" name="LIMIT" value="100" />
+                            </td>
+                            <td style="visibility:hidden;">
+                                <div id="QuickLink" class="quick_search">
+                                    <b>Recherche rapide</b><br/>
+                                    <a id="MyFinishedContributions" class="quick_link" href="">Mes contributions finies</a><br/>
+                                    <a id="MyNotFinishedContributions" class="quick_link" href="">Mes contributions non finies</a>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div style="display:none; padding: 5px;">
+                    <b>Affiche </b>
+                    <select id="LIMITSelect" name="LIMIT">
+                        <option label="10" value="10">10</option>
+                        <option label="20" value="20">20</option>
+                        <option label="50" value="50">50</option>
+                        <option label="100" value="100">100</option>
+                        <!--option label="all" value="0">tous les</option-->
+                    </select>
+                    <b>résultats par page avec la forme</b>
+                    <select id="Xsl" name="XSL">
+                        <option label="par défaut" value="">par défaut</option>
+                        <option id="XslTmpl" label="par défaut" value="">défaut</option>
+                    </select>
+                    <input type="hidden" id="Offset" name="OFFSET" />
+                    <input type="hidden" id="Action" name="ACTION" value=""/>
+                    <input type="submit" value="Go" />
+                </div>
+            </form>
+        </div>
+    </body>
+</html>

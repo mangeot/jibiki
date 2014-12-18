@@ -16,7 +16,7 @@
 function lookupIndex (parameters, direction) {
 	load = true;
 	$('.loadmore').show();
-		
+    
 	//On lance la fonction ajax
 	$.ajax({
 		   url: scriptStartUrl + 'LookupVolume.po',
@@ -67,7 +67,10 @@ $(document).ready(function(){ // Quand le document est complètement chargé
 	limit = parseInt($('#LIMIT').val(),10);
   	entriesHeight = $('#lookupentries').height();
  	lastEntryOffset = entriesHeight;
- 
+
+    console.log('document ready: limit: ' + limit + ' eh:', entriesHeight);
+
+                  
 	$('#lookupentries').scroll(function(){ // On surveille l'évènement scroll
  
 		/* Si l'élément offset est en bas de scroll, si aucun chargement 
@@ -91,8 +94,8 @@ $(document).ready(function(){ // Quand le document est complètement chargé
 				volume='Motamot_khm';
 				key='cdm-pronunciation';
 			}
-							   
 			var queryString = (action=='lookupVolume')?'action='+action+'&VOLUME='+volume+'&LIMIT='+limit+'&KEY='+key+'&MSORT='+msort:$('#QueryString').attr('data-query-string');
+            //console.log('call lookupindex queryString: ' + queryString);
 			if (queryString !== undefined) {
 				lookupIndex(queryString, direction);
 			}
