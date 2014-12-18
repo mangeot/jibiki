@@ -6,7 +6,7 @@
  * © Mathieu Mangeot & Gilles Sérasset - GETA CLIPS IMAG
  * Projet Papillon
  *-----------------------------------------------
- * $Id$
+ * $Id: Information.java 1296 2011-11-29 17:57:22Z mangeot $
  *-----------------------------------------------
  *
  *-----------------------------------------------
@@ -34,16 +34,16 @@ import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
 import fr.imag.clips.papillon.presentation.MultilingualHtmlTemplateFactory;
 
-public class Information extends PapillonBasePO {
+public class Authors extends PapillonBasePO {
 
     public Node getContent()
         throws HttpPresentationException, IOException {
 
-	InformationTmplXHTML content;
+	AuthorsTmplXHTML content;
 
 	// Création du contenu
 	//content = (InfosTmplHTML)this.getComms().xmlcFactory.create(InfosTmplHTML.class);
-        content = (InformationTmplXHTML)MultilingualXHtmlTemplateFactory.createTemplate("InformationTmplXHTML", this.getComms(), this.getSessionData());
+        content = (AuthorsTmplXHTML)MultilingualXHtmlTemplateFactory.createTemplate("AuthorsTmplXHTML", this.getComms(), this.getSessionData());
       
         return content.getElementInfoContent();
         }

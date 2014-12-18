@@ -120,7 +120,7 @@ public class ConsultPage extends DilafBasePO {
 				key=Volume.CDM_headword;
 			}			
 		
-			//PapillonLogger.writeDebugMsg("ConsultPage: " + volume + " WORD: " + word + " KEY: " + key);
+			PapillonLogger.writeDebugMsg("ConsultPage: " + action + " volume:" + volume + " WORD: " + word + " KEY: " + key);
 			if (action != null && !action.equals("")) {
 				throw new ClientPageRedirectException("Home.po?" + this.getComms().request.getQueryString());
 			}
@@ -213,7 +213,7 @@ public class ConsultPage extends DilafBasePO {
 				if (EntryCollection!=null) {
 					for (java.util.Iterator myIterator = EntryCollection.iterator(); myIterator.hasNext(); ) {
 						Index myIndex = (Index) myIterator.next();
-						String entry = "<div class='lookupentry' title='"+ Utility.encodeXMLEntities(myIndex.getMsort())+"'><a href='?VOLUME="+volume+"&amp;HANDLE="+myIndex.getEntryId()+"&amp;KEY="+key+"' style='display:block; margin:5px;'>"+Utility.encodeXMLEntities(myIndex.getValue())+"</a></div>";
+						String entry = "<div class='lookupentry' title='"+ Utility.encodeXMLEntities(myIndex.getMsort())+"'><a href='javascript:void(0);' style='display:block; margin:5px;' onclick=\"lookupVolume('VOLUME="+volume+"&amp;HANDLE="+myIndex.getEntryId()+"');$(this).parent().css('font-weight','bold')\">"+Utility.encodeXMLEntities(myIndex.getValue())+"</a></div>";
 						if (order.equals(IndexFactory.ORDER_DESCENDING)) {
 							stringResponse = entry + stringResponse;
 						}
@@ -233,7 +233,7 @@ public class ConsultPage extends DilafBasePO {
 				if (EntryCollection!=null) {
 					for (java.util.Iterator myIterator = EntryCollection.iterator(); myIterator.hasNext(); ) {
 						Index myIndex = (Index) myIterator.next();
-						String entry = "<div class='lookupentry' title='"+ Utility.encodeXMLEntities(myIndex.getMsort())+"'><a href='?VOLUME="+volume+"&amp;HANDLE="+myIndex.getEntryId()+"&amp;KEY="+key+"' style='display:block; margin:5px;'>"+Utility.encodeXMLEntities(myIndex.getValue())+"</a></div>";
+						String entry = "<div class='lookupentry' title='"+ Utility.encodeXMLEntities(myIndex.getMsort())+"'><a href='javascript:void(0);' style='display:block; margin:5px;' onclick=\"lookupVolume('VOLUME="+volume+"&amp;HANDLE="+myIndex.getEntryId()+"');$(this).parent().css('font-weight','bold')\">"+Utility.encodeXMLEntities(myIndex.getValue())+"</a></div>";
 						if (order.equals(IndexFactory.ORDER_DESCENDING)) {
 							stringResponse2 = entry + stringResponse2;
 						}

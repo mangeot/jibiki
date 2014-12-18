@@ -8,35 +8,27 @@
   </head>
   <body>
     <div id="HomeContent">
-      <!-- in this div, there must be only p and h1 tags -->
-      <div id="ProjectDescription">
-        <h1 lang="fr" xml:lang="fr">Grand dictionnaire estonien-français <span class="gray">(GDEF)</span></h1>
-        <p class="standard">
-		<span class="fra" lang="fr" xml:lang="fr">L’objectif de ce projet est de réaliser un grand dictionnaire
-estonien-français de plus de 80&nbsp;000 articles. La rédaction de ce dictionnaire
-est assurée par l’Association franco-estonienne de lexicographie sous la
-direction scientifique d’Antoine Chalvin, avec la coopération de l’Institut de la langue estonienne (EKI) et le
-soutien de l’Organisation internationale de la francophonie (OIF), du ministère estonien de l’Éducation et de la Recherche, de la Fondation Robert Schuman,
-de l’Ambassade de France en Estonie et du Centre culturel et de coopération français de Tallinn. 
-<br/>Le dictionnaire contient actuellement <span id="GDEFValidatedEntryCountFra">XXX</span> articles validés 
-ainsi que <span id="GDEFReviewedEntryCountFra">XXX</span> articles révisés en attente de validation.</span></p>
-        <h1 lang="et" xml:lang="et">Suur eesti-prantsuse sõnaraamat <span class="gray">(GDEF)</span></h1>
-        <p class="standard">
-		<span class="est" lang="et" xml:lang="et">Projekti eesmärgiks on koostada üle 
-		80&nbsp;000 märksõna sisaldav
-eesti-prantsuse sõnaraamat. Sõnaraamatut koostab Antoine Chalvin’ peatoimetamisel 
-Eesti-Prantsuse Leksikograafiaühing koostöös Eesti Keele Instituudiga. Projekti toetavad Rahvusvaheline Frankofooniaorganisatsioon (OIF), Eesti Vabariigi Haridus- ja Teadusministeerium, Robert Schumani Fond, Prantsuse Suursaatkond 
-Eestis ning Prantsuse Kultuuri- ja  Koostöökeskus Tallinnas.
-<br/>Sõnaraamat sisaldab praegu <span id="GDEFValidatedEntryCountEst">XXX</span> kinnitatud artiklit ja
- <span id="GDEFReviewedEntryCountEst">XXX</span> toimetatud, ent veel kinnitamata artiklit.</span></p>
-      </div>
-	　　　<div style="text-align: center;">
-				<a href="http://www.francophonie.org/" ><img alt="Logo OIF" width="170" src="media/logo_OIF_petit.jpg" /></a>   
-				<a href="http://www.hm.ee/"><img src="media/logoHM_petit.jpg" alt="Logo Haridusministeerium" width="210" /></a>  
-				<a href="http://www.ccf.ee/"><img alt="Logo CCCF" width="200" src="media/CCCF_Logo.jpg" /></a>   
-				<a href="http://www.ambafrance-ee.org/" ><img src="media/logoAmbass_petit.jpg" alt="Logo Ambassade" width="120" /></a>   
-				<a href="http://www.robert-schuman.org/" ><img alt="Logo AIF" width="150" src="media/logoSchumanpetit.jpg" /></a></div>
-       <div id="QueryResult">
+        <div id="ProjectDescription" style="text-align:center;">
+        <div class="projectTitle">
+            <h1 class="projectAcronym">GDEF</h1>
+            <h2 class="projectName">Grand Dictionnaire Estonien-Français</h2>
+        </div>
+            <form action="ConsultPage.po" class="cellVolumeLookup">
+                <div style="display:inline;">                    
+                    <input id="LIMIT" name="LIMIT" type="hidden" value="100"/>
+                    <input id="STATUS" name="STATUS" type="hidden" value="finished"/>
+                    <!--label accesskey="v" for="VOLUME" id="VolumeLabel" style="display:inline;"><span class="accesskey">v</span>olume-->
+                    <input  id="VOLUME" name="VOLUME" value="GDEF_est_fra" type="hidden"/>
+                    <!--select id="VOLUME" name="VOLUME" title="sélectionner le volume [v]"><option label="JMdict_jpn_eng" value="JMdict_jpn_eng">JMdict_jpn_eng</option></select-->
+                    <!--/label-->
+                    <input  id="KEY" name="KEY" value="cdm-headword" type="hidden"/>
+                    <input id="HEADWORD" size="30" style="color:gray;" name="HEADWORD" type="text" value="Tapez ici un mot estonien" onclick="this.value='';this.style.color='black'"/>
+                    <input type="submit" value="Rechercher"/>
+                </div></form>
+        <p style='margin-top:60px;margin-left:50px; margin-right:50px;color:navy; font-family: "garamond"'>Ce dictionnaire est en cours de réalisation. Sa version publique contient actuellement 15308 articles.</p>
+        </div>
+
+        <div id="QueryResult">
         <!--h1 class="title">Search result</h1-->
         <div id="QueryResultForm"/>
       </div>

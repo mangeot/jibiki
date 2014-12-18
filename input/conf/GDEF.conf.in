@@ -259,7 +259,7 @@ Papillon.Users.Groups.Password.validator = "@JIBIKI_VALIDATOR_PASSWORD@"
 
 # Class name of the layout for pages of the application
 Papillon.Presentation.PriorityPackage = "fr.imag.clips.papillon.presentation.xhtmlgdef"
-Papillon.LayoutClassName = "fr.imag.clips.papillon.presentation.GDEFLayout"
+Papillon.LayoutClassName = "fr.imag.clips.papillon.presentation.PapillonLayout"
 Papillon.LoginCookieName = "GDEFLoginCookie"
 
 

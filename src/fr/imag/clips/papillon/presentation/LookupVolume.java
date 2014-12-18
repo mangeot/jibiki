@@ -111,7 +111,7 @@ public class LookupVolume extends AbstractPO {
     public org.w3c.dom.Node getDocument()
 	throws HttpPresentationException, java.io.IOException, Exception {
 			
-			/* initilaize response */
+			/* initialize response */
 			java.util.Collection EntryCollection = null;
 			org.w3c.dom.Document docResponse = XMLServices.buildDOMTree("<?xml version='1.0' encoding='UTF-8' ?><div id='entries'></div>");
 			// Intialize QueryRequest
@@ -127,7 +127,7 @@ public class LookupVolume extends AbstractPO {
 			String order = myGetParameter("DIRECTION");
 
 		
-		//PapillonLogger.writeDebugMsg("LookupVolume: action: " + action + " VOLUME: " + volume + " WORD: " + word + " KEY: " + key + " ORDER: " + order);
+		PapillonLogger.writeDebugMsg("LookupVolume: action: " + action + " VOLUME: " + volume + " WORD: " + word + " KEY: " + key + " ORDER: " + order);
 		// advanced lookup
 			if (action!=null && action.equals("advancedLookup")) {
 				if (order!=null && order.equals(IndexFactory.ORDER_ASCENDING)) {
@@ -219,7 +219,7 @@ public class LookupVolume extends AbstractPO {
 					Headword[2] = word;
 					Headword[3] = strategy;
 					myKeys.add(Headword);
-					//PapillonLogger.writeDebugMsg("LookupVolume: [" + myVolume.getIndexDbname() + "] source: [" + source + "] WORD: [" + word + "] KEY: [" + key + "] strat: [" + strategy + "] order: [" + order + "] limit: [" + limit + "]");
+					PapillonLogger.writeDebugMsg("LookupVolume: [" + myVolume.getIndexDbname() + "] lang: [" + lang + "] WORD: [" + word + "] KEY: [" + key + "] strat: [" + strategy + "] order: [" + order + "] limit: [" + limit + "]");
 					EntryCollection = IndexFactory.getIndexEntriesVector(myVolume.getIndexDbname(), myKeys, order,limit);
 				}
 				else if (msort != null && !msort.equals("")) {

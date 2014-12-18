@@ -1,82 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <link href="css/gdef-home.css" rel="StyleSheet" type="text/css" />
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta name="author" content="Mathieu MANGEOT &amp; Gilles Sérasset" />
-	 <meta name="keywords" content="Grand Dictionnaire Estonien Français" /> 
-	 
-	 <meta name="description" content="Le projet GDEF a pour but de créer un dictionnaire bilingue estonien-français" />
-
-	 <meta name="generator" content="Enhydra" />
-	 
-	 <meta name="robots" content="index, follow" /> 
- 
-     <title>GDEF: Grand Dictionnaire Estonien Français</title>
-    <script src="javascript/jquery-1.8.0.min.js" type="text/javascript"><!-- // --></script>
-    <script src="javascript/jquery.dimensions.js" type="text/javascript"><!-- // --></script>
-    <script src="javascript/autocomplete.js" type="text/javascript"><!-- // --></script>
-    <script src="javascript/functions.js" type="text/javascript"><!-- // --></script>
-    <script id="Script" type="text/javascript">
-<!--
-
-function loadFunction () {
-	return 0;
-}
-
-//--></script>
-  </head>
-  <body onload="javascript:loadFunction();">
-  <script src="javascript/AdvancedQueryFormAjax.js" type="text/javascript"><!-- // --></script>
-    <div class="headerBlock">
-      <h1 id="projectTitle" xml:lang="fr" lang="fr">
-        <!--img alt="The Papillon Project" src="media/header.jpg" /-->
-        Le projet <span class="projectName">GDEF</span>
-      </h1>
-      <div id="HeaderMenu" class="headerMenu">	
-	  <div id="MenuBar" xml:lang="fr" lang="fr">
-  <div class="popupMenu"><a href="Home.po">Accueil</a></div>
-  <div class="popupMenu"><a href="Information.po">Informations</a><ul>
-    	<li><a href="Information.po#Anchor-49575">Objectif</a></li>
-    	<li><a href="Information.po#Anchor-47857">Nécessité</a></li>
-    	<li><a href="Information.po#Anchor-11481">Publics cibles</a></li>
-    	<li><a href="Information.po#Anchor-35882">Aspects linguistiques</a></li>
-    	<li><a href="Information.po#Anchor-14210">Aspects informatiques</a></li>
-    	<li><a href="Information.po#Anchor-23240">Aspects institutionnels</a></li>
-    	<li><a href="Information.po#Anchor-3800">Débouchés concrets</a></li>
-    	<li><a href="Information.po#Credits">Crédits</a></li>
-    </ul>
-  </div>
-  <div class="popupMenu"><a href="ConsultInformations.po">Documentation</a>
-  </div>
- <div class="popupMenu"><a href="News.po">Nouvelles</a>
-  </div>
-  <div class="popupMenu"><a href="phpBB2/index.php">Forums</a>
-  </div>
-</div>
-</div>
-    </div> 
-	<p style="clear:both;"></p>
-	<hr id="RemoveIfNotIE" style="color:white; height:0"/>
-    <div id="MenuColumn" class="menuColumn">
-	<div id="UserMenuHolder">
-    </div>
-	<div id="QueryMenuHolder">
-	</div>
-    <div id="LexiesManagementHolder">
-    </div>
-    <div id="ReviewerMenuHolder">
-	</div>
-     <div id="ValidatorMenuHolder">
-    </div>
-    <div id="AdministrationMenuHolder">
-    </div>
-</div>
-    <div id="MainColumn" class="mainColumn" />
-    <div id="NewsColumn" class="newsColumn" />
-    <div id="firefox"><a href="http://www.mozilla-europe.org/fr/"><img alt="Firefox 2" title="Firefox 2" src="http://sfx-images.mozilla.org/affiliates/Buttons/firefox2/firefox-spread-btn-1b.png"/></a><span>La banque de termes LexALP est optimisée pour le navigateur gratuit : </span></div>
-    <div class="copyright">Plate-forme&nbsp;: © 2001-2013 <a href="mailto:Mathieu.MangeotATimag.fr?subject=GDEFServer&amp;body=replace&nbsp;AT&nbsp;by&nbsp;@&nbsp;in&nbsp;the&nbsp;email&nbsp;address">Mathieu Mangeot</a>, GETA-CLIPS &amp; GETALP-LIG. Licence LGPL.<br />
-    Données&nbsp;: © 2004-2013 Association franco-estonienne de lexicographie et Institut de la langue estonienne. Tous droits réservés.</div>
-  </body>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="fr" xml:lang="fr">
+    <head>
+        <link href="css/gdef-home.css" rel="stylesheet" type="text/css" />
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="author" content="Mathieu MANGEOT-NAGATA" />
+        <meta name="keywords" content="Grand Dictionnaire Estonien-Français, GDEF, dictionnaire, estonien, français, corpus bilingue"/>
+        <meta name="description" content="Le projet GDEF a pour but de créer un dictionnaire bilingue estonien-français" />
+        <title>GDEF : Grand dictionnaire estonien-français</title>
+        <script src="javascript/jquery-1.8.0.min.js" type="text/javascript"><!-- // --></script>
+        <script src="javascript/lookupVolume.js" type="text/javascript"><!-- // --></script>
+        <script id="Script" type="text/javascript"><!-- // --></script>
+    </head>
+    <body>
+        <div class="headerBlock">
+            <div class="headerMenu" id="headerMenu">
+                <table style="margin:auto; border-spacing: 0px;width:90%">
+                    <tbody>
+                        <tr><td class="popupMenu homeMenu"><a href="/" style="text-decoration: underline;">Accueil</a></td>
+                            <td class="popupMenu contactMenu"><a href="Information.po" style="text-decoration: underline;">Le projet</a></td>
+                            <td class="popupMenu contactMenu"><a href="Help.po"  style="text-decoration: underline;">Mode d&apos;emploi</a></td>
+                            <td class="popupMenu dataMenu"><a href="AdvancedLookup.po"  style="text-decoration: underline;">Recherche avancée</a></td>
+                            <td class="popupMenu projectMenu"><a href="Authors.po"  style="text-decoration: underline;">Qui sommes-nous ?</a></td>
+                            <td class="popupMenu helpMenu"><a href="Contacts.po"  style="text-decoration: underline;">Contacts</a></td>
+                            <td class="popupMenu popupMenuEnd"><div id="LangFormHolder" style="display:none;"><!-- // --></div>
+                                <a class="lang" href="?lang=est"><img  alt="est" src="media/drapeau_ee.jpg" /></a>
+                            </td>
+                            <td class="popupMenu userProfileMenu" style="display:none;"><div id="UserMenuHolder" style="display: inline;" />
+                                <ul class="second-level-menu">
+                                    <li><div id="LexiesManagementHolder" style="display: inline;"/></li>
+                                    <li><div id="ReviewerMenuHolder"  style="display: inline;" /></li>
+                                    <li><div id="ValidatorMenuHolder"  style="display: inline;"/></li>
+                                    <li><div id="AdministrationMenuHolder"  style="display: inline;"/></li></ul>
+                            </td>
+                            
+                        </tr></tbody></table>
+            </div>
+            
+            
+            <div id="BannerPlaceHolder" style="display:block;">
+                <div id="BannerContent">
+                    <div id="projectTitle" style="display:none;"><!-- // --></div>
+                    <div id="QueryMenuHolder" style="display:none;"><!-- // --></div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="sectionPrincipale">
+            <div id="MenuColumn"><!-- // --></div>
+            <div id="MainColumn"><!-- // --></div>
+        </div>
+        <div id="footer">
+            <p style="margin-right:10px;padding-right:10px;">
+                <!-- pied de page -->
+                Plate-forme : © 2001-2014 Mathieu Mangeot &amp; Gilles Sérasset, GETA-CLIPS, GETALP-LIG. Licence LGPL.&#xA0;&#xA0;<br/>
+                Données : © 2004-2014 Association franco-estonienne de lexicographie et Institut de la langue estonienne. Tous droits réservés.&#xA0;&#xA0;</p>
+        </div>
+    </body>
 </html>

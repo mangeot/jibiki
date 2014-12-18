@@ -78,205 +78,47 @@ td.block {
 /* Title of the page */
 /*-------------------------*/
 
-#projectTitle {
-	text-align: left;
-	margin: 0;
-	padding: 0em 0.3em 0em 0.3em;
-	color: #00c;
-	font-family: Times, "Times New Roman", serif;
-	font-style: italic;
-	font-size: 2.5em;
-	font-weight: normal;
-	background: white;   
-	border-left: 1px solid black;
+.projectTitle {
+    text-align: center;
+    margin-top: 100px;
+    font-weight: normal;
+    font-family: "Garamond";
+    color: navy;
 }
 
-#projectTitle span.projectName {
-	font-weight: bold;
-	color: #00d;
+
+.projectTitle .projectAcronym {
+    margin-top: 100px;
+    font-size: 3em;
+}
+
+.projectTitle .projectName {
+    margin-bottom: 30px;
+    font-size: 1.8em;
 }
 
 /*-------------------------*/
 /* CSS only popup menus    */
 /*-------------------------*/
 
-#MenuBar {
-	background: white;
-	height: 1.4em;
-	line-height: 1.2em;
-	z-index:10;
-	text-align: left;
+#headerMenu {
+    font-size:0.8em;
 }
 
 .popupMenu {
 	width: auto;
-	float: left;
 	padding: 0.1em 0em 0.1em 0em;
-	cursor: default;
-	border-left: 1px solid black;
-	border-bottom: 1px solid black;
 }
 
-.popupMenu:hover {
-   background: #887;
-   color:#fff;
-}
-
-.popupMenu  a {
-   padding: 0em 0.5em 0em 0.5em ;
-   text-decoration: none;
-}
-
-.popupMenu  a:link {
-   color:#00a;
-}
-
-.popupMenu  a:visited {
-   color:#00a;
-}
-
-.popupMenu  a:active {
-   color:#00a;
-}
-
-.popupMenu  a:hover {
-   background: #887;
-   color:#fff;
-   text-decoration: none;
-}
-
-.popupMenu ul {
-	display: none;
-	position: absolute;
-	background: #aa7;
-	color: black;
-	list-style: none;
-	margin: 0em 0 0 0;
-   padding: 0;
-}
-
-.popupMenu ul li {
-   display: block;
-   padding: 0.1em 0.5em 0.1em 0.5em ;
-   font-size:0.9em;
-}
-
-div.popupMenu:hover ul {
-    display: block;
-    margin: 0;
-    padding: 0;
-
-}
-
-div.popupMenu ul li:hover {
-   background: #887;
-   color: #fff;
-}
-
-/*-----------------------------------*/
-/* MenuBlock (left) part of the page */
-/*-----------------------------------*/
-
-.menuBlock {
-	background: white;
-    color: #000;
-    padding-bottom: 0.2em;
-    border: 1px solid black;
-    font-size: 13px;
-    margin-bottom: .5em;
-}
-
-.menuBlock h2.menuTitle {
-   background: #aa7;
-   color: #fff;
-   border: none;
-   border-bottom : 1px solid grey;
-   width: 100%;
-   font-weight: bold;
-   font-size: medium;
-   text-indent: 0.5em;
-   margin-top: 0;
-   padding: 0.1em 0;
-   font-variant: small-caps;
-}
-
-.menuBlock a:link {
-    text-decoration: none; 
+.popupMenu a {
+    text-decoration: underline;
     color: blue;
 }
 
-.menuBlock a:visited {
-    text-decoration: none; 
-    color: blue;
-}
-
-.menuBlock a:active {
-    text-decoration: none; 
-    color: blue;
-}
-
-.menuBlock a:hover {
-    text-decoration: none; 
-    color: #000070;
-}
-
-.menuBlock h2, .menuBlock div, .menuBlock p, .menuBlock ul {
-   color: #000;
-}
-
-.menuBlock div, .menuBlock p, .menuBlock ul {
-   margin-top: 0.2em;
-}
-
-.menuBlock li {
-   margin-left: 0;
-   color: #aa7;
-}
-
-.menuBlock p, .menuBlock div {
-   text-indent: 0.3em;
-}
-
-.menuBlock form {
-   margin-top: 0;
-   padding-left: 0.2em;
-   padding-right: 0.2em;
-}
-
-.menuBlock h2.menuTitle a {
-   color: #fff;
-}
-
-.menuBlock h2.menuTitle a:hover {
-   text-decoration: none;
-}
 
 /*--------------------------------------*/
 /* Main (central) part of the page      */
 /*--------------------------------------*/
-
-.mainBlock {
-	
-}
-
-/* styles for table cells */
-.headerRow	{ background: #4682b4; 
-                  color: #ffffff; }
-.cellRow	{ background: #eeeecc; 
-                  color: #000000; }
-
-/* Message administratif aux utilisateurs... */
-pre.adminMessage {
-    font-size: 1.5em;
-    color: #ff0000;
-    background: #DFDFDF;
-}
-
-/* Message aux utilisateurs... */
-pre.userMessage {
-    color: #ff0000;
-    background: #DFDFDF;
-}
 
 /* General */
 
@@ -289,7 +131,8 @@ h1 {
 }
 
 h2 {
-   font-size: 0.8em;
+   color: navy;
+   font-size: 1.2em;
 }
 
 p.standard {
@@ -298,7 +141,14 @@ p.standard {
 
 .accesskey {text-decoration: underline; }
 
-.copyright {text-align:right; font-size: 11px;}
+#footer {
+    clear:both;
+    text-align:right;
+    font-size: 11px;
+    position: fixed;
+    bottom: 0;
+    width:100%;
+}
 
 .gray {
 	color:  gray;
@@ -312,6 +162,61 @@ p.standard {
 
 .note {
 	color:  red;
+}
+
+/*--------------------------------------*/
+/* Columns */
+/*--------------------------------------*/
+
+#sectionPrincipale {
+    display: table;
+    width: 100%;
+    padding-bottom: 30px;
+}
+
+
+#MenuColumn {
+    display:table-cell;
+    padding: 10px;
+}
+
+#lookupentries {
+    margin-top: 0px;
+    height: 620px;
+    overflow:hidden;
+    width:200px;
+}
+
+#lookupentries:hover, #entriesList:hover {
+    overflow-y:auto;
+}
+
+
+#MainColumn {
+    display: table-cell;
+    width: 100%;
+}
+
+#lookupcontent {
+    min-height:600px;
+    padding: 10px;
+    margin-left: 0px;
+    border:1px solid grey;
+}
+.lookupentry {
+    border:1px solid grey;
+}
+
+#WelcomeMessage {
+    text-align: center;
+}
+.loadingMessageTop {
+    margin:0;
+}
+.loadingMessageBottom {
+    margin-top:0;
+    margin-bottom:0;
+    margin-left:205px;
 }
 
 
@@ -353,35 +258,7 @@ A.hide {text-decoration: none}
 
 
 /* Language Styles */
-
-/* The lang attribute with CSS2 :lang function */
-:lang(ar)       {font-family: "Traditional Arabic", serif; font-size: 1.2em;}
-:lang(zh-Hant)  {font-family: PMingLiU,MingLiU, serif;}
-:lang(zh-Hans)  {font-family: SimSum-18030,SimHei, serif;}
-:lang(din)      {font-family: "Doulos SIL", serif;} 
-
-/* The lang attribute with lang|= selector */
-*[lang|="ar"]   {font-family: "Traditional Arabic", serif; font-size: 1.2em;}
-*[lang|="zh-Hant"]      {font-family: PMingLiU,MingLiU, serif;}
-*[lang|="zh-Hans"]      {font-family: SimSum-18030,SimHei, serif;}
-*[lang|="din"]  {font-family: "Doulos SIL", serif;} 
-
 /* The ISO-639-2/T 3 letter codes */
-
-.deu	{
-	font-family: sans-serif;
-	color: #993399;
-	}
-
-.eng	{
-	font-family: "Arial", sans-serif;
-	color: #006600;
-	}
-
-.esp	{
-	font-family: sans-serif;
-	color: #FF9900;
-	}
 
 .est	{
 	font-family: "Helvetica", sans-serif;
@@ -393,62 +270,10 @@ A.hide {text-decoration: none}
 	color: #3366FF;
 	}
 
-.hun	{
-	font-family: sans-serif;
-	color: #660000;
-	}
-
-.ita	{
-	font-family: sans-serif;
-	color: #CC6600;
-	}
-
-.jpn	{
-	/*font-family: "Osaka", sans-serif; */
-	font-family: sans-serif;
-	color: #FF0000;
-	}
-
-.lao	{
-	font-family: sans-serif;
-	color: #FF0099;
-	}
-
-.msa	{
-	font-family: sans-serif;
-	color: #009900;
-	}
-        
-.rus	{
-	font-family: sans-serif;
-	color: #CC0000;
-	}
-
-.sin	{
-	color: black;
-	}
-
-.tha	{
-	font-family: sans-serif;
-	color: #6600FF;
-	}
-
-.vie	{
-	font-family: sans-serif;
-	color: #CC9900;
-	}
-	
-.zho	{
-	font-family: PMingLiU,MingLiU, serif;
-	color: #000080;
-	}
-	
 .meta	{
 	font-family: sans-serif;
 	color: gray;
 	}
-	
-
 
 /* CDM elements */
 .entry {
@@ -474,12 +299,12 @@ A.hide {text-decoration: none}
 }
 
 .pos {
-	font-weight: bold;
-	color: black;
+	/*font-weight: bold;
+	color: black;*/
 }
 .pronunciation {
-	font-family: courier;
-	color: black;
+	/*font-family: courier;
+	color: black;*/
 }
 .label	{
 	font-family: sans-serif;
@@ -496,6 +321,8 @@ A.hide {text-decoration: none}
 
 .examples {
 	display: block;
+    margin-left: 1em;
+    margin-top: 1em;
 }
 
 .example {
@@ -508,6 +335,37 @@ A.hide {text-decoration: none}
 
 .idiom {
 	font-style : normal;
+}
+
+/* styles special GDEF */
+.domaine {
+    font-family: sans-serif;
+    color: gray;
+    font-variant: small-caps;
+}
+
+.registre {
+    font-family: sans-serif;
+    color: gray;
+    font-variant: small-caps;
+}
+
+.sous-bloc-semantique {
+    display: block;
+    margin-left: 2em;
+}
+
+.bloc-morph {
+    /*font-size: 0.8em;*/
+    color:gray;
+}
+
+.explication {
+    font-style: italic;
+}
+
+.vedette {
+    font-size: larger;
 }
 
 /* styles for XML source */
@@ -550,87 +408,7 @@ A.hide {text-decoration: none}
 	font-weight: bold;
 	background-color: yellow;
 }
-	
-/* Styles for Header links */
-	
-/* .header A:link {
-	font-size: 13px; 
-	font-weight: bold; 
-	text-decoration: none; 
-	color: #663300;
-	}
-.header A:visited {
-	font-size: 13px; 
-	font-weight: bold; 
-	text-decoration: none; 
-	color: #663300;
-	}
-.header A:active {
-	font-size: 13px; 
-	font-weight: bold; 
-	text-decoration: none; 
-	color: #663300;
-	}
-.header  A:hover {
-	font-size: 13px; 
-	font-weight: bold; 
-	font-style: italic; 
-	text-decoration: underline overline; 
-	color: #663300;
-	}
-*/
-	
-/* Styles for Menu titles links */
-	
-/* .menutitle A:link {
-	font-size: 13px; 
-	font-weight: bold; 
-	text-decoration: none; 
-	color: #663300;
-	}
-.menutitle A:visited {
-	font-size: 13px; 
-	font-weight: bold; 
-	text-decoration: none; 
-	color: #663300;
-	}
-.menutitle A:active {
-	font-size: 13px; 
-	font-weight: bold; 
-	text-decoration: none; 
-	color: #663300;
-	}
-.menutitle  A:hover {
-	font-size: 13px; 
-	font-weight: bold; 
-	text-decoration: underline; 
-	color: #663300;
-	}
-*/
-	
-/* Styles for Menu link links */
-	
-/* .menulink A:link {
-	font-size: 13px; 
-	text-decoration: none; 
-	color: blue;
-	}
-.menulink A:visited {
-	font-size: 13px; 
-	text-decoration: none; 
-	color: blue;
-	}
-.menulink A:active {
-	font-size: 13px; 
-	text-decoration: none; 
-	color: blue;
-	}
-.menulink  A:hover {
-	font-size: 13px; 
-	text-decoration: underline; 
-	color: blue;
-	}
-*/
+
 /* Styles for body links */
 	
 .bodylink A:link {
@@ -653,7 +431,3 @@ A.hide {text-decoration: none}
 	text-decoration: underline; 
 	color: blue;
 	}
-	
-/* Styles for FOKS results */
-TD.result {background: #e6e6fa; font-size: 11px;}
-TH.result {background: #fdcfcf;font-family: Arial, sans-serif; font-size: 11px;} 
