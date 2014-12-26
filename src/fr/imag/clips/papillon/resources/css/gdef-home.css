@@ -81,8 +81,6 @@ td.block {
 .projectTitle {
     text-align: center;
     margin-top: 100px;
-    font-weight: normal;
-    font-family: "Garamond";
     color: navy;
 }
 
@@ -91,7 +89,7 @@ h1.projectAcronym h1.projectTitle {
 }
 
 h1.projectAcronym {
-    font-style: normal;
+    font-weight: normal;
 }
 
 .projectTitle .projectAcronym {
