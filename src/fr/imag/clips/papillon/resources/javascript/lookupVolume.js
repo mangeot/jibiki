@@ -86,7 +86,7 @@ $(document).ready(function(){ // Quand le document est complètement chargé
 			//console.log('load: lastEntryOffset: ' + lastEntryOffset + ' scrollTop: ' +scrollTop + ' listTop: ' +listTop);
 
 			//On récupère le headword du dernier entrée affiché
-			var msort = (direction=='ASC') ? $('.lookupentry:last').attr('title') : $('.lookupentry:first').attr('title');
+			var msort = (direction=='ASC') ? $('.lookupentry:last').attr('msort') : $('.lookupentry:first').attr('msort');
  			lastEntriesSize = $('.lookupentry').size();
 			var volume = $('#VOLUME').val();
 			var key='cdm-headword';

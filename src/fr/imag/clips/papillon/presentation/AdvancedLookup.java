@@ -115,6 +115,7 @@ public class AdvancedLookup extends DilafBasePO {
             
             // Display result
 			String stringResponse = "<?xml version='1.0' encoding='UTF-8' ?><div class='entries'>";
+            String firstEntryStyle = " style='font-weight:bold;'";
 			String volumeName = null;
             Volume theVolume = null;
 
@@ -126,7 +127,7 @@ public class AdvancedLookup extends DilafBasePO {
 						volumeName = theVolume.getName();
 					}
                     String displayValue = Utility.encodeXMLEntities(myIndex.getValue());
-                    if (!queryReq.firstCriteriaKey().equals(Volume.CDM_headword)) {
+                    if (!myIndex.getKey().equals(Volume.CDM_headword)) {
                         java.util.Collection resultsVector = IndexFactory.getIndexVectorByEntryId(theVolume, myIndex.getEntryId()+"");
                         String cdmHeadword = "";
                         java.util.Iterator indexIterator = resultsVector.iterator();
@@ -140,7 +141,8 @@ public class AdvancedLookup extends DilafBasePO {
                             displayValue = Utility.encodeXMLEntities(cdmHeadword);
                         }
                     }
-					String entry = "<div class='lookupentry' title='"+ Utility.encodeXMLEntities(myIndex.getMsort())+"'><a href='javascript:void(0);' style='display:block; margin:5px;' onclick=\"lookupVolume('VOLUME="+volumeName+"&amp;HANDLE="+myIndex.getEntryId()+"');$(this).parent().css('font-weight','bold')\">"+displayValue+"</a></div>";
+					String entry = "<div class='lookupentry' msort='"+ Utility.encodeXMLEntities(myIndex.getMsort())+"' "+firstEntryStyle+"><a href='javascript:void(0);' style='display:block; margin:5px;' onclick=\"lookupVolume('VOLUME="+volumeName+"&amp;HANDLE="+myIndex.getEntryId()+"');$(this).parent().css('font-weight','bold')\">"+displayValue+"</a></div>";
+                    firstEntryStyle = "";
 					stringResponse += entry;
 				}
 				if (qrset.size()==0) {
