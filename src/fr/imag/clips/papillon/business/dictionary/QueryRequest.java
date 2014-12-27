@@ -880,6 +880,46 @@ import javax.swing.JOptionPane;
 		}
 				return res;
 		}
+        
+        public boolean findKeyInCriteriaTree(String key)  throws PapillonBusinessException {
+            boolean result = false;
+            try {
+                if ((criteriaTree.size() != 0)) {
+                    int i=0;
+                    int treeSize = criteriaTree.size();
+                    while (i<treeSize && !result) {
+                        ArrayList node = (ArrayList)criteriaTree.get(i);
+                        if (node.size()==1) {
+                            QueryCriteria criteria = (QueryCriteria)node.get(0);
+                            result = key.equals(criteria.getKey());
+                        }
+                        i++;
+                    }
+                }
+                
+            } catch(Exception ex) {
+                throw new PapillonBusinessException("Exception in findKeyInCriteriaTree() ", ex);
+            }
+            return result;
+        }
+
+        
+        public String firstCriteriaKey()  throws PapillonBusinessException {
+            String result = "";
+            try {
+                if ((criteriaTree.size() != 0)) {
+                    ArrayList node = (ArrayList)criteriaTree.get(0);
+                    if (node.size()==1) {
+                        QueryCriteria criteria = (QueryCriteria)node.get(0);
+                        result = criteria.getKey();
+                    }
+                }
+            } catch(Exception ex) {
+                throw new PapillonBusinessException("Exception in firstCriteriaKey() ", ex);
+            }
+            return result;
+        }
+        
 
 		 public HashMap findLexieAndTranslationForRest(String volumeName, String headword, User user)  throws PapillonBusinessException {
             try {
