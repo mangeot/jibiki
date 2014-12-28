@@ -155,10 +155,21 @@ public class ConsultPage extends DilafBasePO {
 																					 null,
 																					 this.getUser(),
 																					 0, 1);
-			
-			
 			if (EntryCollection!=null) {
                 java.util.Iterator myIterator = EntryCollection.iterator();
+                /* Opération trop lente ! */
+   /*             if (!myIterator.hasNext()) {
+                    Headword[3] = QueryBuilder.GREATER_THAN_OR_EQUAL;
+                    EntryCollection = DictionariesFactory.getDictionaryNameEntriesCollection(myVolume.getDictname(),
+                                                                                             source,
+                                                                                             targets,
+                                                                                             myKeys,
+                                                                                             null,
+                                                                                             null,
+                                                                                             this.getUser(),
+                                                                                             0, 1);
+                }
+                myIterator = EntryCollection.iterator(); */
                 if (myIterator.hasNext()) {
                     for (myIterator = EntryCollection.iterator(); myIterator.hasNext(); ) {
                     QueryResult myQueryResult = (QueryResult) myIterator.next();

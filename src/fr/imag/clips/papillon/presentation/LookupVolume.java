@@ -113,7 +113,7 @@ public class LookupVolume extends AbstractPO {
 			
 			/* initialize response */
 			java.util.Collection EntryCollection = null;
-			org.w3c.dom.Document docResponse = XMLServices.buildDOMTree("<?xml version='1.0' encoding='UTF-8' ?><div id='entries'></div>");
+			org.w3c.dom.Document docResponse = XMLServices.buildDOMTree("<?xml version='1.0' encoding='UTF-8' ?><div id='entries'><script type='text/javascript'><!-- \n\n document.getElementById('EmptyMessage').setAttribute('style','display:none;');\n\n // --></script></div>");
 			// Intialize QueryRequest
 			/* volume */
 			String volume = myGetParameter("VOLUME");
@@ -297,16 +297,24 @@ public class LookupVolume extends AbstractPO {
 																			null,
 																			this.getUser(),
 																						 0, 1);
-				
-				
-				if (EntryCollection!=null) {
+ 				if (EntryCollection!=null) {
 					org.w3c.dom.Element rootElement = docResponse.getDocumentElement();
-					for (java.util.Iterator myIterator = EntryCollection.iterator(); myIterator.hasNext(); ) {
+                    /* Opération trop lente ! */
+                    /* Headword[3] = QueryBuilder.GREATER_THAN_OR_EQUAL; */
+                    java.util.Iterator myIterator = EntryCollection.iterator();
+                    if (myIterator.hasNext()) {
+                        for (myIterator = EntryCollection.iterator(); myIterator.hasNext(); ) {
 						QueryResult myQueryResult = (QueryResult) myIterator.next();
 						ResultFormatter myResultFormater = ResultFormatterFactory.getFormatter(myQueryResult, null, ResultFormatterFactory.XHTML_DIALECT,null);
 						org.w3c.dom.Element newEntry = (org.w3c.dom.Element)myResultFormater.getFormattedResult(myQueryResult, this.getUser());
 						rootElement.appendChild(docResponse.importNode(newEntry, true));
-					}
+                        }
+                    }
+                    else {
+                        PapillonLogger.writeDebugMsg("Pas de réponse!");
+                        String stringResponse = "<?xml version='1.0' encoding='UTF-8' ?><div><script type='text/javascript'><!-- \n\n document.getElementById('EmptyMessage').setAttribute('style','display:block;');\n\n // --></script></div>";
+                        docResponse = XMLServices.buildDOMTree(stringResponse);
+                    }
 				}
 			}
 			else if (action != null && !action.equals("")) {

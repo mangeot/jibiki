@@ -187,7 +187,9 @@ function lookupVolume (parameters) {
 					$('.loadcontent').fadeOut(500);
 					// On affiche le résultat
 					//$('#content').text('LookupVolume.po' + parameters);
-					$('#lookupcontent').append($(data).children());
+                   //$('#lookupcontent').append($(data).children());
+                   // use this method in order to execute embedded javascrit in the data
+                   $('#lookupcontent').append(data);
 					load = false;
 				}
 			});
@@ -212,7 +214,9 @@ function queryOneKey (key, value, volume) {
 		   $('.loadcontent').fadeOut(500);
 		   // On affiche le résultat
 		   //$('#content').text('LookupVolume.po' + parameters);
-		   $('#lookupcontent').append($(data).children());
+		   //$('#lookupcontent').append($(data).children());
+           // use this method in order to execute embedded javascrit in the data
+           $('#lookupcontent').append(data);
 		   load = false;
 		   }
 		   });
