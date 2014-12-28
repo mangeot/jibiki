@@ -61,7 +61,8 @@ public class ConsultPage extends DilafBasePO {
 	java.io.IOException,
 	ClassNotFoundException, fr.imag.clips.papillon.business.PapillonBusinessException 
 	{
-		String status = myGetParameter(ConsultPageXHTML.NAME_STATUS);
+        String javascript = myGetParameter("JAVASCRIPT");
+        String status = myGetParameter(ConsultPageXHTML.NAME_STATUS);
 		volume = myGetParameter(ConsultPageXHTML.NAME_VOLUME);
 		String word = myGetParameter(ConsultPageXHTML.NAME_HEADWORD);
 		
@@ -192,6 +193,11 @@ public class ConsultPage extends DilafBasePO {
 		// Query an alphabetical list of entries from a word prefix
 			if (myVolume != null && 
 					 (word != null && !word.equals(""))) {
+                if (javascript != null && !javascript.equals("")) {
+                    org.w3c.dom.Document javascriptResponse = XMLServices.buildDOMTree("<?xml version='1.0' encoding='UTF-8' ?><script type='text/javascript'><!-- \n\n queryPrefixVolume('"+word+"','"+volume+"'); \n\n// --></script>");
+                    content.getElementMainContent().appendChild(content.importNode(javascriptResponse.getDocumentElement(), true));
+                }
+                else {
 				int limit = 30;
 				/*String limitString = myGetParameter("LIMIT");
 				if (limitString!=null && !limitString.equals("")) {
@@ -247,6 +253,7 @@ public class ConsultPage extends DilafBasePO {
 				stringResponse = "<?xml version='1.0' encoding='UTF-8' ?><div class='entries'>" + stringResponse2 + stringResponse + "</div>";
 				docResponse = XMLServices.buildDOMTree(stringResponse);
 				content.getElementLookupentries().appendChild(content.importNode(docResponse.getDocumentElement(), true));
+                }
 			}
 
 		//On rend le contenu correct

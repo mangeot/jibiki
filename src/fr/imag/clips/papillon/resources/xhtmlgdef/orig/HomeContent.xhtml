@@ -15,6 +15,7 @@
         </div>
             <form action="ConsultPage.po" class="cellVolumeLookup">
                 <div style="display:inline;">                    
+                    <input id="JAVASCRIPT" name="JAVASCRIPT" type="hidden" value=""/>
                     <input id="LIMIT" name="LIMIT" type="hidden" value="100"/>
                     <input id="STATUS" name="STATUS" type="hidden" value="finished"/>
                     <!--label accesskey="v" for="VOLUME" id="VolumeLabel" style="display:inline;"><span class="accesskey">v</span>olume-->
@@ -23,7 +24,7 @@
                     <!--/label-->
                     <input  id="KEY" name="KEY" value="cdm-headword" type="hidden"/>
                     <input id="HEADWORD" size="30" style="color:gray;" name="HEADWORD" type="text" value="Tapez ici un mot estonien" onclick="this.value='';this.style.color='black'"/>
-                    <input type="submit" value="Rechercher"/>
+                    <input type="submit" value="Rechercher" onclick="this.form.elements['JAVASCRIPT'].value = 'on'; return true;"/>
                 </div></form>
         <p style='margin-top:60px;margin-left:50px; margin-right:50px;color:navy; font-family: "garamond"'>Ce dictionnaire est en cours de réalisation. Sa version publique contient actuellement 15308 articles.</p>
         </div>

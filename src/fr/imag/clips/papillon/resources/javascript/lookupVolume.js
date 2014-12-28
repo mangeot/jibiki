@@ -1,5 +1,5 @@
 <!--
-	var limit;
+	var limit = 100;
 	var load = false; // aucun chargement d'entrée n'est en cours
 	var entriesHeight = 0;
  	var nbentries = 0;
@@ -68,7 +68,7 @@ $(document).ready(function(){ // Quand le document est complètement chargé
   	entriesHeight = $('#lookupentries').height();
  	lastEntryOffset = entriesHeight;
 
-    console.log('document ready: limit: ' + limit + ' eh:', entriesHeight);
+    //console.log('document ready: limit: ' + limit + ' eh:', entriesHeight);
 
                   
 	$('#lookupentries').scroll(function(){ // On surveille l'évènement scroll
