@@ -149,7 +149,10 @@ function queryPrefixVolume(word, volume) {
 		   success: function(data) {
 		   /* On affiche le résultat après la dernière entrée */
 			if ($('.lookupentry').length) {
+               $('.lookupentry:last').attr('id','prevlast');
 			   $('.lookupentry:last').after($(data).children());
+               $('#prevlast').next().css('font-weight','bold');
+               $('#prevlast').removeAttr('id');
 			   /* On actualise la valeur offset de la dernière entrée */
 			   lastEntryOffset = $('.lookupentry:last').offset().top - $('.lookupentry:first').offset().top - entriesHeight;
 			   //On remet la valeur à faux car c'est fini
@@ -158,6 +161,7 @@ function queryPrefixVolume(word, volume) {
 			   }
 			   else {
 			   $('#lookupentries').append($(data).children());
+               $('#lookupentries').children(":first").first().css('font-weight','bold');
 			   }
 		   }
 		   });
