@@ -136,6 +136,7 @@ public class ConsultPage extends DilafBasePO {
 		// Query an entry from its headword
 			if (myVolume != null && 
 				word != null && !word.equals("")) {
+                content.getElementLookupcontent().removeChild(content.getElementWelcomeMessage());
 						java.util.Collection targets = myVolume.getTargetLanguagesArray();
 			java.util.Vector myKeys = new java.util.Vector();
 			String[] Headword = new String[4];
@@ -143,7 +144,7 @@ public class ConsultPage extends DilafBasePO {
 			Headword[0] = key;
 			Headword[1] = source;
 			Headword[2] = word;
-			Headword[3] = QueryBuilder.EQUAL;
+			Headword[3] = QueryBuilder.CASE_INSENSITIVE_STARTS_WITH;
 			myKeys.add(Headword);
 			
 			EntryCollection = DictionariesFactory.getDictionaryNameEntriesCollection(myVolume.getDictname(),
@@ -153,17 +154,22 @@ public class ConsultPage extends DilafBasePO {
 																					 null,
 																					 null,
 																					 this.getUser(),
-																					 0, DictionariesFactory.MaxRetrievedEntries);
+																					 0, 1);
 			
 			
 			if (EntryCollection!=null) {
-				for (java.util.Iterator myIterator = EntryCollection.iterator(); myIterator.hasNext(); ) {
-					QueryResult myQueryResult = (QueryResult) myIterator.next();
-					ResultFormatter myResultFormater = ResultFormatterFactory.getFormatter(myQueryResult, null, ResultFormatterFactory.XHTML_DIALECT,null);
-					org.w3c.dom.Element newEntry = (org.w3c.dom.Element)myResultFormater.getFormattedResult(myQueryResult, this.getUser());
-					content.getElementLookupcontent().appendChild(content.importNode(newEntry, true));
-					content.getElementLookupcontent().removeChild(content.getElementWelcomeMessage());
-				}
+                java.util.Iterator myIterator = EntryCollection.iterator();
+                if (myIterator.hasNext()) {
+                    for (myIterator = EntryCollection.iterator(); myIterator.hasNext(); ) {
+                    QueryResult myQueryResult = (QueryResult) myIterator.next();
+                    ResultFormatter myResultFormater = ResultFormatterFactory.getFormatter(myQueryResult, null, ResultFormatterFactory.XHTML_DIALECT,null);
+                    org.w3c.dom.Element newEntry = (org.w3c.dom.Element)myResultFormater.getFormattedResult(myQueryResult, this.getUser());
+                    content.getElementLookupcontent().appendChild(content.importNode(newEntry, true));
+                    }
+                }
+                else {
+                    content.getElementEmptyMessage().setAttribute("style","display: block");
+                }
 			}
 		}
 		// Query an entry from its database handle

@@ -286,7 +286,7 @@ public class LookupVolume extends AbstractPO {
 				Headword[0] = key;
 				Headword[1] = lang;
 				Headword[2] = oneentry;
-				Headword[3] = QueryBuilder.EQUAL;
+				Headword[3] = QueryBuilder.CASE_INSENSITIVE_STARTS_WITH;
 				myKeys.add(Headword);
 
 				EntryCollection = DictionariesFactory.getDictionaryNameEntriesCollection(myVolume.getDictname(),
@@ -296,7 +296,7 @@ public class LookupVolume extends AbstractPO {
 																			null,
 																			null,
 																			this.getUser(),
-																						 0, DictionariesFactory.MaxRetrievedEntries);
+																						 0, 1);
 				
 				
 				if (EntryCollection!=null) {
