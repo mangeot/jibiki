@@ -156,7 +156,7 @@
 		A30722B90EC89B2100733910 /* Actions.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = Actions.java; sourceTree = "<group>"; };
 		A30722BB0EC89B2100733910 /* JibikiContext.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = JibikiContext.java; sourceTree = "<group>"; };
 		A30722BD0EC89B2100733910 /* Actions.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = Actions.java; sourceTree = "<group>"; };
-		A30722BE0EC89B2100733910 /* Papillon.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = Papillon.java; sourceTree = "<group>"; };
+		A30722BE0EC89B2100733910 /* Papillon.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = Papillon.java; path = ../Papillon.java; sourceTree = "<group>"; };
 		A30722C00EC89B2100733910 /* DataLayerVersion.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = DataLayerVersion.java; sourceTree = "<group>"; };
 		A30722C10EC89B2100733910 /* ManageDatabase.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = ManageDatabase.java; sourceTree = "<group>"; };
 		A30722C30EC89B2100733910 /* AbstractPO.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = AbstractPO.java; sourceTree = "<group>"; };
@@ -1573,7 +1573,6 @@
 				A30722AE0EC89B2000733910 /* CurrentRequestContext.java */,
 				A30722AF0EC89B2100733910 /* dict */,
 				A30722B70EC89B2100733910 /* facelets */,
-				A30722BE0EC89B2100733910 /* Papillon.java */,
 				A30722BF0EC89B2100733910 /* papillon_data */,
 				A30722C20EC89B2100733910 /* presentation */,
 				A307231E0EC89B2300733910 /* properties */,
@@ -1842,6 +1841,7 @@
 		A30722AF0EC89B2100733910 /* dict */ = {
 			isa = PBXGroup;
 			children = (
+				A30722BE0EC89B2100733910 /* Papillon.java */,
 				A30722B00EC89B2100733910 /* kernel */,
 				A30722B30EC89B2100733910 /* rfc2229.txt */,
 				A30722B40EC89B2100733910 /* server */,
@@ -3756,8 +3756,6 @@
 /* Begin PBXProject section */
 		A348B7040E7EFB50003F6712 /* Project object */ = {
 			isa = PBXProject;
-			attributes = {
-			};
 			buildConfigurationList = A348B7070E7EFB50003F6712 /* Build configuration list for PBXProject "JibikiLinks" */;
 			compatibilityVersion = "Xcode 3.1";
 			developmentRegion = English;

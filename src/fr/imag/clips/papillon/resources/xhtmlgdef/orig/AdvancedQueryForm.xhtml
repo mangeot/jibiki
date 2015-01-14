@@ -15,10 +15,34 @@
         </script>
     </head>
     <body>
-        <script type="text/javascript">
-        </script>
         <div id="AdvancedSearchForm" lang="fr" xml:lang="fr">
-            <form id="SearchForm" action="">
+		<script type="text/javascript">
+		<!--
+function selectedValue(selBox) {
+    return selBox.options[selBox.selectedIndex].value;
+}
+
+function validAdvancedSearchForm(form) {
+		var nbcrit = form.CRITERIA_NB.value;
+		nbcrit = parseInt(nbcrit) - 1;
+		for (var i=0; i<=nbcrit; i++) {
+			var select  = form.elements['FACET.'+i];
+			var textBox  = form.elements['FACETVALUE.'+i];
+			if (selectedValue(select) == 'gdef-est-traduction') {
+				textBox.value = 'fra.' + textBox.value;
+				var strategy = form.elements['OPERATOR.'+i];
+				if (strategy.value=='0') {
+					textBox.value = textBox.value + '.';
+					strategy.value=6;
+				}
+			}
+		}
+    return true;
+}
+-->
+</script>
+
+            <form id="SearchForm" action="" onsubmit="return validAdvancedSearchForm(this);">
                 <div style="display:block; padding:5px;">
                     <input type="hidden" name="action" id="actionJS" value="advancedLookup" />
                     <table border="0" cellpadding="0" cellspacing="0" summary="Search Form" width="100%">
@@ -42,6 +66,26 @@
                                 <div id="CriteriaZone" style=" padding:5px;">
                                     <!-- ADVANCEDQUERYFORM SCRIPT  -->
                                     <script src="javascript/AdvancedQueryFormAjax.js" type="text/javascript"><!-- // --></script>
+									<script type="text/javascript">
+									<!--
+
+function adjustAdvancedSearchForm(select) {
+	var criteriaNumber=select.name;
+	criteriaNumber = criteriaNumber.substring(criteriaNumber.lastIndexOf("."));
+    if (selectedValue(select) == 'gdef-est-domaine') {
+            document.getElementById('ValueField'+criteriaNumber).setAttribute('name', 'toto');
+            document.getElementById('ValueField'+criteriaNumber).setAttribute('style', 'display:none;');
+            document.getElementById('domaine').setAttribute('name', 'FACETVALUE'+criteriaNumber);
+            document.getElementById('domaine').setAttribute('style', '');
+    } 
+	else {
+            document.getElementById('ValueField'+criteriaNumber).setAttribute('style', '');
+            document.getElementById('ValueField'+criteriaNumber).setAttribute('name', 'FACETVALUE'+criteriaNumber);
+            document.getElementById('domaine').setAttribute('name', 'domaine');
+            document.getElementById('domaine').setAttribute('style', 'display:none;');
+   }
+}
+// -->								</script>
                                     <table id="tableShowHideElement" style="display: none;" >
                                         <tr id="rowShowHideTemplate" ><td>cdm-headword</td></tr>
                                     </table>
@@ -49,37 +93,63 @@
                                     <div id="criterion" style="display:block; margin-left: 10px;">
                                         <img id="minus" onclick="addOrRemoveCriterion(this.id, '-');" src="media/minus.jpg" alt="-" width="15"/>
                                         <img id="plus" onclick="addOrRemoveCriterion(this.id, '+');" src="media/plus.jpg" alt="+" width="15"/>
-                                        <select id="Facet" name="FACET" onchange="hideOrNotSourceLang(value, name);">
-                                            <option label="le mot-vedette" selected="selected" value="cdm-headword">le mot-vedette</option>
-                                            <option label="la variante" value="cdm-headword-variant">la variante</option>
-                                            <option label="l'écriture" value="cdm-writing">l'écriture</option>
-                                            <option label="la classe" value="cdm-pos">la classe</option>
-                                            <option label="un exemple" value="cdm-example">un exemple</option>
-                                            <!--option value="cdm-definition" label="la definition">la définition</option-->
-                                            <option label="créé par" value="cdm-contribution-author">créé par</option>
-                                            <option label="à (aaaa/mm/jj)" value="cdm-contribution-creation-date">à (aaaa/mm/jj)</option>
-                                            <option label="modifié par" value="cdm-modification-author">modifié par</option>
-                                            <option label="à (aaaa/mm/jj)" value="cdm-modification-date">à (aaaa/mm/jj)</option>
-                                            <option label="le statut" value="cdm-contribution-status">le status</option>
-                                            <option label="l'id de l'entrée" value="cdm-entry-id">l'ID de l'entrée</option>
-                                            <option label="l'id de la contrib" value="cdm-contribution-id">l'ID de la contrib</option>
-                                            <option label="le niveau" value="cdm-contribution-group">le niveau</option>
-                                            <option label="le domaine" value="gdef-est-domaine">le domaine</option>
-                                            <option label="la fréquence" value="gdef-est-frequence">la fréquence</option>
-                                            <option label="une locution" value="gdef-est-locution">une locution</option>
-                                            <option label="la nomenclature" value="gdef-est-nomenclature">la nomenclature</option>
-                                            <option label="la particule" value="gdef-est-particule">la particule</option>
-                                            <option label="la trad. d'1 exemple" value="gdef-est-traduction-exemple">la trad. d'un exemple</option>
-                                            <option label="la trad. d'1 locution" value="gdef-est-traduction-locution">la trad. d'1 locution</option></select>
-                                        
+                                        <select id="Facet" name="FACET" onchange="adjustAdvancedSearchForm(this)">
+                                            <option selected="selected" value="cdm-headword">le mot-vedette</option>
+                                            <option value="cdm-headword-variant">la variante</option>
+                                            <option value="gdef-est-particule">la particule</option>
+											<option value="gdef-est-traduction">la traduction française</option>
+											<option value="gdef-est-domaine">le domaine de spécialité</option>
+                                            <option value="cdm-example">un exemple</option>
+                                            <option value="gdef-est-locution">une locution</option>
+                                            <option value="gdef-est-traduction-exemple">la trad. d'1 exemple</option>
+                                            <option value="gdef-est-traduction-locution">la trad. d'1 locution</option>
+										</select>
+										<span id="OperatorDefault" style="display:none;"> est exactement </span>
                                             <select id="Operator" name="OPERATOR" >
-                                            <option value="0" label="est">est</option>
-                                            <option value="2" label="comme">comme</option>
-                                            <option value="6" label="commence par">commence par</option>
-                                            <option value="10" label="plus grand que">plus grand que</option>
-                                            <option value="11" label="plus petit que">plus petit que</option>
+                                            <option value="0">est exactement</option>
+                                            <option value="6">commence par</option>
                                         </select>
                                         <input type="text" id="ValueField" name="FACETVALUE" size="14" maxlength="128"/>
+										<select id="domaine" name="domaine" style="display:none;">
+										 <option value="aiand.">aiand.</option><option value="aj.">aj.</option>
+										 <option value="anat.">anat.</option><option value="antr.">antr.</option>
+										 <option value="arheol.">arheol.</option><option value="arhit.">arhit.</option>
+										 <option value="astr.">astr.</option><option value="aut.">aut.</option>
+										 <option value="bibl.">bibl.</option><option value="biol.">biol.</option>
+										 <option value="bot.">bot.</option><option value="ehit.">ehit.</option>
+										 <option value="el.">el.</option><option value="etn.">etn.</option>
+										 <option value="farm.">farm.</option><option value="film.">film.</option>
+										 <option value="filos.">filos.</option><option value="folkl.">folkl.</option>
+										 <option value="fot.">fot.</option><option value="füsiol.">füsiol.</option>
+										 <option value="füüs.">füüs.</option><option value="geod.">geod.</option>
+										 <option value="geogr.">geogr.</option><option value="geol.">geol.</option>
+										 <option value="hüdr.">hüdr.</option><option value="info.">info.</option>
+										 <option value="jah.">jah.</option><option value="jur.">jur.</option>
+										 <option value="kal.">kal.</option><option value="keem.">keem.</option>
+										 <option value="ker.">ker.</option><option value="kirikl.">kirikl.</option>
+										 <option value="kirj.">kirj.</option><option value="kul.">kul.</option>
+										 <option value="kunst">kunst</option><option value="lenn.">lenn.</option>
+										 <option value="lgv.">lgv.</option><option value="loog.">loog.</option>
+										 <option value="maj.">maj.</option><option value="mat.">mat.</option>
+										 <option value="med.">med.</option><option value="meh.">meh.</option>
+										 <option value="mer.">mer.</option><option value="mes.">mes.</option>
+										 <option value="meteor.">meteor.</option><option value="mets.">mets.</option>
+										 <option value="min.">min.</option><option value="mull.">mull.</option>
+										 <option value="muus.">muus.</option><option value="mäend.">mäend.</option>
+										 <option value="müt.">müt.</option><option value="nahat.">nahat.</option>
+										 <option value="paberit.">paberit.</option><option value="paleont.">paleont.</option>
+										 <option value="pat.">pat.</option><option value="ped.">ped.</option>
+										 <option value="pol.">pol.</option><option value="psühh.">psühh.</option>
+										 <option value="puidut.">puidut.</option><option value="põll.">põll.</option>
+										 <option value="raad.">raad.</option><option value="raudt.">raudt.</option>
+										 <option value="rel.">rel.</option><option value="side">side</option>
+										 <option value="sotsiol.">sotsiol.</option><option value="sport">sport</option>
+										 <option value="stat.">stat.</option><option value="sõj.">sõj.</option>
+										 <option value="zool.">zool.</option><option value="teater">teater</option>
+										 <option value="teed.">teed.</option><option value="tehn.">tehn.</option>
+										 <option value="tekst.">tekst.</option><option value="trük.">trük.</option>
+										 <option value="vet.">vet.</option>
+										 </select>
                                         <span style="display:none;"><span style="display:none;">
                                             <!--
                                              <label id="SourceLangLabel" for="SourceLang" accesskey="i" >

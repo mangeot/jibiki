@@ -521,8 +521,9 @@ public class AdvancedQueryForm {
         
 		
 		//populate form with non standard indexed CDM elements in the facet list 
+		// disabled because it cannot be controlled when displayed. options cannot be disabled and option names can be unclear
 		XHTMLSelectElement facet = queryDoc.getElementFacet();
-		XHTMLOptionElement templateOption = (XHTMLOptionElement) facet.getLastChild();
+/*		XHTMLOptionElement templateOption = (XHTMLOptionElement) facet.getLastChild();
         Iterator iterCdmElements = fr.imag.clips.papillon.business.dictionary.VolumeCache.getNonStandardCDMElements().iterator();
         while ( iterCdmElements.hasNext() ) {
             String CdmElement = (String)iterCdmElements.next();
@@ -533,7 +534,7 @@ public class AdvancedQueryForm {
 			optionTextTemplate.setData(CdmElement);
 			facet.appendChild(templateOption);
         }
-		
+		*/
 		
         // Populate form with all know target languages
         XHTMLOptionElement targetOption = queryDoc.getElementTargetTmpl();

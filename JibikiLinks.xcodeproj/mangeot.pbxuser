@@ -420,6 +420,13 @@
 			sepNavVisRange = "{5559, 2355}";
 		};
 	};
+	A30722CD0EC89B2100733910 /* AdvancedQueryFormAjax.java */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1484, 2490}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{1853, 2072}";
+		};
+	};
 	A30722CE0EC89B2100733910 /* AdvancedSearch.java */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1660, 3765}}";
@@ -1533,13 +1540,6 @@
 			sepNavVisRange = "{4562, 2671}";
 		};
 	};
-	A319ABCD1290A74F00EF68FC /* AdvancedQueryForm.xhtml */ = {
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1004, 1827}}";
-			sepNavSelRange = "{1999, 0}";
-			sepNavVisRange = "{0, 2992}";
-		};
-	};
 	A319ABDA1290A80900EF68FC /* HomeContent.xhtml */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1194, 1032}}";
@@ -1688,6 +1688,20 @@
 		vrLen = 1375;
 		vrLoc = 5999;
 	};
+	A33F36B71A42B4810030039C /* AdvancedLookup.xhtml */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1020, 855}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 2161}";
+		};
+	};
+	A33F36B81A42B5AB0030039C /* AdvancedQueryForm.xhtml */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1164, 2880}}";
+			sepNavSelRange = "{4635, 0}";
+			sepNavVisRange = "{2283, 4641}";
+		};
+	};
 	A342C4D418456690000397B2 /* DownloadTmpl.xhtml */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {2068, 660}}";
@@ -1819,8 +1833,8 @@
 					PBXFileDataSource_Target_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 439888364;
-			PBXWorkspaceStateSaveDate = 439888364;
+			PBXPerProjectTemplateStateSaveDate = 442909259;
+			PBXWorkspaceStateSaveDate = 442909259;
 		};
 		perUserProjectItems = {
 			A32CBB911A19E1E400B1D65C = A32CBB911A19E1E400B1D65C /* PBXTextBookmark */;
@@ -2256,13 +2270,6 @@
 			sepNavVisRange = "{0, 1097}";
 		};
 	};
-	A3A2ECCB18454A6000785800 /* AdvancedQueryForm.xhtml */ = {
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1004, 1830}}";
-			sepNavSelRange = "{1984, 11}";
-			sepNavVisRange = "{0, 3136}";
-		};
-	};
 	A3A2ECCC18454AB000785800 /* AdvancedQueryForm.xhtml */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1004, 2025}}";
@@ -2427,7 +2434,6 @@
 	};
 	A3E277941A1C6E5600589E6F /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
-		fRef = A3A2ECCB18454A6000785800 /* AdvancedQueryForm.xhtml */;
 		name = "AdvancedQueryForm.xhtml: 42";
 		rLen = 11;
 		rLoc = 1984;
@@ -2457,7 +2463,6 @@
 	};
 	A3E277971A1C6E5600589E6F /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
-		fRef = A319ABCD1290A74F00EF68FC /* AdvancedQueryForm.xhtml */;
 		name = "AdvancedQueryForm.xhtml: 43";
 		rLen = 0;
 		rLoc = 1999;
