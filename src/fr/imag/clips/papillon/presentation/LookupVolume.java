@@ -76,7 +76,7 @@ public class LookupVolume extends AbstractPO {
     
 	protected static final String ALL_STATUS = "*ALL*";
  
-    protected static final int MAX_ENTRIES = 10;
+    protected static final int MAX_HOMOGRAPHS = 50;
 	
 	/* Beware, This feature is Postgresql only!!! */
 	//protected static final String DOLLAR_QUOTING = "$GETA$";
@@ -115,7 +115,7 @@ public class LookupVolume extends AbstractPO {
 			
 			/* initialize response */
 			java.util.Collection EntryCollection = null;
-			org.w3c.dom.Document docResponse = XMLServices.buildDOMTree("<?xml version='1.0' encoding='UTF-8' ?><div id='entries'><script type='text/javascript'><!-- \n\n document.getElementById('EmptyMessage').setAttribute('style','display:none;');\n\n // --></script></div>");
+			org.w3c.dom.Document docResponse = XMLServices.buildDOMTree("<?xml version='1.0' encoding='UTF-8' ?><div id='entries'><script type='text/javascript'><!-- \n\n document.getElementById('EmptyMessage').setAttribute('style','display:none;');\ndocument.getElementById('PrefixLookupMessage').setAttribute('style','display:none;');\n\n // --></script></div>");
 			// Intialize QueryRequest
 			/* volume */
 			String volume = myGetParameter("VOLUME");
@@ -308,7 +308,7 @@ public class LookupVolume extends AbstractPO {
 				Headword[0] = key;
 				Headword[1] = lang;
 				Headword[2] = oneentry;
-				Headword[3] = QueryBuilder.CASE_INSENSITIVE_STARTS_WITH;
+				Headword[3] = QueryBuilder.CASE_INSENSITIVE_EQUAL;
 				myKeys.add(Headword);
 
 				EntryCollection = DictionariesFactory.getDictionaryNameEntriesCollection(myVolume.getDictname(),
@@ -318,18 +318,40 @@ public class LookupVolume extends AbstractPO {
 																			null,
 																			null,
 																			this.getUser(),
-																						 0, MAX_ENTRIES);
+																						 0, MAX_HOMOGRAPHS);
  				if (EntryCollection!=null) {
-					org.w3c.dom.Element rootElement = docResponse.getDocumentElement();
                     /* Opération trop lente ! */
                     /* Headword[3] = QueryBuilder.GREATER_THAN_OR_EQUAL; */
                     java.util.Iterator myIterator = EntryCollection.iterator();
+                    org.w3c.dom.Element prefixLookupElement = null;
+                   if (!myIterator.hasNext()) {
+                        Headword[3] = QueryBuilder.CASE_INSENSITIVE_STARTS_WITH;
+                       EntryCollection = DictionariesFactory.getDictionaryNameEntriesCollection(myVolume.getDictname(),
+                                                                                                 source,
+                                                                                                 targets,
+                                                                                                 myKeys,
+                                                                                                 null,
+                                                                                                 null,
+                                                                                                 this.getUser(),
+                                                                                                 0, 1);
+                       if (EntryCollection!=null) {
+                           myIterator = EntryCollection.iterator();
+                           if (myIterator.hasNext()) {
+                               String prefixLookup = "<?xml version='1.0' encoding='UTF-8' ?><div><script type='text/javascript'><!-- \n\n document.getElementById('PrefixLookupMessage').setAttribute('style','display:block;');\n\n // --></script></div>";
+                               prefixLookupElement = XMLServices.buildDOMTree(prefixLookup).getDocumentElement();
+                           }
+                       }
+                   }
                     if (myIterator.hasNext()) {
+                        org.w3c.dom.Element rootElement = docResponse.getDocumentElement();
                         for (myIterator = EntryCollection.iterator(); myIterator.hasNext(); ) {
 						QueryResult myQueryResult = (QueryResult) myIterator.next();
 						ResultFormatter myResultFormater = ResultFormatterFactory.getFormatter(myQueryResult, null, ResultFormatterFactory.XHTML_DIALECT,null);
 						org.w3c.dom.Element newEntry = (org.w3c.dom.Element)myResultFormater.getFormattedResult(myQueryResult, this.getUser());
 						rootElement.appendChild(docResponse.importNode(newEntry, true));
+                        }
+                        if (prefixLookupElement != null) {
+                            rootElement.appendChild(docResponse.importNode(prefixLookupElement, true));
                         }
                     }
                     else {

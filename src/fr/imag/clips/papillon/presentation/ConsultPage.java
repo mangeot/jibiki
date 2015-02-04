@@ -45,7 +45,7 @@ public class ConsultPage extends DilafBasePO {
 	protected ConsultPageXHTML content = null;
 	protected String volume = null;
     
-    protected static final int MAX_ENTRIES = 10;
+    protected static final int MAX_HOMOGRAPHS = 50;
 
     protected boolean loggedInUserRequired() {
         return false;
@@ -123,7 +123,7 @@ public class ConsultPage extends DilafBasePO {
 				key=Volume.CDM_headword;
 			}			
 		
-			PapillonLogger.writeDebugMsg("ConsultPage: " + action + " volume:" + volume + " WORD: " + word + " KEY: " + key);
+			//PapillonLogger.writeDebugMsg("ConsultPage: " + action + " volume:" + volume + " WORD: " + word + " KEY: " + key);
 			if (action != null && !action.equals("")) {
 				throw new ClientPageRedirectException("Home.po?" + this.getComms().request.getQueryString());
 			}
@@ -156,8 +156,48 @@ public class ConsultPage extends DilafBasePO {
 																					 null,
 																					 null,
 																					 this.getUser(),
-																					 0, MAX_ENTRIES);
-			if (EntryCollection!=null) {
+																					 0, MAX_HOMOGRAPHS);
+                {
+                    /* Opération trop lente ! */
+                    /* Headword[3] = QueryBuilder.GREATER_THAN_OR_EQUAL; */
+                    java.util.Iterator myIterator = EntryCollection.iterator();
+                    org.w3c.dom.Element prefixLookupElement = null;
+                    if (!myIterator.hasNext()) {
+                        Headword[3] = QueryBuilder.CASE_INSENSITIVE_STARTS_WITH;
+                        EntryCollection = DictionariesFactory.getDictionaryNameEntriesCollection(myVolume.getDictname(),
+                                                                                                 source,
+                                                                                                 targets,
+                                                                                                 myKeys,
+                                                                                                 null,
+                                                                                                 null,
+                                                                                                 this.getUser(),
+                                                                                                 0, 1);
+                        if (EntryCollection!=null) {
+                            myIterator = EntryCollection.iterator();
+                            String prefixLookup = "<?xml version='1.0' encoding='UTF-8' ?><div><script type='text/javascript'><!-- \n\n document.getElementById('PrefixLookupMessage').setAttribute('style','display:block;');\n\n // --></script></div>";
+                            prefixLookupElement = XMLServices.buildDOMTree(prefixLookup).getDocumentElement();
+                        }
+                    }
+                    if (myIterator.hasNext()) {
+                        org.w3c.dom.Element rootElement = docResponse.getDocumentElement();
+                        for (myIterator = EntryCollection.iterator(); myIterator.hasNext(); ) {
+                            QueryResult myQueryResult = (QueryResult) myIterator.next();
+                            ResultFormatter myResultFormater = ResultFormatterFactory.getFormatter(myQueryResult, null, ResultFormatterFactory.XHTML_DIALECT,null);
+                            org.w3c.dom.Element newEntry = (org.w3c.dom.Element)myResultFormater.getFormattedResult(myQueryResult, this.getUser());
+                            rootElement.appendChild(docResponse.importNode(newEntry, true));
+                        }
+                        if (prefixLookupElement != null) {
+                            rootElement.appendChild(docResponse.importNode(prefixLookupElement, true));
+                        }
+                    }
+                    else {
+                        PapillonLogger.writeDebugMsg("Pas de réponse!");
+                        String stringResponse = "<?xml version='1.0' encoding='UTF-8' ?><div><script type='text/javascript'><!-- \n\n document.getElementById('EmptyMessage').setAttribute('style','display:block;');\n\n // --></script></div>";
+                        docResponse = XMLServices.buildDOMTree(stringResponse);
+                    }
+                }
+                
+                if (EntryCollection!=null) {
                 java.util.Iterator myIterator = EntryCollection.iterator();
                 /* Opération trop lente ! */
    /*             if (!myIterator.hasNext()) {
@@ -172,6 +212,23 @@ public class ConsultPage extends DilafBasePO {
                                                                                              0, 1);
                 }
                 myIterator = EntryCollection.iterator(); */
+                 if (!myIterator.hasNext()) {
+                     Headword[3] = QueryBuilder.CASE_INSENSITIVE_STARTS_WITH;
+                     EntryCollection = DictionariesFactory.getDictionaryNameEntriesCollection(myVolume.getDictname(),
+                                                                                              source,
+                                                                                              targets,
+                                                                                              myKeys,
+                                                                                              null,
+                                                                                              null,
+                                                                                              this.getUser(),
+                                                                                              0, 1);
+                     if (EntryCollection!=null) {
+                         myIterator = EntryCollection.iterator();
+                         if (myIterator.hasNext()) {
+                             content.getElementPrefixLookupMessage().setAttribute("style","display: block");
+                         }
+                     }
+                 }
                 if (myIterator.hasNext()) {
                     for (myIterator = EntryCollection.iterator(); myIterator.hasNext(); ) {
                     QueryResult myQueryResult = (QueryResult) myIterator.next();
