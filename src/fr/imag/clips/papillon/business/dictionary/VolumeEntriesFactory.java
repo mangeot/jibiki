@@ -601,7 +601,7 @@ public class VolumeEntriesFactory {
 					}
 				}				
 				query.getQueryBuilder().setMaxRows((0 == limit) ? DictionariesFactory.MaxRetrievedEntries : limit);
-				// seems to be a bug in the queryBuilder, have to put a space gefore OFFSET
+				// seems to be a bug in the queryBuilder, have to put a space before OFFSET
 				query.getQueryBuilder().addEndClause(" OFFSET " + offset);
 				if (order==null || !order.equals(ORDER_DESCENDING)) {
 					order = "";

@@ -75,6 +75,8 @@ import java.util.Collection;
 public class LookupVolume extends AbstractPO {
     
 	protected static final String ALL_STATUS = "*ALL*";
+ 
+    protected static final int MAX_ENTRIES = 10;
 	
 	/* Beware, This feature is Postgresql only!!! */
 	//protected static final String DOLLAR_QUOTING = "$GETA$";
@@ -153,16 +155,36 @@ public class LookupVolume extends AbstractPO {
 					
 					// Display result
 					String stringResponse = "<?xml version='1.0' encoding='UTF-8' ?><div class='entries'>";
-					String volumeName = null;
 					
-					if (qrset!=null) {
-						for (java.util.Iterator myIterator = qrset.iterator(); myIterator.hasNext(); ) {
-							Index myIndex = (Index) myIterator.next();
-							if (volumeName==null) {
-								Volume tempVolume = VolumesFactory.getVolumeByIndexDbname(myIndex.getTableName());
-								volumeName = tempVolume.getName();
-							}
-							String entry = "<div class='lookupentry' msort='"+ Utility.encodeXMLEntities(myIndex.getMsort())+"'><a href='javascript:void(0);' style='display:block; margin:5px;' onclick=\"lookupVolume('VOLUME="+volumeName+"&amp;HANDLE="+myIndex.getEntryId()+"');$(this).parent().css('font-weight','bold')\">"+Utility.encodeXMLEntities(myIndex.getValue())+"</a></div>";
+                    String volumeName = null;
+                    Volume theVolume = null;
+                    
+                    if (qrset!=null) {
+                        for (java.util.Iterator myIterator = qrset.iterator(); myIterator.hasNext(); ) {
+                            Index myIndex = (Index) myIterator.next();
+                            if (theVolume == null && volumeName==null) {
+                                theVolume = VolumesFactory.getVolumeByIndexDbname(myIndex.getTableName());
+                                volumeName = theVolume.getName();
+                            }
+                            String displayValue = "";
+                            if (myIndex.getKey().equals(Volume.CDM_headword)) {
+                                displayValue = Utility.encodeXMLEntities(myIndex.getValue());
+                            }
+                            else {
+                                java.util.Collection resultsVector = IndexFactory.getIndexVectorByEntryId(theVolume, myIndex.getEntryId()+"");
+                                String cdmHeadword = "";
+                                java.util.Iterator indexIterator = resultsVector.iterator();
+                                while (cdmHeadword == "" &&  indexIterator.hasNext()) {
+                                    Index myEntry = (Index) indexIterator.next();
+                                    if (myEntry.getKey().equals(Volume.CDM_headword)) {
+                                        cdmHeadword = myEntry.getValue();
+                                    }
+                                }
+                                if (cdmHeadword!="") {
+                                    displayValue = Utility.encodeXMLEntities(cdmHeadword);
+                                }
+                            }
+							String entry = "<div class='lookupentry' msort='"+ Utility.encodeXMLEntities(myIndex.getMsort())+"'><a href='javascript:void(0);' style='display:block; margin:5px;' onclick=\"lookupVolume('VOLUME="+volumeName+"&amp;HANDLE="+myIndex.getEntryId()+"');$(this).parent().css('font-weight','bold')\">"+displayValue+"</a></div>";
 							stringResponse += entry;
 						}
 					}					
@@ -296,7 +318,7 @@ public class LookupVolume extends AbstractPO {
 																			null,
 																			null,
 																			this.getUser(),
-																						 0, 1);
+																						 0, MAX_ENTRIES);
  				if (EntryCollection!=null) {
 					org.w3c.dom.Element rootElement = docResponse.getDocumentElement();
                     /* Opération trop lente ! */

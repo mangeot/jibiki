@@ -67,7 +67,9 @@ public class AdvancedLookup extends DilafBasePO {
 	java.io.IOException,
 	ClassNotFoundException, fr.imag.clips.papillon.business.PapillonBusinessException 
 	{
-		// Création du contenu
+        //PapillonLogger.writeDebugMsg("orig qs:" + this.getComms().request.getQueryString());
+
+        // Création du contenu
 		content =
 		(AdvancedLookupXHTML)MultilingualXHtmlTemplateFactory.createTemplate("AdvancedLookupXHTML", this.getComms(), this.getSessionData());
 		
@@ -126,8 +128,11 @@ public class AdvancedLookup extends DilafBasePO {
 						theVolume = VolumesFactory.getVolumeByIndexDbname(myIndex.getTableName());
 						volumeName = theVolume.getName();
 					}
-                    String displayValue = Utility.encodeXMLEntities(myIndex.getValue());
-                    if (!myIndex.getKey().equals(Volume.CDM_headword)) {
+                    String displayValue = "";
+                    if (myIndex.getKey().equals(Volume.CDM_headword)) {
+                        displayValue = Utility.encodeXMLEntities(myIndex.getValue());
+                    }
+                    else {
                         java.util.Collection resultsVector = IndexFactory.getIndexVectorByEntryId(theVolume, myIndex.getEntryId()+"");
                         String cdmHeadword = "";
                         java.util.Iterator indexIterator = resultsVector.iterator();
@@ -157,7 +162,9 @@ public class AdvancedLookup extends DilafBasePO {
 				int newOffset = qp.getOffset() + qp.getLimit();
 				qp.setOffset(newOffset);
 				org.enhydra.xml.xhtml.dom.XHTMLSpanElement queryString = content.getElementQueryString();
-				queryString.setAttribute("data-query-string",this.getComms().request.getQueryString()+"&OFFSET="+newOffset);
+                String previousQueryString = this.getComms().request.getQueryString();
+                previousQueryString = previousQueryString.replaceAll("&OFFSET=\\d*","");
+				queryString.setAttribute("data-query-string",previousQueryString+"&OFFSET="+newOffset);
 			}
 			
 			//PapillonLogger.writeDebugMsg("stringResponse.length(): "+ stringResponse.length());

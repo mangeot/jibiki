@@ -44,6 +44,8 @@ public class ConsultPage extends DilafBasePO {
 
 	protected ConsultPageXHTML content = null;
 	protected String volume = null;
+    
+    protected static final int MAX_ENTRIES = 10;
 
     protected boolean loggedInUserRequired() {
         return false;
@@ -154,7 +156,7 @@ public class ConsultPage extends DilafBasePO {
 																					 null,
 																					 null,
 																					 this.getUser(),
-																					 0, 1);
+																					 0, MAX_ENTRIES);
 			if (EntryCollection!=null) {
                 java.util.Iterator myIterator = EntryCollection.iterator();
                 /* Opération trop lente ! */
