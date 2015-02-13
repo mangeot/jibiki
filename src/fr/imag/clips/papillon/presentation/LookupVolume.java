@@ -60,8 +60,10 @@ import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
 import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
 import fr.imag.clips.papillon.business.transformation.ResultFormatter;
 import fr.imag.clips.papillon.business.transformation.ResultFormatterFactory;
-import fr.imag.clips.papillon.business.xml.XMLServices;
+import fr.imag.clips.papillon.business.utility.HeadwordComparator;
 import fr.imag.clips.papillon.business.utility.Utility;
+import fr.imag.clips.papillon.business.xml.XMLServices;
+
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -343,7 +345,8 @@ public class LookupVolume extends AbstractPO {
                        }
                    }
                     if (myIterator.hasNext()) {
-                        org.w3c.dom.Element rootElement = docResponse.getDocumentElement();
+                        java.util.Collections.sort((java.util.List) EntryCollection,new HeadwordComparator());
+                       org.w3c.dom.Element rootElement = docResponse.getDocumentElement();
                         for (myIterator = EntryCollection.iterator(); myIterator.hasNext(); ) {
 						QueryResult myQueryResult = (QueryResult) myIterator.next();
 						ResultFormatter myResultFormater = ResultFormatterFactory.getFormatter(myQueryResult, null, ResultFormatterFactory.XHTML_DIALECT,null);
