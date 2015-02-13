@@ -35,6 +35,7 @@ import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
 import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
 import fr.imag.clips.papillon.business.transformation.ResultFormatter;
 import fr.imag.clips.papillon.business.transformation.ResultFormatterFactory;
+import fr.imag.clips.papillon.business.utility.HeadwordComparator;
 import fr.imag.clips.papillon.business.utility.Utility;
 import fr.imag.clips.papillon.business.xml.XMLServices;
 
@@ -190,7 +191,8 @@ public class ConsultPage extends DilafBasePO {
                      }
                  }
                 if (myIterator.hasNext()) {
-                    for (myIterator = EntryCollection.iterator(); myIterator.hasNext(); ) {
+                    java.util.Collections.sort((java.util.List) EntryCollection,new HeadwordComparator());
+                   for (myIterator = EntryCollection.iterator(); myIterator.hasNext(); ) {
                     QueryResult myQueryResult = (QueryResult) myIterator.next();
                     ResultFormatter myResultFormater = ResultFormatterFactory.getFormatter(myQueryResult, null, ResultFormatterFactory.XHTML_DIALECT,null);
                     org.w3c.dom.Element newEntry = (org.w3c.dom.Element)myResultFormater.getFormattedResult(myQueryResult, this.getUser());

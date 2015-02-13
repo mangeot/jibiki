@@ -42,6 +42,7 @@ import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
 import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
 import fr.imag.clips.papillon.business.transformation.ResultFormatter;
 import fr.imag.clips.papillon.business.transformation.ResultFormatterFactory;
+import fr.imag.clips.papillon.business.utility.HeadwordComparator;
 import fr.imag.clips.papillon.business.utility.Utility;
 import fr.imag.clips.papillon.business.xml.XMLServices;
 
@@ -180,6 +181,7 @@ public class AdvancedLookup extends DilafBasePO {
 				EntryCollection = DictionariesFactory.findAnswerAndTranslations(tempVolume.getName(), myIndex.getEntryId()+"", targets, this.getUser());
 				
 				if (EntryCollection!=null) {
+                    java.util.Collections.sort((java.util.List) EntryCollection,new HeadwordComparator());
 					for (java.util.Iterator myIterator = EntryCollection.iterator(); myIterator.hasNext(); ) {
 						QueryResult myQueryResult = (QueryResult) myIterator.next();
 						ResultFormatter myResultFormater = ResultFormatterFactory.getFormatter(myQueryResult, null, ResultFormatterFactory.XHTML_DIALECT,null);
