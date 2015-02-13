@@ -197,9 +197,10 @@ function validAdvancedSearchForm(form) {
                                              <span class="accesskey">I</span>n:</label>
                                              -->
                                             <select id="SourceLang" name="SOURCE">
-                                                <option value="All"  selected="selected" label="Toutes">Toutes</option>
-                                                <option id="SourceOptionTemplate" value="NONE" label="NONE">NONE</option>
-                                                
+                                                <option value="All"  selected="selected">Toutes</option>
+                                            </select>
+                                            <select name="allsources">
+                                                 <option id="SourceOptionTemplate" value="NONE" label="NONE">NONE</option>
                                             </select>
                                         </span></span>
                                     </div>
@@ -209,7 +210,8 @@ function validAdvancedSearchForm(form) {
                                 <div id="TargetLanguagesSelection" style="display: none;">
                                     <b>langues cibles</b><br/>
                                     <select id="Targets" name="TARGETS" multiple="multiple">
-                                        <option id="TargetTmpl" label="Toutes" value="*All*" selected="selected">Toutes</option>
+                                        <option value="*All*" selected="selected">Toutes</option>
+                                        <option id="TargetTmpl" value="*All*">Toutes</option>
                                     </select>
                                 </div>
                                 <input type="submit" value="➡" />
