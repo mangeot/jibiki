@@ -103,8 +103,12 @@ function validAdvancedSearchForm(form) {
                                     <select id="Dictionaries" name="DICTIONARIES" multiple="multiple">
                                         <option id="dictionaryTmpl" label="tous dictionnaires" value="*All*">tous dictionnaires</option>
                                     </select>
-                                    <select style="display:none;" id="Volumes" name="VOLUMES" multiple="multiple">
-                                        <option id="volumeTmpl" label="tous volumes" value="*All*">tous volumes</option>
+                                    <select style="display:none;" id="Volumes" name="VOLUMES">
+                                        <option value="GDEF_est_fra">GDEF_est_fra</option>
+                                       
+                                    </select>
+                                    <select name="templatevolume">
+                                         <option id="volumeTmpl" label="tous volumes" value="*All*">tous volumes</option>
                                     </select>
                                 </div>
                             </td>
@@ -193,9 +197,6 @@ function validAdvancedSearchForm(form) {
                                              <span class="accesskey">I</span>n:</label>
                                              -->
                                             <select id="SourceLang" name="SOURCE">
-                                                <option value="est">estonien</option>
-                                            </select>
-                                            <select name="ALLSOURCES">
                                                 <option id="SourceOptionTemplate" value="NONE" label="NONE">NONE</option>
                                                 <option value="All" label="Toutes">Toutes</option>
                                             </select>
