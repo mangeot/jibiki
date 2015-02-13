@@ -605,7 +605,7 @@ public class AdvancedQueryForm {
         minus.removeAttribute("id");
         plus.removeAttribute("id");
         facet.removeAttribute("id");
-        oper.removeAttribute("id");
+        //oper.removeAttribute("id");
         //valuefield.removeAttribute("id");
         //sourceLangSelectArea.removeAttribute("id");
         //sourceLangLabel.removeAttribute("id");
@@ -650,7 +650,8 @@ public class AdvancedQueryForm {
             AbstractPO.setSelected(oper,"1");
             facet.setAttribute("name", AdvancedQueryFormXHTML.NAME_FACET + ".0");
             oper.setAttribute("name", AdvancedQueryFormXHTML.NAME_OPERATOR + ".0");
-            valuefield.setAttribute("name", AdvancedQueryFormXHTML.NAME_FACETVALUE + ".0");
+            oper.setAttribute("id", "Operator.0");
+           valuefield.setAttribute("name", AdvancedQueryFormXHTML.NAME_FACETVALUE + ".0");
             valuefield.setAttribute("id", "ValueField.0");
             sourceLang.setAttribute("name", AdvancedQueryFormXHTML.NAME_SOURCE + ".0");
             minus.getParentNode().removeChild(minus);
@@ -684,7 +685,8 @@ public class AdvancedQueryForm {
 				}
                 facet.setAttribute("name", AdvancedQueryFormXHTML.NAME_FACET + "." + istr);
                 oper.setAttribute("name", AdvancedQueryFormXHTML.NAME_OPERATOR + "." + istr);
-                valuefield.setAttribute("name", AdvancedQueryFormXHTML.NAME_FACETVALUE + "." + istr);
+                oper.setAttribute("id", "Operator." + istr);
+               valuefield.setAttribute("name", AdvancedQueryFormXHTML.NAME_FACETVALUE + "." + istr);
                 valuefield.setAttribute("id", "ValueField." + istr);
                 sourceLang.setAttribute("name", AdvancedQueryFormXHTML.NAME_SOURCE + "." + istr);
                 minus.setAttribute("id", "minus." + istr);
