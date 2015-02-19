@@ -1123,6 +1123,26 @@
 		A32CBB611A198C9300B1D65C /* AdvancedQueryForm.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AdvancedQueryForm.xmlc; sourceTree = "<group>"; };
 		A32CBB621A198C9F00B1D65C /* AdvancedQueryForm.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdvancedQueryForm.xhtml; sourceTree = "<group>"; };
 		A32CBB631A198C9F00B1D65C /* AdvancedQueryForm.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AdvancedQueryForm.xmlc; sourceTree = "<group>"; };
+		A33095711A9445C60055D557 /* AdvancedLookup.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = AdvancedLookup.xhtml; sourceTree = "<group>"; };
+		A33095721A9445C60055D557 /* AdvancedQueryForm.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = AdvancedQueryForm.xhtml; sourceTree = "<group>"; };
+		A33095731A9445C60055D557 /* AuthorsTmpl.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = AuthorsTmpl.xhtml; sourceTree = "<group>"; };
+		A33095741A9445C60055D557 /* ConsultPage.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = ConsultPage.xhtml; sourceTree = "<group>"; };
+		A33095751A9445C60055D557 /* ContactsContent.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = ContactsContent.xhtml; sourceTree = "<group>"; };
+		A33095761A9445C60055D557 /* HelpContent.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = HelpContent.xhtml; sourceTree = "<group>"; };
+		A33095771A9445C60055D557 /* HomeContent.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = HomeContent.xhtml; sourceTree = "<group>"; };
+		A33095781A9445C60055D557 /* InformationTmpl.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = InformationTmpl.xhtml; sourceTree = "<group>"; };
+		A33095791A9445C60055D557 /* LinkerResultList.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = LinkerResultList.xhtml; sourceTree = "<group>"; };
+		A330957A1A9445C60055D557 /* LinkerSearchForm.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = LinkerSearchForm.xhtml; sourceTree = "<group>"; };
+		A330957B1A9445DD0055D557 /* AdvancedLookup.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = AdvancedLookup.xhtml; sourceTree = "<group>"; };
+		A330957C1A9445DD0055D557 /* AdvancedQueryForm.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = AdvancedQueryForm.xhtml; sourceTree = "<group>"; };
+		A330957D1A9445DD0055D557 /* AuthorsTmpl.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = AuthorsTmpl.xhtml; sourceTree = "<group>"; };
+		A330957E1A9445DD0055D557 /* ConsultPage.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = ConsultPage.xhtml; sourceTree = "<group>"; };
+		A330957F1A9445DD0055D557 /* ContactsContent.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = ContactsContent.xhtml; sourceTree = "<group>"; };
+		A33095801A9445DD0055D557 /* HelpContent.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = HelpContent.xhtml; sourceTree = "<group>"; };
+		A33095811A9445DD0055D557 /* HomeContent.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = HomeContent.xhtml; sourceTree = "<group>"; };
+		A33095821A9445DD0055D557 /* InformationTmpl.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = InformationTmpl.xhtml; sourceTree = "<group>"; };
+		A33095841A9445DD0055D557 /* LinkerResultList.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = LinkerResultList.xhtml; sourceTree = "<group>"; };
+		A33095851A9445DD0055D557 /* LinkerSearchForm.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = LinkerSearchForm.xhtml; sourceTree = "<group>"; };
 		A3376029100241C4002281AF /* MotamotPostUpdateProcessor.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = MotamotPostUpdateProcessor.java; sourceTree = "<group>"; };
 		A33F36B61A4270C00030039C /* ConsultPage.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = ConsultPage.xhtml; sourceTree = "<group>"; };
 		A33F36B71A42B4810030039C /* AdvancedLookup.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = AdvancedLookup.xhtml; sourceTree = "<group>"; };
@@ -2854,8 +2874,18 @@
 		A30726210EC89B2900733910 /* est */ = {
 			isa = PBXGroup;
 			children = (
+				A33095711A9445C60055D557 /* AdvancedLookup.xhtml */,
+				A33095721A9445C60055D557 /* AdvancedQueryForm.xhtml */,
+				A33095731A9445C60055D557 /* AuthorsTmpl.xhtml */,
+				A33095741A9445C60055D557 /* ConsultPage.xhtml */,
+				A33095751A9445C60055D557 /* ContactsContent.xhtml */,
+				A33095761A9445C60055D557 /* HelpContent.xhtml */,
+				A33095771A9445C60055D557 /* HomeContent.xhtml */,
+				A33095781A9445C60055D557 /* InformationTmpl.xhtml */,
 				A307262A0EC89B2900733910 /* Layout.xhtml */,
 				A307262B0EC89B2900733910 /* Layout.xmlc */,
+				A33095791A9445C60055D557 /* LinkerResultList.xhtml */,
+				A330957A1A9445C60055D557 /* LinkerSearchForm.xhtml */,
 				A307262E0EC89B2900733910 /* options.xmlc */,
 			);
 			path = est;
@@ -2864,8 +2894,18 @@
 		A30726330EC89B2900733910 /* fra */ = {
 			isa = PBXGroup;
 			children = (
+				A330957B1A9445DD0055D557 /* AdvancedLookup.xhtml */,
+				A330957C1A9445DD0055D557 /* AdvancedQueryForm.xhtml */,
+				A330957D1A9445DD0055D557 /* AuthorsTmpl.xhtml */,
+				A330957E1A9445DD0055D557 /* ConsultPage.xhtml */,
+				A330957F1A9445DD0055D557 /* ContactsContent.xhtml */,
+				A33095801A9445DD0055D557 /* HelpContent.xhtml */,
+				A33095811A9445DD0055D557 /* HomeContent.xhtml */,
+				A33095821A9445DD0055D557 /* InformationTmpl.xhtml */,
 				A307263E0EC89B2A00733910 /* Layout.xhtml */,
 				A307263F0EC89B2A00733910 /* Layout.xmlc */,
+				A33095841A9445DD0055D557 /* LinkerResultList.xhtml */,
+				A33095851A9445DD0055D557 /* LinkerSearchForm.xhtml */,
 				A30726420EC89B2A00733910 /* options.xmlc */,
 			);
 			path = fra;
