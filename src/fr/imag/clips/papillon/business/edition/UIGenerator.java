@@ -260,12 +260,9 @@ public class UIGenerator {
                 }
                 PapillonLogger.writeDebugMsg("UIGenerator.updateElement On est ici ");
                 Document documentValue = null;
-                //               if (value.indexOf('[')>=0 && value.indexOf('/')>0 && value.indexOf(']')>1) {
                 if (value.indexOf('<')>=0 && value.indexOf('/')>0 && value.indexOf('>')>1) {
-                    String newValue = value.replace('[','<');
-                    newValue = newValue.replace(']','>');
                     try {
-                        documentValue = XMLServices.buildDOMTree("<?xml version='1.0' ?><root>"+newValue+"</root>");
+                        documentValue = XMLServices.buildDOMTree("<?xml version='1.0' ?><root>"+value+"</root>");
                     }
                     catch (Exception ex) {
                     }
@@ -560,12 +557,10 @@ public class UIGenerator {
                     case  Node.ELEMENT_NODE:
                         String contentString = serializeChildren(nodeItem);
                         if (contentString.equals("")) {
-    //                        result += "[" + nodeItem.getNodeName() + "/]";
                             result += "<" + nodeItem.getNodeName() + "/>";
                         }
                         else {
-  //                          result += "[" + nodeItem.getNodeName() + "]" + serializeChildren(nodeItem) + "[/" + nodeItem.getNodeName() + "]";
-                            result += "<" + nodeItem.getNodeName() + ">" + serializeChildren(nodeItem) + "</" + nodeItem.getNodeName() + ">";
+                             result += "<" + nodeItem.getNodeName() + ">" + serializeChildren(nodeItem) + "</" + nodeItem.getNodeName() + ">";
                         }
  
                         break;
