@@ -258,8 +258,30 @@ public class UIGenerator {
                 while(resultElt.hasChildNodes()) {
                     resultElt.removeChild(resultElt.getFirstChild());
                 }
-                Node textNode = resultElt.getOwnerDocument().createTextNode(value);
-                resultElt.appendChild(textNode);
+                PapillonLogger.writeDebugMsg("UIGenerator.updateElement On est ici ");
+                Document documentValue = null;
+                //               if (value.indexOf('[')>=0 && value.indexOf('/')>0 && value.indexOf(']')>1) {
+                if (value.indexOf('<')>=0 && value.indexOf('/')>0 && value.indexOf('>')>1) {
+                    String newValue = value.replace('[','<');
+                    newValue = newValue.replace(']','>');
+                    try {
+                        documentValue = XMLServices.buildDOMTree("<?xml version='1.0' ?><root>"+newValue+"</root>");
+                    }
+                    catch (Exception ex) {
+                    }
+                }
+                if (documentValue != null) {
+                    NodeList myNodeList = documentValue.getDocumentElement().getChildNodes();
+                    for (int i = 0; i < myNodeList.getLength (); i++) {
+                        Node nodeItem = myNodeList.item(i);
+                        resultElt.appendChild(resultElt.getOwnerDocument().importNode(nodeItem,true));
+                    }
+                }
+                else {
+                    Node textNode = resultElt.getOwnerDocument().createTextNode(value);
+                    resultElt.appendChild(textNode);
+                }
+                PapillonLogger.writeDebugMsg("UIGenerator.updateElement On est là ");
                 return true;
             }
         }
@@ -466,7 +488,11 @@ public class UIGenerator {
 			
 			// computing child elements
 			String inputValue = "";
-			if (entryNode.hasChildNodes ()) {
+            boolean found = findCorrespondingTextInput(entryNodeName,itfElt);
+            if (found) {
+                inputValue = serializeChildren(entryNode);
+            }
+            else if (entryNode.hasChildNodes ()) {
 				NodeList myNodeList = entryNode.getChildNodes ();
 				Node previousNode = null;
 				Element correspItf;
@@ -504,15 +530,56 @@ public class UIGenerator {
 					}
 				}
 			}
-			boolean found = setIdValueCorrespondingTextInput(entryNodeName,itfElt, newId, inputValue);
-			if (!found) {
+			boolean valueSet = setIdValueCorrespondingTextInput(entryNodeName,itfElt, newId, inputValue);
+			if (!valueSet) {
 				setIdValueCorrespondingSelect(entryNodeName,itfElt, newId, inputValue);
 			}
-			if (!found) {
+			if (!valueSet) {
 				setIdValueCorrespondingBooleanCheckbox(entryNodeName,itfElt, newId, inputValue);
 			}
 		}
 	}
+    
+    protected static String serializeChildren(Node entryNode) {
+        String result = "";
+        
+        if (entryNode.hasChildNodes ()) {
+            NodeList myNodeList = entryNode.getChildNodes ();
+            Node previousNode = null;
+            Element correspItf;
+            for (int i = 0; i < myNodeList.getLength (); i++) {
+                Node nodeItem = myNodeList.item(i);
+                switch (nodeItem.getNodeType()) {
+                        // an attribute note is not a child node
+                        // so, this case should not be present
+                    case  Node.ATTRIBUTE_NODE:
+                        break;
+                        // this case case should not be present.
+                    case  Node.DOCUMENT_NODE:
+                        break;
+                    case  Node.ELEMENT_NODE:
+                        String contentString = serializeChildren(nodeItem);
+                        if (contentString.equals("")) {
+    //                        result += "[" + nodeItem.getNodeName() + "/]";
+                            result += "<" + nodeItem.getNodeName() + "/>";
+                        }
+                        else {
+  //                          result += "[" + nodeItem.getNodeName() + "]" + serializeChildren(nodeItem) + "[/" + nodeItem.getNodeName() + "]";
+                            result += "<" + nodeItem.getNodeName() + ">" + serializeChildren(nodeItem) + "</" + nodeItem.getNodeName() + ">";
+                        }
+ 
+                        break;
+                    case Node.TEXT_NODE:
+                        result += nodeItem.getNodeValue();
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+        
+        return result;
+    }
 	
 	protected static int getElementNumber(Element entryElt) {
 		Document myDoc = entryElt.getOwnerDocument();
@@ -729,8 +796,54 @@ public class UIGenerator {
 		return found;
 	}
     
+    protected static boolean setIdValueCorrespondingTextInput(String correspName, Element itfElt, String newId, String value) {
+        //PapillonLogger.writeDebugMsg("setIdValueCorrespondingTextInput: " + correspName + " (newId = " + newId + ") (value = " + value + ")");
+        boolean found = false;
+        NodeList myNodeList = itfElt.getElementsByTagName ("input");
+        int i=0;
+        while (i<myNodeList.getLength() && !found) {
+            Element currentElt = (Element) myNodeList.item(i);
+            String name = currentElt.getAttribute("name");
+            if (name !=null && name.equals(correspName)) {
+                String type = currentElt.getAttribute("type");
+                if (type !=null && (type.equals("text") || type.equals("textarea"))) {
+                    currentElt.setAttribute("name", newId);
+                    currentElt.setAttribute("id", newId);
+                    currentElt.setAttribute("value", value);
+                    found = true;
+                }
+            }
+            i++;
+        }
+        if (!found) {
+            myNodeList = itfElt.getElementsByTagName ("textarea");
+            i=0;
+            while (i<myNodeList.getLength() && !found) {
+                Element currentElt = (Element) myNodeList.item(i);
+                String name = currentElt.getAttribute("name");
+                if (name !=null && name.equals(correspName)) {
+                    currentElt.setAttribute("name", newId);
+                    currentElt.setAttribute("id", newId);
+                    NodeList children = currentElt.getChildNodes();
+                    int j=0;
+                    while (j<children.getLength()) {
+                        currentElt.removeChild(children.item(j));
+                        j++;
+                    }
+                    org.w3c.dom.Text textElt = currentElt.getOwnerDocument().createTextNode(value);
+                    currentElt.appendChild(textElt);
+                    found = true;
+                }
+                i++;	
+            }		
+        }
+        return found;
+    }
+    
+
+    
 	
-	protected static boolean setIdValueCorrespondingTextInput(String correspName, Element itfElt, String newId, String value) {
+	protected static boolean findCorrespondingTextInput(String correspName, Element itfElt) {
 		//PapillonLogger.writeDebugMsg("setIdValueCorrespondingTextInput: " + correspName + " (newId = " + newId + ") (value = " + value + ")");
 		boolean found = false;
 		NodeList myNodeList = itfElt.getElementsByTagName ("input");
@@ -741,9 +854,6 @@ public class UIGenerator {
 			if (name !=null && name.equals(correspName)) {
 				String type = currentElt.getAttribute("type");
 				if (type !=null && (type.equals("text") || type.equals("textarea"))) {
-					currentElt.setAttribute("name", newId);
-					currentElt.setAttribute("id", newId);
-					currentElt.setAttribute("value", value);
 					found = true;
 				}
 			}
@@ -756,17 +866,7 @@ public class UIGenerator {
                 Element currentElt = (Element) myNodeList.item(i);
 				String name = currentElt.getAttribute("name");
 				if (name !=null && name.equals(correspName)) {
-                    currentElt.setAttribute("name", newId);
-					currentElt.setAttribute("id", newId);
-					NodeList children = currentElt.getChildNodes();
-					int j=0;
-					while (j<children.getLength()) {
-                        currentElt.removeChild(children.item(j));
-						j++;
-					}
-					org.w3c.dom.Text textElt = currentElt.getOwnerDocument().createTextNode(value);
-					currentElt.appendChild(textElt);
-					found = true;
+ 					found = true;
 				}
 				i++;	
 			}		

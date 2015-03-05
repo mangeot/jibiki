@@ -225,15 +225,15 @@ public class GenerateTemplate {
 				typeName =  baseType.getName();
 			}
 			
-			PapillonLogger.writeDebugMsg("Element: " + elementName);
-			PapillonLogger.writeDebugMsg("Type Name: " + typeName);
+			//PapillonLogger.writeDebugMsg("Element: " + elementName);
+			//PapillonLogger.writeDebugMsg("Type Name: " + typeName);
 			
 			if (baseType instanceof XSSimpleTypeDefinition) {
 				parseSimpleTypeDeclaration (interfaceBuffer,(XSSimpleTypeDefinition) baseType,elementName);
 			}
 			else if (baseType instanceof XSComplexTypeDefinition) {
 				//	interfaceBuffer.write("  <blockquote>\n");	
-				PapillonLogger.writeDebugMsg("Complex type definition");
+				//PapillonLogger.writeDebugMsg("Complex type definition");
 				complexType = (XSComplexTypeDefinition) baseType; 
 				
 				/* Attributes */
@@ -262,7 +262,7 @@ public class GenerateTemplate {
 							parseSimpleTypeDeclaration (interfaceBuffer,simpleTypeDefinition,elementName);
 							//PapillonLogger.writeDebugMsg ("PB in constructComplexType: a simpleTypeDefinition not managed: " + simpleTypeDefinition);
 						}
-							break;
+                        break;
 						
 					case XSComplexTypeDefinition.CONTENTTYPE_MIXED:
 						//		PapillonLogger.writeDebugMsg ("************************CONTENTTYPE_MIXED" );
@@ -278,11 +278,11 @@ public class GenerateTemplate {
 								addStringTypeDefinition(interfaceBuffer, elementName);
 							}
 						}
-							else {
-								// I simulate the content as a string
-								addStringTypeDefinition(interfaceBuffer, elementName);
-							}
-							break;
+                        else {
+                            // I simulate the content as a string
+                            addStringTypeDefinition(interfaceBuffer, elementName);
+                        }
+                        break;
 						
 					case XSComplexTypeDefinition.CONTENTTYPE_ELEMENT:
 						//	PapillonLogger.writeDebugMsg ("************************CONTENTTYPE_ELEMENT" );
@@ -294,7 +294,7 @@ public class GenerateTemplate {
 								// PapillonLogger.writeDebugMsg ("XSModelGroup ");
 								modelGroup = (XSModelGroup) term;
 								if (modelGroup.getCompositor()==XSModelGroup.COMPOSITOR_SEQUENCE) {
-									PapillonLogger.writeDebugMsg ("Compositor sequence");
+									//PapillonLogger.writeDebugMsg ("Compositor sequence");
 									XSObjectList myList = modelGroup.getParticles();
 									for (int j=0;j<myList.getLength();j++) {
 										XSParticle tempParticle = (XSParticle)myList.item(j);
@@ -384,7 +384,7 @@ public class GenerateTemplate {
 		throws java.io.IOException {
 			String typeName = simpleTypeDefinition.getName();
 			String elementNameDisplay = fr.imag.clips.papillon.business.utility.Utility.getLocalTagName(elementName);
-			PapillonLogger.writeDebugMsg("Simple type definition: " + elementName + " type: " + typeName);
+			//PapillonLogger.writeDebugMsg("Simple type definition: " + elementName + " type: " + typeName);
 			interfaceBuffer.write("  <label for='" + elementName + "' >" + elementNameDisplay + ":</label>\n");	
 			// we do not manage all the different types, we can only use a checkbox, a text box and a select
 			// for a closed list, we use a select with a list of options

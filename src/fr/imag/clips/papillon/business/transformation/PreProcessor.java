@@ -23,12 +23,12 @@ import fr.imag.clips.papillon.business.user.User;
 
 
 public class PreProcessor implements ResultPreProcessor {
-    
+
 
     public void transformation(VolumeEntry volumeEntry, User user) throws PapillonBusinessException {
         // Nothing
     }
-    
+
 }
 
 

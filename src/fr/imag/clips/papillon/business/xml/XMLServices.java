@@ -106,14 +106,14 @@ public class XMLServices {
             contentDocument = parser.parse(mySource);
             XMLParsersPool.releaseParser(parser);
         } catch (org.xml.sax.SAXException saxe) {
-            PapillonLogger.writeDebugMsg("buildDOMTree: org.xml.sax.SAXException" + saxe);
+            //PapillonLogger.writeDebugMsg("buildDOMTree: org.xml.sax.SAXException" + saxe);
 			throw new PapillonBusinessException("buildDOMTree: org.xml.sax.SAXException", saxe);
         } catch (java.io.IOException ioe) {
-            PapillonLogger.writeDebugMsg("buildDOMTree: java.io.IOException" + ioe);
+            //PapillonLogger.writeDebugMsg("buildDOMTree: java.io.IOException" + ioe);
  			throw new PapillonBusinessException("buildDOMTree: java.io.IOException", ioe);
        }
         if (null == contentDocument) {
-            PapillonLogger.writeDebugMsg("buildDOMTree: DOCUMENT IS NULL !!!! ");
+            //PapillonLogger.writeDebugMsg("buildDOMTree: DOCUMENT IS NULL !!!! ");
         }
         return contentDocument;
     }

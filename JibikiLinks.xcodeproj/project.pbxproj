@@ -1291,7 +1291,6 @@
 		A37C032B128C62DB0047A982 /* UserLanguageSelect.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UserLanguageSelect.xmlc; sourceTree = "<group>"; };
 		A37C032C128C62DB0047A982 /* UserProfile.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = UserProfile.xhtml; sourceTree = "<group>"; };
 		A37C032E128C62DB0047A982 /* ViewQueryResult.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ViewQueryResult.xhtml; sourceTree = "<group>"; };
-		A37C0330128C73980047A982 /* EditEntryInitFactory.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = EditEntryInitFactory.java; sourceTree = "<group>"; };
 		A386068B1A8C948E00FD081D /* ConsultPage.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = ConsultPage.xhtml; sourceTree = "<group>"; };
 		A386068C1A8C94B800FD081D /* ConsultPage.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = ConsultPage.xhtml; sourceTree = "<group>"; };
 		A386068D1A8C94F700FD081D /* ConsultPage.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = ConsultPage.xhtml; sourceTree = "<group>"; };
@@ -1968,6 +1967,7 @@
 				A30722E10EC89B2100733910 /* DownloadBasePO.java */,
 				A30722E20EC89B2100733910 /* DRI.java */,
 				A30722E30EC89B2100733910 /* EditEntry.java */,
+				A30722FE0EC89B2200733910 /* EditEntryInit.java */,
 				A30722E40EC89B2200733910 /* EditEntryInitFactory.java */,
 				A30722E50EC89B2200733910 /* EditingBasePO.java */,
 				A30722E60EC89B2200733910 /* EditingError.java */,
@@ -1995,8 +1995,6 @@
 				A30722FC0EC89B2200733910 /* LaunchSaxon8bTransformation.java */,
 				A30722FD0EC89B2200733910 /* LexALP.java */,
 				A369D51118AD0E820023314A /* LexalpEditEntryInit.java */,
-				A30722FE0EC89B2200733910 /* EditEntryInit.java */,
-				A37C0330128C73980047A982 /* EditEntryInitFactory.java */,
 				A30722FF0EC89B2200733910 /* LexALPLayout.java */,
 				A30723000EC89B2200733910 /* LexALPLinker.java */,
 				A30723010EC89B2200733910 /* LinkerBasePO.java */,
