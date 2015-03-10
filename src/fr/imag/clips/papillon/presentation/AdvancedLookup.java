@@ -100,18 +100,19 @@ public class AdvancedLookup extends DilafBasePO {
     		//PapillonLogger.writeDebugMsg("---qr advanced is not empty");
 			
 			
-            // Add status criteria
-            ArrayList listStatus = new ArrayList();
             
-			QueryCriteria criteriaStatus = new QueryCriteria();
-			criteriaStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);
-			criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.CLASSIFIED_FINISHED_STATUS);
-			criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.CLASSIFIED_NOT_FINISHED_STATUS);
-			criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.DELETED_STATUS);
-			criteriaStatus.add("lang", QueryCriteria.EQUAL, Volume.DEFAULT_LANG);
-			listStatus.add(criteriaStatus);
-			
-			queryReq.addOrCriteriaList(listStatus);
+            //FIXME: mettre une option sur le volume pour dire s'il est en cours d'édition ou non
+            // Add status criteria
+            /*ArrayList listStatus = new ArrayList();
+             
+             QueryCriteria criteriaStatus = new QueryCriteria();
+             criteriaStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);
+             criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.CLASSIFIED_FINISHED_STATUS);
+             criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.CLASSIFIED_NOT_FINISHED_STATUS);
+             criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.DELETED_STATUS);
+             listStatus.add(criteriaStatus);
+             
+             queryReq.addOrCriteriaList(listStatus);*/
             
             // Perform the request
             Collection qrset = queryReq.findIndex(this.getUser());
@@ -129,25 +130,8 @@ public class AdvancedLookup extends DilafBasePO {
 						theVolume = VolumesFactory.getVolumeByIndexDbname(myIndex.getTableName());
 						volumeName = theVolume.getName();
 					}
-                    String displayValue = "";
-                    if (myIndex.getKey().equals(Volume.CDM_headword)) {
-                        displayValue = Utility.encodeXMLEntities(myIndex.getValue());
-                    }
-                    else {
-                        java.util.Collection resultsVector = IndexFactory.getIndexVectorByEntryId(theVolume, myIndex.getEntryId()+"");
-                        String cdmHeadword = "";
-                        java.util.Iterator indexIterator = resultsVector.iterator();
-                        while (cdmHeadword == "" &&  indexIterator.hasNext()) {
-                            Index myEntry = (Index) indexIterator.next();
-                            if (myEntry.getKey().equals(Volume.CDM_headword)) {
-                                cdmHeadword = myEntry.getValue();
-                            }
-                        }
-                        if (cdmHeadword!="") {
-                            displayValue = Utility.encodeXMLEntities(cdmHeadword);
-                        }
-                    }
-					String entry = "<div class='lookupentry' msort='"+ Utility.encodeXMLEntities(myIndex.getMsort())+"' "+firstEntryStyle+"><a href='javascript:void(0);' style='display:block; margin:5px;' onclick=\"lookupVolume('VOLUME="+volumeName+"&amp;HANDLE="+myIndex.getEntryId()+"');$(this).parent().css('font-weight','bold')\">"+displayValue+"</a></div>";
+                    String displayValue = Utility.encodeXMLEntities(myIndex.getValue());
+ 					String entry = "<div class='lookupentry' msort='"+ Utility.encodeXMLEntities(myIndex.getMsort())+"' "+firstEntryStyle+"><a href='javascript:void(0);' style='display:block; margin:5px;' onclick=\"lookupVolume('VOLUME="+volumeName+"&amp;HANDLE="+myIndex.getEntryId()+"');$(this).parent().css('font-weight','bold')\">"+displayValue+"</a></div>";
                     firstEntryStyle = "";
 					stringResponse += entry;
 				}

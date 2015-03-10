@@ -140,8 +140,9 @@ public class LookupVolume extends AbstractPO {
 				if (!queryReq.isEmpty() && !qf.actionOnFormRequested()) {
 					//PapillonLogger.writeDebugMsg("---qr advanced is not empty");
 					
+                    //FIXME: mettre une option sur le volume pour dire s'il est en cours d'édition ou non
 					// Add status criteria
-					ArrayList listStatus = new ArrayList();
+					/*ArrayList listStatus = new ArrayList();
 					
 					QueryCriteria criteriaStatus = new QueryCriteria();
 					criteriaStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);
@@ -149,8 +150,8 @@ public class LookupVolume extends AbstractPO {
 					criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.CLASSIFIED_NOT_FINISHED_STATUS);
 					criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.DELETED_STATUS);
 					listStatus.add(criteriaStatus);
-					
-					queryReq.addOrCriteriaList(listStatus);
+			
+					queryReq.addOrCriteriaList(listStatus);*/
 					
 					// Perform the request
 					Collection qrset = queryReq.findIndex(this.getUser());

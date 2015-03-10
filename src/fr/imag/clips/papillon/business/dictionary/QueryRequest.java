@@ -82,6 +82,14 @@ import javax.swing.JOptionPane;
             criteriaTree.add(orNode);
         }
         
+        public void addFirstCriteria(QueryCriteria criteria) {
+            
+            // Add to criteriaTree
+            ArrayList orNode = new ArrayList();
+            orNode.add(criteria);
+            criteriaTree.add(0,orNode);
+        }
+        
         //
         public void addOrCriteriaList(ArrayList criteriaList) {
             
@@ -418,7 +426,7 @@ import javax.swing.JOptionPane;
          * @return Index arraylist
          * @exception PapillonBusinessException if database error
          */
-        public ArrayList findIndex(User user)  throws PapillonBusinessException {
+        public ArrayList findIndexNotSorted(User user)  throws PapillonBusinessException {
             try {
                 ArrayList result = new ArrayList();
 				filterVolumes();
@@ -459,7 +467,70 @@ import javax.swing.JOptionPane;
                 throw new PapillonBusinessException("Exception in findIndex() ", ex);
             }
         }
-		
+
+        // select distinct idxgdefestfra.* from idxgdefestfra WHERE key='cdm-headword' AND idxgdefestfra.entryId in (select idxgdefestfra.entryId from idxgdefestfra WHERE key='cdm-example' AND value ilike '%avaldus%') order by msort;
+
+        public ArrayList findIndex(User user)  throws PapillonBusinessException {
+            try {
+                ArrayList result = new ArrayList();
+                filterVolumes();
+                for (Iterator iter = volumes.iterator(); iter.hasNext();) {
+                    Volume volume = (Volume)iter.next();
+                    String volumeIndexDbName = volume.getIndexDbname();
+                    RDBTable tableIndex = new RDBTable(volumeIndexDbName);
+                    RDBColumn entryIdRDB = new RDBColumn( tableIndex, "entryId", false );
+                  
+                    IndexQuery indexQuery = new IndexQuery(volumeIndexDbName, CurrentDBTransaction.get());
+                    indexQuery.getQueryBuilder().distinct();
+
+                    IndexQuery indexSubQuery = new IndexQuery(volumeIndexDbName, CurrentDBTransaction.get());
+ 
+                    //addIndexCriteria(indexSubQuery.getQueryBuilder(), volume.getIndexDbname());
+                    
+                    if (!firstCriteriaKey().equals(Volume.CDM_headword)) {
+                        QueryCriteria criteriaHeadword = new QueryCriteria();
+                        criteriaHeadword.add("key", QueryCriteria.EQUAL, Volume.CDM_headword);
+                        addFirstCriteria(criteriaHeadword);
+                    }
+ 
+                    addIndexCriteria(indexQuery.getQueryBuilder(), volume.getIndexDbname());
+                    
+                    
+                   // indexQuery.getQueryBuilder().addWhereIn(entryIdRDB,indexSubQuery.getQueryBuilder());
+
+                    
+                    // limit/offset and sort
+                    if ((limit != null) && (offset != null) && ((!limit.equals("0")) || (!offset.equals("0")))) {
+                        indexQuery.getQueryBuilder().addEndClause(" LIMIT " + limit + " OFFSET " + offset);
+                    }
+                    indexQuery.getQueryBuilder().addOrderByColumn(IndexFactory.MSORT_FIELD,"");
+                   /*
+                     DISTINCT ON ( expression [, ...] ) keeps only the first row of each set of rows where the given expressions evaluate to equal. [...] Note that the "first row" of each set is unpredictable unless ORDER BY is used to ensure that the desired row appears first. [...] The DISTINCT ON expression(s) must match the leftmost ORDER BY expression(s).
+                     */
+                    // indexQuery.getQueryBuilder().distinct();
+                    
+                    // Debug
+                    if (DEBUG) indexQuery.getQueryBuilder().debug();
+                    //PapillonLogger.writeDebugMsg("findIndex debug");
+                    //indexQuery.getQueryBuilder().debug();
+                    
+                    //
+                    IndexDO[] DOarray = indexQuery.getDOArray();
+                    if (null != DOarray) {
+                        for (int j=0; j < DOarray.length; j++) {
+                            Index tempIndex = new Index(DOarray[j]);
+                            result.add(tempIndex);
+                        }
+                    }
+                }
+                return result;
+                
+            } catch(Exception ex) {
+                throw new PapillonBusinessException("Exception in findIndex() ", ex);
+            }
+        }
+
+        
 		
         /**
          * Find lexies
