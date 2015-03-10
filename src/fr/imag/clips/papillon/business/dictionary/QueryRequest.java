@@ -434,6 +434,10 @@ import javax.swing.JOptionPane;
                         indexQuery.getQueryBuilder().addEndClause(" LIMIT " + limit + " OFFSET " + offset);
                     }
 					indexQuery.getQueryBuilder().addOrderByColumn(IndexFactory.MSORT_FIELD,"");
+                    /*
+                     DISTINCT ON ( expression [, ...] ) keeps only the first row of each set of rows where the given expressions evaluate to equal. [...] Note that the "first row" of each set is unpredictable unless ORDER BY is used to ensure that the desired row appears first. [...] The DISTINCT ON expression(s) must match the leftmost ORDER BY expression(s).
+                     */
+                   // indexQuery.getQueryBuilder().distinct();
 					
                     // Debug
                     if (DEBUG) indexQuery.getQueryBuilder().debug();
