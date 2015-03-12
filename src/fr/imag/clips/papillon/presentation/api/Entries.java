@@ -317,7 +317,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 					langCriteria=Volume.DEFAULT_LANG;
 				}				
 				
-				String[] Words = word.split(",");
+				String[] Words = word.split("|");
 				for (int i=0, len= Words.length; i<len;i++) {
 					String oneWord = Words[i];
 					String criteriaString = "<criteria name='"+criteria+"' strategy='"+strategyString+"' value='"+Utility.encodeXMLEntities(oneWord)+"'>"; 
