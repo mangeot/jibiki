@@ -258,7 +258,6 @@ public class UIGenerator {
                 while(resultElt.hasChildNodes()) {
                     resultElt.removeChild(resultElt.getFirstChild());
                 }
-                PapillonLogger.writeDebugMsg("UIGenerator.updateElement On est ici ");
                 Document documentValue = null;
                 if (value.indexOf('<')>=0 && value.indexOf('/')>0 && value.indexOf('>')>1) {
                     try {
@@ -278,7 +277,6 @@ public class UIGenerator {
                     Node textNode = resultElt.getOwnerDocument().createTextNode(value);
                     resultElt.appendChild(textNode);
                 }
-                PapillonLogger.writeDebugMsg("UIGenerator.updateElement On est là ");
                 return true;
             }
         }

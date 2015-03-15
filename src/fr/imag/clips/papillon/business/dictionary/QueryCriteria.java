@@ -211,9 +211,12 @@ public class QueryCriteria {
 			}
 			resClause += "lang='"+this.lang+"'";
 		}
-		if (this.clause != null) {
-			resClause = this.clause + " AND " + resClause;
+		if (this.clause != null && !resClause.equals("")) {
+            resClause = this.clause + " AND " + resClause;
 		}
+        else if (this.clause != null) {
+            resClause = this.clause;
+        }
 		return resClause;
 	}
 	

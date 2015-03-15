@@ -221,7 +221,7 @@ import javax.swing.JOptionPane;
                             for (int i = 0; i < criteria.size(); i++) {      
                                 RDBColumn columnRDB = new RDBColumn( table, criteria.getColumn(i), false );
                                 query.addWhere(columnRDB, criteria.getValue(i), criteria.getStrategie(i));
-								PapillonLogger.writeDebugMsg("value: " + criteria.getValue(i) + " Strategy: " + criteria.getStrategie(i));
+								//PapillonLogger.writeDebugMsg("value: " + criteria.getValue(i) + " Strategy: " + criteria.getStrategie(i));
                             }
 							query.addWhereCloseParen();
                             if ( iterOr.hasNext() ) { query.addWhereOr(); }
@@ -730,7 +730,7 @@ import javax.swing.JOptionPane;
                         qr = (QueryResult) result.get(result.size()-1);
                     }
                 } else {
-                    throw new PapillonBusinessException("Exception in findLexieHistory() : none or several entries find");
+                    throw new PapillonBusinessException("Exception in findLexieHistory() : none or several entries found");
                 }
                 */
                 

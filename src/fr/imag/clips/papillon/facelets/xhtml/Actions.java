@@ -86,7 +86,7 @@ public class Actions implements fr.imag.clips.papillon.facelets.api.Actions {
             content = (ActionNodesXHTML) 
             MultilingualXHtmlTemplateFactory.createTemplate("ActionNodesXHTML", scomms, sdata);
         } catch (HttpPresentationException e) {
-            throw new PapillonBusinessException("Fail to instanciate XHTML Action Node Template.", e);
+            throw new PapillonBusinessException("Failed to instanciate XHTML Action Node Template.", e);
         }
         
         XHTMLElement actionsNode = content.getElementActionsNode();

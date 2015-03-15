@@ -494,7 +494,7 @@ public class AdvancedQueryForm {
     
     /** Called during form initialization.
         If a user wants to modify the parameters and rebuild the form accordingly,
-        he will have to call this method again.
+        s/he will have to call this method again.
         */
     public void buildFormFromParameters(HttpPresentationComms comms, PapillonSessionData sessionData, QueryParameter qp, boolean showTargets, boolean showQuickSearch) 
         throws com.lutris.appserver.server.httpPresentation.HttpPresentationException
@@ -753,29 +753,31 @@ public class AdvancedQueryForm {
         return i;
     }
     
-    
-    public static String getEncodedUrlForParameter(QueryParameter qp) 
+    // utiliser plutôt & ou &amp; ??? &amp; n'est pas bien décodé par enhydra
+    // HttpServletRequest req.getParameterValues(name)
+
+    public static String getEncodedUrlForParameter(QueryParameter qp)
         throws PapillonBusinessException {
         
         // View
         String url = AdvancedQueryFormXHTML.NAME_XSL + "=" + qp.getXsl();
-        url += "&amp;" + AdvancedQueryFormXHTML.NAME_LIMIT + "=" + qp.getLimit();
-        url += "&amp;" + OFFSET_PARAMETER + "=" + qp.getOffset();
+        url += "&" + AdvancedQueryFormXHTML.NAME_LIMIT + "=" + qp.getLimit();
+        url += "&" + OFFSET_PARAMETER + "=" + qp.getOffset();
         
         // Dictionnaries
         for (Iterator iter = qp.getDictionaries().iterator(); iter.hasNext();) {
             Dictionary dict = (Dictionary)iter.next();
-            url += "&amp;" + AdvancedQueryFormXHTML.NAME_DICTIONARIES  + "=" +  dict.getName();
+            url += "&" + AdvancedQueryFormXHTML.NAME_DICTIONARIES  + "=" +  dict.getName();
         }
         
         // target languages
         for (Iterator iter = qp.getTargets().iterator(); iter.hasNext();) {
-            url += "&amp;" + AdvancedQueryFormXHTML.NAME_TARGETS  + "=" +  (String)iter.next();
+            url += "&" + AdvancedQueryFormXHTML.NAME_TARGETS  + "=" +  (String)iter.next();
         }
         
         // CriteriaS
         List criteria = qp.getCriteria();
-        url+= "&amp;" + AdvancedQueryFormXHTML.NAME_CRITERIA_NB + "=" + criteria.size();
+        url+= "&" + AdvancedQueryFormXHTML.NAME_CRITERIA_NB + "=" + criteria.size();
         
         //
         int i = 0;
@@ -783,13 +785,13 @@ public class AdvancedQueryForm {
             String[] key = (String[])iter.next();    
             
             //
-            url += "&amp;" + AdvancedQueryFormXHTML.NAME_FACET + "." + Integer.toString(i) + "=" + key[0];
+            url += "&" + AdvancedQueryFormXHTML.NAME_FACET + "." + Integer.toString(i) + "=" + key[0];
             if (null != key[1])
-                url += "&amp;" + AdvancedQueryFormXHTML.NAME_SOURCE + "." + Integer.toString(i) + "=" + key[1];
-            url += "&amp;" + AdvancedQueryFormXHTML.NAME_FACETVALUE + "." + Integer.toString(i) + "=" + AbstractPO.myUrlEncode(key[2]);
+                url += "&" + AdvancedQueryFormXHTML.NAME_SOURCE + "." + Integer.toString(i) + "=" + key[1];
+            url += "&" + AdvancedQueryFormXHTML.NAME_FACETVALUE + "." + Integer.toString(i) + "=" + AbstractPO.myUrlEncode(key[2]);
             //int operValue = index(IQuery.QueryBuilderStrategy, key[3]);
             //url += "&" + AdvancedQueryFormXHTML.NAME_OPERATOR + "." + Integer.toString(i) + "=" + Integer.toString(operValue); 
-            url += "&amp;" + AdvancedQueryFormXHTML.NAME_OPERATOR + "." + Integer.toString(i) + "=" + key[3]; 
+            url += "&" + AdvancedQueryFormXHTML.NAME_OPERATOR + "." + Integer.toString(i) + "=" + key[3];
             
             //
             i++;

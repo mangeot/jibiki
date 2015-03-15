@@ -393,7 +393,7 @@ public abstract class AbstractPO
                 for (int i = 0; i < res.length; i++) {
                     byte[] pbytes = res[i].getBytes("ISO-8859-1");
                     res[i] = new String(pbytes, "UTF-8");
-                }
+              }
             }
             return res;
         } catch (java.io.UnsupportedEncodingException e) {
@@ -425,7 +425,7 @@ public abstract class AbstractPO
                 for (int i = 0; i < res.length; i++) {
                     byte[] pbytes = res[i].getBytes("ISO-8859-1");
                     res[i] = new String(pbytes, "UTF-8");
-                }
+                 }
             }
             return res;
         } catch (java.io.UnsupportedEncodingException e) {

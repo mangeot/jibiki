@@ -550,6 +550,114 @@ pre.api {
 .notFinishedEntry {
 	background: #F0F0F0;
 }
+
+/*--------------------------------------*/
+/* éléments du Cesselin */
+/*--------------------------------------*/
+
+
+.vedette-hiragana, .vedette-jpn, .jpn {
+    color: #BC002D;
+}
+
+.vedette-romaji, .romaji {
+    color: D45455;
+}
+
+.vedette-romaji, .vedette-hiragana, .vedette-jpn {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.vedette-ex {
+    /*	color: black; */
+    font-weight: bold;
+}
+
+.étiquettes {
+    /* color: DarkGray;*/
+}
+
+.sens, .fra {
+    color: #002395;
+}
+
+article {
+    display: block;
+    border: 1px solid black;
+    border-radius: 10px;
+    margin: 10px;
+    padding: 10px;
+}
+
+.forme {
+    /*	display: block;*/
+}
+
+.nonvalidejpn, .romaji .pb {
+    background-color: orange;
+}
+
+.nonvalidefra, .sens .pb, .fra .pb {
+    background-color: yellow;
+    margin-left:5px;
+}
+
+.vedette-romaji {
+    padding-right: 10px;
+}
+
+.vedette-jpn {
+    padding: 5px;
+}
+
+.gram {
+    color: black;
+}
+
+.domaine {
+    font-variant: small-caps;
+    color: DarkGray;
+    padding-right: 5px;
+}
+
+.etymologie {
+    padding-right: 5px;
+}
+
+.sens {
+    display: block;
+    margin: 20px;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    border: 1px solid gray;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+ul {
+    margin: 20px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.exemples {
+    /*	font-style: italic; */
+    list-style-type: square;
+}
+
+.exemple {
+    padding: 5px;
+}
+
+.romaji {
+    padding-right: 5px;
+}
+
+.jpn {
+    padding-right: 5px;
+}
+
 	
 /*--------------------------------------*/
 /* CDM elements */
@@ -688,73 +796,63 @@ table.center {
 /* The ISO-639-2/T 3 letter codes */
 
 .ara	{
-	font-family: serif;
 	color: #007A3D;
 	}
 
 .deu	{
-	font-family: sans-serif;
 	color: #993399;
 	}
 
 .eng	{
-	font-family: "Arial", sans-serif;
 	color: #006600;
 	}
 
 .esp	{
-	font-family: sans-serif;
 	color: #FF9900;
 	}
 
 .est	{
-	font-family: sans-serif;
 	color: #FF9911;
 	}
 
 .fra	{
-	font-family: "Helvetica", sans-serif;
-	color: #3366FF;
+	color: #002395;
 	}
 
 .hun	{
-	font-family: sans-serif;
 	color: #660000;
 	}
 
 .ita	{
-	font-family: sans-serif;
 	color: #CC6600;
 	}
 
 .jpn	{
 	/*font-family: "Osaka", sans-serif; */
-	font-family: sans-serif;
-	color: #FF0000;
+	color: #BC002D;
 	}
 
 .lao	{
-	font-family: sans-serif;
 	color: #FF0099;
 	}
 
 .khm {
-	font-family: sans-serif;
 	color: #000099;
 	}
 
+.lat {
+    color:DarkRed;
+}
+
 .msa	{
-	font-family: sans-serif;
 	color: #009900;
 	}
         
 .rus	{
-	font-family: sans-serif;
 	color: #CC0000;
 	}
 
 .tha	{
-	font-family: sans-serif;
 	color: #6600FF;
 	}
 
@@ -768,7 +866,6 @@ table.center {
 	}
 
 .vie	{
-	font-family: sans-serif;
 	color: #CC9900;
 	}
 	
@@ -778,7 +875,6 @@ table.center {
 	}
 	
 .meta	{
-	font-family: sans-serif;
 	color: gray;
 	}
 
