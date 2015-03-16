@@ -487,7 +487,7 @@ import javax.swing.JOptionPane;
  
                     //addIndexCriteria(indexSubQuery.getQueryBuilder(), volume.getIndexDbname());
                     
-                    if (!firstCriteriaKey().equals(Volume.CDM_headword)) {
+                    if (firstCriteriaKey()==null || !firstCriteriaKey().equals(Volume.CDM_headword)) {
                         QueryCriteria criteriaHeadword = new QueryCriteria();
                         criteriaHeadword.add("key", QueryCriteria.EQUAL, Volume.CDM_headword);
                         addFirstCriteria(criteriaHeadword);
@@ -511,8 +511,8 @@ import javax.swing.JOptionPane;
                     
                     // Debug
                     if (DEBUG) indexQuery.getQueryBuilder().debug();
-                    PapillonLogger.writeDebugMsg("findIndex debug");
-                    indexQuery.getQueryBuilder().debug();
+                    //PapillonLogger.writeDebugMsg("findIndex debug");
+                    //indexQuery.getQueryBuilder().debug();
                     
                     //
                     IndexDO[] DOarray = indexQuery.getDOArray();

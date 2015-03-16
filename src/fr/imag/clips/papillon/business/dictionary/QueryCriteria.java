@@ -221,7 +221,8 @@ public class QueryCriteria {
 	}
 	
 	// following BUG311, needed to create clauses
-	private void addClause(String theClause) {
+    // needed also to set the method public
+	public void addClause(String theClause) {
 		if (this.clause != null) {
 			this.clause+= " AND " + theClause;		
 		}

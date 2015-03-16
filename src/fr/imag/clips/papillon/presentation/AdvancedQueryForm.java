@@ -174,7 +174,9 @@ public class AdvancedQueryForm {
     protected static final String actionPatternString = "^(\\+|\\-)([^\\.]+)\\.(\\d+)$";
     protected static Pattern actionPattern = Pattern.compile(actionPatternString);
     protected static Matcher actionMatcher = actionPattern.matcher("");
-    
+    protected static java.util.regex.Pattern quotePattern = java.util.regex.Pattern.compile("'");
+    protected static Matcher quoteMatcher = quotePattern.matcher("");
+   
     QueryParameter qparams;     //FIXME: replace by qrequest
     QueryRequest qrequest;
     ArrayList criteriaList;
@@ -397,7 +399,21 @@ public class AdvancedQueryForm {
                 
                 //
 				if (key != null && !key.equals("")) {
-					criteria.add("key", "=", key);
+
+                    String keyClause = "(";
+                    /* clés multiples */
+                    String[] keynames = key.split("\\|");
+                    for (int j=0;j<keynames.length;j++) {
+                        java.util.regex.Matcher quoteMatcher = quotePattern.matcher(keynames[j]);
+                        String newValue = quoteMatcher.replaceAll("''");
+
+                        keyClause += "key = '" + newValue + "'";
+                        if (j<keynames.length-1) {
+                            keyClause += " OR ";
+                        }
+                    }
+                    keyClause += ")";
+                    criteria.addClause(keyClause);
 				}
 				criteria.add("value", strategy, value);
 				if (language==null) {
