@@ -251,7 +251,7 @@ public class ConsultPage extends DilafBasePO {
 				Headword[2] = word;
 				Headword[3] = strategy;
 				myKeys.add(Headword);
-				//PapillonLogger.writeDebugMsg("ConsultPage: [" + myVolume.getIndexDbname() + "] source: [" + source + "] WORD: [" + word + "] KEY: [" + key + "] strat: [" + strategy + "] order: [" + order + "] limit: [" + limit + "]");
+				PapillonLogger.writeDebugMsg("ConsultPage: [" + myVolume.getIndexDbname() + "] source: [" + source + "] WORD: [" + word + "] KEY: [" + key + "] strat: [" + strategy + "] order: [" + order + "] limit: [" + limit + "]");
 				EntryCollection = IndexFactory.getIndexEntriesVector(myVolume.getIndexDbname(), myKeys, order,limit);
 				String stringResponse = "";
 				if (EntryCollection!=null) {

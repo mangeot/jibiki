@@ -136,6 +136,8 @@
 package fr.imag.clips.papillon.business.dictionary;
 
 import com.lutris.dods.builder.generator.query.QueryBuilder;
+import com.lutris.dods.builder.generator.query.RDBColumn;
+import com.lutris.dods.builder.generator.query.RDBTable;
 import fr.imag.clips.papillon.CurrentDBTransaction;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.PapillonLogger;
@@ -304,31 +306,83 @@ public class IndexFactory {
 				com.lutris.dods.builder.generator.query.RDBColumn keyColumn = IndexDO.getKeyColumn(indexTableName);
 				com.lutris.dods.builder.generator.query.RDBColumn langColumn = IndexDO.getLangColumn(indexTableName);
 				com.lutris.dods.builder.generator.query.RDBColumn valueColumn = IndexDO.getValueColumn(indexTableName);
-				IndexQuery query = new IndexQuery(indexTableName, CurrentDBTransaction.get());
+                IndexQuery query = new IndexQuery(indexTableName, CurrentDBTransaction.get());
 				//fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Index request table: " + indexTableName);
 				
 				if (Keys != null) {
 					for (java.util.Enumeration enumKeys = Keys.elements(); enumKeys.hasMoreElements();) {
 						String[] key = (String[]) enumKeys.nextElement();
 						if (key!=null && key[2] !=null && !key[2].equals("")) {
-							query.getQueryBuilder().addWhere(keyColumn, key[0], QueryBuilder.EQUAL);
-							if (key[1] !=null && !key[1].equals("")) {
-								query.getQueryBuilder().addWhere(langColumn, key[1], QueryBuilder.EQUAL);
-							}
-							if ( key[3] == QueryBuilder.LESS_THAN ||
-								 key[3] == QueryBuilder.LESS_THAN_OR_EQUAL ||
-								 key[3] == QueryBuilder.GREATER_THAN ||
-								 key[3] == QueryBuilder.GREATER_THAN_OR_EQUAL) {
-								//Replace all apostrophes with double apostrophes
-								java.util.regex.Matcher quoteMatcher = quotePattern.matcher(key[2]);
-								String newValue = quoteMatcher.replaceAll("''");
-								
-								query.getQueryBuilder().addWhere(MSORT_FIELD + key[3]+ "multilingual_sort('" + key[1] + "','" + newValue + "')");
-							}
-							else {
-								query.getQueryBuilder().addWhere(valueColumn, key[2],  key[3]);
-							}
-						}
+                            // Est-ce utile ? à tester d'avantage !
+                            if (!key[2].equals(Volume.CDM_headword)) {
+                                query.getQueryBuilder().addWhere(keyColumn,Volume.CDM_headword,QueryBuilder.EQUAL);
+                                
+                                RDBTable tableIndex = new RDBTable(indexTableName);
+                                RDBColumn entryIdRDB = new RDBColumn(tableIndex, "entryId", false );
+                                RDBColumn[] tableIndexRDBList = new RDBColumn[1];
+                                tableIndexRDBList[0] = entryIdRDB;
+                                
+                                QueryBuilder querySearch = new QueryBuilder(tableIndexRDBList);
+
+                                /* clés multiples */
+                                String[] keynames = key[0].split("\\|");
+                                querySearch.addWhereOpenParen();
+                                for (int i=0;i<keynames.length;i++) {
+                                    querySearch.addWhere(keyColumn, keynames[i], QueryBuilder.EQUAL);
+                                    if (i<keynames.length-1) {
+                                        query.getQueryBuilder().addWhereOr();
+                                    }
+                                }
+                                querySearch.addWhereCloseParen();
+                                
+                                if (key[1] !=null && !key[1].equals("")) {
+                                    querySearch.addWhere(langColumn, key[1], QueryBuilder.EQUAL);
+                                }
+                                if ( key[3] == QueryBuilder.LESS_THAN ||
+                                    key[3] == QueryBuilder.LESS_THAN_OR_EQUAL ||
+                                    key[3] == QueryBuilder.GREATER_THAN ||
+                                    key[3] == QueryBuilder.GREATER_THAN_OR_EQUAL) {
+                                    //Replace all apostrophes with double apostrophes
+                                    java.util.regex.Matcher quoteMatcher = quotePattern.matcher(key[2]);
+                                    String newValue = quoteMatcher.replaceAll("''");
+                                    
+                                    querySearch.addWhere(MSORT_FIELD + key[3]+ "multilingual_sort('" + key[1] + "','" + newValue + "')");
+                                }
+                                else {
+                                    querySearch.addWhere(valueColumn, key[2],  key[3]);
+                                }
+                                query.getQueryBuilder().addWhereIn(entryIdRDB,querySearch);
+                             }
+                            else {
+                                /* clés multiples */
+                                String[] keynames = key[0].split("\\|");
+                                query.getQueryBuilder().addWhereOpenParen();
+                                for (int i=0;i<keynames.length;i++) {
+                                    query.getQueryBuilder().addWhere(keyColumn, keynames[i], QueryBuilder.EQUAL);
+                                    if (i<keynames.length-1) {
+                                        query.getQueryBuilder().addWhereOr();
+                                    }
+                                }
+                                query.getQueryBuilder().addWhereCloseParen();
+                                
+                                if (key[1] !=null && !key[1].equals("")) {
+                                    query.getQueryBuilder().addWhere(langColumn, key[1], QueryBuilder.EQUAL);
+                                }
+                                if ( key[3] == QueryBuilder.LESS_THAN ||
+                                    key[3] == QueryBuilder.LESS_THAN_OR_EQUAL ||
+                                    key[3] == QueryBuilder.GREATER_THAN ||
+                                    key[3] == QueryBuilder.GREATER_THAN_OR_EQUAL) {
+                                    //Replace all apostrophes with double apostrophes
+                                    java.util.regex.Matcher quoteMatcher = quotePattern.matcher(key[2]);
+                                    String newValue = quoteMatcher.replaceAll("''");
+                                    
+                                    query.getQueryBuilder().addWhere(MSORT_FIELD + key[3]+ "multilingual_sort('" + key[1] + "','" + newValue + "')");
+                                }
+                                else {
+                                    query.getQueryBuilder().addWhere(valueColumn, key[2],  key[3]);
+                                }
+                            }
+ 						}
 					}
 				}				
 				query.getQueryBuilder().setMaxRows((0 == limit) ? DictionariesFactory.MaxRetrievedEntries : limit);
@@ -374,8 +428,18 @@ public class IndexFactory {
 				com.lutris.dods.builder.generator.query.RDBColumn msortColumn = IndexDO.getMsortColumn(indexTableName);
 				IndexQuery query = new IndexQuery(indexTableName, CurrentDBTransaction.get());
 				
-				query.getQueryBuilder().addWhere(keyColumn, key, QueryBuilder.EQUAL);
-				query.getQueryBuilder().addWhere(msortColumn, msort,  operator);
+                /* clés multiples */
+                String[] keynames = key.split("\\|");
+                query.getQueryBuilder().addWhereOpenParen();
+                for (int i=0;i<keynames.length;i++) {
+                    query.getQueryBuilder().addWhere(keyColumn, keynames[i], QueryBuilder.EQUAL);
+                    if (i<keynames.length-1) {
+                        query.getQueryBuilder().addWhereOr();
+                    }
+                }
+                query.getQueryBuilder().addWhereCloseParen();
+
+                query.getQueryBuilder().addWhere(msortColumn, msort,  operator);
 				
 				query.getQueryBuilder().setMaxRows((0 == limit) ? DictionariesFactory.MaxRetrievedEntries : limit);
 				if (offset!=0) {

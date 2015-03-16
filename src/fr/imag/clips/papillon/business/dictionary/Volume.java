@@ -251,6 +251,7 @@ public class Volume {
     public static final  String CDM_pos = "cdm-pos";
     public static final  String CDM_pronunciation = "cdm-pronunciation";
     public static final  String CDM_definition = "cdm-definition";
+    public static final  String CDM_domain = "cdm-domain";
     public static final  String CDM_templateEntry = "cdm-template-entry";
     public static final  String CDM_translation = "cdm-translation";
     // FIXME: Added by Gilles for distinction between translations in a bilingual dictionary and
@@ -351,7 +352,8 @@ public class Volume {
 		CDM_writing,
 		CDM_pronunciation,
 		CDM_pos,
-		CDM_example,
+        CDM_domain,
+        CDM_example,
 		CDM_idiom,
 		CDM_translation,
 		CDM_translationReflexie,
@@ -392,6 +394,7 @@ public class Volume {
 		CDM_writing,
 		CDM_pronunciation,
 		CDM_pos,
+        CDM_domain,
 		CDM_example,
 		CDM_idiom,
 		CDM_translation,
@@ -430,6 +433,7 @@ public class Volume {
 		CDM_writing,
 		CDM_pronunciation,
 		CDM_pos,
+        CDM_domain,
 		CDM_example,
 		CDM_idiom,
 		// gdef-est elements

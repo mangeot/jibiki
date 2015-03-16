@@ -51,19 +51,22 @@
                     <img id="minus" onclick="addOrRemoveCriterion(this.id, '-');" src="media/minus.jpg" alt="-" width="15"/>
                     <img id="plus" onclick="addOrRemoveCriterion(this.id, '+');" src="media/plus.jpg" alt="+" width="15"/>
                     <select id="Facet" name="FACET" onchange="hideOrNotSourceLang(value, name);" >
-                      <option value="cdm-headword" label="le mot-vedette">le mot-vedette</option>
-                      <option value="cdm-writing" label="le hiragana">le hiragana</option>
-                      <option value="cdm-pos" label="la catégorie">la catégorie</option>
-					  <option value="cdm-translation" label="la traduction">la traduction</option>
-                      <option value="cdm-entry-id" label="l'id de l'entrée">l'ID de l'entrée</option>
+                      <option value="cdm-headword">le mot-vedette</option>
+                      <option value="cdm-reading">le hiragana</option>
+                      <option value="cdm-writing">le romaji</option>
+                      <option value="cdm-pos">la catégorie</option>
+					  <option value="cdm-translation">la traduction</option>
+                      <option value="cdm-entry-id">l'ID de l'entrée</option>
                     </select>
                     <select id="Operator" name="OPERATOR" >
-                      <option value="0" label="est">est</option>
-                      <option value="2" label="comme">comme</option>
-                      <option value="6" label="commence par">commence par</option>
-                      <option value="10" label="plus grand que">plus grand que</option>
-                      <option value="11" label="plus petit que">plus petit que</option>
-                    </select>
+                      <option value="0">est</option>
+                      <option value="2">comme</option>
+                      <option value="6">commence par</option>
+                      <option value="5">finit par</option>
+                     <option value="10">plus grand que</option>
+                      <option value="11">plus petit que</option>
+                      <option value="4">contient</option>
+                   </select>
                     <input type="text" id="ValueField" name="FACETVALUE" size="14" maxlength="128"/>
                     <span style="display:none;"><span style="display:none;">
                         <!--

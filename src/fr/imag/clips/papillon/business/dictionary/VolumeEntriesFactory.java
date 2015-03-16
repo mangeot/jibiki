@@ -350,6 +350,7 @@ import fr.imag.clips.papillon.data.*;
 import fr.imag.clips.papillon.papillon_data.ManageDatabase;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -570,7 +571,17 @@ public class VolumeEntriesFactory {
 							} else {
 								myQueryBuilder.setDatabaseVendor();
 							}
-							myQueryBuilder.addWhere(keyColumn, key[0], QueryBuilder.EQUAL);
+                            /* clés multiples */
+                            String[] keynames = key[0].split("\\|");
+                            myQueryBuilder.addWhereOpenParen();
+                            for (int i=0;i<keynames.length;i++) {
+                                myQueryBuilder.addWhere(keyColumn, keynames[i], QueryBuilder.EQUAL);
+                                if (i<keynames.length-1) {
+                                    myQueryBuilder.addWhereOr();
+                                }
+                            }
+                            myQueryBuilder.addWhereCloseParen();
+                            
 							if ((key[1] ==null || key[1].equals(""))) {
 								if (volume.isSourceLangCDMElement(key[0])) {
 									key[1] = sourceLanguage;
@@ -608,7 +619,7 @@ public class VolumeEntriesFactory {
 				}				
 				query.getQueryBuilder().addOrderByColumn("multilingual_sort('" + sourceLanguage + "',headword)",order);
 				// debug
-				// query.getQueryBuilder().debug();
+				 //query.getQueryBuilder().debug();
                 
 				VolumeEntryDO[] DOarray = query.getDOArray();
 				if (null != DOarray) {

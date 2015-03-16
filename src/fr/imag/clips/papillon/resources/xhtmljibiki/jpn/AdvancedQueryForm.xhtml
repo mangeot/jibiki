@@ -51,18 +51,21 @@
                     <img id="minus" onclick="addOrRemoveCriterion(this.id, '-');" src="media/minus.jpg" alt="-" width="15"/>
                     <img id="plus" onclick="addOrRemoveCriterion(this.id, '+');" src="media/plus.jpg" alt="+" width="15"/>
                     <select id="Facet" name="FACET" onchange="hideOrNotSourceLang(value, name);" >
-                      <option value="cdm-headword" label="見出し語">見出し語</option>
-                      <option value="cdm-writing" label="ひらがな">ひらがな</option>
-                      <option value="cdm-pos" label="品詞">品詞</option>
-                      <option value="cdm-translation" label="翻訳">翻訳</option>
-                       <option value="cdm-entry-id" label="エントリのID">エントリのID</option>
+                      <option value="cdm-headword">見出し語</option>
+                      <option value="cdm-reading">ひらがな</option>
+                      <option value="cdm-writing">ローマ字</option>
+                      <option value="cdm-pos">品詞</option>
+                      <option value="cdm-translation">翻訳</option>
+                       <option value="cdm-entry-id">エントリのID</option>
                      </select>
                     <select id="Operator" name="OPERATOR" >
-                      <option value="0" label="＝">＝</option>
-                      <option value="2" label="似ています">似ています</option>
-                      <option value="6" label="始まる">始まる</option>
-                      <option value="10" label="&gt;">&gt;</option>
-                      <option value="11" label="&lt;">&lt;</option>
+                      <option value="0">＝</option>
+                      <option value="2">似ています</option>
+                      <option value="6">始まる</option>
+                      <option value="5">終わる</option>
+                      <option value="10">&gt;</option>
+                      <option value="11">&lt;</option>
+                      <option value="4">中にある</option>
                     </select>
                     <input type="text" id="ValueField" name="FACETVALUE" size="14" maxlength="128"/>
                     <span style="display:none;"><span style="display:none;">

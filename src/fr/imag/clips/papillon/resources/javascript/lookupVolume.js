@@ -110,7 +110,7 @@ function queryPrefixVolume(word, volume) {
 			load = true;
 			$('#lookupentries').children().remove();
 	var halflimit = Math.floor(limit/2);
-	var key='cdm-headword';
+	var key='cdm-headword|cdm-headwordVariant|cdm-writing|cdm-reading';
 	if (volume=='Motamot_khm_api') {
 		volume='Motamot_khm';
 		key='cdm-pronunciation';
@@ -225,7 +225,7 @@ function queryOneKey (key, value, volume) {
 
 function queryOneEntry (entry, volume) {
 	//On lance la fonction ajax
-	var key='cdm-headword';
+	var key='cdm-headword|cdm-headwordVariant|cdm-writing|cdm-reading';
 	if (volume=='Motamot_khm_api') {
 		volume='Motamot_khm';
 		key='cdm-pronunciation';

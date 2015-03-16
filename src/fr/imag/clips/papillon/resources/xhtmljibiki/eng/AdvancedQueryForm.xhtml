@@ -51,18 +51,21 @@
                     <img id="minus" onclick="addOrRemoveCriterion(this.id, '-');" src="media/minus.jpg" alt="-" width="15"/>
                     <img id="plus" onclick="addOrRemoveCriterion(this.id, '+');" src="media/plus.jpg" alt="+" width="15"/>
                     <select id="Facet" name="FACET" onchange="hideOrNotSourceLang(value, name);" >
-                      <option value="cdm-headword" label="headword">headword</option>
-                      <option value="cdm-writing" label="hiragana">hiragana</option>
-                      <option value="cdm-pos" label="POS">POS</option>
-                       <option value="cdm-translation" label="translation">translation</option>
-                      <option value="cdm-entry-id" label="entry id">entry id</option>
+                      <option value="cdm-headword">headword</option>
+                      <option value="cdm-reading">hiragana</option>
+                      <option value="cdm-writing">romaji</option>
+                      <option value="cdm-pos">POS</option>
+                       <option value="cdm-translation">translation</option>
+                      <option value="cdm-entry-id">entry id</option>
                     </select>
                     <select id="Operator" name="OPERATOR" >
-                      <option value="0" label="is">is</option>
-                      <option value="2" label="like">like</option>
-                      <option value="6" label="starts with">starts with</option>
-                      <option value="10" label="greater than">greater than</option>
-                      <option value="11" label="lower than">lower than</option>
+                      <option value="0">is</option>
+                      <option value="2">like</option>
+                      <option value="6">starts with</option>
+                      <option value="5">ends with</option>
+                      <option value="10">greater than</option>
+                      <option value="11">lower than</option>
+                      <option value="4">contains</option>
                     </select>
                     <input type="text" id="ValueField" name="FACETVALUE" size="14" maxlength="128"/>
                     <span style="display:none;"><span style="display:none;">

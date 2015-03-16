@@ -131,7 +131,7 @@ public class LookupVolume extends AbstractPO {
 			String order = myGetParameter("DIRECTION");
 
 		
-		//PapillonLogger.writeDebugMsg("LookupVolume: action: " + action + " VOLUME: " + volume + " WORD: " + word + " KEY: " + key + " ORDER: " + order);
+		PapillonLogger.writeDebugMsg("LookupVolume: action: " + action + " VOLUME: " + volume + " WORD: " + word + " KEY: " + key + " ORDER: " + order);
 		// advanced lookup
 			if (action!=null && action.equals("advancedLookup")) {
 				if (order!=null && order.equals(IndexFactory.ORDER_ASCENDING)) {
@@ -152,6 +152,26 @@ public class LookupVolume extends AbstractPO {
 					listStatus.add(criteriaStatus);
 			
 					queryReq.addOrCriteriaList(listStatus);*/
+                    
+                    
+  /*                  if (queryReq.firstCriteriaKey().equals(Volume.CDM_headword)) {
+                        ArrayList criteriaList = new ArrayList();
+                        QueryCriteria newCriteria = new QueryCriteria();
+                        newCriteria.add("key", QueryCriteria.EQUAL, Volume.CDM_headwordVariant);
+                        criteriaList.add(newCriteria);
+                        queryReq.addAndCriteriaList(criteriaList);
+                        newCriteria.remove(0);
+                        newCriteria.add("key", QueryCriteria.EQUAL, Volume.CDM_writing);
+                        queryReq.addAndCriteriaList(criteriaList);
+                        newCriteria.remove(0);
+                        newCriteria.add("key", QueryCriteria.EQUAL, Volume.CDM_reading);
+                        queryReq.addAndCriteriaList(criteriaList);
+                        newCriteria.remove(0);
+                        newCriteria.add("key", QueryCriteria.EQUAL, Volume.CDM_pronunciation);
+                        queryReq.addAndCriteriaList(criteriaList);
+                   }
+   */
+                   
 					
 					// Perform the request
 					Collection qrset = queryReq.findIndex(this.getUser());
@@ -307,7 +327,7 @@ public class LookupVolume extends AbstractPO {
 				
 				java.util.Vector myKeys = new java.util.Vector();
 				String[] Headword = new String[4];
-				//PapillonLogger.writeDebugMsg("LookupVolume entry: " + oneentry + " key: " + key);
+				PapillonLogger.writeDebugMsg("LookupVolume entry: " + oneentry + " key: " + key);
 				Headword[0] = key;
 				Headword[1] = lang;
 				Headword[2] = oneentry;
