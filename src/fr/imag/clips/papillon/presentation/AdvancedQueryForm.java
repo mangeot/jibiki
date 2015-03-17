@@ -400,20 +400,26 @@ public class AdvancedQueryForm {
                 //
 				if (key != null && !key.equals("")) {
 
-                    String keyClause = "(";
+                    
                     /* clés multiples */
-                    String[] keynames = key.split("\\|");
-                    for (int j=0;j<keynames.length;j++) {
-                        java.util.regex.Matcher quoteMatcher = quotePattern.matcher(keynames[j]);
-                        String newValue = quoteMatcher.replaceAll("''");
-
-                        keyClause += "key = '" + newValue + "'";
-                        if (j<keynames.length-1) {
-                            keyClause += " OR ";
+                    if (key.indexOf('|')>0) {
+                        String keyClause = "(";
+                        String[] keynames = key.split("\\|");
+                        for (int j=0;j<keynames.length;j++) {
+                            java.util.regex.Matcher quoteMatcher = quotePattern.matcher(keynames[j]);
+                            String newValue = quoteMatcher.replaceAll("''");
+                            
+                            keyClause += "key = '" + newValue + "'";
+                            if (j<keynames.length-1) {
+                                keyClause += " OR ";
+                            }
                         }
+                        keyClause += ")";
+                        criteria.addClause(keyClause);
                     }
-                    keyClause += ")";
-                    criteria.addClause(keyClause);
+                    else {
+                        criteria.add("key", "=", key);
+                    }
 				}
 				criteria.add("value", strategy, value);
 				if (language==null) {
