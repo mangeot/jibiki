@@ -167,6 +167,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 		Volume theVolume = null;
 		org.w3c.dom.Document resultDoc = null;
 		String strategy = getStrategy(strategyString);
+        //PapillonLogger.writeDebugMsg("REST API getEntries: " + dictName + " lang: " + lang + " word: " + word + "criteria: " + criteria + " strategy: " + strategy);
 		if (criteria !=null && criteria.equals("handle")) {
 			if (key==null) {
 				java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
@@ -351,6 +352,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 						}
 					} 
 					else {
+                     //   PapillonLogger.writeDebugMsg("REST API: call IndexFactory.getIndexEntriesVector: theVolume.getIndexDbname()");
 						java.util.Collection resultsVector = IndexFactory.getIndexEntriesVector(theVolume.getIndexDbname(),
 																								myKeys,
 																								IndexFactory.ORDER_DESCENDING,

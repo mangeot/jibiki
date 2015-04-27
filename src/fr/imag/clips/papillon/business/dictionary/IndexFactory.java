@@ -305,16 +305,18 @@ public class IndexFactory {
 			try {
 				com.lutris.dods.builder.generator.query.RDBColumn keyColumn = IndexDO.getKeyColumn(indexTableName);
 				com.lutris.dods.builder.generator.query.RDBColumn langColumn = IndexDO.getLangColumn(indexTableName);
-				com.lutris.dods.builder.generator.query.RDBColumn valueColumn = IndexDO.getValueColumn(indexTableName);
+                com.lutris.dods.builder.generator.query.RDBColumn valueColumn = IndexDO.getValueColumn(indexTableName);
+                com.lutris.dods.builder.generator.query.RDBColumn entryIdColumn = IndexDO.getEntryIdColumn(indexTableName);
                 IndexQuery query = new IndexQuery(indexTableName, CurrentDBTransaction.get());
 				//fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Index request table: " + indexTableName);
 				
 				if (Keys != null) {
 					for (java.util.Enumeration enumKeys = Keys.elements(); enumKeys.hasMoreElements();) {
 						String[] key = (String[]) enumKeys.nextElement();
+                        //PapillonLogger.writeDebugMsg("keys: 0:" + key[0] + " 1:" + key[1]+ " 2:" + key[2]+ " 3:" + key[3]);
 						if (key!=null && key[2] !=null && !key[2].equals("")) {
                             // Est-ce utile ? à tester d'avantage !
-                            if (!key[2].equals(Volume.CDM_headword)) {
+                            if (!key[0].equals(Volume.CDM_headword)) {
                                 query.getQueryBuilder().addWhere(keyColumn,Volume.CDM_headword,QueryBuilder.EQUAL);
                                 
                                 RDBTable tableIndex = new RDBTable(indexTableName);
@@ -323,6 +325,11 @@ public class IndexFactory {
                                 tableIndexRDBList[0] = entryIdRDB;
                                 
                                 QueryBuilder querySearch = new QueryBuilder(tableIndexRDBList);
+                                if (IndexFactory.databaseVendor != null) {
+                                    querySearch.setDatabaseVendor(IndexFactory.databaseVendor);
+                                } else {
+                                    querySearch.setDatabaseVendor();
+                                }
 
                                 /* clés multiples */
                                 String[] keynames = key[0].split("\\|");
@@ -349,9 +356,13 @@ public class IndexFactory {
                                     querySearch.addWhere(MSORT_FIELD + key[3]+ "multilingual_sort('" + key[1] + "','" + newValue + "')");
                                 }
                                 else {
-                                    querySearch.addWhere(valueColumn, key[2],  key[3]);
+                                    java.util.regex.Matcher quoteMatcher = quotePattern.matcher(key[2]);
+                                   String newValue = quoteMatcher.replaceAll("''");
+                                   querySearch.addWhere(valueColumn, key[2],  key[3]);
                                 }
-                                query.getQueryBuilder().addWhereIn(entryIdRDB,querySearch);
+                                querySearch.resetSelectedFields();
+                                querySearch.select(entryIdColumn);
+                               query.getQueryBuilder().addWhereIn(entryIdRDB,querySearch);
                              }
                             else {
                                 /* clés multiples */
@@ -450,7 +461,7 @@ public class IndexFactory {
 				}
 				query.getQueryBuilder().addOrderByColumn(MSORT_FIELD,order);
 				// debug
-				//query.getQueryBuilder().debug();
+				query.getQueryBuilder().debug();
 				
 				IndexDO[] DOarray = query.getDOArray();
 				if (null != DOarray) {
