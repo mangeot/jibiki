@@ -73,7 +73,7 @@ public class JibikiXsltExtension {
     public static String getEntryStatus(String entryid) throws PapillonBusinessException {
         try {
             JibikiContext context = CurrentRequestContext.get();
-            VolumeEntry ve = VolumeEntriesFactory.findEntryByEntryId(((PapillonSessionData) context.get("sessionData")).getUser(),entryid);
+            VolumeEntry ve = VolumeEntriesFactory.findEntryByContributionId(((PapillonSessionData) context.get("sessionData")).getUser(),entryid);
 			
             return ve.getStatus();
         } catch (NullPointerException e) {
@@ -84,7 +84,7 @@ public class JibikiXsltExtension {
 	public static String getEntryGroups(String entryid) throws PapillonBusinessException {
         try {
             JibikiContext context = CurrentRequestContext.get();
-            VolumeEntry ve = VolumeEntriesFactory.findEntryByEntryId(((PapillonSessionData) context.get("sessionData")).getUser(),entryid);
+               VolumeEntry ve = VolumeEntriesFactory.findEntryByContributionId(((PapillonSessionData) context.get("sessionData")).getUser(),entryid);
             return  Utility.getStars(ve.getGroups());
         } catch (NullPointerException e) {
             return "";
@@ -95,7 +95,7 @@ public class JibikiXsltExtension {
 	public static String getEntrySourceLanguage(String entryid) throws PapillonBusinessException {
         try {
             JibikiContext context = CurrentRequestContext.get();
-            VolumeEntry ve = VolumeEntriesFactory.findEntryByEntryId(((PapillonSessionData) context.get("sessionData")).getUser(),entryid);
+            VolumeEntry ve = VolumeEntriesFactory.findEntryByContributionId(((PapillonSessionData) context.get("sessionData")).getUser(),entryid);
 			
             return ve.getSourceLanguage();
         } catch (NullPointerException e) {
@@ -106,7 +106,7 @@ public class JibikiXsltExtension {
 	public static String getEntryHeadword(String entryid) throws PapillonBusinessException {
         try {
             JibikiContext context = CurrentRequestContext.get();
-            VolumeEntry ve = VolumeEntriesFactory.findEntryByEntryId(((PapillonSessionData) context.get("sessionData")).getUser(),entryid);
+                     VolumeEntry ve = VolumeEntriesFactory.findEntryByContributionId(((PapillonSessionData) context.get("sessionData")).getUser(),entryid);
 			
             return ve.getHeadword();
         } catch (NullPointerException e) {
@@ -117,7 +117,7 @@ public class JibikiXsltExtension {
 	public static String getEntryVolume(String entryid) throws PapillonBusinessException {
         try {
             JibikiContext context = CurrentRequestContext.get();
-            VolumeEntry ve = VolumeEntriesFactory.findEntryByEntryId(((PapillonSessionData) context.get("sessionData")).getUser(),entryid);
+            VolumeEntry ve = VolumeEntriesFactory.findEntryByContributionId(((PapillonSessionData) context.get("sessionData")).getUser(),entryid);
 			
             return ve.getVolumeName();
         } catch (NullPointerException e) {
@@ -128,7 +128,7 @@ public class JibikiXsltExtension {
     public static String getEntryModificationAuthor(String entryid) throws PapillonBusinessException {
         try {
             JibikiContext context = CurrentRequestContext.get();
-            VolumeEntry ve = VolumeEntriesFactory.findEntryByEntryId(((PapillonSessionData) context.get("sessionData")).getUser(),entryid);
+            VolumeEntry ve = VolumeEntriesFactory.findEntryByContributionId(((PapillonSessionData) context.get("sessionData")).getUser(),entryid);
 
             return ve.getModificationAuthor();
         } catch (NullPointerException e) {

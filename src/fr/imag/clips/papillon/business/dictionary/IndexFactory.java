@@ -297,8 +297,10 @@ public class IndexFactory {
 		return getIndexEntriesVector(indexTableName, Keys, order, limit,0);
 	}
 
-	
-	public static ArrayList getIndexEntriesVector(String indexTableName, Vector Keys, String order, int limit, int offset) throws PapillonBusinessException {
+    public static ArrayList getIndexEntriesVector(String indexTableName, Vector Keys, String order, int limit, int offset) throws PapillonBusinessException {
+        return getIndexEntriesVector(indexTableName, Keys, null, order, limit, offset);
+    }
+	public static ArrayList getIndexEntriesVector(String indexTableName, Vector Keys, Vector Clauses, String order, int limit, int offset) throws PapillonBusinessException {
         ArrayList theEntries = new ArrayList();
 		
 		if (null != indexTableName) {
@@ -315,8 +317,10 @@ public class IndexFactory {
 						String[] key = (String[]) enumKeys.nextElement();
                         //PapillonLogger.writeDebugMsg("keys: 0:" + key[0] + " 1:" + key[1]+ " 2:" + key[2]+ " 3:" + key[3]);
 						if (key!=null && key[2] !=null && !key[2].equals("")) {
+                           /* clés multiples */
+                          String[] keynames = key[0].split("\\|");
                             // Est-ce utile ? à tester d'avantage !
-                            if (!key[0].equals(Volume.CDM_headword)) {
+                           if (!keynames[0].equals(Volume.CDM_headword)) {
                                 query.getQueryBuilder().addWhere(keyColumn,Volume.CDM_headword,QueryBuilder.EQUAL);
                                 
                                 RDBTable tableIndex = new RDBTable(indexTableName);
@@ -331,17 +335,20 @@ public class IndexFactory {
                                     querySearch.setDatabaseVendor();
                                 }
 
-                                /* clés multiples */
-                                String[] keynames = key[0].split("\\|");
-                                querySearch.addWhereOpenParen();
-                                for (int i=0;i<keynames.length;i++) {
-                                    querySearch.addWhere(keyColumn, keynames[i], QueryBuilder.EQUAL);
-                                    if (i<keynames.length-1) {
-                                        query.getQueryBuilder().addWhereOr();
+                               if (keynames.length>1) {
+                                  querySearch.addWhereOpenParen();
+                                    for (int i=0;i<keynames.length;i++) {
+                                        querySearch.addWhere(keyColumn, keynames[i], QueryBuilder.EQUAL);
+                                        if (i<keynames.length-1) {
+                                            query.getQueryBuilder().addWhereOr();
+                                        }
                                     }
-                                }
-                                querySearch.addWhereCloseParen();
-                                
+                                    querySearch.addWhereCloseParen();
+                               }
+                               else {
+                                   querySearch.addWhere(keyColumn, keynames[0], QueryBuilder.EQUAL);
+                               }
+                               
                                 if (key[1] !=null && !key[1].equals("")) {
                                     querySearch.addWhere(langColumn, key[1], QueryBuilder.EQUAL);
                                 }
@@ -360,21 +367,25 @@ public class IndexFactory {
                                    String newValue = quoteMatcher.replaceAll("''");
                                    querySearch.addWhere(valueColumn, key[2],  key[3]);
                                 }
-                                querySearch.resetSelectedFields();
-                                querySearch.select(entryIdColumn);
+                                //querySearch.resetSelectedFields();
+                                //querySearch.select(entryIdColumn);
                                query.getQueryBuilder().addWhereIn(entryIdRDB,querySearch);
                              }
                             else {
                                 /* clés multiples */
-                                String[] keynames = key[0].split("\\|");
-                                query.getQueryBuilder().addWhereOpenParen();
-                                for (int i=0;i<keynames.length;i++) {
-                                    query.getQueryBuilder().addWhere(keyColumn, keynames[i], QueryBuilder.EQUAL);
-                                    if (i<keynames.length-1) {
-                                        query.getQueryBuilder().addWhereOr();
+                                if (keynames.length>1) {
+                                    query.getQueryBuilder().addWhereOpenParen();
+                                    for (int i=0;i<keynames.length;i++) {
+                                        query.getQueryBuilder().addWhere(keyColumn, keynames[i], QueryBuilder.EQUAL);
+                                        if (i<keynames.length-1) {
+                                            query.getQueryBuilder().addWhereOr();
+                                        }
                                     }
+                                    query.getQueryBuilder().addWhereCloseParen();
                                 }
-                                query.getQueryBuilder().addWhereCloseParen();
+                                else {
+                                    query.getQueryBuilder().addWhere(keyColumn, keynames[0], QueryBuilder.EQUAL);
+                                }
                                 
                                 if (key[1] !=null && !key[1].equals("")) {
                                     query.getQueryBuilder().addWhere(langColumn, key[1], QueryBuilder.EQUAL);
@@ -395,7 +406,24 @@ public class IndexFactory {
                             }
  						}
 					}
-				}				
+				}
+                if (Clauses != null) {
+                    com.lutris.dods.builder.generator.query.QueryBuilder clausesQueryBuilder = new com.lutris.dods.builder.generator.query.QueryBuilder(Columns);
+                    if (IndexFactory.databaseVendor != null) {
+                        clausesQueryBuilder.setDatabaseVendor(IndexFactory.databaseVendor);
+                    } else {
+                        clausesQueryBuilder.setDatabaseVendor();
+                    }
+                    for (java.util.Enumeration enumClauses = Clauses.elements(); enumClauses.hasMoreElements();) {
+                        String clause = (String) enumClauses.nextElement();
+                        clausesQueryBuilder.addWhereOpenParen();
+                        clausesQueryBuilder.addWhere(clause);
+                        clausesQueryBuilder.addWhereCloseParen();
+                    }
+                    clausesQueryBuilder.resetSelectedFields();
+                    clausesQueryBuilder.select(entryIdColumn);
+                    query.getQueryBuilder().addWhereIn(entryIdColumn, clausesQueryBuilder);
+                }
 				query.getQueryBuilder().setMaxRows((0 == limit) ? DictionariesFactory.MaxRetrievedEntries : limit);
 				if (offset!=0) {
 					query.getQueryBuilder().addEndClause("OFFSET " + offset);
@@ -405,7 +433,8 @@ public class IndexFactory {
 				}
 				query.getQueryBuilder().addOrderByColumn(MSORT_FIELD,order);
 				// debug
-				//query.getQueryBuilder().debug();
+               // PapillonLogger.writeDebugMsg("getIndexEntriesVector query debug: ");
+			//	query.getQueryBuilder().debug();
 				
 				IndexDO[] DOarray = query.getDOArray();
 				if (null != DOarray) {
@@ -430,26 +459,55 @@ public class IndexFactory {
 		return getIndexEntriesVector(indexTableName, Volume.CDM_headword, msort, operator, order, limit, offset);
 	}
 
-	public static ArrayList getIndexEntriesVector(String indexTableName, String key, String msort, String operator, String order, int limit, int offset) throws PapillonBusinessException {
+    public static ArrayList getIndexEntriesVector(String indexTableName, String key, String msort, String operator, String order, int limit, int offset) throws PapillonBusinessException {
+        return getIndexEntriesVector(indexTableName, key, null, msort, operator, order, limit, offset);
+    }
+
+    public static ArrayList getIndexEntriesVector(String indexTableName, String key, Vector Clauses, String msort, String operator, String order, int limit, int offset) throws PapillonBusinessException {
         ArrayList theEntries = new ArrayList();
 		
 		if (null != indexTableName) {
 			try {
 				com.lutris.dods.builder.generator.query.RDBColumn keyColumn = IndexDO.getKeyColumn(indexTableName);
 				com.lutris.dods.builder.generator.query.RDBColumn msortColumn = IndexDO.getMsortColumn(indexTableName);
+                com.lutris.dods.builder.generator.query.RDBColumn entryIdColumn = IndexDO.getEntryIdColumn(indexTableName);
 				IndexQuery query = new IndexQuery(indexTableName, CurrentDBTransaction.get());
 				
                 /* clés multiples */
                 String[] keynames = key.split("\\|");
-                query.getQueryBuilder().addWhereOpenParen();
-                for (int i=0;i<keynames.length;i++) {
-                    query.getQueryBuilder().addWhere(keyColumn, keynames[i], QueryBuilder.EQUAL);
-                    if (i<keynames.length-1) {
-                        query.getQueryBuilder().addWhereOr();
+                if (keynames.length>1) {
+                    query.getQueryBuilder().addWhereOpenParen();
+                    for (int i=0;i<keynames.length;i++) {
+                        query.getQueryBuilder().addWhere(keyColumn, keynames[i], QueryBuilder.EQUAL);
+                        if (i<keynames.length-1) {
+                            query.getQueryBuilder().addWhereOr();
+                        }
                     }
+                    query.getQueryBuilder().addWhereCloseParen();
                 }
-                query.getQueryBuilder().addWhereCloseParen();
-
+                else {
+                    query.getQueryBuilder().addWhere(keyColumn, keynames[0], QueryBuilder.EQUAL);
+                }
+  
+                if (Clauses != null) {
+                    com.lutris.dods.builder.generator.query.QueryBuilder clausesQueryBuilder = new com.lutris.dods.builder.generator.query.QueryBuilder(Columns);
+                    if (IndexFactory.databaseVendor != null) {
+                        clausesQueryBuilder.setDatabaseVendor(IndexFactory.databaseVendor);
+                    } else {
+                        clausesQueryBuilder.setDatabaseVendor();
+                    }
+                    for (java.util.Enumeration enumClauses = Clauses.elements(); enumClauses.hasMoreElements();) {
+                        String clause = (String) enumClauses.nextElement();
+                        clausesQueryBuilder.addWhereOpenParen();
+                        clausesQueryBuilder.addWhere(clause);
+                        clausesQueryBuilder.addWhereCloseParen();
+                    }
+                    clausesQueryBuilder.resetSelectedFields();
+                    clausesQueryBuilder.select(entryIdColumn);
+                    query.getQueryBuilder().addWhereIn(entryIdColumn, clausesQueryBuilder);
+                }
+             
+                
                 query.getQueryBuilder().addWhere(msortColumn, msort,  operator);
 				
 				query.getQueryBuilder().setMaxRows((0 == limit) ? DictionariesFactory.MaxRetrievedEntries : limit);
@@ -461,7 +519,8 @@ public class IndexFactory {
 				}
 				query.getQueryBuilder().addOrderByColumn(MSORT_FIELD,order);
 				// debug
-				query.getQueryBuilder().debug();
+                //PapillonLogger.writeDebugMsg("getIndexEntriesVector avec key debug:")
+				//query.getQueryBuilder().debug();
 				
 				IndexDO[] DOarray = query.getDOArray();
 				if (null != DOarray) {

@@ -97,22 +97,24 @@ public class AdvancedLookup extends DilafBasePO {
 			// AdvancedSearch query
         QueryRequest queryReq = qf.getQueryRequest();
  		if (!queryReq.isEmpty() && !qf.actionOnFormRequested()) {
-    		//PapillonLogger.writeDebugMsg("---qr advanced is not empty");
 			
+            //PapillonLogger.writeDebugMsg("---qr advanced is not empty");
 			
             
-            //FIXME: mettre une option sur le volume pour dire s'il est en cours d'édition ou non
-            // Add status criteria
-            /*ArrayList listStatus = new ArrayList();
-             
-             QueryCriteria criteriaStatus = new QueryCriteria();
-             criteriaStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);
-             criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.CLASSIFIED_FINISHED_STATUS);
-             criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.CLASSIFIED_NOT_FINISHED_STATUS);
-             criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.DELETED_STATUS);
-             listStatus.add(criteriaStatus);
-             
-             queryReq.addOrCriteriaList(listStatus);*/
+            //FIXME: mettre une option sur le volume pour dire s'il est en cours d'édition ou non ?            
+            if (!queryReq.isOpenRequest()) {
+                // Add status criteria
+                ArrayList listStatus = new ArrayList();
+                
+                QueryCriteria criteriaStatus = new QueryCriteria();
+                criteriaStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);
+                criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.CLASSIFIED_FINISHED_STATUS);
+                criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.NOT_FINISHED_STATUS);
+                criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.DRAFT_STATUS);
+                listStatus.add(criteriaStatus);
+                
+                queryReq.addOrCriteriaList(listStatus);
+            }
             
             // Perform the request
             Collection qrset = queryReq.findIndex(this.getUser());

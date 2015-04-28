@@ -296,7 +296,7 @@ public class IndexEntry {
                                                       HashMap CdmElementsTable, org.apache.xml.utils.PrefixResolver thePrefixResolver)
             throws PapillonBusinessException {
         org.w3c.dom.NodeList resNodeList = null;
-        // fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getCdmElements: " + CdmElement + " " + lang);
+        //fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getCdmElements: " + CdmElement + " " + lang);
         if (lang != null && !lang.equals("") && CdmElementsTable != null) {
             java.util.HashMap tmpTable = (java.util.HashMap) CdmElementsTable.get(lang);
             if (tmpTable != null) {
@@ -306,13 +306,13 @@ public class IndexEntry {
                     myXPath = (org.apache.xpath.XPath) myArrayList.get(2);
 					resNodeList = getNodeListFromXPath(myEntryDOM.getDocumentElement(), myXPath, thePrefixResolver);
                  } else {
-                    //fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getCdmElements: ArrayList: null for CdmElement: " + CdmElement + " lang: " + lang);
+                    fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getCdmElements: ArrayList: null for CdmElement: " + CdmElement + " lang: " + lang);
                 }
             } else {
-                //fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getCdmElements: " + CdmElement + " tmpTable == null for lang: " + lang);
+                fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getCdmElements: " + CdmElement + " tmpTable == null for lang: " + lang);
             }
         } else {
-            //fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getCdmElements: " + CdmElement + " CdmElementsTable == null");
+            fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getCdmElements: " + CdmElement + " CdmElementsTable == null");
         }
         return resNodeList;
     }
@@ -417,9 +417,10 @@ public class IndexEntry {
 
     public static void setCdmElement(IAnswer myEntry, String CdmElement, String value, String lang)
             throws PapillonBusinessException {
-        //fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("setCdmElement: " + CdmElement + " value: " + value);
+      // fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("setCdmElement: " + CdmElement + " value: " + value + " lang:" + lang);
         org.w3c.dom.Node eltNode = getCdmElement(myEntry, CdmElement, lang);
         if (eltNode != null) {
+           // PapillonLogger.writeDebugMsg("setCdmElement: eltNode != null, append");
             org.w3c.dom.Node textNode = eltNode.getOwnerDocument().createTextNode(value);
             if (eltNode.hasChildNodes()) {
                 org.w3c.dom.NodeList childNodes = eltNode.getChildNodes();
@@ -428,6 +429,9 @@ public class IndexEntry {
                 }
             }
             eltNode.appendChild(textNode);
+        }
+        else {
+         //   PapillonLogger.writeDebugMsg("setCdmElement: eltNode == null");
         }
     }
 

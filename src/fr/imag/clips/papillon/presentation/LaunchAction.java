@@ -114,6 +114,7 @@ public class LaunchAction extends PapillonBasePO {
                 VolumeEntry volumeEntry = VolumeEntriesFactory.findEntryByHandle(volumeName, entryHandle);
                     
                 //
+                PapillonLogger.writeDebugMsg("LaunchAction UNDO_ACTION call undoFinish");
                 VolumeEntry previousVolumeEntry = volumeEntry.undoFinish();
                 
                 //

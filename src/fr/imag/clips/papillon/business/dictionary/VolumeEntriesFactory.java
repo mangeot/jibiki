@@ -573,14 +573,20 @@ public class VolumeEntriesFactory {
 							}
                             /* clés multiples */
                             String[] keynames = key[0].split("\\|");
-                            myQueryBuilder.addWhereOpenParen();
-                            for (int i=0;i<keynames.length;i++) {
-                                myQueryBuilder.addWhere(keyColumn, keynames[i], QueryBuilder.EQUAL);
-                                if (i<keynames.length-1) {
-                                    myQueryBuilder.addWhereOr();
+                            
+                            if (keynames.length>1) {
+                                myQueryBuilder.addWhereOpenParen();
+                                for (int i=0;i<keynames.length;i++) {
+                                    myQueryBuilder.addWhere(keyColumn, keynames[i], QueryBuilder.EQUAL);
+                                    if (i<keynames.length-1) {
+                                        myQueryBuilder.addWhereOr();
+                                    }
                                 }
+                                myQueryBuilder.addWhereCloseParen();
                             }
-                            myQueryBuilder.addWhereCloseParen();
+                            else {
+                                myQueryBuilder.addWhere(keyColumn, keynames[0], QueryBuilder.EQUAL);
+                            }
                             
 							if ((key[1] ==null || key[1].equals(""))) {
 								if (volume.isSourceLangCDMElement(key[0])) {
@@ -607,10 +613,27 @@ public class VolumeEntriesFactory {
 							}
 							myQueryBuilder.resetSelectedFields();
 							myQueryBuilder.select(entryidColumn);
-							query.getQueryBuilder().addWhereIn(objectidColumn, myQueryBuilder);
+ 							query.getQueryBuilder().addWhereIn(objectidColumn, myQueryBuilder);
 						}
-					}
-				}				
+                        if (Clauses != null) {
+                            com.lutris.dods.builder.generator.query.QueryBuilder clausesQueryBuilder = new com.lutris.dods.builder.generator.query.QueryBuilder(Columns);
+                            if (IndexFactory.databaseVendor != null) {
+                                clausesQueryBuilder.setDatabaseVendor(IndexFactory.databaseVendor);
+                            } else {
+                                clausesQueryBuilder.setDatabaseVendor();
+                            }
+                            for (java.util.Enumeration enumClauses = Clauses.elements(); enumClauses.hasMoreElements();) {
+                                String clause = (String) enumClauses.nextElement();
+                                clausesQueryBuilder.addWhereOpenParen();
+                                clausesQueryBuilder.addWhere(clause);
+                                clausesQueryBuilder.addWhereCloseParen();
+                            }
+                            clausesQueryBuilder.resetSelectedFields();
+                            clausesQueryBuilder.select(entryidColumn);
+                            query.getQueryBuilder().addWhereIn(objectidColumn, clausesQueryBuilder);
+                        }
+ 					}
+				}
 				query.getQueryBuilder().setMaxRows((0 == limit) ? DictionariesFactory.MaxRetrievedEntries : limit);
 				// seems to be a bug in the queryBuilder, have to put a space before OFFSET
 				query.getQueryBuilder().addEndClause(" OFFSET " + offset);
@@ -619,7 +642,8 @@ public class VolumeEntriesFactory {
 				}				
 				query.getQueryBuilder().addOrderByColumn("multilingual_sort('" + sourceLanguage + "',headword)",order);
 				// debug
-				 //query.getQueryBuilder().debug();
+                //PapillonLogger.writeDebugMsg("getDbTableEntriesVector query debug:");
+				// query.getQueryBuilder().debug();
                 
 				VolumeEntryDO[] DOarray = query.getDOArray();
 				if (null != DOarray) {
@@ -1186,6 +1210,12 @@ public class VolumeEntriesFactory {
                 query.requireUniqueInstance();
                 theVolumeEntryDO = query.getNextDO();
                 theEntry = new VolumeEntry(myDict, myVolume,theVolumeEntryDO);
+                // Put entry in cache
+                // Add the volume entry in the request context.
+                CurrentRequestContext.get().set(theEntry.getEntryId(), theEntry);
+                CurrentRequestContext.get().set(theEntry.getContributionId(), theEntry);
+             //   EntryCache.putEntryInCache(theEntry);
+
                 return theEntry;
             } catch(Exception ex) {
 				return theEntry;
@@ -1329,7 +1359,8 @@ public class VolumeEntriesFactory {
                     }
                 }
             }
-            CurrentRequestContext.get().set(entryId, resultEntry);
+    //        CurrentRequestContext.get().set(entryId, resultEntry);
+            CurrentRequestContext.get().set(resultEntry.getContributionId(), resultEntry);
         } else {
             //PapillonLogger.writeDebugMsg("Found it in request context.");
         }
@@ -1521,19 +1552,19 @@ throws PapillonBusinessException {
         // Status : find last contribution (finished ou not finished)
         // donc on les veut toutes ?
         ArrayList listStatus = new ArrayList();
-   /*     QueryCriteria criteriaFinishedStatus = new QueryCriteria();
+       QueryCriteria criteriaFinishedStatus = new QueryCriteria();
         criteriaFinishedStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);  
         criteriaFinishedStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.FINISHED_STATUS);
         listStatus.add(criteriaFinishedStatus);
-        QueryCriteria criteriaNFStatus = new QueryCriteria();
+   /*     QueryCriteria criteriaNFStatus = new QueryCriteria();
         criteriaNFStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);  
         criteriaNFStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.NOT_FINISHED_STATUS);
         listStatus.add(criteriaNFStatus);
         QueryCriteria criteriaDeletedStatus = new QueryCriteria();
         criteriaDeletedStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);  
         criteriaDeletedStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.DELETED_STATUS);
-        listStatus.add(criteriaDeletedStatus);
-        queryReq.addOrCriteriaList(listStatus);*/
+        listStatus.add(criteriaDeletedStatus);*/
+        queryReq.addOrCriteriaList(listStatus);
 		
         //
         ArrayList qrset = queryReq.findLexie(user);
@@ -1557,6 +1588,53 @@ throws PapillonBusinessException {
     
     return resultEntry;
 }
+
+    /**
+     * Find Entry by contribution Id
+     *
+     *
+     */
+    public static VolumeEntry findEntryByContributionId(User user, String entryId)
+    throws PapillonBusinessException {
+        return findEntryByContributionId(user, VolumesFactory.getVolumesArray(), entryId);
+    }
+
+    protected static VolumeEntry findEntryByContributionId(User user, Collection volumes, String entryId)
+    throws PapillonBusinessException {
+        //PapillonLogger.writeDebugMsg("findEntryByContributionId " + entryId + " in " + volumes.size() + " volumes");
+        //FIXME: an entry id may not be unique externally to a dictionary so the dict must be specified
+        VolumeEntry resultEntry = (VolumeEntry) CurrentRequestContext.get().get(entryId);
+        
+        if (null == resultEntry && entryId != null && !entryId.equals("")) {
+            
+            // FIXME ... Add dictionary in QueryRequest class
+            QueryRequest queryReq = new QueryRequest(volumes);
+            
+            // Entry Id
+            QueryCriteria criteriaSearch = new QueryCriteria();
+            criteriaSearch.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionId);
+            criteriaSearch.add("value", QueryCriteria.EQUAL, entryId);
+            queryReq.addCriteria(criteriaSearch);
+            
+            //
+            ArrayList qrset = queryReq.findLexie(user);
+            
+            //
+            if (qrset.size() == 1) {
+                resultEntry = ((QueryResult) qrset.get(0)).getSourceEntry();
+            } else if (qrset.size() < 1) {
+                PapillonLogger.writeDebugMsg("Error, 0 entry found: " + entryId);
+            } else if (qrset.size() > 1) {
+                resultEntry = ((QueryResult) qrset.get(0)).getSourceEntry();
+                PapillonLogger.writeDebugMsg("Error, too many entries found: " + entryId);
+            }
+            
+            CurrentRequestContext.get().set(entryId, resultEntry);
+        } else {
+          //  PapillonLogger.writeDebugMsg("Found it in request context.");
+        }
+        return resultEntry;
+    }
 
 
 
@@ -1587,8 +1665,44 @@ protected static VolumeEntry findEntryByContributionId(Dictionary myDict, Volume
 throws PapillonBusinessException {
     return findEntryByKey(myDict, myVolume, Volume.CDM_contributionId, Volume.DEFAULT_LANG, entryId);
 }
+    
+    /**
+     * The findEntriesByOriginalContributionId method performs a database query to
+     * return a collection of VolumeEntries
+     *
+     * @param id, the object id of the entries table.
+     * @return the corresponding VolumeEntry
+     * @exception PapillonBusinessException
+     *    if there is a problem retrieving message.
+     */
 
-public static VolumeEntry newEntryFromExisting(VolumeEntry existingEntry) 
+
+public static java.util.Vector findEntriesByOriginalContributionId(VolumeEntry existingEntry)
+throws fr.imag.clips.papillon.business.PapillonBusinessException {
+    
+    java.util.Vector myKeys = new java.util.Vector();
+    String[] origContribId = new String[4];
+    origContribId[0] = Volume.CDM_originalContributionId;
+    origContribId[1] = Volume.DEFAULT_LANG;
+    origContribId[2] = existingEntry.getOriginalContributionId();
+    origContribId[3] = QueryBuilder.EQUAL;
+    myKeys.add(origContribId);
+    
+    String[] StatusNotFinished = new String[4];
+    StatusNotFinished[0] = Volume.CDM_contributionStatus;
+    StatusNotFinished[1] = Volume.DEFAULT_LANG;
+    StatusNotFinished[2] = VolumeEntry.NOT_FINISHED_STATUS;
+    StatusNotFinished[3] = QueryBuilder.NOT_EQUAL;
+    myKeys.add(StatusNotFinished);
+    String[] StatusDraft = (String[]) StatusNotFinished.clone();
+    StatusDraft[2] = VolumeEntry.DRAFT_STATUS;
+    myKeys.add(StatusDraft);
+    
+    return getDbTableEntriesVector(existingEntry.getDictionary(), existingEntry.getVolume(), myKeys, null, "", "", 0, 0);
+    
+  }
+  
+  public static VolumeEntry newEntryFromExisting(VolumeEntry existingEntry) 
 throws fr.imag.clips.papillon.business.PapillonBusinessException {
     VolumeEntry resEntry = new VolumeEntry(existingEntry.getDictionary(), existingEntry.getVolume());
     //dom avant toute chose !
@@ -1603,7 +1717,8 @@ throws fr.imag.clips.papillon.business.PapillonBusinessException {
     return resEntry;
 }
 
-public static VolumeEntry createEmptyEntry(String volume) 
+
+public static VolumeEntry createEmptyEntry(String volume)
 throws fr.imag.clips.papillon.business.PapillonBusinessException {
     VolumeEntry myEntry = null;
     Volume myVolume = VolumesFactory.getVolumeByName(volume);
@@ -1784,6 +1899,7 @@ public static Collection getVolumeEntries(Volume volume, int offset, int limit) 
 public static String normalizeValue(String value) {
     
     //
+    if (value != null) {
     String patternStr = "(\n|\r|\t|[ ])+";
     String replaceStr = " ";
     Pattern pattern = Pattern.compile(patternStr);
@@ -1804,7 +1920,10 @@ public static String normalizeValue(String value) {
     matcher = pattern.matcher(value);
     value = matcher.replaceAll(replaceStr);
     //PapillonLogger.writeDebugMsg("updateElement: normalized value: " + value);
-    
+    }
+    else {
+        value="";
+    }
     //
     return value;
 }

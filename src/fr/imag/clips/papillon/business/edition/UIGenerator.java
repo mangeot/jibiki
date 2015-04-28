@@ -101,10 +101,12 @@ package fr.imag.clips.papillon.business.edition;
 import java.util.Vector;
 
 // internal imports
+import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory;
 import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
 import fr.imag.clips.papillon.business.xml.XMLServices;
+
 
 // DOM elements
 import org.w3c.dom.Attr;
@@ -230,12 +232,21 @@ public class UIGenerator {
 	
 	
 	// Update an element in the XML entry entryElt with the new value value
-	public static boolean updateElement(String elementId, String value, Element entryElt) {
-		//PapillonLogger.writeDebugMsg("updateElement: " + elementId + " value: " + value);	
+	public static boolean updateElement(String elementId, String value, Element entryElt)
+    throws PapillonBusinessException {
 
         // Normalized value
         value = VolumeEntriesFactory.normalizeValue(value);
-	        
+        
+        //convert element name into UTF-8
+        try {
+            byte[] pbytes = elementId.getBytes("ISO-8859-1");
+            elementId = new String(pbytes, "UTF-8");
+          } catch (java.io.UnsupportedEncodingException e) {
+            throw new PapillonBusinessException("UTF-8 encoding is not supported on this plateform.", e);
+        }
+
+ 
         //
         attributeMatcher.reset(elementId);
         nodeMatcher.reset(elementId);
@@ -245,7 +256,8 @@ public class UIGenerator {
             String tagNum = attributeMatcher.group(2);
             String attributeName = attributeMatcher.group(3);
             Element resultElt = findElementInEntry(tagName, tagNum, entryElt);
-            if (resultElt!=null) { 
+            if (resultElt!=null) {
+                // PapillonLogger.writeDebugMsg("updateElement: " + elementId + " call setAttribute " + attributeName + " value: [" + value + "]");
                 resultElt.setAttribute(attributeName,value);
                 return true;
             }

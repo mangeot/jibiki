@@ -131,7 +131,7 @@ public class LookupVolume extends AbstractPO {
 			String order = myGetParameter("DIRECTION");
 
 		
-		PapillonLogger.writeDebugMsg("LookupVolume: action: " + action + " VOLUME: " + volume + " WORD: " + word + " KEY: " + key + " ORDER: " + order);
+	//	PapillonLogger.writeDebugMsg("LookupVolume: action: " + action + " VOLUME: " + volume + " WORD: " + word + " KEY: " + key + " ORDER: " + order);
 		// advanced lookup
 			if (action!=null && action.equals("advancedLookup")) {
 				if (order!=null && order.equals(IndexFactory.ORDER_ASCENDING)) {
@@ -140,38 +140,20 @@ public class LookupVolume extends AbstractPO {
 				if (!queryReq.isEmpty() && !qf.actionOnFormRequested()) {
 					//PapillonLogger.writeDebugMsg("---qr advanced is not empty");
 					
-                    //FIXME: mettre une option sur le volume pour dire s'il est en cours d'édition ou non
-					// Add status criteria
-					/*ArrayList listStatus = new ArrayList();
-					
-					QueryCriteria criteriaStatus = new QueryCriteria();
-					criteriaStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);
-					criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.CLASSIFIED_FINISHED_STATUS);
-					criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.CLASSIFIED_NOT_FINISHED_STATUS);
-					criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.DELETED_STATUS);
-					listStatus.add(criteriaStatus);
-			
-					queryReq.addOrCriteriaList(listStatus);*/
-                    
-                    
-  /*                  if (queryReq.firstCriteriaKey().equals(Volume.CDM_headword)) {
-                        ArrayList criteriaList = new ArrayList();
-                        QueryCriteria newCriteria = new QueryCriteria();
-                        newCriteria.add("key", QueryCriteria.EQUAL, Volume.CDM_headwordVariant);
-                        criteriaList.add(newCriteria);
-                        queryReq.addAndCriteriaList(criteriaList);
-                        newCriteria.remove(0);
-                        newCriteria.add("key", QueryCriteria.EQUAL, Volume.CDM_writing);
-                        queryReq.addAndCriteriaList(criteriaList);
-                        newCriteria.remove(0);
-                        newCriteria.add("key", QueryCriteria.EQUAL, Volume.CDM_reading);
-                        queryReq.addAndCriteriaList(criteriaList);
-                        newCriteria.remove(0);
-                        newCriteria.add("key", QueryCriteria.EQUAL, Volume.CDM_pronunciation);
-                        queryReq.addAndCriteriaList(criteriaList);
-                   }
-   */
-                   
+                    //FIXME: mettre une option sur le volume pour dire s'il est en cours d'édition ou non ?
+                    if (!queryReq.isOpenRequest()) {
+                        // Add status criteria
+                        ArrayList listStatus = new ArrayList();
+                        
+                        QueryCriteria criteriaStatus = new QueryCriteria();
+                        criteriaStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);
+                        criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.CLASSIFIED_FINISHED_STATUS);
+                        criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.NOT_FINISHED_STATUS);
+                        criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.DRAFT_STATUS);
+                        listStatus.add(criteriaStatus);
+                        
+                        queryReq.addOrCriteriaList(listStatus);
+                    }
 					
 					// Perform the request
 					Collection qrset = queryReq.findIndex(this.getUser());
@@ -264,11 +246,33 @@ public class LookupVolume extends AbstractPO {
 					Headword[2] = word;
 					Headword[3] = strategy;
 					myKeys.add(Headword);
-					//PapillonLogger.writeDebugMsg("LookupVolume: [" + myVolume.getIndexDbname() + "] lang: [" + lang + "] WORD: [" + word + "] KEY: [" + key + "] strat: [" + strategy + "] order: [" + order + "] limit: [" + limit + "]");
-					EntryCollection = IndexFactory.getIndexEntriesVector(myVolume.getIndexDbname(), myKeys, order,limit);
+                    
+                    /* si ça prend du temps, faire une table d'index juste pour les vedettes */
+                   QueryCriteria criteriaStatus = new QueryCriteria();
+                    criteriaStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);
+                    criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.CLASSIFIED_FINISHED_STATUS);
+                    criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.NOT_FINISHED_STATUS);
+                    criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.DRAFT_STATUS);
+
+                    java.util.Vector myClauses = new java.util.Vector();
+                    myClauses.add(criteriaStatus.getFullClause());
+                    
+                    
+					//PapillonLogger.writeDebugMsg("LookupVolume: lookupvolume [" + myVolume.getIndexDbname() + "] lang: [" + lang + "] WORD: [" + word + "] KEY: [" + key + "] strat: [" + strategy + "] order: [" + order + "] limit: [" + limit + "]");
+					EntryCollection = IndexFactory.getIndexEntriesVector(myVolume.getIndexDbname(), myKeys, myClauses, order,limit, 0);
 				}
 				else if (msort != null && !msort.equals("")) {
-					EntryCollection = IndexFactory.getIndexEntriesVector(myVolume.getIndexDbname(), key, msort, strategy, order,limit,0);
+ /* si ça prend du temps, faire une table d'index juste pour les vedettes */
+                    QueryCriteria criteriaStatus = new QueryCriteria();
+                    criteriaStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);
+                    criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.CLASSIFIED_FINISHED_STATUS);
+                    criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.NOT_FINISHED_STATUS);
+                    criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.DRAFT_STATUS);
+                    
+                    java.util.Vector myClauses = new java.util.Vector();
+                    myClauses.add(criteriaStatus.getFullClause());
+
+                    EntryCollection = IndexFactory.getIndexEntriesVector(myVolume.getIndexDbname(), key, myClauses, msort, strategy, order,limit,0);
 				
 				}
 				if (EntryCollection!=null) {
@@ -286,6 +290,8 @@ public class LookupVolume extends AbstractPO {
 					//PapillonLogger.writeDebugMsg("stringResponse.length(): "+ stringResponse.length());
 					stringResponse = "<?xml version='1.0' encoding='UTF-8' ?><div class='entries'>" + stringResponse + "</div>";
 					docResponse = XMLServices.buildDOMTree(stringResponse);
+                    //PapillonLogger.writeDebugMsg("LookupVolume fin lookupVolume: " + oneentry + " key: " + key);
+
 				}
 			}
 			// one entry by handle lookup
@@ -327,18 +333,28 @@ public class LookupVolume extends AbstractPO {
 				
 				java.util.Vector myKeys = new java.util.Vector();
 				String[] Headword = new String[4];
-				PapillonLogger.writeDebugMsg("LookupVolume entry: " + oneentry + " key: " + key);
+				// PapillonLogger.writeDebugMsg("LookupVolume queryOneEntry: " + oneentry + " key: " + key);
 				Headword[0] = key;
 				Headword[1] = lang;
 				Headword[2] = oneentry;
 				Headword[3] = QueryBuilder.CASE_INSENSITIVE_EQUAL;
 				myKeys.add(Headword);
+                
+                QueryCriteria criteriaStatus = new QueryCriteria();
+                criteriaStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);
+                criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.CLASSIFIED_FINISHED_STATUS);
+                criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.NOT_FINISHED_STATUS);
+                criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.DRAFT_STATUS);
+                
+                java.util.Vector myClauses = new java.util.Vector();
+                myClauses.add(criteriaStatus.getFullClause());
+
 
 				EntryCollection = DictionariesFactory.getDictionaryNameEntriesCollection(myVolume.getDictname(),
 																			source,
 																			targets,
 																			myKeys,
-																			null,
+																			myClauses,
 																			null,
 																			this.getUser(),
 																						 0, MAX_HOMOGRAPHS);
@@ -353,7 +369,7 @@ public class LookupVolume extends AbstractPO {
                                                                                                  source,
                                                                                                  targets,
                                                                                                  myKeys,
-                                                                                                 null,
+                                                                                                 myClauses,
                                                                                                  null,
                                                                                                  this.getUser(),
                                                                                                  0, 1);
@@ -377,9 +393,10 @@ public class LookupVolume extends AbstractPO {
                         if (prefixLookupElement != null) {
                             rootElement.appendChild(docResponse.importNode(prefixLookupElement, true));
                         }
+                        // PapillonLogger.writeDebugMsg("Fin LookupVolume queryOneEntry");
                     }
                     else {
-                        PapillonLogger.writeDebugMsg("Pas de réponse!");
+                        //PapillonLogger.writeDebugMsg("Pas de réponse!");
                         String stringResponse = "<?xml version='1.0' encoding='UTF-8' ?><div><script type='text/javascript'><!-- \n\n document.getElementById('EmptyMessage').setAttribute('style','display:block;');\n\n // --></script></div>";
                         docResponse = XMLServices.buildDOMTree(stringResponse);
                     }

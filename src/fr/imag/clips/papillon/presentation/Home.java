@@ -534,20 +534,20 @@ public class Home
                     queryReq.getTargets().add(language);
                 }
 
-  
-                 // Add status criteria
-                ArrayList listStatus = new ArrayList();
-
-				QueryCriteria criteriaStatus = new QueryCriteria();
-                criteriaStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);
-                criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.CLASSIFIED_FINISHED_STATUS);
-                criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.CLASSIFIED_NOT_FINISHED_STATUS);
-                criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.DELETED_STATUS);
-                criteriaStatus.add("lang", QueryCriteria.EQUAL, Volume.DEFAULT_LANG);
-                listStatus.add(criteriaStatus);
-				
-				queryReq.addOrCriteriaList(listStatus);
-                if (searchKind.equals(PREVIOUS_ENTRY) && !headword.equals("")) {
+                if (!queryReq.isOpenRequest()) {
+                    // Add status criteria
+                    ArrayList listStatus = new ArrayList();
+                    
+                    QueryCriteria criteriaStatus = new QueryCriteria();
+                    criteriaStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);
+                    criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.CLASSIFIED_FINISHED_STATUS);
+                    criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.NOT_FINISHED_STATUS);
+                    criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.DRAFT_STATUS);
+                    listStatus.add(criteriaStatus);
+                    
+                    queryReq.addOrCriteriaList(listStatus);
+                }
+                 if (searchKind.equals(PREVIOUS_ENTRY) && !headword.equals("")) {
  					//PapillonLogger.writeDebugMsg("search previous entry: " + headword+ " in "+ volumeName);
                    //// CLASSIC SEARCH
                     // Perform the request

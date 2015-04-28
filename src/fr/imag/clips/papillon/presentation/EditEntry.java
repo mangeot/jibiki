@@ -182,15 +182,15 @@ public class EditEntry extends EditingBasePO {
 		referrerElement.setValue(referrer);
         
         // Enable undo update button            
-        String previousNFContributionId = myVolumeEntry.getClassifiedNotFinishedContributionId();
-        Collection classifiedFinishedContributionIdCollection = myVolumeEntry.getClassifiedFinishedContributionIdCollection();
-        if (myVolumeEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS) 
-            && (    ((previousNFContributionId != null)
-                    && (!previousNFContributionId.equals("")))
-                ||  (classifiedFinishedContributionIdCollection.size() != 0))){
-            XHTMLInputElement undoUpdateElement = content.getElementUndoUpdate();
-            undoUpdateElement.setDisabled(false);	
-        }
+  //      String previousNFContributionId = myVolumeEntry.getClassifiedNotFinishedContributionId();
+  //      Collection classifiedFinishedContributionIdCollection = myVolumeEntry.getClassifiedFinishedContributionIdCollection();
+  //      if (myVolumeEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS)
+  //          && (    ((previousNFContributionId != null)
+  //                  && (!previousNFContributionId.equals("")))
+  //              ||  (classifiedFinishedContributionIdCollection.size() != 0))){
+  //          XHTMLInputElement undoUpdateElement = content.getElementUndoUpdate();
+  //          undoUpdateElement.setDisabled(false);
+  //      }
         
         // Fill interface template
 		UIGenerator.fillInterfaceTemplate(myVolumeEntry.getDom().getDocumentElement(), myInterface, myItfTemplate);

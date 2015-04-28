@@ -67,7 +67,8 @@ public class Actions implements fr.imag.clips.papillon.facelets.api.Actions {
         JibikiContext context = CurrentRequestContext.get();
         
         // BUG279: This will be long enough... We really need to work on caching and multiple volume handling (maybe an explicit id...)
-		 VolumeEntry ve = VolumeEntriesFactory.findEntryByEntryId(((PapillonSessionData) context.get("sessionData")).getUser(),entryid);
+  //      VolumeEntry ve = VolumeEntriesFactory.findEntryByEntryId(((PapillonSessionData) context.get("sessionData")).getUser(),entryid);
+        VolumeEntry ve = VolumeEntriesFactory.findEntryByContributionId(((PapillonSessionData) context.get("sessionData")).getUser(),entryid);
 		return this.getActions(ve);
     }
     
@@ -152,7 +153,13 @@ public class Actions implements fr.imag.clips.papillon.facelets.api.Actions {
 							textStatus.setNodeValue("under edition");
 							//                entryNode.setAttribute("class", "notFinishedEntry");
 						}
-					}
+                    } else if (myEntry.getStatus().equals(VolumeEntry.CLASSIFIED_FINISHED_STATUS)) {
+                        textStatus.setNodeValue("classified");
+                        
+                    } else if (myEntry.getStatus().equals(VolumeEntry.DRAFT_STATUS)) {
+                        textStatus.setNodeValue("draft");
+        
+                    }
 					entryStatus.appendChild(textStatus);
 
 		// (action.equals("XML"))
@@ -168,9 +175,9 @@ public class Actions implements fr.imag.clips.papillon.facelets.api.Actions {
 						qpxml.setDictionaries(dicts);
 						ArrayList crit = new ArrayList();
 						String[] idc = new String[4];
-						idc[0] = Volume.CDM_entryId;
+						idc[0] = Volume.CDM_contributionId;
 						idc[1] = null;
-						idc[2] = myEntry.getEntryId();
+						idc[2] = myEntry.getContributionId();
 						idc[3] = QueryCriteria.EQUAL;
 						crit.add(idc);
 						qpxml.setCriteria(crit);
@@ -274,7 +281,7 @@ public class Actions implements fr.imag.clips.papillon.facelets.api.Actions {
         JibikiContext context = CurrentRequestContext.get();
         
         // BUG279: This will be long enough... We really need to work on caching and multiple volume handling (maybe an explicit id...)
-		VolumeEntry ve = VolumeEntriesFactory.findEntryByEntryId(((PapillonSessionData) context.get("sessionData")).getUser(),entryid);
+		VolumeEntry ve = VolumeEntriesFactory.findEntryByContributionId(((PapillonSessionData) context.get("sessionData")).getUser(),entryid);
 		return this.getLinkActions(ve);
     }
     

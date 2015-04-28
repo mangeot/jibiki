@@ -349,11 +349,13 @@ public class VolumesFactory {
 			tmplEntry = addDmlUrlInTemplateEntry(tmplEntry);
 		}
 		upgradeCdmLinkElement(volume.getOwnerDocument());
-				HashMap cdmElements = createCdmElementsTable(volume, source, tmplEntry);
+		
+      //  PapillonLogger.writeDebugMsg("Call createCdmElementsTable for volume " + name);
+                HashMap cdmElements = createCdmElementsTable(volume, source, tmplEntry);
 				
 				HashMap linksTable = createLinksTable(volume, tmplEntry, cdmElements);
 				
-		PapillonLogger.writeDebugMsg("The CDM elements and links hashtables have been created");
+		PapillonLogger.writeDebugMsg("The CDM elements and links hashtables for volume " + name + " have been created");
 				
         // Embedding the entry into a contribution element
         tmplEntry = updateTemplateEntry(tmplEntry, cdmElements);
@@ -385,7 +387,8 @@ public class VolumesFactory {
 	boolean virtual = false;
 	volume = (Element) docXml.getElementsByTagName(VOLUME_TAG).item(0);
 	if (volume != null) {
-		HashMap cdmElements = createCdmElementsTable(volume, theVolume.getSourceLanguage(),theVolume.getTemplateEntry());
+   //     PapillonLogger.writeDebugMsg("Call createCdmElementsTable for volume " + theVolume.getName());
+	HashMap cdmElements = createCdmElementsTable(volume, theVolume.getSourceLanguage(),theVolume.getTemplateEntry());
 		theVolume.setCdmElements(cdmElements);
 		HashMap linksTable = createLinksTable(volume, theVolume.getTemplateEntry(), cdmElements);
 		theVolume.setLinksTable(linksTable);
@@ -1375,12 +1378,12 @@ public class VolumesFactory {
         }
         if (getCdmXPathString(elementsTable, Volume.CDM_contributionId, Volume.DEFAULT_LANG) == null) {
             addCdmElementInTable(elementsTable, Volume.CDM_contributionId, Volume.DEFAULT_LANG,
-                    currentXpath + "/@" + VolumeEntry.contributionIdAttr,
+                    currentXpath + "/@" + dml_prefix + VolumeEntry.contributionIdAttr,
                     Volume.isIndexCDMElement(Volume.CDM_contributionId));
         }
         if (getCdmXPathString(elementsTable, Volume.CDM_originalContributionId, Volume.DEFAULT_LANG) == null) {
             addCdmElementInTable(elementsTable, Volume.CDM_originalContributionId, Volume.DEFAULT_LANG,
-                    currentXpath + "/@" + VolumeEntry.originalContributionIdAttr,
+                    currentXpath + "/@" + dml_prefix + VolumeEntry.originalContributionIdAttr,
                     Volume.isIndexCDMElement(Volume.CDM_originalContributionId));
         }
         if (getCdmXPathString(elementsTable, Volume.CDM_contributionDataElement, Volume.DEFAULT_LANG) == null) {
@@ -1480,7 +1483,18 @@ public class VolumesFactory {
                     currentXpath + "/" + dml_prefix + VolumeEntry.statusTag + "/text()",
                     Volume.isIndexCDMElement(Volume.CDM_contributionStatus));
         }
-        // Previous classified finished contribution
+        // Previous contribution
+        if (getCdmXPathString(elementsTable, Volume.CDM_previousContributionElement, Volume.DEFAULT_LANG) == null) {
+            addCdmElementInTable(elementsTable, Volume.CDM_previousContributionElement, Volume.DEFAULT_LANG,
+                                 currentXpath + "/" + dml_prefix + VolumeEntry.previousContributionTag,
+                                 Volume.isIndexCDMElement(Volume.CDM_previousContributionElement));
+        }
+        if (getCdmXPathString(elementsTable, Volume.CDM_previousContribution, Volume.DEFAULT_LANG) == null) {
+            addCdmElementInTable(elementsTable, Volume.CDM_previousContribution, Volume.DEFAULT_LANG,
+                                 currentXpath + "/" + dml_prefix + VolumeEntry.previousContributionTag + "/text()",
+                                 Volume.isIndexCDMElement(Volume.CDM_previousContribution));
+        }
+       // Previous classified finished contribution
         if (getCdmXPathString(elementsTable, Volume.CDM_previousClassifiedFinishedContributionElement,
                 Volume.DEFAULT_LANG) == null) {
             addCdmElementInTable(elementsTable, Volume.CDM_previousClassifiedFinishedContributionElement,
@@ -1710,7 +1724,7 @@ public class VolumesFactory {
     protected static void addCdmElementInTable(HashMap table, String elt, String lang, String xpathString,
                                                boolean isIndex) {
         /* cdmElements HashMap = {lang => HashMap} = {CDM_element => ArrayList} = (xpathString, isIndex, XPath)*/
-//		PapillonLogger.writeDebugMsg("addCdmElementInTable: elt: " + elt + " lang: " + lang + " xpath: " + xpathString + " isIndex: " + isIndex);
+		//PapillonLogger.writeDebugMsg("addCdmElementInTable: elt: " + elt + " lang: " + lang + " xpath: " + xpathString + " isIndex: " + isIndex);
         ArrayList xpathAndIndexList = new ArrayList();
         xpathAndIndexList.add(xpathString);
         xpathAndIndexList.add(new Boolean(isIndex));

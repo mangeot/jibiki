@@ -44,6 +44,7 @@ import javax.swing.JOptionPane;
         protected String limit; 
         protected String xsl;
         protected ArrayList targets = new ArrayList();
+        protected boolean isOpenRequest = false;
         
         //
         private final boolean DEBUG = false;
@@ -149,7 +150,13 @@ import javax.swing.JOptionPane;
             targets = new ArrayList(targetsCollection);
         }
 
-
+        public boolean isOpenRequest() {
+            return isOpenRequest;
+        }
+        public void setOpenRequest(boolean requestState) {
+            isOpenRequest = requestState;
+        }
+        
         public boolean isEmpty() {
             return (criteriaTree.size() == 0);
         }
@@ -511,8 +518,8 @@ import javax.swing.JOptionPane;
                     
                     // Debug
                     if (DEBUG) indexQuery.getQueryBuilder().debug();
-                    //PapillonLogger.writeDebugMsg("findIndex debug");
-                    //indexQuery.getQueryBuilder().debug();
+                    PapillonLogger.writeDebugMsg("findIndex debug");
+                    indexQuery.getQueryBuilder().debug();
                     
                     //
                     IndexDO[] DOarray = indexQuery.getDOArray();
@@ -569,7 +576,8 @@ import javax.swing.JOptionPane;
                             VolumeEntry tempEntry = new VolumeEntry(DictionariesFactory.getDictionaryByName(volume.getDictname()), volume, DOarray[j]);
 							// Add the volume entry in the request context.
                             CurrentRequestContext.get().set(tempEntry.getEntryId(), tempEntry);
-							EntryCache.putEntryInCache(tempEntry);
+                            CurrentRequestContext.get().set(tempEntry.getContributionId(), tempEntry);
+				//			EntryCache.putEntryInCache(tempEntry);
 							QueryResult queryResult = new QueryResult(QueryResult.UNIQUE_RESULT, tempEntry);
                             result.add(queryResult);
                         }
@@ -615,7 +623,8 @@ import javax.swing.JOptionPane;
 					VolumeEntriesFactory.cutEntryCache();
 					// Add the volume entry in the request context.
 					CurrentRequestContext.get().set(tempEntry.getEntryId(), tempEntry);
-					EntryCache.putEntryInCache(tempEntry);
+                    CurrentRequestContext.get().set(tempEntry.getContributionId(), tempEntry);
+			//		EntryCache.putEntryInCache(tempEntry);
 					QueryResult queryResult = new QueryResult(QueryResult.UNIQUE_RESULT, tempEntry);
 					lexies.add(queryResult);
 				}
@@ -643,7 +652,8 @@ import javax.swing.JOptionPane;
 					VolumeEntriesFactory.cutEntryCache();
 					// Add the volume entry in the request context.
 					CurrentRequestContext.get().set(tempEntry.getEntryId(), tempEntry);
-					EntryCache.putEntryInCache(tempEntry);
+                    CurrentRequestContext.get().set(tempEntry.getContributionId(), tempEntry);
+			//		EntryCache.putEntryInCache(tempEntry);
 					QueryResult queryResult = new QueryResult(QueryResult.UNIQUE_RESULT, tempEntry);
 					lexies.add(queryResult);
 				}
@@ -706,33 +716,36 @@ import javax.swing.JOptionPane;
                 criteria.add("entryid", QueryCriteria.EQUAL, handle);
                 query.addCriteria(criteria);
                 
-                result = query.findLexie(user); 
-                /*
+                result = query.findLexie(user);
+                
                 if (result.size() == 1) {
                     QueryResult qr = (QueryResult) result.get(0);
-                    Collection classifiedFinishedContributionIdCollection = qr.getSourceEntry().getClassifiedFinishedContributionIdCollection();
+                    
+                    
+                    QueryRequest newQuery = new QueryRequest(volume);
 
-                    //
-                    while ( classifiedFinishedContributionIdCollection.size() != 0 ) {
-                                             
-                        //
-                        for (Iterator iter = classifiedFinishedContributionIdCollection.iterator(); iter.hasNext();) {
-                            String newEntryId = qr.getSourceEntry().getClassifiedFinishedContributionId();
-                            
-                        QueryRequest newQuery = new QueryRequest(volume);
-                                                
-                        QueryCriteria newCriteria = new QueryCriteria();
-                        newCriteria.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionId);  
-                        newCriteria.add("value", QueryCriteria.EQUAL, newEntryId);
-                        newQuery.addCriteria(newCriteria);
-                        
-                        result.addAll(newQuery.findLexie(user));
-                        qr = (QueryResult) result.get(result.size()-1);
-                    }
+ 
+                    QueryCriteria origContribId = new QueryCriteria();
+                    origContribId.add("key", QueryCriteria.EQUAL, Volume.CDM_originalContributionId);
+                    origContribId.add("value", QueryCriteria.EQUAL, qr.getSourceEntry().getOriginalContributionId());
+                    
+                    newQuery.addCriteria(origContribId);
+                    
+                    ArrayList listStatus = new ArrayList();
+                    
+                    QueryCriteria criteriaStatus = new QueryCriteria();
+                    criteriaStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);
+                    criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.DRAFT_STATUS);
+                    criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.NOT_FINISHED_STATUS);
+                    listStatus.add(criteriaStatus);
+                    
+                    newQuery.addOrCriteriaList(listStatus);
+                    
+                    // Perform the request
+                     result = newQuery.findLexie(user);
                 } else {
                     throw new PapillonBusinessException("Exception in findLexieHistory() : none or several entries found");
                 }
-                */
                 
                 return result;
                 
@@ -1006,7 +1019,8 @@ import javax.swing.JOptionPane;
 					VolumeEntriesFactory.cutEntryCache();
 					// Add the volume entry in the request context.
 					CurrentRequestContext.get().set(tempEntry.getEntryId(), tempEntry);
-					EntryCache.putEntryInCache(tempEntry);
+                    CurrentRequestContext.get().set(tempEntry.getContributionId(), tempEntry);
+			//		EntryCache.putEntryInCache(tempEntry);
 					QueryResult queryResult = new QueryResult(QueryResult.UNIQUE_RESULT, tempEntry);
 					lexies.add(queryResult);
 					

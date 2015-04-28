@@ -317,11 +317,13 @@ public abstract class AbstractPO
      *          Exception
      */
     public static String myUrlEncode(String str) {
-        // WARNING Java 1.4.1 specific.
-        try {
-            return java.net.URLEncoder.encode(str, "UTF-8");
-        } catch (java.io.UnsupportedEncodingException ex) {
-            PapillonLogger.writeErrorMsg("UTF8 is not supported ??!!");
+        if (str != null && !str.equals("")) {
+            // WARNING Java 1.4.1 specific.
+            try {
+                return java.net.URLEncoder.encode(str, "UTF-8");
+            } catch (java.io.UnsupportedEncodingException ex) {
+                PapillonLogger.writeErrorMsg("UTF8 is not supported ??!!");
+            }
         }
         return str;
     }

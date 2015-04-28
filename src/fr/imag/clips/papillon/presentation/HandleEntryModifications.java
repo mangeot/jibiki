@@ -131,8 +131,9 @@ public class HandleEntryModifications extends EditingBasePO {
     public static String MoveDownCall_PARAMETER = "MoveDownCall";
     public static String ChooseCall_PARAMETER = "ChooseCall";
     public static String Update_PARAMETER = "Update";  
-    public static String Save_PARAMETER = "Save"; 
-    public static String UndoUpdate_PARAMETER = "UndoUpdate";  
+    public static String Preview_PARAMETER = "Preview";
+    public static String SaveAsDraft_PARAMETER = "SaveAsDraft";
+    public static String UndoUpdate_PARAMETER = "UndoUpdate";
     //public static String SaveComment_PARAMETER = "SaveComment";  
     
     // Protected parameters
@@ -142,7 +143,7 @@ public class HandleEntryModifications extends EditingBasePO {
     protected static String BooleanTrue_PARAMETER = UIGenerator.BOOLEAN_TRUE_ATTR_NAME;  
 	
     // URL
-	protected final static String EditEntryInitURL = "LexalpEditEntryInit.po";
+	protected final static String EditEntryInitURL = "AdvancedLookup.po";
     protected final static String EditingErrorURL = "EditingError.po";
     protected final static String ConfirmEntryURL = "ConfirmEntry.po";
 	protected final static String EditEntryURL = "EditEntry.po";
@@ -178,7 +179,8 @@ public class HandleEntryModifications extends EditingBasePO {
 			String submitMoveDown = myGetParameter(MoveDownCall_PARAMETER);
 			String submitChoose = myGetParameter(ChooseCall_PARAMETER);
 			String submitUpdate = myGetParameter(Update_PARAMETER);
-			String submitSave = myGetParameter(Save_PARAMETER);
+            String submitPreview = myGetParameter(Preview_PARAMETER);
+            String submitSaveAsDraft = myGetParameter(SaveAsDraft_PARAMETER);
             String submitUndoUpdate = myGetParameter(UndoUpdate_PARAMETER);
 			String select = myGetParameter(Select_PARAMETER);
 			String choose = myGetParameter(Choose_PARAMETER);
@@ -197,55 +199,41 @@ public class HandleEntryModifications extends EditingBasePO {
 			}
 		
 			// INIT
-			VolumeEntry oldVolumeEntry = VolumeEntriesFactory.findEntryByHandle(volumeName, entryHandle);
-            VolumeEntry newVolumeEntry = null;
+			VolumeEntry theVolumeEntry = VolumeEntriesFactory.findEntryByHandle(volumeName, entryHandle);
 			
             // 
-			if ( oldVolumeEntry == null || oldVolumeEntry.isEmpty() ) {
+			if ( theVolumeEntry == null || theVolumeEntry.isEmpty() ) {
 
                 // FIXME: add correct verification process !
                 //&&     !( oldVolumeEntry.getModificationAuthor().equals(this.getUser().getLogin())
                 //      || this.getUser().isInGroup(Group.ADMIN_GROUP))) {
                 
                 // FIXME: Add a user error message !!!
-				if (DEBUG) PapillonLogger.writeDebugMsg ("HandleEntryModifications : oldVolumeEntry null");   
+				if (DEBUG) PapillonLogger.writeDebugMsg ("HandleEntryModifications : theVolumeEntry null");
 				throw new ClientPageRedirectException(EditEntryInitURL);
 			
-            } else if (submitUndoUpdate!=null && !submitUndoUpdate.equals("")) {
-				// Undo draft
-                undoDraftEntry(oldVolumeEntry, referrer);
+            }
+            else if ( theVolumeEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS) ) {
+                ;
+            }
+            else if ( theVolumeEntry.getStatus().equals(VolumeEntry.DRAFT_STATUS) ) {
+                theVolumeEntry.setStatus(VolumeEntry.NOT_FINISHED_STATUS);
+                ResultPreProcessor preProcessor = ResultPreProcessorFactory.getPreProcessor(theVolumeEntry);
+                preProcessor.transformation(theVolumeEntry, this.getUser());
+            }
+            else if ( theVolumeEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS) ) {
                 
-            } else if ( oldVolumeEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS) ) {
-                
-                // Old entry modification
-                oldVolumeEntry.setStatus(VolumeEntry.CLASSIFIED_NOT_FINISHED_STATUS);
-                oldVolumeEntry.save();
-                
-                // CREATE DRAFT
-                newVolumeEntry = VolumeEntriesFactory.newEntryFromExisting(oldVolumeEntry);
-                newVolumeEntry.setHeadword(oldVolumeEntry.getCdmHeadword());
-                newVolumeEntry.setClassifiedNotFinishedContribution(oldVolumeEntry);
+                // CREATE EDITABLE COPY
+                VolumeEntry newVolumeEntry = VolumeEntriesFactory.newEntryFromExisting(theVolumeEntry);
+                newVolumeEntry.setHeadword(theVolumeEntry.getCdmHeadword());
+                newVolumeEntry.addClassifiedFinishedContribution(theVolumeEntry);
                 newVolumeEntry.setStatus(VolumeEntry.NOT_FINISHED_STATUS);
-                newVolumeEntry.save();
-
-            } else if ( oldVolumeEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS) ) {
-                
-                // Old entry modification
-                oldVolumeEntry.setStatus(VolumeEntry.MODIFIED_STATUS);
-                oldVolumeEntry.setNextContributionAuthor(this.getUser().getLogin());
-                oldVolumeEntry.save();
-
-                // CREATE DRAFT
-                newVolumeEntry = VolumeEntriesFactory.newEntryFromExisting(oldVolumeEntry);
-                newVolumeEntry.setHeadword(oldVolumeEntry.getCdmHeadword());
-                newVolumeEntry.initClassifiedFinishedContribution();
-                newVolumeEntry.addClassifiedFinishedContribution(oldVolumeEntry);
-                newVolumeEntry.initClassifiedNotFinishedContribution();
-                newVolumeEntry.setStatus(VolumeEntry.NOT_FINISHED_STATUS);
-                newVolumeEntry.save();
+                newVolumeEntry.setPreviousContributionId(theVolumeEntry.getContributionId());
+                ResultPreProcessor preProcessor = ResultPreProcessorFactory.getPreProcessor(newVolumeEntry);
+                preProcessor.transformation(newVolumeEntry, this.getUser());
+               theVolumeEntry = newVolumeEntry;
             
             } else {
-             
                 //
                 throw new ClientPageRedirectException(EditEntryInitURL);
             }
@@ -257,7 +245,7 @@ public class HandleEntryModifications extends EditingBasePO {
 			
 			
             // Get document element
-			Element myEntry = newVolumeEntry.getDom().getDocumentElement();
+			Element myEntry = theVolumeEntry.getDom().getDocumentElement();
             
             // Get template entry
 			Element myTemplateEntry = UITemplates.getTemplateEntry(volumeName);
@@ -265,14 +253,12 @@ public class HandleEntryModifications extends EditingBasePO {
 			String anchor = "";
 			
 			// Fill DOM structure
-			if (newVolumeEntry!=null) {
+			if (theVolumeEntry!=null) {
 				FillDOMStructure(myEntry, this.getComms().request.getParameterNames());
 			}
 			
-			if (DEBUG) PapillonLogger.writeDebugMsg ("HandleEntryModifications : avant submitAdd ");   
 			// Add element
 			if (submitAdd!=null && !submitAdd.equals("")) {
-				if (DEBUG) PapillonLogger.writeDebugMsg ("HandleEntryModifications : submitAdd ");   
 				int plus =  submitAdd.indexOf(UIGenerator.PARAMETERS_SEPARATOR);
 				if (plus > 0) {
 					String elementName = submitAdd.substring(0,plus);
@@ -327,24 +313,33 @@ public class HandleEntryModifications extends EditingBasePO {
 			}
 			
 			//
-			updateDraftEntry(newVolumeEntry, referrer);
+			updateEditedEntry(theVolumeEntry, referrer);
 
-            if (submitSave!=null && !submitSave.equals("")) {
-				// Save draft and redirect
-                saveDraftEntry(newVolumeEntry, referrer);
-			
+            if (submitPreview!=null && !submitPreview.equals("")) {
+                // redirect preview to confirmEntry
+                // Referer is not used !
+               // PapillonLogger.writeDebugMsg("HandleEntryModifications: Submit Preview -> confirmEntry");
+                throw new ClientPageRedirectException(
+                                                      ConfirmEntryURL + "?" +
+                                                      ConfirmEntry.VolumeName_PARAMETER + "=" + theVolumeEntry.getVolumeName() + "&" +
+                                                      ConfirmEntry.EntryHandle_PARAMETER + "=" + theVolumeEntry.getHandle());
+            }
+            if (submitSaveAsDraft!=null && !submitSaveAsDraft.equals("")) {
+                // Save draft and redirect
+                saveEntryAsDraft(theVolumeEntry, referrer);
             }
 			// Edit current volume entry
+            PapillonLogger.writeDebugMsg("HandleEntryModifs: Referrer: " + referrer);
             throw new ClientPageRedirectException(
                                                   EditEntryURL + "?" + 
-                                                  EditEntry.VolumeName_PARAMETER + "=" + newVolumeEntry.getVolumeName() + "&" + 
-                                                  EditEntry.EntryHandle_PARAMETER + "=" + newVolumeEntry.getHandle() + "&" +
+                                                  EditEntry.VolumeName_PARAMETER + "=" + theVolumeEntry.getVolumeName() + "&" +
+                                                  EditEntry.EntryHandle_PARAMETER + "=" + theVolumeEntry.getHandle() + "&" +
                                                   EditEntry.Referrer_PARAMETER + "=" + myUrlEncode(referrer) + "#" + anchor
 												  );
 	}
 	
 	//
-	protected void updateBooleanElements(String[] booleanElements, String[] trueElements, Element myEntry) {
+	protected void updateBooleanElements(String[] booleanElements, String[] trueElements, Element myEntry) throws fr.imag.clips.papillon.business.PapillonBusinessException {
 		// FIXME: a problem here: the element ids change when one element is deleted.
 		// the second element of the same type will not be deleted
 		java.util.List myList = java.util.Arrays.asList(trueElements);
@@ -364,7 +359,7 @@ public class HandleEntryModifications extends EditingBasePO {
     //
     private void FillDOMStructure(Element entryElt, java.util.Enumeration parameterNames)
 		throws java.io.UnsupportedEncodingException,
-        com.lutris.appserver.server.httpPresentation.HttpPresentationException {
+        com.lutris.appserver.server.httpPresentation.HttpPresentationException, fr.imag.clips.papillon.business.PapillonBusinessException {
             
             // Redirect parameters
             while (parameterNames.hasMoreElements()) {
@@ -379,150 +374,31 @@ public class HandleEntryModifications extends EditingBasePO {
         }
 	
 	//
-	private void updateDraftEntry(VolumeEntry newVolumeEntry, String referrer)
+	private void updateEditedEntry(VolumeEntry newVolumeEntry, String referrer)
 		throws java.io.UnsupportedEncodingException,
         com.lutris.appserver.server.httpPresentation.HttpPresentationException {
-            if (DEBUG) PapillonLogger.writeDebugMsg("HandleEntryModifications : updateDraftEntry");
+            if (DEBUG) PapillonLogger.writeDebugMsg("HandleEntryModifications : updateEditedEntry");
 			
             // Update draft
             newVolumeEntry.setModification(this.getUser().getLogin(), "update");
-            newVolumeEntry.setStatus(VolumeEntry.NOT_FINISHED_STATUS);
-            newVolumeEntry.save();
-            
-            //
-            if (DEBUG) PapillonLogger.writeDebugMsg("HandleEntryModifications : myVolumeEntry.ContributionId " + newVolumeEntry.getContributionId() + "-> NFVolumeEntry.ContributionId " + newVolumeEntry.getClassifiedNotFinishedContributionId());
             
             // Call PostUpdateProcessor
             ResultPostUpdateProcessor postUpdateProcessor = ResultPostUpdateProcessorFactory.getPostUpdateProcessor(newVolumeEntry);
             postUpdateProcessor.transformation(newVolumeEntry, this.getUser());
-            
+            newVolumeEntry.save();
         }
 	
-    //
-	private void saveDraftEntry(VolumeEntry newVolumeEntry, String referrer) 
-		throws fr.imag.clips.papillon.business.PapillonBusinessException {
-            if (DEBUG) PapillonLogger.writeDebugMsg("HandleEntryModifications : saveDraftEntry");
-            
-            // Save draft
-            newVolumeEntry.setModification(this.getUser().getLogin(), "finish");
-            newVolumeEntry.setStatus(VolumeEntry.FINISHED_STATUS);
-            newVolumeEntry.initClassifiedNotFinishedContribution(); // FIXME: remove draft !!!!
-            newVolumeEntry.save();
-            
-            // Change status of the last finished contribution : MODIFIED_STATUS to CLASSIFIED_FINISHED_STATUS
-            Collection classifiedFinishedContributionIdCollection = newVolumeEntry.getClassifiedFinishedContributionIdCollection();
-            for (Iterator iter = classifiedFinishedContributionIdCollection.iterator(); iter.hasNext();) {
-                
-                //
-                String tmp = (String)iter.next();
-                VolumeEntry oldVolumeEntry = VolumeEntriesFactory.findEntryByContributionId(newVolumeEntry.getVolumeName(), tmp);
-                
-                //
-                if ((oldVolumeEntry != null) && oldVolumeEntry.getStatus().equals(VolumeEntry.MODIFIED_STATUS)) {
-                    oldVolumeEntry.setStatus(VolumeEntry.CLASSIFIED_FINISHED_STATUS);
-                    oldVolumeEntry.save();
-                }
-            }
-            
-            // FIXME: This shoudl be handled by a post processing class or something like this, still to be defined...
-            // !!!!!!!!!!!! A DEPLACER EN POST PROCESS !!!!!!!!!!!!
-            //myVolumeEntry.setFinished(this.getUser());
-            //myVolumeEntry.setReviewed(this.getUser());
-            //myVolumeEntry.setValidated(this.getUser());
-            
-            //
-            if (DEBUG) PapillonLogger.writeDebugMsg("HandleEntryModifications : myVolumeEntry.ContributionId" + newVolumeEntry.getContributionId() + "-> NFVolumeEntry.ContributionId : " + newVolumeEntry.getClassifiedNotFinishedContributionId());
-            
-            // Call PostProcessor
-            ResultPostSaveProcessor postSaveProcessor = ResultPostSaveProcessorFactory.getPostSaveProcessor(newVolumeEntry);
-            postSaveProcessor.transformation(newVolumeEntry, this.getUser());
-            
-            //
-            // Referer is not use !
-            throw new ClientPageRedirectException(
-                                                  ConfirmEntryURL + "?" + 
-                                                  ConfirmEntry.VolumeName_PARAMETER + "=" + newVolumeEntry.getVolumeName() + "&" + 
-                                                  ConfirmEntry.EntryHandle_PARAMETER + "=" + newVolumeEntry.getHandle());
-        }
-    
-    //
-	private void undoDraftEntry(VolumeEntry newVolumeEntry, String referrer) 
-		throws fr.imag.clips.papillon.business.PapillonBusinessException {
-            if (DEBUG) PapillonLogger.writeDebugMsg("HandleEntryModifications : undoDraftEntry");
-                        
-            /*
-            //
-            String previousNFContributionId = newVolumeEntry.getClassifiedNotFinishedContributionId();
-            String previousFContributionId = newVolumeEntry.getClassifiedFinishedContributionId();
-            if ((previousNFContributionId != null) && (!previousNFContributionId.equals(""))) {
-            
-                //
-                VolumeEntry previousEntry = VolumeEntriesFactory.findEntryByContributionId(newVolumeEntry.getVolume().getName(), previousNFContributionId);
-                previousEntry.setStatus(VolumeEntry.NOT_FINISHED_STATUS);
-				previousEntry.save(); 
-                
-                //
-                PapillonLogger.writeDebugMsg("HandleEntryModifications : previousEntry.ContributionId " + previousEntry.getContributionId() + " - deleted -> newVolumeEntry.ContributionId " + newVolumeEntry.getClassifiedNotFinishedContributionId());
-                
-                // Delete contribution
-                newVolumeEntry.delete();
-                
-                // Edit previous volume entry
-                throw new ClientPageRedirectException(
-                                                      EditEntryURL + "?" + 
-                                                      EditEntry.VolumeName_PARAMETER + "=" + previousEntry.getVolumeName() + "&" + 
-                                                      EditEntry.EntryHandle_PARAMETER + "=" + previousEntry.getHandle() + "&" +
-                                                      EditEntry.Referrer_PARAMETER + "=" + myUrlEncode(referrer));
-                
-                
-            }  else if ((previousFContributionId != null) && (!previousFContributionId.equals(""))) {
-                
-                //
-                VolumeEntry previousEntry = VolumeEntriesFactory.findEntryByContributionId(newVolumeEntry.getVolume().getName(), previousFContributionId);
-                previousEntry.setStatus(VolumeEntry.FINISHED_STATUS);
-				previousEntry.save(); 
-                
-                //
-                PapillonLogger.writeDebugMsg("HandleEntryModifications : previousEntry.ContributionId " + previousEntry.getContributionId() + " - deleted -> newVolumeEntry.ContributionId " + newVolumeEntry.getClassifiedNotFinishedContributionId());
-                
-                // Delete contribution
-                newVolumeEntry.delete();
-                
-                // Edit previous volume entry
-                throw new ClientPageRedirectException(
-                                                      EditEntryURL + "?" + 
-                                                      EditEntry.VolumeName_PARAMETER + "=" + previousEntry.getVolumeName() + "&" + 
-                                                      EditEntry.EntryHandle_PARAMETER + "=" + previousEntry.getHandle() + "&" +
-                                                      EditEntry.Referrer_PARAMETER + "=" + myUrlEncode(referrer));
-            } else {
-                
-                // Error page
-                PapillonLogger.writeDebugMsg("HandleEntryModifications : Error undoDraftEntry method");
-                throw new ClientPageRedirectException(EditingErrorURL);
-            }
-             */
-            
-            // Get previous entry
-            VolumeEntry previousEntry = newVolumeEntry.undoNotFinish();
-            //if (previousEntry == null) previousEntry = newVolumeEntry.undoFinish();
-
-            //
-            if (previousEntry != null) {
-                
-                // Edit previous entry
-                throw new ClientPageRedirectException(
-                                                      EditEntryURL + "?" + 
-                                                      EditEntry.VolumeName_PARAMETER + "=" + previousEntry.getVolumeName() + "&" + 
-                                                      EditEntry.EntryHandle_PARAMETER + "=" + previousEntry.getHandle() + "&" +
-                                                      EditEntry.Referrer_PARAMETER + "=" + myUrlEncode(referrer));
-            
-            } else {
-                
-                // Error page
-                PapillonLogger.writeDebugMsg("HandleEntryModifications : Error undoDraftEntry method");
-                throw new ClientPageRedirectException(EditingErrorURL);
-            }
-        }
+    private void saveEntryAsDraft(VolumeEntry newVolumeEntry, String referrer)
+    throws java.io.UnsupportedEncodingException,
+    com.lutris.appserver.server.httpPresentation.HttpPresentationException {
+        if (DEBUG) PapillonLogger.writeDebugMsg("HandleEntryModifications : updateDraftEntry");
+        
+        // Update draft
+        newVolumeEntry.setModification(this.getUser().getLogin(), "save as draft");
+        newVolumeEntry.setStatus(VolumeEntry.DRAFT_STATUS);
+        
+        newVolumeEntry.save();
+    }
     
 	
 }

@@ -62,11 +62,16 @@ import fr.imag.clips.papillon.business.dictionary.ParseVolume;
 import fr.imag.clips.papillon.business.dictionary.Volume;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory;
+import fr.imag.clips.papillon.business.transformation.ResultPostSaveProcessor;
+import fr.imag.clips.papillon.business.transformation.ResultPostSaveProcessorFactory;
+import fr.imag.clips.papillon.business.transformation.ResultPostUpdateProcessor;
+import fr.imag.clips.papillon.business.transformation.ResultPostUpdateProcessorFactory;
 import fr.imag.clips.papillon.business.transformation.ResultFormatter;
 import fr.imag.clips.papillon.business.transformation.ResultFormatterFactory;
 import fr.imag.clips.papillon.business.dictionary.QueryResult;
 import fr.imag.clips.papillon.business.user.User;
 import fr.imag.clips.papillon.business.utility.Utility;
+import fr.imag.clips.papillon.business.xml.XMLServices;
 import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
 import fr.imag.clips.papillon.business.PapillonBusinessException;
@@ -78,7 +83,7 @@ public class ConfirmEntry extends EditingBasePO {
     
     //
     private final boolean DEBUG = false;
-    
+        
     //
     public static String EntryHandle_PARAMETER = EditEntry.EntryHandle_PARAMETER;
     public static String VolumeName_PARAMETER = EditEntry.VolumeName_PARAMETER;  
@@ -104,78 +109,158 @@ public class ConfirmEntry extends EditingBasePO {
     public org.w3c.dom.Node getContent() 
 		throws java.io.UnsupportedEncodingException, 
 		HttpPresentationException {
+            
+            ConfirmEntryXHTML content = (ConfirmEntryXHTML) MultilingualXHtmlTemplateFactory.createTemplate("ConfirmEntryXHTML", this.myComms, this.sessionData);
 			
-            //
-            if (DEBUG) PapillonLogger.writeDebugMsg ("ConfirmEntry : getContent");   
             
 			// Management of the parameters
-			String volumeName = myGetParameter(VolumeName_PARAMETER);
-			String entryHandle = myGetParameter(EntryHandle_PARAMETER);
+			String volumeName = myGetParameter(content.NAME_VolumeName);
+			String entryHandle = myGetParameter(content.NAME_EntryHandle);
             String message = myGetParameter(Message_PARAMETER);
             String button = myGetParameter(Button_PARAMETER);
-			
-			// Manage VolumeEntry
-			VolumeEntry myVolumeEntry = null;
-			if (volumeName!=null && !volumeName.equals("")
-				&& entryHandle!=null && !entryHandle.equals("")) {
-                
-				// VolumeEntry
-				myVolumeEntry = VolumeEntriesFactory.findEntryByHandle(volumeName, entryHandle);
-                if (DEBUG) {
-                    PapillonLogger.writeDebugMsg ("ConfirmEntry : Contribution ID " + myVolumeEntry.getContributionId());
-                    Collection collection = myVolumeEntry.getClassifiedFinishedContributionIdCollection();
-                    for (Iterator iter = collection.iterator(); iter.hasNext();) {
-                        PapillonLogger.writeDebugMsg ("ConfirmEntry : Previous ID " + (String)iter.next());
+            String reedit = myGetParameter(content.NAME_edit);
+            String save = myGetParameter(content.NAME_save);
+            String delete = myGetParameter(content.NAME_delete);
+
+            //
+            if (DEBUG) PapillonLogger.writeDebugMsg ("ConfirmEntry : getContent: vn: " + volumeName + " h:" +entryHandle);
+
+            
+            if (reedit != null && !reedit.equals("")) {
+                PapillonLogger.writeDebugMsg("Reedit contribution");
+               if ( volumeName!=null && !volumeName.equals("") &&
+                    entryHandle!=null && !entryHandle.equals("") ) {
+                    //
+                    throw new ClientPageRedirectException(EditEntryURL + "?" +
+                                                          EditEntry.VolumeName_PARAMETER + "=" + volumeName +
+                                                          "&" + EditEntry.EntryHandle_PARAMETER + "=" + entryHandle);
+                } else {
+                    // Error page
+                    throw new ClientPageRedirectException(EditingErrorURL);
+                }
+            }
+            else if (save != null && !save.equals("")) {
+                PapillonLogger.writeDebugMsg("Save contribution");
+
+                if ( volumeName!=null && !volumeName.equals("") &&
+                    entryHandle!=null && !entryHandle.equals("") ) {
+                    PapillonLogger.writeDebugMsg("Save contribution volumename:" + volumeName);
+
+                    VolumeEntry newVolumeEntry = VolumeEntriesFactory.findEntryByHandle(volumeName, entryHandle);
+                    VolumeEntry oldVolumeEntry = VolumeEntriesFactory.findEntryByContributionId(newVolumeEntry.getVolumeName(), newVolumeEntry.getPreviousContributionId());
+                    
+                    if (oldVolumeEntry != null) {
+                        oldVolumeEntry.setStatus(VolumeEntry.CLASSIFIED_FINISHED_STATUS);
+                        oldVolumeEntry.setNextContributionAuthor(this.getUser().getLogin());
+                        oldVolumeEntry.save();
                     }
+                    
+                    // Save draft
+                    newVolumeEntry.setModification(this.getUser().getLogin(), "finish");
+                    newVolumeEntry.setStatus(VolumeEntry.FINISHED_STATUS);
+                    newVolumeEntry.setGroups(Utility.ArrayUnion(newVolumeEntry.getGroups(),this.getUser().getGroupsArray()));
+                   
+                    // !!!!!!!!!!!! A DEPLACER EN POST PROCESS !!!!!!!!!!!!
+                    //myVolumeEntry.setFinished(this.getUser());
+                    //myVolumeEntry.setReviewed(this.getUser());
+                    //myVolumeEntry.setValidated(this.getUser());
+                    
+                    // Call PostProcessor
+                    ResultPostSaveProcessor postSaveProcessor = ResultPostSaveProcessorFactory.getPostSaveProcessor(newVolumeEntry);
+                    postSaveProcessor.transformation(newVolumeEntry, this.getUser());
+                    newVolumeEntry.save();
+                //    PapillonLogger.writeDebugMsg("Contribution saved");
+                    XHTMLElement closeWindow = content.getElementCloseWindow();
+                    closeWindow.setAttribute("style","display: inline;");
+                    XHTMLElement deleteButton = content.getElementDelete();
+                    deleteButton.setAttribute("style","display: none;");
+                    XHTMLElement editButton = content.getElementEdit();
+                    editButton.setAttribute("style","display: none;");
+                    XHTMLElement saveButton = content.getElementSave();
+                    saveButton.setAttribute("style","display: none;");
+                } else {
+
+                    // Error page
+                    throw new ClientPageRedirectException(EditingErrorURL);
+                }
+            }
+            else if (delete != null && !delete.equals("")) {
+                    if (volumeName!=null && !volumeName.equals("") &&
+                        entryHandle!=null && !entryHandle.equals("") ) {
+                        //
+                        VolumeEntry newVolumeEntry = VolumeEntriesFactory.findEntryByHandle(volumeName, entryHandle);
+                        newVolumeEntry.delete();
+                     //   PapillonLogger.writeDebugMsg("Delete contribution");
+                        XHTMLElement closeWindow = content.getElementCloseWindow();
+                        closeWindow.setAttribute("style","display: inline;");
+                        XHTMLElement deleteButton = content.getElementDelete();
+                        deleteButton.setAttribute("style","display: none;");
+                        XHTMLElement editButton = content.getElementEdit();
+                        editButton.setAttribute("style","display: none;");
+                        XHTMLElement saveButton = content.getElementSave();
+                        saveButton.setAttribute("style","display: none;");
+                    } else {
+                        // Error page
+                        throw new ClientPageRedirectException(EditingErrorURL);
+                    }
+            }
+            else {
+                // Manage VolumeEntry
+                VolumeEntry myVolumeEntry = null;
+                if (volumeName!=null && !volumeName.equals("")
+                    && entryHandle!=null && !entryHandle.equals("")) {
+                    // VolumeEntry
+                    myVolumeEntry = VolumeEntriesFactory.findEntryByHandle(volumeName, entryHandle);
+                    if (DEBUG) {
+                        PapillonLogger.writeDebugMsg ("ConfirmEntry : Contribution ID " + myVolumeEntry.getContributionId());
+                        Collection collection = myVolumeEntry.getClassifiedFinishedContributionIdCollection();
+                        for (Iterator iter = collection.iterator(); iter.hasNext();) {
+                            PapillonLogger.writeDebugMsg ("ConfirmEntry : Previous ID " + (String)iter.next());
+                        }
+                    }
+                    
+                    // Verification 
+                    if ( !(myVolumeEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS)
+                           && myVolumeEntry.getModificationAuthor().equals(this.getUser().getLogin())) ) {
+                        
+                        // Error page
+                        throw new ClientPageRedirectException(EditingErrorURL);
+                    }
+        
+                //
+                QueryResult qr = new QueryResult(1, myVolumeEntry);
+                ResultFormatter rf = ResultFormatterFactory.getFormatter(qr, null, ResultFormatterFactory.XHTML_DIALECT, null);
+                Element resultElement = (Element)rf.getFormattedResult(qr, this.getUser());
+                
+                //
+                XHTMLDivElement editingResultViewElement = content.getElementEditingResultView();
+                editingResultViewElement.appendChild(content.importNode(resultElement, true));
+                }
+                    
+                // Message
+                if (message!=null) {
+                    content.setTextMessage(message);
                 }
                 
-				// Verification 
-				if ( !(myVolumeEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS) 
-					   && myVolumeEntry.getModificationAuthor().equals(this.getUser().getLogin())) ) {
-					
-					// Error page
-					throw new ClientPageRedirectException(EditingErrorURL);
-				}
-				
-				// adding author groups in entry
-				myVolumeEntry.setGroups(Utility.ArrayUnion(myVolumeEntry.getGroups(),this.getUser().getGroupsArray()));
-				myVolumeEntry.save();
-				
-			}
-			
-			//
-			ConfirmEntryXHTML content = (ConfirmEntryXHTML) MultilingualXHtmlTemplateFactory.createTemplate("ConfirmEntryXHTML", this.myComms, this.sessionData);
-            
-			//
-			QueryResult qr = new QueryResult(1, myVolumeEntry);
-			ResultFormatter rf = ResultFormatterFactory.getFormatter(qr, null, ResultFormatterFactory.XHTML_DIALECT, null);
-			Element resultElement = (Element)rf.getFormattedResult(qr, this.getUser());
-			
-			//
-			XHTMLDivElement editingResultViewElement = content.getElementEditingResultView();
-			editingResultViewElement.appendChild(content.importNode(resultElement, true));
-            
-            // Message
-            if (message!=null) {
-                content.setTextMessage(message);
+                //
+                // ACTION
+                // undo, redit ...
+                
+                // Re-edit button 
+                //XHTMLElement reEditForm = content.getElementReEditForm();
+                //reEditForm.setAttribute("action", EditEntryURL);
+                //reEditForm.removeAttribute("id");
+                XHTMLElement value1 = content.getElementVolumeName();
+                value1.setAttribute("name", content.NAME_VolumeName);
+                value1.setAttribute("value", myVolumeEntry.getVolumeName());
+                value1.removeAttribute("id");
+                XHTMLElement value2 = content.getElementEntryHandle();
+                value2.setAttribute("name", content.NAME_EntryHandle);
+                value2.setAttribute("value", myVolumeEntry.getHandle());
+                value2.removeAttribute("id");
+
             }
-            
-            //
-            // ACTION
-			// undo, redit ...
-            
-            // Re-edit button 
-            //XHTMLElement reEditForm = content.getElementReEditForm();
-            //reEditForm.setAttribute("action", EditEntryURL);
-            //reEditForm.removeAttribute("id");
-            XHTMLElement value1 = content.getElementValue1();
-            value1.setAttribute("name", LaunchAction.VOLUME_NAME_PARAMETER);
-            value1.setAttribute("value", myVolumeEntry.getVolumeName());
-            value1.removeAttribute("id");
-            XHTMLElement value2 = content.getElementValue2();
-            value2.setAttribute("name", LaunchAction.HANDLE_PARAMETER);
-            value2.setAttribute("value", myVolumeEntry.getHandle());
-            value2.removeAttribute("id");
+
             
 			//
 			return content.getElementConfirmEntryContent();

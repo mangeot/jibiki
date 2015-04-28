@@ -181,6 +181,8 @@ public class AdvancedQueryForm {
     QueryRequest qrequest;
     ArrayList criteriaList;
     
+    boolean IsOpenRequest = false;
+    
     String action;
     
     public Collection getRequestedDictionaries(HttpServletRequest req) 
@@ -410,6 +412,12 @@ public class AdvancedQueryForm {
                             String newValue = quoteMatcher.replaceAll("''");
                             
                             keyClause += "key = '" + newValue + "'";
+                            if (newValue.equals(Volume.CDM_contributionId) ||
+ //                               newValue.equals(VolumeEntry.CDM_originalContributionId) ||
+                                newValue.equals(Volume.CDM_contributionStatus)
+                                ) {
+                                IsOpenRequest = true;
+                            }
                             if (j<keynames.length-1) {
                                 keyClause += " OR ";
                             }
@@ -418,6 +426,12 @@ public class AdvancedQueryForm {
                         criteria.addClause(keyClause);
                     }
                     else {
+                        if (key.equals(Volume.CDM_contributionId) ||
+                            //                               newValue.equals(VolumeEntry.CDM_originalContributionId) ||
+                            key.equals(Volume.CDM_contributionStatus)
+                            ) {
+                            IsOpenRequest = true;
+                        }
                         criteria.add("key", "=", key);
                     }
 				}
@@ -457,6 +471,7 @@ public class AdvancedQueryForm {
             for (Iterator iter = criteriaList.iterator(); iter.hasNext();) {
                 qrequest.addCriteria((QueryCriteria)iter.next());
             }
+            qrequest.setOpenRequest(IsOpenRequest);
             qrequest.setLimit(getRequestedNumberOfResultsPerPageString(comms.request.getHttpServletRequest()));
             qrequest.setOffset(getRequestedOffsetString(comms.request.getHttpServletRequest()));
             qrequest.setXsl(getRequestedXsl(comms.request.getHttpServletRequest()));
@@ -841,7 +856,12 @@ public class AdvancedQueryForm {
         //
         return qrequest;
     }
-
+    
+    public boolean isOpenRequest() {
+        //
+        return IsOpenRequest;
+    }
+    
     public ArrayList getCriteriaList() {
         //
         return criteriaList;

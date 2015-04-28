@@ -17,6 +17,7 @@
 
 package fr.imag.clips.papillon.business.transformation;
 
+import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
 import fr.imag.clips.papillon.business.dictionary.Dictionary;
 import fr.imag.clips.papillon.business.dictionary.Volume;
@@ -43,6 +44,7 @@ public class ResultPostUpdateProcessorFactory {
         if (postUpdateProcessorClassName == null) {
             postUpdateProcessorClassName = "fr.imag.clips.papillon.business.transformation.PostUpdateProcessor";
         }
+        //PapillonLogger.writeDebugMsg("postUpdateProcessor: " + postUpdateProcessorClassName);
         
         // Instanciate the postUpdateProcessor
         ResultPostUpdateProcessor postUpdateProcessor = null;

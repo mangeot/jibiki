@@ -98,7 +98,8 @@ import fr.imag.clips.papillon.presentation.EditEntry;
 public class EditEntryInitFactory {
 
     //
-    protected final static String EditEntryURL = "EditEntry.po";
+    //    protected final static String EditEntryURL = "EditEntry.po";
+    protected final static String EditEntryURL = "HandleEntryModifications.po";
     protected final static String EditingErrorURL = "EditingError.po";
     
     // URL parameters

@@ -323,6 +323,12 @@ a.lang:hover {
   	width: 100%;
 }
 
+#EditEntryForm, #confirmEntryContent {
+    border-spacing: 10px;
+    padding-top: 50px;
+    margin: 10px;
+}
+
 #lookupcontent {
 	min-height:600px;
 	padding: 10px;
@@ -582,7 +588,7 @@ pre.api {
     color: #002395;
 }
 
-article {
+article, .article {
     display: block;
     border: 1px solid black;
     border-radius: 10px;

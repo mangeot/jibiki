@@ -324,7 +324,9 @@ public class Volume {
     public static final  String CDM_nextContributionAuthor = "cdm-next-contribution-author";
     public static final  String CDM_nextContributionAuthorElement = "cdm-next-contribution-author-element";
 
-	
+    // MM: Ajouté par Mathieu: simplifications !
+    public static final  String CDM_previousContribution = "cdm-previous-contribution";
+    public static final  String CDM_previousContributionElement = "cdm-previous-contribution-element";
 	
 	
 	/* constants added to manage axies, it should be generic...*/
@@ -420,8 +422,9 @@ public class Volume {
 		CDM_contributionValidationDate,
 		CDM_contributionValidator,
 		CDM_contributionStatus,
+        CDM_previousContribution,
 		CDM_previousClassifiedFinishedContribution,
-		CDM_previousClassifiedNotFinishedContribution,
+        CDM_previousClassifiedNotFinishedContribution,
 		CDM_nextContributionAuthor
 	};
 	

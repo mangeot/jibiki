@@ -328,7 +328,8 @@ public class VolumeEntry
     public final static String ORIGINAL_STATUS = "original";    // FIXME: in use ?
     public final static String NOT_FINISHED_STATUS = "not finished";
     public final static String FINISHED_STATUS = "finished";
-    public final static String CLASSIFIED_FINISHED_STATUS = "classified finished";
+    public final static String DRAFT_STATUS = "draft";
+    public final static String CLASSIFIED_FINISHED_STATUS = "classified";
     public final static String CLASSIFIED_NOT_FINISHED_STATUS = "classified not finished";
 
     public final static String REVIEWED_STATUS = "revised";
@@ -358,7 +359,8 @@ public class VolumeEntry
 			public final static String statusTag = "status";
 			public final static String validationDateTag = "validation-date";
 			public final static String validatorTag = "validator";
-			public final static String previousClassifiedFinishedContributionTag = "previous-classified-finished-contribution";
+            public final static String previousContributionTag = "previous-contribution";
+            public final static String previousClassifiedFinishedContributionTag = "previous-classified-finished-contribution";
 			public final static String previousClassifiedNotFinishedContributionTag = "previous-classified-not-finished-contribution";
 			public final static String nextContributionAuthorTag = "next-contribution-author";
 			
@@ -771,6 +773,13 @@ public class VolumeEntry
             throws PapillonBusinessException {
         IndexEntry.setCdmElement(this, Volume.CDM_originalContributionId, newId);
     }
+    
+    protected void setOriginalContributionIdIfNull()
+            throws PapillonBusinessException {
+                if (this.getOriginalContributionId() == null || this.getOriginalContributionId().equals("")) {
+                    this.setOriginalContributionId(this.createNewId() + CONTRIBUTION_ID_SUFFIX);
+                }
+            }
 
     /**
      * getOriginalContributionId gets the original contribution id into the XML code of the entry.
@@ -1335,6 +1344,16 @@ public class VolumeEntry
         return IAnswer.LocalEntry;
     }
 
+    public void setPreviousContributionId(String contributionId)
+      throws PapillonBusinessException {
+      IndexEntry.setCdmElement(this, Volume.CDM_previousContributionElement, contributionId);
+    }
+            
+    public String getPreviousContributionId()
+        throws PapillonBusinessException {
+            return IndexEntry.getCdmString(this, Volume.CDM_previousContribution);
+    }
+            
     public Collection getClassifiedFinishedContributionIdCollection()
             throws PapillonBusinessException {
         String[] list = IndexEntry.getCdmStrings(this, Volume.CDM_previousClassifiedFinishedContribution);
@@ -1552,9 +1571,10 @@ public class VolumeEntry
             "<" + dmlPrefix + commentTag + "/>" +
             "</" + dmlPrefix + modificationTag + ">" +
             "</" + dmlPrefix + historyTag + ">" +
+            "<" + dmlPrefix + previousContributionTag + "/>" +
             "<" + dmlPrefix + previousClassifiedFinishedContributionTag + "/>" +
-            "<" + dmlPrefix + previousClassifiedNotFinishedContributionTag + "/>" +
-            "<" + dmlPrefix + nextContributionAuthorTag + "/>" +
+ //           "<" + dmlPrefix + previousClassifiedNotFinishedContributionTag + "/>" +
+ //           "<" + dmlPrefix + nextContributionAuthorTag + "/>" +
             "</" + dmlPrefix + metadataTag + ">" +
             "<" + dmlPrefix + dataTag + ">";
 			return result;
@@ -1616,7 +1636,8 @@ public class VolumeEntry
     public boolean save(boolean index)
             throws PapillonBusinessException {
         boolean res = true;
-        try {
+        //PapillonLogger.writeDebugMsg("VolumeEntry.save()");
+       try {
             // Reset caches
             VolumeEntriesFactory.resetCountCache(this.getVolume().getName());
 
@@ -1624,7 +1645,8 @@ public class VolumeEntry
             IndexFactory.deleteIndexForEntryId(this.getVolume().getIndexDbname(), this.getHandle());
             //
             this.setEntryIdIfNull();
-            this.setContributionIdIfNull();
+           this.setContributionIdIfNull();
+           this.setOriginalContributionIdIfNull();
             // New index
             if (index) {
 				res = IndexEntry.indexEntry(this);
@@ -1733,6 +1755,7 @@ public class VolumeEntry
                     VolumeEntry volumeEntry2 = VolumeEntriesFactory.findEntryByContributionId(getVolumeName(),
                             contributionId2);
                     if (volumeEntry2.getStatus().equals(VolumeEntry.CLASSIFIED_FINISHED_STATUS)) {
+                        PapillonLogger.writeDebugMsg("undo finish: setStatus: " + VolumeEntry.MODIFIED_STATUS);
                         volumeEntry2.setStatus(VolumeEntry.MODIFIED_STATUS);
                         volumeEntry2.save();
                     }

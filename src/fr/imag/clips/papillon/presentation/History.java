@@ -14,6 +14,8 @@ import com.lutris.appserver.server.session.SessionException;
 import com.lutris.appserver.server.httpPresentation.HttpPresentation;
 import com.lutris.appserver.server.httpPresentation.HttpPresentationRequest;
 import com.lutris.appserver.server.httpPresentation.HttpPresentationException;
+import com.lutris.appserver.server.httpPresentation.ClientPageRedirectException;
+
 //import org.enhydra.xml.xmlc.XMLObject;
 import org.enhydra.xml.xhtml.dom.*;
 import org.w3c.dom.*;
@@ -71,6 +73,12 @@ public class History extends PapillonBasePO {
         // Management of the parameters
         String volumeName = myGetParameter(VolumeName_PARAMETER);
         String entryHandle = myGetParameter(EntryHandle_PARAMETER);
+
+        String action = myGetParameter("action");
+ 
+        if (action != null && !action.equals("")) {
+            throw new ClientPageRedirectException("Home.po?" + this.getComms().request.getQueryString());
+        }
         
         //
         HistoryXHTML content = (HistoryXHTML) MultilingualXHtmlTemplateFactory.createTemplate("HistoryXHTML", this.myComms, this.sessionData);
@@ -111,7 +119,8 @@ public class History extends PapillonBasePO {
 				QueryResult qr = (QueryResult) myIterator.next();
                 
                 // get the apropriate transformer.
-                ResultFormatter rf = ResultFormatterFactory.getFormatter(qr, null, ResultFormatterFactory.XHTML_DIALECT,null);   
+                ResultFormatter rf = ResultFormatterFactory.getFormatter(qr, null, ResultFormatterFactory.XHTML_DIALECT,null);
+                //getFormatter(Dictionary dict, Volume vol, Object parameter, int dialect, String lang)
                 addElement(content, (Element)rf.getFormattedResult(qr, this.getUser()), qr.getSourceEntry());
             }
         } else {
@@ -172,7 +181,4 @@ public class History extends PapillonBasePO {
             throw new PapillonBusinessException("Exception in addEntries: ", ex);
         }
     }
-    
-    
-    
 }
