@@ -130,7 +130,8 @@ public class HandleEntryModifications extends EditingBasePO {
     public static String MoveUpCall_PARAMETER = "MoveUpCall";
     public static String MoveDownCall_PARAMETER = "MoveDownCall";
     public static String ChooseCall_PARAMETER = "ChooseCall";
-    public static String Update_PARAMETER = "Update";  
+    public static String Cancel_PARAMETER = "Cancel";
+    public static String Update_PARAMETER = "Update";
     public static String Preview_PARAMETER = "Preview";
     public static String SaveAsDraft_PARAMETER = "SaveAsDraft";
     public static String UndoUpdate_PARAMETER = "UndoUpdate";
@@ -178,6 +179,7 @@ public class HandleEntryModifications extends EditingBasePO {
 			String submitMoveUp = myGetParameter(MoveUpCall_PARAMETER);
 			String submitMoveDown = myGetParameter(MoveDownCall_PARAMETER);
 			String submitChoose = myGetParameter(ChooseCall_PARAMETER);
+            String submitCancel = myGetParameter(Cancel_PARAMETER);
 			String submitUpdate = myGetParameter(Update_PARAMETER);
             String submitPreview = myGetParameter(Preview_PARAMETER);
             String submitSaveAsDraft = myGetParameter(SaveAsDraft_PARAMETER);
@@ -188,7 +190,8 @@ public class HandleEntryModifications extends EditingBasePO {
 			String entryHandle = myGetParameter(EntryHandle_PARAMETER);
 			//String saveComment = myGetParameter(SaveComment_PARAMETER);
 			String referrer = myGetParameter(Referrer_PARAMETER);
-			
+
+            
             //
 			if (volumeName==null || volumeName.equals("") ||
 				entryHandle==null || entryHandle.equals("")) {
@@ -236,6 +239,16 @@ public class HandleEntryModifications extends EditingBasePO {
             } else {
                 //
                 throw new ClientPageRedirectException(EditEntryInitURL);
+            }
+            
+            
+            if (submitCancel!=null && !submitCancel.equals("")) {
+                throw new ClientPageRedirectException(
+                                                      ConfirmEntryURL + "?" +
+                                                      ConfirmEntry.VolumeName_PARAMETER + "=" + theVolumeEntry.getVolumeName() + "&" +
+                                                      ConfirmEntry.EntryHandle_PARAMETER + "=" + theVolumeEntry.getHandle() + "&" +
+                                                      ConfirmEntry.Delete_PARAMETER + "=" + "Supprimer"
+                                                      );
             }
 			
 			// Call PreProcessor

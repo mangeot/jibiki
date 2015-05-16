@@ -86,7 +86,8 @@ public class ConfirmEntry extends EditingBasePO {
         
     //
     public static String EntryHandle_PARAMETER = EditEntry.EntryHandle_PARAMETER;
-    public static String VolumeName_PARAMETER = EditEntry.VolumeName_PARAMETER;  
+    public static String VolumeName_PARAMETER = EditEntry.VolumeName_PARAMETER;
+    public static String Delete_PARAMETER = ConfirmEntryXHTML.NAME_delete;
     public static String Message_PARAMETER = "message";
     public static String Button_PARAMETER = "button";
     

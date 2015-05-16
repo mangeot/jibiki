@@ -323,9 +323,9 @@ a.lang:hover {
   	width: 100%;
 }
 
-#EditEntryForm, #confirmEntryContent {
+#EditEntryForm, #ConfirmEntryContent {
     border-spacing: 10px;
-    padding-top: 50px;
+    padding-top: 30px;
     margin: 10px;
 }
 

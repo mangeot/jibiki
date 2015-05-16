@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXFileReference section */
+		A303076F1AEF905F00DD22C4 /* ConfirmEntry.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = ConfirmEntry.xhtml; sourceTree = "<group>"; };
+		A30307711AEF910000DD22C4 /* EditEntry.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = EditEntry.xhtml; sourceTree = "<group>"; };
 		A307220A0EC89B1D00733910 /* DiskFile.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = DiskFile.java; sourceTree = "<group>"; };
 		A307220B0EC89B1D00733910 /* MemoryFile.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = MemoryFile.java; sourceTree = "<group>"; };
 		A307220C0EC89B1D00733910 /* MultipartRequest.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = MultipartRequest.java; sourceTree = "<group>"; };
@@ -3394,7 +3396,9 @@
 				A308172F1AB58185003846A8 /* ActionNodes.xhtml */,
 				A3662CF91A12FC2500C423DF /* AdvancedLookup.xhtml */,
 				A32CBB621A198C9F00B1D65C /* AdvancedQueryForm.xhtml */,
+				A303076F1AEF905F00DD22C4 /* ConfirmEntry.xhtml */,
 				A32D31291AEF644100D8EA78 /* ConsultPage.xhtml */,
+				A30307711AEF910000DD22C4 /* EditEntry.xhtml */,
 				A32D312B1AEF7EDD00D8EA78 /* EditingLayout.xhtml */,
 				A3662CFF1A13490300C423DF /* LangAndUser.xhtml */,
 				A3662CFB1A12FC2500C423DF /* Layout.xhtml */,

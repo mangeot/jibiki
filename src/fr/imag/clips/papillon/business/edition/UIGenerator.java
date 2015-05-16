@@ -1032,7 +1032,7 @@ public class UIGenerator {
 	
 	
 	protected static String insertEntryElement(Element parentElement, Element newElement, Element siblingElement) {
-		PapillonLogger.writeDebugMsg("insertEntryElement: " + newElement.toString() + " parent: " + parentElement.toString());	
+//		PapillonLogger.writeDebugMsg("insertEntryElement: " + newElement.toString() + " parent: " + parentElement.toString());
 		Vector nodeVector = new Vector();
 		
 		Element resElt = (Element) parentElement.getOwnerDocument().importNode(newElement,true);
@@ -1059,14 +1059,19 @@ public class UIGenerator {
 				if (nodeItem.getNodeType()== Node.ELEMENT_NODE) {
 					Element currentElt = (Element) nodeItem;		
 					other = (!currentElt.getNodeName().equals(resElt.getNodeName()));
-				}	
+				}
 				i++;	
-			}		
-			i--;
-			if (i<childNodes.getLength ()) {
+			}
+            if (other) {
+                i--;
+            }
+			if (i<childNodes.getLength()) {
+ //               PapillonLogger.writeDebugMsg("insertEntryElement: insert before: " + i + "<" + childNodes.getLength());
+
 				parentElement.insertBefore(resElt,childNodes.item(i));
 			}
 			else {
+ //               PapillonLogger.writeDebugMsg("insertEntryElement: append");
 				parentElement.appendChild(resElt);
 			}
 		}
