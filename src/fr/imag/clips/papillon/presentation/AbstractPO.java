@@ -281,6 +281,7 @@ public abstract class AbstractPO
         context.set("comms", this.getComms());
         context.set("sessionData", this.getSessionData());
         context.set("url", this.getUrl());
+        context.set("absoluteurl", this.getAbsoluteUrl());
         CurrentRequestContext.registerNewPresentationContext(context);
     }
 

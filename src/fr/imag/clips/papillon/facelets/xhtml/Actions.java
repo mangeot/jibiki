@@ -80,7 +80,7 @@ public class Actions implements fr.imag.clips.papillon.facelets.api.Actions {
         HttpPresentationComms scomms = (HttpPresentationComms) context.get("comms");
 
         User user = (null == sdata) ? null : sdata.getUser();
-		String url = (String) context.get("url");
+		String url = (String) context.get("absoluteurl");
        
         ActionNodesXHTML content;
         try {
@@ -120,7 +120,8 @@ public class Actions implements fr.imag.clips.papillon.facelets.api.Actions {
 		XHTMLAnchorElement viewHistoryEntryAnchor = content.getElementViewHistoryEntryAnchor();
 		viewHistoryEntryAnchor.removeAttribute("id");
 		// FIXME: Create static variable ... VolumeName and EntryHandle ...
-		viewHistoryEntryAnchor.setHref(HistoryURL + "?" + "VolumeName" + "=" + myEntry.getVolumeName() + "&" + "EntryHandle" + "=" + myEntry.getHandle());
+        String AbsoluteHistoryUrl = url.substring(0,url.lastIndexOf('/')+1) + HistoryURL;
+		viewHistoryEntryAnchor.setHref(AbsoluteHistoryUrl + "?" + "VolumeName" + "=" + myEntry.getVolumeName() + "&" + "EntryHandle" + "=" + myEntry.getHandle());
 		viewHistoryEntryAnchor.setAttribute("class", "action");
 		
 		// (action.equals("STATUS"))
