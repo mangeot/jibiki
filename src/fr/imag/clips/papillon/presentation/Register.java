@@ -47,6 +47,8 @@ import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 public class Register extends PapillonBasePO {
 
 
+    public final static String PREFERENCES_PREFIX = "PREF__";
+    
     protected RegisterXHTML content;
 
     protected static String REGISTER_PAGE = "ReNuser";
@@ -104,6 +106,7 @@ public class Register extends PapillonBasePO {
 
                 if (!myUserAnswer.isEmpty()) {
                     this.setUser(myUserAnswer.getUser());
+                    savePreferences();
                     throw new ClientPageRedirectException(Dest);
                 }
                 
@@ -117,4 +120,20 @@ public class Register extends PapillonBasePO {
     
     return content.getElementFormulaire();
     }
+    
+    protected void savePreferences() throws com.lutris.appserver.server.httpPresentation.HttpPresentationException {
+        java.util.Enumeration parameterNames = this.getComms().request.getParameterNames();
+        while (parameterNames.hasMoreElements()) {
+            String parameterName = (String) parameterNames.nextElement();
+            if (parameterName.indexOf(PREFERENCES_PREFIX)==0) {
+                String value = myGetParameter(parameterName);
+              //  PapillonLogger.writeDebugMsg("setPreference " + parameterName + ": " + value);
+                this.setPreference(parameterName,value);
+            }
+        }
+
+    }
+    
+    
+    
 }

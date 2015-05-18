@@ -1124,9 +1124,7 @@
 		A3202D5E1A382CA200E98881 /* AdvancedQueryForm.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdvancedQueryForm.xhtml; sourceTree = "<group>"; };
 		A3216DE90ED17C22009BC773 /* LexalpEditEntryInit.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = LexalpEditEntryInit.xhtml; sourceTree = "<group>"; };
 		A32CBB5D1A198C8400B1D65C /* AdvancedQueryForm.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdvancedQueryForm.xhtml; sourceTree = "<group>"; };
-		A32CBB5E1A198C8400B1D65C /* AdvancedQueryForm.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AdvancedQueryForm.xmlc; sourceTree = "<group>"; };
 		A32CBB601A198C9300B1D65C /* AdvancedQueryForm.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdvancedQueryForm.xhtml; sourceTree = "<group>"; };
-		A32CBB611A198C9300B1D65C /* AdvancedQueryForm.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AdvancedQueryForm.xmlc; sourceTree = "<group>"; };
 		A32CBB621A198C9F00B1D65C /* AdvancedQueryForm.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdvancedQueryForm.xhtml; sourceTree = "<group>"; };
 		A32D31291AEF644100D8EA78 /* ConsultPage.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = ConsultPage.xhtml; sourceTree = "<group>"; };
 		A32D312B1AEF7EDD00D8EA78 /* EditingLayout.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = EditingLayout.xhtml; sourceTree = "<group>"; };
@@ -1188,25 +1186,22 @@
 		A3469E19170DA3F7006DE82A /* ViewQueryResult.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ViewQueryResult.xmlc; sourceTree = "<group>"; };
 		A3469E1A170DA89C006DE82A /* PapillonBasePO.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = PapillonBasePO.java; sourceTree = "<group>"; };
 		A3469E1B170DA89C006DE82A /* PapillonLayout.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = PapillonLayout.java; sourceTree = "<group>"; };
+		A34F3E211B0A1AB800A548EC /* Register.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Register.xhtml; sourceTree = "<group>"; };
+		A34F3E231B0A275F00A548EC /* Register.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Register.xhtml; sourceTree = "<group>"; };
+		A34F3E241B0A277F00A548EC /* Register.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Register.xhtml; sourceTree = "<group>"; };
+		A34F3E251B0A280900A548EC /* Register.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Register.xhtml; sourceTree = "<group>"; };
 		A351D9231A198C450073B5BB /* AdvancedQueryForm.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdvancedQueryForm.xhtml; sourceTree = "<group>"; };
 		A35B12441A149A4700CAA58E /* AdvancedLookup.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdvancedLookup.xhtml; sourceTree = "<group>"; };
-		A35B12451A149A4700CAA58E /* AdvancedLookup.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AdvancedLookup.xmlc; sourceTree = "<group>"; };
 		A35B12461A149A4700CAA58E /* LangAndUser.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = LangAndUser.xhtml; sourceTree = "<group>"; };
-		A35B12471A149A4700CAA58E /* LangAndUser.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LangAndUser.xmlc; sourceTree = "<group>"; };
 		A35B12481A149A4700CAA58E /* Layout.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Layout.xhtml; sourceTree = "<group>"; };
-		A35B12491A149A4700CAA58E /* Layout.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Layout.xmlc; sourceTree = "<group>"; };
 		A35B124A1A149A4700CAA58E /* options.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = options.xmlc; sourceTree = "<group>"; };
 		A35B124C1A149A5600CAA58E /* AdvancedLookup.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdvancedLookup.xhtml; sourceTree = "<group>"; };
 		A35B124E1A149A5600CAA58E /* LangAndUser.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = LangAndUser.xhtml; sourceTree = "<group>"; };
 		A35B12501A149A5600CAA58E /* Layout.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Layout.xhtml; sourceTree = "<group>"; };
-		A35B12511A149A5600CAA58E /* Layout.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Layout.xmlc; sourceTree = "<group>"; };
 		A35B12521A149A5600CAA58E /* options.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = options.xmlc; sourceTree = "<group>"; };
 		A35B125A1A149A6100CAA58E /* AdvancedLookup.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdvancedLookup.xhtml; sourceTree = "<group>"; };
-		A35B125B1A149A6100CAA58E /* AdvancedLookup.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AdvancedLookup.xmlc; sourceTree = "<group>"; };
 		A35B125C1A149A6100CAA58E /* LangAndUser.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = LangAndUser.xhtml; sourceTree = "<group>"; };
-		A35B125D1A149A6100CAA58E /* LangAndUser.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LangAndUser.xmlc; sourceTree = "<group>"; };
 		A35B125E1A149A6100CAA58E /* Layout.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Layout.xhtml; sourceTree = "<group>"; };
-		A35B125F1A149A6100CAA58E /* Layout.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Layout.xmlc; sourceTree = "<group>"; };
 		A35B12601A149A6100CAA58E /* options.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = options.xmlc; sourceTree = "<group>"; };
 		A35D6A4F171C55730031534B /* ConsultPage.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ConsultPage.xhtml; sourceTree = "<group>"; };
 		A35D6A69171C60F60031534B /* DownloadTmpl.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = DownloadTmpl.xhtml; sourceTree = "<group>"; };
@@ -1214,7 +1209,6 @@
 		A35D6A85171C6CC10031534B /* ConsultPage.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ConsultPage.xhtml; sourceTree = "<group>"; };
 		A3662CF91A12FC2500C423DF /* AdvancedLookup.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = AdvancedLookup.xhtml; sourceTree = "<group>"; };
 		A3662CFB1A12FC2500C423DF /* Layout.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Layout.xhtml; sourceTree = "<group>"; };
-		A3662CFC1A12FC2500C423DF /* Layout.xmlc */ = {isa = PBXFileReference; lastKnownFileType = text; path = Layout.xmlc; sourceTree = "<group>"; };
 		A3662CFD1A12FC2500C423DF /* options.xmlc */ = {isa = PBXFileReference; lastKnownFileType = text; path = options.xmlc; sourceTree = "<group>"; };
 		A3662CFF1A13490300C423DF /* LangAndUser.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = LangAndUser.xhtml; sourceTree = "<group>"; };
 		A369D51118AD0E820023314A /* LexalpEditEntryInit.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = LexalpEditEntryInit.java; sourceTree = "<group>"; };
@@ -3336,13 +3330,10 @@
 			children = (
 				A30817311AB582E6003846A8 /* ActionNodes.xhtml */,
 				A35B12441A149A4700CAA58E /* AdvancedLookup.xhtml */,
-				A35B12451A149A4700CAA58E /* AdvancedLookup.xmlc */,
 				A32CBB5D1A198C8400B1D65C /* AdvancedQueryForm.xhtml */,
-				A32CBB5E1A198C8400B1D65C /* AdvancedQueryForm.xmlc */,
 				A35B12461A149A4700CAA58E /* LangAndUser.xhtml */,
-				A35B12471A149A4700CAA58E /* LangAndUser.xmlc */,
 				A35B12481A149A4700CAA58E /* Layout.xhtml */,
-				A35B12491A149A4700CAA58E /* Layout.xmlc */,
+				A34F3E231B0A275F00A548EC /* Register.xhtml */,
 				A35B124A1A149A4700CAA58E /* options.xmlc */,
 			);
 			path = eng;
@@ -3356,7 +3347,7 @@
 				A351D9231A198C450073B5BB /* AdvancedQueryForm.xhtml */,
 				A35B124E1A149A5600CAA58E /* LangAndUser.xhtml */,
 				A35B12501A149A5600CAA58E /* Layout.xhtml */,
-				A35B12511A149A5600CAA58E /* Layout.xmlc */,
+				A34F3E241B0A277F00A548EC /* Register.xhtml */,
 				A35B12521A149A5600CAA58E /* options.xmlc */,
 			);
 			path = fra;
@@ -3367,13 +3358,10 @@
 			children = (
 				A30817321AB582F7003846A8 /* ActionNodes.xhtml */,
 				A35B125A1A149A6100CAA58E /* AdvancedLookup.xhtml */,
-				A35B125B1A149A6100CAA58E /* AdvancedLookup.xmlc */,
 				A32CBB601A198C9300B1D65C /* AdvancedQueryForm.xhtml */,
-				A32CBB611A198C9300B1D65C /* AdvancedQueryForm.xmlc */,
 				A35B125C1A149A6100CAA58E /* LangAndUser.xhtml */,
-				A35B125D1A149A6100CAA58E /* LangAndUser.xmlc */,
 				A35B125E1A149A6100CAA58E /* Layout.xhtml */,
-				A35B125F1A149A6100CAA58E /* Layout.xmlc */,
+				A34F3E251B0A280900A548EC /* Register.xhtml */,
 				A35B12601A149A6100CAA58E /* options.xmlc */,
 			);
 			path = jpn;
@@ -3402,7 +3390,7 @@
 				A32D312B1AEF7EDD00D8EA78 /* EditingLayout.xhtml */,
 				A3662CFF1A13490300C423DF /* LangAndUser.xhtml */,
 				A3662CFB1A12FC2500C423DF /* Layout.xhtml */,
-				A3662CFC1A12FC2500C423DF /* Layout.xmlc */,
+				A34F3E211B0A1AB800A548EC /* Register.xhtml */,
 				A3662CFD1A12FC2500C423DF /* options.xmlc */,
 			);
 			path = orig;
