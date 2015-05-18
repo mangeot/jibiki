@@ -1413,6 +1413,7 @@
 		A3AF17C61069FA0500E1CEB5 /* Help.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = Help.java; sourceTree = "<group>"; };
 		A3AF17CD1069FAE800E1CEB5 /* ApiContent.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ApiContent.xhtml; sourceTree = "<group>"; };
 		A3AF1808106A10C500E1CEB5 /* Kawet.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = Kawet.java; sourceTree = "<group>"; };
+		A3AF27A01B0A4473008A4654 /* ConfirmEntry.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = ConfirmEntry.xhtml; sourceTree = "<group>"; };
 		A3B4F55F1A3FD6D100FF2EDA /* ProjectTmpl.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = ProjectTmpl.xhtml; sourceTree = "<group>"; };
 		A3B4F5601A4007DD00FF2EDA /* HomeContent.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = HomeContent.xhtml; sourceTree = "<group>"; };
 		A3B4F5611A400B2D00FF2EDA /* Information.java */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.java; path = Information.java; sourceTree = "<group>"; };
@@ -3529,6 +3530,7 @@
 				A37C0307128C62DB0047A982 /* AdvancedSearch.xhtml */,
 				A37C0308128C62DB0047A982 /* AxiesManagement.xhtml */,
 				A37C0309128C62DB0047A982 /* AxiesManagement.xmlc */,
+				A3AF27A01B0A4473008A4654 /* ConfirmEntry.xhtml */,
 				A386068B1A8C948E00FD081D /* ConsultPage.xhtml */,
 				A37C030A128C62DB0047A982 /* ContactsContent.xhtml */,
 				A37C030B128C62DB0047A982 /* ContactsContent.xmlc */,
