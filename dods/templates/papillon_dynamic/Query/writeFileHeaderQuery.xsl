@@ -778,7 +778,7 @@ public class <xsl:value-of select="CLASS_NAME"/>Query implements Query {
 	    boolean resultsFromQCache = false;
 	    QueryCacheItem queryCachedItem = null;
 
-	    if(builder.isUnionTableJoin())throw new DataObjectException( "Could not use ‘UNION [ALL]’ statement in query witch retrieve data object." );
+	    if(builder.isUnionTableJoin())throw new DataObjectException( "Could not use UNION [ALL] statement in query witch retrieve data object." );
 
 	    if ((transaction!=null) &amp;&amp;
 		(transaction instanceof com.lutris.appserver.server.sql.CachedDBTransaction)) {
