@@ -18,7 +18,99 @@
    <script type="text/javascript">
                      </script>
     <div id="AdvancedSearchForm" lang="fr" xml:lang="fr">
-      <form id="SearchForm" action="">
+        <script type="text/javascript">
+            <!--
+             function selectedValue(selBox) {
+             return selBox.options[selBox.selectedIndex].value;
+             }
+             -->
+        </script>
+        <select id='selectdefault' style="display:none;">
+            <option value="0">est exactement</option>
+            <option value="6">commence par</option>
+            <option value="5">finit par</option>
+        </select>
+        <select id='selectexact' style="display:none;">
+            <option value="0">est exactement</option>
+        </select>
+        <select id='selectcontains' style="display:none;">
+            <option value="4">contient</option>
+        </select>
+        <select id="cdm-domain" name="cdm-domain" style="display:none;">
+            <option value="algèbre">algèbre</option>
+            <option value="anatomie">anatomie</option>
+            <option value="architecture">architecture</option>
+            <option value="astronomie">astronomie</option>
+            <option value="astrologie">astrologie</option>
+            <option value="bourse">bourse</option>
+            <option value="biologie">biologie</option>
+            <option value="botanique">botanique</option>
+            <option value="bouddhisme">bouddhisme</option>
+            <option value="catholicisme">catholicisme</option>
+            <option value="chemin de fer">chemin de fer</option>
+            <option value="chimie">chimie</option>
+            <option value="commerce">commerce</option>
+            <option value="comptabilité">comptabilité</option>
+            <option value="conchyologie">conchyologie</option>
+            <option value="construction">construction</option>
+            <option value="contraction">contraction</option>
+            <option value="corruption">corruption</option>
+            <option value="électricité">électricité</option>
+            <option value="entomologie">entomologie</option>
+            <option value="féodalité">féodalité</option>
+            <option value="finance">finance</option>
+            <option value="fortification">fortification</option>
+            <option value="géologie">géologie</option>
+            <option value="géométrie">géométrie</option>
+            <option value="grammaire">grammaire</option>
+            <option value="hippologie">hippologie</option>
+            <option value="ichtyologie">ichtyologie</option>
+            <option value="jurisprudence">jurisprudence</option>
+            <option value="logique">logique</option>
+            <option value="marine">marine</option>
+            <option value="mathématiques">mathématiques</option>
+            <option value="mécanique">mécanique</option>
+            <option value="médecine">médecine</option>
+            <option value="métallurgie">métallurgie</option>
+            <option value="terme militaire">terme militaire</option>
+            <option value="minéralogie">minéralogie</option>
+            <option value="musique">musique</option>
+            <option value="ornithologie">ornithologie</option>
+            <option value="paléontologie">paléontologie</option>
+            <option value="pharmacie">pharmacie</option>
+            <option value="philosophie">philosophie</option>
+            <option value="photographie">photographie</option>
+            <option value="physique">physique</option>
+            <option value="physiologie">physiologie</option>
+            <option value="sériciculture">sériciculture</option>
+            <option value="shintoïsme">shintoïsme</option>
+            <option value="technique">technique</option>
+            <option value="théâtre">théâtre</option>
+            <option value="typographie">typographie</option>
+            <option value="science vétérinaire">science vétérinaire</option>
+            <option value="zoologie">zoologie</option>
+        </select>
+        <select id="cdm-pos" name="cdm-pos" style="display:none;">
+            <option value="接頭">接頭詞 (préfixe)</option>
+            <option value="副">副詞 (adverbe)</option>
+            <option value="動">動詞 (verbe)</option>
+            <option value="形">形容詞 (adjectif)</option>
+        </select>
+        <select id="cdm-contribution-status" name="cdm-contribution-status" style="display:none;">
+            <option value="finished">fini</option>
+            <option value="classified">classifié</option>
+            <option value="not finished">en cours d'édition</option>
+            <option value="draft">brouillon</option>
+       </select>
+        <select id="cesselin-relecture" name="cesselin-relecture" style="display:none;">
+            <option value="fraOK">français vérifié sur le PDF</option>
+            <option value="jpnOK">japonais vérifié sur le PDF</option>
+            <option value="frajpnOK">français et japnais vérifiés</option>
+            <option value="fusion">à fusionner avec l'entrée précédente</option>
+            <option value="cission">à séparer en 2 entrées</option>
+            <option value="ssentrée">sous-entrée à restructurer</option>
+        </select>
+    <form id="SearchForm" action="">
         <div style="display:block; padding:5px;">
 		<input type="hidden" name="action" id="actionJS" value="advancedLookup" />
           <table border="0" cellpadding="0" cellspacing="0" summary="Search Form" width="100%">
@@ -40,7 +132,53 @@
                 <div id="CriteriaZone" style=" padding:5px;">
                 <!-- ADVANCEDQUERYFORM SCRIPT  -->
                 <script src="javascript/AdvancedQueryFormAjax.js" type="text/javascript"><!-- // --></script>
-                  
+                <script type="text/javascript">
+                    <!--
+                     function adjustAdvancedSearchForm(select) {
+                     var criteriaNumber='';
+                     if (select.name.lastIndexOf(".") != -1) {
+                     criteriaNumber = select.name.substring(select.name.lastIndexOf("."));
+                     }
+                     var selvalue = selectedValue(select);
+                     var operator = document.getElementById('Operator'+criteriaNumber);
+                     var textbox = document.getElementById('ValueField'+criteriaNumber);
+
+                     // on vire le select précédent s'il y en avait un
+                     var selectFacetValue = document.getElementById('select-facet-value'+ criteriaNumber);
+                     if (selectFacetValue != null) {
+                     textbox.parentNode.removeChild(selectFacetValue);
+                     }
+                     
+                     //   operator.options.length = 0;
+                     if (selvalue == 'cdm-example' || selvalue == 'cesselin-example-romaji' || selvalue == 'cesselin-example-hiragana') {
+                     var select2 = document.getElementById("selectcontains");
+                     operator.innerHTML = select2.innerHTML;
+                     }
+                     else if (selvalue == 'cdm-domain' || selvalue == 'cesselin-page' || selvalue == 'cesselin-relecture' || selvalue == 'cdm-pos') {
+                     var select2 = document.getElementById("selectexact");
+                     operator.innerHTML = select2.innerHTML;
+                     }
+                     else {
+                     var select2 = document.getElementById("selectdefault");
+                     operator.innerHTML = select2.innerHTML;
+                     }
+                     if (selvalue == 'cdm-domain' || selvalue == 'cdm-pos' || selvalue == 'cdm-contribution-status' || selvalue == 'cesselin-relecture') {
+                     textbox.setAttribute('name', 'toto');
+                     textbox.setAttribute('style', 'display:none;');
+                     var selectFacetValue = document.getElementById(selvalue).cloneNode(true);
+                     selectFacetValue.setAttribute('name', 'FACETVALUE'+criteriaNumber);
+                     selectFacetValue.setAttribute('id', 'select-facet-value' + criteriaNumber);
+                     selectFacetValue.setAttribute('style', '');
+                     var parent = textbox.parentNode;
+                     parent.insertBefore(selectFacetValue,textbox);
+                     }
+                     else {
+                        textbox.setAttribute('style', '');
+                        textbox.setAttribute('name', 'FACETVALUE'+criteriaNumber);
+                     }
+                     }
+                     // -->
+                </script>
                   <b>où</b>
                   <br/>
                     <table id="tableShowHideElement" style="display: none;" >
@@ -50,20 +188,24 @@
                   <div id="criterion" style="display:block; margin-left: 10px;">
                     <img id="minus" onclick="addOrRemoveCriterion(this.id, '-');" src="media/minus.jpg" alt="-" width="15"/>
                     <img id="plus" onclick="addOrRemoveCriterion(this.id, '+');" src="media/plus.jpg" alt="+" width="15"/>
-                    <select id="Facet" name="FACET" onchange="hideOrNotSourceLang(value, name);" >
+                    <select id="Facet" name="FACET" onchange="adjustAdvancedSearchForm(this)" >
                       <option value="cdm-headword">le mot-vedette</option>
                       <option value="cdm-reading">le hiragana</option>
                       <option value="cdm-writing">le romaji</option>
                       <option value="cdm-pos">la catégorie</option>
                       <option value="cdm-domain">le domaine</option>
                       <option value="cdm-translation">la traduction</option>
+                      <option value="cesselin-example-hiragana">un exemple (hiragana)</option>
+                      <option value="cesselin-example-romaji">un exemple (romaji)</option>
                       <option value="cdm-example">la traduction de l'exemple</option>
                       <option value="cdm-entry-id">l'ID de l'entrée</option>
                       <option value="cdm-contribution-id">l'ID de la contribution</option>
-                      <option value="cdm-original-contribution-id">l'ID de la contribution d'origine</option>
-                      <option value="cdm-modification-author">le contributeur</option>
+                      <option value="cdm-original-contribution-id">l'ID de la contrib. d'origine</option>
+                      <option value="cdm-contribution-status">le statut de la contribution</option>
+                     <option value="cdm-modification-author">le contributeur</option>
                       <option value="cdm-modification-date">la date de contribution</option>
                       <option value="cesselin-page">la page (Cesselin)</option>
+                      <option value="cesselin-relecture">la relecture (Cesselin)</option>
                     </select>
                     <select id="Operator" name="OPERATOR" >
                       <option value="0">est</option>
@@ -127,6 +269,22 @@
             <input type="submit" value="Go" />
           </div>
       </form>
+    <script type="text/javascript">
+        <!--
+         function adjustAllAdvancedSearchForm() {
+         var form = document.getElementById('SearchForm');
+         var nbcrit = form.CRITERIA_NB.value;
+         nbcrit = parseInt(nbcrit) - 1;
+         for (var i=0; i<=nbcrit; i++) {
+         var select  = form.elements['FACET.'+i];
+         adjustAdvancedSearchForm(select);
+         }
+         return true;
+         }
+         
+         addLoadEvent(adjustAllAdvancedSearchForm);
+         // -->
+    </script>
     </div>
   </body>
 </html>
