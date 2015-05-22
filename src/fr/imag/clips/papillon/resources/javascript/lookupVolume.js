@@ -235,11 +235,11 @@ function queryOneEntry (entry, volume) {
 }
 
 function replace_api(string) {
-	string.replace('a'+'̄','ā');
-	string.replace('e'+'̄','ē');
-	string.replace('i'+'̄','ī');
-	string.replace('o'+'̄','ō');
-	string.replace('u'+'̄','ū');
+	string = string.replace('a'+'̄','ā');
+	string = string.replace('e'+'̄','ē');
+	string = string.replace('i'+'̄','ī');
+	string = string.replace('o'+'̄','ō');
+	string = string.replace('u'+'̄','ū');
 	return string;
 }
 
