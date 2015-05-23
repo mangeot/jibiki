@@ -69,7 +69,9 @@ public class VolumeCache {
     
 	
 	protected static void putNonStandardCDMElementsInCache(java.util.HashMap CdmElementsTable)  {
-		
+        if (CdmElementsTable == null) {
+            PapillonLogger.writeDebugMsg("putNonStandardCDMElementsInCache: CdmElementsTable null");
+        }
 		for (Iterator langKeys = CdmElementsTable.keySet().iterator(); langKeys.hasNext();) {
 			String lang = (String) langKeys.next();
 			
