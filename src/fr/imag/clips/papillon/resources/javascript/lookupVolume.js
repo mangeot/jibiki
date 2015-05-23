@@ -109,7 +109,7 @@ function queryPrefixVolume(word, volume) {
 			//On lance la fonction ajax
 			load = true;
 			$('#lookupentries').children().remove();
-	var halflimit = Math.floor(limit/2);
+    var halflimit = parseInt($('#LIMIT').val(),10);
 	var key='cdm-headword|cdm-headwordVariant|cdm-writing|cdm-reading';
 	if (volume=='Motamot_khm_api') {
 		volume='Motamot_khm';
