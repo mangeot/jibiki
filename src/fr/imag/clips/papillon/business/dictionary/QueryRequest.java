@@ -456,7 +456,7 @@ import javax.swing.JOptionPane;
 					
                     // Debug
                     if (DEBUG) indexQuery.getQueryBuilder().debug();
-                   // PapillonLogger.writeDebugMsg("findIndex debug");
+                   // PapillonLogger.writeDebugMsg("findIndexNotSorted debug");
 					//indexQuery.getQueryBuilder().debug();
 					
                     //
@@ -518,7 +518,7 @@ import javax.swing.JOptionPane;
                     
                     // Debug
                     if (DEBUG) indexQuery.getQueryBuilder().debug();
-                    PapillonLogger.writeDebugMsg("findIndex debug");
+                    //PapillonLogger.writeDebugMsg("findIndex debug");
                     indexQuery.getQueryBuilder().debug();
                     
                     //

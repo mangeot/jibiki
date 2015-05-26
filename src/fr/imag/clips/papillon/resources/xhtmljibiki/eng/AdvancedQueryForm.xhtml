@@ -23,18 +23,18 @@
              }
              -->
         </script>
-        <select id='selectdefault' style="display:none;">
+        <select id='selectdefault' title="default" style="display:none;">
             <option value="0">is exactly</option>
             <option value="6">begins with</option>
             <option value="5">ends with</option>
         </select>
-        <select id='selectexact' style="display:none;">
+        <select id='selectexact' title="exact" style="display:none;">
             <option value="0">is exactly</option>
         </select>
-        <select id='selectcontains' style="display:none;">
+        <select id='selectcontains' title="contains" style="display:none;">
             <option value="4">contains</option>
         </select>
-        <select id="cdm-domain" name="cdm-domain" style="display:none;">
+        <select id="cdm-domain" name="cdm-domain" title="cdm-domain" style="display:none;">
             <option value="algèbre">algèbre</option>
             <option value="anatomie">anatomie</option>
             <option value="architecture">architecture</option>
@@ -88,7 +88,7 @@
             <option value="science vétérinaire">science vétérinaire</option>
             <option value="zoologie">zoologie</option>
         </select>
-        <select id="cdm-pos" name="cdm-pos" style="display:none;">
+        <select id="cdm-pos" name="cdm-pos" title="cdm-pos" style="display:none;">
             <option value="形">形容詞 (adjectif)</option>
             <option value="副">副詞 (adverbe)</option>
             <option value="連語">連語 (mot composé)</option>
@@ -98,13 +98,13 @@
             <option value="代">代名詞 (pronom)</option>
             <option value="動">動詞 (verbe)</option>
         </select>
-        <select id="cdm-contribution-status" name="cdm-contribution-status" style="display:none;">
+        <select id="cdm-contribution-status" name="cdm-contribution-status" title="cdm-contribution-status" style="display:none;">
             <option value="finished">fini</option>
             <option value="classified">classifié</option>
             <option value="not finished">en cours d'édition</option>
             <option value="draft">brouillon</option>
         </select>
-        <select id="cesselin-relecture" name="cesselin-relecture" style="display:none;">
+        <select id="cesselin-relecture" name="cesselin-relecture" title="cesselin-relecture" style="display:none;">
             <option value="fraOK">français vérifié sur le PDF</option>
             <option value="jpnOK">japonais vérifié sur le PDF</option>
             <option value="frajpnOK">français et japonais vérifiés</option>
@@ -145,32 +145,39 @@
                      var operator = document.getElementById('Operator'+criteriaNumber);
                      var textbox = document.getElementById('ValueField'+criteriaNumber);
                      
-                     // on vire le select précédent s'il y en avait un
-                     var selectFacetValue = document.getElementById('select-facet-value'+ criteriaNumber);
-                     if (selectFacetValue != null) {
-                     textbox.parentNode.removeChild(selectFacetValue);
-                     }
-                     
+                     var select2 = null;
                      //   operator.options.length = 0;
                      if (selvalue == 'cdm-translation' || selvalue == 'cdm-example' || selvalue == 'cesselin-example-romaji' || selvalue == 'cesselin-example-hiragana') {
-                     var select2 = document.getElementById("selectcontains");
-                     operator.innerHTML = select2.innerHTML;
+                     select2 = document.getElementById("selectcontains");
                      }
                      else if (selvalue == 'cdm-domain' || selvalue == 'cesselin-page' || selvalue == 'cesselin-relecture' || selvalue == 'cdm-pos') {
-                     var select2 = document.getElementById("selectexact");
-                     operator.innerHTML = select2.innerHTML;
+                     select2 = document.getElementById("selectexact");
                      }
                      else {
-                     var select2 = document.getElementById("selectdefault");
+                     select2 = document.getElementById("selectdefault");
+                     }
+                     if (operator.title != select2.title) {
+                     var value = operator.value;
                      operator.innerHTML = select2.innerHTML;
+                     operator.title = select2.title;
+                     operator.value = value;
+                     }
+                     // on vire le select précédent s'il y en avait un
+                     var selectFacetValue = document.getElementById('select-facet-value'+ criteriaNumber);
+                     if (selectFacetValue == null || (selectFacetValue != null && selectFacetValue.title != selvalue)) {
+                     if (selectFacetValue != null) {
+                     textbox.parentNode.removeChild(selectFacetValue);
                      }
                      if (selvalue == 'cdm-domain' || selvalue == 'cdm-pos' || selvalue == 'cdm-contribution-status' || selvalue == 'cesselin-relecture') {
                      textbox.setAttribute('name', 'toto');
                      textbox.setAttribute('style', 'display:none;');
-                     var selectFacetValue = document.getElementById(selvalue).cloneNode(true);
+                     selectFacetValue = document.getElementById(selvalue).cloneNode(true);
                      selectFacetValue.setAttribute('name', 'FACETVALUE'+criteriaNumber);
                      selectFacetValue.setAttribute('id', 'select-facet-value' + criteriaNumber);
                      selectFacetValue.setAttribute('style', '');
+                     selectFacetValue.title = selvalue;
+                     selectFacetValue.value = textbox.value;
+                     
                      var parent = textbox.parentNode;
                      parent.insertBefore(selectFacetValue,textbox);
                      }
@@ -179,8 +186,9 @@
                      textbox.setAttribute('name', 'FACETVALUE'+criteriaNumber);
                      }
                      }
+                     }
                      // -->
-                </script>                
+                </script>
                   <b>where</b>
                   <br/>
                     <table id="tableShowHideElement" style="display: none;" >
