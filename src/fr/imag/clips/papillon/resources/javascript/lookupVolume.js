@@ -1,5 +1,5 @@
 <!--
-	var limit = 100;
+	var limit = 400;
 	var load = false; // aucun chargement d'entrée n'est en cours
 	var entriesHeight = 0;
  	var nbentries = 0;
