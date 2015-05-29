@@ -9,6 +9,13 @@
 <div id="Formulaire" xml:lang="en" lang="en">    
 <script type="text/javascript">
  <!-- 
+ 		// Open a new window 
+        function exportVolumeAll() {
+            href = 'Export.po?VOLUME=' + document.getElementById('VOLUME').value + '&EXPORTALL=go';
+            //window.open(href,'Export');
+            window.location.href = href;
+        }
+        
         // Open a new window 
         function exportVolume() {
             href = 'Export.po?VOLUME=' + document.getElementById('VOLUME').value + '&EXPORT=go';
@@ -44,6 +51,7 @@
         </select>
 	</td>
 	<td>
+		<input name="EXPORTALL" type="submit" value="Export volume" onclick="exportVolumeAll()"/><br/>
         <input name="EXPORT" type="submit" value="Export volume (finished contributions)" onclick="exportVolume()"/>
         <input name="EXPORTMYFINISHED" type="submit" value="Export my finished contributions" onclick="exportMyFinished()"/>
         <input name="EXPORTMYUNFINISHED" type="submit" value="Export my unfinished contributions" onclick="exportMyUnfinished()"/>
