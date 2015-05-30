@@ -209,6 +209,7 @@ public abstract class AbstractPO
         // setContentType before calling getDocument
         // because getDocument can change the content type
         this.getComms().response.setContentType("text/html");
+        this.getComms().response.setHeader("Access-Control-Allow-Origin","*");
 
         try {
             initPresentationContext();
