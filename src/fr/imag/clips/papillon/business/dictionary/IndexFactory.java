@@ -311,7 +311,10 @@ public class IndexFactory {
                 com.lutris.dods.builder.generator.query.RDBColumn entryIdColumn = IndexDO.getEntryIdColumn(indexTableName);
                 IndexQuery query = new IndexQuery(indexTableName, CurrentDBTransaction.get());
 				//fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Index request table: " + indexTableName);
-				
+                if (limit==0) {
+                    limit = DictionariesFactory.MaxRetrievedEntries;
+                }
+                
 				if (Keys != null) {
 					for (java.util.Enumeration enumKeys = Keys.elements(); enumKeys.hasMoreElements();) {
 						String[] key = (String[]) enumKeys.nextElement();
@@ -424,17 +427,19 @@ public class IndexFactory {
                     clausesQueryBuilder.select(entryIdColumn);
                     query.getQueryBuilder().addWhereIn(entryIdColumn, clausesQueryBuilder);
                 }
-				query.getQueryBuilder().setMaxRows((0 == limit) ? DictionariesFactory.MaxRetrievedEntries : limit);
-				if (offset!=0) {
-					query.getQueryBuilder().addEndClause("OFFSET " + offset);
-				}
 				if (order==null || !order.equals(ORDER_DESCENDING)) {
 					order = "";
 				}
-				query.getQueryBuilder().addOrderByColumn(MSORT_FIELD,order);
+                query.getQueryBuilder().addOrderByColumn(MSORT_FIELD,order);
+                query.getQueryBuilder().setMaxRows(limit);
+                query.getQueryBuilder().addEndClause(" LIMIT " + limit);
+                if (offset!=0) {
+                    query.getQueryBuilder().addEndClause(" OFFSET " + offset);
+                }
+
 				// debug
-               // PapillonLogger.writeDebugMsg("getIndexEntriesVector query debug: ");
-			//	query.getQueryBuilder().debug();
+                // PapillonLogger.writeDebugMsg("getIndexEntriesVector query debug: ");
+				//query.getQueryBuilder().debug();
 				
 				IndexDO[] DOarray = query.getDOArray();
 				if (null != DOarray) {
@@ -473,6 +478,10 @@ public class IndexFactory {
                 com.lutris.dods.builder.generator.query.RDBColumn entryIdColumn = IndexDO.getEntryIdColumn(indexTableName);
 				IndexQuery query = new IndexQuery(indexTableName, CurrentDBTransaction.get());
 				
+                if (limit==0) {
+                    limit = DictionariesFactory.MaxRetrievedEntries;
+                }
+
                 /* clés multiples */
                 String[] keynames = key.split("\\|");
                 if (keynames.length>1) {
@@ -510,17 +519,18 @@ public class IndexFactory {
                 
                 query.getQueryBuilder().addWhere(msortColumn, msort,  operator);
 				
-				query.getQueryBuilder().setMaxRows((0 == limit) ? DictionariesFactory.MaxRetrievedEntries : limit);
+                if (order==null || !order.equalsIgnoreCase(ORDER_DESCENDING)) {
+                    order = "";
+                }
+                query.getQueryBuilder().addOrderByColumn(MSORT_FIELD,order);
+                query.getQueryBuilder().setMaxRows(limit);
+                query.getQueryBuilder().addEndClause(" LIMIT " + limit);
 				if (offset!=0) {
-					query.getQueryBuilder().addEndClause("OFFSET " + offset);
+					query.getQueryBuilder().addEndClause(" OFFSET " + offset);
 				}
-				if (order==null || !order.equalsIgnoreCase(ORDER_DESCENDING)) {
-					order = "";
-				}
-				query.getQueryBuilder().addOrderByColumn(MSORT_FIELD,order);
 				// debug
-                //PapillonLogger.writeDebugMsg("getIndexEntriesVector avec key debug:")
-				//query.getQueryBuilder().debug();
+                PapillonLogger.writeDebugMsg("getIndexEntriesVector avec key+msort debug:");
+				query.getQueryBuilder().debug();
 				
 				IndexDO[] DOarray = query.getDOArray();
 				if (null != DOarray) {

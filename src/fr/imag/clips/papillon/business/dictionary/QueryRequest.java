@@ -519,7 +519,7 @@ import javax.swing.JOptionPane;
                     // Debug
                     if (DEBUG) indexQuery.getQueryBuilder().debug();
                     //PapillonLogger.writeDebugMsg("findIndex debug");
-                    indexQuery.getQueryBuilder().debug();
+                    //indexQuery.getQueryBuilder().debug();
                     
                     //
                     IndexDO[] DOarray = indexQuery.getDOArray();

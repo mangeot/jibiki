@@ -634,16 +634,19 @@ public class VolumeEntriesFactory {
                         }
  					}
 				}
-				query.getQueryBuilder().setMaxRows((0 == limit) ? DictionariesFactory.MaxRetrievedEntries : limit);
-				// seems to be a bug in the queryBuilder, have to put a space before OFFSET
-				query.getQueryBuilder().addEndClause(" OFFSET " + offset);
 				if (order==null || !order.equals(ORDER_DESCENDING)) {
 					order = "";
 				}				
 				query.getQueryBuilder().addOrderByColumn("multilingual_sort('" + sourceLanguage + "',headword)",order);
+                if (limit==0) {
+                    limit = DictionariesFactory.MaxRetrievedEntries;
+                }
+                query.getQueryBuilder().setMaxRows(limit);
+                // seems to be a bug in the queryBuilder, have to put a space before LIMIT or OFFSET
+                query.getQueryBuilder().addEndClause(" LIMIT " + limit + " OFFSET " + offset);
 				// debug
-                //PapillonLogger.writeDebugMsg("getDbTableEntriesVector query debug:");
-				// query.getQueryBuilder().debug();
+                // PapillonLogger.writeDebugMsg("getDbTableEntriesVector query debug:");
+                //query.getQueryBuilder().debug();
                 
 				VolumeEntryDO[] DOarray = query.getDOArray();
 				if (null != DOarray) {

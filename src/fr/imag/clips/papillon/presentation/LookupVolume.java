@@ -258,7 +258,7 @@ public class LookupVolume extends AbstractPO {
                     myClauses.add(criteriaStatus.getFullClause());
                     
                     
-					//PapillonLogger.writeDebugMsg("LookupVolume: lookupvolume [" + myVolume.getIndexDbname() + "] lang: [" + lang + "] WORD: [" + word + "] KEY: [" + key + "] strat: [" + strategy + "] order: [" + order + "] limit: [" + limit + "]");
+					// PapillonLogger.writeDebugMsg("LookupVolume: lookupvolume [" + myVolume.getIndexDbname() + "] lang: [" + lang + "] WORD: [" + word + "] KEY: [" + key + "] strat: [" + strategy + "] order: [" + order + "] limit: [" + limit + "]");
 					EntryCollection = IndexFactory.getIndexEntriesVector(myVolume.getIndexDbname(), myKeys, myClauses, order,limit, 0);
 				}
 				else if (msort != null && !msort.equals("")) {
@@ -272,7 +272,9 @@ public class LookupVolume extends AbstractPO {
                     java.util.Vector myClauses = new java.util.Vector();
                     myClauses.add(criteriaStatus.getFullClause());
 
-                    EntryCollection = IndexFactory.getIndexEntriesVector(myVolume.getIndexDbname(), key, myClauses, msort, strategy, order,limit,0);
+                    
+                    //PapillonLogger.writeDebugMsg("LookupVolume: lookupvolume msort [" + myVolume.getIndexDbname() + "] lang: [" + lang + "] WORD: [" + word + "] KEY: [" + key + "] msort: [ " + msort + "] strat: [" + strategy + "] order: [" + order + "] limit: [" + limit + "]");
+                   EntryCollection = IndexFactory.getIndexEntriesVector(myVolume.getIndexDbname(), key, myClauses, msort, strategy, order,limit,0);
 				
 				}
 				if (EntryCollection!=null) {
@@ -333,7 +335,7 @@ public class LookupVolume extends AbstractPO {
 				
 				java.util.Vector myKeys = new java.util.Vector();
 				String[] Headword = new String[4];
-				// PapillonLogger.writeDebugMsg("LookupVolume queryOneEntry: " + oneentry + " key: " + key);
+				//PapillonLogger.writeDebugMsg("LookupVolume queryOneEntry: " + oneentry + " key: " + key);
 				Headword[0] = key;
 				Headword[1] = lang;
 				Headword[2] = oneentry;
