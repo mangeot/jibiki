@@ -1149,6 +1149,7 @@
 		A33095821A9445DD0055D557 /* InformationTmpl.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = InformationTmpl.xhtml; sourceTree = "<group>"; };
 		A33095841A9445DD0055D557 /* LinkerResultList.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = LinkerResultList.xhtml; sourceTree = "<group>"; };
 		A33095851A9445DD0055D557 /* LinkerSearchForm.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = LinkerSearchForm.xhtml; sourceTree = "<group>"; };
+		A334B0581B1B4945003F742E /* ViewQueryResultPivax.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = ViewQueryResultPivax.xhtml; sourceTree = "<group>"; };
 		A3376029100241C4002281AF /* MotamotPostUpdateProcessor.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = MotamotPostUpdateProcessor.java; sourceTree = "<group>"; };
 		A33F36B61A4270C00030039C /* ConsultPage.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = ConsultPage.xhtml; sourceTree = "<group>"; };
 		A33F36B71A42B4810030039C /* AdvancedLookup.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = AdvancedLookup.xhtml; sourceTree = "<group>"; };
@@ -3562,6 +3563,7 @@
 				A37C032B128C62DB0047A982 /* UserLanguageSelect.xmlc */,
 				A37C032C128C62DB0047A982 /* UserProfile.xhtml */,
 				A37C032E128C62DB0047A982 /* ViewQueryResult.xhtml */,
+				A334B0581B1B4945003F742E /* ViewQueryResultPivax.xhtml */,
 			);
 			path = orig;
 			sourceTree = "<group>";
