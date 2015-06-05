@@ -16,13 +16,6 @@
   </head>
   <body>
     <div id="AdvancedSearchForm" lang="en" xml:lang="en">
-        <script type="text/javascript">
-            <!--
-             function selectedValue(selBox) {
-             return selBox.options[selBox.selectedIndex].value;
-             }
-             -->
-        </script>
         <select id='selectdefault' title="default" style="display:none;">
             <option value="0">is exactly</option>
             <option value="6">begins with</option>
@@ -141,7 +134,7 @@
                      if (select.name.lastIndexOf(".") != -1) {
                      criteriaNumber = select.name.substring(select.name.lastIndexOf("."));
                      }
-                     var selvalue = selectedValue(select);
+                     var selvalue = select.value;
                      var operator = document.getElementById('Operator'+criteriaNumber);
                      var textbox = document.getElementById('ValueField'+criteriaNumber);
                      
@@ -227,16 +220,6 @@
                       <option value="4">contains</option>
                     </select>
                     <input type="text" id="ValueField" name="FACETVALUE" size="14" maxlength="128"/>
-                    <span style="display:none;"><span style="display:none;">
-                        <!--
-                        <label id="SourceLangLabel" for="SourceLang" accesskey="i" >
-                        <span class="accesskey">I</span>n:</label>
-                        -->
-                        <select id="SourceLang" name="SOURCE">
-                            <option id="SourceOptionTemplate" value="NONE" label="NONE">NONE</option>
-                            <option value="All" label="All">All</option>
-                        </select>
-                    </span></span>
                   </div>
                 </div>
               </td>
@@ -248,7 +231,7 @@
                   </select>
                 </div>
 				<input type="submit" value="➡" />
-				<input type="hidden" id="LIMIT" name="LIMIT" value="100" />
+				<input type="hidden" id="LIMIT" name="LIMIT" value="400" />
               </td>
                 <td>
                     <div id="QuickLink" class="quick_search">
@@ -262,7 +245,7 @@
           </div>
           <div style="display:none; padding: 5px;">
             <b>Display </b>
-            <select id="LIMITSelect" name="LIMIT">
+            <select id="LIMITSelect" name="">
               <option label="10" value="10">10</option>
               <option label="20" value="20">20</option>
               <option label="50" value="50">50</option>
@@ -278,6 +261,16 @@
             <input type="submit" value="Go" />
           </div>
       </form>
+      <span style="display:none;"><span style="display:none;">
+          <!--
+           <label id="SourceLangLabel" for="SourceLang" accesskey="i" >
+           <span class="accesskey">I</span>n:</label>
+           -->
+          <select id="SourceLang" name="">
+              <option id="SourceOptionTemplate" value="NONE" label="NONE">NONE</option>
+              <option value="All" label="All">All</option>
+          </select>
+      </span></span>
       <script type="text/javascript">
           <!--
            function adjustAllAdvancedSearchForm() {
