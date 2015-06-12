@@ -56,7 +56,10 @@ function lookupIndex (parameters, direction) {
 			lastEntryOffset = $('.lookupentry:last').offset().top - $('.lookupentry:first').offset().top - entriesHeight;
 			//On remet la valeur à faux car c'est fini
 			load = false;
-		   }
+           },
+           error: function (request, status, errorThrown) {
+           alert(errorThrown);
+           } // When Service call fails
 		   });
 }
 
@@ -139,7 +142,10 @@ function queryPrefixVolume(word, volume) {
 				   else {
 					$('#lookupentries').append($(data).children());
 				   }
-				}
+                },
+                error: function (request, status, errorThrown) {
+                   alert(errorThrown);
+                } // When Service call fails
 			});
 		$.ajax({
 		   url: scriptStartUrl + 'LookupVolume.po',
@@ -165,7 +171,10 @@ function queryPrefixVolume(word, volume) {
 			   $('#lookupentries').append($(data).children());
                $('#lookupentries').children(":first").first().css('font-weight','bold');
 			   }
-		   }
+		   },
+            error: function (request, status, errorThrown) {
+               alert(errorThrown);
+            } // When Service call fails
 		   });
 }
 
@@ -178,7 +187,7 @@ function lookupVolume (parameters) {
 			$('#lookupcontent').children().remove();
 			$('.lookupentry').css('font-weight', 'normal');
 			$.ajax({
-//                crossDomain: true,
+                crossDomain: true,
                 data: 'action=queryHandle&'+parameters,
                 dataType: "html",
                 type: 'GET',
@@ -224,8 +233,11 @@ function queryOneKey (key, value, volume) {
            // use this method in order to execute embedded javascrit in the data
            $('#lookupcontent').append(data);
 		   load = false;
-		   }
-		   });
+           },
+           error: function (request, status, errorThrown) {
+           alert(errorThrown);
+           } // When Service call fails
+        });
 }
 
 
