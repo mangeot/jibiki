@@ -21,6 +21,7 @@ function lookupIndex (parameters, direction) {
     
 	//On lance la fonction ajax
 	$.ajax({
+           crossDomain: true,
 		   url: scriptStartUrl + 'LookupVolume.po',
 		   type: 'GET',
 		   data: parameters+'&DIRECTION='+direction,
@@ -123,6 +124,7 @@ function queryPrefixVolume(word, volume) {
 	}
 	//alert(volume+' '+ key + ' ' + word);
 			$.ajax({
+                crossDomain: true,
 				url: scriptStartUrl + 'LookupVolume.po',
 				type: 'GET',
 				data: 'action=lookupVolume&VOLUME='+volume+'&LIMIT='+halflimit+'&KEY='+key+'&WORD='+word+'&DIRECTION=DESC',
@@ -148,6 +150,7 @@ function queryPrefixVolume(word, volume) {
                 } // When Service call fails
 			});
 		$.ajax({
+           crossDomain: true,
 		   url: scriptStartUrl + 'LookupVolume.po',
 		   type: 'GET',
 		   data: 'action=lookupVolume&VOLUME='+volume+'&LIMIT='+halflimit+'&KEY='+key+'&WORD='+word+'&DIRECTION=ASC&STRATEGY=>%3D',
@@ -218,9 +221,11 @@ function queryOneKey (key, value, volume) {
 	$('.lookupentry').css('font-weight', 'normal');
 	
 	$.ajax({
+           crossDomain: true,
 		   url: scriptStartUrl + 'LookupVolume.po',
-		   type: 'get',
+		   type: 'GET',
 		   data: 'action=queryOneEntry&VOLUME='+volume+'&ENTRY='+value + '&KEY=' + key,
+           dataType: "html",
 		   
 		   //Succès de la requête
 		   success: function(data) {
