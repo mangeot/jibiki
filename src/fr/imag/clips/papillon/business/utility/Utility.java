@@ -185,7 +185,7 @@ public class Utility {
                 || theString.indexOf("<") >= 0 ||theString.indexOf(">") >= 0) {
                 if (theString.indexOf("'") >= 0) {
                     theString = theString.substring(0,theString.indexOf("'"))
-                        + "&apos;" + theString.substring(theString.indexOf("'") + 1);
+                        + "&#39;" + theString.substring(theString.indexOf("'") + 1);
                 }
                 if (theString.indexOf("\"") >= 0) {
                     theString = theString.substring(0,theString.indexOf("\""))

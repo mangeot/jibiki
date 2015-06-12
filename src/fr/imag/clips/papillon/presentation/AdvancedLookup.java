@@ -133,7 +133,7 @@ public class AdvancedLookup extends DilafBasePO {
 						volumeName = theVolume.getName();
 					}
                     String displayValue = Utility.encodeXMLEntities(myIndex.getValue());
- 					String entry = "<div class='lookupentry' msort='"+ Utility.encodeXMLEntities(myIndex.getMsort())+"' "+firstEntryStyle+"><a href='javascript:void(0);' style='display:block; margin:5px;' onclick=\"lookupVolume('VOLUME="+volumeName+"&amp;HANDLE="+myIndex.getEntryId()+"');$(this).parent().css('font-weight','bold')\">"+displayValue+"</a></div>";
+ 					String entry = "<div class='lookupentry' msort='"+ Utility.encodeXMLEntities(myIndex.getMsort())+"' "+firstEntryStyle+"><a href='javascript:void(0);' style='display:block; margin:5px;' onclick='lookupVolume(\"VOLUME="+volumeName+"&amp;HANDLE="+myIndex.getEntryId()+"\");$(this).parent().css(\"font-weight\",\"bold\")'>"+displayValue+"</a></div>";
                     firstEntryStyle = "";
 					stringResponse += entry;
 				}

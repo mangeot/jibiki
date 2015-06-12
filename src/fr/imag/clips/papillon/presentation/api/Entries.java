@@ -270,7 +270,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 						String id =((String) listKeys.get(i)).replace("&", "&amp;");
 						id = id.replace(">", "&gt;");
 						id = id.replace("<", "&lt;");
-						id = id.replace("'", "&apos;");
+						id = id.replace("'", "&#39;");
 						id = id.replace("\"", "&quot;");
 						allEntries.append(id);
 						allEntries.append("</entryId>\n");
@@ -278,7 +278,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 						String e =((VolumeEntry)listValues.get(i)).getHeadword().replace("&", "&amp;");
 						e = e.replace(">", "&gt;");
 						e = e.replace("<", "&lt;");
-						e = e.replace("'", "&apos;");
+						e = e.replace("'", "&#39;");
 						e = e.replace("\"", "&quot;");
 						allEntries.append(e);
 						allEntries.append("</headword>\n");

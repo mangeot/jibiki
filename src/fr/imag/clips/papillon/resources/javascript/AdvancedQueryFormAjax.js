@@ -1,5 +1,5 @@
 // List of XmlHttpObject
-var xmlHttpList
+var xmlHttpList;
 
 
 // Get select element depending on cdm element (Ajax function)

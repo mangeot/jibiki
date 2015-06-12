@@ -15,15 +15,15 @@
   <body>
     <div id="AdvancedSearchForm" lang="fr" xml:lang="fr">
         <select id='selectdefault' title="default" style="display:none;">
-            <option value="0">est exactement</option>
-            <option value="6">commence par</option>
-            <option value="5">finit par</option>
+            <option label="est exactement" value="0">est exactement</option>
+            <option label="commence par" value="6">commence par</option>
+            <option label="finit par" value="5">finit par</option>
         </select>
         <select id='selectexact' title="exact" style="display:none;">
-            <option value="0">est exactement</option>
+            <option label="est exactement" value="0">est exactement</option>
         </select>
         <select id='selectcontains' title="contains" style="display:none;">
-            <option value="4">contient</option>
+            <option label="contient" value="4">contient</option>
         </select>
         <select id="cdm-domain" name="cdm-domain" title="cdm-domain" style="display:none;">
             <option value="algèbre">algèbre</option>
@@ -99,7 +99,7 @@
             <option value="fraOK">français vérifié sur le PDF</option>
             <option value="jpnOK">japonais vérifié sur le PDF</option>
             <option value="frajpnOK">français et japonais vérifiés</option>
-            <option value="fusion">à fusionner avec l'entrée précédente</option>
+            <option value="fusion">à fusionner avec l&rsquo;entrée précédente</option>
             <option value="cission">à séparer en 2 entrées</option>
             <option value="ssentrée">sous-entrée à restructurer</option>
         </select>
@@ -187,8 +187,8 @@
                     </table>
                   <input type="hidden" id="NumberOfCriteria" name="CRITERIA_NB"/>
                   <div id="criterion" style="display:block; margin-left: 10px;">
-                    <img id="minus" onclick="addOrRemoveCriterion(this.id, '-');" src="media/minus.jpg" alt="-" width="15"/>
-                    <img id="plus" onclick="addOrRemoveCriterion(this.id, '+');" src="media/plus.jpg" alt="+" width="15"/>
+                    <img id="minus" onclick='addOrRemoveCriterion(this.id, "-");' src="media/minus.jpg" alt="-" width="15"/>
+                    <img id="plus" onclick='addOrRemoveCriterion(this.id, "+");' src="media/plus.jpg" alt="+" width="15"/>
                     <select id="Facet" name="FACET" onchange="adjustAdvancedSearchForm(this)" >
                       <option value="cdm-headword">le mot-vedette</option>
                       <option value="cdm-reading">le hiragana</option>
@@ -198,10 +198,10 @@
                       <option value="cdm-translation">la traduction</option>
                       <option value="cesselin-example-hiragana">un exemple (hiragana)</option>
                       <option value="cesselin-example-romaji">un exemple (romaji)</option>
-                      <option value="cdm-example">la traduction de l'exemple</option>
-                      <option value="cdm-entry-id">l'ID de l'entrée</option>
-                      <option value="cdm-contribution-id">l'ID de la contribution</option>
-                      <option value="cdm-original-contribution-id">l'ID de la contrib. d'origine</option>
+                      <option value="cdm-example">la traduction de l&rsquo;exemple</option>
+                      <option value="cdm-entry-id">l&rsquo;ID de l&rsquo;entrée</option>
+                      <option value="cdm-contribution-id">l&rsquo;ID de la contribution</option>
+                      <option value="cdm-original-contribution-id">l&rsquo;ID de la contrib. d&rsquo;origine</option>
                       <option value="cdm-contribution-status">le statut de la contribution</option>
                      <option value="cdm-modification-author">le contributeur</option>
                       <option value="cdm-modification-date">la date de contribution</option>

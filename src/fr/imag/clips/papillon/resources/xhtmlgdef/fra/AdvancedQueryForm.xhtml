@@ -99,7 +99,7 @@ function validAdvancedSearchForm(form) {
                     <table border="0" cellpadding="0" cellspacing="0" summary="Search Form" width="100%">
                         <tr valign="top">
                             <td style="vertical-align: middle;">
-                                <div><h2 style="display: inline; font-family: 'garamond', serif;">GDEF</h2> : recherche avancée</div>
+                                <div><h2 style='display: inline; font-family: "garamond", serif;'>GDEF</h2> : recherche avancée</div>
                                 <div id="DictionarySelection" style="padding:5px; display: none;">
                                     <!-- MULTIPLE VALUES: TARGETS, DICTIONARIES -->
                                     <select id="Dictionaries" name="DICTIONARIES" multiple="multiple">
@@ -169,8 +169,8 @@ function validAdvancedSearchForm(form) {
                                     </table>
                                     <input type="hidden" id="NumberOfCriteria" name="CRITERIA_NB"/>
                                     <div id="criterion" style="display:block; margin-left: 10px;">
-                                        <img id="minus" onclick="addOrRemoveCriterion(this.id, '-');" src="media/minus.jpg" alt="-" width="15"/>
-                                        <img id="plus" onclick="addOrRemoveCriterion(this.id, '+');" src="media/plus.jpg" alt="+" width="15"/>
+                                        <img id="minus" onclick='addOrRemoveCriterion(this.id, "-");' src="media/minus.jpg" alt="-" width="15"/>
+                                        <img id="plus" onclick='addOrRemoveCriterion(this.id, "+");' src="media/plus.jpg" alt="+" width="15"/>
                                         <select id="Facet" name="FACET" onchange="adjustAdvancedSearchForm(this)">
                                             <option selected="selected" value="cdm-headword">le mot-vedette</option>
                                             <option value="cdm-headword-variant">la variante</option>

@@ -13,6 +13,8 @@
 	var myScript = scripts[scripts.length - 1];
 	var scriptStartUrl=myScript.src.substring(0,myScript.src.lastIndexOf("javascript/"));
 
+$.support.cors = true;
+
 function lookupIndex (parameters, direction) {
 	load = true;
 	$('.loadmore').show();
@@ -20,7 +22,7 @@ function lookupIndex (parameters, direction) {
 	//On lance la fonction ajax
 	$.ajax({
 		   url: scriptStartUrl + 'LookupVolume.po',
-		   type: 'get',
+		   type: 'GET',
 		   data: parameters+'&DIRECTION='+direction,
 		   dataType: "html",
 		   
@@ -119,7 +121,7 @@ function queryPrefixVolume(word, volume) {
 	//alert(volume+' '+ key + ' ' + word);
 			$.ajax({
 				url: scriptStartUrl + 'LookupVolume.po',
-				type: 'get',
+				type: 'GET',
 				data: 'action=lookupVolume&VOLUME='+volume+'&LIMIT='+halflimit+'&KEY='+key+'&WORD='+word+'&DIRECTION=DESC',
 				dataType: "html",
  
@@ -141,7 +143,7 @@ function queryPrefixVolume(word, volume) {
 			});
 		$.ajax({
 		   url: scriptStartUrl + 'LookupVolume.po',
-		   type: 'get',
+		   type: 'GET',
 		   data: 'action=lookupVolume&VOLUME='+volume+'&LIMIT='+halflimit+'&KEY='+key+'&WORD='+word+'&DIRECTION=ASC&STRATEGY=>%3D',
 		   dataType: "html",
 		   
@@ -171,18 +173,19 @@ function queryPrefixVolume(word, volume) {
 function lookupVolume (parameters) {
 			//On lance la fonction ajax
 			load = true;
+            confirm('debut lookupVolume');
 			$('.loadcontent').show();
 			$('#lookupcontent').children().remove();
 			$('.lookupentry').css('font-weight', 'normal');
-
 			$.ajax({
+//                crossDomain: true,
+                data: 'action=queryHandle&'+parameters,
+                dataType: "html",
+                type: 'GET',
 				url: scriptStartUrl + 'LookupVolume.po',
-				type: 'get',
-				data: 'action=queryHandle&'+parameters,
  
 				//Succès de la requête
 				success: function(data) {
- 
 					//On masque le loader
 					$('.loadcontent').fadeOut(500);
 					// On affiche le résultat
@@ -191,7 +194,10 @@ function lookupVolume (parameters) {
                    // use this method in order to execute embedded javascrit in the data
                    $('#lookupcontent').append(data);
 					load = false;
-				}
+				},
+                error: function (request, status, errorThrown) {
+                   alert(errorThrown);
+                } // When Service call fails
 			});
 	}
 
