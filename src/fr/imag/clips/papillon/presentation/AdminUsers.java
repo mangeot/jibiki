@@ -130,16 +130,26 @@ public class AdminUsers extends PapillonBasePO {
             //TEMPORAIRE :avec l URL
             //AJOUT DE DICO
             String userMessage = null;
-            if (null != myGetParameter(REMOVE_PARAMETER)) {
-                User myUser = UsersFactory.findUserById(myGetParameter(REMOVE_PARAMETER));
-								if (myUser !=null && !myUser.isEmpty()) {
-									String userName = myUser.getName();
-									myUser.delete();
-									userMessage = "User "+  userName + " has been deleted";
-								}
-								else {
+            if (null != myGetParameter(SEE_PARAMETER)) {
+                User myUser = UsersFactory.findUserById(myGetParameter(SEE_PARAMETER));
+                if (myUser !=null && !myUser.isEmpty()) {
+                    String userName = myUser.getName();
+                    userMessage = "User "+  userName + " XML: " + myUser.getXmlCode();
+                }
+                else {
                     userMessage = "User not in database";
-								}
+                }
+            }
+            else if (null != myGetParameter(REMOVE_PARAMETER)) {
+                User myUser = UsersFactory.findUserById(myGetParameter(REMOVE_PARAMETER));
+                if (myUser !=null && !myUser.isEmpty()) {
+                    String userName = myUser.getName();
+                    myUser.delete();
+                    userMessage = "User "+  userName + " has been deleted";
+                }
+                else {
+                    userMessage = "User not in database";
+                }
             }
             else if (null != myGetParameter(MAKEADMIN_PARAMETER)) {
                 User myUser = UsersFactory.findUserById(myGetParameter(MAKEADMIN_PARAMETER));

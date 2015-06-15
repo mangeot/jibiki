@@ -114,6 +114,7 @@ public class User implements com.lutris.appserver.server.user.User {
 
     protected final static String PASSWORD_STRING = "Papillon.Users.Groups.Password";
     protected final static String PASSWORD_ENCODING = "US-ASCII";
+    //protected final static String PASSWORD_ENCODING = "UTF-8";
     protected final static String PASSWORD_DIGEST = "SHA";
     protected final static int PASSWORD_DIGEST_LENGTH = 30;
 	
@@ -226,7 +227,7 @@ public class User implements com.lutris.appserver.server.user.User {
 	public void setLogin(String login)
 		throws PapillonBusinessException {
 			try {
-				myDO.setLogin(login);
+                myDO.setLogin(login);
 			} catch(DataObjectException ex) {
 				throw new PapillonBusinessException("Error setting user's login", ex);
 			}
@@ -253,16 +254,11 @@ public class User implements com.lutris.appserver.server.user.User {
 	public void setPassword(String password)
 		throws PapillonBusinessException {
 			try {
-				byte[] myDigest = makeDigest(this.getLogin(), password);
-				String passwordString = new String(myDigest, PASSWORD_ENCODING);
-				myDO.setPassword(passwordString);
+				String passwordString = makeDigest(this.getLogin(), password);
+                myDO.setPassword(passwordString);
 			} catch(DataObjectException ex) {
 				throw new PapillonBusinessException("Error setting user's password", ex);
 			}
-			catch(UnsupportedEncodingException uee){
-				throw new PapillonBusinessException("Error in makeDigestString: UnsupportedEncodingException: " + PASSWORD_ENCODING, uee);
-			}
-			
 		}
 	
 	/**
@@ -541,8 +537,9 @@ public class User implements com.lutris.appserver.server.user.User {
 	
 	public void save()
 		throws PapillonBusinessException {
-			//PapillonLogger.writeDebugMsg("User.save");
-			this.setXmlCode(this.serializeXml());
+            String xml = this.serializeXml();
+			PapillonLogger.writeDebugMsg("User.save" + xml);
+            this.setXmlCode(this.serializeXml());
 			try {
 				this.myDO.commit();
 			} catch(Exception ex) {
@@ -570,8 +567,9 @@ public class User implements com.lutris.appserver.server.user.User {
 	/**	Uses the given digest algorithm to compute a 20 byte array of the
 		*	user name and password.
 		*/
-	protected static byte[] makeDigest(String user, String password)
+	protected static String makeDigest(String user, String password)
 		throws PapillonBusinessException {
+            String givenPasswordString = "";
 			byte[] digestbytes = new byte[PASSWORD_DIGEST_LENGTH];
 			if (user == null || user.equals("")) {
 				throw new PapillonBusinessException("Error in makeDigestString: user login empty");
@@ -583,27 +581,27 @@ public class User implements com.lutris.appserver.server.user.User {
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				messagedigest.update(baos.toByteArray());
 				digestbytes = messagedigest.digest();
-			} catch(NoSuchAlgorithmException nsae) {
-				throw new PapillonBusinessException("Error in makeDigest: NoSuchAlgorithmException: ", nsae);
-			}
-			return digestbytes;
+                givenPasswordString = new String(digestbytes, PASSWORD_ENCODING);
+                givenPasswordString = givenPasswordString.replaceAll("\\x00", "");
+            } catch(NoSuchAlgorithmException nsae) {
+                throw new PapillonBusinessException("Error in makeDigest: NoSuchAlgorithmException " + PASSWORD_DIGEST + " : ", nsae);
+            }
+            catch(UnsupportedEncodingException uee) {
+                throw new PapillonBusinessException("Error in makeDigest: UnsupportedEncoding " + PASSWORD_ENCODING + " : ", uee);
+            }
+            PapillonLogger.writeDebugMsg("makeDigest: [" + user +"],[" +password+"] = [" + digestbytes.toString()+"]");
+			return givenPasswordString;
 		}
 	
 	public boolean HasCorrectPassword(String password)
 		throws PapillonBusinessException {
             boolean answer = false;
             String login = this.getLogin();
-            try {
-                if (null != login && !login.equals("")) {
-                    byte[] givenPassword = makeDigest(login,password);
-                    String givenPasswordString = new String(givenPassword, PASSWORD_ENCODING);
-                    answer = this.getPassword().equals(givenPasswordString);
-                }
+            if (null != login && !login.equals("")) {
+                String givenPasswordString = makeDigest(login,password);
+                answer = this.getPassword().equals(givenPasswordString);
             }
-            catch(UnsupportedEncodingException uee){
-                throw new PapillonBusinessException("Error in makeDigestString: UnsupportedEncodingException: " + PASSWORD_ENCODING, uee);
-            }
-            return answer;   
+            return answer;
         } 
 		
 	// xmlcode management methods
