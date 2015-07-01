@@ -589,7 +589,7 @@ public class User implements com.lutris.appserver.server.user.User {
             catch(UnsupportedEncodingException uee) {
                 throw new PapillonBusinessException("Error in makeDigest: UnsupportedEncoding " + PASSWORD_ENCODING + " : ", uee);
             }
-            PapillonLogger.writeDebugMsg("makeDigest: [" + user +"],[" +password+"] = [" + digestbytes.toString()+"]");
+            //PapillonLogger.writeDebugMsg("makeDigest: [" + user +"],[" +password+"] = [" + digestbytes.toString()+"]");
 			return givenPasswordString;
 		}
 	

@@ -404,7 +404,7 @@ public class VolumesFactory {
             myXPath = new org.apache.xpath.XPath(xpathString, mySourceLocator, aPrefixResolver,
 												 org.apache.xpath.XPath.SELECT);
         } catch (javax.xml.transform.TransformerException e) {
-            throw new PapillonBusinessException("javax.xml.transform.TransformerException: ", e);
+            throw new PapillonBusinessException("javax.xml.transform.TransformerException with XPath "+xpathString+" : ", e);
         }
         return myXPath;
     }

@@ -1363,7 +1363,13 @@ public class VolumeEntriesFactory {
                 }
             }
     //        CurrentRequestContext.get().set(entryId, resultEntry);
-            CurrentRequestContext.get().set(resultEntry.getContributionId(), resultEntry);
+            if (resultEntry!=null) {
+                CurrentRequestContext.get().set(resultEntry.getContributionId(), resultEntry);
+ //               PapillonLogger.writeDebugMsg("findEntryByEntryId: " + resultEntry.getXmlCode());
+            }
+            else {
+ //               PapillonLogger.writeDebugMsg("findEntryByEntryId: resultentry null");
+            }
         } else {
             //PapillonLogger.writeDebugMsg("Found it in request context.");
         }
