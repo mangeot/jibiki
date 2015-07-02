@@ -62,6 +62,7 @@ import fr.imag.clips.papillon.facelets.util.JibikiContext;
 import fr.imag.clips.papillon.CurrentRequestContext;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import com.lutris.appserver.server.httpPresentation.ClientPageRedirectException;
@@ -81,6 +82,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Collection;
 
+
+
 import org.enhydra.xml.io.OutputOptions;
 import org.enhydra.xml.io.DOMFormatter;
 
@@ -89,6 +92,7 @@ import fr.imag.clips.papillon.Papillon;
 import fr.imag.clips.papillon.business.PapillonLogger;
 
 import fr.imag.clips.papillon.business.user.User;
+import fr.imag.clips.papillon.business.user.UsersFactory;
 
 
 /**
@@ -262,6 +266,33 @@ public abstract class AbstractPO
 					getComms().sessionData.set(PapillonSessionData.SESSION_KEY, this.sessionData);
 				}
             }
+            com.lutris.http.BasicAuthResult theBasicAuthResult = com.lutris.http.BasicAuth.getAuthentication(this.getComms().request);
+            if (theBasicAuthResult!=null) {
+                String login = theBasicAuthResult.username;
+                String password = theBasicAuthResult.password;
+                PapillonLogger.writeDebugMsg("basic auth: " + login + " password: " + password);
+                User theUser = UsersFactory.findUserByLogin(login);
+                if (theUser!=null && theUser.HasCorrectPassword(password)) {
+                    PapillonLogger.writeDebugMsg("Registered user from BasicAuth " + theUser.getName());
+                    this.setUser(theUser);
+                }
+                else {
+                    String errorMsg = "Error: user: " + login +" not authorized!";
+                    //System.out.println(errorMsg);
+                    this.getComms().response.setStatus(HttpPresentationResponse.SC_UNAUTHORIZED,errorMsg);
+                }
+            }
+            else {
+                if (this.getUser() == null || this.getUser().isEmpty()) {
+                    User cookieUser = this.getLoginCookieUser();
+                    // if the user is registered
+                    if (cookieUser != null && !cookieUser.isEmpty()) {
+                        PapillonLogger.writeDebugMsg("Registered user from cookie: " + cookieUser.getName());
+                        this.setUser(cookieUser);
+                    }
+                }
+            }
+            
         } catch (KeywordValueException ex) {
             System.out.println("Problem getting session data from session: " + ex.getMessage());
         }
@@ -630,7 +661,9 @@ public abstract class AbstractPO
      */
     public void setUser(User theUser) throws PapillonPresentationException {
         try {
-            this.myComms.session.setUser(theUser);
+            if (this.myComms.session!= null) {
+                this.myComms.session.setUser(theUser);
+            }
         } catch (com.lutris.appserver.server.session.SessionException SesEx) {
             throw new PapillonPresentationException("PapillonBasePO:Session Error for setUser: ", SesEx);
         }
@@ -646,6 +679,40 @@ public abstract class AbstractPO
     public User getUser() {
         return this.getSessionData().getUser();
     }
+
+    /**
+     *  Gets the loginCookieUser attribute of the PapillonBasePO object
+     *
+     * @return                                The loginCookieUser value
+     * @exception  HttpPresentationException  Description of the Exception
+     */
+    public User getLoginCookieUser()
+    throws HttpPresentationException {
+        User cookieUser = null;
+        Cookie[] myCookies = this.getCookies();
+        int i = 0;
+        while (i < myCookies.length && cookieUser == null) {
+            Cookie myCookie = myCookies[i];
+            if (myCookie.getName().equals(LOGIN_COOKIE)) {
+                cookieUser = UsersFactory.findUserById(myCookie.getValue());
+            }
+            i++;
+        }
+        return cookieUser;
+    }
+            
+            
+            /**
+             *  Gets the cookies attribute of the PapillonBasePO object
+             *
+             * @return                                The cookies value
+             * @exception  HttpPresentationException  Description of the Exception
+             */
+            public Cookie[] getCookies()
+            throws HttpPresentationException {
+                return this.getComms().request.getCookies();
+            }
+            
 
 
     /**

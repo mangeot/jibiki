@@ -108,6 +108,28 @@ $(document).ready(function(){ // Quand le document est complètement chargé
 			}
 		}
 	});
+                  
+                  
+/* fonction pour les editable: pb de chargement dynamique !!! */
+                  $('.edit').editable(function(value, settings) {
+                                      var contribid = encodeURIComponent($(this).closest('article').attr('id'));
+                                      var xpath = $(this).attr('xpath');
+                                      $.ajax({
+                                             url: scriptStartUrl + 'api/Cesselin/jpn/'+contribid+'/' + value,
+                                             type: 'PUT',
+                                             data: xpath,
+                                             success: function(result) {
+                                             // Do something with the result
+                                             }
+                                             });
+                                      return(value);
+                                      }, {
+                                      submit  : 'OK',
+                                      tooltip   : 'Cliquer pour éditer...',
+                                      style   : 'display: inline;',
+                                      });
+
+                  
 });
 
 

@@ -1441,6 +1441,7 @@
 		A3C894AB171EBFF300A9651D /* ViewQueryResult.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ViewQueryResult.xhtml; sourceTree = "<group>"; };
 		A3CFEC641844F962008F6C62 /* HelpContent.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = HelpContent.xhtml; sourceTree = "<group>"; };
 		A3DD4FAF12933C6C0099E764 /* XslTransformation.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = XslTransformation.java; sourceTree = "<group>"; };
+		A3E8991B1B45830800BC5C07 /* jquery.jeditable.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = jquery.jeditable.js; sourceTree = "<group>"; };
 		A3E933D51843432100B9590E /* AdvancedQueryForm.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdvancedQueryForm.xhtml; sourceTree = "<group>"; };
 		A3EC8127163FB75F00715BB7 /* AdminEntriesTmpl.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdminEntriesTmpl.xhtml; sourceTree = "<group>"; };
 		A3EC8128163FB75F00715BB7 /* AdminEntriesTmpl.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AdminEntriesTmpl.xmlc; sourceTree = "<group>"; };
@@ -2417,6 +2418,7 @@
 				A32D5F4A1AAFC2E5003C9E7A /* jquery-1.8.0.min.js */,
 				A307243A0EC89B2500733910 /* jquery.dimensions.js */,
 				A307243B0EC89B2500733910 /* jquery.dimensions.min.js */,
+				A3E8991B1B45830800BC5C07 /* jquery.jeditable.js */,
 				A38DC85116AFE3B600CCA5B9 /* lookupVolume.js */,
 			);
 			path = javascript;

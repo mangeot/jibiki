@@ -52,6 +52,7 @@ import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.dictionary.Dictionary;
 import fr.imag.clips.papillon.business.dictionary.DictionariesFactory;
 import fr.imag.clips.papillon.business.dictionary.Index;
+import fr.imag.clips.papillon.business.dictionary.IndexEntry;
 import fr.imag.clips.papillon.business.dictionary.IndexFactory;
 import fr.imag.clips.papillon.business.dictionary.QueryRequest;
 import fr.imag.clips.papillon.business.dictionary.QueryResult;
@@ -147,9 +148,8 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 		return resultDoc;			
 	}
 
-	public static org.w3c.dom.Document getEntries(String dictName, String lang, String criteria, String word, String key, String strategyString, String limitString, String offsetString, String login, String password) 
+	public static org.w3c.dom.Document getEntries(String dictName, String lang, String criteria, String word, String key, String strategyString, String limitString, String offsetString, User theUser)
 	throws HttpPresentationException, java.io.IOException, Exception {
-		User theUser = getUser(login, password);
 		int limit = DEFAULT_LIMIT;
 		if (limitString!=null) {
 			limit = Integer.parseInt(limitString);
@@ -456,16 +456,12 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 		return allIndexes.toString();
 	}
 	
-	public static boolean userCanPutEntry(String login, String password) 
+	public static boolean userCanPutEntry(User myUser)
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 		boolean answer = false;
-		if (null != login && !login.equals("") &&
-			null != password && !password.equals("")) {
-			User myUser = UsersFactory.findUserByLogin(login);
-			if (null != myUser && !myUser.isEmpty() && (myUser.isAdmin() || myUser.isValidator() || myUser.isSpecialist())) {
-				answer=true;
-			}
-		}
+        if (null != myUser && !myUser.isEmpty() && (myUser.isAdmin() || myUser.isValidator() || myUser.isSpecialist())) {
+            answer=true;
+        }
 		return answer;
 	}
 	
@@ -497,17 +493,76 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 		}
 		return resultDoc;			
 	}
-	
-	public static boolean userCanPostEntry(String login, String password) 
+
+    public static org.w3c.dom.Document editEntry(String dictName, String lang, String entryId, String xpathString, String value)
+    throws HttpPresentationException, java.io.IOException, Exception {
+        
+        Volume theVolume = null;
+        org.w3c.dom.Document resultDoc = null;
+        
+        java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
+        
+        if (volumesCollection !=null && volumesCollection.size()>0) {
+            theVolume = (Volume) volumesCollection.iterator().next();
+            PapillonLogger.writeDebugMsg("Entry: id: " + entryId + " volume: " + theVolume.getName());
+            VolumeEntry myEntry = VolumeEntriesFactory.findEntryByContributionId(theVolume.getName(), entryId);
+            if (myEntry != null && !myEntry.isEmpty() && myEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS)) {
+                PapillonLogger.writeDebugMsg("Entry: headword: " + myEntry.getHeadword());
+                org.w3c.dom.Document docDom = XMLServices.buildDOMTree(myEntry.getXmlCode());
+                if (docDom != null) {
+                    
+                    /* modifying an entry with the xpath */
+                    
+                    org.apache.xml.utils.PrefixResolver thePrefixResolver = myEntry.getVolume().getPrefixResolver();
+                    org.apache.xpath.XPath myXPath = VolumesFactory.compileXPath(xpathString, thePrefixResolver);
+                    org.w3c.dom.NodeList resNodeList = IndexEntry.getNodeListFromXPath(docDom.getDocumentElement(), myXPath, thePrefixResolver);
+                    if (resNodeList.getLength()==1) {
+                        org.w3c.dom.Node myNode = resNodeList.item(0);
+                        if (myNode.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
+                            while (myNode.hasChildNodes()) {
+                                myNode.removeChild(myNode.getFirstChild());
+                            }
+                            org.w3c.dom.Node textNode = myNode.getOwnerDocument().createTextNode(value);
+                            myNode.appendChild(textNode);
+                            //PapillonLogger.writeDebugMsg("Entry modified: " + value);
+                        }
+                        else if (myNode.getNodeType() == org.w3c.dom.Node.ATTRIBUTE_NODE) {
+                            myNode.setNodeValue(value);
+                            //PapillonLogger.writeDebugMsg("Entry modified: " + value);
+                       }
+                        else {
+                            PapillonLogger.writeDebugMsg("Entry not modified: Node type: " + myNode.getNodeType());
+                        }
+                        
+                        VolumeEntry newVolumeEntry = VolumeEntriesFactory.newEntryFromExisting(myEntry);
+                        newVolumeEntry.setDom(docDom);
+                        newVolumeEntry.setHeadword();
+                        newVolumeEntry.setContributionId();
+                        newVolumeEntry.addClassifiedFinishedContribution(myEntry);
+                        newVolumeEntry.setPreviousContributionId(myEntry.getContributionId());
+                        newVolumeEntry.save();
+                        myEntry.setStatus(VolumeEntry.CLASSIFIED_FINISHED_STATUS);
+                        myEntry.save();
+                        resultDoc = newVolumeEntry.getDom();
+                    }
+                    else {
+                        PapillonLogger.writeDebugMsg("Entry not modified: node list size != 1: " + resNodeList.getLength());
+                    }
+                }
+            }
+            else {
+                PapillonLogger.writeDebugMsg("Entry null: " + entryId);
+            }
+        }
+        return resultDoc;			
+    }
+
+	public static boolean userCanPostEntry(User myUser)
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 		boolean answer = false;
-		if (null != login && !login.equals("") &&
-			null != password && !password.equals("")) {
-			User myUser = UsersFactory.findUserByLogin(login);
 			if (null != myUser && !myUser.isEmpty() && (myUser.isAdmin() || myUser.isValidator())) {
 				answer=true;
 			}
-		}
 		return answer;
 	}
 
@@ -540,28 +595,15 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 		return resultDoc;			
 	}
 	
-	public static boolean userCanDeleteEntry(String login, String password) 
+	public static boolean userCanDeleteEntry(User myUser)
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 		boolean answer = false;
-		if (null != login && !login.equals("") &&
-			null != password && !password.equals("")) {
-			User myUser = UsersFactory.findUserByLogin(login);
 			if (null != myUser && !myUser.isEmpty() && (myUser.isAdmin())) {
 				answer=true;
 			}
-		}
 		return answer;
 	}
 	
-	protected static User getUser(String login, String password) 
-	throws fr.imag.clips.papillon.business.PapillonBusinessException {
-		User user = null;
-		if (null != login && !login.equals("") &&
-			null != password && !password.equals("")) {
-			user = UsersFactory.findUserByLogin(login);
-		}
-		return user;
-	}
 	
 	public static org.w3c.dom.Document deleteEntry(String dictName, String lang, String entryId) 
 	throws HttpPresentationException, java.io.IOException, Exception {

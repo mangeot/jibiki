@@ -300,6 +300,10 @@ a.lang:hover {
 	padding-bottom: 30px;
 }
 
+#sectionPrincipale input {
+    font-size: 1em;
+    padding: 4px 5px 3px;
+}
   
 #MenuColumn {
   	display:table-cell;

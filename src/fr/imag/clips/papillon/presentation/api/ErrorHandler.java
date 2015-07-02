@@ -33,6 +33,8 @@ import fr.imag.clips.papillon.Papillon;
 import fr.imag.clips.papillon.business.xml.XMLServices;
 
 import fr.imag.clips.papillon.business.PapillonLogger;
+import fr.imag.clips.papillon.business.user.User;
+import fr.imag.clips.papillon.business.user.UsersFactory;
 
 import java.io.*;
 /*
@@ -57,7 +59,9 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
 	
 	protected static String ERROR_PAGE = "<?xml version='1.0'?><html></html>";
 	protected static String LOGIN_PARAMETER = "login";
-	protected static String PASSWORD_PARAMETER = "password";
+    protected static String PASSWORD_PARAMETER = "password";
+    protected static String XPATH_PARAMETER = "xpath";
+    protected static String VALUE_PARAMETER = "value";
 	protected static String STRATEGY_PARAMETER = "strategy";
 	protected static String LIMIT_PARAMETER = "count";
 	protected static String OFFSET_PARAMETER = "startIndex";
@@ -92,7 +96,7 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
         	
 			
 			////// Create Home page
-			content = XMLServices.buildDOMTree(ERROR_PAGE);
+		content = XMLServices.buildDOMTree(ERROR_PAGE);
         String prefix = this.getAbsoluteUrl();
 		prefix = prefix.substring(0,prefix.lastIndexOf('/') + 1);
 			
@@ -101,7 +105,13 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
 				HttpPresentationRequest theRequest = this.getComms().request;
 				HttpPresentationResponse theResponse = this.getComms().response;
 				String login =  myGetParameter(LOGIN_PARAMETER);
-				String password = myGetParameter(PASSWORD_PARAMETER);
+                String password = myGetParameter(PASSWORD_PARAMETER);
+                
+                setUserFromLoginPassword(login,password);
+                
+                
+                String xpath = myGetParameter(XPATH_PARAMETER);
+                String value = myGetParameter(VALUE_PARAMETER);
 				PapillonLogger.writeDebugMsg("REST API URI : [" + prefix + "] " + theRequest.getPresentationURI()+";");
 				String theURI = java.net.URLDecoder.decode(theRequest.getPresentationURI());
 				if (theURI.indexOf(prefix)==0) {
@@ -168,6 +178,14 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
 						System.out.println("Error: delete dict: not implemented");
 						theResponse.setStatus(HttpPresentationResponse.SC_NOT_IMPLEMENTED);
 					}
+                    else if (theRequest.getMethod().equals("OPTIONS")) {
+                        // System.out.println("OPTIONS");
+                        theResponse.setHeader("Allow","GET, OPTIONS");
+                    }
+                    else {
+                        theResponse.setStatus(HttpPresentationResponse.SC_NOT_IMPLEMENTED);
+                        System.out.println("Error: method not implemented");
+                    }
 				}
 				if (restStrings.length==2) {
 					PapillonLogger.writeDebugMsg(commande + " DICT: " + restStrings[0] + " LANG: " + restStrings[1]+ ";");
@@ -197,6 +215,14 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
 						System.out.println(errorMsg);
 						theResponse.setStatus(HttpPresentationResponse.SC_NOT_IMPLEMENTED,errorMsg);
 					}
+                    else if (theRequest.getMethod().equals("OPTIONS")) {
+                        // System.out.println("OPTIONS");
+                        theResponse.setHeader("Allow","GET, OPTIONS");
+                    }
+                    else {
+                        theResponse.setStatus(HttpPresentationResponse.SC_NOT_IMPLEMENTED);
+                        System.out.println("Error: method not implemented");
+                    }
 				}
 				if (restStrings.length==3) {
 					PapillonLogger.writeDebugMsg(commande + " DICT: " + restStrings[0] + " LANG: " + restStrings[1]+ " ENTRYID : " + restStrings[2]+ ";");
@@ -213,7 +239,7 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
 						String entry = convertStreamToString(inputStream);
 						System.out.println("put data: "+entry);
 						//inputStream.close();
-						if (Entries.userCanPutEntry(login,password)) {
+						if (Entries.userCanPutEntry(getUser())) {
 							content = Entries.putEntry(restStrings[0], restStrings[1], restStrings[2], entry);
 							if (content==null) {
 								String errorMsg = "Error: entryid: " + restStrings[0] + " lang: " +  restStrings[1] + " ID: " + restStrings[2] +" does not exist!";
@@ -234,7 +260,7 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
 						HttpPresentationInputStream inputStream = theRequest.getInputStream();
 						String entry = convertStreamToString(inputStream);
 						System.out.println("post data: "+entry);
-						if (Entries.userCanPostEntry(login,password)) {
+						if (Entries.userCanPostEntry(getUser())) {
 							content = Entries.postEntry(restStrings[0], restStrings[1], restStrings[2], entry);
 							if (content==null) {
 								String errorMsg = "Error: dict: " + restStrings[0] + " lang: " +  restStrings[1] +" does not exist!";
@@ -252,7 +278,7 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
 						}
 					}
 					else if (theRequest.getMethod().equals("DELETE")) {
-						if (Entries.userCanDeleteEntry(login,password)) {
+						if (Entries.userCanDeleteEntry(getUser())) {
 							content = Entries.deleteEntry(restStrings[0], restStrings[1], restStrings[2]);
 							if (content==null) {
 								String errorMsg = "Error: entryid: " + restStrings[0] + " lang: " +  restStrings[1] + " ID: " + restStrings[2] +" does not exist!";
@@ -269,6 +295,14 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
 							theResponse.setStatus(HttpPresentationResponse.SC_UNAUTHORIZED,errorMsg);
 						}
 					}
+                    else if (theRequest.getMethod().equals("OPTIONS")) {
+                        // System.out.println("OPTIONS");
+                        theResponse.setHeader("Allow","GET, PUT, POST, DELETE, OPTIONS");
+                    }
+                    else {
+                        theResponse.setStatus(HttpPresentationResponse.SC_NOT_IMPLEMENTED);
+                        System.out.println("Error: method not implemented");
+                    }
 				}
 				if (restStrings.length==4 || restStrings.length==5) {
 					PapillonLogger.writeDebugMsg(commande + " DICT: " + restStrings[0] + " LANG: " + restStrings[1]+ " MODE: " + restStrings[2]+ " STRING: " + restStrings[3]+ ";");
@@ -298,13 +332,40 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
 								}
 							}
 						}						*/
-						content = Entries.getEntries(restStrings[0], restStrings[1], restStrings[2], restStrings[3], key, strategy, limit, offset, login, password);
+						content = Entries.getEntries(restStrings[0], restStrings[1], restStrings[2], restStrings[3], key, strategy, limit, offset, getUser());
 						if (content==null) {
 							String errorMsg = "Error: search: " + restStrings[0] + " lang: " +  restStrings[1] + " method: " + restStrings[2] +" does not exist!";
 							System.out.println(errorMsg);
 							theResponse.setStatus(HttpPresentationResponse.SC_NOT_FOUND, errorMsg);
 						}
 					}
+                    else if (theRequest.getMethod().equals("PUT")) {
+                        HttpPresentationInputStream inputStream = theRequest.getInputStream();
+                        String entryPart = convertStreamToString(inputStream);
+                        //System.out.println("put data: "+ restStrings[3] +" xpath: "+entryPart);
+                        if (Entries.userCanPutEntry(getUser())) {
+                            content = Entries.editEntry(restStrings[0], restStrings[1], restStrings[2], entryPart, restStrings[3]);
+                            if (content==null) {
+                                String errorMsg = "Error: dict: " + restStrings[0] + " lang: " +  restStrings[1] +" does not exist!";
+                                System.out.println(errorMsg);
+                                theResponse.setStatus(HttpPresentationResponse.SC_NOT_FOUND, errorMsg);
+                            }
+                            else {
+                                theResponse.setStatus(HttpPresentationResponse.SC_CREATED);
+                            }
+                        }
+                        else {
+                            String errorMsg = "Error: user: " + login +" not authorized to put entry!";
+                            System.out.println(errorMsg);
+                            theResponse.setStatus(HttpPresentationResponse.SC_UNAUTHORIZED,errorMsg);
+                        }
+                    }
+                    else if (theRequest.getMethod().equals("OPTIONS")) {
+                        theResponse.setHeader("Access-Control-Allow-Methods","GET, PUT, POST, DELETE, OPTIONS");
+                        theResponse.setHeader("Access-Control-Max-Age","1000");
+                        theResponse.setHeader("Access-Control-Allow-Headers","origin, x-csrftoken, content-type, accept");
+                        theResponse.setHeader("Allow","GET, PUT, POST, DELETE, OPTIONS");
+                    }
 					else {
 						theResponse.setStatus(HttpPresentationResponse.SC_NOT_IMPLEMENTED);
 						System.out.println("Error: method not implemented");
@@ -369,4 +430,19 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
 			
 			return sb.toString();
 		}
+    
+    protected void setUserFromLoginPassword(String login, String password)
+    throws fr.imag.clips.papillon.business.PapillonBusinessException, fr.imag.clips.papillon.presentation.PapillonPresentationException {
+        User user = getUser();
+        if (user ==null) {
+            if (null != login && !login.equals("") &&
+                null != password && !password.equals("")) {
+                user = UsersFactory.findUserByLogin(login);
+                if (user.HasCorrectPassword(password)) {
+                    setUser(user);
+                }
+            }
+        }
+    }
+
 }

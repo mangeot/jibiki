@@ -381,40 +381,36 @@ public abstract class PapillonBasePO extends AbstractPO {
         userAcceptLanguage.addAll(browserAcceptLanguages);
         
         // We recuperate a permanent cookie if the user has logged before
-        if (this.getUser() == null || this.getUser().isEmpty()) {
-            User cookieUser = this.getLoginCookieUser();
-			// if the user is registered
-            if (cookieUser != null && !cookieUser.isEmpty()) {
-                PapillonLogger.writeDebugMsg("Registered user from cookie: " + cookieUser.getName());
-				getSessionData().setUser(cookieUser);
-				getSessionData().setUserAcceptLanguages(userAcceptLanguage);
-				getSessionData().setUserPreferredLanguage(cookieUser.getLang());
-				getSessionData().setClientWithLabelDisplayProblems(getComms().request.getHeader("User-Agent"));
-				if (getComms().session != null) {
-					PapillonSessionManager.addNewSession(getComms().session, cookieUser);
-				}
-			}
+        User theUser = this.getUser();
+        if (theUser != null && !theUser.isEmpty()) {
+            getSessionData().setUser(theUser);
+            getSessionData().setUserAcceptLanguages(userAcceptLanguage);
+            getSessionData().setUserPreferredLanguage(theUser.getLang());
+            getSessionData().setClientWithLabelDisplayProblems(getComms().request.getHeader("User-Agent"));
+            if (getComms().session != null) {
+                PapillonSessionManager.addNewSession(getComms().session, theUser);
+            }
+        }
+        else {
+            if (getComms().session != null) {
+                theUser = (fr.imag.clips.papillon.business.user.User) getComms().session.getUser();
+            }
+            // if the user is unregistered but active in this session
+            if (theUser != null) {
+                // PapillonLogger.writeDebugMsg("Unregistered user from cookie: " + cookieUser.getName());
+            }
             else {
-				if (getComms().session != null) {
-					cookieUser = (fr.imag.clips.papillon.business.user.User) getComms().session.getUser();
-				}
-				// if the user is unregistered but active in this session
-				if (cookieUser != null) {
-					// PapillonLogger.writeDebugMsg("Unregistered user from cookie: " + cookieUser.getName());
-				}
-				else {
-					// if the user is unregistered and not active in this session
-					cookieUser = new User();
-					cookieUser.setLang((String) browserAcceptLanguages.get(0));
-					cookieUser.setLogin(notRegisterLogin);
-					getSessionData().setUserAcceptLanguages(userAcceptLanguage);
-					if (getComms().session != null) {
-						cookieUser.setName(getComms().request.getRemoteHost());
-						cookieUser.setEmail(getComms().request.getRemoteUser() + "@" + getComms().request.getRemoteAddr());
-						getSessionData().setClientWithLabelDisplayProblems(getComms().request.getHeader("User-Agent"));
-						PapillonSessionManager.addNewSession(getComms().session, cookieUser);
-					}
-				}
+                // if the user is unregistered and not active in this session
+                theUser = new User();
+                theUser.setLang((String) browserAcceptLanguages.get(0));
+                theUser.setLogin(notRegisterLogin);
+                getSessionData().setUserAcceptLanguages(userAcceptLanguage);
+                if (getComms().session != null) {
+                    theUser.setName(getComms().request.getRemoteHost());
+                    theUser.setEmail(getComms().request.getRemoteUser() + "@" + getComms().request.getRemoteAddr());
+                    getSessionData().setClientWithLabelDisplayProblems(getComms().request.getHeader("User-Agent"));
+                    PapillonSessionManager.addNewSession(getComms().session, theUser);
+                }
             }
         }
     }
@@ -563,40 +559,7 @@ public abstract class PapillonBasePO extends AbstractPO {
         }
     
     
-    /**
-        *  Gets the cookies attribute of the PapillonBasePO object
-     *
-     * @return                                The cookies value
-     * @exception  HttpPresentationException  Description of the Exception
-     */
-    public Cookie[] getCookies()
-        throws HttpPresentationException {
-            return this.getComms().request.getCookies();
-        }
-    
-    
-    /**
-        *  Gets the loginCookieUser attribute of the PapillonBasePO object
-     *
-     * @return                                The loginCookieUser value
-     * @exception  HttpPresentationException  Description of the Exception
-     */
-    public User getLoginCookieUser()
-        throws HttpPresentationException {
-            User cookieUser = null;
-            Cookie[] myCookies = this.getCookies();
-            int i = 0;
-            while (i < myCookies.length && cookieUser == null) {
-                Cookie myCookie = myCookies[i];
-                if (myCookie.getName().equals(LOGIN_COOKIE)) {
-                    cookieUser = UsersFactory.findUserById(myCookie.getValue());
-                }
-                i++;
-            }
-            return cookieUser;
-        }
-    
-    
+     
     /**
         *  Description of the Method
      *
