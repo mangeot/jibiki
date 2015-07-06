@@ -379,7 +379,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 			resultDoc = XMLServices.buildDOMTree(allEntries.toString());
 		}
 		else {
-			System.out.println("Error message no corresponding dict: " + dictName + " & lang: " + lang);
+			PapillonLogger.writeDebugMsg("Error message no corresponding dict: " + dictName + " & lang: " + lang);
 		}
 		}
 		else {
@@ -421,7 +421,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 				resultDoc = XMLServices.buildDOMTree(allEntries.toString());
 			}
 			else {
-				System.out.println("Error message no corresponding dict: " + dictName + " & lang: " + lang);
+				PapillonLogger.writeDebugMsg("Error message no corresponding dict: " + dictName + " & lang: " + lang);
 			}
 		return resultDoc;			
 	}
@@ -494,7 +494,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 		return resultDoc;			
 	}
 
-    public static org.w3c.dom.Document editEntry(String dictName, String lang, String entryId, String xpathString, String value)
+    public static org.w3c.dom.Document editEntry(String dictName, String lang, String entryId, String xpathString, String value, User theUser)
     throws HttpPresentationException, java.io.IOException, Exception {
         
         Volume theVolume = null;
@@ -540,6 +540,8 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
                         newVolumeEntry.setContributionId();
                         newVolumeEntry.addClassifiedFinishedContribution(myEntry);
                         newVolumeEntry.setPreviousContributionId(myEntry.getContributionId());
+                        newVolumeEntry.setModification(theUser.getLogin(), "finish");
+                        newVolumeEntry.setGroups(Utility.ArrayUnion(newVolumeEntry.getGroups(),theUser.getGroupsArray()));
                         newVolumeEntry.save();
                         myEntry.setStatus(VolumeEntry.CLASSIFIED_FINISHED_STATUS);
                         myEntry.save();

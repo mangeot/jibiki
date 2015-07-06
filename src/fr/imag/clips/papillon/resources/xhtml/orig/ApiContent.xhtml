@@ -87,52 +87,64 @@
 </pre>
 
 
-<h3>Modifying an entry</h3>
+<h3>Modifying an entire entry</h3>
 
 <table class="api">
  <tbody>
-    <tr><td>URL</td><td colspan="2">api/[dictionary]/[lang]/[contributionId]</td></tr>
-    <tr><td>Method</td><td colspan="2">PUT</td></tr>
-    <tr><td rowspan="2">Querystring</td><td>login=</td><td>login</td></tr>
-    <tr><td>password=</td><td>password</td></tr>
-    <tr><td rowspan="3">Returns</td><td colspan="2">201 Created &amp; XML (entry)</td></tr>
-    <tr><td colspan="2">401 Unauthorized</td></tr>
-    <tr><td colspan="2">404 Not Found</td></tr>
+    <tr><td>URL</td><td>api/[dictionary]/[lang]/[contributionId]</td></tr>
+    <tr><td>Method</td><td>PUT</td></tr>
+    <tr><td rowspan="3">Returns</td><td>201 Created &amp; XML (entry)</td></tr>
+    <tr><td>401 Unauthorized</td></tr>
+    <tr><td>404 Not Found</td></tr>
  </tbody>
 </table>
 
-<p>Note: the user has to be logged and in the specialist group.</p>
+<p>The data to be sent with the PUT command is the XML of the contribution (entry + metadata).</p>
+<p>Note: the user has to be <a href="#Authentication">logged</a> and in the specialist group.</p>
+
+<h3>Modifying part of an entry</h3>
+
+<table class="api">
+    <tbody>
+        <tr><td>URL</td><td>api/[dictionary]/[lang]/[contributionId]/[string]</td></tr>
+        <tr><td>Method</td><td>PUT</td></tr>
+        <tr><td rowspan="3">Returns</td><td>201 Created &amp; XML (entry)</td></tr>
+        <tr><td>401 Unauthorized</td></tr>
+        <tr><td>404 Not Found</td></tr>
+    </tbody>
+</table>
+
+<p>The data to be sent with the PUT command is the xpath of the element or attribute to be modified.<br/>
+[string] is the new value.</p>
+<p>Note: the user has to be <a href="#Authentication">logged</a>.</p>
 
 <h3>Creating an entry</h3>
 
 <table class="api">
  <tbody>
-    <tr><td>URL</td><td colspan="2">api/[dictionary]/[lang]/[contributionId]</td></tr>
-    <tr><td>Method</td><td colspan="2">POST</td></tr>
-    <tr><td rowspan="2">Querystring</td><td>login=</td><td>login</td></tr>
-    <tr><td>password=</td><td>password</td></tr>
-    <tr><td rowspan="2">Returns</td><td colspan="2">201 Created &amp; XML (entry)</td></tr>
-    <tr><td colspan="2">401 Unauthorized</td></tr>
+    <tr><td>URL</td><td>api/[dictionary]/[lang]/[contributionId]</td></tr>
+    <tr><td>Method</td><td>POST</td></tr>
+    <tr><td rowspan="2">Returns</td><td>201 Created &amp; XML (entry)</td></tr>
+    <tr><td>401 Unauthorized</td></tr>
  </tbody>
 </table>
 
-<p>Note: the user has to be logged and in the validator group.</p>
+<p>The data to be sent with the PUT command is the XML of the contribution (entry + metadata).</p>
+<p>Note: the user has to be <a href="#Authentication">logged</a> and in the validator group.</p>
 
 <h3>Deleting an entry</h3>
 
 <table class="api">
  <tbody>
-    <tr><td>URL</td><td colspan="2">api/[dictionary]/[lang]/[contributionId]</td></tr>
-    <tr><td>Method</td><td colspan="2">DELETE</td></tr>
-    <tr><td rowspan="2">Querystring</td><td>login=</td><td>login</td></tr>
-    <tr><td>password=</td><td>password</td></tr>
-    <tr><td rowspan="3">Returns</td><td colspan="2">204 No Content &amp; XML (entry)</td></tr>
-    <tr><td colspan="2">401 Unauthorized</td></tr>
-    <tr><td colspan="2">404 Not Found</td></tr>
+    <tr><td>URL</td><td>api/[dictionary]/[lang]/[contributionId]</td></tr>
+    <tr><td>Method</td><td>DELETE</td></tr>
+    <tr><td rowspan="3">Returns</td><td>204 No Content &amp; XML (entry)</td></tr>
+    <tr><td>401 Unauthorized</td></tr>
+    <tr><td>404 Not Found</td></tr>
  </tbody>
 </table>
 
-<p>Note: the user has to be logged and in the admin group.</p>
+<p>Note: the user has to be <a href="#Authentication">logged</a> and in the admin group.</p>
 
 <h3>Querying entries</h3>
 
@@ -330,6 +342,22 @@ Other criteria and keys not in the list may exist only for one specific resource
 	&lt;/entry>
 &lt;/entry-list>
 </pre>
+
+<h3 id="Authentication">Authentication methods</h3>
+<p>Authentication method is one of the following:</p>
+
+<table class="api">
+    <tbody>
+        <tr><td>BasicAuth</td><td>login and password are encoded in base 64 and sent to the server in the request header.
+        This method is not secure because the encryption method is easy to decrypt.</td></tr>
+        <tr><td>Authentication cookie</td><td>cookies are sent to the server in the request header. In order to ask for an authentication cookie, please visit the <a href="LoginUser.po">login page</a>.</td></tr>
+        <tr><td rowspan="3">Querystring</td><td>login=login</td></tr>
+        <tr><td>password=password</td></tr>
+        <tr><td>This method is not secure at all : login and password are sent in cleartext.
+            They will even be registered on the web server logs!</td></tr>
+    </tbody>
+</table>
+
 
 <h2>Misc</h2>
 <p>If you need more help, send an email to

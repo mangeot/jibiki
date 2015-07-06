@@ -12,6 +12,163 @@
     <script src="/jibiki/javascript/jquery-1.11.3.min.js" type="text/javascript"><!-- // --></script>
     <script src="/jibiki/javascript/lookupVolume.js" type="text/javascript"><!-- // --></script>
     <script src="/jibiki/javascript/jquery.xdomainrequest.min.js" type="text/javascript"><!-- // --></script>
+    <script src="/jibiki/javascript/jquery.jeditable.js" type="text/javascript"><!-- // --></script>
+    <script type="text/javascript"><!--
+    /* fonction pour les editable*/
+                                    function loadVedetteJpnEditable () {
+                                    $('.vedette-jpn-editable').editable(function(value, settings) {
+                                    xpath = $(this).attr('xpath');
+                                    encodedValue = encodeURIComponent(value);
+                                    divcontrib = $(this).closest("div.contribution");
+                                    origcontribid = encodeURIComponent(divcontrib.attr("id"));
+                                    
+                                    // première requête AJAX pour modifier le texte
+                                    $.ajax({
+                                    url: scriptStartUrl + 'api/Cesselin/jpn/'+origcontribid+'/' + encodedValue,
+                                    type: 'PUT',
+                                    data: xpath,
+                                    success: function(result) {
+                                    var contribution = $(result).find('d\\:contribution, contribution')[ 0 ];
+                                    var contribid = contribution.getAttributeNS(DMLNamespace,'contribid');
+                                    contribid = encodeURIComponent(contribid);
+                                    
+                                    // deuxième requête AJAX pour modifier l'attribut
+                                    $.ajax({
+                                    url: scriptStartUrl + 'api/Cesselin/jpn/'+contribid+'/Manuel',
+                                    type: 'PUT',
+                                    data: xpath+'/@match',
+                                    success: function(result) {
+                                    var newcontribution = $(result).find('d\\:contribution, contribution')[ 0 ];
+                                    var newcontribid = newcontribution.getAttributeNS(DMLNamespace,'contribid');
+                                    alert('newcontribid2:'+newcontribid);
+                                    divcontrib.attr('id',newcontribid);
+                                    },
+                                    error: function (xhr, ajaxOptions, thrownError) {
+                                    alert('erreur call vedette-jpn-editable 2, status: ' + xhr.status + ' error: ' + thrownError);
+                                    }
+                                    });
+
+                                    },
+                                    error: function (xhr, ajaxOptions, thrownError) {
+                                    alert('erreur call vedette-jpn-editable 1, status: ' + xhr.status + ' error: ' + thrownError);
+                                    }
+                                    });
+                                    return(value);
+                                    }, {
+                                    submit  : 'ok',
+                                    tooltip   : 'Cliquer pour éditer...',
+                                    style   : 'display: inline;',
+                                    });
+                                    
+                                    return 'ok';
+                                    }
+
+                                    
+                                    function loadEditable () {
+                                    $('.editable').editable(function(value, settings) {
+                                    xpath = $(this).attr('xpath');
+                                    encodedValue = encodeURIComponent(value);
+                                    divcontrib = $(this).closest("div.contribution");
+                                    origcontribid = encodeURIComponent(divcontrib.attr("id"));
+                                    
+                                    // première requête AJAX pour modifier le texte
+                                    $.ajax({
+                                    url: scriptStartUrl + 'api/Cesselin/jpn/'+origcontribid+'/' + encodedValue,
+                                    type: 'PUT',
+                                    data: xpath,
+                                    success: function(result) {
+                                    var contribution = $(result).find('d\\:contribution, contribution')[ 0 ];
+                                    var contribid = contribution.getAttributeNS(DMLNamespace,'contribid');
+                                    divcontrib.attr('id',contribid);
+
+                                    },
+                                    error: function (xhr, ajaxOptions, thrownError) {
+                                    alert('erreur call vedette-jpn-editable 1, status: ' + xhr.status + ' error: ' + thrownError);
+                                    }
+                                    });
+                                    return(value);
+                                    }, {
+                                    submit  : 'ok',
+                                    tooltip   : 'Cliquer pour éditer...',
+                                    style   : 'display: inline;',
+                                    });
+                                    
+                                    return 'ok';
+                                    }
+                                    
+
+                                    
+                                    function loadEditablepb1() {
+                                    $('.editable').editable(function(value, settings) {
+                                    xpath = $(this).attr('xpath');
+                                    divcontrib = $(this).closest("div.contribution");
+                                    origcontribid = encodeURIComponent(divcontrib.attr("id"));
+                                    
+                                    //requête AJAX pour modifier le texte
+                                    $.ajax({
+                                    url: scriptStartUrl + "api/Cesselin/jpn/"+origcontribid+"/" + value,
+                                    type: "PUT",
+                                    data: xpath,
+                                    success: function(result) {
+                                    // récupération de l'ID pour modifications ultérieures
+                                    },
+                                   	error: function (xhr, ajaxOptions, thrownError) {
+                                    alert('erreur call editable, status: ' + xhr.status + ' error: ' + thrownError);
+                                    }
+                                    
+                                    });
+                                    return(value);
+                                    }, {
+                                    submit  : "ok",
+                                    tooltip   : "Cliquer pour éditer...",
+                                    style   : "display: inline;font-size:1em;",
+                                    });
+                                    
+                                    return 'ok';
+                                    }
+
+
+                                    function loadEditablepb() {
+                                    $('.editable').editable(function(value, settings) {
+                                    xpath = $(this).attr('xpath');
+                                    divcontrib = $(this).closest("div.contribution");
+                                    origcontribid = encodeURIComponent(divcontrib.attr("id"));
+
+                                    //requête AJAX pour modifier le texte
+                                    $.ajax({
+                                    url: scriptStartUrl + "api/Cesselin/jpn/"+origcontribid+"/" + value,
+                                    type: "PUT",
+                                    data: xpath,
+                                    success: function(result) {
+                                    // récupération de l'ID pour modifications ultérieures
+                                    var contribution = $(result).find('d\\:contribution, contribution')[ 0 ];
+                                    alert('dmlns:'+DMLNamespace);
+                                    alert('contribution:'+contribution);
+                                    //var newcontribid = contribution.getAttributeNS(DMLNamespace,'contribid');
+                                    //alert('newcontribid:'+newcontribid);
+                                    //divcontrib.attr('id',newcontribid);
+                                    },
+                                   	error: function (xhr, ajaxOptions, thrownError) {
+                                    alert('erreur call editable, status: ' + xhr.status + ' error: ' + thrownError);
+                                    }
+                                    
+                                    });
+                                    return(value);
+                                    }, {
+                                    data: function(value, settings) {
+                                    /* Remove <span class="pb"> tags. */
+                                    var retval = value.replace(/<\/?span[^>]*>/gi, '');
+                                    return retval;
+                                    },
+                                    submit  : "ok",
+                                    tooltip   : "Cliquer pour éditer...",
+                                    style   : "display: inline;font-size:1em;",
+                                    });
+                                    
+                                    return 'ok';
+                                    }
+   // -->
+    </script>
     <script id="Script" type="text/javascript"><!-- // --></script>
     </head>
   <body>

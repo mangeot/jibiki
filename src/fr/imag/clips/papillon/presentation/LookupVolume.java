@@ -117,7 +117,7 @@ public class LookupVolume extends AbstractPO {
 			
 			/* initialize response */
 			java.util.Collection EntryCollection = null;
-			org.w3c.dom.Document docResponse = XMLServices.buildDOMTree("<?xml version='1.0' encoding='UTF-8' ?><div id='entries'><script type='text/javascript'><!-- \n\n document.getElementById('EmptyMessage').setAttribute('style','display:none;');\ndocument.getElementById('PrefixLookupMessage').setAttribute('style','display:none;');\n\n // --></script></div>");
+			org.w3c.dom.Document docResponse = XMLServices.buildDOMTree("<?xml version='1.0' encoding='UTF-8' ?><div id='entries'><script type='text/javascript'><!-- \n\n var em = document.getElementById('EmptyMessage'); if (em != null) em.setAttribute('style','display:none;');\n var plm = document.getElementById('PrefixLookupMessage'); if (plm != null) plm.setAttribute('style','display:none;');\n\n // --></script></div>");
 			// Intialize QueryRequest
 			/* volume */
 			String volume = myGetParameter("VOLUME");

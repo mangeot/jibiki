@@ -300,9 +300,9 @@ a.lang:hover {
 	padding-bottom: 30px;
 }
 
-#sectionPrincipale input {
-    font-size: 1em;
-    padding: 4px 5px 3px;
+article input {
+    font-size: .9em;
+    padding: 0px;
 }
   
 #MenuColumn {
@@ -566,17 +566,21 @@ pre.api {
 /*--------------------------------------*/
 
 
-.vedette-hiragana, .vedette-jpn, .jpn {
+.vedette-hiragana, .vedette-jpn, .vedette-jpn-editable, .jpn, .jpn-editable {
     color: #BC002D;
 }
 
-.vedette-romaji, .romaji {
+.vedette-romaji, .romaji, .romaji-editable {
     color: #D45455;
 }
 
-.vedette-romaji, .vedette-hiragana, .vedette-jpn {
+.vedette-romaji, .vedette-hiragana, .vedette-jpn, .vedette-jpn-editable {
     font-size: 1.2em;
     font-weight: bold;
+}
+
+.vedette-jpn-editable {
+    background-color: orange;
 }
 
 .vr, .vj {
@@ -604,11 +608,11 @@ article, .article {
     /*	display: block;*/
 }
 
-.nonvalidejpn, .romaji .pb {
+.romaji .pb, .romaji-editable .pb {
     background-color: orange;
 }
 
-.nonvalidefra, .sens .pb, .fra .pb {
+.nonvalidefra, .sens .pb, .fra .pb, .texte-sens-editable .pb, .texte-sous-sens-editable .pb {
     background-color: yellow;
     margin-left:5px;
 }
@@ -617,7 +621,7 @@ article, .article {
     padding-right: 10px;
 }
 
-.vedette-jpn {
+.vedette-jpn, .vedette-jpn-editable {
     padding: 5px;
 }
 

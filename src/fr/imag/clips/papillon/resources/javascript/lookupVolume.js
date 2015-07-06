@@ -8,7 +8,7 @@
 	var entriesSize = 0;
  	var listTop = false;
  	var listBottom = false;
-
+    var DMLNamespace = 'http://www-clips.imag.fr/geta/services/dml';
 	var scripts = document.getElementsByTagName('script');
 	var myScript = scripts[scripts.length - 1];
 	var scriptStartUrl=myScript.src.substring(0,myScript.src.lastIndexOf("javascript/"));
@@ -108,27 +108,6 @@ $(document).ready(function(){ // Quand le document est complètement chargé
 			}
 		}
 	});
-                  
-                  
-/* fonction pour les editable: pb de chargement dynamique !!! */
-                  $('.edit').editable(function(value, settings) {
-                                      var contribid = encodeURIComponent($(this).closest('article').attr('id'));
-                                      var xpath = $(this).attr('xpath');
-                                      $.ajax({
-                                             url: scriptStartUrl + 'api/Cesselin/jpn/'+contribid+'/' + value,
-                                             type: 'PUT',
-                                             data: xpath,
-                                             success: function(result) {
-                                             // Do something with the result
-                                             }
-                                             });
-                                      return(value);
-                                      }, {
-                                      submit  : 'OK',
-                                      tooltip   : 'Cliquer pour éditer...',
-                                      style   : 'display: inline;',
-                                      });
-
                   
 });
 

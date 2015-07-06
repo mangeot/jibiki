@@ -113,17 +113,17 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
 					else if (theRequest.getMethod().equals("PUT")) {
 						HttpPresentationInputStream inputStream = theRequest.getInputStream();
 						String dict = convertStreamToString(inputStream);
-						System.out.println("Error: put dictlist: not implemented");
+						PapillonLogger.writeDebugMsg("Error: put dictlist: not implemented");
 						theResponse.setStatus(HttpPresentationResponse.SC_NOT_IMPLEMENTED);
 					}
 					else if (theRequest.getMethod().equals("POST")) {
 						HttpPresentationInputStream inputStream = theRequest.getInputStream();
 						String dict = convertStreamToString(inputStream);
-						System.out.println("Error: post dictlist: not implemented");
+						PapillonLogger.writeDebugMsg("Error: post dictlist: not implemented");
 						theResponse.setStatus(HttpPresentationResponse.SC_NOT_IMPLEMENTED);						
 					}
 					else if (theRequest.getMethod().equals("DELETE")) {
-						System.out.println("Error: delete dictlist: not implemented");
+						PapillonLogger.writeDebugMsg("Error: delete dictlist: not implemented");
 						theResponse.setStatus(HttpPresentationResponse.SC_NOT_IMPLEMENTED);
 					}
 			}
