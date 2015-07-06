@@ -17,6 +17,7 @@
     /* fonction pour les editable*/
                                     function loadVedetteJpnEditable () {
                                     $('.vedette-jpn-editable').editable(function(value, settings) {
+                                    $(this).attr('class', 'vedette-jpn-editable');
                                     xpath = $(this).attr('xpath');
                                     encodedValue = encodeURIComponent(value);
                                     divcontrib = $(this).closest("div.contribution");
@@ -40,7 +41,6 @@
                                     success: function(result) {
                                     var newcontribution = $(result).find('d\\:contribution, contribution')[ 0 ];
                                     var newcontribid = newcontribution.getAttributeNS(DMLNamespace,'contribid');
-                                    alert('newcontribid2:'+newcontribid);
                                     divcontrib.attr('id',newcontribid);
                                     },
                                     error: function (xhr, ajaxOptions, thrownError) {

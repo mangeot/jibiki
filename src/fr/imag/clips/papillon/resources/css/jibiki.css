@@ -579,10 +579,6 @@ pre.api {
     font-weight: bold;
 }
 
-.vedette-jpn-editable {
-    background-color: orange;
-}
-
 .vr, .vj {
     /*	color: black; */
     font-weight: bold;
@@ -608,7 +604,7 @@ article, .article {
     /*	display: block;*/
 }
 
-.romaji .pb, .romaji-editable .pb {
+.nonvalidejpn, .romaji .pb, .romaji-editable .pb {
     background-color: orange;
 }
 

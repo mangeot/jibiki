@@ -38,9 +38,9 @@
                                     type: 'PUT',
                                     data: xpath+'/@match',
                                     success: function(result) {
+                                    $(this).attr('class', 'vedette-jpn-editable');
                                     var newcontribution = $(result).find('d\\:contribution, contribution')[ 0 ];
                                     var newcontribid = newcontribution.getAttributeNS(DMLNamespace,'contribid');
-                                    alert('newcontribid2:'+newcontribid);
                                     divcontrib.attr('id',newcontribid);
                                     },
                                     error: function (xhr, ajaxOptions, thrownError) {
