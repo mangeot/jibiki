@@ -16,6 +16,7 @@
     <script type="text/javascript"><!--
     /* fonction pour les editable*/
                                     function loadVedetteJpnEditable () {
+                                    if (document.cookie.indexOf("JibikiLoginCookie") >= 0) {
                                     $('.vedette-jpn-editable').editable(function(value, settings) {
                                     $(this).attr('class', 'vedette-jpn-editable');
                                     xpath = $(this).attr('xpath');
@@ -59,12 +60,14 @@
                                     tooltip   : 'Cliquer pour éditer...',
                                     style   : 'display: inline;',
                                     });
-                                    
+                                    }
+
                                     return 'ok';
                                     }
 
                                     
                                     function loadEditable () {
+                                    if (document.cookie.indexOf("JibikiLoginCookie") >= 0) {
                                     $('.editable').editable(function(value, settings) {
                                     xpath = $(this).attr('xpath');
                                     encodedValue = encodeURIComponent(value);
@@ -97,7 +100,7 @@
                                     tooltip   : 'Cliquer pour éditer...',
                                     style   : 'display: inline;',
                                     });
-                                    
+                                    }
                                     return 'ok';
                                     }
                                     

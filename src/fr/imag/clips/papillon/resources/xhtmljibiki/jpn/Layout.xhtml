@@ -16,7 +16,9 @@
     <script type="text/javascript"><!--
                                     /* fonction pour les editable*/
                                     function loadVedetteJpnEditable () {
+                                    if (document.cookie.indexOf("JibikiLoginCookie") >= 0) {
                                     $('.vedette-jpn-editable').editable(function(value, settings) {
+                                    $(this).attr('class', 'vedette-jpn-editable');
                                     xpath = $(this).attr('xpath');
                                     encodedValue = encodeURIComponent(value);
                                     divcontrib = $(this).closest("div.contribution");
@@ -38,7 +40,6 @@
                                     type: 'PUT',
                                     data: xpath+'/@match',
                                     success: function(result) {
-                                    $(this).attr('class', 'vedette-jpn-editable');
                                     var newcontribution = $(result).find('d\\:contribution, contribution')[ 0 ];
                                     var newcontribid = newcontribution.getAttributeNS(DMLNamespace,'contribid');
                                     divcontrib.attr('id',newcontribid);
@@ -59,12 +60,14 @@
                                     tooltip   : 'Cliquer pour éditer...',
                                     style   : 'display: inline;',
                                     });
+                                    }
                                     
                                     return 'ok';
                                     }
                                     
                                     
                                     function loadEditable () {
+                                    if (document.cookie.indexOf("JibikiLoginCookie") >= 0) {
                                     $('.editable').editable(function(value, settings) {
                                     xpath = $(this).attr('xpath');
                                     encodedValue = encodeURIComponent(value);
@@ -97,7 +100,7 @@
                                     tooltip   : 'Cliquer pour éditer...',
                                     style   : 'display: inline;',
                                     });
-                                    
+                                    }
                                     return 'ok';
                                     }
                                     
