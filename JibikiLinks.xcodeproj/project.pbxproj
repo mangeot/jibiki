@@ -1187,6 +1187,7 @@
 		A3469E19170DA3F7006DE82A /* ViewQueryResult.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ViewQueryResult.xmlc; sourceTree = "<group>"; };
 		A3469E1A170DA89C006DE82A /* PapillonBasePO.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = PapillonBasePO.java; sourceTree = "<group>"; };
 		A3469E1B170DA89C006DE82A /* PapillonLayout.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = PapillonLayout.java; sourceTree = "<group>"; };
+		A34B639E1B5606FC0006F457 /* ApiContent.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = ApiContent.xhtml; sourceTree = "<group>"; };
 		A34F3E211B0A1AB800A548EC /* Register.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Register.xhtml; sourceTree = "<group>"; };
 		A34F3E231B0A275F00A548EC /* Register.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Register.xhtml; sourceTree = "<group>"; };
 		A34F3E241B0A277F00A548EC /* Register.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Register.xhtml; sourceTree = "<group>"; };
@@ -3531,6 +3532,7 @@
 				A37C0305128C62DB0047A982 /* AdvancedQueryForm.xhtml */,
 				A37C0306128C62DB0047A982 /* AdvancedQueryForm.xmlc */,
 				A37C0307128C62DB0047A982 /* AdvancedSearch.xhtml */,
+				A34B639E1B5606FC0006F457 /* ApiContent.xhtml */,
 				A37C0308128C62DB0047A982 /* AxiesManagement.xhtml */,
 				A37C0309128C62DB0047A982 /* AxiesManagement.xmlc */,
 				A3AF27A01B0A4473008A4654 /* ConfirmEntry.xhtml */,

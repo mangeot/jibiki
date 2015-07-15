@@ -244,7 +244,7 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
 						String entry = convertStreamToString(inputStream);
 						PapillonLogger.writeDebugMsg("put data: "+entry);
 						if (Entries.userCanPutEntry(getUser())) {
-							content = Entries.putEntry(restStrings[0], restStrings[1], entry, restStrings[2]);
+							content = Entries.putEntry(restStrings[0], restStrings[1], entry, restStrings[2], this.getUser());
 							if (content==null) {
 								String errorMsg = "Error: entryid: " + restStrings[0] + " lang: " +  restStrings[1] + " ID: " + restStrings[2] +" does not exist!";
                                 //theResponse.setStatus(HttpPresentationResponse.SC_NOT_FOUND,errorMsg);
@@ -266,7 +266,7 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
 						String entry = convertStreamToString(inputStream);
                         PapillonLogger.writeDebugMsg("post data: "+entry);
 						if (Entries.userCanPostEntry(getUser())) {
-							content = Entries.postEntry(restStrings[0], restStrings[1], restStrings[2], entry);
+							content = Entries.postEntry(restStrings[0], restStrings[1], restStrings[2], entry, this.getUser());
 							if (content==null) {
 								String errorMsg = "Error: dict: " + restStrings[0] + " lang: " +  restStrings[1] +" does not exist!";
                                 System.out.println(errorMsg);

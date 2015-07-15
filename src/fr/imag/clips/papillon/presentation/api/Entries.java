@@ -465,7 +465,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 		return answer;
 	}
 	
-	public static org.w3c.dom.Document putEntry(String dictName, String lang, String entryId, String docXml) 
+	public static org.w3c.dom.Document putEntry(String dictName, String lang, String entryId, String docXml, User theUser)
 	throws HttpPresentationException, java.io.IOException, Exception {
 		
 		Volume theVolume = null;
@@ -482,11 +482,22 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 				PapillonLogger.writeDebugMsg("Entry: docXML: [" + docXml + "]");
 				org.w3c.dom.Document docDom = XMLServices.buildDOMTree(docXml);
 				if (docDom != null) {
-					myEntry.setDom(docDom);
-                    myEntry.setHeadword();
-					myEntry.save();
+                    VolumeEntry newVolumeEntry = VolumeEntriesFactory.newEntryFromExisting(myEntry);
+                    newVolumeEntry.setDom(docDom);
+                    newVolumeEntry.setHeadword();
+                    newVolumeEntry.setContributionId();
+                    newVolumeEntry.addClassifiedFinishedContribution(myEntry);
+                    newVolumeEntry.setPreviousContributionId(myEntry.getContributionId());
+                    newVolumeEntry.setModification(theUser.getLogin(), "finish");
+                    newVolumeEntry.setGroups(Utility.ArrayUnion(newVolumeEntry.getGroups(),theUser.getGroupsArray()));
+                    newVolumeEntry.save();
+                    myEntry.setStatus(VolumeEntry.CLASSIFIED_FINISHED_STATUS);
+                    myEntry.save();
+                    resultDoc = newVolumeEntry.getDom();
 				}
-				resultDoc = myEntry.getDom();
+                else {
+                    resultDoc = myEntry.getDom();
+                }
 			}
 			else {
 				PapillonLogger.writeDebugMsg("Entry null: " + entryId);
@@ -569,7 +580,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 		return answer;
 	}
 
-	public static org.w3c.dom.Document postEntry(String dictName, String lang,  String headword, String docXml) 
+	public static org.w3c.dom.Document postEntry(String dictName, String lang,  String headword, String docXml, User theUser)
 	throws HttpPresentationException, java.io.IOException, Exception {
 		
 		Dictionary theDict = null;
@@ -587,9 +598,10 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 				if (docDom!=null) {
 					VolumeEntry newEntry = new VolumeEntry(theDict, theVolume); 
                     newEntry.setDom(docDom);
-					newEntry.setAuthor();
+					newEntry.setAuthor(theUser.getLogin());
 					newEntry.setCreationDate();
 					newEntry.setHeadword();
+                    newEntry.setModification(theUser.getLogin(), "finish");
 					newEntry.save();
  					resultDoc = newEntry.getDom();
 				}

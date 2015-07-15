@@ -176,6 +176,7 @@ public class AdminEntries extends PapillonBasePO {
         String submitAdd = myGetParameter(content.NAME_ADD);
         String logContributions = myGetParameter(content.NAME_LogContributions);
         String defaultStatus = myGetParameter(content.NAME_DefaultStatus);
+        String indexEntriesString = myGetParameter(content.NAME_IndexEntries);
 				
 		
         String replaceExistingContributionsString = myGetParameter(content.NAME_ReplaceExistingContributions);
@@ -191,7 +192,8 @@ public class AdminEntries extends PapillonBasePO {
 		}
 		
 		
-		boolean logContribs = (logContributions!=null && !logContributions.equals(""));
+        boolean logContribs = (logContributions!=null && !logContributions.equals(""));
+        boolean indexEntries = (indexEntriesString!=null && !indexEntriesString.equals(""));
         
 		String userMessage = "";
 
@@ -209,7 +211,7 @@ public class AdminEntries extends PapillonBasePO {
 				ex.printStackTrace();
 			}	
 			if (myURL != null) {
-				userMessage += handleVolumeAddition(volumeString, myURL, defaultStatus, replaceExistingEntries, replaceExistingContributions, logContribs);
+				userMessage += handleVolumeAddition(volumeString, myURL, defaultStatus, replaceExistingEntries, replaceExistingContributions, logContribs, indexEntries);
 			}
 			if (userMessage != "") {
 				this.getSessionData().writeUserMessage(userMessage);
@@ -221,7 +223,7 @@ public class AdminEntries extends PapillonBasePO {
         return content.getElementFormulaire();
     }
 	
-	protected String handleVolumeAddition(String volumeString, java.net.URL myURL, String defaultStatus, int replaceExistingEntries, int replaceExistingContributions, boolean logContribs) 
+	protected String handleVolumeAddition(String volumeString, java.net.URL myURL, String defaultStatus, int replaceExistingEntries, int replaceExistingContributions, boolean logContribs, boolean indexEntries)
 		throws fr.imag.clips.papillon.business.PapillonBusinessException, 
 			HttpPresentationException {
         String userMessage ="";
@@ -229,7 +231,7 @@ public class AdminEntries extends PapillonBasePO {
         // Create and Register the transaction
   //      CurrentDBTransaction.registerNewDBTransaction();
         try {
-			String message = ParseVolume.parseVolume(volumeString, myURL, defaultStatus, replaceExistingEntries, replaceExistingContributions, logContribs);
+			String message = ParseVolume.parseVolume(volumeString, myURL, defaultStatus, replaceExistingEntries, replaceExistingContributions, logContribs, indexEntries);
 			userMessage = "Volume: " + volumeString + " / URL: " + myURL + " downloaded...";
 			userMessage += message;
            // everything was correct, commit the transaction...

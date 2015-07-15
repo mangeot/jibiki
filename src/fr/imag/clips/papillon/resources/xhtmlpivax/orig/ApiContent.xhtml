@@ -323,6 +323,22 @@ Other criteria and keys not in the list may exist only for one specific resource
 &lt;/entry-list>
 </pre>
 
+<h3 id="Authentication">Authentication methods</h3>
+<p>Authentication method is one of the following:</p>
+
+<table class="api">
+    <tbody>
+        <tr><td>BasicAuth</td><td>login and password are encoded in base 64 and sent to the server in the request header.
+            This method is not secure because the encryption method is easy to decrypt.</td></tr>
+        <tr><td>Authentication cookie</td><td>cookies are sent to the server in the request header. In order to ask for an authentication cookie, please visit the <a href="LoginUser.po">login page</a>.</td></tr>
+        <tr><td rowspan="3">Querystring</td><td>login=login</td></tr>
+        <tr><td>password=password</td></tr>
+        <tr><td>This method is not secure at all : login and password are sent in cleartext.
+            They will even be registered on the web server logs!</td></tr>
+    </tbody>
+</table>
+
+
 <h2>Misc</h2>
 <p>If you need more help, send an email to
 <a href="mailto:mathieu.mangeotATimag.fr?subject=jibikiServer&amp;body=replace&nbsp;AT&nbsp;by&nbsp;@&nbsp;in&nbsp;the&nbsp;email&nbsp;address">Mathieu Mangeot</a>.</p>
