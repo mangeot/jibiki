@@ -86,8 +86,8 @@ public class IndexEntry {
 				java.util.HashMap linksTable = myEntry.getVolume().getLinksTable();
 				ArrayList links = indexEntryLinks(linksTable, myEntry.getVolume(), myRootElt, myEntry.getHandle());
 				saveLinks(links);
+                result = true;
 			}
-         
         return result;
     }
     

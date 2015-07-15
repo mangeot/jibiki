@@ -402,7 +402,7 @@ public class ParseVolume {
 						/*bufferLine = bufferLine.substring(endComment+3);*/
 					}
 				}
-				//PapillonLogger.writeDebugMsg("buffer: " + bufferLine.toString());
+				//PapillonLogger.writeDebugMsg("buffer: [" + bufferLine + "]");
 				//PapillonLogger.writeDebugMsg("begin: " + beginComment + " end: " + endComment + " in: " + inComment);
 				if (!inComment) {
                 firstEntryIndex = bufferLine.indexOf("<" + CDM_Contribution + " ");
@@ -410,13 +410,18 @@ public class ParseVolume {
                     firstEntryIndex = bufferLine.indexOf("<" + CDM_Contribution + "\t");
                 }
 				if (firstEntryIndex<0) {
-					firstEntryIndex = bufferLine.indexOf("<" + CDM_Contribution + "\n");
+					firstEntryIndex = bufferLine.indexOf("<" + CDM_Contribution);
+                    int length = bufferLine.length();
+                    int filength = firstEntryIndex + 1 + CDM_Contribution.length();
+                    if (firstEntryIndex >=0 && filength != length) {
+                        firstEntryIndex = -1;
+                    }
 				}
                 if (firstEntryIndex < 0) {
                     firstEntryIndex = bufferLine.indexOf("<" + CDM_Contribution + ">");
                 }
                 isContributionVolume = (firstEntryIndex >= 0);
-                if (firstEntryIndex < 0) {
+               if (firstEntryIndex < 0) {
                     firstEntryIndex = bufferLine.indexOf("<" + CDM_Entry + " ");
                 }
                 if (firstEntryIndex < 0) {
