@@ -483,6 +483,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 				org.w3c.dom.Document docDom = XMLServices.buildDOMTree(docXml);
 				if (docDom != null) {
 					myEntry.setDom(docDom);
+                    myEntry.setHeadword();
 					myEntry.save();
 				}
 				resultDoc = myEntry.getDom();
