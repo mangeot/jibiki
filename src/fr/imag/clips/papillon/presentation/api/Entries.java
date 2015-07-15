@@ -581,16 +581,16 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 			java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
 			if (volumesCollection !=null && volumesCollection.size()>0) {
 				theVolume = (Volume) volumesCollection.iterator().next();
-				PapillonLogger.writeDebugMsg("Entries: headword: " + headword + " volume: " + theVolume.getName());
+				PapillonLogger.writeDebugMsg("postEntry: headword: " + headword + " volume: " + theVolume.getName());
 				org.w3c.dom.Document docDom = XMLServices.buildDOMTree(docXml);
 				if (docDom!=null) {
 					VolumeEntry newEntry = new VolumeEntry(theDict, theVolume); 
-					newEntry.setDom(docDom);
+                    newEntry.setDom(docDom);
 					newEntry.setAuthor();
 					newEntry.setCreationDate();
 					newEntry.setHeadword();
 					newEntry.save();
-					resultDoc = newEntry.getDom();
+ 					resultDoc = newEntry.getDom();
 				}
 			}
 		}

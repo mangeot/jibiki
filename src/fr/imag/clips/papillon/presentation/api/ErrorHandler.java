@@ -243,13 +243,12 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
 						HttpPresentationInputStream inputStream = theRequest.getInputStream();
 						String entry = convertStreamToString(inputStream);
 						PapillonLogger.writeDebugMsg("put data: "+entry);
-						inputStream.close();
 						if (Entries.userCanPutEntry(getUser())) {
 							content = Entries.putEntry(restStrings[0], restStrings[1], entry, restStrings[2]);
 							if (content==null) {
 								String errorMsg = "Error: entryid: " + restStrings[0] + " lang: " +  restStrings[1] + " ID: " + restStrings[2] +" does not exist!";
-								System.out.println(errorMsg);
-								theResponse.setStatus(HttpPresentationResponse.SC_NOT_FOUND,errorMsg);
+                                //theResponse.setStatus(HttpPresentationResponse.SC_NOT_FOUND,errorMsg);
+								PapillonLogger.writeDebugMsg(errorMsg);
 							}
 							else {
 								theResponse.setStatus(HttpPresentationResponse.SC_CREATED);
@@ -257,7 +256,7 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
 						}
 						else {
 							String errorMsg = "Error: user: " + login +" not authorized to put entry!";
-							System.out.println(errorMsg);
+							PapillonLogger.writeDebugMsg(errorMsg);
 							theResponse.setStatus(HttpPresentationResponse.SC_UNAUTHORIZED,errorMsg);
 						}
                         theResponse.flush();
@@ -266,13 +265,12 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
 						HttpPresentationInputStream inputStream = theRequest.getInputStream();
 						String entry = convertStreamToString(inputStream);
                         PapillonLogger.writeDebugMsg("post data: "+entry);
-                        inputStream.close();
 						if (Entries.userCanPostEntry(getUser())) {
 							content = Entries.postEntry(restStrings[0], restStrings[1], restStrings[2], entry);
 							if (content==null) {
 								String errorMsg = "Error: dict: " + restStrings[0] + " lang: " +  restStrings[1] +" does not exist!";
-								System.out.println(errorMsg);
-								theResponse.setStatus(HttpPresentationResponse.SC_NOT_FOUND, errorMsg);
+                                System.out.println(errorMsg);
+                                theResponse.setStatus(HttpPresentationResponse.SC_NOT_FOUND, errorMsg);
 							}
 							else {
 								theResponse.setStatus(HttpPresentationResponse.SC_CREATED);
@@ -429,12 +427,15 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
     protected void setUserFromLoginPassword(String login, String password)
     throws fr.imag.clips.papillon.business.PapillonBusinessException, fr.imag.clips.papillon.presentation.PapillonPresentationException {
         User user = getUser();
-        if (user ==null) {
+        //PapillonLogger.writeDebugMsg("setUserFromLoginPassword: [" + login + "] [" + password + "]");
+       if (user ==null) {
             if (null != login && !login.equals("") &&
                 null != password && !password.equals("")) {
                 user = UsersFactory.findUserByLogin(login);
+                PapillonLogger.writeDebugMsg("User found: " + user.getLogin());
                 if (user.HasCorrectPassword(password)) {
-                    setUser(user);
+                    PapillonLogger.writeDebugMsg("User has correct password!");
+                   setUser(user);
                 }
             }
         }
