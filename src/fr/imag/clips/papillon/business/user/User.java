@@ -401,7 +401,40 @@ public class User implements com.lutris.appserver.server.user.User {
 				throw new PapillonBusinessException("Error setting User's xmlcode", ex);
 			}
 		}
-	
+
+    
+    /**
+     * Get CreationDate of the InformationDocument
+     *
+     * @return CreationDate of the InformationDocument
+     *
+     * @exception DataObjectException
+     *   If the object is not found in the database.
+     */
+    public java.sql.Date getCreationDate () throws PapillonBusinessException {
+        try {
+            return this.myDO.getCreationDate();
+        } catch(DataObjectException  ex) {
+            throw new PapillonBusinessException("Error getting User's creationDate", ex);
+        }
+    }
+    
+    /**
+     * Get ModificationDate of the InformationDocument
+     *
+     * @return ModificationDate of the InformationDocument
+     *
+     * @exception DataObjectException
+     *   If the object is not found in the database.
+     */
+    public java.sql.Date getModificationDate () throws PapillonBusinessException {
+        try {
+            return this.myDO.getModificationDate();
+        } catch(DataObjectException  ex) {
+            throw new PapillonBusinessException("Error getting User's modificationDate", ex);
+        }
+    }
+    
 	// group convenience methods
 	protected void addNewGroup(String group)
 		throws PapillonBusinessException {
@@ -541,6 +574,10 @@ public class User implements com.lutris.appserver.server.user.User {
 			// PapillonLogger.writeDebugMsg("User.save" + xml);
             this.setXmlCode(this.serializeXml());
 			try {
+                if (null == this.getCreationDate()) {
+                    this.myDO.setCreationDate(new java.sql.Date(new java.util.Date().getTime()));
+                }
+                this.myDO.setModificationDate(new java.sql.Date(new java.util.Date().getTime()));
 				this.myDO.commit();
 			} catch(Exception ex) {
 				throw new PapillonBusinessException("Error saving user", ex);

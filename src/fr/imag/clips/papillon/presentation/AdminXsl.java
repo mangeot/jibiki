@@ -171,7 +171,11 @@ public class AdminXsl extends PapillonBasePO {
                 String dictionaryName = req.getParameter(AdminXslTmplXHTML.NAME_dictionaryName);
                 String volumeName = req.getParameter(AdminXslTmplXHTML.NAME_volumeName);
                 String Description= req.getParameter(AdminXslTmplXHTML.NAME_description);
-                URL theURL= new URL(req.getParameter(AdminXslTmplXHTML.NAME_url));
+                String urlString = req.getParameter(AdminXslTmplXHTML.NAME_url);
+                if (urlString.charAt(0) == '/') {
+                    urlString = "file:" + urlString;
+                }
+                URL theURL= new URL(urlString);
                 String leCode = fr.imag.clips.papillon.business.xsl.XslSheetFactory.parseXslSheet(theURL);
                 boolean defaultXsl = (null!=req.getParameter(AdminXslTmplXHTML.NAME_defaultxsl));
                 boolean externalXsl = (null!=req.getParameter(AdminXslTmplXHTML.NAME_externalxsl));

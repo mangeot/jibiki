@@ -398,12 +398,24 @@
             <type canBeNull="false" dbType="INTEGER" javaType="int"/>
 				<initialValue>0</initialValue>
           </column>
-         <column id="xmlCode" usedForQuery="true">
-            <javadoc>/**
- * The XML code of the user.
- */</javadoc>
-            <type  canBeNull="true" dbType="LONGVARCHAR" javaType="String"/>
-          </column>
+           <column id="xmlCode" usedForQuery="true">
+               <javadoc>/**
+                   * The XML code of the user.
+                   */</javadoc>
+               <type  canBeNull="true" dbType="LONGVARCHAR" javaType="String"/>
+           </column>
+           <column id="creationDate" usedForQuery="true">
+               <javadoc>/**
+                   * The user creation date.
+                   */</javadoc>
+               <type  canBeNull="true" dbType="DATE" javaType="java.sql.Date"/>
+           </column>
+           <column id="modificationDate" usedForQuery="true">
+               <javadoc>/**
+                   * The user creation date.
+                   */</javadoc>
+               <type  canBeNull="true" dbType="DATE" javaType="java.sql.Date"/>
+           </column>
 		<index id="name_idx" unique="true">
           <indexColumn id="name"/>
         </index>

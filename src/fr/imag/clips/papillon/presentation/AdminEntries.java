@@ -142,11 +142,7 @@ import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
 
 public class AdminEntries extends PapillonBasePO {
-    protected final static String ADD_PARAMETER="Add";
     
-    protected final static String URL_PARAMETER="url";
-    protected final static String VOLUME_PARAMETER="VOLUME";
-
     protected boolean loggedInUserRequired() {
         return true;
     }
@@ -201,6 +197,9 @@ public class AdminEntries extends PapillonBasePO {
 			urlString!=null && !urlString.equals("") &&
 			submitAdd!=null && !submitAdd.equals("")) {
 			java.net.URL myURL = null;
+            if (urlString.charAt(0) == '/') {
+                urlString = "file:" + urlString;
+            }
 			try {
 				myURL = new java.net.URL(urlString);
 				PapillonLogger.writeDebugMsg(myURL.toString());

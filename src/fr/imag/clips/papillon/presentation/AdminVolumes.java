@@ -223,6 +223,9 @@ public class AdminVolumes extends PapillonBasePO {
             //AJOUT DE DICO
             String userMessage = "";
             String urlString = myGetParameter(AdminVolumesXHTML.NAME_URL);
+            if (urlString.charAt(0) == '/') {
+                urlString = "file:" + urlString;
+            }
 			URL myURL = null;
             if (null != urlString &&
 				null != myGetParameter(AdminVolumesXHTML.NAME_Dictionary)) {

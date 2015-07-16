@@ -216,7 +216,17 @@ public class DataLayerVersion {
 				ManageDatabase.executeSql("alter table users alter column password type VARCHAR(255);\n");
 				PapillonLogger.writeDebugMsg("!!!! you must reset all passwords!!!");                        
 			}
-			
+
+            if (!ManageDatabase.getColumnNames("users").contains("creationDate")) {
+                ManageDatabase.executeSql("alter TABLE users add COLUMN creationDate DATE;\n");
+                PapillonLogger.writeDebugMsg("'creationDate' column added in table users");
+            }
+            
+            if (!ManageDatabase.getColumnNames("users").contains("modificationDate")) {
+                ManageDatabase.executeSql("alter TABLE users add COLUMN modificationDate DATE;\n");
+                PapillonLogger.writeDebugMsg("'modificationDate' column added in table users");
+            }
+            
 			
 			PapillonLogger.writeDebugMsg("If columns were created or dropped, consider vacuum your database!");
             setDBVersion(currentApplicationVersion);
