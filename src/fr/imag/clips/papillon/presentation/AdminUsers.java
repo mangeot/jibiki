@@ -337,10 +337,18 @@ public class AdminUsers extends PapillonBasePO {
 						groupsString += " " + Groups[j];
 					}
                 content.setTextGroups(groupsString);
+                
+                String creationDateString = "";
+                if (UsersTable[i].getCreationDate() != null) {
+                    creationDateString = UsersTable[i].getCreationDate().toString();
+                }
+                content.setTextCreationDate(creationDateString);
 
-                content.setTextCreationDate(UsersTable[i].getCreationDate().toString());
-
-                content.setTextModificationDate(UsersTable[i].getModificationDate().toString());
+                String modificationDateString = "";
+                if (UsersTable[i].getModificationDate() != null) {
+                    modificationDateString = UsersTable[i].getModificationDate().toString();
+                }
+                content.setTextModificationDate(modificationDateString);
 
                 
                 theMakeAdminAnchor.setHref(this.getUrl() + "?" + MAKEADMIN_PARAMETER +
