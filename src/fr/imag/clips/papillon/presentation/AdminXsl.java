@@ -172,7 +172,7 @@ public class AdminXsl extends PapillonBasePO {
                 String volumeName = req.getParameter(AdminXslTmplXHTML.NAME_volumeName);
                 String Description= req.getParameter(AdminXslTmplXHTML.NAME_description);
                 String urlString = req.getParameter(AdminXslTmplXHTML.NAME_url);
-                if (urlString.charAt(0) == '/') {
+                if (null != urlString && urlString.charAt(0) == '/') {
                     urlString = "file:" + urlString;
                 }
                 URL theURL= new URL(urlString);

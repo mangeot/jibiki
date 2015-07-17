@@ -344,7 +344,11 @@ article input {
 }
 
 #WelcomeMessage {
-	text-align: center;
+    text-align: center;
+}
+
+#EmptyMessage, #PrefixLookupMessage {
+    padding: 0 5px 5px 5px;
 }
 .loadingMessageTop {
 	margin:0;
@@ -611,6 +615,10 @@ article, .article {
 .nonvalidefra, .sens .pb, .fra .pb, .texte-sens-editable .pb, .texte-sous-sens-editable .pb {
     background-color: yellow;
     margin-left:5px;
+}
+
+.texte-sens .en {
+    background-color: #BFFF00;
 }
 
 .vedette-romaji {

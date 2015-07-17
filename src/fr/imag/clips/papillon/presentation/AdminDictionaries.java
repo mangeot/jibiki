@@ -209,7 +209,7 @@ public class AdminDictionaries extends PapillonBasePO {
             //AJOUT DE DICO
             String userMessage = "";
             String urlString = req.getParameter(AdminDictionariesXHTML.NAME_url);
-            if (urlString.charAt(0) == '/') {
+            if (null != urlString && urlString.charAt(0) == '/') {
                 urlString = "file:" + urlString;
             }
             
