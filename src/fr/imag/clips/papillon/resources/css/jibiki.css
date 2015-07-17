@@ -617,7 +617,8 @@ article, .article {
     margin-left:5px;
 }
 
-.texte-sens .en {
+.fra .en {
+    color: black;
     background-color: #BFFF00;
 }
 
