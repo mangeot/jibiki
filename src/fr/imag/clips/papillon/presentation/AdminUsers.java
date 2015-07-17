@@ -299,6 +299,8 @@ public class AdminUsers extends PapillonBasePO {
             HTMLElement theLogin = content.getElementLogin();
             HTMLElement theEmail = content.getElementEmail();
             HTMLElement theGroups = content.getElementGroups();
+            HTMLElement creationDate = content.getElementCreationDate();
+            HTMLElement modificationDate = content.getElementModificationDate();
             HTMLAnchorElement theMakeAdminAnchor = content.getElementMakeAdminAnchor();
             HTMLAnchorElement theResetPasswordAnchor = content.getElementResetPasswordAnchor();
             HTMLAnchorElement theMakeSpecialistAnchor = content.getElementMakeSpecialistAnchor();
@@ -313,6 +315,8 @@ public class AdminUsers extends PapillonBasePO {
             theLogin.removeAttribute("id");
             theEmail.removeAttribute("id");
             theGroups.removeAttribute("id");
+            creationDate.removeAttribute("id");
+            modificationDate.removeAttribute("id");
             theMakeAdminAnchor.removeAttribute("id");
             theResetPasswordAnchor.removeAttribute("id");
             theMakeSpecialistAnchor.removeAttribute("id");
@@ -334,6 +338,11 @@ public class AdminUsers extends PapillonBasePO {
 					}
                 content.setTextGroups(groupsString);
 
+                content.setTextCreationDate(UsersTable[i].getCreationDate().toString());
+
+                content.setTextModificationDate(UsersTable[i].getModificationDate().toString());
+
+                
                 theMakeAdminAnchor.setHref(this.getUrl() + "?" + MAKEADMIN_PARAMETER +
                                            "=" + UsersTable[i].getHandle());
                 theResetPasswordAnchor.setHref(this.getUrl() + "?" + RESETPASSWORD_PARAMETER +

@@ -452,9 +452,15 @@ public class UsersFactory {
 				else if (sortBy.equals("login")) {
 					query.addOrderByLogin(true);
 				}
-				else if (sortBy.equals("email")) {
-					query.addOrderByEmail(true);
-				}
+                else if (sortBy.equals("email")) {
+                    query.addOrderByEmail(true);
+                }
+                else if (sortBy.equals("creationDate")) {
+                    query.addOrderByCreationDate(true);
+                }
+                else if (sortBy.equals("modificationDate")) {
+                    query.addOrderByModificationDate(true);
+                }
 			}
             UserDO[] DOarray = query.getDOArray();
             theDictArray = new User[ DOarray.length ];
