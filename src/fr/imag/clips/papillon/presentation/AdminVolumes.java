@@ -223,13 +223,13 @@ public class AdminVolumes extends PapillonBasePO {
             //AJOUT DE DICO
             String userMessage = "";
             String urlString = myGetParameter(AdminVolumesXHTML.NAME_URL);
-            if (null != urlString && urlString.charAt(0) == '/') {
-                urlString = "file:" + urlString;
-            }
-			URL myURL = null;
+ 			URL myURL = null;
             if (null != urlString &&
 				null != myGetParameter(AdminVolumesXHTML.NAME_Dictionary)) {
 				try  {
+                    if (urlString.charAt(0) == '/') {
+                        urlString = "file:" + urlString;
+                    }
 					myURL = new URL(urlString);
                 }
 				catch (java.io.IOException ex) {
@@ -247,6 +247,9 @@ public class AdminVolumes extends PapillonBasePO {
 					String object = myGetParameter(AdminVolumesXHTML.NAME_Object);
 					String url = myGetParameter(AdminVolumesXHTML.NAME_URLObject);
 				 try  {
+                     if (url.charAt(0) == '/') {
+                         url = "file:" + url;
+                     }
 					 myURL = new URL(url);
 				 }
 				 catch (java.io.IOException ex) {
