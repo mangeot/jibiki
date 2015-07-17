@@ -128,10 +128,10 @@ public class AdvancedLookup extends DilafBasePO {
 			if (qrset!=null) {
 				for (java.util.Iterator myIterator = qrset.iterator(); myIterator.hasNext(); ) {
 					Index myIndex = (Index) myIterator.next();
-					if (theVolume == null && volumeName==null) {
+					//if (theVolume == null && volumeName==null) {
 						theVolume = VolumesFactory.getVolumeByIndexDbname(myIndex.getTableName());
 						volumeName = theVolume.getName();
-					}
+					//}
                     String displayValue = Utility.encodeXMLEntities(myIndex.getValue());
  					String entry = "<div class='lookupentry' msort='"+ Utility.encodeXMLEntities(myIndex.getMsort())+"' "+firstEntryStyle+"><a href='javascript:void(0);' style='display:block; margin:5px;' onclick='lookupVolume(\"VOLUME="+volumeName+"&amp;HANDLE="+myIndex.getEntryId()+"\");$(this).parent().css(\"font-weight\",\"bold\")'>"+displayValue+"</a></div>";
                     firstEntryStyle = "";
