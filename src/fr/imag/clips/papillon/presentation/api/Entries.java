@@ -54,6 +54,7 @@ import fr.imag.clips.papillon.business.dictionary.DictionariesFactory;
 import fr.imag.clips.papillon.business.dictionary.Index;
 import fr.imag.clips.papillon.business.dictionary.IndexEntry;
 import fr.imag.clips.papillon.business.dictionary.IndexFactory;
+import fr.imag.clips.papillon.business.dictionary.ParseVolume;
 import fr.imag.clips.papillon.business.dictionary.QueryRequest;
 import fr.imag.clips.papillon.business.dictionary.QueryResult;
 import fr.imag.clips.papillon.business.dictionary.Volume;
@@ -65,7 +66,6 @@ import fr.imag.clips.papillon.business.user.User;
 import fr.imag.clips.papillon.business.utility.Utility;
 import fr.imag.clips.papillon.business.xsl.XslSheet;
 import fr.imag.clips.papillon.business.xsl.XslSheetFactory;
-
 import fr.imag.clips.papillon.business.xml.XMLServices;
 
 /**
@@ -479,7 +479,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 			VolumeEntry myEntry = VolumeEntriesFactory.findEntryByContributionId(theVolume.getName(), entryId);
 			if (myEntry != null && !myEntry.isEmpty()) {
 				PapillonLogger.writeDebugMsg("Entry: headword: " + myEntry.getHeadword());
-				PapillonLogger.writeDebugMsg("Entry: docXML: [" + docXml + "]");
+				//PapillonLogger.writeDebugMsg("Entry: docXML: [" + docXml + "]");
 				org.w3c.dom.Document docDom = XMLServices.buildDOMTree(docXml);
 				if (docDom != null) {
                     VolumeEntry newVolumeEntry = VolumeEntriesFactory.newEntryFromExisting(myEntry);
@@ -580,13 +580,12 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 		return answer;
 	}
 
-	public static org.w3c.dom.Document postEntry(String dictName, String lang,  String headword, String docXml, User theUser)
+	public static org.w3c.dom.Document postEntries(String dictName, String lang, String headword, String docXml, User theUser)
 	throws HttpPresentationException, java.io.IOException, Exception {
 		
 		Dictionary theDict = null;
 		Volume theVolume = null;
 		org.w3c.dom.Document resultDoc = null;
-		
 
 		theDict = DictionariesFactory.getDictionaryByName(dictName);
 		if (theDict !=null) {
@@ -594,19 +593,45 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 			if (volumesCollection !=null && volumesCollection.size()>0) {
 				theVolume = (Volume) volumesCollection.iterator().next();
 				PapillonLogger.writeDebugMsg("postEntry: headword: " + headword + " volume: " + theVolume.getName());
-				org.w3c.dom.Document docDom = XMLServices.buildDOMTree(docXml);
-				if (docDom!=null) {
-					VolumeEntry newEntry = new VolumeEntry(theDict, theVolume); 
-                    newEntry.setDom(docDom);
-					newEntry.setAuthor(theUser.getLogin());
-					newEntry.setCreationDate();
-					newEntry.setHeadword();
-                    newEntry.setModification(theUser.getLogin(), "finish");
-					newEntry.save();
- 					resultDoc = newEntry.getDom();
-				}
+                String message = "";
+                
+                try {
+                    message = ParseVolume.parseVolume(theDict, theVolume, docXml, VolumeEntry.FINISHED_STATUS,
+                                            0, 50,
+                                            false, true);
+                }
+                catch (Exception e) {
+                    resultDoc = null;
+                }
+                if (message.indexOf(ParseVolume.ENTRIES_ADDED)>=0) {
+                    String entriesAdded = message.substring(message.indexOf(ParseVolume.ENTRIES_ADDED)+ParseVolume.ENTRIES_ADDED.length());
+                    entriesAdded = entriesAdded.substring(0,entriesAdded.indexOf("]")+1);
+                    org.json.JSONArray myJsonArray = new org.json.JSONArray(entriesAdded);
+                    if (myJsonArray != null && myJsonArray.length()>0) {
+                        String resultString = ENTRIES_HEAD_XMLSTRING;
+                        for (int i=0; i< myJsonArray.length(); i++) {
+                            String contribId = myJsonArray.getString(i);
+                            VolumeEntry newEntry = VolumeEntriesFactory.findEntryByContributionId(theDict, theVolume, contribId);
+                            if (newEntry != null) {
+                                newEntry.setAuthor(theUser.getLogin());
+                                newEntry.setModification(theUser.getLogin(), "finish");
+                                newEntry.save();
+                                resultString += newEntry.getXmlCode();
+                            }
+                        }
+                        resultString += ENTRIES_TAIL_XMLSTRING;
+                        resultDoc = XMLServices.buildDOMTree(resultString);
+                    }
+                    else {
+                        resultDoc = null;
+                    }
+                }
+                else {
+                    resultDoc = null;
+                }
 			}
 		}
+ 
 		return resultDoc;			
 	}
 	
@@ -630,10 +655,10 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 		
 		if (volumesCollection !=null && volumesCollection.size()>0) {
 			theVolume = (Volume) volumesCollection.iterator().next();
-			PapillonLogger.writeDebugMsg("Entries: id: " + entryId + " volume: " + theVolume.getName());
+			PapillonLogger.writeDebugMsg("Delete entry: id: " + entryId + " volume: " + theVolume.getName());
 			VolumeEntry myEntry = VolumeEntriesFactory.findEntryByContributionId(theVolume.getName(), entryId);
 			if (myEntry != null && !myEntry.isEmpty()) {
-				PapillonLogger.writeDebugMsg("Entry: headword: " + myEntry.getHeadword());
+				PapillonLogger.writeDebugMsg("Delete entry, found headword: " + myEntry.getHeadword());
 				myEntry.delete();
 				resultDoc = myEntry.getDom();
 			}
@@ -641,7 +666,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 				PapillonLogger.writeDebugMsg("Entry null: " + entryId);
 			}
 		}
-		return resultDoc;			
+		return resultDoc;
 	}
 	
 	public static String getStrategy(String strategy) {

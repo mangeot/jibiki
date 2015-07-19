@@ -167,6 +167,9 @@ public class ParseVolume {
     public static final int ReplaceExistingContribution_ReplaceAnyway = 51;
     public static final int ReplaceExistingContribution_ReplaceIfSameStatus = 52;
     public static final int ReplaceExistingContribution_ReplaceIfFinished = 53;
+    
+    public static final String ENTRIES_ADDED = " Entries added: ";
+    public static final String ENTRIES_DISCARDED = " Entries discarded: ";
 
 
     public static final int MAX_DISCARDED_ENTRIES_LOGGED = 500;
@@ -183,6 +186,7 @@ public class ParseVolume {
     protected static final String XMLHEADER = "<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>";
     protected static final String XMLDECLSTART = "<?xml ";
     protected static final int MAX_TRY = 5;
+    
 
     public static int parseFoksVolume(String url)
             throws PapillonBusinessException {
@@ -227,12 +231,6 @@ public class ParseVolume {
     }
 
     public static String parseVolume(String volumeName, java.net.URL myURL, String defaultStatus, int replaceExistingEntries,
-                                     int replaceExistingContributions, boolean logContribs)  throws PapillonBusinessException {
-        return parseVolume(volumeName, myURL, defaultStatus, replaceExistingEntries, replaceExistingContributions,logContribs, false);
-    }
-
-    
-    public static String parseVolume(String volumeName, java.net.URL myURL, String defaultStatus, int replaceExistingEntries,
                                      int replaceExistingContributions, boolean logContribs, boolean indexEntries)
             throws PapillonBusinessException {
         String message = "";
@@ -247,30 +245,39 @@ public class ParseVolume {
         return message;
     }
 
-    protected static String parseVolume(Dictionary myDict, Volume myVolume, java.net.URL myURL, boolean logContribs)
-    throws PapillonBusinessException {
-        
-        return parseVolume(myDict, myVolume, myURL, logContribs,false);
-    }
-
     protected static String parseVolume(Dictionary myDict, Volume myVolume, java.net.URL myURL, boolean logContribs, boolean indexEntries)
             throws PapillonBusinessException {
-        String xmlHeader = getXMLHeader(myURL, myVolume.getCdmEntry());
-        String encoding = getEncoding(xmlHeader);
-        return parseEntries(myDict, myVolume, myURL, encoding, VolumeEntry.FINISHED_STATUS, ReplaceExistingEntry_Ignore,
+        return parseVolume(myDict, myVolume, myURL, VolumeEntry.FINISHED_STATUS, ReplaceExistingEntry_Ignore,
                 ReplaceExistingContribution_Ignore, logContribs, indexEntries);
     }
 
     protected static String parseVolume(Dictionary myDict, Volume myVolume, java.net.URL myURL, String defaultStatus,
                                         int replaceExistingEntries, int replaceExistingContributions,
                                         boolean logContribs, boolean indexEntries)
-            throws PapillonBusinessException {
+    throws PapillonBusinessException {
         String xmlHeader = getXMLHeader(myURL, myVolume.getCdmEntry());
         String encoding = getEncoding(xmlHeader);
-        return parseEntries(myDict, myVolume, myURL, encoding, defaultStatus, replaceExistingEntries,
-                replaceExistingContributions, logContribs, indexEntries);
+        java.io.InputStream is = null;
+        try {
+            is = myURL.openStream();
+        }
+        catch (java.io.IOException exp) {
+            throw new PapillonBusinessException("ParseVolume.parseEntries, error IOException", exp);
+        }
+        return parseEntries(myDict, myVolume, is, encoding, defaultStatus, replaceExistingEntries,
+                            replaceExistingContributions, logContribs, indexEntries);
     }
-
+    
+    public static String parseVolume(Dictionary myDict, Volume myVolume, String volumeString, String defaultStatus,
+                                        int replaceExistingEntries, int replaceExistingContributions,
+                                        boolean logContribs, boolean indexEntries)
+    throws PapillonBusinessException {
+        String encoding = getEncoding(volumeString);
+        java.io.InputStream is = new java.io.ByteArrayInputStream(volumeString.getBytes());
+        return parseEntries(myDict, myVolume, is, encoding, defaultStatus, replaceExistingEntries,
+                            replaceExistingContributions, logContribs, indexEntries);
+    }
+    
     protected static String getXMLHeader(java.net.URL myUrl, String CDM_entry)
             throws PapillonBusinessException {
         String res = XMLHEADER;
@@ -292,7 +299,7 @@ public class ParseVolume {
                 }
                 if (    (str.indexOf("<" + CDM_entry + " ") >= 0) ||
                         (str.indexOf("<" + CDM_entry + "\t") >= 0) ||
-                        (str.indexOf("<" + CDM_entry + "\n") >= 0) ||
+                        (str.indexOf("<" + CDM_entry) + 1 + CDM_entry.length() == str.length()) ||
                         (str.indexOf("<" + CDM_entry + ">") >= 0)) {
                     break;
                 }
@@ -330,7 +337,7 @@ public class ParseVolume {
         return res;
     }
 
-	/* 
+        /*
 	 parseEntries split the input stream into entries. Allows to discard malformed entries
 	 
 	 Rebuilds the XML header until the entry tag
@@ -340,16 +347,16 @@ public class ParseVolume {
 	 - does not work if an entry tag is in a CDATA section.
 	 
 	 */
-    protected static String parseEntries(Dictionary myDict, Volume myVolume, java.net.URL myUrl, String encoding,
+    protected static String parseEntries(Dictionary myDict, Volume myVolume, java.io.InputStream inStream, String encoding,
                                          String defaultStatus, int replaceExistingEntries,
                                          int replaceExistingContributions, boolean logContribs, boolean indexEntry)
             throws PapillonBusinessException {
         PapillonLogger.writeDebugMsg("parseEntries, encoding: [" + encoding + "]");
         int countEntries = 0;
         String message = "";
+        java.util.Vector ParsedEntries = new Vector();
         java.util.Vector DiscardedEntries = new Vector();
         try {
-            java.io.InputStream inStream = myUrl.openStream();
             java.io.InputStreamReader inReader = new java.io.InputStreamReader(inStream, encoding);
             // throws UnsupportedEncodingException
             java.io.BufferedReader buffer = new java.io.BufferedReader(inReader);
@@ -427,9 +434,14 @@ public class ParseVolume {
                 if (firstEntryIndex < 0) {
                     firstEntryIndex = bufferLine.indexOf("<" + CDM_Entry + "\t");
                 }
-				if (firstEntryIndex<0) {
-					firstEntryIndex = bufferLine.indexOf("<" + CDM_Entry + "\n");
-				}
+                if (firstEntryIndex<0) {
+                    firstEntryIndex = bufferLine.indexOf("<" + CDM_Entry);
+                    int length = bufferLine.length();
+                    int filength = firstEntryIndex + 1 + CDM_Entry.length();
+                    if (firstEntryIndex >=0 && filength != length) {
+                        firstEntryIndex = -1;
+                    }
+                }
                 if (firstEntryIndex < 0) {
                     firstEntryIndex = bufferLine.indexOf("<" + CDM_Entry + ">");
                 }
@@ -474,7 +486,12 @@ public class ParseVolume {
             while (buffer.ready() && bufferLine.indexOf("</" + CDM_Volume + ">") < 0) {
                 int entryIndex = bufferLine.indexOf("<" + CDM_Entry + " ");
                 entryIndex = (entryIndex<0) ? bufferLine.indexOf("<" + CDM_Entry + "\t") : entryIndex;
-                entryIndex = (entryIndex<0) ? bufferLine.indexOf("<" + CDM_Entry + "\n") : entryIndex;
+                entryIndex = (entryIndex<0) ? bufferLine.indexOf("<" + CDM_Entry) : entryIndex;
+                int length = bufferLine.length();
+                int filength = entryIndex + 1 + CDM_Entry.length();
+                if (entryIndex >=0 && filength != length) {
+                    entryIndex = -1;
+                }
                 entryIndex = (entryIndex<0) ? bufferLine.indexOf("<" + CDM_Entry + ">") : entryIndex;
                 
                 while (entryIndex >= 0) {
@@ -484,9 +501,10 @@ public class ParseVolume {
                         bufferLine = bufferLine.substring(entryIndex);
                     }
                     if (entryBuffer.length() > xmlHeaderBuffer.length()) {
-                        if (parseEntry(myDict, myVolume, entryBuffer.append(xmlFooterBuffer), defaultStatus,
+                        // PapillonLogger.writeDebugMsg("Middle call: parseEntry " + entryBuffer.toString());
+                       if (parseEntry(myDict, myVolume, entryBuffer.append(xmlFooterBuffer), defaultStatus,
                                 isContributionVolume, replaceExistingEntries, replaceExistingContributions, logContribs,
-                                       indexEntry, DiscardedEntries)) {
+                                       indexEntry, ParsedEntries, DiscardedEntries)) {
                             countEntries++;
                         }
                         entryBuffer = new StringBuffer();
@@ -494,7 +512,12 @@ public class ParseVolume {
                     }
                     entryIndex = bufferLine.indexOf("<" + CDM_Entry + " ", entryIndex + CDM_Entry.length() + 1);
 					entryIndex = (entryIndex<0) ? bufferLine.indexOf("<" + CDM_Entry + "\t", entryIndex + CDM_Entry.length() + 1) : entryIndex;
-					entryIndex = (entryIndex<0) ? bufferLine.indexOf("<" + CDM_Entry + "\n", entryIndex + CDM_Entry.length() + 1) : entryIndex;
+					entryIndex = (entryIndex<0) ? bufferLine.indexOf("<" + CDM_Entry, entryIndex + CDM_Entry.length() + 1) : entryIndex;
+                    length = bufferLine.length();
+                    filength = entryIndex + 1 + CDM_Entry.length();
+                    if (entryIndex >=0 && filength != length) {
+                        entryIndex = -1;
+                    }
 					entryIndex = (entryIndex<0) ? bufferLine.indexOf("<" + CDM_Entry + ">", entryIndex + CDM_Entry.length() + 1) : entryIndex;
                 }
                 entryBuffer.append(bufferLine);
@@ -502,16 +525,23 @@ public class ParseVolume {
             }
             buffer.close();
             inStream.close();
+            int closeVolume = bufferLine.indexOf("</" + CDM_Volume + ">");
+            if (closeVolume > 0) {
+                entryBuffer.append(bufferLine.substring(0, closeVolume));
+            }
+           // PapillonLogger.writeDebugMsg("Final call: parseEntry " + entryBuffer.toString());
             if (parseEntry(myDict, myVolume, entryBuffer.append(xmlFooterBuffer), defaultStatus, isContributionVolume,
-                    replaceExistingEntries, replaceExistingContributions, logContribs, indexEntry, DiscardedEntries)) {
+                    replaceExistingEntries, replaceExistingContributions, logContribs, indexEntry, ParsedEntries, DiscardedEntries)) {
                 countEntries++;
             }
-            message = "volume parsed, " + countEntries + " entries added.";
-            PapillonLogger.writeDebugMsg(message);
-            message += " Entries discarded: ";
-            for (java.util.Iterator iter = DiscardedEntries.iterator(); iter.hasNext();) {
-                message += (String) iter.next() + ", ";
+            message = "volume parsed, " + countEntries + " entries added. ";
+            if (ParsedEntries.size()>0) {
+                message += ENTRIES_ADDED + new org.json.JSONArray((java.util.Collection)ParsedEntries).toString();
             }
+            if (DiscardedEntries.size()>0) {
+                message += DiscardedEntries.size() + ENTRIES_DISCARDED + new org.json.JSONArray((java.util.Collection)DiscardedEntries).toString();
+            }
+            PapillonLogger.writeDebugMsg(message);
         } catch (java.io.FileNotFoundException exp) {
             throw new PapillonBusinessException("FileNotFoundException: " + myVolume.getVolumeRef(), exp);
 
@@ -524,23 +554,15 @@ public class ParseVolume {
     protected static boolean parseEntry(Dictionary myDict, Volume myVolume, StringBuffer entryBuffer,
                                         String defaultStatus, boolean isContributionVolume, int replaceExistingEntries,
                                         int replaceExistingContributions, boolean logContribs, boolean indexEntry,
-                                        java.util.Vector DiscardedEntries)
-            throws PapillonBusinessException {
-        return parseEntry(myDict, myVolume, entryBuffer.toString(), defaultStatus, isContributionVolume,
-                replaceExistingEntries, replaceExistingContributions, logContribs, indexEntry, DiscardedEntries);
-    }
-
-    protected static boolean parseEntry(Dictionary myDict, Volume myVolume, String entryString, String defaultStatus,
-                                        boolean isContributionVolume, int replaceExistingEntries,
-                                        int replaceExistingContributions, boolean logContribs, boolean indexEntry,
-                                        java.util.Vector DiscardedEntries)
-            throws PapillonBusinessException {
+                                        java.util.Vector ParsedEntries, java.util.Vector DiscardedEntries)
+             throws PapillonBusinessException {
         boolean result = false;
 				org.w3c.dom.Document myDoc = null;
 				try {
-					myDoc = XMLServices.buildDOMTree(entryString);
+					myDoc = XMLServices.buildDOMTree(entryBuffer.toString());
 				}
 				catch (Exception e) {
+                    myDoc = null;
 				}
         if (myDoc != null) {
             VolumeEntry newEntry = new VolumeEntry(myDict, myVolume);
@@ -552,6 +574,7 @@ public class ParseVolume {
             String entryId = "";
             if (isContributionVolume) {
                 entryId = newEntry.getContributionId();
+//                PapillonLogger.writeDebugMsg("Entry " + entryBuffer.toString() + "New contributionId "+ entryId);
                 if (entryId != null && !entryId.equals("")) {
                     VolumeEntry existingEntry = VolumeEntriesFactory.findEntryByContributionId(myDict, myVolume,
                             entryId);
@@ -645,6 +668,12 @@ public class ParseVolume {
                     ContributionsFactory.createContributionLogsFromExistingEntry(newEntry);
                 }
                 PapillonLogger.writeDebugMsg("Adding entry " + newEntry.getHeadword() + " // " + newEntry.getId());
+                if (indexEntry) {
+                    if (ParsedEntries.size() < MAX_DISCARDED_ENTRIES_LOGGED) {
+                        ParsedEntries.add(newEntry.getContributionId());
+                    }
+                }
+                
             } else {
                 PapillonLogger.writeDebugMsg("Discarding entry " + newEntry.getHeadword() + " // " + newEntry.getId());
                 if (DiscardedEntries.size() < MAX_DISCARDED_ENTRIES_LOGGED) {
@@ -652,7 +681,7 @@ public class ParseVolume {
                 }
             }
         } else {
-            PapillonLogger.writeDebugMsg("Entry not valid:[" + entryString + "]");
+            PapillonLogger.writeDebugMsg("Entry not valid:[" + entryBuffer.toString() + "]");
         }
         return result;
     }

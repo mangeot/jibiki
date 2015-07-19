@@ -60,8 +60,6 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
 	protected static String ERROR_PAGE = "<?xml version='1.0'?><html></html>";
 	protected static String LOGIN_PARAMETER = "login";
     protected static String PASSWORD_PARAMETER = "password";
-    protected static String XPATH_PARAMETER = "xpath";
-    protected static String VALUE_PARAMETER = "value";
 	protected static String STRATEGY_PARAMETER = "strategy";
 	protected static String LIMIT_PARAMETER = "count";
 	protected static String OFFSET_PARAMETER = "startIndex";
@@ -109,10 +107,7 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
                 
                 setUserFromLoginPassword(login,password);
                 
-                
-                String xpath = myGetParameter(XPATH_PARAMETER);
-                String value = myGetParameter(VALUE_PARAMETER);
-				PapillonLogger.writeDebugMsg("REST API URI : [" + prefix + "] " + theRequest.getPresentationURI()+";");
+                PapillonLogger.writeDebugMsg("REST API URI : [" + prefix + "] " + theRequest.getPresentationURI()+";");
 				String theURI = java.net.URLDecoder.decode(theRequest.getPresentationURI());
 				if (theURI.indexOf(prefix)==0) {
 					theURI = theURI.substring(prefix.length());
@@ -234,7 +229,7 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
 					if (theRequest.getMethod().equals("GET")) {
 						content = Entries.getEntry(restStrings[0], restStrings[1], restStrings[2]);
 						if (content==null) {
-							String errorMsg = "Error: entryid: " + restStrings[0] + " lang: " +  restStrings[1] + " ID: " + restStrings[2] +" does not exist!";
+							String errorMsg = "Error: get: " + restStrings[0] + " lang: " +  restStrings[1] + " ID: " + restStrings[2] +" does not exist!";
 							System.out.println(errorMsg);
 							theResponse.setStatus(HttpPresentationResponse.SC_NOT_FOUND,errorMsg);
 						}						
@@ -242,53 +237,86 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
 					else if (theRequest.getMethod().equals("PUT")) {
 						HttpPresentationInputStream inputStream = theRequest.getInputStream();
 						String entry = convertStreamToString(inputStream);
-						PapillonLogger.writeDebugMsg("put data: "+entry);
-						if (Entries.userCanPutEntry(getUser())) {
-							content = Entries.putEntry(restStrings[0], restStrings[1], entry, restStrings[2], this.getUser());
-							if (content==null) {
-								String errorMsg = "Error: entryid: " + restStrings[0] + " lang: " +  restStrings[1] + " ID: " + restStrings[2] +" does not exist!";
-                                //theResponse.setStatus(HttpPresentationResponse.SC_NOT_FOUND,errorMsg);
-								PapillonLogger.writeDebugMsg(errorMsg);
-							}
-							else {
-								theResponse.setStatus(HttpPresentationResponse.SC_CREATED);
-							}
-						}
-						else {
-							String errorMsg = "Error: user: " + login +" not authorized to put entry!";
-							PapillonLogger.writeDebugMsg(errorMsg);
-							theResponse.setStatus(HttpPresentationResponse.SC_UNAUTHORIZED,errorMsg);
-						}
-                        theResponse.flush();
+						//PapillonLogger.writeDebugMsg("put data: "+entry);
+                        try {
+                            org.w3c.dom.Document entryDom = XMLServices.buildDOMTree(entry);
+                        }
+                        catch (Exception e) {
+                            entry = "";
+                        }
+                        if (entry != null && !entry.equals("")) {
+                            if (Entries.userCanPutEntry(getUser())) {
+                                content = Entries.putEntry(restStrings[0], restStrings[1], restStrings[2], entry, this.getUser());
+                                if (content==null) {
+                                    String errorMsg = "Error: dict: " + restStrings[0] + " lang: " +  restStrings[1] + " ID: " + restStrings[2] +" does not exist!";
+                                    content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + HttpPresentationResponse.SC_NOT_FOUND + "</h1><p>" + errorMsg + "</p></html>");
+                                    theResponse.setStatus(HttpPresentationResponse.SC_NOT_FOUND,errorMsg);
+                                    //PapillonLogger.writeDebugMsg(errorMsg);
+                                }
+                                else {
+                                    theResponse.setStatus(HttpPresentationResponse.SC_CREATED);
+                                }
+                            }
+                            else {
+                                String errorMsg = "Error: user: " + login +" not authorized to put entry!";
+                                //PapillonLogger.writeDebugMsg(errorMsg);
+                                content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + HttpPresentationResponse.SC_NOT_FOUND + "</h1><p>" + errorMsg + "</p></html>");
+                                theResponse.setStatus(HttpPresentationResponse.SC_UNAUTHORIZED,errorMsg);
+                            }
+                            theResponse.flush();
+                        }
+                        else {
+                            String errorMsg = "Error: entry: " + entry +" XML is malformed!";
+                            //PapillonLogger.writeDebugMsg(errorMsg);
+                            content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + HttpPresentationResponse.SC_BAD_REQUEST + "</h1><p>" + errorMsg + "</p></html>");
+                            theResponse.setStatus(HttpPresentationResponse.SC_BAD_REQUEST ,errorMsg);
+                        }
 					}
 					else if (theRequest.getMethod().equals("POST")) {
 						HttpPresentationInputStream inputStream = theRequest.getInputStream();
 						String entry = convertStreamToString(inputStream);
-                        PapillonLogger.writeDebugMsg("post data: "+entry);
-						if (Entries.userCanPostEntry(getUser())) {
-							content = Entries.postEntry(restStrings[0], restStrings[1], restStrings[2], entry, this.getUser());
-							if (content==null) {
-								String errorMsg = "Error: dict: " + restStrings[0] + " lang: " +  restStrings[1] +" does not exist!";
-                                System.out.println(errorMsg);
-                                theResponse.setStatus(HttpPresentationResponse.SC_NOT_FOUND, errorMsg);
-							}
-							else {
-								theResponse.setStatus(HttpPresentationResponse.SC_CREATED);
-							}
-						}
-						else {
-							String errorMsg = "Error: user: " + login +" not authorized to put entry!";
-							PapillonLogger.writeDebugMsg(errorMsg);
-							theResponse.setStatus(HttpPresentationResponse.SC_UNAUTHORIZED,errorMsg);
-						}
+                        //PapillonLogger.writeDebugMsg("post data: "+entry);
+                        try {
+                            org.w3c.dom.Document entryDom = XMLServices.buildDOMTree(entry);
+                        }
+                        catch (Exception e) {
+                            entry = "";
+                        }
+                        if (entry != null && !entry.equals("")) {
+                            if (Entries.userCanPostEntry(getUser())) {
+                                content = Entries.postEntries(restStrings[0], restStrings[1], restStrings[2], entry, this.getUser());
+                                if (content==null) {
+                                    String errorMsg = "Error: conflict with dict: " + restStrings[0] + " lang: " +  restStrings[1] +" headword: " + restStrings[2] + " !";
+                                    PapillonLogger.writeDebugMsg(errorMsg);
+                                    content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + 409 + " Conflict</h1><p>" + errorMsg + "</p></html>");
+                                    theResponse.setStatus(409, errorMsg);
+                                }
+                                else {
+                                    theResponse.setStatus(HttpPresentationResponse.SC_CREATED);
+                                }
+                            }
+                            else {
+                                String errorMsg = "Error: user: " + login +" not authorized to put entry!";
+                                //PapillonLogger.writeDebugMsg(errorMsg);
+                                content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + HttpPresentationResponse.SC_UNAUTHORIZED + "</h1><p>" + errorMsg + "</p></html>");
+                                theResponse.setStatus(HttpPresentationResponse.SC_UNAUTHORIZED,errorMsg);
+                            }
+                        }
+                        else {
+                            String errorMsg = "Error: entry: " + entry +" XML is malformed!";
+                            //PapillonLogger.writeDebugMsg(errorMsg);
+                            content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + HttpPresentationResponse.SC_BAD_REQUEST + "</h1><p>" + errorMsg + "</p></html>");
+                            theResponse.setStatus(HttpPresentationResponse.SC_BAD_REQUEST ,errorMsg);
+                        }
                         theResponse.flush();
 					}
 					else if (theRequest.getMethod().equals("DELETE")) {
 						if (Entries.userCanDeleteEntry(getUser())) {
 							content = Entries.deleteEntry(restStrings[0], restStrings[1], restStrings[2]);
 							if (content==null) {
-								String errorMsg = "Error: entryid: " + restStrings[0] + " lang: " +  restStrings[1] + " ID: " + restStrings[2] +" does not exist!";
-								System.out.println(errorMsg);
+								String errorMsg = "Error: dict: " + restStrings[0] + " lang: " +  restStrings[1] + " ID: " + restStrings[2] +" does not exist!";
+								//PapillonLogger.writeDebugMsg(errorMsg);
+                                content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + HttpPresentationResponse.SC_NOT_FOUND + "</h1><p>" + errorMsg + "</p></html>");
 								theResponse.setStatus(HttpPresentationResponse.SC_NOT_FOUND, errorMsg);
 							}
 							else {
@@ -297,17 +325,21 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
 						}
 						else {
 							String errorMsg = "Error: user: " + login +" not authorized to put entry!";
-							PapillonLogger.writeDebugMsg(errorMsg);
+	//						PapillonLogger.writeDebugMsg(errorMsg);
+                            content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + HttpPresentationResponse.SC_UNAUTHORIZED + "</h1><p>" + errorMsg + "</p></html>");
 							theResponse.setStatus(HttpPresentationResponse.SC_UNAUTHORIZED,errorMsg);
 						}
 					}
                     else if (theRequest.getMethod().equals("OPTIONS")) {
                         // System.out.println("OPTIONS");
+                        theResponse.setHeader("Access-Control-Allow-Methods","GET, PUT, POST, DELETE, OPTIONS");
                         theResponse.setHeader("Allow","GET, PUT, POST, DELETE, OPTIONS");
                     }
                     else {
-                        theResponse.setStatus(HttpPresentationResponse.SC_NOT_IMPLEMENTED);
-                        PapillonLogger.writeDebugMsg("Error: method not implemented");
+                        String errorMsg = "Error: method not implemented";
+                        //PapillonLogger.writeDebugMsg(errorMsg);
+                        content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + HttpPresentationResponse.SC_NOT_IMPLEMENTED + "</h1><p>" + errorMsg + "</p></html>");
+                        theResponse.setStatus(HttpPresentationResponse.SC_NOT_IMPLEMENTED, errorMsg);
                     }
 				}
 				if (restStrings.length==4 || restStrings.length==5) {
@@ -323,39 +355,56 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
 						content = Entries.getEntries(restStrings[0], restStrings[1], restStrings[2], restStrings[3], key, strategy, limit, offset, getUser());
 						if (content==null) {
 							String errorMsg = "Error: search: " + restStrings[0] + " lang: " +  restStrings[1] + " method: " + restStrings[2] +" does not exist!";
-							PapillonLogger.writeDebugMsg(errorMsg);
+						//	PapillonLogger.writeDebugMsg(errorMsg);
+                            content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + HttpPresentationResponse.SC_NOT_FOUND + "</h1><p>" + errorMsg + "</p></html>");
 							theResponse.setStatus(HttpPresentationResponse.SC_NOT_FOUND, errorMsg);
 						}
 					}
                     else if (theRequest.getMethod().equals("PUT")) {
                         HttpPresentationInputStream inputStream = theRequest.getInputStream();
-                        String entryPart = convertStreamToString(inputStream);
+                        String xpathString = convertStreamToString(inputStream);
                         //inputStream.close();
                         //PapillonLogger.writeDebugMsg("put data: "+ restStrings[3] +" xpath: "+entryPart);
-                        if (Entries.userCanPutEntry(getUser())) {
-                            content = Entries.editEntry(restStrings[0], restStrings[1], restStrings[2], entryPart, restStrings[3], this.getUser());
-                            if (content==null) {
-                                String errorMsg = "Error: dict: " + restStrings[0] + " lang: " +  restStrings[1] +" does not exist!";
-                                PapillonLogger.writeDebugMsg(errorMsg);
-                                theResponse.setStatus(HttpPresentationResponse.SC_NOT_FOUND, errorMsg);
+                        try {
+                            javax.xml.xpath.XPathFactory factory = javax.xml.xpath.XPathFactory.newInstance();
+                            javax.xml.xpath.XPath xpath = factory.newXPath();
+                            javax.xml.xpath.XPathExpression expr = xpath.compile(xpathString);
+                        }
+                        catch (Exception exception) {
+                            xpathString = "";
+                        }
+                        if (xpathString != null && !xpathString.equals("")) {
+                            if (Entries.userCanPutEntry(getUser())) {
+                                content = Entries.editEntry(restStrings[0], restStrings[1], restStrings[2], xpathString, restStrings[3], this.getUser());
+                                if (content==null) {
+                                    String errorMsg = "Error: dict: " + restStrings[0] + " lang: " +  restStrings[1] +" ID: " + restStrings[2] + " does not exist!";
+                                    //PapillonLogger.writeDebugMsg(errorMsg);
+                                    content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + HttpPresentationResponse.SC_NOT_FOUND + "</h1><p>" + errorMsg + "</p></html>");
+                                   theResponse.setStatus(HttpPresentationResponse.SC_NOT_FOUND, errorMsg);
+                                }
+                                else {
+                                    theResponse.setStatus(HttpPresentationResponse.SC_CREATED);
+                                    //PapillonLogger.writeDebugMsg("put data end: "+ restStrings[3] +" result: "+XMLServices.NodeToString(content));
+                                }
                             }
                             else {
-                                theResponse.setStatus(HttpPresentationResponse.SC_CREATED);
-                                //PapillonLogger.writeDebugMsg("put data end: "+ restStrings[3] +" result: "+XMLServices.NodeToString(content));
+                                String errorMsg = "Error: user: " + login +" not authorized to put entry!";
+                            //    PapillonLogger.writeDebugMsg(errorMsg);
+                                content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + HttpPresentationResponse.SC_UNAUTHORIZED + "</h1><p>" + errorMsg + "</p></html>");
+                                theResponse.setStatus(HttpPresentationResponse.SC_UNAUTHORIZED,errorMsg);
                             }
-                        }
-                        else {
-                            String errorMsg = "Error: user: " + login +" not authorized to put entry!";
-                            PapillonLogger.writeDebugMsg(errorMsg);
-                            theResponse.setStatus(HttpPresentationResponse.SC_UNAUTHORIZED,errorMsg);
-                        }
                         //inputStream.close();
                         //theResponse.flush();
+                        }
+                        else {
+                            String errorMsg = "Error: XPath: " + xpathString +" is malformed!";
+                            //PapillonLogger.writeDebugMsg(errorMsg);
+                            content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + HttpPresentationResponse.SC_BAD_REQUEST + "</h1><p>" + errorMsg + "</p></html>");
+                            theResponse.setStatus(HttpPresentationResponse.SC_BAD_REQUEST ,errorMsg);
+                        }
                    }
                     else if (theRequest.getMethod().equals("OPTIONS")) {
                         theResponse.setHeader("Access-Control-Allow-Methods","GET, PUT, POST, DELETE, OPTIONS");
-                        theResponse.setHeader("Access-Control-Max-Age","1000");
-                        theResponse.setHeader("Access-Control-Allow-Headers","origin, x-csrftoken, content-type, accept");
                         theResponse.setHeader("Allow","GET, PUT, POST, DELETE, OPTIONS");
                     }
 					else {
@@ -365,9 +414,10 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
 					}
 				}
 				if (restStrings.length>5) {
-					PapillonLogger.writeDebugMsg(commande + " DICT: " + restStrings[0] + " LANG: " + restStrings[1]+ " MODE: " + restStrings[2]+ " STRING: " + restStrings[3]+ ";");
-					theResponse.setStatus(HttpPresentationResponse.SC_NOT_IMPLEMENTED);
-					PapillonLogger.writeDebugMsg("Error: method not implemented");
+                    String errorMsg = "Error: method not implemented: " + commande + " DICT: " + restStrings[0] + " LANG: " + restStrings[1]+ " MODE: " + restStrings[2]+ " STRING: " + restStrings[3]+ ";";
+                    //PapillonLogger.writeDebugMsg(errorMsg);
+                    content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + HttpPresentationResponse.SC_NOT_IMPLEMENTED + "</h1><p>" + errorMsg + "</p></html>");
+                    theResponse.setStatus(HttpPresentationResponse.SC_NOT_IMPLEMENTED, errorMsg);
 				}
 			}
 			else {
@@ -386,7 +436,6 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
 				content.getDocumentElement().appendChild(messageNode);
 			}
         }
-        //PapillonLogger.writeDebugMsg("ErrorHandler end: content: "+XMLServices.NodeToString(content));
 		return content;
     }
 	

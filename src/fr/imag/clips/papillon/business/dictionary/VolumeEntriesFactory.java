@@ -1670,7 +1670,7 @@ throws PapillonBusinessException {
     return findEntryByContributionId(dict, volume, entryId);
 }
 
-protected static VolumeEntry findEntryByContributionId(Dictionary myDict, Volume myVolume, String entryId)
+public static VolumeEntry findEntryByContributionId(Dictionary myDict, Volume myVolume, String entryId)
 throws PapillonBusinessException {
     return findEntryByKey(myDict, myVolume, Volume.CDM_contributionId, Volume.DEFAULT_LANG, entryId);
 }

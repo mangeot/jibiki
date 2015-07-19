@@ -762,7 +762,7 @@ public class VolumesFactory {
                     VolumeEntriesFactory.createVolumeTables(resVolume);
                     if (parseEntries) {
                         URL resultURL = new URL(fileURL, resVolume.getVolumeRef());
-                        ParseVolume.parseVolume(dict, resVolume, resultURL, logContribs);
+                        ParseVolume.parseVolume(dict, resVolume, resultURL, logContribs, false);
                     } else {
                         PapillonLogger.writeDebugMsg("parseVolumeMetadata: do not parse entries!");
                     }

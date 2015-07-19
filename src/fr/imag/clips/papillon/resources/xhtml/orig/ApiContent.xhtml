@@ -44,13 +44,16 @@
  </tbody>
 </table>
 
-<h3>Requesting an entry</h3>
+<h3>Requesting a contribution</h3>
+
+<p>Note: a contribution is an entry with its metadata (status, author, dates, etc.). A contribution is unique, wether an entry
+can have multiple values depending of its status.</p>
 
 <table class="api">
  <tbody>
     <tr><td>URL</td><td>api/[dictionary]/[lang]/[contributionId]</td></tr>
     <tr><td>Method</td><td >GET</td></tr>
-    <tr><td rowspan="2">Returns</td><td >200 OK &amp; XML (entry)</td></tr>
+    <tr><td rowspan="2">Returns</td><td >200 OK &amp; XML (contribution)</td></tr>
     <tr><td>404 Not Found</td></tr>
  </tbody>
 </table>
@@ -87,13 +90,14 @@
 </pre>
 
 
-<h3>Modifying an entire entry</h3>
+<h3>Modifying an entire contribution</h3>
 
 <table class="api">
  <tbody>
     <tr><td>URL</td><td>api/[dictionary]/[lang]/[contributionId]</td></tr>
     <tr><td>Method</td><td>PUT</td></tr>
-    <tr><td rowspan="3">Returns</td><td>201 Created &amp; XML (entry)</td></tr>
+    <tr><td rowspan="4">Returns</td><td>201 Created &amp; XML (contribution)</td></tr>
+    <tr><td>400 Bad Request (XML not valid)</td></tr>
     <tr><td>401 Unauthorized</td></tr>
     <tr><td>404 Not Found</td></tr>
  </tbody>
@@ -103,13 +107,14 @@
 <p>Note 1: the entry XML code must be complete with volume and contribution tags.</p>
 <p>Note 2: the user has to be <a href="#Authentication">logged</a> and in the specialist group.</p>
 
-<h3>Modifying part of an entry</h3>
+<h3>Modifying part of a contribution</h3>
 
 <table class="api">
     <tbody>
         <tr><td>URL</td><td>api/[dictionary]/[lang]/[contributionId]/[string]</td></tr>
         <tr><td>Method</td><td>PUT</td></tr>
-        <tr><td rowspan="3">Returns</td><td>201 Created &amp; XML (entry)</td></tr>
+        <tr><td rowspan="4">Returns</td><td>201 Created &amp; XML (contribution)</td></tr>
+        <tr><td>400 Bad Request (XPath not valid)</td></tr>
         <tr><td>401 Unauthorized</td></tr>
         <tr><td>404 Not Found</td></tr>
     </tbody>
@@ -119,28 +124,30 @@
 [string] is the new value.</p>
 <p>Note: the user has to be <a href="#Authentication">logged</a>.</p>
 
-<h3>Creating an entry</h3>
+<h3>Creating entries or contributions</h3>
 
 <table class="api">
  <tbody>
-    <tr><td>URL</td><td>api/[dictionary]/[lang]/[contributionId]</td></tr>
+    <tr><td>URL</td><td>api/[dictionary]/[lang]/[headword]</td></tr>
     <tr><td>Method</td><td>POST</td></tr>
-    <tr><td rowspan="2">Returns</td><td>201 Created &amp; XML (entry)</td></tr>
+    <tr><td rowspan="4">Returns</td><td>201 Created &amp; XML (contribution)</td></tr>
+    <tr><td>400 Bad Request (XML not valid)</td></tr>
     <tr><td>401 Unauthorized</td></tr>
+    <tr><td>409 Conflict (entry already existing)</td></tr>
  </tbody>
 </table>
 
-<p>The data to be sent with the POST command is the XML of the contribution (entry + metadata).</p>
-<p>Note 1: the entry XML code must be complete with volume and contribution tags.</p>
+<p>The data to be sent with the POST command is the XML of the entries or contributions (entry + metadata).</p>
+<p>Note 1: the XML code of the entries or contributions must be complete with the volume tag.</p>
 <p>Note 2: the user has to be <a href="#Authentication">logged</a> and in the validator group.</p>
 
-<h3>Deleting an entry</h3>
+<h3>Deleting a contribution</h3>
 
 <table class="api">
  <tbody>
     <tr><td>URL</td><td>api/[dictionary]/[lang]/[contributionId]</td></tr>
     <tr><td>Method</td><td>DELETE</td></tr>
-    <tr><td rowspan="3">Returns</td><td>204 No Content &amp; XML (entry)</td></tr>
+    <tr><td rowspan="3">Returns</td><td>204 No Content &amp; XML (contribution)</td></tr>
     <tr><td>401 Unauthorized</td></tr>
     <tr><td>404 Not Found</td></tr>
  </tbody>
