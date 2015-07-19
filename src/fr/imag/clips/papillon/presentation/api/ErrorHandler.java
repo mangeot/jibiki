@@ -36,6 +36,9 @@ import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.user.User;
 import fr.imag.clips.papillon.business.user.UsersFactory;
 
+import org.enhydra.xml.io.OutputOptions;
+import org.enhydra.xml.io.DOMFormatter;
+
 import java.io.*;
 /*
 import java.io.BufferedReader;
@@ -53,16 +56,22 @@ import java.util.Properties;
  * @author
  * @version
  */
-public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO {
+public class ErrorHandler extends  fr.imag.clips.papillon.presentation.AbstractPO {
  
 	private org.w3c.dom.Document content;
+    private String jsonString = "";
 	
 	protected static String ERROR_PAGE = "<?xml version='1.0'?><html></html>";
 	protected static String LOGIN_PARAMETER = "login";
     protected static String PASSWORD_PARAMETER = "password";
 	protected static String STRATEGY_PARAMETER = "strategy";
 	protected static String LIMIT_PARAMETER = "count";
-	protected static String OFFSET_PARAMETER = "startIndex";
+    protected static String OFFSET_PARAMETER = "startIndex";
+    protected static String JSON_CONTENTTYPE = "text/json";
+    protected static String XML_CONTENTTYPE = "text/xml";
+    
+    private String contentType = XML_CONTENTTYPE;
+   
 	
 	/**
      * Description of the Method
@@ -89,7 +98,7 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
      * @param HttpPresentationComms
      * @exception HttpPresentationException
      */
-    public org.w3c.dom.Document getContent()
+    public org.w3c.dom.Node getDocument()
         throws HttpPresentationException, java.io.IOException, java.lang.Exception {
         	
 			
@@ -107,7 +116,11 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
                 
                 setUserFromLoginPassword(login,password);
                 
-                PapillonLogger.writeDebugMsg("REST API URI : [" + prefix + "] " + theRequest.getPresentationURI()+";");
+                if (theRequest.getHeader("Accept").equals("application/json")) {
+                    contentType = JSON_CONTENTTYPE;
+                }
+                
+                PapillonLogger.writeDebugMsg("REST API URI : [" + prefix + "] " + theRequest.getPresentationURI()+" Accept: "+theRequest.getHeader("Accept")+" ;");
 				String theURI = java.net.URLDecoder.decode(theRequest.getPresentationURI());
 				if (theURI.indexOf(prefix)==0) {
 					theURI = theURI.substring(prefix.length());
@@ -419,6 +432,16 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
                     content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + HttpPresentationResponse.SC_NOT_IMPLEMENTED + "</h1><p>" + errorMsg + "</p></html>");
                     theResponse.setStatus(HttpPresentationResponse.SC_NOT_IMPLEMENTED, errorMsg);
 				}
+                if (contentType.equals(JSON_CONTENTTYPE)) {
+                    try {
+                        String xmlString = XMLServices.NodeToString(content);
+                        org.json.JSONObject xmlJSONObj = org.json.XML.toJSONObject(xmlString);
+                        jsonString = xmlJSONObj.toString(2);
+                    } catch (org.json.JSONException je) {
+                        theResponse.setStatus(HttpPresentationResponse.SC_INTERNAL_SERVER_ERROR,je.toString());
+                        jsonString = je.toString();
+                    }
+                }
 			}
 			else {
 				StringWriter stringWriter = new StringWriter();
@@ -436,6 +459,7 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
 				content.getDocumentElement().appendChild(messageNode);
 			}
         }
+
 		return content;
     }
 	
@@ -489,5 +513,68 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
             }
         }
     }
+    
+    /**
+     * This implements the run method in HttpPresentation.
+     *
+     * @param comms Description of the Parameter
+     * @throws Exception
+     * @throws HttpPresentationException Description of the Exception
+     * @throws IOException               Description of the Exception
+     */
+    public void run(HttpPresentationComms comms) throws HttpPresentationException, IOException, Exception {
+        this.myComms = comms;
+        initSessionData();
+        
+        // Check if the user needs to be logged in for this request.
+        if (this.loggedInUserRequired()) {
+            checkForUserLogin();                  // This will redirect the user to the login page if necessary
+        }
+        
+        // After this point, user is logged in if required...
+        
+        if (!this.userMayUseThisPO()) {
+            userIsNotAuthorized();                // This will redirect the user to the login page if necessary
+        }
+        
+        
+        HttpPresentationOutputStream out;
+        org.w3c.dom.Node document;
+        byte[] buffer;
+        
+        // setContentType before calling getDocument
+        // because getDocument can change the content type
+        this.getComms().response.setContentType(contentType);
+        this.getComms().response.setEncoding("UTF-8");
+        this.getComms().response.setHeader("Access-Control-Allow-Origin","*");
+        
+        try {
+            initPresentationContext();
+            document = getDocument();
+        } finally {
+            flushPresentationContext();
+        }
+        
+        if (contentType.equals(JSON_CONTENTTYPE)) {
+            buffer = jsonString.getBytes("UTF-8");
+        }
+        else {
+            if (null == document) {
+                this.getComms().response.sendError(HttpPresentationResponse.SC_NOT_FOUND, "Page returned a null Document");
+            }
+            // Preparation de la sortie...
+            OutputOptions options = new OutputOptions();
+            options.setDropHtmlSpanIds(true);
+            options.setXmlEncoding("UTF-8");
+            DOMFormatter fFormatter = new DOMFormatter(options);
+            buffer = fFormatter.toBytes(document);
+        }
+        
+        comms.response.setContentLength(buffer.length);
+        out = comms.response.getOutputStream();
+        out.write(buffer);
+        out.flush();
+    }
+
 
 }
