@@ -35,6 +35,8 @@ import fr.imag.clips.papillon.business.xml.XMLServices;
 import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.user.User;
 import fr.imag.clips.papillon.business.user.UsersFactory;
+import fr.imag.clips.papillon.presentation.PapillonSessionData;
+import fr.imag.clips.papillon.presentation.PapillonSessionManager;
 
 import org.enhydra.xml.io.OutputOptions;
 import org.enhydra.xml.io.DOMFormatter;
@@ -56,7 +58,7 @@ import java.util.Properties;
  * @author
  * @version
  */
-public class ErrorHandler extends  fr.imag.clips.papillon.presentation.AbstractPO {
+public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO {
  
 	private org.w3c.dom.Document content;
     private String jsonString = "";
@@ -69,6 +71,7 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.AbstractP
     protected static String OFFSET_PARAMETER = "startIndex";
     protected static String JSON_CONTENTTYPE = "text/json";
     protected static String XML_CONTENTTYPE = "text/xml";
+    protected static String ENHYDRA_SESSION_COOKIE = "JSESSIONID";
     
     private String contentType = XML_CONTENTTYPE;
    
@@ -499,9 +502,9 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.AbstractP
     
     protected void setUserFromLoginPassword(String login, String password)
     throws fr.imag.clips.papillon.business.PapillonBusinessException, fr.imag.clips.papillon.presentation.PapillonPresentationException {
-        User user = getUser();
+        User user = this.getUser();
         //PapillonLogger.writeDebugMsg("setUserFromLoginPassword: [" + login + "] [" + password + "]");
-       if (user ==null) {
+        if (user==null) {
             if (null != login && !login.equals("") &&
                 null != password && !password.equals("")) {
                 user = UsersFactory.findUserByLogin(login);
@@ -511,6 +514,9 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.AbstractP
                    setUser(user);
                 }
             }
+        }
+        else {
+            PapillonLogger.writeDebugMsg("API User identified: " + user.getLogin());
         }
     }
     
@@ -524,6 +530,33 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.AbstractP
      */
     public void run(HttpPresentationComms comms) throws HttpPresentationException, IOException, Exception {
         this.myComms = comms;
+        
+        // code spécial pour récupérer la session active car il semble qu'il n'y ait pas de session attachée au ErrorHandler !
+        if (this.myComms != null && this.myComms.sessionData == null) {
+            javax.servlet.http.Cookie[] cookiesArray = this.myComms.request.getCookies();
+            //PapillonLogger.writeDebugMsg("Cookies:");
+           for (int i=0; i<cookiesArray.length;i++) {
+               //PapillonLogger.writeDebugMsg(cookiesArray[i].getName() + ":" + cookiesArray[i].getValue());
+               if (cookiesArray[i].getName().equals(ENHYDRA_SESSION_COOKIE)) {
+                   this.myComms.session = PapillonSessionManager.getSession(cookiesArray[i].getValue());
+                   if (this.myComms.session!=null) {
+                       //PapillonLogger.writeDebugMsg("The Session not null");
+                       this.myComms.sessionData = this.myComms.session.getSessionData();
+                       if (this.myComms.sessionData != null) {
+                           //PapillonLogger.writeDebugMsg("theSessionData not null");
+                           Object obj = this.myComms.sessionData.get(PapillonSessionData.SESSION_KEY);
+                           if (null != obj) {
+                               this.sessionData = (PapillonSessionData) obj;
+                           }
+                       }
+                       else {
+                           //PapillonLogger.writeDebugMsg("theSessionData null");
+                       }
+                   }
+               }
+            }
+        }
+        
         initSessionData();
         
         // Check if the user needs to be logged in for this request.

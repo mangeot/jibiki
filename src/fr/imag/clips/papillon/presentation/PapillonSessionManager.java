@@ -22,21 +22,26 @@ public class PapillonSessionManager {
 		addNewSession(newSession, null);
 	}
 	
-	public static void addNewSession(Session newSession, com.lutris.appserver.server.user.User myUser) 
-		throws PapillonPresentationException {
-		if (myUser!=null) {
-			try {
-				newSession.setUser(myUser);
-			}
-			catch (com.lutris.appserver.server.session.SessionException SesEx) {
-				throw new PapillonPresentationException("PapillonSessionManager:Session Error for setUser: ",SesEx);
-			}
-		}
-		SessionsTable.put(newSession.getSessionKey(), newSession);
-		updateActiveSessions();
-	}
-
-	protected static java.util.Vector getActiveSessionsVector() 
+    public static void addNewSession(Session newSession, com.lutris.appserver.server.user.User myUser)
+    throws PapillonPresentationException {
+        if (myUser!=null) {
+            try {
+                newSession.setUser(myUser);
+            }
+            catch (com.lutris.appserver.server.session.SessionException SesEx) {
+                throw new PapillonPresentationException("PapillonSessionManager:Session Error for setUser: ",SesEx);
+            }
+        }
+        SessionsTable.put(newSession.getSessionKey(), newSession);
+        updateActiveSessions();
+    }
+    
+    public static Session getSession(String sessionKey)
+    throws PapillonPresentationException {
+        return (Session) SessionsTable.get(sessionKey);
+    }
+    
+	protected static java.util.Vector getActiveSessionsVector()
 		throws PapillonPresentationException {
 		java.util.Vector ActiveSessions = new java.util.Vector();
 		updateActiveSessions();

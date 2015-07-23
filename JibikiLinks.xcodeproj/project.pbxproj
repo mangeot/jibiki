@@ -1297,6 +1297,7 @@
 		A386068D1A8C94F700FD081D /* ConsultPage.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = ConsultPage.xhtml; sourceTree = "<group>"; };
 		A38DC7D116AEE4B400CCA5B9 /* dilaf.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = dilaf.css; sourceTree = "<group>"; };
 		A38DC85116AFE3B600CCA5B9 /* lookupVolume.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = lookupVolume.js; sourceTree = "<group>"; };
+		A38FB6751B610B1100FBCA3C /* Papillon.java */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.java; path = Papillon.java; sourceTree = "<group>"; };
 		A391CEDA1A382D7B009BA89D /* AdvancedQueryForm.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = AdvancedQueryForm.xhtml; sourceTree = "<group>"; };
 		A39917D216271D470052B09A /* AdministrationMenu.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdministrationMenu.xhtml; sourceTree = "<group>"; };
 		A39917D416271D470052B09A /* AdministrationMenu.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AdministrationMenu.xmlc; sourceTree = "<group>"; };
@@ -1598,6 +1599,7 @@
 				A30722AE0EC89B2000733910 /* CurrentRequestContext.java */,
 				A30722AF0EC89B2100733910 /* dict */,
 				A30722B70EC89B2100733910 /* facelets */,
+				A38FB6751B610B1100FBCA3C /* Papillon.java */,
 				A30722BF0EC89B2100733910 /* papillon_data */,
 				A30722C20EC89B2100733910 /* presentation */,
 				A307231E0EC89B2300733910 /* properties */,

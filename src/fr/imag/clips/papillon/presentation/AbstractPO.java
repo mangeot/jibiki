@@ -258,7 +258,7 @@ public abstract class AbstractPO
             // If we found the session data, save it in a private data member
             if (null != obj) {
                 this.sessionData = (PapillonSessionData) obj;
-            } else {
+            } else if (this.sessionData == null) {
                 // If no session data was found, create a new session data instance
                 this.sessionData = new PapillonSessionData();
 
