@@ -195,7 +195,7 @@
             <!--
              if (!read_cookie('USER_LOGIN')) {
                 var userLogin = $('#UserLogin');
-                if (userLogin.exists()) {
+                if (userLogin.exists() && userLogin.is(':visible')) {
                     userLogin = userLogin.children('a').text();
                     createCookie('USER_LOGIN',userLogin);
                     createCookie('LANG','fra');
