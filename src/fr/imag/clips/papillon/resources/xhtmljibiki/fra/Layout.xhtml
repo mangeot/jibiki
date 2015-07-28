@@ -103,7 +103,22 @@
                                     }
                                     return 'ok';
                                     }
-                                    
+                                    /* fonction pour les cookies de PHP */
+                                    function createCookie(name, value, days) {
+                                        document.cookie = encodeURIComponent(name) + "=" + encodeURIComponent(value) + "; path=/";
+                                    }
+                                    function read_cookie(k){
+                                        if ($match = document.cookie.match('(^|; )'+k+'=([^;]*)')) {
+                                            return $match[2];
+                                        }
+                                        else {
+                                            return false;
+                                        }
+                                    }
+                                    $.fn.exists = function () {
+                                    return this.length !== 0;
+                                    }
+
 // -->
     </script>
     <script id="Script" type="text/javascript"><!-- // --></script>
@@ -175,6 +190,20 @@
         </a>
 		Licence Creative Commons CC0 (domaine public).
 		</p>
+        <!-- Login -->
+        <script type="text/javascript">
+            <!--
+             if (!read_cookie('USER_LOGIN')) {
+                var userLogin = $('#UserLogin');
+                if (userLogin.exists()) {
+                    userLogin = userLogin.children('a').text();
+                    createCookie('USER_LOGIN',userLogin);
+                    createCookie('LANG','fra');
+                }
+             }
+             // -->
+        </script>
+        
         <!-- Piwik -->
         <script type="text/javascript">
             <!--

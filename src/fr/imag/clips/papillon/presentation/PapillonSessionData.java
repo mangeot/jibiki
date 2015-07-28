@@ -120,9 +120,11 @@ public class PapillonSessionData {
     }
 
     protected void setClientWithLabelDisplayProblems(String requestHeader) {
-        this.ClientWithLabelDisplayProblems = (requestHeader.indexOf("MSIE") > 0
-                                                || requestHeader.indexOf("iCab") > 0);
-    }	
+        if (requestHeader != null) {
+            this.ClientWithLabelDisplayProblems = (requestHeader.indexOf("MSIE") > 0
+                                                   || requestHeader.indexOf("iCab") > 0);
+        }
+    }
    
     /**
         * Sets the person object

@@ -104,6 +104,15 @@
                                     return 'ok';
                                     }
                                     
+                                    /* fonction pour les cookies de PHP */
+                                    function createCookie(name, value, days) {
+                                    document.cookie = encodeURIComponent(name) + "=" + encodeURIComponent(value) + "; path=/";
+                                    }
+                                    function read_cookie(k){return(document.cookie.match('(^|; )'+k+'=([^;]*)')||0)[2]}
+                                    $.fn.exists = function () {
+                                    return this.length !== 0;
+                                    }
+
                                     // -->
     </script>
    <script id="Script" type="text/javascript"><!-- // --></script>
@@ -175,6 +184,19 @@
         </a>
         Creative Commons License CC0 (public domain).
 		</p>
+        <!-- Login -->
+        <script type="text/javascript">
+            <!--
+             if (!read_cookie('USER_LOGIN')) {
+             var userLogin = $('#UserLogin');
+             if (userLogin.exists()) {
+             userLogin = userLogin.children('a').text();
+             createCookie('USER_LOGIN',userLogin);
+             createCookie('LANG','eng');
+             }
+             }
+             // -->
+        </script>
         <!-- Piwik -->
         <script type="text/javascript">
             <!--

@@ -119,7 +119,7 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                 
                 setUserFromLoginPassword(login,password);
                 
-                if (theRequest.getHeader("Accept").equals("application/json")) {
+                if (null != theRequest.getHeader("Accept") && theRequest.getHeader("Accept").equals("application/json")) {
                     contentType = JSON_CONTENTTYPE;
                 }
                 
