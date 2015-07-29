@@ -1214,6 +1214,9 @@
 		A3662CFD1A12FC2500C423DF /* options.xmlc */ = {isa = PBXFileReference; lastKnownFileType = text; path = options.xmlc; sourceTree = "<group>"; };
 		A3662CFF1A13490300C423DF /* LangAndUser.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = LangAndUser.xhtml; sourceTree = "<group>"; };
 		A369D51118AD0E820023314A /* LexalpEditEntryInit.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = LexalpEditEntryInit.java; sourceTree = "<group>"; };
+		A37059271B68C78C00A00483 /* LexiesManagement.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = LexiesManagement.xhtml; sourceTree = "<group>"; };
+		A37059281B68C82300A00483 /* LexiesManagement.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = LexiesManagement.xhtml; sourceTree = "<group>"; };
+		A37059291B68C85800A00483 /* LexiesManagement.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = LexiesManagement.xhtml; sourceTree = "<group>"; };
 		A37C02CE128C62BD0047A982 /* Base64Coder.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = Base64Coder.java; sourceTree = "<group>"; };
 		A37C02CF128C62BD0047A982 /* DBConnection.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = DBConnection.java; sourceTree = "<group>"; };
 		A37C02D0128C62BD0047A982 /* PivaxFormatter.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = PivaxFormatter.java; sourceTree = "<group>"; };
@@ -3340,6 +3343,7 @@
 				A32CBB5D1A198C8400B1D65C /* AdvancedQueryForm.xhtml */,
 				A35B12461A149A4700CAA58E /* LangAndUser.xhtml */,
 				A35B12481A149A4700CAA58E /* Layout.xhtml */,
+				A37059291B68C85800A00483 /* LexiesManagement.xhtml */,
 				A34F3E231B0A275F00A548EC /* Register.xhtml */,
 				A35B124A1A149A4700CAA58E /* options.xmlc */,
 			);
@@ -3354,6 +3358,7 @@
 				A351D9231A198C450073B5BB /* AdvancedQueryForm.xhtml */,
 				A35B124E1A149A5600CAA58E /* LangAndUser.xhtml */,
 				A35B12501A149A5600CAA58E /* Layout.xhtml */,
+				A37059281B68C82300A00483 /* LexiesManagement.xhtml */,
 				A34F3E241B0A277F00A548EC /* Register.xhtml */,
 				A35B12521A149A5600CAA58E /* options.xmlc */,
 			);
@@ -3368,6 +3373,7 @@
 				A32CBB601A198C9300B1D65C /* AdvancedQueryForm.xhtml */,
 				A35B125C1A149A6100CAA58E /* LangAndUser.xhtml */,
 				A35B125E1A149A6100CAA58E /* Layout.xhtml */,
+				A37059271B68C78C00A00483 /* LexiesManagement.xhtml */,
 				A34F3E251B0A280900A548EC /* Register.xhtml */,
 				A35B12601A149A6100CAA58E /* options.xmlc */,
 			);
