@@ -9,6 +9,7 @@
 /* Begin PBXFileReference section */
 		A303076F1AEF905F00DD22C4 /* ConfirmEntry.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = ConfirmEntry.xhtml; sourceTree = "<group>"; };
 		A30307711AEF910000DD22C4 /* EditEntry.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = EditEntry.xhtml; sourceTree = "<group>"; };
+		A305B59B1B68FB3800037B0D /* logo-CC0.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "logo-CC0.png"; sourceTree = "<group>"; };
 		A307220A0EC89B1D00733910 /* DiskFile.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = DiskFile.java; sourceTree = "<group>"; };
 		A307220B0EC89B1D00733910 /* MemoryFile.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = MemoryFile.java; sourceTree = "<group>"; };
 		A307220C0EC89B1D00733910 /* MultipartRequest.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = MultipartRequest.java; sourceTree = "<group>"; };
@@ -2452,6 +2453,7 @@
 				A307244E0EC89B2600733910 /* lexalp */,
 				A30724610EC89B2600733910 /* logo-jibiki.jpg */,
 				A30724620EC89B2600733910 /* logo_OIF_petit.jpg */,
+				A305B59B1B68FB3800037B0D /* logo-CC0.png */,
 				A30724630EC89B2600733910 /* logoAmbass_petit.jpg */,
 				A30724640EC89B2600733910 /* logoHM_petit.jpg */,
 				A30724650EC89B2600733910 /* logoSchumanpetit.jpg */,
