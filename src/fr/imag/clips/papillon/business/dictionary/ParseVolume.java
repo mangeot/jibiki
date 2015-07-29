@@ -486,11 +486,11 @@ public class ParseVolume {
             while (buffer.ready() && bufferLine.indexOf("</" + CDM_Volume + ">") < 0) {
                 int entryIndex = bufferLine.indexOf("<" + CDM_Entry + " ");
                 entryIndex = (entryIndex<0) ? bufferLine.indexOf("<" + CDM_Entry + "\t") : entryIndex;
-                entryIndex = (entryIndex<0) ? bufferLine.indexOf("<" + CDM_Entry) : entryIndex;
-                int length = bufferLine.length();
-                int filength = entryIndex + 1 + CDM_Entry.length();
-                if (entryIndex >=0 && filength != length) {
-                    entryIndex = -1;
+                if (entryIndex<0) {
+                    entryIndex = (entryIndex<0) ? bufferLine.indexOf("<" + CDM_Entry) : entryIndex;
+                    if (entryIndex >=0 && bufferLine.length() != entryIndex + 1 + CDM_Entry.length()) {
+                        entryIndex = -1;
+                    }
                 }
                 entryIndex = (entryIndex<0) ? bufferLine.indexOf("<" + CDM_Entry + ">") : entryIndex;
                 
@@ -512,11 +512,11 @@ public class ParseVolume {
                     }
                     entryIndex = bufferLine.indexOf("<" + CDM_Entry + " ", entryIndex + CDM_Entry.length() + 1);
 					entryIndex = (entryIndex<0) ? bufferLine.indexOf("<" + CDM_Entry + "\t", entryIndex + CDM_Entry.length() + 1) : entryIndex;
-					entryIndex = (entryIndex<0) ? bufferLine.indexOf("<" + CDM_Entry, entryIndex + CDM_Entry.length() + 1) : entryIndex;
-                    length = bufferLine.length();
-                    filength = entryIndex + 1 + CDM_Entry.length();
-                    if (entryIndex >=0 && filength != length) {
-                        entryIndex = -1;
+                    if (entryIndex<0) {
+                        entryIndex = bufferLine.indexOf("<" + CDM_Entry, entryIndex + CDM_Entry.length() + 1);
+                        if (entryIndex >=0 && bufferLine.length() != entryIndex + 1 + CDM_Entry.length()) {
+                            entryIndex = -1;
+                        }
                     }
 					entryIndex = (entryIndex<0) ? bufferLine.indexOf("<" + CDM_Entry + ">", entryIndex + CDM_Entry.length() + 1) : entryIndex;
                 }
