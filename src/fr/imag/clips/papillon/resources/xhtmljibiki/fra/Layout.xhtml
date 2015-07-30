@@ -16,7 +16,7 @@
     <script type="text/javascript"><!--
     /* fonction pour les editable*/
                                     function loadVedetteJpnEditable () {
-                                    if (document.cookie.indexOf("JibikiLoginCookie") >= 0 || document.cookie.indexOf("JSESSIONID") >=0) {
+                                    if (document.cookie.indexOf("JibikiLoginCookie") >= 0 || document.cookie.indexOf("USER_LOGIN") >=0) {
                                     $('.vedette-jpn-editable').editable(function(value, settings) {
                                     $(this).attr('class', 'vedette-jpn-editable');
                                     xpath = $(this).attr('xpath');
@@ -67,7 +67,7 @@
 
                                     
                                     function loadEditable () {
-                                    if (document.cookie.indexOf("JibikiLoginCookie") >= 0 || document.cookie.indexOf("JSESSIONID") >=0) {
+                                    if (document.cookie.indexOf("JibikiLoginCookie") >= 0 || document.cookie.indexOf("USER_LOGIN") >=0) {
                                     $('.editable').editable(function(value, settings) {
                                     xpath = $(this).attr('xpath');
                                     encodedValue = encodeURIComponent(value);
