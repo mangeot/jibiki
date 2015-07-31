@@ -75,6 +75,7 @@
                                     origcontribid = encodeURIComponent(divcontrib.attr("id"));
                                     
                                     // première requête AJAX pour modifier le texte
+                                    alert('ajax encoded value: ' + scriptStartUrl + 'api/Cesselin/jpn/'+origcontribid+'/' + encodedValue);
                                     $.ajax({
                                     url: scriptStartUrl + 'api/Cesselin/jpn/'+origcontribid+'/' + encodedValue,
                                     type: 'PUT',
@@ -92,8 +93,10 @@
                                     return(value);
                                     }, {
                                     data: function(value, settings) {
-                                    /* Remove <span class="pb"> tags. */
+                                    /* Remove <span class="pb">, <ruby> & <rt> tags. */
                                     var retval = value.replace(/<\/?span[^>]*>/gi, '');
+                                    retval = retval.replace(/<rt>[^<]*<\/rt>/gi, '');
+                                    retval = retval.replace(/<\/?ruby[^>]*>/gi, '');
                                     return retval;
                                     },
                                     submit  : 'ok',

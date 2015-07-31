@@ -92,8 +92,11 @@
                                     return(value);
                                     }, {
                                     data: function(value, settings) {
-                                    /* Remove <span class="pb"> tags. */
+                                    /* Remove <span class="pb">, <ruby> & <rt> tags. */
+                                    /* or replace < by &lt; > by &gt; */
                                     var retval = value.replace(/<\/?span[^>]*>/gi, '');
+                                    retval = retval.replace(/<rt>[^<]*<\/rt>/gi, '');
+                                    retval = retval.replace(/<\/?ruby[^>]*>/gi, '');
                                     return retval;
                                     },
                                     submit  : 'ok',
