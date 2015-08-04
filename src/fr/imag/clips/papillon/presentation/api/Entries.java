@@ -506,7 +506,17 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 		return resultDoc;			
 	}
 
-    public static org.w3c.dom.Document editEntry(String dictName, String lang, String entryId, String xpathString, String value, User theUser)
+    public static boolean userCanEditEntry(User myUser)
+    throws fr.imag.clips.papillon.business.PapillonBusinessException {
+        boolean answer = false;
+        //      if (null != myUser && !myUser.isEmpty() && (myUser.isAdmin() || myUser.isValidator() || myUser.isSpecialist())) {
+        if (null != myUser && !myUser.isEmpty()) {
+            answer=true;
+        }
+        return answer;
+    }
+    
+   public static org.w3c.dom.Document editEntry(String dictName, String lang, String entryId, String xpathString, String value, User theUser)
     throws HttpPresentationException, java.io.IOException, Exception {
         
         Volume theVolume = null;

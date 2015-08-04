@@ -390,7 +390,7 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                             xpathString = "";
                         }
                         if (xpathString != null && !xpathString.equals("")) {
-                            if (Entries.userCanPutEntry(getUser())) {
+                            if (Entries.userCanEditEntry(getUser())) {
                                 content = Entries.editEntry(restStrings[0], restStrings[1], restStrings[2], xpathString, restStrings[3], this.getUser());
                                 if (content==null) {
                                     String errorMsg = "Error: dict: " + restStrings[0] + " lang: " +  restStrings[1] +" ID: " + restStrings[2] + " does not exist!";
