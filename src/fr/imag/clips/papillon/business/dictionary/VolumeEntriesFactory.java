@@ -531,7 +531,11 @@ public class VolumeEntriesFactory {
 		String volumeTableName = volume.getDbname();
 		if (null != volumeTableName) {
 			try {
-				com.lutris.dods.builder.generator.query.QueryBuilder myQueryBuilder = null; 
+                if (limit==0) {
+                    limit = DictionariesFactory.MaxRetrievedEntries;
+                }
+
+				com.lutris.dods.builder.generator.query.QueryBuilder myQueryBuilder = null;
 				com.lutris.dods.builder.generator.query.RDBColumn entryidColumn = IndexDO.getEntryIdColumn(volume.getIndexDbname());
 				com.lutris.dods.builder.generator.query.RDBColumn keyColumn = IndexDO.getKeyColumn(volume.getIndexDbname());
 				com.lutris.dods.builder.generator.query.RDBColumn langColumn = IndexDO.getLangColumn(volume.getIndexDbname());
@@ -611,6 +615,10 @@ public class VolumeEntriesFactory {
 							else {
 								myQueryBuilder.addWhere(valueColumn, key[2],  key[3]);
 							}
+                            if (offset == 0) {
+                                myQueryBuilder.addEndClause(" LIMIT " + limit + " OFFSET " + offset);
+                            }
+
 							myQueryBuilder.resetSelectedFields();
 							myQueryBuilder.select(entryidColumn);
  							query.getQueryBuilder().addWhereIn(objectidColumn, myQueryBuilder);
@@ -638,9 +646,6 @@ public class VolumeEntriesFactory {
 					order = "";
 				}				
 				query.getQueryBuilder().addOrderByColumn("multilingual_sort('" + sourceLanguage + "',headword)",order);
-                if (limit==0) {
-                    limit = DictionariesFactory.MaxRetrievedEntries;
-                }
                 query.getQueryBuilder().setMaxRows(limit);
                 // seems to be a bug in the queryBuilder, have to put a space before LIMIT or OFFSET
                 query.getQueryBuilder().addEndClause(" LIMIT " + limit + " OFFSET " + offset);

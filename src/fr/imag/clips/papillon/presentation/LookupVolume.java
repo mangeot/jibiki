@@ -374,7 +374,7 @@ public class LookupVolume extends AbstractPO {
                                                                                                  myClauses,
                                                                                                  null,
                                                                                                  this.getUser(),
-                                                                                                 0, 1);
+                                                                                                 0, MAX_HOMOGRAPHS);
                        if (EntryCollection!=null) {
                            myIterator = EntryCollection.iterator();
                            if (myIterator.hasNext()) {

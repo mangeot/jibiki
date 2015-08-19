@@ -205,7 +205,7 @@ function lookupVolume (parameters) {
 					// On affiche le résultat
 					//$('#content').text('LookupVolume.po' + parameters);
                    //$('#lookupcontent').append($(data).children());
-                   // use this method in order to execute embedded javascrit in the data
+                   // use this method in order to execute embedded javascript in the data
                    $('#lookupcontent').append(data);
 					load = false;
 				},
