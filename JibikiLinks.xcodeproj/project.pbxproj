@@ -1447,6 +1447,9 @@
 		A3C894AB171EBFF300A9651D /* ViewQueryResult.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ViewQueryResult.xhtml; sourceTree = "<group>"; };
 		A3CFEC641844F962008F6C62 /* HelpContent.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = HelpContent.xhtml; sourceTree = "<group>"; };
 		A3DD4FAF12933C6C0099E764 /* XslTransformation.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = XslTransformation.java; sourceTree = "<group>"; };
+		A3E736491BAC607C006FFFB6 /* AdminUsersTmpl.xmlc */ = {isa = PBXFileReference; lastKnownFileType = text; path = AdminUsersTmpl.xmlc; sourceTree = "<group>"; };
+		A3E7364A1BAC608C006FFFB6 /* AdminUsersTmpl.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = AdminUsersTmpl.xhtml; sourceTree = "<group>"; };
+		A3E7364B1BAC60B7006FFFB6 /* AdminUsersTmpl.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = AdminUsersTmpl.xhtml; sourceTree = "<group>"; };
 		A3E8991B1B45830800BC5C07 /* jquery.jeditable.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = jquery.jeditable.js; sourceTree = "<group>"; };
 		A3E933D51843432100B9590E /* AdvancedQueryForm.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdvancedQueryForm.xhtml; sourceTree = "<group>"; };
 		A3EC8127163FB75F00715BB7 /* AdminEntriesTmpl.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdminEntriesTmpl.xhtml; sourceTree = "<group>"; };
@@ -3502,6 +3505,7 @@
 				A3469DFD170DA3F7006DE82A /* AdminEntriesTmpl.xmlc */,
 				A3469DFE170DA3F7006DE82A /* AdministrationMenu.xhtml */,
 				A3469DFF170DA3F7006DE82A /* AdministrationMenu.xmlc */,
+				A3E7364B1BAC60B7006FFFB6 /* AdminUsersTmpl.xhtml */,
 				A3469E00170DA3F7006DE82A /* AdvancedQueryForm.xhtml */,
 				A3469E01170DA3F7006DE82A /* AdvancedQueryForm.xmlc */,
 				A3469E02170DA3F7006DE82A /* AdvancedSearch.xhtml */,
@@ -3539,6 +3543,8 @@
 				A37C0302128C62DB0047A982 /* AdminEntriesTmpl.xhtml */,
 				A37C0303128C62DB0047A982 /* AdministrationMenu.xhtml */,
 				A37C0304128C62DB0047A982 /* AdministrationMenu.xmlc */,
+				A3E7364A1BAC608C006FFFB6 /* AdminUsersTmpl.xhtml */,
+				A3E736491BAC607C006FFFB6 /* AdminUsersTmpl.xmlc */,
 				A37C0305128C62DB0047A982 /* AdvancedQueryForm.xhtml */,
 				A37C0306128C62DB0047A982 /* AdvancedQueryForm.xmlc */,
 				A37C0307128C62DB0047A982 /* AdvancedSearch.xhtml */,
