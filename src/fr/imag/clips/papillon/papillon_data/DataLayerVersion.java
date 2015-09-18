@@ -217,14 +217,14 @@ public class DataLayerVersion {
 				PapillonLogger.writeDebugMsg("!!!! you must reset all passwords!!!");                        
 			}
 
-            if (!ManageDatabase.getColumnNames("users").contains("creationDate")) {
-                ManageDatabase.executeSql("alter TABLE users add COLUMN creationDate DATE;\n");
-                PapillonLogger.writeDebugMsg("'creationDate' column added in table users");
+            if (!ManageDatabase.getColumnNames("users").contains("creationdate")) {
+                ManageDatabase.executeSql("alter TABLE users add COLUMN creationdate DATE;\n");
+                PapillonLogger.writeDebugMsg("'creationdate' column added in table users");
             }
             
-            if (!ManageDatabase.getColumnNames("users").contains("modificationDate")) {
-                ManageDatabase.executeSql("alter TABLE users add COLUMN modificationDate DATE;\n");
-                PapillonLogger.writeDebugMsg("'modificationDate' column added in table users");
+            if (!ManageDatabase.getColumnNames("users").contains("modificationdate")) {
+                ManageDatabase.executeSql("alter TABLE users add COLUMN modificationdate DATE;\n");
+                PapillonLogger.writeDebugMsg("'modificationdate' column added in table users");
             }
             
 			
