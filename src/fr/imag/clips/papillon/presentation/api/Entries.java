@@ -465,7 +465,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 		return answer;
 	}
 	
-	public static org.w3c.dom.Document putEntry(String dictName, String lang, String entryId, String docXml, User theUser)
+	public static org.w3c.dom.Document putEntry(String dictName, String lang, String entryId, org.w3c.dom.Document docDom, User theUser)
 	throws HttpPresentationException, java.io.IOException, Exception {
 		
 		Volume theVolume = null;
@@ -480,24 +480,18 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 			if (myEntry != null && !myEntry.isEmpty()) {
 				PapillonLogger.writeDebugMsg("Entry: headword: " + myEntry.getHeadword());
 				//PapillonLogger.writeDebugMsg("Entry: docXML: [" + docXml + "]");
-				org.w3c.dom.Document docDom = XMLServices.buildDOMTree(docXml);
-				if (docDom != null) {
-                    VolumeEntry newVolumeEntry = VolumeEntriesFactory.newEntryFromExisting(myEntry);
-                    newVolumeEntry.setDom(docDom);
-                    newVolumeEntry.setHeadword();
-                    newVolumeEntry.setContributionId();
-                    newVolumeEntry.addClassifiedFinishedContribution(myEntry);
-                    newVolumeEntry.setPreviousContributionId(myEntry.getContributionId());
-                    newVolumeEntry.setModification(theUser.getLogin(), "finish");
-                    newVolumeEntry.setGroups(Utility.ArrayUnion(newVolumeEntry.getGroups(),theUser.getGroupsArray()));
-                    newVolumeEntry.save();
-                    myEntry.setStatus(VolumeEntry.CLASSIFIED_FINISHED_STATUS);
-                    myEntry.save();
-                    resultDoc = newVolumeEntry.getDom();
-				}
-                else {
-                    resultDoc = myEntry.getDom();
-                }
+                VolumeEntry newVolumeEntry = VolumeEntriesFactory.newEntryFromExisting(myEntry);
+                newVolumeEntry.setDom(docDom);
+                newVolumeEntry.setHeadword();
+                newVolumeEntry.setContributionId();
+                newVolumeEntry.addClassifiedFinishedContribution(myEntry);
+                newVolumeEntry.setPreviousContributionId(myEntry.getContributionId());
+                newVolumeEntry.setModification(theUser.getLogin(), "finish");
+                newVolumeEntry.setGroups(Utility.ArrayUnion(newVolumeEntry.getGroups(),theUser.getGroupsArray()));
+                newVolumeEntry.save();
+                myEntry.setStatus(VolumeEntry.CLASSIFIED_FINISHED_STATUS);
+                myEntry.save();
+                resultDoc = newVolumeEntry.getDom();
 			}
 			else {
 				PapillonLogger.writeDebugMsg("Entry null: " + entryId);

@@ -35,6 +35,102 @@
  </tbody>
 </table>
 
+<h3>Creating a dictionary</h3>
+
+<table class="api">
+    <tbody>
+        <tr><td>URL</td><td>api/[dictionary]</td></tr>
+        <tr><td>Method</td><td>POST</td></tr>
+        <tr><td rowspan="4">Returns</td><td>201 Created &amp; XML (dict metadata)</td></tr>
+        <tr><td>400 Bad Request (XML not valid)</td></tr>
+        <tr><td>401 Unauthorized</td></tr>
+        <tr><td>409 Conflict (dictionary already existing)</td></tr>
+        <tr><td>422 Unprocessable Entity (XML not semantically correct)</td></tr>
+    </tbody>
+</table>
+
+<p>The data to be sent with the POST command is the XML of the dictionary metadata and optionally the XSL stylesheet associated to the dictionary.</p>
+<p>Note 1: the user has to be <a href="#Authentication">logged</a> and in the admin group.</p>
+
+<p>Example of query:</p>
+<pre class="api">
+    curl -X POST \
+    -u user:login \
+    -H "Accept: application/xml" \
+    -H "Content-Type: application/xml;charset=UTF-8" \
+    -d '&lt;?xml version="1.0" encoding="UTF-8"?>
+    &lt;dictionary-metadata-files>
+    &lt;dictionary-metadata xmlns="http://www-clips.imag.fr/geta/services/dml" xmlns:d="http://www-clips.imag.fr/geta/services/dml" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" category="bilingual" creation-date="2015-05-14T07:44:55+02:00" fullname="Dictionnaire japonais-français par Gustave Cesselin" installation-date="2015-05-14T07:44:55+02:00" last-modification-date="2015-05-14T07:45:53+02:00" name="Cesselin" owner="mangeot" type="monodirectional" xsi:schemaLocation="http://www-clips.imag.fr/geta/services/dml http://www-clips.imag.fr/geta/services/dml/dml.xsd">
+    [...]
+    &lt;/dictionary-metadata>
+    &lt;xsl:stylesheet>
+    [...]
+    &lt;/xsl:stylesheet>
+    &lt;/dictionary-metadata-files>
+    '\
+    "api/Cesselin"
+</pre>
+
+<h3>Modifying a dictionary</h3>
+
+<table class="api">
+    <tbody>
+        <tr><td>URL</td><td>api/[dictionary]</td></tr>
+        <tr><td>Method</td><td>PUT</td></tr>
+        <tr><td rowspan="4">Returns</td><td>201 Created &amp; XML (dict metadata)</td></tr>
+        <tr><td>400 Bad Request (XML not valid)</td></tr>
+        <tr><td>401 Unauthorized</td></tr>
+        <tr><td>404 Not Found (dictionary not found)</td></tr>
+        <tr><td>422 Unprocessable Entity (XML not semantically correct)</td></tr>
+    </tbody>
+</table>
+
+<p>The data to be sent with the PUT command is the XML of the dictionary metadata and optionally the XSL stylesheet associated to the dictionary.</p>
+<p>Note 1: the user has to be <a href="#Authentication">logged</a> and in the admin group.</p>
+
+<p>Example of query:</p>
+<pre class="api">
+    curl -X PUT \
+    -u user:login \
+    -H "Accept: application/xml" \
+    -H "Content-Type: application/xml;charset=UTF-8" \
+    -d '&lt;?xml version="1.0" encoding="UTF-8"?>
+    &lt;dictionary-metadata-files>
+    &lt;dictionary-metadata xmlns="http://www-clips.imag.fr/geta/services/dml" xmlns:d="http://www-clips.imag.fr/geta/services/dml" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" category="bilingual" creation-date="2015-05-14T07:44:55+02:00" fullname="Dictionnaire japonais-français par Gustave Cesselin" installation-date="2015-05-14T07:44:55+02:00" last-modification-date="2015-05-14T07:45:53+02:00" name="Cesselin" owner="mangeot" type="monodirectional" xsi:schemaLocation="http://www-clips.imag.fr/geta/services/dml http://www-clips.imag.fr/geta/services/dml/dml.xsd">
+    [...]
+    &lt;/dictionary-metadata>
+    &lt;xsl:stylesheet>
+    [...]
+    &lt;/xsl:stylesheet>
+    &lt;/dictionary-metadata-files>
+    '\
+    "api/Cesselin"
+</pre>
+
+<h3>Deleting a dictionary</h3>
+
+<table class="api">
+    <tbody>
+        <tr><td>URL</td><td>api/[dictionary]</td></tr>
+        <tr><td>Method</td><td>DELETE</td></tr>
+        <tr><td rowspan="3">Returns</td><td>204 No Content &amp; XML (contribution)</td></tr>
+        <tr><td>401 Unauthorized</td></tr>
+        <tr><td>404 Not Found</td></tr>
+    </tbody>
+</table>
+
+<p>Note: the user has to be <a href="#Authentication">logged</a> and in the admin group.</p>
+
+<p>Example of query:</p>
+<pre class="api">
+    curl -X DELETE \
+    -u user:login \
+    "<a href="api/Cesselin">api/Cesselin</a>"
+</pre>
+
+<p>Answer is not significant</p>
+
+
 <h3>Description of a volume</h3>
 
 <table class="api">
@@ -46,6 +142,103 @@
     <tr><td>404 Not Found</td></tr>
  </tbody>
 </table>
+
+<h3>Creating a volume</h3>
+
+<table class="api">
+    <tbody>
+        <tr><td>URL</td><td>api/[dictionary]/[lang]</td></tr>
+        <tr><td>Method</td><td>POST</td></tr>
+        <tr><td rowspan="4">Returns</td><td>201 Created &amp; XML (volume metadata)</td></tr>
+        <tr><td>400 Bad Request (XML not valid)</td></tr>
+        <tr><td>401 Unauthorized</td></tr>
+        <tr><td>404 Not Found (dictionary not found)</td></tr>
+        <tr><td>409 Conflict (volume already existing)</td></tr>
+        <tr><td>422 Unprocessable Entity (XML not semantically correct)</td></tr>
+    </tbody>
+</table>
+
+<p>The data to be sent with the POST command is the XML of the volume metadata, the template entry, and optionally, the XML schema, the template interface and the XSL stylesheet associated to the dictionary.</p>
+<p>Note 1: the user has to be <a href="#Authentication">logged</a> and in the admin group.</p>
+
+<p>Example of query:</p>
+<pre class="api">
+    curl -X POST \
+    -u user:login \
+    -H "Accept: application/xml" \
+    -H "Content-Type: application/xml;charset=UTF-8" \
+    -d '&lt;?xml version="1.0" encoding="UTF-8"?>
+    &lt;volume-metadata-files>
+    &lt;volume-metadata xmlns="http://www-clips.imag.fr/geta/services/dml" xmlns:d="http://www-clips.imag.fr/geta/services/dml" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" category="bilingual" creation-date="2015-05-14T07:44:55+02:00" fullname="Dictionnaire japonais-français par Gustave Cesselin" installation-date="2015-05-14T07:44:55+02:00" last-modification-date="2015-05-14T07:45:53+02:00" name="Cesselin" owner="mangeot" type="monodirectional" xsi:schemaLocation="http://www-clips.imag.fr/geta/services/dml http://www-clips.imag.fr/geta/services/dml/dml.xsd">
+    [...]
+    &lt;/volume-metadata>
+    &lt;xsl:stylesheet>
+    [...]
+    &lt;/xsl:stylesheet>
+    &lt;/volume-metadata-files>
+    '\
+    "api/Cesselin/jpn"
+</pre>
+
+<h3>Modifying a volume</h3>
+
+<table class="api">
+    <tbody>
+        <tr><td>URL</td><td>api/[dictionary]/[lang]</td></tr>
+        <tr><td>Method</td><td>PUT</td></tr>
+        <tr><td rowspan="4">Returns</td><td>201 Created &amp; XML (volume metadata)</td></tr>
+        <tr><td>400 Bad Request (XML not valid)</td></tr>
+        <tr><td>401 Unauthorized</td></tr>
+        <tr><td>404 Not Found (dictionary or volume not found)</td></tr>
+        <tr><td>422 Unprocessable Entity (XML not semantically correct)</td></tr>
+    </tbody>
+</table>
+
+<p>The data to be sent with the PUT command is the XML of the volume metadata, the template entry, and optionally, the XML schema, the template interface and the XSL stylesheet associated to the dictionary.</p>
+<p>Note 1: the user has to be <a href="#Authentication">logged</a> and in the admin group.</p>
+
+<p>Example of query:</p>
+<pre class="api">
+    curl -X PUT \
+    -u user:login \
+    -H "Accept: application/xml" \
+    -H "Content-Type: application/xml;charset=UTF-8" \
+    -d '&lt;?xml version="1.0" encoding="UTF-8"?>
+    &lt;volume-metadata-files>
+    &lt;volume-metadata xmlns="http://www-clips.imag.fr/geta/services/dml" xmlns:d="http://www-clips.imag.fr/geta/services/dml" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" category="bilingual" creation-date="2015-05-14T07:44:55+02:00" fullname="Dictionnaire japonais-français par Gustave Cesselin" installation-date="2015-05-14T07:44:55+02:00" last-modification-date="2015-05-14T07:45:53+02:00" name="Cesselin" owner="mangeot" type="monodirectional" xsi:schemaLocation="http://www-clips.imag.fr/geta/services/dml http://www-clips.imag.fr/geta/services/dml/dml.xsd">
+    [...]
+    &lt;/volume-metadata>
+    &lt;xsl:stylesheet>
+    [...]
+    &lt;/xsl:stylesheet>
+    &lt;/volume-metadata-files>
+    '\
+    "api/Cesselin/jpn"
+</pre>
+
+<h3>Deleting a volume</h3>
+
+<table class="api">
+    <tbody>
+        <tr><td>URL</td><td>api/[dictionary]/[lang]</td></tr>
+        <tr><td>Method</td><td>DELETE</td></tr>
+        <tr><td rowspan="3">Returns</td><td>204 No Content &amp; XML (contribution)</td></tr>
+        <tr><td>401 Unauthorized</td></tr>
+        <tr><td>404 Not Found</td></tr>
+    </tbody>
+</table>
+
+<p>Note: the user has to be <a href="#Authentication">logged</a> and in the admin group.</p>
+
+<p>Example of query:</p>
+<pre class="api">
+    curl -X DELETE \
+    -u user:login \
+    "<a href="api/Cesselin/jpn">api/Cesselin/jpn</a>"
+</pre>
+
+<p>Answer is not significant</p>
+
 
 <h3>Requesting a contribution</h3>
 

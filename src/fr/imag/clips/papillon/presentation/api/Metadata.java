@@ -48,8 +48,12 @@ import fr.imag.clips.papillon.business.dictionary.Dictionary;
 import fr.imag.clips.papillon.business.dictionary.DictionariesFactory;
 import fr.imag.clips.papillon.business.dictionary.Volume;
 import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
+import fr.imag.clips.papillon.business.user.User;
 
 import fr.imag.clips.papillon.business.xml.XMLServices;
+
+import fr.imag.clips.papillon.Papillon;
+
 
 /**
 *  Description of the Class
@@ -135,19 +139,60 @@ public class Metadata extends fr.imag.clips.papillon.presentation.XmlBasePO {
 		return resultDoc;			
 	}
 
-	public static org.w3c.dom.Document getDictionaryMetadata(String dictName) 
-	throws HttpPresentationException, java.io.IOException, Exception {
-		
-		org.w3c.dom.Document resultDoc = null;
-		Dictionary theDict  = DictionariesFactory.getDictionaryByName(dictName);
-		if (theDict !=null && !theDict.isEmpty()) {
-			resultDoc = XMLServices.buildDOMTree(theDict.getXmlCode());
-			PapillonLogger.writeDebugMsg("Dict metadata: " + theDict.getName());
-		}
-		return resultDoc;
-	}
-	
-	public static org.w3c.dom.Document getVolumeMetadata(String dictName, String lang) 
+    public static org.w3c.dom.Document getDictionaryMetadata(String dictName)
+    throws HttpPresentationException, java.io.IOException, Exception {
+        
+        org.w3c.dom.Document resultDoc = null;
+        Dictionary theDict  = DictionariesFactory.getDictionaryByName(dictName);
+        if (theDict !=null && !theDict.isEmpty()) {
+            resultDoc = XMLServices.buildDOMTree(theDict.getXmlCode());
+            PapillonLogger.writeDebugMsg("Dict metadata: " + theDict.getName());
+        }
+        return resultDoc;
+    }
+    
+    public static org.w3c.dom.Document postDictionary(String dictName, org.w3c.dom.Document dictDoc, User theUser)
+    throws HttpPresentationException, java.io.IOException, Exception {
+        Dictionary theDict = DictionariesFactory.parseDictionaryMetadata(dictDoc, null, false, false, false);
+        org.w3c.dom.Document resultDoc = null;
+        if (theDict !=null && !theDict.isEmpty()) {
+            resultDoc = XMLServices.buildDOMTree(theDict.getXmlCode());
+        }
+        return resultDoc;
+    }
+    
+    public static org.w3c.dom.Document putDictionary(Dictionary theDict, org.w3c.dom.Document dictDoc, User theUser)
+    throws HttpPresentationException, java.io.IOException, Exception {
+        theDict.delete();
+        theDict = DictionariesFactory.parseDictionaryMetadata(dictDoc, null, false, false, false);
+        org.w3c.dom.Document resultDoc = null;
+        if (theDict !=null && !theDict.isEmpty()) {
+            resultDoc = XMLServices.buildDOMTree(theDict.getXmlCode());
+        }
+        return resultDoc;
+    }
+    
+    public static org.w3c.dom.Document deleteDictionary(Dictionary theDict, User theUser)
+    throws HttpPresentationException, java.io.IOException, Exception {
+        org.w3c.dom.Document resultDoc = null;
+        if (theDict !=null && !theDict.isEmpty()) {
+            resultDoc = XMLServices.buildDOMTree(theDict.getXmlCode());
+            theDict.deleteAll();
+            Papillon.initializeAllCaches();
+        }
+        return resultDoc;
+    }
+    
+    public static boolean userCanHandleMetadata(User myUser)
+    throws fr.imag.clips.papillon.business.PapillonBusinessException {
+        boolean answer = false;
+        if (null != myUser && !myUser.isEmpty() && (myUser.isAdmin())) {
+            answer=true;
+        }
+        return answer;
+    }
+
+    public static org.w3c.dom.Document getVolumeMetadata(String dictName, String lang)
 	throws HttpPresentationException, java.io.IOException, Exception {
 		
 		org.w3c.dom.Document resultDoc = null;
@@ -159,5 +204,37 @@ public class Metadata extends fr.imag.clips.papillon.presentation.XmlBasePO {
 		}
 		return resultDoc;
 	}
-	
+    
+    public static org.w3c.dom.Document postVolume(Dictionary theDict, String lang, org.w3c.dom.Document volDoc, User theUser)
+    throws HttpPresentationException, java.io.IOException, Exception {
+        Volume theVolume = VolumesFactory.parseVolumeMetadata(theDict, volDoc, null, false, false);
+        org.w3c.dom.Document resultDoc = null;
+        if (theVolume !=null && !theVolume.isEmpty()) {
+            resultDoc = XMLServices.buildDOMTree(theVolume.getXmlCode());
+        }
+        return resultDoc;
+    }
+ 
+    public static org.w3c.dom.Document putVolume(Dictionary theDict, Volume theVolume, org.w3c.dom.Document volDoc, User theUser)
+    throws HttpPresentationException, java.io.IOException, Exception {
+        theVolume.delete();
+        theVolume = VolumesFactory.parseVolumeMetadata(theDict, volDoc, null, false, false);
+        org.w3c.dom.Document resultDoc = null;
+        if (theVolume !=null && !theVolume.isEmpty()) {
+            resultDoc = XMLServices.buildDOMTree(theVolume.getXmlCode());
+        }
+        return resultDoc;
+    }
+    
+    public static org.w3c.dom.Document deleteVolume(Volume theVolume, String lang, User theUser)
+    throws HttpPresentationException, java.io.IOException, Exception {
+        org.w3c.dom.Document resultDoc = null;
+        if (theVolume !=null && !theVolume.isEmpty()) {
+            resultDoc = XMLServices.buildDOMTree(theVolume.getXmlCode());
+            theVolume.deleteAll();
+            Papillon.initializeAllCaches();
+        }
+        return resultDoc;
+    }
+    
 }

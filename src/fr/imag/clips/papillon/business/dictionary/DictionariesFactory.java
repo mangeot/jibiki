@@ -256,7 +256,8 @@ public class DictionariesFactory {
     protected final static String XLINK_URI = DmlPrefixResolver.XLINK_URI;
     protected final static String DICTIONARY_TAG="dictionary-metadata";
     protected final static String VOLUME_REF_TAG="volume-metadata-ref";
-    protected final static String XSLSHEET_TAG="xsl-stylesheet";
+    protected final static String XSLSHEET_REF_TAG="xsl-stylesheet";
+    protected final static String XSLSHEET_TAG="stylesheet";
     protected final static String HREF_ATTRIBUTE="href";
     protected final static String NAME_ATTRIBUTE="name";
 	protected final static String DEFAULT_ATTRIBUTE="default";
@@ -423,6 +424,7 @@ public class DictionariesFactory {
         }
         return myDictionary;
     }
+    
 	
 	
     /** 
@@ -438,16 +440,21 @@ public class DictionariesFactory {
 	 * @exception PapillonBusinessException
 	 */
     public static Dictionary parseDictionaryMetadata
-	(URL fileURL, boolean loadVolumes, boolean loadEntries, boolean logContribs)
+    (URL fileURL, boolean loadVolumes, boolean loadEntries, boolean logContribs)
+    throws fr.imag.clips.papillon.business.PapillonBusinessException {
+        Document docXml = XMLServices.buildDOMTree(fileURL);
+        return parseDictionaryMetadata(docXml, fileURL, loadVolumes, loadEntries, logContribs);
+    }
+
+    public static Dictionary parseDictionaryMetadata
+	(Document docXml, URL fileURL, boolean loadVolumes, boolean loadEntries, boolean logContribs)
 	throws fr.imag.clips.papillon.business.PapillonBusinessException {
 		Dictionary myDict = null;
-		Document docXml = XMLServices.buildDOMTree(fileURL);
 		PapillonLogger.writeDebugMsg("The xml");
 		PapillonLogger.writeDebugMsg(XMLServices.xmlCode(docXml));
 		
 		// on recupere l'element dictionary
-		Element dictionary;
-		dictionary=(Element)docXml.getElementsByTagName(DICTIONARY_TAG).item(0);
+		Element dictionary = (Element)docXml.getElementsByTagName(DICTIONARY_TAG).item(0);
 		
 		if (dictionary==null) {
 			throw new fr.imag.clips.papillon.business.PapillonBusinessException("Error: the XML file does not begin with the tag: " + DICTIONARY_TAG + "!");
@@ -458,8 +465,7 @@ public class DictionariesFactory {
 		if (null != myDict) {
 			
 			// DONE: allow several stylesheets in metadata
-			NodeList stylesheets =(NodeList)docXml.getElementsByTagName(XSLSHEET_TAG);
-			
+			NodeList stylesheets =(NodeList)docXml.getElementsByTagName(XSLSHEET_REF_TAG);
 			for (int i=0; i<stylesheets.getLength(); i++) {
 				Element stylesheet = (Element) stylesheets.item(i);
 				
@@ -484,6 +490,21 @@ public class DictionariesFactory {
 					XslSheetFactory.AddXslSheet(name, myDict.getName(), null , null, xslString, isDefaultXsl, isExternalXsl);
 				}
 			}
+            stylesheets =(NodeList)docXml.getElementsByTagName(XSLSHEET_TAG);
+            for (int i=0; i<stylesheets.getLength(); i++) {
+                Element stylesheet = (Element) stylesheets.item(i);
+                
+                if (null != stylesheet) {
+                    String name = stylesheet.getAttribute(NAME_ATTRIBUTE);
+                    if (name == null) {
+                        name = "";
+                    }
+                    String isDefault = stylesheet.getAttribute(DEFAULT_ATTRIBUTE);
+                    boolean isDefaultXsl = (null != isDefault && isDefault.equals("true"));
+                    String xslString = XMLServices.NodeToString(stylesheet);
+                    XslSheetFactory.AddXslSheet(name, myDict.getName(), null , null, xslString, isDefaultXsl, false);
+                }
+            }
 			if (loadVolumes || loadEntries) {
 				NodeList links = dictionary.getElementsByTagName(VOLUME_REF_TAG);
 				if (null != links && links.getLength() > 0) {

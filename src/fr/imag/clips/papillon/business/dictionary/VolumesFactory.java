@@ -2,205 +2,7 @@
  -----------------------------
  * $Id$
  *-----------------------------------------------
- * $Log$
- * Revision 1.53.2.1  2007/10/29 15:11:03  serasset
- * NEW: lexalp css now defines different forms for HARMONISED/REJECTED entries
- * NEW: added new db url/user/password configuration keys in papillon.properties file
- * BUG158: headwords are now harmonised at edition and search time, added a "normalise headword" admin action
  *
- * Revision 1.53  2007/02/07 13:58:57  fbrunet
- * added message before axies are merged and undo process if the merge is not correct.
- *
- * Revision 1.52  2007/01/16 13:28:31  serasset
- * Added cache reinitialization when a metadata is modified.
- *
- * Revision 1.51  2007/01/15 17:24:28  serasset
- * Merged Modification made for the DRI instance with main trunk modifications.
- *
- * Revision 1.50  2007/01/15 17:12:18  serasset
- * Several notes added, suppressed the HTMLDOM_CACHE stuff.
- *
- * Revision 1.49  2007/01/08 15:13:42  fbrunet
- * Correction of th xml attribut bug in ContributionHeader (VolumeEntry class)
- *
- * Revision 1.48  2007/01/05 13:57:25  serasset
- * multiple code cleanup.
- * separation of XMLServices from the Utility class
- * added an xml parser pool to allow reuse of parser in a multithreaded context
- * added a new field in the db to identify the db layer version
- * added a new system property to know which db version is known by the current app
- *
- * Revision 1.46  2006/12/14 20:03:26  fbrunet
- * Add method to normalize value into XML structure.
- *
- * Revision 1.45  2006/12/13 09:32:00  fbrunet
- * *** empty log message ***
- *
- * Revision 1.44  2006/09/12 19:26:10  fbrunet
- * - improve reconstruction index
- *
- * Revision 1.43  2006/08/10 22:17:12  fbrunet
- * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
- * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
- * - Bug correction : +/- in advanced search
- *
- * Revision 1.42  2006/06/01 22:05:05  fbrunet
- * New interface, quick search, new contribution management (the first edition not create new contribution. New contribution is created after add, remove element, update, save, etc. in the interface window)
- *
- * Revision 1.41  2006/05/05 02:08:23  fbrunet
- * bug correction : url utf8 transfert (in createEntryInit)
- *
- * Revision 1.40  2006/03/27 10:48:45  mangeot
- * added finition-date in contribution metadata
- *
- * Revision 1.39  2006/03/13 08:48:00  fbrunet
- * bug corrections before merge
- *
- * Revision 1.38  2006/03/01 15:12:31  mangeot
- * Merge between maintrunk and LEXALP_1_1 branch
- *
- * Revision 1.37  2006/03/01 08:53:14  mangeot
- * *** empty log message ***
- *
- * Revision 1.36  2005/12/04 15:22:39  mangeot
- * Fixed the volume parsing when the volume element is not the root element
- *
- * Revision 1.35  2005/12/01 15:34:28  mangeot
- * MM: I solved the problem of already created tables by creating an sql query for retrieving the table names. If the name already exists, VolumeEntriesFactory.createVolumeTables do not create the tables.
- * It allows the administrator to delete and reload only the metadata files without dropping the whole data.
- * The method is ManageDatabase.getTableNames() and it returns a vector with all the table names created by the database user (usually "papillon").
- *
- * Revision 1.34  2005/11/23 13:42:27  mangeot
- * Added cdmEntryIdElement for setting the entry id even if it is not an attribute
- *
- * Revision 1.33  2005/11/22 13:21:02  mangeot
- * I moved the VolumeEntriesFactory.createVolumeTables out of the database transactions in AdminDictionaries.java and Adminvolumes.java because otherwise, it is not possible to reload metadata when the data tables already exist (in this case, the transaction does not commit).
- *
- * Revision 1.32  2005/11/22 10:47:04  mangeot
- * *** empty log message ***
- *
- * Revision 1.12  2005/11/09 13:30:31  mangeot
- * *** empty log message ***
- *
- * Revision 1.11.4.4  2006/01/25 15:22:23  fbrunet
- * Improvement of QueryRequest
- * Add new search criteria
- * Add modified status
- *
- * Revision 1.11.4.3  2006/01/24 13:39:49  fbrunet
- * Modification view management
- * Modification LexALP postprocessing
- *
- * Revision 1.11.4.2  2005/12/02 10:04:09  fbrunet
- * Add Pre/Post edition processing
- * Add index reconstruction
- * Add new query request
- * Add fuzzy search
- * Add new contribution administration
- * Add xsl transformation volume
- *
- * Revision 1.11.4.1  2005/10/24 16:29:19  fbrunet
- * Added fuzzy search capabilities.
- * Added possibility to rebuild the index DB tables.
- * Added Pre and post processors that could be defined by the user.
- *
- * Revision 1.11  2005/07/16 12:58:31  serasset
- * Added limit parameter to query functions
- * Added a parameter to Formater initializations
- * Developped a new Advanced search functionality with reusable code for the query form handling...
- *
- * Revision 1.10  2005/07/14 13:48:53  serasset
- * Added columns dictionaryname and volumename to the xslsheets.
- * Modified the XslSheet and XslSheetFactory accordingly.
- * Modified AdminXsl interface accordingly.
- * Modified DictionariesFactory and VolumesFactory to allow several xsl-sheets and to
- * correctly provide dictionaryName/volumeName to XslSheetFactory.
- * Cleanup of several errors in papillon_static doml file.
- *
- * Revision 1.9  2005/06/23 09:48:17  mangeot
- * Bug fix in xpath completion and creation-date cdm element
- *
- * Revision 1.8  2005/06/22 15:55:53  mangeot
- * Solved an unresolved prefix bug when the dml prefix was not in the template entry.
- * Now we use the DmlPrefixResolver to solve this issue.
- *
- * Revision 1.7  2005/06/16 16:09:17  mangeot
- * *** empty log message ***
- *
- * Revision 1.6  2005/06/15 16:48:27  mangeot
- * Merge between the ContribsInXml branch and the main trunk. It compiles but bugs remain..
- *
- * Revision 1.5  2005/05/24 12:51:21  serasset
- * Updated many aspect of the Papillon project to handle lexalp project.
- * 1. Layout is now parametrable in the application configuration file.
- * 2. Notion of QueryResult has been defined to handle mono/bi and multi lingual dictionary requests
- * 3. Result presentation may be done by way of standard xsl or with any class implementing the appropriate interface.
- * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
- * 5. It is now possible to give a name to the cookie key in the app conf file
- * 6. Several bug fixes.
- *
- * Revision 1.4.4.7  2005/06/09 11:07:45  mangeot
- * Deleted the countEntriesCache. entries counts are not cached any more.
- * Fixed a few bugs.
- *
- * Revision 1.4.4.6  2005/06/01 15:20:33  mangeot
- * Added a boolean for contributionslog
- *
- * Revision 1.4.4.5  2005/06/01 08:38:43  mangeot
- * Multi bug correction + added the possibility of disabling data edition
- * via the Admin.po page
- *
- * Revision 1.4.4.4  2005/05/31 14:22:34  mangeot
- * *** empty log message ***
- *
- * Revision 1.4.4.3  2005/05/27 11:53:21  mangeot
- * *** empty log message ***
- *
- * Revision 1.4.4.2  2005/05/19 17:02:22  mangeot
- * Importing entries without the contribution element
- *
- * Revision 1.4.4.1  2005/04/29 14:50:25  mangeot
- * New version with contribution infos embedded in the XML of the entries
- *
- * Revision 1.4  2005/04/11 12:29:59  mangeot
- * Merge between the XPathAndMultipleKeys branch and the main trunk
- *
- * Revision 1.3.2.5  2005/03/29 09:41:32  serasset
- * Added transaction support. Use CurrentDBTransaction class to define a transaction
- * context in which all db commands will be executed.
- *
- * Revision 1.3.2.4  2005/02/06 22:43:49  mangeot
- * Merged the 2 HashMaps CDM Elements and XPaths into one
- * Added a boolean (reverse-lookup) in the volume metadata and functionalities in order to perform a reverse lookup when no direct lookup result is found
- * Added a boolean (index) in the volume metadata for indexing the only specified CDM Elements
- *
- * Revision 1.3.2.3  2005/01/28 23:01:09  mangeot
- * Fixed bugs in the editor. It seems to work now. More testing needed anyway...
- *
- * Revision 1.3.2.2  2005/01/28 19:45:55  mangeot
- * First version that runs basically.
- * Should compile after an ant clean.
- * XPath loading and virtual volumes for terminological lexicons are OK.
- * Bugs remain, needs more testings like the editor for example.
- *
- * Revision 1.3.2.1  2005/01/27 15:56:21  mangeot
- * Able to load a volume with XPointers, cannot lookup the result yet.
- * Does not compile but commit for backup
- *
- * Revision 1.3  2005/01/15 12:51:24  mangeot
- * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
- *
- * Revision 1.2  2004/12/24 14:31:28  mangeot
- * I merged the latest developments of Papillon5.0 with this version 5.1.
- * Have to be tested more ...
- *
- * Revision 1.1.1.1  2004/12/06 16:38:31  serasset
- * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
- * There are still bugs in the code.
- *
- *
- *-----------------------------------------------
- * 
  */
 
 package fr.imag.clips.papillon.business.dictionary;
@@ -242,10 +44,14 @@ public class VolumesFactory {
     protected final static String VOLUME_TAG = "volume-metadata";
     protected final static String CDM_ELEMENTS_TAG = "cdm-elements";
     protected final static String LINKS_TAG = "links";
-    protected final static String XSLSHEET_TAG = "xsl-stylesheet";
-    protected final static String XMLSCHEMA_TAG = "xmlschema-ref";
-    protected final static String TEMPLATE_INTERFACE_TAG = "template-interface-ref";
-    protected final static String TEMPLATE_ENTRY_TAG = "template-entry-ref";
+    protected final static String XSLSHEET_REF_TAG = "xsl-stylesheet";
+    protected final static String XMLSCHEMA_REF_TAG = "xmlschema-ref";
+    protected final static String TEMPLATE_INTERFACE_REF_TAG = "template-interface-ref";
+    protected final static String TEMPLATE_ENTRY_REF_TAG = "template-entry-ref";
+    protected final static String XSLSHEET_TAG = "stylesheet";
+    protected final static String XMLSCHEMA_TAG = "xmlschema";
+    protected final static String TEMPLATE_INTERFACE_TAG = "template-interface";
+    protected final static String TEMPLATE_ENTRY_TAG = "template-entry";
     protected final static String XML_FOOTER_TAG = "volume-xml-footer";
 
     protected final static String HREF_ATTRIBUTE = "href";
@@ -260,11 +66,6 @@ public class VolumesFactory {
 	
 	public final static String XMLNAMESPACE = "xmlns";
 	public final static String DEFAULT_DML_PREFIX = "d";
-
-	
-    protected final static String VOLUME_GDEF_est = "GDEF_est";
-    protected final static String VOLUME_GDEF_tes = "GDEF_tes";
-    protected final static String VOLUME_GDEF_fra = "GDEF_fra";
 
     /**
      * The initializeVolumeCache method performs a database query to
@@ -309,6 +110,11 @@ public class VolumesFactory {
      * @throws PapillonBusinessException, IOException
      */
     public static Volume newVolume(String dictname, Element volume, URL fileURL)
+    throws fr.imag.clips.papillon.business.PapillonBusinessException {
+        return newVolume(dictname, volume, fileURL, "","","");
+    }
+    
+    public static Volume newVolume(String dictname, Element volume, URL fileURL, String schema, String tmplEntry, String tmplInterface)
             throws fr.imag.clips.papillon.business.PapillonBusinessException {
 
 				String name = volume.getAttribute("name");
@@ -319,7 +125,7 @@ public class VolumesFactory {
 				String location = volume.getAttribute(LOCATION_ATTRIBUTE);
 				String source = volume.getAttribute("source-language");
 				if (source == null || source.equals("")) {
-					throw new PapillonBusinessException("Exception in newVolume: there is no volume name, there is no 'source' attribute  for the 'volume-metadata' element or it is empty!");
+					throw new PapillonBusinessException("Exception in newVolume: there is no volume source, there is no 'source' attribute  for the 'volume-metadata' element or it is empty!");
 				}
 				String targets = volume.getAttribute("target-languages");
 				String reverseLookup = volume.getAttribute("reverse-lookup");
@@ -337,13 +143,18 @@ public class VolumesFactory {
 				} else {
 					PapillonLogger.writeDebugMsg("No volume-ref");
 				}
-
-		String schema = getXmlCode(volume, XMLSCHEMA_TAG, fileURL);
-        String tmplInterface = getXmlCode(volume, TEMPLATE_INTERFACE_TAG, fileURL);
-        String tmplEntry = getXmlCode(volume, TEMPLATE_ENTRY_TAG, fileURL);
-				
+                if (schema == null || schema.equals("")) {
+                    schema = getXmlCode(volume, XMLSCHEMA_REF_TAG, fileURL);
+                }
+                if (tmplInterface == null || tmplInterface.equals("")) {
+                    tmplInterface = getXmlCode(volume, TEMPLATE_INTERFACE_REF_TAG, fileURL);
+                }
+                if (tmplEntry == null || tmplEntry.equals("")) {
+                    tmplEntry = getXmlCode(volume, TEMPLATE_ENTRY_REF_TAG, fileURL);
+                }
+ 				
 		if (tmplEntry == null || tmplEntry.equals("")) {
-			throw new PapillonBusinessException("Exception in newVolume: there is no template entry, the element " + TEMPLATE_ENTRY_TAG + " does not exist or is empty!");
+			throw new PapillonBusinessException("Exception in newVolume: there is no template entry, the element " + TEMPLATE_ENTRY_REF_TAG + " does not exist or is empty!");
 		}
 		else {
 			tmplEntry = addDmlUrlInTemplateEntry(tmplEntry);
@@ -699,13 +510,17 @@ public class VolumesFactory {
      * @return Volume
      * @throws PapillonBusinessException
      */
-    public static Volume parseVolumeMetadata(Dictionary dict, URL fileURL, boolean parseEntries, boolean logContribs)
+    public static Volume parseVolumeMetadata(Dictionary dict, URL fileURL, boolean parseEntries, boolean logContribs) throws fr.imag.clips.papillon.business.PapillonBusinessException {
+        Document docXml = XMLServices.buildDOMTree(fileURL);
+        return parseVolumeMetadata(dict, docXml, fileURL, parseEntries, logContribs);
+    }
+
+    public static Volume parseVolumeMetadata(Dictionary dict, Document docXml, URL fileURL, boolean parseEntries, boolean logContribs)
             throws fr.imag.clips.papillon.business.PapillonBusinessException {
 
         Volume resVolume = null;
 
         try {
-            Document docXml = XMLServices.buildDOMTree(fileURL);
 //            PapillonLogger.writeDebugMsg("The xml code:");
 //            PapillonLogger.writeDebugMsg(XMLServices.xmlCodePrettyPrinted(docXml));
 
@@ -721,8 +536,24 @@ public class VolumesFactory {
 				throw new fr.imag.clips.papillon.business.PapillonBusinessException("Error: the XML file does not begin with the tag: " + VOLUME_TAG + "!");
 			}
 
+            Element schemaElement = (Element) docXml.getElementsByTagName(XMLSCHEMA_TAG).item(0);
+            Element tmplEntryElement = (Element) docXml.getElementsByTagName(TEMPLATE_ENTRY_TAG).item(0);
+            Element tmplInterfaceElement = (Element) docXml.getElementsByTagName(TEMPLATE_INTERFACE_TAG).item(0);
+            String schemaString = "";
+            if (schemaElement != null) {
+                schemaString = XMLServices.NodeToString(schemaElement);
+            }
+            String tmplEntryString = "";
+            if (tmplEntryElement != null) {
+                tmplEntryString = XMLServices.NodeToString(tmplEntryElement);
+            }
+            String tmplInterfaceString = "";
+            if (tmplInterfaceElement != null) {
+                tmplInterfaceString = XMLServices.NodeToString(tmplInterfaceElement);
+            }
+
             // ajout du volume ds la table.
-            resVolume = VolumesFactory.newVolume(dict.getName(), volume, fileURL);
+            resVolume = VolumesFactory.newVolume(dict.getName(), volume, fileURL, schemaString, tmplEntryString, tmplInterfaceString);
 			//PapillonLogger.writeDebugMsg("parseVolumeMetadata: linksTable size: " + resVolume.getLinksTable().size());
             if (null != resVolume) {
 				if ((resVolume.getTemplateInterface() == null || resVolume.getTemplateInterface() == "") && resVolume.getTemplateEntry() !=null && resVolume.getTemplateEntry() != "" && resVolume.getXmlSchema() !=null && resVolume.getXmlSchema() !="") {
@@ -730,8 +561,7 @@ public class VolumesFactory {
 				}
                 resVolume.save();
 
-                NodeList stylesheets = (NodeList) docXml.getElementsByTagName(XSLSHEET_TAG);
-
+                NodeList stylesheets = (NodeList) docXml.getElementsByTagName(XSLSHEET_REF_TAG);
                 for (int i = 0; i < stylesheets.getLength(); i++) {
                     Element stylesheet = (Element) stylesheets.item(i);
 
@@ -742,21 +572,35 @@ public class VolumesFactory {
                             name = "";
                         }
 
-                        //
                         String isDefault = stylesheet.getAttribute(DEFAULT_ATTRIBUTE);
                         boolean isDefaultXsl = (null != isDefault && isDefault.equals("true"));
 
-                        //
                         String isExternal = stylesheet.getAttribute(EXTERNAL_ATTRIBUTE);
                         boolean isExternalXsl = (null != isExternal && isExternal.equals("true"));
 
-                        //
                         URL resultURL = new URL(fileURL, ref);
                         String xslString = fr.imag.clips.papillon.business.xsl.XslSheetFactory.parseXslSheet(resultURL);
                         XslSheetFactory.AddXslSheet(name, dict.getName(), resVolume.getName(), null, xslString,
                                 isDefaultXsl, isExternalXsl);
                     }
                 }
+                stylesheets = (NodeList) docXml.getElementsByTagName(XSLSHEET_TAG);
+                for (int i = 0; i < stylesheets.getLength(); i++) {
+                    Element stylesheet = (Element) stylesheets.item(i);
+                    
+                    if (null != stylesheet) {
+                        String name = stylesheet.getAttribute(NAME_ATTRIBUTE);
+                        if (name == null) {
+                            name = "";
+                        }
+                        String isDefault = stylesheet.getAttribute(DEFAULT_ATTRIBUTE);
+                        boolean isDefaultXsl = (null != isDefault && isDefault.equals("true"));
+                        String xslString = XMLServices.NodeToString(stylesheet);
+                        XslSheetFactory.AddXslSheet(name, dict.getName(), resVolume.getName(), null, xslString,
+                                                    isDefaultXsl, false);
+                    }
+                }
+
 
                 if (resVolume.getLocation().equals(Volume.LOCAL_LOCATION) && !virtual) {
                     VolumeEntriesFactory.createVolumeTables(resVolume);
@@ -775,7 +619,7 @@ public class VolumesFactory {
         }
         return resVolume;
     }
-
+    
     /*
      public static Volume findVolumeByID(String id)
          throws PapillonBusinessException {
@@ -1023,48 +867,6 @@ public class VolumesFactory {
         return VolumeCache.getTargetLanguagesInCache();
 
     }
-
-    /*
-     public static String getSymetricVolumeName(String myVolumeName)
-         throws fr.imag.clips.papillon.business.PapillonBusinessException {
-         String resName = "";
-             /* FIXME √† recoder proprement en utilsant les language-link des metadonn√©es du dictionnaire
-         Volume myVolume = getVolumeByName(myVolumeName);
-         if (myVolume != null && !myVolume.isEmpty()) {
-             Volume resVolume = getSymetricVolume(myVolume);
-             if (resVolume != null && !resVolume.isEmpty()) {
-                 resName = resVolume.getName();
-             }
-         }
-             +/
-         if (myVolumeName.equals(VOLUME_GDEF_est)
-             || myVolumeName.equals(VOLUME_GDEF_tes)) {
-             resName = VOLUME_GDEF_fra;
-         }
-         else if (myVolumeName.equals(VOLUME_GDEF_fra))  {
-             resName = VOLUME_GDEF_est;
-         }
-         return resName;
-     }
-
-
-
-     protected static Volume getSymetricVolume(Volume myVolume)
-         throws fr.imag.clips.papillon.business.PapillonBusinessException {
-         Volume resVolume = null;
-
-         Volume[] volumesArray = getVolumesArray(myVolume.getDictname());
-         int i=0;
-         while (resVolume==null && i<volumesArray.length) {
-             Volume tmpVolume = volumesArray[i];
-             if (!tmpVolume.getName().equals(myVolume.getName())) {
-                 resVolume = tmpVolume;
-             }
-             i++;
-         }
-         return resVolume;
-     }
-     */
 
 
     /**
