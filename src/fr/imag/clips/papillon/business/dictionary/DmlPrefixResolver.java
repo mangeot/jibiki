@@ -36,6 +36,8 @@ public class DmlPrefixResolver implements PrefixResolver  {
 	
 	public final static String DML_URI = "http://www-clips.imag.fr/geta/services/dml";
     public final static String XLINK_URI = "http://www.w3.org/1999/xlink";
+    public final static String XMLSCHEMA_URI = "http://www.w3.org/2001/XMLSchema";
+    public final static String XSLT_URI = "http://www.w3.org/1999/XSL/Transform";
 	
 	
 	protected static PrefixResolver defaultPrefixResolver = null;

@@ -48,6 +48,7 @@ import fr.imag.clips.papillon.business.dictionary.Dictionary;
 import fr.imag.clips.papillon.business.dictionary.DictionariesFactory;
 import fr.imag.clips.papillon.business.dictionary.Volume;
 import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
+import fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory;
 import fr.imag.clips.papillon.business.user.User;
 
 import fr.imag.clips.papillon.business.xml.XMLServices;
@@ -156,6 +157,9 @@ public class Metadata extends fr.imag.clips.papillon.presentation.XmlBasePO {
         Dictionary theDict = DictionariesFactory.parseDictionaryMetadata(dictDoc, null, false, false, false);
         org.w3c.dom.Document resultDoc = null;
         if (theDict !=null && !theDict.isEmpty()) {
+            String userMessage = "adding " + theDict.getName() + " dictionary" + " // " + theDict.getCategory() + " // " + theDict.getType() + " // " + theDict.getDomain() + " // " + theDict.getLegal() + " // " + theDict.getSourceLanguages() + " // " + theDict.getTargetLanguages();
+            PapillonLogger.writeDebugMsg(userMessage);
+            theDict.save();
             resultDoc = XMLServices.buildDOMTree(theDict.getXmlCode());
         }
         return resultDoc;
@@ -210,6 +214,14 @@ public class Metadata extends fr.imag.clips.papillon.presentation.XmlBasePO {
         Volume theVolume = VolumesFactory.parseVolumeMetadata(theDict, volDoc, null, false, false);
         org.w3c.dom.Document resultDoc = null;
         if (theVolume !=null && !theVolume.isEmpty()) {
+            String userMessage = "adding " + theVolume.getName() + " volume: " + theVolume.getDictname() + " // "  + theVolume.getDbname() + " // " + theVolume.getSourceLanguage() + " // " + theVolume.getTargetLanguages() + " // " + theVolume.getVolumeRef();
+            theVolume.save();
+            PapillonLogger.writeDebugMsg(userMessage);
+            fr.imag.clips.papillon.business.edition.UITemplates.resetCache();
+            VolumeEntriesFactory.resetCountCache(theVolume.getName());
+            theVolume.getCount();
+            Papillon.initializeAllCaches();
+
             resultDoc = XMLServices.buildDOMTree(theVolume.getXmlCode());
         }
         return resultDoc;

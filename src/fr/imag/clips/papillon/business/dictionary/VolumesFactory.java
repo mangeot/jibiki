@@ -38,8 +38,10 @@ import java.io.StringReader;
  */
 public class VolumesFactory {
 
-	public final static String DML_URI = "http://www-clips.imag.fr/geta/services/dml";
-    public final static String XLINK_URI = "http://www.w3.org/1999/xlink";
+    protected final static String DML_URI = DmlPrefixResolver.DML_URI;
+    protected final static String XLINK_URI = DmlPrefixResolver.XLINK_URI;
+    protected final static String XSLT_URI = DmlPrefixResolver.XSLT_URI;
+    public final static String XMLSCHEMA_URI = DmlPrefixResolver.XMLSCHEMA_URI;
 
     protected final static String VOLUME_TAG = "volume-metadata";
     protected final static String CDM_ELEMENTS_TAG = "cdm-elements";
@@ -49,7 +51,7 @@ public class VolumesFactory {
     protected final static String TEMPLATE_INTERFACE_REF_TAG = "template-interface-ref";
     protected final static String TEMPLATE_ENTRY_REF_TAG = "template-entry-ref";
     protected final static String XSLSHEET_TAG = "stylesheet";
-    protected final static String XMLSCHEMA_TAG = "xmlschema";
+    protected final static String XMLSCHEMA_TAG = "schema";
     protected final static String TEMPLATE_INTERFACE_TAG = "template-interface";
     protected final static String TEMPLATE_ENTRY_TAG = "template-entry";
     protected final static String XML_FOOTER_TAG = "volume-xml-footer";
@@ -536,7 +538,7 @@ public class VolumesFactory {
 				throw new fr.imag.clips.papillon.business.PapillonBusinessException("Error: the XML file does not begin with the tag: " + VOLUME_TAG + "!");
 			}
 
-            Element schemaElement = (Element) docXml.getElementsByTagName(XMLSCHEMA_TAG).item(0);
+            Element schemaElement = (Element) docXml.getElementsByTagNameNS(XMLSCHEMA_URI,XMLSCHEMA_TAG).item(0);
             Element tmplEntryElement = (Element) docXml.getElementsByTagName(TEMPLATE_ENTRY_TAG).item(0);
             Element tmplInterfaceElement = (Element) docXml.getElementsByTagName(TEMPLATE_INTERFACE_TAG).item(0);
             String schemaString = "";
@@ -565,7 +567,7 @@ public class VolumesFactory {
                 for (int i = 0; i < stylesheets.getLength(); i++) {
                     Element stylesheet = (Element) stylesheets.item(i);
 
-                    if (null != stylesheet) {
+                    if (null != stylesheet && null != fileURL) {
                         String ref = stylesheet.getAttributeNS(XLINK_URI, HREF_ATTRIBUTE);
                         String name = stylesheet.getAttribute(NAME_ATTRIBUTE);
                         if (name == null) {
@@ -584,7 +586,7 @@ public class VolumesFactory {
                                 isDefaultXsl, isExternalXsl);
                     }
                 }
-                stylesheets = (NodeList) docXml.getElementsByTagName(XSLSHEET_TAG);
+                stylesheets = (NodeList) docXml.getElementsByTagNameNS(XSLT_URI,XSLSHEET_TAG);
                 for (int i = 0; i < stylesheets.getLength(); i++) {
                     Element stylesheet = (Element) stylesheets.item(i);
                     
@@ -887,7 +889,7 @@ public class VolumesFactory {
             if (null != refNodes && refNodes.getLength() > 0) {
                 Element tempElt = (Element) refNodes.item(0);
                 href = tempElt.getAttributeNS(XLINK_URI, "href");
-                if (href != null && !href.equals("")) {
+                if (href != null && !href.equals("") && fileURL!=null) {
                     URL resultURL = new URL(fileURL, href);
                     PapillonLogger.writeDebugMsg("getXmlCode with URL: " + resultURL.toString());
                     res = XMLServices.xmlCode(XMLServices.buildDOMTree(resultURL));

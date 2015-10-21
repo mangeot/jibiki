@@ -189,6 +189,7 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                         String dictXml = convertStreamToString(inputStream);
                         org.w3c.dom.Document dictDom = null;
                         //PapillonLogger.writeDebugMsg("post data: "+dictXml);
+                        if (contentType.equals(XML_CONTENTTYPE)) {
                         try {
                             dictDom = XMLServices.buildDOMTree(dictXml);
                         }
@@ -227,8 +228,15 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                         else {
                             String errorMsg = "Error: dictionary metadata: " + dictXml +" XML is malformed!";
                             //PapillonLogger.writeDebugMsg(errorMsg);
-                            content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + HttpPresentationResponse.SC_BAD_REQUEST + "</h1><p>" + errorMsg + "</p></html>");
+                            content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " +HttpPresentationResponse.SC_BAD_REQUEST + "</h1><p>" + errorMsg + "</p></html>");
                             theResponse.setStatus(HttpPresentationResponse.SC_BAD_REQUEST ,errorMsg);
+                        }
+                        }
+                        else {
+                            String errorMsg = "Error: only XML content type allowed!";
+                            //PapillonLogger.writeDebugMsg(errorMsg);
+                            content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + 415 + " Unsupported Media Type</h1><p>" + errorMsg + "</p></html>");
+                            theResponse.setStatus(415 ,errorMsg);
                         }
                         theResponse.flush();
                     }
@@ -237,7 +245,8 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                         String dictXml = convertStreamToString(inputStream);
                         org.w3c.dom.Document dictDom = null;
                         //PapillonLogger.writeDebugMsg("post data: "+dictXml);
-                        try {
+                        if (contentType.equals(XML_CONTENTTYPE)) {
+                       try {
                             dictDom = XMLServices.buildDOMTree(dictXml);
                         }
                         catch (Exception e) {
@@ -278,6 +287,13 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                             content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + HttpPresentationResponse.SC_BAD_REQUEST + "</h1><p>" + errorMsg + "</p></html>");
                             theResponse.setStatus(HttpPresentationResponse.SC_BAD_REQUEST ,errorMsg);
                         }
+                        }
+                        else {
+                            String errorMsg = "Error: only XML content type allowed!";
+                            //PapillonLogger.writeDebugMsg(errorMsg);
+                            content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + 415 + " Unsupported Media Type</h1><p>" + errorMsg + "</p></html>");
+                            theResponse.setStatus(415 ,errorMsg);
+                        }
                         theResponse.flush();
                     }
 					else if (theRequest.getMethod().equals("DELETE")) {
@@ -303,7 +319,7 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                             }
                         }
                         else {
-                            String errorMsg = "Error: user: " + login +" not authorized to post dict!";
+                            String errorMsg = "Error: user: " + login +" not authorized to delete dict!";
                             //PapillonLogger.writeDebugMsg(errorMsg);
                             content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + HttpPresentationResponse.SC_UNAUTHORIZED + "</h1><p>" + errorMsg + "</p></html>");
                             theResponse.setStatus(HttpPresentationResponse.SC_UNAUTHORIZED,errorMsg);
@@ -333,7 +349,8 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                         HttpPresentationInputStream inputStream = theRequest.getInputStream();
                         String dictXml = convertStreamToString(inputStream);
                         org.w3c.dom.Document dictDom = null;
-                        //PapillonLogger.writeDebugMsg("post data: "+dictXml);
+                        if (contentType.equals(XML_CONTENTTYPE)) {
+                       //PapillonLogger.writeDebugMsg("post data: "+dictXml);
                         try {
                             dictDom = XMLServices.buildDOMTree(dictXml);
                         }
@@ -373,7 +390,7 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                                 }
                             }
                             else {
-                                String errorMsg = "Error: user: " + login +" not authorized to post dict!";
+                                String errorMsg = "Error: user: " + login +" not authorized to put volume!";
                                 //PapillonLogger.writeDebugMsg(errorMsg);
                                 content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + HttpPresentationResponse.SC_UNAUTHORIZED + "</h1><p>" + errorMsg + "</p></html>");
                                 theResponse.setStatus(HttpPresentationResponse.SC_UNAUTHORIZED,errorMsg);
@@ -385,14 +402,22 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                             content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + HttpPresentationResponse.SC_BAD_REQUEST + "</h1><p>" + errorMsg + "</p></html>");
                             theResponse.setStatus(HttpPresentationResponse.SC_BAD_REQUEST ,errorMsg);
                         }
-                        theResponse.flush();
+                        }
+                        else {
+                            String errorMsg = "Error: only XML content type allowed!";
+                            //PapillonLogger.writeDebugMsg(errorMsg);
+                            content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + 415 + " Unsupported Media Type</h1><p>" + errorMsg + "</p></html>");
+                            theResponse.setStatus(415 ,errorMsg);
+                        }
+                       theResponse.flush();
                     }
 					else if (theRequest.getMethod().equals("POST")) {
                         HttpPresentationInputStream inputStream = theRequest.getInputStream();
                         String dictXml = convertStreamToString(inputStream);
                         org.w3c.dom.Document dictDom = null;
                         //PapillonLogger.writeDebugMsg("post data: "+dictXml);
-                        try {
+                        if (contentType.equals(XML_CONTENTTYPE)) {
+                       try {
                             dictDom = XMLServices.buildDOMTree(dictXml);
                         }
                         catch (Exception e) {
@@ -431,7 +456,7 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                                 }
                             }
                             else {
-                                String errorMsg = "Error: user: " + login +" not authorized to post dict!";
+                                String errorMsg = "Error: user: " + login +" not authorized to post volume!";
                                 //PapillonLogger.writeDebugMsg(errorMsg);
                                 content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + HttpPresentationResponse.SC_UNAUTHORIZED + "</h1><p>" + errorMsg + "</p></html>");
                                 theResponse.setStatus(HttpPresentationResponse.SC_UNAUTHORIZED,errorMsg);
@@ -443,7 +468,14 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                             content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + HttpPresentationResponse.SC_BAD_REQUEST + "</h1><p>" + errorMsg + "</p></html>");
                             theResponse.setStatus(HttpPresentationResponse.SC_BAD_REQUEST ,errorMsg);
                         }
-                        theResponse.flush();
+                    }
+                    else {
+                        String errorMsg = "Error: only XML content type allowed!";
+                        //PapillonLogger.writeDebugMsg(errorMsg);
+                        content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + 415 + " Unsupported Media Type</h1><p>" + errorMsg + "</p></html>");
+                        theResponse.setStatus(415 ,errorMsg);
+                    }
+                       theResponse.flush();
                     }
 					else if (theRequest.getMethod().equals("DELETE")) {
                         if (Metadata.userCanHandleMetadata(getUser())) {
@@ -469,7 +501,7 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                             }
                         }
                         else {
-                            String errorMsg = "Error: user: " + login +" not authorized to post dict!";
+                            String errorMsg = "Error: user: " + login +" not authorized to delete volume!";
                             //PapillonLogger.writeDebugMsg(errorMsg);
                             content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + HttpPresentationResponse.SC_UNAUTHORIZED + "</h1><p>" + errorMsg + "</p></html>");
                             theResponse.setStatus(HttpPresentationResponse.SC_UNAUTHORIZED,errorMsg);
@@ -500,7 +532,8 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
 						String entry = convertStreamToString(inputStream);
 						//PapillonLogger.writeDebugMsg("put data: "+entry);
                         org.w3c.dom.Document entryDom = null;
-                        try {
+                        if (contentType.equals(XML_CONTENTTYPE)) {
+                       try {
                             entryDom = XMLServices.buildDOMTree(entry);
                         }
                         catch (Exception e) {
@@ -525,7 +558,6 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                                 content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + HttpPresentationResponse.SC_NOT_FOUND + "</h1><p>" + errorMsg + "</p></html>");
                                 theResponse.setStatus(HttpPresentationResponse.SC_UNAUTHORIZED,errorMsg);
                             }
-                            theResponse.flush();
                         }
                         else {
                             String errorMsg = "Error: entry: " + entry +" XML is malformed!";
@@ -533,12 +565,21 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                             content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + HttpPresentationResponse.SC_BAD_REQUEST + "</h1><p>" + errorMsg + "</p></html>");
                             theResponse.setStatus(HttpPresentationResponse.SC_BAD_REQUEST ,errorMsg);
                         }
+                        }
+                        else {
+                            String errorMsg = "Error: only XML content type allowed!";
+                            //PapillonLogger.writeDebugMsg(errorMsg);
+                            content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + 415 + " Unsupported Media Type</h1><p>" + errorMsg + "</p></html>");
+                            theResponse.setStatus(415 ,errorMsg);
+                        }
+                        theResponse.flush();
 					}
 					else if (theRequest.getMethod().equals("POST")) {
 						HttpPresentationInputStream inputStream = theRequest.getInputStream();
 						String entry = convertStreamToString(inputStream);
                         //PapillonLogger.writeDebugMsg("post data: "+entry);
-                        try {
+                        if (contentType.equals(XML_CONTENTTYPE)) {
+                       try {
                             org.w3c.dom.Document entryDom = XMLServices.buildDOMTree(entry);
                         }
                         catch (Exception e) {
@@ -570,7 +611,14 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                             content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + HttpPresentationResponse.SC_BAD_REQUEST + "</h1><p>" + errorMsg + "</p></html>");
                             theResponse.setStatus(HttpPresentationResponse.SC_BAD_REQUEST ,errorMsg);
                         }
-                        theResponse.flush();
+                        }
+                        else {
+                            String errorMsg = "Error: only XML content type allowed!";
+                            //PapillonLogger.writeDebugMsg(errorMsg);
+                            content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + 415 + " Unsupported Media Type</h1><p>" + errorMsg + "</p></html>");
+                            theResponse.setStatus(415 ,errorMsg);
+                        }
+                       theResponse.flush();
 					}
 					else if (theRequest.getMethod().equals("DELETE")) {
 						if (Entries.userCanDeleteEntry(getUser())) {

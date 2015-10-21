@@ -254,6 +254,7 @@ public class DictionariesFactory {
 	public final static int MaxRetrievedEntries = 100;
     protected final static String DML_URI = DmlPrefixResolver.DML_URI;
     protected final static String XLINK_URI = DmlPrefixResolver.XLINK_URI;
+    protected final static String XSLT_URI = DmlPrefixResolver.XSLT_URI;
     protected final static String DICTIONARY_TAG="dictionary-metadata";
     protected final static String VOLUME_REF_TAG="volume-metadata-ref";
     protected final static String XSLSHEET_REF_TAG="xsl-stylesheet";
@@ -469,7 +470,7 @@ public class DictionariesFactory {
 			for (int i=0; i<stylesheets.getLength(); i++) {
 				Element stylesheet = (Element) stylesheets.item(i);
 				
-				if (null != stylesheet) {
+                if (null != stylesheet && null != fileURL) {
 					String ref = stylesheet.getAttributeNS(XLINK_URI,HREF_ATTRIBUTE);
 					String name = stylesheet.getAttribute(NAME_ATTRIBUTE);
 					if (name == null) {
@@ -490,7 +491,7 @@ public class DictionariesFactory {
 					XslSheetFactory.AddXslSheet(name, myDict.getName(), null , null, xslString, isDefaultXsl, isExternalXsl);
 				}
 			}
-            stylesheets =(NodeList)docXml.getElementsByTagName(XSLSHEET_TAG);
+            stylesheets = (NodeList) docXml.getElementsByTagNameNS(XSLT_URI,XSLSHEET_TAG);
             for (int i=0; i<stylesheets.getLength(); i++) {
                 Element stylesheet = (Element) stylesheets.item(i);
                 

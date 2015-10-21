@@ -41,10 +41,12 @@
     <tbody>
         <tr><td>URL</td><td>api/[dictionary]</td></tr>
         <tr><td>Method</td><td>POST</td></tr>
-        <tr><td rowspan="4">Returns</td><td>201 Created &amp; XML (dict metadata)</td></tr>
+        <tr><td>ContentType</td><td>application/xml</td></tr>
+        <tr><td rowspan="6">Returns</td><td>201 Created &amp; XML (dict metadata)</td></tr>
         <tr><td>400 Bad Request (XML not valid)</td></tr>
         <tr><td>401 Unauthorized</td></tr>
         <tr><td>409 Conflict (dictionary already existing)</td></tr>
+        <tr><td>415 Unsupported Media Type (content-type not XML)</td></tr>
         <tr><td>422 Unprocessable Entity (XML not semantically correct)</td></tr>
     </tbody>
 </table>
@@ -77,10 +79,12 @@
     <tbody>
         <tr><td>URL</td><td>api/[dictionary]</td></tr>
         <tr><td>Method</td><td>PUT</td></tr>
-        <tr><td rowspan="4">Returns</td><td>201 Created &amp; XML (dict metadata)</td></tr>
+        <tr><td>ContentType</td><td>application/xml</td></tr>
+        <tr><td rowspan="6">Returns</td><td>201 Created &amp; XML (dict metadata)</td></tr>
         <tr><td>400 Bad Request (XML not valid)</td></tr>
         <tr><td>401 Unauthorized</td></tr>
         <tr><td>404 Not Found (dictionary not found)</td></tr>
+        <tr><td>415 Unsupported Media Type (content-type not XML)</td></tr>
         <tr><td>422 Unprocessable Entity (XML not semantically correct)</td></tr>
     </tbody>
 </table>
@@ -149,11 +153,13 @@
     <tbody>
         <tr><td>URL</td><td>api/[dictionary]/[lang]</td></tr>
         <tr><td>Method</td><td>POST</td></tr>
-        <tr><td rowspan="4">Returns</td><td>201 Created &amp; XML (volume metadata)</td></tr>
+        <tr><td>ContentType</td><td>application/xml</td></tr>
+        <tr><td rowspan="7">Returns</td><td>201 Created &amp; XML (volume metadata)</td></tr>
         <tr><td>400 Bad Request (XML not valid)</td></tr>
         <tr><td>401 Unauthorized</td></tr>
         <tr><td>404 Not Found (dictionary not found)</td></tr>
         <tr><td>409 Conflict (volume already existing)</td></tr>
+        <tr><td>415 Unsupported Media Type (content-type not XML)</td></tr>
         <tr><td>422 Unprocessable Entity (XML not semantically correct)</td></tr>
     </tbody>
 </table>
@@ -186,10 +192,12 @@
     <tbody>
         <tr><td>URL</td><td>api/[dictionary]/[lang]</td></tr>
         <tr><td>Method</td><td>PUT</td></tr>
-        <tr><td rowspan="4">Returns</td><td>201 Created &amp; XML (volume metadata)</td></tr>
+        <tr><td>ContentType</td><td>application/xml</td></tr>
+        <tr><td rowspan="6">Returns</td><td>201 Created &amp; XML (volume metadata)</td></tr>
         <tr><td>400 Bad Request (XML not valid)</td></tr>
         <tr><td>401 Unauthorized</td></tr>
         <tr><td>404 Not Found (dictionary or volume not found)</td></tr>
+        <tr><td>415 Unsupported Media Type (content-type not XML)</td></tr>
         <tr><td>422 Unprocessable Entity (XML not semantically correct)</td></tr>
     </tbody>
 </table>
@@ -301,10 +309,11 @@ can have multiple values depending of its status.</p>
     <tr><td>URL</td><td>api/[dictionary]/[lang]/[contributionId]</td></tr>
     <tr><td>Method</td><td>PUT</td></tr>
     <tr><td>ContentType</td><td>application/xml</td></tr>
-    <tr><td rowspan="4">Returns</td><td>201 Created &amp; XML (contribution)</td></tr>
+    <tr><td rowspan="5">Returns</td><td>201 Created &amp; XML (contribution)</td></tr>
     <tr><td>400 Bad Request (XML not valid)</td></tr>
     <tr><td>401 Unauthorized</td></tr>
     <tr><td>404 Not Found</td></tr>
+    <tr><td>415 Unsupported Media Type (content-type not XML)</td></tr>
  </tbody>
 </table>
 
@@ -440,10 +449,12 @@ curl -X PUT \
  <tbody>
     <tr><td>URL</td><td>api/[dictionary]/[lang]/[headword]</td></tr>
     <tr><td>Method</td><td>POST</td></tr>
-    <tr><td rowspan="4">Returns</td><td>201 Created &amp; XML (contribution)</td></tr>
+    <tr><td>ContentType</td><td>application/xml</td></tr>
+    <tr><td rowspan="5">Returns</td><td>201 Created &amp; XML (contribution)</td></tr>
     <tr><td>400 Bad Request (XML not valid)</td></tr>
     <tr><td>401 Unauthorized</td></tr>
     <tr><td>409 Conflict (entry already existing)</td></tr>
+    <tr><td>415 Unsupported Media Type (content-type not XML)</td></tr>
  </tbody>
 </table>
 
