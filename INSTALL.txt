@@ -8,7 +8,7 @@
 svn checkout svn://svn.ligforge.imag.fr/svnroot/toolsforjibiki
 
 ## for a longer version, see toolsforjibiki/INSTALL_Tools_For_Jibiki.html
-## for jdk1.5 version:
+## for jdk1.5 version or newer:
 #Replace the xmlc.jar located in enhydra5.1/lib directory with the new xmlc.jar
 # located in xmlc-2.2.13/lib/ dir, see below.
 #Add the xalan.jar in the enhydra ant classpath (after the ./configure)
@@ -17,13 +17,16 @@ cd toolsforjibiki
 tar zxvf *.tar.gz
 cd enhydra5.1
 sudo ./configure -Djdk.dir=/usr
-## for jdk1.5:
+## for jdk1.5 or newer:
 # sudo chmod 755 bin/ant
 # vi bin/ant
 ## add xalan-j_2_4_1/bin/xalan.jar before enhydra classpath 
 ### if you install xalan-j_2_7_0/xalan.jar instead of 2_4_0
 ### you will have problems in dods egen generation with messages like: [ejen] SystemId Unknown; Line #29; Column #42; Empty expression!
 ### I could not locate the errors, probably in some XML files...
+## for jdk1.7 or newer on MacOs:
+## add the path to the tools.jar in the lib dir of the jdk before enhydra classpath 
+### mine is: /Library/Java/JavaVirtualMachines/jdk1.8.0_65.jdk/Contents/Home/lib/tools.jar
 # sudo cp ../xmlc-2.2.13/lib/xmlc.jar lib/.
 chmod -R 777 dods/build/template/standard/*
 sudo chmod 777 dods/build/dods.properties
