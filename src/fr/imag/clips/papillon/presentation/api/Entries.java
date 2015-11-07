@@ -49,12 +49,14 @@ import com.lutris.appserver.server.httpPresentation.HttpPresentationException;
 import com.lutris.dods.builder.generator.query.QueryBuilder;
 
 import fr.imag.clips.papillon.business.PapillonLogger;
+
 import fr.imag.clips.papillon.business.dictionary.Dictionary;
 import fr.imag.clips.papillon.business.dictionary.DictionariesFactory;
 import fr.imag.clips.papillon.business.dictionary.Index;
 import fr.imag.clips.papillon.business.dictionary.IndexEntry;
 import fr.imag.clips.papillon.business.dictionary.IndexFactory;
 import fr.imag.clips.papillon.business.dictionary.ParseVolume;
+import fr.imag.clips.papillon.business.dictionary.QueryCriteria;
 import fr.imag.clips.papillon.business.dictionary.QueryRequest;
 import fr.imag.clips.papillon.business.dictionary.QueryResult;
 import fr.imag.clips.papillon.business.dictionary.Volume;
@@ -300,6 +302,15 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 			if (criteria.equals("headword")) {
 				criteria=Volume.CDM_headword;
 			}
+            java.util.Vector myClauses = new java.util.Vector();
+            if (!criteria.contains(Volume.CDM_contributionStatus)) {
+                QueryCriteria criteriaStatus = new QueryCriteria();
+                criteriaStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);
+                criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.CLASSIFIED_FINISHED_STATUS);
+                criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.NOT_FINISHED_STATUS);
+                criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.DRAFT_STATUS);
+                myClauses.add(criteriaStatus.getFullClause());
+            }
 			java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
 		
 		if (volumesCollection !=null && volumesCollection.size()>0) {
@@ -321,7 +332,6 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 				String[] Words = word.split("\\|");
 				for (int i=0, len= Words.length; i<len;i++) {
 					String oneWord = Words[i];
-					String criteriaString = "<criteria name='"+criteria+"' strategy='"+strategyString+"' value='"+Utility.encodeXMLEntities(oneWord)+"'>"; 
 					java.util.Vector myKeys = new java.util.Vector();
 					String[] Word = new String[4];
 					Word[0] = criteria;
@@ -335,7 +345,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 																													  sourceLang,
 																													  targets,
 																													  myKeys,
-																													  null,
+																													  myClauses,
 																													  null,
 																													  theUser,
 																													  offset,
@@ -353,6 +363,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 					} 
 					else {
                      //   PapillonLogger.writeDebugMsg("REST API: call IndexFactory.getIndexEntriesVector: theVolume.getIndexDbname()");
+                        String criteriaString = "<criteria name='"+criteria+"' strategy='"+strategyString+"' value='"+Utility.encodeXMLEntities(oneWord)+"'>";
 						java.util.Collection resultsVector = IndexFactory.getIndexEntriesVector(theVolume.getIndexDbname(),
 																								myKeys,
 																								IndexFactory.ORDER_DESCENDING,
