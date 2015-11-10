@@ -168,8 +168,8 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
 				}
 				if (restStrings.length==1) {
 					if (theRequest.getMethod().equals("GET")) {
-						PapillonLogger.writeDebugMsg(commande + " DICTLIST;");
 						if (dictName.equals("*")) {
+                            PapillonLogger.writeDebugMsg(commande + " DICTLIST;");
 							content = Metadata.getDictionaryList();
 						}
 						else {

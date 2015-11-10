@@ -373,4 +373,8 @@ or there is no accessible xml schema
             throw new PapillonBusinessException("Exception in printToFile()", ioex);
             }
         }
+    
+    public static String trimXmlDeclaration(String XmlString) {
+        return XmlString.replaceAll("\\<\\?xml(.+?)\\?\\>", "").trim();
+    }
 }

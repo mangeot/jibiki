@@ -43,6 +43,7 @@ public class VolumesFactory {
     protected final static String XSLT_URI = DmlPrefixResolver.XSLT_URI;
     public final static String XMLSCHEMA_URI = DmlPrefixResolver.XMLSCHEMA_URI;
 
+    public final static String VOLUME_FILES_TAG = "volume-metadata-files";
     protected final static String VOLUME_TAG = "volume-metadata";
     protected final static String CDM_ELEMENTS_TAG = "cdm-elements";
     protected final static String LINKS_TAG = "links";
@@ -52,8 +53,8 @@ public class VolumesFactory {
     protected final static String TEMPLATE_ENTRY_REF_TAG = "template-entry-ref";
     protected final static String XSLSHEET_TAG = "stylesheet";
     protected final static String XMLSCHEMA_TAG = "schema";
-    protected final static String TEMPLATE_INTERFACE_TAG = "template-interface";
-    protected final static String TEMPLATE_ENTRY_TAG = "template-entry";
+    public final static String TEMPLATE_INTERFACE_TAG = "template-interface";
+    public final static String TEMPLATE_ENTRY_TAG = "template-entry";
     protected final static String XML_FOOTER_TAG = "volume-xml-footer";
 
     protected final static String HREF_ATTRIBUTE = "href";

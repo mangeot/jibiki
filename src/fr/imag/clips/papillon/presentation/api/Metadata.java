@@ -52,6 +52,8 @@ import fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory;
 import fr.imag.clips.papillon.business.user.User;
 
 import fr.imag.clips.papillon.business.xml.XMLServices;
+import fr.imag.clips.papillon.business.xsl.XslSheet;
+import fr.imag.clips.papillon.business.xsl.XslSheetFactory;
 
 import fr.imag.clips.papillon.Papillon;
 
@@ -131,10 +133,17 @@ public class Metadata extends fr.imag.clips.papillon.presentation.XmlBasePO {
 			java.util.Iterator dictItr = dictCollection.iterator();
 			while (dictItr.hasNext()) {
 				Dictionary theDict = (Dictionary) dictItr.next();
-				org.w3c.dom.Document theDictDom = XMLServices.buildDOMTree(theDict.getXmlCode());
-				org.w3c.dom.Node theDictImported = resultDoc.importNode(theDictDom.getDocumentElement(), true);
-				resultDoc.getDocumentElement().appendChild(theDictImported);
-				PapillonLogger.writeDebugMsg("Dict: " + theDict.getName());
+                String dictFiles = "<" + DictionariesFactory.DICTIONARY_FILES_TAG + ">"
+                    + XMLServices.trimXmlDeclaration(theDict.getXmlCode());
+                XslSheet defaultDictXslSheet = XslSheetFactory.getXslSheet(theDict.getName(),null,"");
+                if (defaultDictXslSheet!=null) {
+                    dictFiles += XMLServices.trimXmlDeclaration(defaultDictXslSheet.getXmlCode());
+                }
+                dictFiles += "</" + DictionariesFactory.DICTIONARY_FILES_TAG + ">";
+                org.w3c.dom.Document theDictDom = XMLServices.buildDOMTree(dictFiles);
+                org.w3c.dom.Node theDictImported = resultDoc.importNode(theDictDom.getDocumentElement(), true);
+                resultDoc.getDocumentElement().appendChild(theDictImported);
+                PapillonLogger.writeDebugMsg("Dict metadata: " + theDict.getName());
 			}
 		}
 		return resultDoc;			
@@ -146,8 +155,15 @@ public class Metadata extends fr.imag.clips.papillon.presentation.XmlBasePO {
         org.w3c.dom.Document resultDoc = null;
         Dictionary theDict  = DictionariesFactory.getDictionaryByName(dictName);
         if (theDict !=null && !theDict.isEmpty()) {
-            resultDoc = XMLServices.buildDOMTree(theDict.getXmlCode());
             PapillonLogger.writeDebugMsg("Dict metadata: " + theDict.getName());
+            String dictFiles = "<" + DictionariesFactory.DICTIONARY_FILES_TAG + ">"
+            + XMLServices.trimXmlDeclaration(theDict.getXmlCode());
+            XslSheet defaultDictXslSheet = XslSheetFactory.getXslSheet(theDict.getName(),null,"");
+            if (defaultDictXslSheet!=null) {
+                dictFiles += XMLServices.trimXmlDeclaration(defaultDictXslSheet.getXmlCode());
+            }
+            dictFiles += "</" + DictionariesFactory.DICTIONARY_FILES_TAG + ">";
+            resultDoc = XMLServices.buildDOMTree(dictFiles);
         }
         return resultDoc;
     }
@@ -204,7 +220,26 @@ public class Metadata extends fr.imag.clips.papillon.presentation.XmlBasePO {
 		if (volumesCollection !=null && volumesCollection.size()>0) {
 			Volume theVolume = (Volume) volumesCollection.iterator().next();
 			PapillonLogger.writeDebugMsg("Volume metadata: " + theVolume.getName());
-			resultDoc = XMLServices.buildDOMTree(theVolume.getXmlCode());
+            String volumeFiles = "<" + VolumesFactory.VOLUME_FILES_TAG + ">"
+                                 + XMLServices.trimXmlDeclaration(theVolume.getXmlCode())
+                                 + "<" + VolumesFactory.TEMPLATE_ENTRY_TAG + ">"
+                                 + XMLServices.trimXmlDeclaration(theVolume.getTemplateEntry())
+                                 + "</" + VolumesFactory.TEMPLATE_ENTRY_TAG + ">";
+            if (theVolume.getTemplateInterface()!=null) {
+                volumeFiles += "<" + VolumesFactory.TEMPLATE_INTERFACE_TAG + ">"
+                                + XMLServices.trimXmlDeclaration(theVolume.getTemplateInterface())
+                                + "</" + VolumesFactory.TEMPLATE_INTERFACE_TAG + ">";
+            }
+            if (theVolume.getXmlSchema()!=null) {
+                volumeFiles += XMLServices.trimXmlDeclaration(theVolume.getXmlSchema());
+            }
+            XslSheet defaultVolumeXslSheet = XslSheetFactory.getXslSheet(theVolume.getDictname(),theVolume.getName(),"");
+            if (defaultVolumeXslSheet!=null) {
+                volumeFiles += XMLServices.trimXmlDeclaration(defaultVolumeXslSheet.getXmlCode());
+            }
+            volumeFiles += "</" + VolumesFactory.VOLUME_FILES_TAG + ">";
+            //PapillonLogger.writeDebugMsg(volumeFiles);
+			resultDoc = XMLServices.buildDOMTree(volumeFiles);
 		}
 		return resultDoc;
 	}

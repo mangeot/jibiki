@@ -255,6 +255,7 @@ public class DictionariesFactory {
     protected final static String DML_URI = DmlPrefixResolver.DML_URI;
     protected final static String XLINK_URI = DmlPrefixResolver.XLINK_URI;
     protected final static String XSLT_URI = DmlPrefixResolver.XSLT_URI;
+    public final static String DICTIONARY_FILES_TAG = "dictionary-metadata-files";
     protected final static String DICTIONARY_TAG="dictionary-metadata";
     protected final static String VOLUME_REF_TAG="volume-metadata-ref";
     protected final static String XSLSHEET_REF_TAG="xsl-stylesheet";
