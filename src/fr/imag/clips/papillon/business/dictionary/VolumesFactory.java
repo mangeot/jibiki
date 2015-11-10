@@ -548,11 +548,11 @@ public class VolumesFactory {
             }
             String tmplEntryString = "";
             if (tmplEntryElement != null) {
-                tmplEntryString = XMLServices.NodeToString(tmplEntryElement);
+                tmplEntryString = XMLServices.NodeToString(tmplEntryElement.getFirstChild());
             }
             String tmplInterfaceString = "";
             if (tmplInterfaceElement != null) {
-                tmplInterfaceString = XMLServices.NodeToString(tmplInterfaceElement);
+                tmplInterfaceString = XMLServices.NodeToString(tmplInterfaceElement.getFirstChild());
             }
 
             // ajout du volume ds la table.

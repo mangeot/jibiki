@@ -479,7 +479,7 @@ public class ParseVolume {
             }
 			//PapillonLogger.writeDebugMsg("Header [" + xmlHeaderBuffer.toString() + "]");
             PapillonLogger.writeDebugMsg("Will parse [" + CDM_Entry + "]");
-            PapillonLogger.writeDebugMsg(" XML footer [" + myVolume.getXmlFooter() + "]");
+            PapillonLogger.writeDebugMsg("XML footer [" + myVolume.getXmlFooter() + "]");
             xmlFooterBuffer.append(myVolume.getXmlFooter());
             StringBuffer entryBuffer = new StringBuffer();
             entryBuffer.append(xmlHeaderBuffer);

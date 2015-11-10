@@ -1311,31 +1311,39 @@ public class Volume {
      *   retrieving data (usually due to an underlying data layer
 	 *   error).
      */
-    public String getXmlFooter()
+    public String[] getXmlHeaderAndFooter()
 		throws PapillonBusinessException {
 			
-			String xmlFooter = "</" + this.getCdmVolume() + ">";
+            String xmlHeader = "<" + this.getCdmVolume() + ">";
+            String xmlFooter = "</" + this.getCdmVolume() + ">";
 			
 			String templateEntry = this.getTemplateEntry();
 			
 			org.w3c.dom.Document templateDoc = XMLServices.buildDOMTree(templateEntry);
-			
 			org.w3c.dom.NodeList volumeNodes = IndexEntry.getCdmElements(templateDoc, Volume.CDM_volume, Volume.DEFAULT_LANG, this.getCdmElements(), this.getPrefixResolver()); 
 
 			if (volumeNodes != null && volumeNodes.getLength() >0) {
 				org.w3c.dom.Node volumeNode = volumeNodes.item(0);
+                while (volumeNode.hasChildNodes())
+                    volumeNode.removeChild(volumeNode.getFirstChild());
 				org.w3c.dom.Text myTextNode = templateDoc.createTextNode(Volume.XmlFooterSeparator);
 				volumeNode.appendChild(myTextNode);
 				templateEntry = XMLServices.xmlCode(templateDoc);
-				int XmlFooterSeparatorIndex = templateEntry.lastIndexOf(Volume.XmlFooterSeparator);
-				
+                int XmlHeaderSeparatorIndex = templateEntry.indexOf(Volume.XmlFooterSeparator);
+                int XmlFooterSeparatorIndex = templateEntry.lastIndexOf(Volume.XmlFooterSeparator);
+                xmlHeader = templateEntry.substring(0,XmlHeaderSeparatorIndex);
 				xmlFooter = templateEntry.substring(XmlFooterSeparatorIndex+Volume.XmlFooterSeparator.length());
+                //fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getXmlHeaderAndFooter: volumesNodes not null: " + xmlHeader + " " + xmlFooter);
 			}
 			else {
-				fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getXmlFooter: volumesNodes null: " + xmlFooter);
+				fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getXmlHeaderAndFooter: volumesNodes null: " + xmlHeader + " " + xmlFooter);
 			}
-			return xmlFooter;
+			return new String[] {xmlHeader,xmlFooter};
  		}
+    
+    public String getXmlFooter() throws PapillonBusinessException {
+        return (String) getXmlHeaderAndFooter()[1];
+    }
 
     /**
 	 * getCount get entries number of the volume

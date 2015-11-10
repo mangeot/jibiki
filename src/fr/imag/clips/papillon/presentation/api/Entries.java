@@ -486,15 +486,16 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 		
 		if (volumesCollection !=null && volumesCollection.size()>0) {
 			theVolume = (Volume) volumesCollection.iterator().next();
-			PapillonLogger.writeDebugMsg("Entry: id: " + entryId + " volume: " + theVolume.getName());
-			VolumeEntry myEntry = VolumeEntriesFactory.findEntryByContributionId(theVolume.getName(), entryId);
+			//PapillonLogger.writeDebugMsg("Entry: id: " + entryId + " volume: " + theVolume.getName());
+			VolumeEntry myEntry = VolumeEntriesFactory.findEntryByEntryId(theVolume.getName(), entryId);
 			if (myEntry != null && !myEntry.isEmpty()) {
-				PapillonLogger.writeDebugMsg("Entry: headword: " + myEntry.getHeadword());
-				//PapillonLogger.writeDebugMsg("Entry: docXML: [" + docXml + "]");
+				//PapillonLogger.writeDebugMsg("Entry: id: " + entryId + " headword: " + myEntry.getHeadword()+ " volume: " + theVolume.getName());
+                docDom = addContributionHeadersIfNotPresent(docDom, theVolume);
                 VolumeEntry newVolumeEntry = VolumeEntriesFactory.newEntryFromExisting(myEntry);
                 newVolumeEntry.setDom(docDom);
                 newVolumeEntry.setHeadword();
                 newVolumeEntry.setContributionId();
+                newVolumeEntry.setStatusIfNotNull(VolumeEntry.FINISHED_STATUS);
                 newVolumeEntry.addClassifiedFinishedContribution(myEntry);
                 newVolumeEntry.setPreviousContributionId(myEntry.getContributionId());
                 newVolumeEntry.setModification(theUser.getLogin(), "finish");
@@ -876,4 +877,25 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 		}
 		return resultDoc;
 	}
+    
+    protected static org.w3c.dom.Document addContributionHeadersIfNotPresent(org.w3c.dom.Document docDom, Volume theVolume) throws fr.imag.clips.papillon.business.PapillonBusinessException {
+        String CDM_Contribution = theVolume.getCdmContribution();
+        String theEntryString = XMLServices.NodeToString(docDom, false);
+        
+        if (!theEntryString.matches("<" + CDM_Contribution + "[\\s>]")) {
+            String[] xmlHeaderFooter = theVolume.getXmlHeaderAndFooter();
+            String theContribString = xmlHeaderFooter[0]
+                                      + VolumeEntry.getContributionHeader(theVolume.getTemplateEntry())
+                                      + theEntryString
+                                      + VolumeEntry.getContributionFooter(theVolume.getTemplateEntry())
+                                      + xmlHeaderFooter[1];
+            try {
+            docDom = XMLServices.buildDOMTree(theContribString);
+            }
+            catch (Exception e) {
+                docDom = null;
+            }
+        }
+        return docDom;
+    }
 }

@@ -306,7 +306,7 @@ can have multiple values depending of its status.</p>
 
 <table class="api">
  <tbody>
-    <tr><td>URL</td><td>api/[dictionary]/[lang]/[contributionId]</td></tr>
+    <tr><td>URL</td><td>api/[dictionary]/[lang]/[entryId]</td></tr>
     <tr><td>Method</td><td>PUT</td></tr>
     <tr><td>ContentType</td><td>application/xml</td></tr>
     <tr><td rowspan="5">Returns</td><td>201 Created &amp; XML (contribution)</td></tr>
@@ -344,7 +344,7 @@ curl -X PUT \
   &lt;/sémantique>
 &lt;/article>
 '\
-    "api/Cesselin/jpn/jpn.ケース.14723001.c"
+    "api/Cesselin/jpn/jpn.ケース.14723001.e"
 </pre>
 <p>Answer:</p>
 <pre class="api">
@@ -411,6 +411,7 @@ curl -X PUT \
 <p>Answer:</p>
 <pre class="api">
 &lt;?xml version="1.0" encoding="UTF-8"?>
+&lt;volume>
 &lt;d:contribution
     xmlns:d="http://www-clips.imag.fr/geta/services/dml"
     d:contribid="jpn.ケース.14723001.c"
@@ -440,6 +441,7 @@ curl -X PUT \
     &lt;/article>
   &lt;/d:data>
 &lt;/d:contribution>
+&lt;/volume>
 </pre>
 
 
@@ -447,7 +449,7 @@ curl -X PUT \
 
 <table class="api">
  <tbody>
-    <tr><td>URL</td><td>api/[dictionary]/[lang]/[headword]</td></tr>
+    <tr><td>URL</td><td>api/[dictionary]/[lang]/[entryId]</td></tr>
     <tr><td>Method</td><td>POST</td></tr>
     <tr><td>ContentType</td><td>application/xml</td></tr>
     <tr><td rowspan="5">Returns</td><td>201 Created &amp; XML (contribution)</td></tr>
@@ -469,6 +471,7 @@ curl -X POST \
     -H "Accept: application/xml" \
     -H "Content-Type: application/xml;charset=UTF-8" \
     -d '&lt;?xml version="1.0" encoding="UTF-8"?>
+&lt;volume>
 &lt;article id="jpn.ケース.14723001.e">
   &lt;forme>
     &lt;vedette>
@@ -484,13 +487,15 @@ curl -X POST \
     &lt;/sens>
   &lt;/sémantique>
 &lt;/article>
+&lt;/volume>
 '\
-    "api/Cesselin/jpn/jpn.ケース.14723001.c"
+    "api/Cesselin/jpn/jpn.ケース.14723001.e"
 </pre>
 
 <p>Answer:</p>
 <pre class="api">
 &lt;?xml version="1.0" encoding="UTF-8"?>
+&lt;volume>
 &lt;d:contribution
     xmlns:d="http://www-clips.imag.fr/geta/services/dml"
     d:contribid="jpn.ケース.14723001.c"
@@ -520,6 +525,7 @@ curl -X POST \
     &lt;/article>
   &lt;/d:data>
 &lt;/d:contribution>
+&lt;/volume>
 </pre>
 
 

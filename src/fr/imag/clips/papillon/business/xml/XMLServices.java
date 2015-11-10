@@ -284,7 +284,7 @@ or there is no accessible xml schema
         return NodeToString(N, true);
     }
 
-    private static String NodeToString(Node N, boolean printXmlDeclaration) {
+    public static String NodeToString(Node N, boolean printXmlDeclaration) {
         String res = "";
         if (N != null) {
   //          try {
