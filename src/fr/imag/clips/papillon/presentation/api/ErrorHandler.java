@@ -622,7 +622,7 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
 					}
 					else if (theRequest.getMethod().equals("DELETE")) {
 						if (Entries.userCanDeleteEntry(getUser())) {
-							content = Entries.deleteEntry(dictName, restStrings[1], restStrings[2]);
+							content = Entries.deleteEntry(dictName, restStrings[1], restStrings[2], getUser());
 							if (content==null) {
 								String errorMsg = "Error: dict: " + dictName + " lang: " +  restStrings[1] + " ID: " + restStrings[2] +" does not exist!";
 								//PapillonLogger.writeDebugMsg(errorMsg);

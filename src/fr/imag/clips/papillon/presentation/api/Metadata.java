@@ -70,9 +70,9 @@ public class Metadata extends fr.imag.clips.papillon.presentation.XmlBasePO {
 	protected static final String LANG_PARAMETER = "LANG";
 	protected static final String ID_PARAMETER = "ID";
 	
-	protected static final String DICTLIST_XMLSTRING = "<?xml version='1.0' encoding='UTF-8'?><dictionary-metadata-list "
-	+ "xmlns='http://www-clips.imag.fr/geta/services/dml'>"
-	+ "</dictionary-metadata-list>";
+	protected static final String DICTLIST_XMLSTRING = "<?xml version='1.0' encoding='UTF-8'?><d:dictionary-metadata-list "
+	+ "xmlns:d='http://www-clips.imag.fr/geta/services/dml'>"
+	+ "</d:dictionary-metadata-list>";
     		
     /**
     *  This method should be implemented in the subclass so that it returns
@@ -156,13 +156,13 @@ public class Metadata extends fr.imag.clips.papillon.presentation.XmlBasePO {
         Dictionary theDict  = DictionariesFactory.getDictionaryByName(dictName);
         if (theDict !=null && !theDict.isEmpty()) {
             PapillonLogger.writeDebugMsg("Dict metadata: " + theDict.getName());
-            String dictFiles = "<" + DictionariesFactory.DICTIONARY_FILES_TAG + ">"
+            String dictFiles = "<d:" + DictionariesFactory.DICTIONARY_FILES_TAG + " xmlns:d='http://www-clips.imag.fr/geta/services/dml'>"
             + XMLServices.trimXmlDeclaration(theDict.getXmlCode());
             XslSheet defaultDictXslSheet = XslSheetFactory.getXslSheet(theDict.getName(),null,"");
             if (defaultDictXslSheet!=null) {
                 dictFiles += XMLServices.trimXmlDeclaration(defaultDictXslSheet.getXmlCode());
             }
-            dictFiles += "</" + DictionariesFactory.DICTIONARY_FILES_TAG + ">";
+            dictFiles += "</d:" + DictionariesFactory.DICTIONARY_FILES_TAG + ">";
             resultDoc = XMLServices.buildDOMTree(dictFiles);
         }
         return resultDoc;
@@ -220,15 +220,15 @@ public class Metadata extends fr.imag.clips.papillon.presentation.XmlBasePO {
 		if (volumesCollection !=null && volumesCollection.size()>0) {
 			Volume theVolume = (Volume) volumesCollection.iterator().next();
 			PapillonLogger.writeDebugMsg("Volume metadata: " + theVolume.getName());
-            String volumeFiles = "<" + VolumesFactory.VOLUME_FILES_TAG + ">"
+            String volumeFiles = "<d:" + VolumesFactory.VOLUME_FILES_TAG + " xmlns:d='http://www-clips.imag.fr/geta/services/dml'>"
                                  + XMLServices.trimXmlDeclaration(theVolume.getXmlCode())
-                                 + "<" + VolumesFactory.TEMPLATE_ENTRY_TAG + ">"
+                                 + "<d:" + VolumesFactory.TEMPLATE_ENTRY_TAG + ">"
                                  + XMLServices.trimXmlDeclaration(theVolume.getTemplateEntry())
-                                 + "</" + VolumesFactory.TEMPLATE_ENTRY_TAG + ">";
+                                 + "</d:" + VolumesFactory.TEMPLATE_ENTRY_TAG + ">";
             if (theVolume.getTemplateInterface()!=null) {
-                volumeFiles += "<" + VolumesFactory.TEMPLATE_INTERFACE_TAG + ">"
+                volumeFiles += "<d:" + VolumesFactory.TEMPLATE_INTERFACE_TAG + ">"
                                 + XMLServices.trimXmlDeclaration(theVolume.getTemplateInterface())
-                                + "</" + VolumesFactory.TEMPLATE_INTERFACE_TAG + ">";
+                                + "</d:" + VolumesFactory.TEMPLATE_INTERFACE_TAG + ">";
             }
             if (theVolume.getXmlSchema()!=null) {
                 volumeFiles += XMLServices.trimXmlDeclaration(theVolume.getXmlSchema());
@@ -237,7 +237,7 @@ public class Metadata extends fr.imag.clips.papillon.presentation.XmlBasePO {
             if (defaultVolumeXslSheet!=null) {
                 volumeFiles += XMLServices.trimXmlDeclaration(defaultVolumeXslSheet.getXmlCode());
             }
-            volumeFiles += "</" + VolumesFactory.VOLUME_FILES_TAG + ">";
+            volumeFiles += "</d:" + VolumesFactory.VOLUME_FILES_TAG + ">";
             //PapillonLogger.writeDebugMsg(volumeFiles);
 			resultDoc = XMLServices.buildDOMTree(volumeFiles);
 		}

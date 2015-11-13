@@ -138,7 +138,7 @@ public class VolumesFactory {
 					dbname = name;
 				}
 				
-				NodeList refNodes = volume.getElementsByTagName("volume-ref");
+				NodeList refNodes = volume.getElementsByTagNameNS(DML_URI,"volume-ref");
 				String href = "";
 				if (null != refNodes && refNodes.getLength() > 0) {
 					Element tempElt = (Element) refNodes.item(0);
@@ -199,7 +199,7 @@ public class VolumesFactory {
 	//on recupere le dictionnaire
 	Element volume;
 	boolean virtual = false;
-	volume = (Element) docXml.getElementsByTagName(VOLUME_TAG).item(0);
+	volume = (Element) docXml.getElementsByTagNameNS(DML_URI,VOLUME_TAG).item(0);
 	if (volume != null) {
    //     PapillonLogger.writeDebugMsg("Call createCdmElementsTable for volume " + theVolume.getName());
 	HashMap cdmElements = createCdmElementsTable(volume, theVolume.getSourceLanguage(),theVolume.getTemplateEntry());
@@ -276,7 +276,7 @@ public class VolumesFactory {
 			dml_prefix = getDmlPrefix(myDoc.getDocumentElement());
 		}
 		
-        NodeList cdmElts = volume.getElementsByTagName(CDM_ELEMENTS_TAG);
+        NodeList cdmElts = volume.getElementsByTagNameNS(DML_URI,CDM_ELEMENTS_TAG);
         if (null != cdmElts && cdmElts.getLength() > 0) {
             Element cdmElt = (Element) cdmElts.item(0);
             cdmElements = buildCdmElementsTable(cdmElt, source, dml_prefix);
@@ -342,7 +342,7 @@ public class VolumesFactory {
             PapillonLogger.writeDebugMsg("Error in createLinksTable: the template entry doc is empty!");
 			throw new PapillonBusinessException("Error in createLinksTable: the template entry doc is empty!");
 		}
-		NodeList cdmElts = volume.getElementsByTagName(CDM_ELEMENTS_TAG);
+		NodeList cdmElts = volume.getElementsByTagNameNS(DML_URI,CDM_ELEMENTS_TAG);
         if (null != cdmElts && cdmElts.getLength() > 0) {
             Element cdmElt = (Element) cdmElts.item(0);
             linksTable = buildLinksTable(cdmElt, cdmElements, dml_prefix);
@@ -530,7 +530,7 @@ public class VolumesFactory {
             //on recupere le volume
             Element volume;
             boolean virtual = false;
-            volume = (Element) docXml.getElementsByTagName(VOLUME_TAG).item(0);
+            volume = (Element) docXml.getElementsByTagNameNS(DML_URI,VOLUME_TAG).item(0);
             if (volume != null) {
                 String virtualString = volume.getAttribute(VIRTUAL_ATTRIBUTE);
                 virtual = (virtualString != null && virtualString.equals("true"));
@@ -540,8 +540,8 @@ public class VolumesFactory {
 			}
 
             Element schemaElement = (Element) docXml.getElementsByTagNameNS(XMLSCHEMA_URI,XMLSCHEMA_TAG).item(0);
-            Element tmplEntryElement = (Element) docXml.getElementsByTagName(TEMPLATE_ENTRY_TAG).item(0);
-            Element tmplInterfaceElement = (Element) docXml.getElementsByTagName(TEMPLATE_INTERFACE_TAG).item(0);
+            Element tmplEntryElement = (Element) docXml.getElementsByTagNameNS(DML_URI,TEMPLATE_ENTRY_TAG).item(0);
+            Element tmplInterfaceElement = (Element) docXml.getElementsByTagNameNS(DML_URI,TEMPLATE_INTERFACE_TAG).item(0);
             String schemaString = "";
             if (schemaElement != null) {
                 schemaString = XMLServices.NodeToString(schemaElement);
@@ -564,7 +564,7 @@ public class VolumesFactory {
 				}
                 resVolume.save();
 
-                NodeList stylesheets = (NodeList) docXml.getElementsByTagName(XSLSHEET_REF_TAG);
+                NodeList stylesheets = (NodeList) docXml.getElementsByTagNameNS(DML_URI,XSLSHEET_REF_TAG);
                 for (int i = 0; i < stylesheets.getLength(); i++) {
                     Element stylesheet = (Element) stylesheets.item(i);
 

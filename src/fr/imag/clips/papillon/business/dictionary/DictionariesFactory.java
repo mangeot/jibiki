@@ -318,13 +318,13 @@ public class DictionariesFactory {
 		String category = dictionary.getAttribute("category");
 		String type = dictionary.getAttribute("type");
 		
-		NodeList domains = dictionary.getElementsByTagName("domain");
+		NodeList domains = dictionary.getElementsByTagNameNS(DML_URI,"domain");
 		String domain = null;
 		if ((null != domains) && (domains.getLength() > 0)) {
 			domain = domains.item(0).getFirstChild().getNodeValue();
 		}
 		
-		NodeList legals = dictionary.getElementsByTagName("legal");
+		NodeList legals = dictionary.getElementsByTagNameNS(DML_URI,"legal");
 		String legal = null;
 		if ((null != legals) && (legals.getLength() > 0)) {
 			legal = legals.item(0).getFirstChild().getNodeValue();
@@ -332,7 +332,7 @@ public class DictionariesFactory {
 		
 		PapillonLogger.writeDebugMsg("Legal: " + legal);
 		
-		NodeList sourceNodes = dictionary.getElementsByTagName("source-language");
+		NodeList sourceNodes = dictionary.getElementsByTagNameNS(DML_URI,"source-language");
 		String sources = "";
 		if ((null != sourceNodes) && (sourceNodes.getLength() > 0)) {
 			for (int i=0; i<sourceNodes.getLength(); i++) {
@@ -342,7 +342,7 @@ public class DictionariesFactory {
 		}
 		sources = sources.trim();
 		
-		NodeList targetNodes = dictionary.getElementsByTagName("target-language");
+		NodeList targetNodes = dictionary.getElementsByTagNameNS(DML_URI,"target-language");
 		String targets = "";
 		if ((null != targetNodes) && (targetNodes.getLength() > 0)) {
 			for (int i=0; i<targetNodes.getLength(); i++) {
@@ -456,7 +456,7 @@ public class DictionariesFactory {
 		PapillonLogger.writeDebugMsg(XMLServices.xmlCode(docXml));
 		
 		// on recupere l'element dictionary
-		Element dictionary = (Element)docXml.getElementsByTagName(DICTIONARY_TAG).item(0);
+		Element dictionary = (Element)docXml.getElementsByTagNameNS(DML_URI,DICTIONARY_TAG).item(0);
 		
 		if (dictionary==null) {
 			throw new fr.imag.clips.papillon.business.PapillonBusinessException("Error: the XML file does not begin with the tag: " + DICTIONARY_TAG + "!");
@@ -467,7 +467,7 @@ public class DictionariesFactory {
 		if (null != myDict) {
 			
 			// DONE: allow several stylesheets in metadata
-			NodeList stylesheets =(NodeList)docXml.getElementsByTagName(XSLSHEET_REF_TAG);
+			NodeList stylesheets =(NodeList)docXml.getElementsByTagNameNS(DML_URI,XSLSHEET_REF_TAG);
 			for (int i=0; i<stylesheets.getLength(); i++) {
 				Element stylesheet = (Element) stylesheets.item(i);
 				
@@ -508,7 +508,7 @@ public class DictionariesFactory {
                 }
             }
 			if (loadVolumes || loadEntries) {
-				NodeList links = dictionary.getElementsByTagName(VOLUME_REF_TAG);
+				NodeList links = dictionary.getElementsByTagNameNS(DML_URI,VOLUME_REF_TAG);
 				if (null != links && links.getLength() > 0) {
 					for (int i=0; i<links.getLength(); i++) {
 						Element tempElt = (Element)links.item(i);
