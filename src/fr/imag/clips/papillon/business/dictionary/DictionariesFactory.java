@@ -482,10 +482,11 @@ public class DictionariesFactory {
                     User adminUser = UsersFactory.findUserByLogin(adminString);
                     if (adminUser!= null && !adminUser.isEmpty()) {
                         Group adminGroup = GroupsFactory.findGroupByName(adminGroupString);
-                        if (adminGroup == null) {
+                        if (adminGroup == null || adminGroup.isEmpty()) {
                             GroupAnswer adminGroupAnswer = GroupsFactory.createUniqueGroup(adminGroupString, adminUser.getPassword(),adminUser.getPassword(), adminUser.getLogin());
                             if (!adminGroupAnswer.isEmpty()) {
                                 adminGroup = adminGroupAnswer.getGroup();
+				adminGroup.save();
                             }
                         }
                         if (adminGroup != null && !adminGroup.isEmpty()) {
