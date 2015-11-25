@@ -540,7 +540,7 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                             entry = "";
                         }
                         if (entry != null && !entry.equals("")) {
-                            if (Entries.userCanPutEntry(getUser())) {
+                            if (Entries.userCanPutEntry(getUser(),dictName)) {
                                 content = Entries.putEntry(dictName, restStrings[1], restStrings[2], entryDom, this.getUser());
                                 if (content==null) {
                                     String errorMsg = "Error: dict: " + dictName + " lang: " +  restStrings[1] + " ID: " + restStrings[2] +" does not exist!";
@@ -586,7 +586,7 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                             entry = "";
                         }
                         if (entry != null && !entry.equals("")) {
-                            if (Entries.userCanPostEntry(getUser())) {
+                            if (Entries.userCanPostEntry(getUser(), dictName)) {
                                 content = Entries.postEntries(dictName, restStrings[1], restStrings[2], entry, this.getUser());
                                 if (content==null) {
                                     String errorMsg = "Error: conflict with dict: " + dictName + " lang: " +  restStrings[1] +" headword: " + restStrings[2] + " !";
@@ -621,7 +621,7 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                        theResponse.flush();
 					}
 					else if (theRequest.getMethod().equals("DELETE")) {
-						if (Entries.userCanDeleteEntry(getUser())) {
+						if (Entries.userCanDeleteEntry(getUser(),dictName)) {
 							content = Entries.deleteEntry(dictName, restStrings[1], restStrings[2], getUser());
 							if (content==null) {
 								String errorMsg = "Error: dict: " + dictName + " lang: " +  restStrings[1] + " ID: " + restStrings[2] +" does not exist!";
@@ -684,7 +684,7 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                             xpathString = "";
                         }
                         if (xpathString != null && !xpathString.equals("")) {
-                            if (Entries.userCanEditEntry(getUser())) {
+                            if (Entries.userCanEditEntry(getUser(), dictName)) {
                                 content = Entries.editEntry(dictName, restStrings[1], restStrings[2], xpathString, restStrings[3], this.getUser());
                                 if (content==null) {
                                     String errorMsg = "Error: dict: " + dictName + " lang: " +  restStrings[1] +" ID: " + restStrings[2] + " does not exist!";

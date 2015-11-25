@@ -65,6 +65,7 @@ import fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory;
 import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
 import fr.imag.clips.papillon.business.user.UsersFactory;
 import fr.imag.clips.papillon.business.user.User;
+import fr.imag.clips.papillon.business.user.Group;
 import fr.imag.clips.papillon.business.utility.Utility;
 import fr.imag.clips.papillon.business.xsl.XslSheet;
 import fr.imag.clips.papillon.business.xsl.XslSheetFactory;
@@ -467,10 +468,11 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 		return allIndexes.toString();
 	}
 	
-	public static boolean userCanPutEntry(User myUser)
+	public static boolean userCanPutEntry(User myUser, String dictName)
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 		boolean answer = false;
-        if (null != myUser && !myUser.isEmpty() && (myUser.isAdmin() || myUser.isValidator() || myUser.isSpecialist())) {
+            String dictGroup = Group.ADMIN_DICT_GROUP_PREFIX + dictName;
+        if (null != myUser && !myUser.isEmpty() && (myUser.isAdmin() || myUser.isValidator() || myUser.isSpecialist() || myUser.isInGroup(dictGroup))) {
             answer=true;
         }
 		return answer;
@@ -512,9 +514,11 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 		return resultDoc;			
 	}
 
-    public static boolean userCanEditEntry(User myUser)
+    public static boolean userCanEditEntry(User myUser, String dictName)
     throws fr.imag.clips.papillon.business.PapillonBusinessException {
         boolean answer = false;
+        String dictGroup = Group.ADMIN_DICT_GROUP_PREFIX + dictName;
+
         //      if (null != myUser && !myUser.isEmpty() && (myUser.isAdmin() || myUser.isValidator() || myUser.isSpecialist())) {
         if (null != myUser && !myUser.isEmpty()) {
             answer=true;
@@ -590,10 +594,11 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
         return resultDoc;			
     }
 
-	public static boolean userCanPostEntry(User myUser)
+	public static boolean userCanPostEntry(User myUser, String dictName)
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 		boolean answer = false;
-			if (null != myUser && !myUser.isEmpty() && (myUser.isAdmin() || myUser.isValidator())) {
+            String dictGroup = Group.ADMIN_DICT_GROUP_PREFIX + dictName;
+			if (null != myUser && !myUser.isEmpty() && (myUser.isAdmin() || myUser.isValidator() || myUser.isInGroup(dictGroup))) {
 				answer=true;
 			}
 		return answer;
@@ -655,10 +660,11 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 		return resultDoc;			
 	}
 	
-	public static boolean userCanDeleteEntry(User myUser)
+	public static boolean userCanDeleteEntry(User myUser, String dictName)
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 		boolean answer = false;
-			if (null != myUser && !myUser.isEmpty() && (myUser.isAdmin())) {
+            String dictGroup = Group.ADMIN_DICT_GROUP_PREFIX + dictName;
+			if (null != myUser && !myUser.isEmpty() && (myUser.isAdmin() || myUser.isInGroup(dictGroup))) {
 				answer=true;
 			}
 		return answer;
