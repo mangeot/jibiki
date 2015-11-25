@@ -27,6 +27,7 @@
 
 <span id="ExistingUsers">0</span> utilisateurs actuellement dans la base:
 <table summary="Utilisateurs existants">
+<thead>
 <tr>
 	<th><a href="AdminUsers.po?SortBy=name">Nom</a></th>
 	<th><a href="AdminUsers.po?SortBy=login">Login</a></th>
@@ -40,6 +41,8 @@
 	<th>voir</th>
 	<th>rm</th>
 </tr>
+</thead>
+<tbody>
 <tr id="TemplateRow">
 	<td><b><span id="Name">nom</span></b></td>
 	<td><span id="Login">login</span></td>
@@ -53,6 +56,7 @@
 	<td><a href="" id="SeeAnchor">voir</a></td>
 	<td><a href="" id="RemoveAnchor" onclick="return confirm('Etes-vous sûr de vouloir supprimer l'utilisateur?')">rm</a></td>
 </tr>
+</tbody>
 </table>
 <p>Note: la commande "réinitialiser mdp" affecte la valeur du login comme mot de passe. Elle pourra être utile à un utilisateur qui a oublié son mot de passe.</p>
 </div>

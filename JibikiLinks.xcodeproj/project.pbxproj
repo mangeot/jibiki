@@ -856,7 +856,6 @@
 		A30725B30EC89B2800733910 /* ViewQueryResult.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ViewQueryResult.xmlc; sourceTree = "<group>"; };
 		A307262A0EC89B2900733910 /* Layout.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Layout.xhtml; sourceTree = "<group>"; };
 		A307262B0EC89B2900733910 /* Layout.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Layout.xmlc; sourceTree = "<group>"; };
-		A307262E0EC89B2900733910 /* options.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = options.xmlc; path = ../../xhtmlgdef/est/options.xmlc; sourceTree = "<group>"; };
 		A307263E0EC89B2A00733910 /* Layout.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Layout.xhtml; sourceTree = "<group>"; };
 		A307263F0EC89B2A00733910 /* Layout.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Layout.xmlc; sourceTree = "<group>"; };
 		A30726420EC89B2A00733910 /* options.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = options.xmlc; sourceTree = "<group>"; };
@@ -1097,6 +1096,10 @@
 		A30998561121A7BC007DAA26 /* ara */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ara; sourceTree = "<group>"; };
 		A31151A212452A780042BBC6 /* VolumeComparator.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = VolumeComparator.java; sourceTree = "<group>"; };
 		A31151A312452A800042BBC6 /* HeadwordComparator.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = HeadwordComparator.java; sourceTree = "<group>"; };
+		A31606FB1C0533270069D705 /* Layout.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Layout.xhtml; sourceTree = "<group>"; };
+		A31606FC1C0533270069D705 /* Layout.xmlc */ = {isa = PBXFileReference; lastKnownFileType = text; path = Layout.xmlc; sourceTree = "<group>"; };
+		A31606FD1C0533270069D705 /* options.xmlc */ = {isa = PBXFileReference; lastKnownFileType = text; path = options.xmlc; sourceTree = "<group>"; };
+		A31606FE1C0539780069D705 /* HomeContent.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = HomeContent.xhtml; sourceTree = "<group>"; };
 		A319ABCC1290A70900EF68FC /* AdvancedQueryForm.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdvancedQueryForm.xhtml; sourceTree = "<group>"; };
 		A319ABDA1290A80900EF68FC /* HomeContent.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = HomeContent.xhtml; sourceTree = "<group>"; };
 		A31ED37116AD7F1600B642C7 /* AdministrationMenu.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdministrationMenu.xhtml; sourceTree = "<group>"; };
@@ -2104,6 +2107,7 @@
 				A307260C0EC89B2900733910 /* xhtmlgdef */,
 				A3662CF71A12FC2500C423DF /* xhtmljibiki */,
 				A30726660EC89B2A00733910 /* xhtmllexalp */,
+				A31606F91C0533270069D705 /* xhtmllexinnova */,
 				A307270F0EC89B2B00733910 /* xhtmlmotamot */,
 				A37C02EC128C62DB0047A982 /* xhtmlpivax */,
 				A39917D016271D470052B09A /* xhtmlqaamuus */,
@@ -3287,6 +3291,25 @@
 			path = sql;
 			sourceTree = "<group>";
 		};
+		A31606F91C0533270069D705 /* xhtmllexinnova */ = {
+			isa = PBXGroup;
+			children = (
+				A31606FA1C0533270069D705 /* orig */,
+			);
+			path = xhtmllexinnova;
+			sourceTree = "<group>";
+		};
+		A31606FA1C0533270069D705 /* orig */ = {
+			isa = PBXGroup;
+			children = (
+				A31606FE1C0539780069D705 /* HomeContent.xhtml */,
+				A31606FB1C0533270069D705 /* Layout.xhtml */,
+				A31606FC1C0533270069D705 /* Layout.xmlc */,
+				A31606FD1C0533270069D705 /* options.xmlc */,
+			);
+			path = orig;
+			sourceTree = "<group>";
+		};
 		A31ED36716AD7F1600B642C7 /* xhtmldilaf */ = {
 			isa = PBXGroup;
 			children = (
@@ -3298,7 +3321,6 @@
 		A31ED37016AD7F1600B642C7 /* orig */ = {
 			isa = PBXGroup;
 			children = (
-				A307262E0EC89B2900733910 /* options.xmlc */,
 				A31ED37116AD7F1600B642C7 /* AdministrationMenu.xhtml */,
 				A31ED37216AD7F1600B642C7 /* AdministrationMenu.xmlc */,
 				A3A2ECED18454E8000785800 /* AdvancedLookup.xhtml */,

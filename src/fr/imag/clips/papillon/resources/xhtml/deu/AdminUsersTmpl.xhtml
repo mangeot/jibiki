@@ -27,6 +27,7 @@
 
 <span id="ExistingUsers">0</span> users currently in the database:
 <table summary="Existing Users">
+<thead>
 <tr>
 	<th><a href="AdminUsers.po?SortBy=name">Name</a></th>
 	<th><a href="AdminUsers.po?SortBy=login">Login-Name</a></th>
@@ -38,6 +39,8 @@
 	<th>sehen</th>
 	<th>l&ouml;schen</th>
 </tr>
+</thead>
+<tbody>
 <tr id="TemplateRow">
 	<td><b><span id="Name">name</span></b></td>
 	<td><span id="Login">login</span></td>
@@ -51,6 +54,7 @@
 	<td><a href="" id="SeeAnchor">sehen</a></td>
 	<td><a href="" id="RemoveAnchor" onclick="return confirm('Are you sure you want to remove the user?')">rm</a></td>
 </tr>
+</tbody>
 </table>
 <p>Note: the "reset pass" command resets the password of the user with the login for value. It can be used when a user forgets the password.</p>
 </div>
