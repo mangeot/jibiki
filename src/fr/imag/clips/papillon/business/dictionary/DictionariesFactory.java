@@ -233,6 +233,10 @@ import fr.imag.clips.papillon.CurrentDBTransaction;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.user.User;
+import fr.imag.clips.papillon.business.user.UsersFactory;
+import fr.imag.clips.papillon.business.user.Group;
+import fr.imag.clips.papillon.business.user.GroupAnswer;
+import fr.imag.clips.papillon.business.user.GroupsFactory;
 import fr.imag.clips.papillon.business.utility.Utility;
 import fr.imag.clips.papillon.business.xml.XMLServices;
 import fr.imag.clips.papillon.business.xsl.XslSheetFactory;
@@ -465,6 +469,34 @@ public class DictionariesFactory {
 		// ajout du dico ds la table.
 		myDict = DictionariesFactory.newDictionary(dictionary);
 		if (null != myDict) {
+            
+            //administrators
+            String adminGroupString = Group.ADMIN_DICT_GROUP_PREFIX + myDict.getName();
+            NodeList administrators = (NodeList) dictionary.getElementsByTagNameNS(DML_URI,"administrators");
+            if ((null != administrators) && (administrators.getLength() > 0)) {
+                Element administratorsElement = (Element) administrators.item(0);
+                administrators = (NodeList) administratorsElement.getElementsByTagNameNS(DML_URI,"user-ref");
+                for (int i=0; i<administrators.getLength(); i++) {
+                    Element administrator = (Element) administrators.item(i);
+                    String adminString = administrator.getAttribute("name");
+                    User adminUser = UsersFactory.findUserByLogin(adminString);
+                    if (adminUser!= null && !adminUser.isEmpty()) {
+                        Group adminGroup = GroupsFactory.findGroupByName(adminGroupString);
+                        if (adminGroup == null) {
+                            GroupAnswer adminGroupAnswer = GroupsFactory.createUniqueGroup(adminGroupString, adminUser.getPassword(),adminUser.getPassword(), adminUser.getLogin());
+                            if (!adminGroupAnswer.isEmpty()) {
+                                adminGroup = adminGroupAnswer.getGroup();
+                            }
+                        }
+                        if (adminGroup != null && !adminGroup.isEmpty()) {
+                            adminGroup.addUser(adminUser.getLogin());
+                            adminUser.addGroup(adminGroup.getName());
+                            adminGroup.save();
+                            adminUser.save();
+                        }
+                    }
+                }
+            }
 			
 			// DONE: allow several stylesheets in metadata
 			NodeList stylesheets =(NodeList)docXml.getElementsByTagNameNS(DML_URI,XSLSHEET_REF_TAG);

@@ -96,7 +96,7 @@ public class GroupsFactory {
         }
         return new GroupAnswer(myGroup,answerMessage);
     }
-
+   
    public static Group findGroupByName(String name)
     throws PapillonBusinessException {
         Group theGroup = null;
