@@ -606,6 +606,7 @@ public class VolumesFactory {
 
 
                 if (resVolume.getLocation().equals(Volume.LOCAL_LOCATION) && !virtual) {
+                    PapillonLogger.writeDebugMsg("Appel de createVolumeTables");
                     VolumeEntriesFactory.createVolumeTables(resVolume);
                     if (parseEntries) {
                         URL resultURL = new URL(fileURL, resVolume.getVolumeRef());
@@ -1408,7 +1409,7 @@ public class VolumesFactory {
     public static String updateTemplateEntry(String tmplEntry, HashMap cdmElements)
             throws fr.imag.clips.papillon.business.PapillonBusinessException {
         if (tmplEntry != null && !tmplEntry.equals("")) {
-            PapillonLogger.writeDebugMsg("updateTemplateEntry: " + tmplEntry);
+            //PapillonLogger.writeDebugMsg("updateTemplateEntry: " + tmplEntry);
             org.w3c.dom.Document templateDoc = XMLServices.buildDOMTree(tmplEntry);			
 			org.apache.xml.utils.PrefixResolver tmplPrefixResolver = new org.apache.xml.utils.PrefixResolverDefault(templateDoc);
 
