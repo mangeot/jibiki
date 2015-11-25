@@ -874,7 +874,7 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
         this.getComms().response.setContentType(contentType);
         this.getComms().response.setEncoding("UTF-8");
         this.getComms().response.setHeader("Access-Control-Allow-Origin","*");
-        
+        this.getComms().response.setHeader("Access-Control-Allow-Headers","Origin,Content-Type,Accept,Authorization");
         try {
             initPresentationContext();
             document = getDocument();

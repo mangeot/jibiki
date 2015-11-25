@@ -169,7 +169,6 @@ public class ManageDatabase implements Query {
         "ObjectVersion INTEGER NOT NULL)";
     
     public static void createVolumeTable(String table) throws  PapillonBusinessException {
-        PapillonLogger.writeDebugMsg("create table " + table);
             executeSql(createTableSql + table + createVolumeTableParamsSql);
         }
     

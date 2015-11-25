@@ -606,7 +606,6 @@ public class VolumesFactory {
 
 
                 if (resVolume.getLocation().equals(Volume.LOCAL_LOCATION) && !virtual) {
-                    PapillonLogger.writeDebugMsg("Appel de createVolumeTables");
                     VolumeEntriesFactory.createVolumeTables(resVolume);
                     if (parseEntries) {
                         URL resultURL = new URL(fileURL, resVolume.getVolumeRef());
