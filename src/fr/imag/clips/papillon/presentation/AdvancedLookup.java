@@ -111,7 +111,8 @@ public class AdvancedLookup extends DilafBasePO {
                 criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.CLASSIFIED_FINISHED_STATUS);
                 criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.NOT_FINISHED_STATUS);
                 criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.DRAFT_STATUS);
-                listStatus.add(criteriaStatus);
+                criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.DELETED_STATUS);
+               listStatus.add(criteriaStatus);
                 
                 queryReq.addOrCriteriaList(listStatus);
             }
