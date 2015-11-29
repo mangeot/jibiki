@@ -682,7 +682,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 		if (volumesCollection !=null && volumesCollection.size()>0) {
 			theVolume = (Volume) volumesCollection.iterator().next();
 			PapillonLogger.writeDebugMsg("Delete entry: id: " + entryId + " volume: " + theVolume.getName());
-			VolumeEntry myEntry = VolumeEntriesFactory.findEntryByEntryId(theVolume.getName(), entryId);
+			VolumeEntry myEntry = VolumeEntriesFactory.findEntryByContributionId(theVolume.getName(), entryId);
 			if (myEntry != null && !myEntry.isEmpty()) {
 				PapillonLogger.writeDebugMsg("Delete entry, found headword: " + myEntry.getHeadword());
                 VolumeEntry newVolumeEntry = VolumeEntriesFactory.newEntryFromExisting(myEntry);

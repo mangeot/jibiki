@@ -272,7 +272,7 @@ public abstract class AbstractPO
                 String password = theBasicAuthResult.password;
                // PapillonLogger.writeDebugMsg("basic auth: " + login + " password: " + password);
                 User theUser = UsersFactory.findUserByLogin(login);
-                if (theUser!=null && theUser.HasCorrectPassword(password)) {
+                if (theUser!=null && !theUser.isEmpty() && theUser.HasCorrectPassword(password)) {
                     PapillonLogger.writeDebugMsg("Registered user from BasicAuth " + theUser.getName());
                     this.setUser(theUser);
                 }
