@@ -464,7 +464,7 @@ curl -X PUT \
 <p>Note 1: the XML code of the entries or contributions must be complete with the volume tag.</p>
 <p>Note 2: the user has to be <a href="#Authentication">logged</a> and in the validator group.</p>
 
-<p>Example of query:</p>
+<p>Examples of query:</p>
 <pre class="api">
 curl -X POST \
     -u user:password \
@@ -491,6 +491,15 @@ curl -X POST \
 '\
     "api/Cesselin/jpn/jpn.ケース.14723001.e"
 </pre>
+<pre class="api">
+    curl -X POST \
+    -u user:password \
+    -H "Accept: application/xml" \
+    -H "Content-Type: application/xml;charset=UTF-8" \
+    -d '@myfilename'\
+    "api/Cesselin/jpn/jpn.ケース.14723001.e"
+</pre>
+<p>Note: filename is an XML file containing the entry.</p>
 
 <p>Answer:</p>
 <pre class="api">

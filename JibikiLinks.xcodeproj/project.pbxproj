@@ -3844,8 +3844,6 @@
 /* Begin PBXProject section */
 		A348B7040E7EFB50003F6712 /* Project object */ = {
 			isa = PBXProject;
-			attributes = {
-			};
 			buildConfigurationList = A348B7070E7EFB50003F6712 /* Build configuration list for PBXProject "JibikiLinks" */;
 			compatibilityVersion = "Xcode 3.1";
 			developmentRegion = English;
