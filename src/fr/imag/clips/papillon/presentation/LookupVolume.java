@@ -150,6 +150,7 @@ public class LookupVolume extends AbstractPO {
                         criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.CLASSIFIED_FINISHED_STATUS);
                         criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.NOT_FINISHED_STATUS);
                         criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.DRAFT_STATUS);
+                        criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.DELETED_STATUS);
                         listStatus.add(criteriaStatus);
                         
                         queryReq.addOrCriteriaList(listStatus);
@@ -253,6 +254,7 @@ public class LookupVolume extends AbstractPO {
                     criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.CLASSIFIED_FINISHED_STATUS);
                     criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.NOT_FINISHED_STATUS);
                     criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.DRAFT_STATUS);
+                    criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.DELETED_STATUS);
 
                     java.util.Vector myClauses = new java.util.Vector();
                     myClauses.add(criteriaStatus.getFullClause());
@@ -268,7 +270,8 @@ public class LookupVolume extends AbstractPO {
                     criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.CLASSIFIED_FINISHED_STATUS);
                     criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.NOT_FINISHED_STATUS);
                     criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.DRAFT_STATUS);
-                    
+                    criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.DELETED_STATUS);
+                   
                     java.util.Vector myClauses = new java.util.Vector();
                     myClauses.add(criteriaStatus.getFullClause());
 
@@ -347,7 +350,8 @@ public class LookupVolume extends AbstractPO {
                 criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.CLASSIFIED_FINISHED_STATUS);
                 criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.NOT_FINISHED_STATUS);
                 criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.DRAFT_STATUS);
-                
+                criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.DELETED_STATUS);
+               
                 java.util.Vector myClauses = new java.util.Vector();
                 myClauses.add(criteriaStatus.getFullClause());
 
