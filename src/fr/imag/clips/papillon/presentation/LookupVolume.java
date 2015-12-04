@@ -190,7 +190,7 @@ public class LookupVolume extends AbstractPO {
                                     displayValue = Utility.encodeXMLEntities(cdmHeadword);
                                 }
                             }
-							String entry = "<div class='lookupentry' msort='"+ Utility.encodeXMLEntities(myIndex.getMsort())+"'><a href='javascript:void(0);' style='display:block; margin:5px;' onclick='lookupVolume(\"VOLUME="+volumeName+"&amp;HANDLE="+myIndex.getEntryId()+"\");$(this).parent().css(\"font-weight\",\"bold\")\">"+displayValue+"</a></div>";
+							String entry = "<div class='lookupentry' msort='"+ Utility.encodeXMLEntities(myIndex.getMsort())+"'><a href='javascript:void(0);' style='display:block; margin:5px;' onclick='lookupVolume(\"VOLUME="+volumeName+"&amp;HANDLE="+myIndex.getEntryId()+"\");$(this).parent().css(\"font-weight\",\"bold\")'>"+displayValue+"</a></div>";
 							stringResponse += entry;
 						}
 					}					
