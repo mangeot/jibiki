@@ -162,7 +162,7 @@ public class LoginUser extends PapillonBasePO {
                         }
 						if ((Dest != null && !Dest.equals("")) && (NoRedirection == null || NoRedirection.equals(""))) {
                             //Dest += "?" + LOGIN_OK_MESSAGE + "=on";
-                            PapillonLogger.writeDebugMsg("Dest:" + Dest);
+                            //PapillonLogger.writeDebugMsg("Dest:" + Dest);
                      		throw new ClientPageRedirectException(Dest);
                         }
                         else {
