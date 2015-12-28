@@ -144,6 +144,10 @@ public class LoginUser extends PapillonBasePO {
                             this.setCookie(this.LOGIN_COOKIE,
                             myUser.getHandle());
                         }
+                        if (Dest.equals(this.getUrl())) {
+                            Dest += "?" + LOGIN_OK_MESSAGE + "=on";
+                            userMessage = this.getUrl() + ": Login OK";
+                        }
                         if (SessionWithoutCookies != null && !SessionWithoutCookies.equals("") || !getComms().request.isRequestedSessionIdFromCookie()) {
                             try {
                                 Dest = ((fr.imag.clips.papillon.Papillon)com.lutris.appserver.server.Enhydra.getApplication()).encodeUrl(Dest,this.getComms().session.getSessionKey());
@@ -157,12 +161,11 @@ public class LoginUser extends PapillonBasePO {
                             }
                         }
 						if ((Dest != null && !Dest.equals("")) && (NoRedirection == null || NoRedirection.equals(""))) {
-                            Dest += "?" + LOGIN_OK_MESSAGE + "=on";
-                            //PapillonLogger.writeDebugMsg("Dest:" + Dest);
+                            //Dest += "?" + LOGIN_OK_MESSAGE + "=on";
+                            PapillonLogger.writeDebugMsg("Dest:" + Dest);
                      		throw new ClientPageRedirectException(Dest);
                         }
                         else {
-                            userMessage = this.getUrl() + ": Login OK";
                             content.getElementLoginOKMessage().setAttribute("style",MESSAGE_STYLE);
                         }
                     } else {
