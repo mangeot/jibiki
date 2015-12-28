@@ -152,20 +152,25 @@ public class LoginUser extends PapillonBasePO {
 					}
 						if (NoRedirection == null || NoRedirection.equals("")) {
                        		throw new ClientPageRedirectException(Dest);                  
-						}
+                        }
+                        else {
+                            content.getElementLoginOKMessage().setAttribute("style","display: block");
+                        }
                     } else {
                         userMessage = "Wrong password";
+                        content.getElementWrongPasswordMessage().setAttribute("style","display: block");
                     }
                 } else {
                     userMessage = "User unknown";
+                    content.getElementUserUnknownMessage().setAttribute("style","display: block");
                 }
             }
             if (null != Logout && !Logout.equals("")) {
                 this.removeUserFromSession();
                 userMessage = "User logged out";
+                content.getElementUserLoggedOutMessage().setAttribute("style","display: block");
             }
             this.getSessionData().writeUserMessage(userMessage);
-            PapillonLogger.writeDebugMsg(userMessage);
         }
 
             // If the login failed, we have to send the login form with the appropriate Destination

@@ -771,7 +771,6 @@
 		A307255B0EC89B2800733910 /* Layout.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Layout.xhtml; sourceTree = "<group>"; };
 		A307255C0EC89B2800733910 /* LexiesManagement.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = LexiesManagement.xhtml; sourceTree = "<group>"; };
 		A307255D0EC89B2800733910 /* LinkerLayout.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = LinkerLayout.xhtml; sourceTree = "<group>"; };
-		A307255E0EC89B2800733910 /* LoginUserTmpl.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = LoginUserTmpl.xhtml; path = ../../xhtmlmotamot/orig/LoginUserTmpl.xhtml; sourceTree = "<group>"; };
 		A307255F0EC89B2800733910 /* LookupAxiesTmpl.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = LookupAxiesTmpl.xhtml; sourceTree = "<group>"; };
 		A30725600EC89B2800733910 /* LookupVolumePage.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = LookupVolumePage.xhtml; sourceTree = "<group>"; };
 		A30725610EC89B2800733910 /* MergeEntries.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = MergeEntries.xhtml; sourceTree = "<group>"; };
@@ -1397,6 +1396,7 @@
 		A39A47210FF922110090E5C0 /* engvieContent.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = engvieContent.xhtml; sourceTree = "<group>"; };
 		A39A472E0FF922610090E5C0 /* FrajpnContent.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = FrajpnContent.xhtml; sourceTree = "<group>"; };
 		A39A473B0FF923430090E5C0 /* Motamot.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = Motamot.java; sourceTree = "<group>"; };
+		A39F61661C312DF9002A7676 /* LoginUserTmpl.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = LoginUserTmpl.xhtml; sourceTree = "<group>"; };
 		A39FEC8210A06FD400D99EB4 /* Metadata.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = Metadata.java; sourceTree = "<group>"; };
 		A3A1E2A9171CB83500559C1F /* ProjectTmpl.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ProjectTmpl.xhtml; sourceTree = "<group>"; };
 		A3A1E2BE171CC04000559C1F /* HelpContent.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = HelpContent.xhtml; sourceTree = "<group>"; };
@@ -2782,7 +2782,7 @@
 				A3216DE90ED17C22009BC773 /* LexalpEditEntryInit.xhtml */,
 				A307255C0EC89B2800733910 /* LexiesManagement.xhtml */,
 				A307255D0EC89B2800733910 /* LinkerLayout.xhtml */,
-				A307255E0EC89B2800733910 /* LoginUserTmpl.xhtml */,
+				A39F61661C312DF9002A7676 /* LoginUserTmpl.xhtml */,
 				A307255F0EC89B2800733910 /* LookupAxiesTmpl.xhtml */,
 				A30725600EC89B2800733910 /* LookupVolumePage.xhtml */,
 				A30725610EC89B2800733910 /* MergeEntries.xhtml */,
@@ -3844,6 +3844,8 @@
 /* Begin PBXProject section */
 		A348B7040E7EFB50003F6712 /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+			};
 			buildConfigurationList = A348B7070E7EFB50003F6712 /* Build configuration list for PBXProject "JibikiLinks" */;
 			compatibilityVersion = "Xcode 3.1";
 			developmentRegion = English;

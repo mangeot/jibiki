@@ -6,8 +6,11 @@
 </head>
 <body>
 <div id="Formulaire" lang="fr" xml:lang="fr">
-<h1>Page d'enregistrement</h1>
-<br/>
+<h1>Page de connexion utilisateur</h1>
+<p id="LoginOKMessage" style="display:none;padding: 5px; background-color: yellow;">Connexion réussie !</p>
+<p id="WrongPasswordMessage" style="display:none;padding: 5px; background-color: yellow;">Mot de passe incorrect !</p>
+<p id="UserUnknownMessage" style="display:none;padding: 5px; background-color: yellow;">Utilisateur inconnu !</p>
+<p id="UserLoggedOutMessage" style="display:none;padding: 5px; background-color: yellow;">Utilisateur déconnecté !</p>
 <form action="LoginUser.po" method="post">
 <div><input name="Destination" type="hidden" value="" id="Destination"/></div>
 <!-- login user -->
@@ -30,7 +33,7 @@
 </table>
 </form>
     <div style="text-align:center">Si vous êtes un nouvel utilisateur, veuillez vous
-<a href="Register.po"> enregistrer </a> auparavant.</div>
+<a href="Register.po"> inscrire </a> auparavant.</div>
     <div style="text-align:center">Si vous avez oublié votre login ou votre mot de passe, <a href="RetrieveAccount.po">cliquez ici !</a></div>
 </div>
 </body>
