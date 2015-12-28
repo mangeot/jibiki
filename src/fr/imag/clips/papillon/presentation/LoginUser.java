@@ -85,6 +85,8 @@ public class LoginUser extends PapillonBasePO {
 
     protected final static String SUBMIT_PARAMETER="Submit";
     
+    protected final static String MESSAGE_STYLE = "display: block; background-color: yellow; padding: 5px;";
+    
     protected LoginUserTmplXHTML content;
 
 
@@ -154,23 +156,23 @@ public class LoginUser extends PapillonBasePO {
                        		throw new ClientPageRedirectException(Dest);                  
                         }
                         else {
-                            content.getElementLoginOKMessage().setAttribute("style","display: block");
+                            content.getElementLoginOKMessage().setAttribute("style",MESSAGE_STYLE);
                         }
                     } else {
                         userMessage = "Wrong password";
-                        content.getElementWrongPasswordMessage().setAttribute("style","display: block");
+                        content.getElementWrongPasswordMessage().setAttribute("style",MESSAGE_STYLE);
                     }
                 } else {
                     userMessage = "User unknown";
-                    content.getElementUserUnknownMessage().setAttribute("style","display: block");
+                    content.getElementUserUnknownMessage().setAttribute("style",MESSAGE_STYLE);
                 }
             }
             if (null != Logout && !Logout.equals("")) {
                 this.removeUserFromSession();
                 userMessage = "User logged out";
-                content.getElementUserLoggedOutMessage().setAttribute("style","display: block");
+                content.getElementUserLoggedOutMessage().setAttribute("style",MESSAGE_STYLE);
             }
-            this.getSessionData().writeUserMessage(userMessage);
+            PapillonLogger.writeDebugMsg(userMessage);
         }
 
             // If the login failed, we have to send the login form with the appropriate Destination
