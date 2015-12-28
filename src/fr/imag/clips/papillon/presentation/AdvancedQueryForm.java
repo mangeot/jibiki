@@ -389,8 +389,10 @@ public class AdvancedQueryForm {
         criteriaList = new ArrayList();
         for(int i=0; i < nbCriteria; i++) {
             String value = StringNormalizer.normalize(AbstractPO.myGetParameter(req, AdvancedQueryFormXHTML.NAME_FACETVALUE + "." + Integer.toString(i)));
-            java.util.regex.Matcher quoteValueMatcher = quotePattern.matcher(value);
-            value = quoteValueMatcher.replaceAll("''");
+            if (value !=null && !value.equals("")) {
+                java.util.regex.Matcher quoteValueMatcher = quotePattern.matcher(value);
+                value = quoteValueMatcher.replaceAll("''");
+            }
             QueryCriteria criteria = new QueryCriteria();
             
             //
