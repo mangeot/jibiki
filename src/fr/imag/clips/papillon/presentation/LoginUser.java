@@ -74,6 +74,7 @@ import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
 
 public class LoginUser extends PapillonBasePO {
+    protected final static String LOGIN_OK_MESSAGE = "LOGIN_OK_MESSAGE";
     protected final static String LOGIN_PARAMETER="Login";
     protected final static String REMEMBER_LOGIN_PARAMETER="RememberLogin";
     protected final static String SESSION_WITHOUT_COOKIES_PARAMETER="WithoutCookie";
@@ -124,12 +125,15 @@ public class LoginUser extends PapillonBasePO {
         // If there is no destination, just redirect the user to the home page after a succesfull log in.
 		// This redirection does not work with the jessionid cookie in the URL
         //Dest = (Dest != null) ? Dest : req.getAppFileURIPath("/");
-		Dest = (Dest != null) ? Dest : this.getUrl();
+		//Dest = (Dest != null) ? Dest : this.getUrl();
        
         String userMessage = "";
         // If the page is called with parameters, take the requested action
         if (req.getParameterNames().hasMoreElements()) {
-            if (null != myGetParameter(SUBMIT_PARAMETER) &&
+            if (null != myGetParameter(LOGIN_OK_MESSAGE)) {
+                content.getElementLoginOKMessage().setAttribute("style",MESSAGE_STYLE);
+            }
+            else if (null != myGetParameter(SUBMIT_PARAMETER) &&
                 null != Login && !Login.equals("") &&
                 null != Password && !Password.equals("")) {
                 User myUser = UsersFactory.findUserByLogin(Login);
@@ -140,19 +144,21 @@ public class LoginUser extends PapillonBasePO {
                             this.setCookie(this.LOGIN_COOKIE,
                             myUser.getHandle());
                         }
-					if (SessionWithoutCookies != null && !SessionWithoutCookies.equals("") || !getComms().request.isRequestedSessionIdFromCookie()) {
-						try {
-							Dest = ((fr.imag.clips.papillon.Papillon)com.lutris.appserver.server.Enhydra.getApplication()).encodeUrl(Dest,this.getComms().session.getSessionKey());
-							PapillonLogger.writeDebugMsg("Url without cookies: " + Dest);
-						}
-						catch (com.lutris.appserver.server.ApplicationException ae) {
-							PapillonLogger.writeDebugMsg("Error in LoginUser.po: " + ae.toString());
-						}
-						if (SessionWithoutCookies != null && !SessionWithoutCookies.equals("")) {
-							getComms().response.setSessionIdEncodeUrlRequired(true);
-						}
-					}
-						if (NoRedirection == null || NoRedirection.equals("")) {
+                        if (SessionWithoutCookies != null && !SessionWithoutCookies.equals("") || !getComms().request.isRequestedSessionIdFromCookie()) {
+                            try {
+                                Dest = (Dest != null) ? Dest : this.getUrl();
+                                Dest = ((fr.imag.clips.papillon.Papillon)com.lutris.appserver.server.Enhydra.getApplication()).encodeUrl(Dest,this.getComms().session.getSessionKey());
+                                Dest += "?" + LOGIN_OK_MESSAGE + "=on";
+                                PapillonLogger.writeDebugMsg("Url without cookies: " + Dest);
+                            }
+                            catch (com.lutris.appserver.server.ApplicationException ae) {
+                                PapillonLogger.writeDebugMsg("Error in LoginUser.po: " + ae.toString());
+                            }
+                            if (SessionWithoutCookies != null && !SessionWithoutCookies.equals("")) {
+                                getComms().response.setSessionIdEncodeUrlRequired(true);
+                            }
+                        }
+						if (Dest != null && (NoRedirection == null || NoRedirection.equals(""))) {
                        		throw new ClientPageRedirectException(Dest);                  
                         }
                         else {
@@ -167,7 +173,7 @@ public class LoginUser extends PapillonBasePO {
                     content.getElementUserUnknownMessage().setAttribute("style",MESSAGE_STYLE);
                 }
             }
-            if (null != Logout && !Logout.equals("")) {
+            else if (null != Logout && !Logout.equals("")) {
                 this.removeUserFromSession();
                 userMessage = "User logged out";
                 content.getElementUserLoggedOutMessage().setAttribute("style",MESSAGE_STYLE);
@@ -175,7 +181,7 @@ public class LoginUser extends PapillonBasePO {
             PapillonLogger.writeDebugMsg(userMessage);
         }
 
-            // If the login failed, we have to send the login form with the appropriate Destination
+            // If the login fail, we have to send the login form with the appropriate Destination
         HTMLInputElement DestElement = (HTMLInputElement) content.getElementDestination();
         DestElement.setValue(Dest);
         
