@@ -125,7 +125,7 @@ public class LoginUser extends PapillonBasePO {
         // If there is no destination, just redirect the user to the home page after a succesfull log in.
 		// This redirection does not work with the jessionid cookie in the URL
         //Dest = (Dest != null) ? Dest : req.getAppFileURIPath("/");
-		//Dest = (Dest != null) ? Dest : this.getUrl();
+		Dest = (Dest != null && !Dest.equals("")) ? Dest : this.getUrl();
        
         String userMessage = "";
         // If the page is called with parameters, take the requested action
@@ -140,15 +140,13 @@ public class LoginUser extends PapillonBasePO {
                 if (null != myUser && !myUser.isEmpty()) { 
                     if (myUser.HasCorrectPassword(Password)) {
                         setUser(myUser);
-                        if (RememberLogin != null && !RememberLogin.equals("")) {
+                       if (RememberLogin != null && !RememberLogin.equals("")) {
                             this.setCookie(this.LOGIN_COOKIE,
                             myUser.getHandle());
                         }
                         if (SessionWithoutCookies != null && !SessionWithoutCookies.equals("") || !getComms().request.isRequestedSessionIdFromCookie()) {
                             try {
-                                Dest = (Dest != null) ? Dest : this.getUrl();
                                 Dest = ((fr.imag.clips.papillon.Papillon)com.lutris.appserver.server.Enhydra.getApplication()).encodeUrl(Dest,this.getComms().session.getSessionKey());
-                                Dest += "?" + LOGIN_OK_MESSAGE + "=on";
                                 PapillonLogger.writeDebugMsg("Url without cookies: " + Dest);
                             }
                             catch (com.lutris.appserver.server.ApplicationException ae) {
@@ -158,24 +156,27 @@ public class LoginUser extends PapillonBasePO {
                                 getComms().response.setSessionIdEncodeUrlRequired(true);
                             }
                         }
-						if (Dest != null && (NoRedirection == null || NoRedirection.equals(""))) {
-                       		throw new ClientPageRedirectException(Dest);                  
+						if ((Dest != null && !Dest.equals("")) && (NoRedirection == null || NoRedirection.equals(""))) {
+                            Dest += "?" + LOGIN_OK_MESSAGE + "=on";
+                            //PapillonLogger.writeDebugMsg("Dest:" + Dest);
+                     		throw new ClientPageRedirectException(Dest);
                         }
                         else {
+                            userMessage = this.getUrl() + ": Login OK";
                             content.getElementLoginOKMessage().setAttribute("style",MESSAGE_STYLE);
                         }
                     } else {
-                        userMessage = "Wrong password";
+                        userMessage = this.getUrl() + ": Wrong password";
                         content.getElementWrongPasswordMessage().setAttribute("style",MESSAGE_STYLE);
                     }
                 } else {
-                    userMessage = "User unknown";
+                    userMessage = this.getUrl() + ": User unknown";
                     content.getElementUserUnknownMessage().setAttribute("style",MESSAGE_STYLE);
                 }
             }
             else if (null != Logout && !Logout.equals("")) {
                 this.removeUserFromSession();
-                userMessage = "User logged out";
+                userMessage = this.getUrl() + ": User logged out";
                 content.getElementUserLoggedOutMessage().setAttribute("style",MESSAGE_STYLE);
             }
             PapillonLogger.writeDebugMsg(userMessage);
