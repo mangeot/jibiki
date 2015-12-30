@@ -508,7 +508,7 @@ $PROC$ LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
 --
 -- for the moment do nothing
 CREATE OR REPLACE FUNCTION eng_sort( varchar ) 
- RETURNS varchar AS '
+ RETURNS varchar AS $PROC$
 
  DECLARE
   tmp		char;
@@ -517,7 +517,7 @@ CREATE OR REPLACE FUNCTION eng_sort( varchar )
  BEGIN
   return( $1 );
  END;
-' LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
+$PROC$ LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
 
 
 -- est Estonian
@@ -1626,17 +1626,360 @@ $PROC$ LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
 -- romaji katakana hiragana kanji
 -- for the moment do nothing
 -- todo: maybe sort with unicode code or reading 
+-- あいうえお かきくけこ さしすせそ たちつてと なにぬねの はひふへほ まみむめも らりるれろ やゆよ わをん
 CREATE OR REPLACE FUNCTION jpn_sort( varchar ) 
- RETURNS varchar AS '
+ RETURNS varchar AS $PROC$
 
  DECLARE
   tmp		char;
-  result	varchar := '''';
+  result	varchar := '';
   length	integer;
- BEGIN
-  return( $1 );
+  BEGIN
+ 	length := char_length($1);
+  	FOR i IN 1.. length LOOP
+  		tmp := SUBSTR( $1, i, 1 );
+  IF tmp = 'あ'  THEN
+    result:= result || '01';
+  ELSIF tmp = 'ア'  THEN
+    result:= result || '01';
+  ELSIF tmp = 'ぁ'  THEN
+    result:= result || '01';
+  ELSIF tmp = 'ァ'  THEN
+    result:= result || '01';
+  ELSIF tmp = 'い' THEN
+    result:= result || '02';
+  ELSIF tmp = 'イ' THEN
+    result:= result || '02';
+  ELSIF tmp = 'ぃ' THEN
+    result:= result || '02';
+  ELSIF tmp = 'ィ' THEN
+    result:= result || '02';
+  ELSIF tmp = 'う' THEN
+    result:= result || '03';
+  ELSIF tmp = 'ウ' THEN
+    result:= result || '03';
+  ELSIF tmp = 'ぅ' THEN
+    result:= result || '03';
+  ELSIF tmp = 'ゥ' THEN
+    result:= result || '03';
+  ELSIF tmp = 'ゔ' THEN
+    result:= result || '03';
+  ELSIF tmp = 'ヴ' THEN
+    result:= result || '03';
+  ELSIF tmp = 'え' THEN
+    result:= result || '04';
+  ELSIF tmp = 'エ' THEN
+    result:= result || '04';
+  ELSIF tmp = 'ぇ' THEN
+    result:= result || '04';
+  ELSIF tmp = 'ェ' THEN
+    result:= result || '04';
+  ELSIF tmp = 'お' THEN
+    result:= result || '05';
+  ELSIF tmp = 'オ' THEN
+    result:= result || '05';
+  ELSIF tmp = 'ぉ' THEN
+    result:= result || '05';
+  ELSIF tmp = 'ォ' THEN
+    result:= result || '05';
+  ELSIF tmp = 'か' THEN
+    result:= result || '06';
+  ELSIF tmp = 'カ' THEN
+    result:= result || '06';
+  ELSIF tmp = 'が' THEN
+    result:= result || '06';
+  ELSIF tmp = 'ガ' THEN
+    result:= result || '06';
+  ELSIF tmp = 'き' THEN
+    result:= result || '07';
+  ELSIF tmp = 'キ' THEN
+    result:= result || '07';
+  ELSIF tmp = 'ぎ' THEN
+    result:= result || '07';
+  ELSIF tmp = 'ギ' THEN
+    result:= result || '07';
+  ELSIF tmp = 'く' THEN
+    result:= result || '08';
+  ELSIF tmp = 'ク' THEN
+    result:= result || '08';
+  ELSIF tmp = 'ぐ' THEN
+    result:= result || '08';
+  ELSIF tmp = 'グ' THEN
+    result:= result || '08';
+  ELSIF tmp = 'け' THEN
+    result:= result || '09';
+  ELSIF tmp = 'ケ' THEN
+    result:= result || '09';
+  ELSIF tmp = 'げ' THEN
+    result:= result || '09';
+  ELSIF tmp = 'ゲ' THEN
+    result:= result || '09';
+  ELSIF tmp = 'こ' THEN
+    result:= result || '10';
+  ELSIF tmp = 'コ' THEN
+    result:= result || '10';
+  ELSIF tmp = 'ご' THEN
+    result:= result || '10';
+  ELSIF tmp = 'ゴ' THEN
+    result:= result || '10';
+  ELSIF tmp = 'さ' THEN
+    result:= result || '11';
+  ELSIF tmp = 'サ' THEN
+    result:= result || '11';
+  ELSIF tmp = 'ざ' THEN
+    result:= result || '11';
+  ELSIF tmp = 'ザ' THEN
+    result:= result || '11';
+  ELSIF tmp = 'し' THEN
+    result:= result || '12';
+  ELSIF tmp = 'シ' THEN
+    result:= result || '12';
+  ELSIF tmp = 'じ' THEN
+    result:= result || '12';
+  ELSIF tmp = 'ジ' THEN
+    result:= result || '12';
+  ELSIF tmp = 'す' THEN
+    result:= result || '13';
+  ELSIF tmp = 'ス' THEN
+    result:= result || '13';
+  ELSIF tmp = 'ず' THEN
+    result:= result || '13';
+  ELSIF tmp = 'ズ' THEN
+    result:= result || '13';
+  ELSIF tmp = 'せ' THEN
+    result:= result || '14';
+  ELSIF tmp = 'セ' THEN
+    result:= result || '14';
+  ELSIF tmp = 'ぜ' THEN
+    result:= result || '14';
+  ELSIF tmp = 'ゼ' THEN
+    result:= result || '14';
+  ELSIF tmp = 'そ' THEN
+    result:= result || '15';
+  ELSIF tmp = 'ソ' THEN
+    result:= result || '15';
+  ELSIF tmp = 'ぞ' THEN
+    result:= result || '15';
+  ELSIF tmp = 'ゾ' THEN
+    result:= result || '15';
+  ELSIF tmp = 'た' THEN
+    result:= result || '16';
+  ELSIF tmp = 'タ' THEN
+    result:= result || '16';
+  ELSIF tmp = 'だ' THEN
+    result:= result || '16';
+  ELSIF tmp = 'ダ' THEN
+    result:= result || '16';
+  ELSIF tmp = 'ち' THEN
+    result:= result || '17';
+  ELSIF tmp = 'チ' THEN
+    result:= result || '17';
+  ELSIF tmp = 'ぢ' THEN
+    result:= result || '17';
+  ELSIF tmp = 'ヂ' THEN
+    result:= result || '17';
+  ELSIF tmp = 'つ' THEN
+    result:= result || '18';
+  ELSIF tmp = 'ツ' THEN
+    result:= result || '18';
+  ELSIF tmp = 'づ' THEN
+    result:= result || '18';
+  ELSIF tmp = 'ヅ' THEN
+    result:= result || '18';
+  ELSIF tmp = 'て' THEN
+    result:= result || '19';
+  ELSIF tmp = 'テ' THEN
+    result:= result || '19';
+  ELSIF tmp = 'で' THEN
+    result:= result || '19';
+  ELSIF tmp = 'デ' THEN
+    result:= result || '19';
+  ELSIF tmp = 'と' THEN
+    result:= result || '20';
+  ELSIF tmp = 'ト' THEN
+    result:= result || '20';
+  ELSIF tmp = 'ど' THEN
+    result:= result || '20';
+  ELSIF tmp = 'ド' THEN
+    result:= result || '20';
+  ELSIF tmp = 'な' THEN
+    result:= result || '21';
+  ELSIF tmp = 'ナ' THEN
+    result:= result || '21';
+  ELSIF tmp = 'に' THEN
+    result:= result || '22';
+  ELSIF tmp = 'ニ' THEN
+    result:= result || '22';
+  ELSIF tmp = 'ぬ' THEN
+    result:= result || '23';
+  ELSIF tmp = 'ヌ' THEN
+    result:= result || '23';
+  ELSIF tmp = 'ね' THEN
+    result:= result || '24';
+  ELSIF tmp = 'ネ' THEN
+    result:= result || '24';
+  ELSIF tmp = 'の' THEN
+    result:= result || '25';
+  ELSIF tmp = 'ノ' THEN
+    result:= result || '25';
+  ELSIF tmp = 'は' THEN
+    result:= result || '26';
+  ELSIF tmp = 'ハ' THEN
+    result:= result || '26';
+  ELSIF tmp = 'ば' THEN
+    result:= result || '26';
+  ELSIF tmp = 'バ' THEN
+    result:= result || '26';
+  ELSIF tmp = 'ぱ' THEN
+    result:= result || '26';
+  ELSIF tmp = 'パ' THEN
+    result:= result || '26';
+  ELSIF tmp = 'ひ' THEN
+    result:= result || '27';
+  ELSIF tmp = 'ヒ' THEN
+    result:= result || '27';
+  ELSIF tmp = 'び' THEN
+    result:= result || '27';
+  ELSIF tmp = 'ビ' THEN
+    result:= result || '27';
+  ELSIF tmp = 'ぴ' THEN
+    result:= result || '27';
+  ELSIF tmp = 'ピ' THEN
+    result:= result || '27';
+  ELSIF tmp = 'ふ' THEN
+    result:= result || '28';
+  ELSIF tmp = 'フ' THEN
+    result:= result || '28';
+  ELSIF tmp = 'ぶ' THEN
+    result:= result || '28';
+  ELSIF tmp = 'ブ' THEN
+    result:= result || '28';
+  ELSIF tmp = 'ぷ' THEN
+    result:= result || '28';
+  ELSIF tmp = 'プ' THEN
+    result:= result || '28';
+  ELSIF tmp = 'へ' THEN
+    result:= result || '29';
+  ELSIF tmp = 'ヘ' THEN
+    result:= result || '29';
+  ELSIF tmp = 'べ' THEN
+    result:= result || '29';
+  ELSIF tmp = 'ベ' THEN
+    result:= result || '29';
+  ELSIF tmp = 'ぺ' THEN
+    result:= result || '29';
+  ELSIF tmp = 'ペ' THEN
+    result:= result || '29';
+  ELSIF tmp = 'ほ' THEN
+    result:= result || '30';
+  ELSIF tmp = 'ホ' THEN
+    result:= result || '30';
+  ELSIF tmp = 'ぼ' THEN
+    result:= result || '30';
+  ELSIF tmp = 'ボ' THEN
+    result:= result || '30';
+  ELSIF tmp = 'ぽ' THEN
+    result:= result || '30';
+  ELSIF tmp = 'ポ' THEN
+    result:= result || '30';
+  ELSIF tmp = 'ま' THEN
+    result:= result || '31';
+  ELSIF tmp = 'マ' THEN
+    result:= result || '31';
+  ELSIF tmp = 'み' THEN
+    result:= result || '32';
+  ELSIF tmp = 'ミ' THEN
+    result:= result || '32';
+  ELSIF tmp = 'む' THEN
+    result:= result || '33';
+  ELSIF tmp = 'ム' THEN
+    result:= result || '33';
+  ELSIF tmp = 'め' THEN
+    result:= result || '34';
+  ELSIF tmp = 'メ' THEN
+    result:= result || '34';
+  ELSIF tmp = 'も' THEN
+    result:= result || '35';
+  ELSIF tmp = 'モ' THEN
+    result:= result || '35';
+  ELSIF tmp = 'ら' THEN
+    result:= result || '36';
+  ELSIF tmp = 'ラ' THEN
+    result:= result || '36';
+  ELSIF tmp = 'り' THEN
+    result:= result || '37';
+  ELSIF tmp = 'リ' THEN
+    result:= result || '37';
+  ELSIF tmp = 'る' THEN
+    result:= result || '37';
+  ELSIF tmp = 'ル' THEN
+    result:= result || '37';
+  ELSIF tmp = 'れ' THEN
+    result:= result || '38';
+  ELSIF tmp = 'レ' THEN
+    result:= result || '38';
+  ELSIF tmp = 'ろ' THEN
+    result:= result || '39';
+  ELSIF tmp = 'ロ' THEN
+    result:= result || '39';
+  ELSIF tmp = 'や' THEN
+    result:= result || '40';
+  ELSIF tmp = 'ヤ' THEN
+    result:= result || '40';
+  ELSIF tmp = 'ゃ' THEN
+    result:= result || '40';
+  ELSIF tmp = 'ャ' THEN
+    result:= result || '40';
+  ELSIF tmp = 'ゆ' THEN
+    result:= result || '42';
+  ELSIF tmp = 'ユ' THEN
+    result:= result || '42';
+  ELSIF tmp = 'ゅ' THEN
+    result:= result || '42';
+  ELSIF tmp = 'ュ' THEN
+    result:= result || '42';
+  ELSIF tmp = 'よ' THEN
+    result:= result || '45';
+  ELSIF tmp = 'ヨ' THEN
+    result:= result || '45';
+  ELSIF tmp = 'ょ' THEN
+    result:= result || '45';
+  ELSIF tmp = 'ョ' THEN
+    result:= result || '45';
+  ELSIF tmp = 'わ' THEN
+    result:= result || '46';
+  ELSIF tmp = 'ワ' THEN
+    result:= result || '46';
+  ELSIF tmp = 'ゐ' THEN
+    result:= result || '47';
+  ELSIF tmp = 'ヰ' THEN
+    result:= result || '47';
+  ELSIF tmp = 'ゑ' THEN
+    result:= result || '49';
+  ELSIF tmp = 'ヱ' THEN
+    result:= result || '49';
+  ELSIF tmp = 'を' THEN
+    result:= result || '50';
+  ELSIF tmp = 'ヲ' THEN
+    result:= result || '50';
+  ELSIF tmp = 'ん' THEN
+    result:= result || '51';
+  ELSIF tmp = 'ン' THEN
+    result:= result || '51';
+  ELSIF tmp = 'っ' THEN
+    result:= result;
+  ELSIF tmp = 'ッ' THEN
+    result:= result;
+  ELSIF tmp = 'ー' THEN
+    result:= result;
+  ELSE
+    result:= result || tmp;
+  END IF;
+	END LOOP;
+  return( result );
  END;
-' LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
+$PROC$ LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
+
 
 
 -- kau Kanuri 
@@ -1820,16 +2163,16 @@ $PROC$ LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
 -- for the moment do nothing
 -- todo: maybe sort by unicode code
 CREATE OR REPLACE FUNCTION kor_sort( varchar ) 
- RETURNS varchar AS '
+ RETURNS varchar AS $PROC$ 
 
  DECLARE
   tmp		char;
-  result	varchar := '''';
+  result	varchar := '';
   length	integer;
  BEGIN
   return( $1 );
  END;
-' LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
+$PROC$ LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
 
 
 
@@ -1837,16 +2180,16 @@ CREATE OR REPLACE FUNCTION kor_sort( varchar )
 -- a b c d e f g h i j k l m n o p q r s t u v w x y z
 -- for the moment do nothing; probably ok as is
 CREATE OR REPLACE FUNCTION msa_sort( varchar ) 
- RETURNS varchar AS '
+ RETURNS varchar AS $PROC$ 
 
  DECLARE
   tmp		char;
-  result	varchar := '''';
+  result	varchar := '';
   length	integer;
  BEGIN
   return( $1 );
  END;
-' LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
+$PROC$ LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
 
 
 
@@ -1855,16 +2198,16 @@ CREATE OR REPLACE FUNCTION msa_sort( varchar )
 -- for the moment do nothing
 -- todo: maybe slovak sort 
 CREATE OR REPLACE FUNCTION slo_sort( varchar ) 
- RETURNS varchar AS '
+ RETURNS varchar AS $PROC$ 
 
  DECLARE
   tmp		char;
-  result	varchar := '''';
+  result	varchar := '';
   length	integer;
  BEGIN
   return( $1 );
  END;
-' LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
+$PROC$  LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
 
 -- slv Slovene
 --
@@ -2002,16 +2345,16 @@ $PROC$ LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
 -- for the moment do nothing
 -- todo: maybe sort by unicode code
 CREATE OR REPLACE FUNCTION tha_sort( varchar ) 
- RETURNS varchar AS '
+ RETURNS varchar AS $PROC$ 
 
  DECLARE
   tmp		char;
-  result	varchar := '''';
+  result	varchar := '';
   length	integer;
  BEGIN
   return( $1 );
  END;
-' LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
+$PROC$ LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
 
 -- tmh Tamajaq
 -- a ǎ b c d ḍ e ə f g ğ h i j ǰ ɣ k x l ḷ m n ŋ o q r s ṣ š t ṭ u w y z ẓ
@@ -2206,16 +2549,16 @@ $PROC$ LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
 -- for the moment do nothing
 -- todo: umaybe sort by unicode code or suppress diacritics ...
 CREATE OR REPLACE FUNCTION vie_sort( varchar ) 
- RETURNS varchar AS '
+ RETURNS varchar AS $PROC$ 
 
  DECLARE
   tmp		char;
-  result	varchar := '''';
+  result	varchar := '';
   length	integer;
  BEGIN
   return( $1 );
  END;
-' LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
+$PROC$ LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
 
 
 
@@ -2223,63 +2566,63 @@ CREATE OR REPLACE FUNCTION vie_sort( varchar )
 -- for the moment do nothing
 -- todo: sort by unicode code or reading...
 CREATE OR REPLACE FUNCTION zho_sort( varchar ) 
- RETURNS varchar AS '
+ RETURNS varchar AS $PROC$ 
 
  DECLARE
   tmp		char;
-  result	varchar := '''';
+  result	varchar := '';
   length	integer;
  BEGIN
   return( $1 );
  END;
-' LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
+$PROC$ LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
 
 -- multilingual sort
 CREATE OR REPLACE FUNCTION multilingual_sort( varchar,varchar ) 
- RETURNS varchar AS '
+ RETURNS varchar AS $PROC$ 
 
  DECLARE
   lang	varchar;
   word	varchar;
-  result	varchar := '''';
+  result	varchar := '';
  BEGIN
   lang := $1;
   word := $2;
-   IF lang = ''bam'' THEN
+   IF lang = 'bam' THEN
     result:= bam_sort(word);
-  ELSIF lang = ''deu'' THEN
+  ELSIF lang = 'deu' THEN
     result:= deu_sort(word);
-  ELSIF lang = ''dje'' THEN
+  ELSIF lang = 'dje' THEN
     result:= dje_sort(word);
-  ELSIF lang = ''eng'' THEN
+  ELSIF lang = 'eng' THEN
     result:= eng_sort(word);
-  ELSIF lang = ''est'' THEN
+  ELSIF lang = 'est' THEN
     result:= est_sort(word);
-  ELSIF lang = ''fra'' THEN
+  ELSIF lang = 'fra' THEN
     result:= fra_sort(word);
-  ELSIF lang = ''ful'' THEN
+  ELSIF lang = 'ful' THEN
     result:= ful_sort(word);
-  ELSIF lang = ''hau'' THEN
+  ELSIF lang = 'hau' THEN
     result:= hau_sort(word);
-  ELSIF lang = ''ita'' THEN
+  ELSIF lang = 'ita' THEN
     result:= ita_sort(word);
-  ELSIF lang = ''jpn'' THEN
+  ELSIF lang = 'jpn' THEN
     result:= jpn_sort(word);
-  ELSIF lang = ''kau'' THEN
+  ELSIF lang = 'kau' THEN
     result:= kau_sort(word);
-  ELSIF lang = ''kor'' THEN
+  ELSIF lang = 'kor' THEN
     result:= kor_sort(word);
- ELSIF lang = ''msa'' THEN
+ ELSIF lang = 'msa' THEN
     result:= msa_sort(word);
- ELSIF lang = ''slv'' THEN
+ ELSIF lang = 'slv' THEN
     result:= slv_sort(word);
- ELSIF lang = ''tha'' THEN
+ ELSIF lang = 'tha' THEN
     result:= tha_sort(word);
- ELSIF lang = ''tmh'' THEN
+ ELSIF lang = 'tmh' THEN
     result:= tmh_sort(word);
- ELSIF lang = ''vie'' THEN
+ ELSIF lang = 'vie' THEN
     result:= vie_sort(word);
- ELSIF lang = ''zho'' THEN
+ ELSIF lang = 'zho' THEN
     result:= zho_sort(word);
  ELSE 
     result:= word;
@@ -2287,31 +2630,29 @@ CREATE OR REPLACE FUNCTION multilingual_sort( varchar,varchar )
   result := lang || result;
   return( result );
  END;
-' LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
+$PROC$ LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
 
 CREATE OR REPLACE FUNCTION complete_numbers( varchar ) 
- RETURNS varchar AS '
+ RETURNS varchar AS $PROC$
 
  DECLARE
   first	char;
-  zeros	varchar := ''000000000000000000000000'';
-  result	varchar := '''';
+  zeros	varchar := '000000000000000000000000';
+  result	varchar := '';
   lvar		integer;
   lempty	integer;
  BEGIN
  	lvar := char_length($1);
  	first := SUBSTR( $1, 1, 1 );
  	lempty := char_length(zeros);
-	IF first >= ''0'' AND first <= ''9'' THEN
+	IF first >= '0' AND first <= '9' THEN
 		result := $1;
 		IF lvar < lempty THEN
     			result:= SUBSTR( zeros, 1, lempty-lvar ) || result;
     		END IF;
   	ELSE
-    		result:= '''';
+    		result:= '';
   	END IF; 
   	return( result );
  END;
-' LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
-
-
+$PROC$ LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
