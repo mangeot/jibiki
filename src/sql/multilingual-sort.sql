@@ -1682,6 +1682,8 @@ CREATE OR REPLACE FUNCTION jpn_sort( varchar )
     result:= result || '05';
   ELSIF tmp = 'ォ' THEN
     result:= result || '05';
+  ELSIF tmp = 'ー' THEN
+    result:= result || '05';
   ELSIF tmp = 'か' THEN
     result:= result || '06';
   ELSIF tmp = 'カ' THEN
@@ -1969,8 +1971,6 @@ CREATE OR REPLACE FUNCTION jpn_sort( varchar )
   ELSIF tmp = 'っ' THEN
     result:= result;
   ELSIF tmp = 'ッ' THEN
-    result:= result;
-  ELSIF tmp = 'ー' THEN
     result:= result;
   ELSE
     result:= result || tmp;
