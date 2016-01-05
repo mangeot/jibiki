@@ -175,42 +175,26 @@ public class ManageDatabase implements Query {
         }
     
     public static void createIndexTable(String indexTable) throws  PapillonBusinessException {
-            executeSql(createTableSql + indexTable + createIndexTableParamsSql);
+        String createIndexSql = createTableSql + indexTable + createIndexTableParamsSql;
+        String createKeyIndex = createIndexSql + indexTable + "_key_idx" + " ON " + indexTable + " ( key,lang,value );";
+        String createEntryidIndex = createIndexSql + indexTable + "_entryid_idx" + " ON " + indexTable + " ( entryid );";
+        String createMsortIndex = createIndexSql + indexTable + "_msort_idx" + " ON " + indexTable + " ( msort );";
+            executeSql(createIndexSql + createKeyIndex + createEntryidIndex + createMsortIndex);
         }
     
     public static void createLinkTable(String linkTable) throws  PapillonBusinessException {
-        executeSql(createTableSql + linkTable + createLinkTableParamsSql);
-    }
-    
-    public static void createIndexForTable(String table, String name, String field1, String field2, String field3) throws  PapillonBusinessException {
-            String query = createIndexSql + table + "_" + name  + "_idx" + " ON " + table + " ( " + field1 + "," + field2 + "," + field3 + " )";
-            executeSql(query);
-        }
-    
-    public static void createIndexForTable(String table, String name) throws PapillonBusinessException {
-		String query = createIndexSql + table + "_" + name  + "_idx" + " ON " + table + " ( " + name + " )";
-		executeSql(query);
-	}
-    
-    public static void createIndexForLinkTable(String table, String name, String field1, String field2, String field3) throws  PapillonBusinessException {
-        String query = createIndexSql + table + "_" + name  + "_idx" + " ON " + table + " ( " + field1 + "," + field2 + "," + field3 + " )";
-        executeSql(query);
-    }
+        String createLinkSql = createTableSql + linkTable + createLinkTableParamsSql;
+        String createEntryidIndex = createIndexSql + linkTable + "_entryid_idx" + " ON " + linkTable + " ( entryid );";
+        String createNameIndex = createIndexSql + linkTable + "_name_idx" + " ON " + linkTable + " ( name );";
+        String createLangIndex = createIndexSql + linkTable + "_lang_idx" + " ON " + linkTable + " ( lang );";
+        String createVolumeIndex = createIndexSql + linkTable + "_volume_idx" + " ON " + linkTable + " ( volume );";
+        String createTypeIndex = createIndexSql + linkTable + "_type_idx" + " ON " + linkTable + " ( type );";
+        String createWeightIndex = createIndexSql + linkTable + "_weight_idx" + " ON " + linkTable + " ( weight );";
+        String createLabelIndex = createIndexSql + linkTable + "_label_idx" + " ON " + linkTable + " ( label );";
 
-    public static void createIndexForLinkTable(String table, String name) throws PapillonBusinessException {
-    	String query = createIndexSql + table + "_" + name  + "_idx" + " ON " + table + " ( " + name + " )";
-    	executeSql(query);
+        executeSql(createLinkSql + createEntryidIndex + createNameIndex + createLangIndex + createVolumeIndex + createTypeIndex + createWeightIndex + createLabelIndex);
     }
     
-    public static void createSortIndexForVolumeTable(String table, String lang) throws PapillonBusinessException {
-		String query = createIndexSql + table + "_msort_idx" + " ON " + table + " (multilingual_sort( '" + lang + "',headword ))";
-		executeSql(query);
-	}
-
-    public static void dropIndexForTable(String table, String name) throws  PapillonBusinessException {
-            String query = dropIndexSql + table + "_" + name + "_idx";
-            executeSql(query);
-        }
     
     public static void truncateIndexForTable(String table, String name) throws  PapillonBusinessException {
         String query = truncateTableSql + table + "_" + name + "_idx";
@@ -230,8 +214,6 @@ public class ManageDatabase implements Query {
     
     public static void dropTable(String table) throws  PapillonBusinessException {
         executeSql(dropTableSql + table);
-
-       // 
 
         //fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Table: " + table + " dropped");
         

@@ -632,22 +632,9 @@ public class IndexFactory {
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 			try {
 				ManageDatabase.createIndexTable(volume.getIndexDbname());
-				createIndexForTable(volume.getIndexDbname());
 			}
 			catch (Exception e) {
 				throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in createIndexTable " + volume.getIndexDbname() + " for volume: " + volume.getName(), e);
-			}
-		}
-	
-	protected static void createIndexForTable(String table)
-		throws fr.imag.clips.papillon.business.PapillonBusinessException {
-			try {
-				ManageDatabase.createIndexForTable(table,KEY_FIELD, KEY_FIELD, LANG_FIELD, VALUE_FIELD);
-				ManageDatabase.createIndexForTable(table,ENTRYID_FIELD);
-				ManageDatabase.createIndexForTable(table,MSORT_FIELD);
-			}
-			catch (Exception e) {
-				throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in createIndexForTable: " + table, e);
 			}
 		}
 	

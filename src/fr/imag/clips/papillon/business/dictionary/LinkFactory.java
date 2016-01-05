@@ -408,29 +408,12 @@ public class LinkFactory {
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 			try {
 				ManageDatabase.createLinkTable(volume.getLinkDbname());
-				createIndexForTable(volume.getLinkDbname());
 			}
 			catch (Exception e) {
 				throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in createLinkTable " + volume.getLinkDbname() + " for volume: " + volume.getName(), e);
 			}
 		}
 	
-	protected static void createIndexForTable(String table)
-		throws fr.imag.clips.papillon.business.PapillonBusinessException {
-			try {
-				ManageDatabase.createIndexForTable(table,OBJECTID_FIELD);
-				ManageDatabase.createIndexForTable(table,ENTRYID_FIELD);
-				ManageDatabase.createIndexForTable(table,NAME_FIELD);
-				ManageDatabase.createIndexForTable(table,LANG_FIELD);
-				ManageDatabase.createIndexForTable(table,VOLUME_FIELD);
-				ManageDatabase.createIndexForTable(table,TYPE_FIELD);
-				ManageDatabase.createIndexForTable(table,WEIGHT_FIELD);
-				ManageDatabase.createIndexForTable(table,LABEL_FIELD);				
-			}
-			catch (Exception e) {
-				throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in createLinkForTable: " + table, e);
-			}
-		}
 	
 	public static void dropLinkTable(Volume theVolume) 
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
