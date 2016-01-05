@@ -56,7 +56,6 @@ public class ManageDatabase implements Query {
  //   protected static final String truncateTableSql = "TRUNCATE TABLE ";
     protected static final String truncateTableSql = "DELETE FROM ";
     protected static final String dropTableSql = "DROP TABLE ";
-    protected static final String dropIndexSql = "DROP INDEX ";
    
 	
 	protected static final String DatabaseUserString = "DatabaseManager.DB.papillon.Connection.User";
@@ -135,7 +134,7 @@ public class ManageDatabase implements Query {
         </table>*/ 
     
     
-    protected static String createVolumeTableParamsSql = " (" +
+    protected static final String createVolumeTableParamsSql = " (" +
         "headword TEXT DEFAULT '\'''\''    ," +
 		//"dom BYTEA NOT NULL   ," +
 		//"htmldom BYTEA NOT NULL   ," +
@@ -144,7 +143,7 @@ public class ManageDatabase implements Query {
         "ObjectId DECIMAL(19,0) NOT NULL PRIMARY KEY," +
         "ObjectVersion INTEGER NOT NULL);";
     
-    protected static String createIndexTableParamsSql = " (" +
+    protected static final String createIndexTableParamsSql = " (" +
 		"key VARCHAR(255) DEFAULT '\'''\''    ," +
 		"lang VARCHAR(3) DEFAULT '\'''\''    ," +
 		"value VARCHAR(255) DEFAULT '\'''\''    ," +
@@ -154,7 +153,7 @@ public class ManageDatabase implements Query {
         "ObjectId DECIMAL(19,0) NOT NULL PRIMARY KEY," +
         "ObjectVersion INTEGER NOT NULL);";
     
-    protected static String createLinkTableParamsSql = "(" + 
+    protected static final String createLinkTableParamsSql = "(" +
 		"targetId VARCHAR(255) DEFAULT '\'''\''    ,"+
 		"elementId VARCHAR(255) DEFAULT '\'''\''    ,"+
 		"name VARCHAR(255) DEFAULT '\'''\''    ," +
@@ -175,15 +174,15 @@ public class ManageDatabase implements Query {
         }
     
     public static void createIndexTable(String indexTable) throws  PapillonBusinessException {
-        String createIndexSql = createTableSql + indexTable + createIndexTableParamsSql;
+        String createIndexTable = createTableSql + indexTable + createIndexTableParamsSql;
         String createKeyIndex = createIndexSql + indexTable + "_key_idx" + " ON " + indexTable + " ( key,lang,value );";
         String createEntryidIndex = createIndexSql + indexTable + "_entryid_idx" + " ON " + indexTable + " ( entryid );";
         String createMsortIndex = createIndexSql + indexTable + "_msort_idx" + " ON " + indexTable + " ( msort );";
-            executeSql(createIndexSql + createKeyIndex + createEntryidIndex + createMsortIndex);
+            executeSql(createIndexTable + createKeyIndex + createEntryidIndex + createMsortIndex);
         }
     
     public static void createLinkTable(String linkTable) throws  PapillonBusinessException {
-        String createLinkSql = createTableSql + linkTable + createLinkTableParamsSql;
+        String createLinkTable = createTableSql + linkTable + createLinkTableParamsSql;
         String createEntryidIndex = createIndexSql + linkTable + "_entryid_idx" + " ON " + linkTable + " ( entryid );";
         String createNameIndex = createIndexSql + linkTable + "_name_idx" + " ON " + linkTable + " ( name );";
         String createLangIndex = createIndexSql + linkTable + "_lang_idx" + " ON " + linkTable + " ( lang );";
@@ -192,7 +191,7 @@ public class ManageDatabase implements Query {
         String createWeightIndex = createIndexSql + linkTable + "_weight_idx" + " ON " + linkTable + " ( weight );";
         String createLabelIndex = createIndexSql + linkTable + "_label_idx" + " ON " + linkTable + " ( label );";
 
-        executeSql(createLinkSql + createEntryidIndex + createNameIndex + createLangIndex + createVolumeIndex + createTypeIndex + createWeightIndex + createLabelIndex);
+        executeSql(createLinkTable + createEntryidIndex + createNameIndex + createLangIndex + createVolumeIndex + createTypeIndex + createWeightIndex + createLabelIndex);
     }
     
     
