@@ -186,7 +186,7 @@ public class ManageDatabase implements Query {
         String createEntryidIndex = createIndexSql + linkTable + "_entryid_idx" + " ON " + linkTable + " ( entryid );";
         String createNameIndex = createIndexSql + linkTable + "_name_idx" + " ON " + linkTable + " ( name );";
         String createLangIndex = createIndexSql + linkTable + "_lang_idx" + " ON " + linkTable + " ( lang );";
-        String createVolumeIndex = createIndexSql + linkTable + "_volume_idx" + " ON " + linkTable + " ( volume );";
+        String createVolumeIndex = createIndexSql + linkTable + "_volumetarget_idx" + " ON " + linkTable + " ( volumetarget );";
         String createTypeIndex = createIndexSql + linkTable + "_type_idx" + " ON " + linkTable + " ( type );";
         String createWeightIndex = createIndexSql + linkTable + "_weight_idx" + " ON " + linkTable + " ( weight );";
         String createLabelIndex = createIndexSql + linkTable + "_label_idx" + " ON " + linkTable + " ( label );";
