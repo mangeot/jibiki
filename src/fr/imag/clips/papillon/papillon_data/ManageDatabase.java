@@ -142,7 +142,7 @@ public class ManageDatabase implements Query {
         "xmlCode TEXT DEFAULT '\'''\'' NOT NULL   ," +
         
         "ObjectId DECIMAL(19,0) NOT NULL PRIMARY KEY," +
-        "ObjectVersion INTEGER NOT NULL)";
+        "ObjectVersion INTEGER NOT NULL);";
     
     protected static String createIndexTableParamsSql = " (" +
 		"key VARCHAR(255) DEFAULT '\'''\''    ," +
@@ -152,7 +152,7 @@ public class ManageDatabase implements Query {
         "msort VARCHAR(255) DEFAULT '\'''\''    ," +
         
         "ObjectId DECIMAL(19,0) NOT NULL PRIMARY KEY," +
-        "ObjectVersion INTEGER NOT NULL)";
+        "ObjectVersion INTEGER NOT NULL);";
     
     protected static String createLinkTableParamsSql = "(" + 
 		"targetId VARCHAR(255) DEFAULT '\'''\''    ,"+
@@ -166,10 +166,12 @@ public class ManageDatabase implements Query {
   		"weight DECIMAL(3,2) NOT NULL    ," +  
    		
         "ObjectId DECIMAL(19,0) NOT NULL PRIMARY KEY," +
-        "ObjectVersion INTEGER NOT NULL)";
+        "ObjectVersion INTEGER NOT NULL);";
     
-    public static void createVolumeTable(String table) throws  PapillonBusinessException {
-            executeSql(createTableSql + table + createVolumeTableParamsSql);
+    public static void createVolumeTable(String table, String lang) throws  PapillonBusinessException {
+        String createVolumeQuery = createTableSql + table + createVolumeTableParamsSql;
+        String sortIndexQuery = createIndexSql + table + "_msort_idx" + " ON " + table + " (multilingual_sort( '" + lang + "',headword ));";
+            executeSql(createVolumeQuery + sortIndexQuery);
         }
     
     public static void createIndexTable(String indexTable) throws  PapillonBusinessException {

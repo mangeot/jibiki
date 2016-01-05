@@ -1769,8 +1769,7 @@ throws fr.imag.clips.papillon.business.PapillonBusinessException {
 	try {
 		java.util.Vector TableNames = ManageDatabase.getTableNames();
 		if (!TableNames.contains(volume.getDbname())) {
-			ManageDatabase.createVolumeTable(volume.getDbname());
-			ManageDatabase.createSortIndexForVolumeTable(volume.getDbname(), volume.getSourceLanguage());
+			ManageDatabase.createVolumeTable(volume.getDbname(), volume.getSourceLanguage());
 		}
 		if (!TableNames.contains(volume.getIndexDbname())) {
 			IndexFactory.createIndexTable(volume);
