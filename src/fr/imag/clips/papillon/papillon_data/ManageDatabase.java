@@ -231,7 +231,7 @@ public class ManageDatabase implements Query {
     
     public static void dropVolumeTables(String volumeTable, String indexTable, String linkTable) throws  PapillonBusinessException {
         
-        executeSql(dropTableIfExistsSql + volumeTable + dropTableIfExistsSql + indexTable + dropTableIfExistsSql + linkTable);
+        executeSql(dropTableIfExistsSql + volumeTable + ";" + dropTableIfExistsSql + indexTable + ";" +dropTableIfExistsSql + linkTable + ";");
         
         //fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Table: " + table + " dropped");
         
