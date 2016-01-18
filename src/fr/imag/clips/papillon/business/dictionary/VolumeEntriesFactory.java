@@ -1767,18 +1767,7 @@ public static void createVolumeTables(Volume volume)
 throws fr.imag.clips.papillon.business.PapillonBusinessException {
 	/* Added a sorted index on headword field necessary for order by statements */
 	try {
-		java.util.Vector TableNames = ManageDatabase.getTableNames();
-		if (!TableNames.contains(volume.getDbname())) {
-			ManageDatabase.createVolumeTable(volume.getDbname(), volume.getSourceLanguage());
-		}
-		if (!TableNames.contains(volume.getIndexDbname())) {
-			IndexFactory.createIndexTable(volume);
-		}
-		
-		 if (!TableNames.contains(volume.getLinkDbname())) {
-			LinkFactory.createLinkTable(volume);
-		}
-		 
+        ManageDatabase.createVolumeTables(volume.getDbname(), volume.getSourceLanguage(), volume.getIndexDbname(), volume.getLinkDbname());
 	}
 	catch (Exception e) {
 		throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in createVolumeTables with volume: " + volume.getName(), e);
@@ -1787,25 +1776,11 @@ throws fr.imag.clips.papillon.business.PapillonBusinessException {
 }
 
 
-
 public static void dropVolumeTables(Volume volume)
 throws fr.imag.clips.papillon.business.PapillonBusinessException {
 	try {
-		//JOptionPane.showMessageDialog(null,"alert");
-		java.util.Vector TableNames = ManageDatabase.getTableNames();
+		ManageDatabase.dropVolumeTables(volume.getDbname(), volume.getIndexDbname(), volume.getLinkDbname());
 		//truncateVolumeTables(volume);
-		
-		if (TableNames.contains(volume.getIndexDbname())) {
-			IndexFactory.dropIndexTable(volume.getIndexDbname());
-		//	JOptionPane.showMessageDialog(null,volume.getIndexDbname());
-		}
-		if (TableNames.contains(volume.getLinkDbname())) {
-			LinkFactory.dropLinkTable(volume.getLinkDbname());
-		}
-		if (TableNames.contains(volume.getDbname())) {			
-			ManageDatabase.dropTable(volume.getDbname());
-		//	JOptionPane.showMessageDialog(null,"1");
-		}
 	}
 	catch (Exception e) {
 		throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in dropVolumeTables with volume: " + volume.getName(), e);

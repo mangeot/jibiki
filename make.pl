@@ -2,7 +2,8 @@
 
 use warnings;
 use strict;
-`../toolsforjibiki/enhydra5.1/bin/ant quick`;
+#`../toolsforjibiki/enhydra5.1/bin/ant quick`;
+`../../../toolsforjibiki/enhydra5.1/bin/ant quick`;
 
 local $/ = undef;
 open FILE, "output/conf/Papillon.conf" or die "Couldn't open file: $!";

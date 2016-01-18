@@ -616,8 +616,6 @@ public class IndexFactory {
             
 		}
 	
-	
-	
 	public static void emptyIndex(String table)
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 			try {
@@ -627,33 +625,7 @@ public class IndexFactory {
 				throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in emptyIndex with table: " + table, e);
 			}
 		}
-	
-	public static void createIndexTable(Volume volume)
-		throws fr.imag.clips.papillon.business.PapillonBusinessException {
-			try {
-				ManageDatabase.createIndexTable(volume.getIndexDbname());
-			}
-			catch (Exception e) {
-				throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in createIndexTable " + volume.getIndexDbname() + " for volume: " + volume.getName(), e);
-			}
-		}
-	
-	public static void dropIndexTable(Volume theVolume) 
-		throws fr.imag.clips.papillon.business.PapillonBusinessException {
-			dropIndexTable(theVolume.getIndexDbname());
-		}
-	
-	public static void dropIndexTable(String table)
-		throws fr.imag.clips.papillon.business.PapillonBusinessException {
-			try {
-				
-				ManageDatabase.dropTable(table);
-			}
-			catch (Exception e) {
-				throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in dropIndexTable: " + table, e);
-			}
-		}
-	
+		
 	public static void truncateIndexTable(Volume volume) 
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 			truncateIndexTable(volume.getIndexDbname());

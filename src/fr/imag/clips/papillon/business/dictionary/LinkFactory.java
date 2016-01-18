@@ -403,33 +403,7 @@ public class LinkFactory {
 				throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in emptyLink with table: " + table, e);
 			}
 		}
-	
-	public static void createLinkTable(Volume volume)
-		throws fr.imag.clips.papillon.business.PapillonBusinessException {
-			try {
-				ManageDatabase.createLinkTable(volume.getLinkDbname());
-			}
-			catch (Exception e) {
-				throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in createLinkTable " + volume.getLinkDbname() + " for volume: " + volume.getName(), e);
-			}
-		}
-	
-	
-	public static void dropLinkTable(Volume theVolume) 
-		throws fr.imag.clips.papillon.business.PapillonBusinessException {
-			dropLinkTable(theVolume.getLinkDbname());
-		}
-	
-	public static void dropLinkTable(String table)
-		throws fr.imag.clips.papillon.business.PapillonBusinessException {
-			try {
-				ManageDatabase.dropTable(table);
-			}
-			catch (Exception e) {
-				throw new fr.imag.clips.papillon.business.PapillonBusinessException ("Exception in dropLinkTable: " + table, e);
-			}
-		}
-	
+		
 	public static void truncateLinkTable(Volume volume) 
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 			truncateLinkTable(volume.getLinkDbname());

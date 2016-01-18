@@ -56,6 +56,7 @@ public class ManageDatabase implements Query {
  //   protected static final String truncateTableSql = "TRUNCATE TABLE ";
     protected static final String truncateTableSql = "DELETE FROM ";
     protected static final String dropTableSql = "DROP TABLE ";
+    protected static final String dropTableIfExistsSql = "DROP TABLE IF EXISTS ";
    
 	
 	protected static final String DatabaseUserString = "DatabaseManager.DB.papillon.Connection.User";
@@ -167,22 +168,22 @@ public class ManageDatabase implements Query {
         "ObjectId DECIMAL(19,0) NOT NULL PRIMARY KEY," +
         "ObjectVersion INTEGER NOT NULL);";
     
-    public static void createVolumeTable(String table, String lang) throws  PapillonBusinessException {
+    private static String createVolumeTableSql(String table, String lang) throws  PapillonBusinessException {
         String createVolumeQuery = createTableSql + table + createVolumeTableParamsSql;
         String sortIndexQuery = createIndexSql + table + "_msort_idx" + " ON " + table + " (multilingual_sort( '" + lang + "',headword ));";
-            executeSql(createVolumeQuery + sortIndexQuery);
+            return  createVolumeQuery + sortIndexQuery;
         }
     
-    public static void createIndexTable(String indexTable) throws  PapillonBusinessException {
+    private static String createIndexTableSql(String indexTable) throws  PapillonBusinessException {
         String createIndexTable = createTableSql + indexTable + createIndexTableParamsSql;
         String createKeyIndex = createIndexSql + indexTable + "_key_idx" + " ON " + indexTable + " ( key,lang,value );";
         String createEntryidIndex = createIndexSql + indexTable + "_entryid_idx" + " ON " + indexTable + " ( entryid );";
         String createMsortIndex = createIndexSql + indexTable + "_msort_idx" + " ON " + indexTable + " ( msort );";
-            executeSql(createIndexTable + createKeyIndex + createEntryidIndex + createMsortIndex);
+            return  createIndexTable + createKeyIndex + createEntryidIndex + createMsortIndex;
         }
     
-    public static void createLinkTable(String linkTable) throws  PapillonBusinessException {
-        String createLinkTable = createTableSql + linkTable + createLinkTableParamsSql;
+    private static String createLinkTableSql(String linkTable) throws  PapillonBusinessException {
+       String createLinkTable = createTableSql + linkTable + createLinkTableParamsSql;
         String createEntryidIndex = createIndexSql + linkTable + "_entryid_idx" + " ON " + linkTable + " ( entryid );";
         String createNameIndex = createIndexSql + linkTable + "_name_idx" + " ON " + linkTable + " ( name );";
         String createLangIndex = createIndexSql + linkTable + "_lang_idx" + " ON " + linkTable + " ( lang );";
@@ -191,8 +192,25 @@ public class ManageDatabase implements Query {
         String createWeightIndex = createIndexSql + linkTable + "_weight_idx" + " ON " + linkTable + " ( weight );";
         String createLabelIndex = createIndexSql + linkTable + "_label_idx" + " ON " + linkTable + " ( label );";
 
-        executeSql(createLinkTable + createEntryidIndex + createNameIndex + createLangIndex + createVolumeIndex + createTypeIndex + createWeightIndex + createLabelIndex);
+        return  createLinkTable + createEntryidIndex + createNameIndex + createLangIndex + createVolumeIndex + createTypeIndex + createWeightIndex + createLabelIndex;
     }
+   
+    public static void createVolumeTables(String volumeTable, String lang, String indexTable, String linkTable)  throws  PapillonBusinessException {
+        java.util.Vector TableNames = ManageDatabase.getTableNames();
+        String createTablesSql = "";
+        if (!TableNames.contains(volumeTable)) {
+            createTablesSql += createVolumeTableSql(volumeTable, lang);
+        }
+        if (!TableNames.contains(indexTable)) {
+            createTablesSql += createIndexTableSql(indexTable);
+        }
+        if (!TableNames.contains(linkTable)) {
+            createTablesSql += createLinkTableSql(linkTable);
+        }
+        executeSql(createTablesSql);
+    }
+    
+
     
     
     public static void truncateIndexForTable(String table, String name) throws  PapillonBusinessException {
@@ -211,9 +229,10 @@ public class ManageDatabase implements Query {
              }
         }
     
-    public static void dropTable(String table) throws  PapillonBusinessException {
-        executeSql(dropTableSql + table);
-
+    public static void dropVolumeTables(String volumeTable, String indexTable, String linkTable) throws  PapillonBusinessException {
+        
+        executeSql(dropTableIfExistsSql + volumeTable + dropTableIfExistsSql + indexTable + dropTableIfExistsSql + linkTable);
+        
         //fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Table: " + table + " dropped");
         
     }
