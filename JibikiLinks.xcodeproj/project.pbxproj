@@ -1450,6 +1450,9 @@
 		A3C894AB171EBFF300A9651D /* ViewQueryResult.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ViewQueryResult.xhtml; sourceTree = "<group>"; };
 		A3CFEC641844F962008F6C62 /* HelpContent.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = HelpContent.xhtml; sourceTree = "<group>"; };
 		A3DD4FAF12933C6C0099E764 /* XslTransformation.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = XslTransformation.java; sourceTree = "<group>"; };
+		A3DDD0E61C4D2C6D0073EC1E /* LoginUserTmpl.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = LoginUserTmpl.xhtml; sourceTree = "<group>"; };
+		A3DDD0E71C4D2CAC0073EC1E /* LoginUserTmpl.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = LoginUserTmpl.xhtml; sourceTree = "<group>"; };
+		A3DDD0E81C4D2D0E0073EC1E /* LoginUserTmpl.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = LoginUserTmpl.xhtml; sourceTree = "<group>"; };
 		A3E736491BAC607C006FFFB6 /* AdminUsersTmpl.xmlc */ = {isa = PBXFileReference; lastKnownFileType = text; path = AdminUsersTmpl.xmlc; sourceTree = "<group>"; };
 		A3E7364A1BAC608C006FFFB6 /* AdminUsersTmpl.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = AdminUsersTmpl.xhtml; sourceTree = "<group>"; };
 		A3E7364B1BAC60B7006FFFB6 /* AdminUsersTmpl.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = AdminUsersTmpl.xhtml; sourceTree = "<group>"; };
@@ -3511,6 +3514,7 @@
 				A37C02F8128C62DB0047A982 /* Layout.xmlc */,
 				A37C02F9128C62DB0047A982 /* LexiesManagement.xhtml */,
 				A37C02FA128C62DB0047A982 /* LexiesManagement.xmlc */,
+				A3DDD0E81C4D2D0E0073EC1E /* LoginUserTmpl.xhtml */,
 				A37C02FB128C62DB0047A982 /* options.xmlc */,
 				A37C02FC128C62DB0047A982 /* QueryMenu.xhtml */,
 				A37C02FD128C62DB0047A982 /* QueryMenu.xmlc */,
@@ -3594,6 +3598,7 @@
 				A37C031D128C62DB0047A982 /* LinkerLayout.xmlc */,
 				A37C031E128C62DB0047A982 /* LinkerResultList.xhtml */,
 				A37C031F128C62DB0047A982 /* LinkerSearchForm.xhtml */,
+				A3DDD0E61C4D2C6D0073EC1E /* LoginUserTmpl.xhtml */,
 				A37C0321128C62DB0047A982 /* options.xmlc */,
 				A3B4F55F1A3FD6D100FF2EDA /* ProjectTmpl.xhtml */,
 				A37C0323128C62DB0047A982 /* QueryMenu.xhtml */,
@@ -3807,6 +3812,7 @@
 				A3EC814A163FB75F00715BB7 /* LinkerResultList.xmlc */,
 				A3EC814B163FB75F00715BB7 /* LinkerSearchForm.xhtml */,
 				A3EC814C163FB75F00715BB7 /* LinkerSearchForm.xmlc */,
+				A3DDD0E71C4D2CAC0073EC1E /* LoginUserTmpl.xhtml */,
 				A3EC814D163FB75F00715BB7 /* options.xmlc */,
 				A3EC814E163FB75F00715BB7 /* QueryMenu.xhtml */,
 				A3EC814F163FB75F00715BB7 /* QueryMenu.xmlc */,
