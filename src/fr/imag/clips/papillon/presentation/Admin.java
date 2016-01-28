@@ -114,6 +114,7 @@ package fr.imag.clips.papillon.presentation;
 // Enhydra SuperServlet imports
 import com.lutris.appserver.server.httpPresentation.HttpPresentation;
 import com.lutris.appserver.server.httpPresentation.HttpPresentationRequest;
+import com.lutris.appserver.server.httpPresentation.HttpPresentationResponse;
 import com.lutris.appserver.server.httpPresentation.HttpPresentationException;
 
 import org.enhydra.xml.xhtml.dom.*;
@@ -122,6 +123,8 @@ import org.w3c.dom.Node;
 import fr.imag.clips.papillon.business.message.MessageDBLoader;
 import fr.imag.clips.papillon.business.dictionary.Volume;
 import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
+import fr.imag.clips.papillon.business.PapillonBusinessException;
+
 
 // Standard imports
 import java.io.IOException;
@@ -139,11 +142,16 @@ public class Admin extends PapillonBasePO {
 	protected String selectedVolume = null;
 
     protected boolean loggedInUserRequired() {
-        return false;
+        return true;
     }
 
     protected boolean userMayUseThisPO() {
-        return true;
+        try {
+            return this.getUser().isAdmin();
+        } catch (PapillonBusinessException ex) {
+            this.getSessionData().writeUserMessage("Error getting the authorisation to use this PO.");
+        }
+        return false;
     }
     
     protected  int getCurrentSection() {
@@ -226,6 +234,10 @@ public class Admin extends PapillonBasePO {
             } else if (null != myGetParameter(content.NAME_NormalizeHeadword)) {
                 fr.imag.clips.papillon.business.dictionary.VolumesFactory.normalizeHeadwords();
 
+            }
+            else {
+                String errorMessage = "Error: Wrong arguments";
+                this.getComms().response.setStatus(HttpPresentationResponse.SC_BAD_REQUEST,errorMessage);
             }
         }
 		

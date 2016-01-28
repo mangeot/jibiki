@@ -99,7 +99,24 @@ public class Register extends PapillonBasePO {
                 password = myGetParameter(content.NAME_NPassword);
                 password2 = myGetParameter(content.NAME_NPassword2);
                 email = myGetParameter(content.NAME_NEmail);
-               
+                
+                User Existe=UsersFactory.findUserByName(name);
+                if (!Existe.isEmpty()) {
+                    userMessage = "User " + name + " already in the database";
+                    this.getComms().response.setStatus(409,userMessage);
+               }
+                else {
+                    Existe=UsersFactory.findUserByLogin(login);
+                    if (!Existe.isEmpty()) {
+                        userMessage = "Login " + login + " already in the database";
+                        this.getComms().response.setStatus(409,userMessage);
+                   }
+                    else {
+                        if (!password.equals(password2)) {
+                            userMessage = "Passwords do not match";
+                            this.getComms().response.setStatus(HttpPresentationResponse.SC_BAD_REQUEST,userMessage);
+                        }
+                        else {
                 UserAnswer myUserAnswer = UsersFactory.createUniqueUser(name, login, password, password2, email, this.getUserPreferredLanguage()); 
                 
                 userMessage = myUserAnswer.getMessage();
@@ -109,10 +126,20 @@ public class Register extends PapillonBasePO {
                     savePreferences();
                     throw new ClientPageRedirectException(Dest);
                 }
+                else {
+                    this.getComms().response.setStatus(HttpPresentationResponse.SC_BAD_REQUEST,userMessage);
+                }
+                        }
+                    }
+                }
                 
                 this.getSessionData().writeUserMessage(userMessage);
                 PapillonLogger.writeDebugMsg(userMessage);
-             }  
+            }
+            else {
+                String errorMessage = "Error: Wrong arguments";
+                this.getComms().response.setStatus(HttpPresentationResponse.SC_BAD_REQUEST,errorMessage);
+            }
         }
     
     HTMLInputElement DestElement = (HTMLInputElement) content.getElementReNuser();

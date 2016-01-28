@@ -73,6 +73,7 @@ import com.lutris.appserver.server.httpPresentation.HttpUtil;
 
 import com.lutris.appserver.server.httpPresentation.HttpPresentation;
 import com.lutris.appserver.server.httpPresentation.HttpPresentationRequest;
+import com.lutris.appserver.server.httpPresentation.HttpPresentationResponse;
 import com.lutris.appserver.server.httpPresentation.HttpPresentationException;
 import com.lutris.appserver.server.httpPresentation.HttpPresentationInputStream;
 //import org.enhydra.xml.xmlc.XMLObject;
@@ -202,7 +203,8 @@ public class AdminXsl extends PapillonBasePO {
                 }
                 else {
                     userMessage = "XslSheet " + Nom + " not uploaded, please check the URL...";
-                }
+                    this.getComms().response.setStatus(HttpPresentationResponse.SC_BAD_REQUEST,userMessage);
+               }
                 
                 
             // Remove xsl sheet    
@@ -284,6 +286,10 @@ public class AdminXsl extends PapillonBasePO {
                 XslSheet theSheet = XslSheetFactory.getXslSheetByHandle(handle);
                 //adding an XML file
                 addXml(content, theSheet.getXmlCode());
+            }
+            else {
+                String errorMessage = "Error: Wrong arguments";
+                this.getComms().response.setStatus(HttpPresentationResponse.SC_BAD_REQUEST,errorMessage);
             }
             
             

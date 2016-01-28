@@ -83,6 +83,7 @@ package fr.imag.clips.papillon.presentation;
 // Enhydra SuperServlet imports
 import com.lutris.appserver.server.httpPresentation.HttpPresentation;
 import com.lutris.appserver.server.httpPresentation.HttpPresentationRequest;
+import com.lutris.appserver.server.httpPresentation.HttpPresentationResponse;
 import com.lutris.appserver.server.httpPresentation.HttpPresentationException;
 //import org.enhydra.xml.xmlc.XMLObject;
 import org.w3c.dom.html.*;
@@ -241,6 +242,9 @@ public class AdminDictionaries extends PapillonBasePO {
                 dict.deleteAll();
                 Papillon.initializeAllCaches();
                 userMessage = "Dictionary " + dict.getName() + " metadata and volumes erased...";
+            } else {
+                String errorMessage = "Error: Wrong arguments";
+                this.getComms().response.setStatus(HttpPresentationResponse.SC_BAD_REQUEST,errorMessage);
             }
             
             //
@@ -293,6 +297,7 @@ public class AdminDictionaries extends PapillonBasePO {
 				userMessage = "Problems while adding the specified dictionary.\n";
 				userMessage += e.getMessage();
 				userMessage += "\nAll changes to the database have been rolled back.";
+                this.getComms().response.setStatus(HttpPresentationResponse.SC_BAD_REQUEST,userMessage);
 				e.printStackTrace();
 				try {
 					((DBTransaction) CurrentDBTransaction.get()).rollback();

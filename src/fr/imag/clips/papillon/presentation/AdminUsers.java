@@ -48,6 +48,7 @@ package fr.imag.clips.papillon.presentation;
 // Enhydra SuperServlet imports
 import com.lutris.appserver.server.httpPresentation.HttpPresentation;
 import com.lutris.appserver.server.httpPresentation.HttpPresentationRequest;
+import com.lutris.appserver.server.httpPresentation.HttpPresentationResponse;
 import com.lutris.appserver.server.httpPresentation.HttpPresentationException;
 import com.lutris.appserver.server.session.Session;
 
@@ -138,6 +139,7 @@ public class AdminUsers extends PapillonBasePO {
                 }
                 else {
                     userMessage = "User not in database";
+                    this.getComms().response.setStatus(HttpPresentationResponse.SC_NOT_FOUND,userMessage);
                 }
             }
             else if (null != myGetParameter(REMOVE_PARAMETER)) {
@@ -149,6 +151,7 @@ public class AdminUsers extends PapillonBasePO {
                 }
                 else {
                     userMessage = "User not in database";
+                    this.getComms().response.setStatus(HttpPresentationResponse.SC_NOT_FOUND,userMessage);
                 }
             }
             else if (null != myGetParameter(MAKEADMIN_PARAMETER)) {
@@ -158,7 +161,8 @@ public class AdminUsers extends PapillonBasePO {
                     myUser.save();
                     userMessage = "User "+ myUser.getName() + " is admin";
                 } else {
-                    userMessage = "Ignoring user";
+                    userMessage = "User not in database";
+                    this.getComms().response.setStatus(HttpPresentationResponse.SC_NOT_FOUND,userMessage);
                 }
             }
             else if (null != myGetParameter(RESETPASSWORD_PARAMETER)) {
@@ -168,7 +172,8 @@ public class AdminUsers extends PapillonBasePO {
                     myUser.save();
                     userMessage = "User "+ myUser.getName() + " has a new password with the login " + myUser.getLogin() + " for value";
                 } else {
-                    userMessage = "Ignoring user";
+                    userMessage = "User not in database";
+                    this.getComms().response.setStatus(HttpPresentationResponse.SC_NOT_FOUND,userMessage);
                 }
             }
             else if (null != myGetParameter(MAKESPECIALIST_PARAMETER)) {
@@ -178,7 +183,8 @@ public class AdminUsers extends PapillonBasePO {
                     myUser.save();
                     userMessage = "User "+ myUser.getName() + " is a specialist";
                 } else {
-                    userMessage = "Ignoring user";
+                    userMessage = "User not in database";
+                    this.getComms().response.setStatus(HttpPresentationResponse.SC_NOT_FOUND,userMessage);
                 }
             }
             else if (null != myGetParameter(MAKEVALIDATOR_PARAMETER)) {
@@ -188,7 +194,8 @@ public class AdminUsers extends PapillonBasePO {
                     myUser.save();
                     userMessage = "User "+ myUser.getName() + " is a validator";
                 } else {
-                    userMessage = "Ignoring user";
+                    userMessage = "User not in database";
+                    this.getComms().response.setStatus(HttpPresentationResponse.SC_NOT_FOUND,userMessage);
                 }
             }
             else if (null != myGetParameter(ADD_IN_GROUP_PARAMETER) && null != myGetParameter(GROUP_PARAMETER)) {
@@ -198,7 +205,8 @@ public class AdminUsers extends PapillonBasePO {
                     myUser.save();
                     userMessage = "User "+ myUser.getName() + " is in group " + myGetParameter(GROUP_PARAMETER);
                 } else {
-                    userMessage = "Ignoring user";
+                    userMessage = "User not in database";
+                    this.getComms().response.setStatus(HttpPresentationResponse.SC_NOT_FOUND,userMessage);
                 }
             }
             else if (null != myGetParameter(REMOVE_FROM_GROUP_PARAMETER) && null != myGetParameter(GROUP_PARAMETER)) {
@@ -208,7 +216,8 @@ public class AdminUsers extends PapillonBasePO {
                     myUser.save();
                     userMessage = "User "+ myUser.getName() + " has been removed from group " + myGetParameter(GROUP_PARAMETER);
                 } else {
-                    userMessage = "Ignoring user";
+                    userMessage = "User not in database";
+                    this.getComms().response.setStatus(HttpPresentationResponse.SC_NOT_FOUND,userMessage);
                 }
             }
             else if (null != myGetParameter(LEVEL_UP_PARAMETER)) {
@@ -218,7 +227,8 @@ public class AdminUsers extends PapillonBasePO {
                     myUser.save();
                     userMessage = "User "+ myUser.getName() + " has been levelled up";
                 } else {
-                    userMessage = "Ignoring user";
+                    userMessage = "User not in database";
+                    this.getComms().response.setStatus(HttpPresentationResponse.SC_NOT_FOUND,userMessage);
                 }
             }
             else if (null != myGetParameter(LEVEL_DOWN_PARAMETER)) {
@@ -228,8 +238,13 @@ public class AdminUsers extends PapillonBasePO {
                     myUser.save();
                     userMessage = "User "+ myUser.getName() + " has been levelled down";
                 } else {
-                    userMessage = "Ignoring user";
+                    userMessage = "User not in database";
+                    this.getComms().response.setStatus(HttpPresentationResponse.SC_NOT_FOUND,userMessage);
                 }
+            }
+            else {
+                String errorMessage = "Error: Wrong arguments";
+                this.getComms().response.setStatus(HttpPresentationResponse.SC_BAD_REQUEST,errorMessage);
             }
 		
             if (userMessage != null) {

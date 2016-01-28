@@ -272,12 +272,19 @@ public abstract class AbstractPO
                 String password = theBasicAuthResult.password;
                // PapillonLogger.writeDebugMsg("basic auth: " + login + " password: " + password);
                 User theUser = UsersFactory.findUserByLogin(login);
-                if (theUser!=null && !theUser.isEmpty() && theUser.HasCorrectPassword(password)) {
-                    PapillonLogger.writeDebugMsg("Registered user from BasicAuth " + theUser.getName());
-                    this.setUser(theUser);
+                if (theUser!=null && !theUser.isEmpty()) {
+                    if (theUser.HasCorrectPassword(password)) {
+                        PapillonLogger.writeDebugMsg("Registered user from BasicAuth " + theUser.getName());
+                        this.setUser(theUser);
+                    }
+                    else {
+                        String errorMsg = "Error: Wrong password";
+                        //System.out.println(errorMsg);
+                        this.getComms().response.setStatus(HttpPresentationResponse.SC_UNAUTHORIZED,errorMsg);
+                    }
                 }
                 else {
-                    String errorMsg = "Error: user: " + login +" not authorized!";
+                    String errorMsg = "Error: User unknown";
                     //System.out.println(errorMsg);
                     this.getComms().response.setStatus(HttpPresentationResponse.SC_UNAUTHORIZED,errorMsg);
                 }
@@ -290,7 +297,7 @@ public abstract class AbstractPO
                         PapillonLogger.writeDebugMsg("Registered user from cookie: " + cookieUser.getName());
                         this.setUser(cookieUser);
                     }
-                }
+                 }
             }
             
         } catch (KeywordValueException ex) {
@@ -695,6 +702,11 @@ public abstract class AbstractPO
             Cookie myCookie = myCookies[i];
             if (myCookie.getName().equals(LOGIN_COOKIE)) {
                 cookieUser = UsersFactory.findUserById(myCookie.getValue());
+                if (cookieUser ==null || cookieUser.isEmpty()) {
+                    String errorMsg = "Error: User unknown";
+                //System.out.println(errorMsg);
+                    this.getComms().response.setStatus(HttpPresentationResponse.SC_UNAUTHORIZED,errorMsg);
+                }
             }
             i++;
         }

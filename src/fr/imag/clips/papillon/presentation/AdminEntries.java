@@ -109,6 +109,7 @@ package fr.imag.clips.papillon.presentation;
 // Enhydra SuperServlet imports
 import com.lutris.appserver.server.httpPresentation.HttpPresentation;
 import com.lutris.appserver.server.httpPresentation.HttpPresentationRequest;
+import com.lutris.appserver.server.httpPresentation.HttpPresentationResponse;
 import com.lutris.appserver.server.httpPresentation.HttpPresentationException;
 //import org.enhydra.xml.xmlc.XMLObject;
 import org.w3c.dom.html.*;
@@ -192,30 +193,37 @@ public class AdminEntries extends PapillonBasePO {
         boolean indexEntries = (indexEntriesString!=null && !indexEntriesString.equals(""));
         
 		String userMessage = "";
-
-		if (volumeString!=null && !volumeString.equals("") &&
-			urlString!=null && !urlString.equals("") &&
-			submitAdd!=null && !submitAdd.equals("")) {
-			java.net.URL myURL = null;
-            if (urlString.charAt(0) == '/') {
-                urlString = "file:" + urlString;
+        HttpPresentationRequest req = this.getComms().request;
+       if (req.getParameterNames().hasMoreElements()) {
+            if (volumeString!=null && !volumeString.equals("") &&
+                urlString!=null && !urlString.equals("") &&
+                submitAdd!=null && !submitAdd.equals("")) {
+                java.net.URL myURL = null;
+                if (urlString.charAt(0) == '/') {
+                    urlString = "file:" + urlString;
+                }
+                try {
+                    myURL = new java.net.URL(urlString);
+                    PapillonLogger.writeDebugMsg(myURL.toString());
+                }
+                catch (java.io.IOException ex) {
+                    userMessage += "Problems while adding the specified volume entries. The following URL: "+ urlString +" is malformed;\n";
+                    userMessage += ex.getMessage();
+                    this.getComms().response.setStatus(HttpPresentationResponse.SC_BAD_REQUEST,userMessage);
+                   ex.printStackTrace();
+                }	
+                if (myURL != null) {
+                    userMessage += handleVolumeAddition(volumeString, myURL, defaultStatus, replaceExistingEntries, replaceExistingContributions, logContribs, indexEntries);
+                }
+                if (userMessage != "") {
+                    this.getSessionData().writeUserMessage(userMessage);
+                    PapillonLogger.writeDebugMsg(userMessage);
+                }
             }
-			try {
-				myURL = new java.net.URL(urlString);
-				PapillonLogger.writeDebugMsg(myURL.toString());
-			}
-			catch (java.io.IOException ex) {
-				userMessage += "Problems while adding the specified volume entries. The following URL: "+ urlString +" is malformed;\n";
-				userMessage += ex.getMessage();
-				ex.printStackTrace();
-			}	
-			if (myURL != null) {
-				userMessage += handleVolumeAddition(volumeString, myURL, defaultStatus, replaceExistingEntries, replaceExistingContributions, logContribs, indexEntries);
-			}
-			if (userMessage != "") {
-				this.getSessionData().writeUserMessage(userMessage);
-				PapillonLogger.writeDebugMsg(userMessage);
-			}
+            else {
+                String errorMessage = "Error: Wrong arguments";
+                this.getComms().response.setStatus(HttpPresentationResponse.SC_BAD_REQUEST,errorMessage);
+            }
         }
         addConsultForm(content, volumeString);
         //On rend le contenu correct
@@ -239,6 +247,7 @@ public class AdminEntries extends PapillonBasePO {
             userMessage = "Problems while adding the specified volume entries.\n";
             userMessage += e.getMessage();
             userMessage += "\nAll changes to the database have been rolled back.";
+            this.getComms().response.setStatus(HttpPresentationResponse.SC_BAD_REQUEST,userMessage);
 			e.printStackTrace();
 /*            try {
                 ((DBTransaction) CurrentDBTransaction.get()).rollback();

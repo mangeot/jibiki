@@ -40,6 +40,7 @@ package fr.imag.clips.papillon.presentation;
 // Enhydra SuperServlet imports
 import com.lutris.appserver.server.httpPresentation.HttpPresentation;
 import com.lutris.appserver.server.httpPresentation.HttpPresentationRequest;
+import com.lutris.appserver.server.httpPresentation.HttpPresentationResponse;
 import com.lutris.appserver.server.httpPresentation.HttpPresentationException;
 import com.lutris.appserver.server.httpPresentation.ClientPageRedirectException;
 
@@ -114,6 +115,8 @@ public class LoginUser extends PapillonBasePO {
         content = (LoginUserTmplXHTML)MultilingualXHtmlTemplateFactory.createTemplate("LoginUserTmplXHTML", this.getComms(), this.getSessionData());
 
         HttpPresentationRequest req = this.getComms().request;
+        //HttpPresentationResponse theResponse = this.getComms().response;
+
 
         String Login = myGetParameter(LOGIN_PARAMETER);
         String RememberLogin = myGetParameter(REMEMBER_LOGIN_PARAMETER);
@@ -170,11 +173,15 @@ public class LoginUser extends PapillonBasePO {
                         }
                     } else {
                         userMessage = this.getUrl() + ": Wrong password";
-                        content.getElementWrongPasswordMessage().setAttribute("style",MESSAGE_STYLE);
+                        String errorMsg = "Error: Wrong password";
+                       content.getElementWrongPasswordMessage().setAttribute("style",MESSAGE_STYLE);
+                        getComms().response.setStatus(HttpPresentationResponse.SC_UNAUTHORIZED,errorMsg);
                     }
                 } else {
                     userMessage = this.getUrl() + ": User unknown";
+                    String errorMsg = "Error: User unknown";
                     content.getElementUserUnknownMessage().setAttribute("style",MESSAGE_STYLE);
+                    getComms().response.setStatus(HttpPresentationResponse.SC_UNAUTHORIZED,errorMsg);
                 }
             }
             else if (null != Logout && !Logout.equals("")) {
@@ -182,6 +189,11 @@ public class LoginUser extends PapillonBasePO {
                 userMessage = this.getUrl() + ": User logged out";
                 content.getElementUserLoggedOutMessage().setAttribute("style",MESSAGE_STYLE);
             }
+            else {
+                String errorMessage = "Error: Wrong arguments";
+                this.getComms().response.setStatus(HttpPresentationResponse.SC_BAD_REQUEST,errorMessage);
+            }
+            
             PapillonLogger.writeDebugMsg(userMessage);
         }
 

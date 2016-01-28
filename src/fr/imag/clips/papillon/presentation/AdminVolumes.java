@@ -128,6 +128,7 @@ package fr.imag.clips.papillon.presentation;
 
 // Enhydra SuperServlet imports
 import com.lutris.appserver.server.httpPresentation.HttpPresentationRequest;
+import com.lutris.appserver.server.httpPresentation.HttpPresentationResponse;
 import com.lutris.appserver.server.httpPresentation.HttpPresentationException;
 //import org.enhydra.xml.xmlc.XMLObject;
 import org.w3c.dom.html.*;
@@ -235,6 +236,7 @@ public class AdminVolumes extends PapillonBasePO {
 				catch (java.io.IOException ex) {
 					userMessage += "Problems while adding the specified volume. The following URL: "+ urlString +" is malformed;\n";
 					userMessage += ex.getMessage();
+                    this.getComms().response.setStatus(HttpPresentationResponse.SC_BAD_REQUEST,userMessage);
 					ex.printStackTrace();
 				}	
 				if (myURL != null) {
@@ -254,6 +256,7 @@ public class AdminVolumes extends PapillonBasePO {
 				 }
 				 catch (java.io.IOException ex) {
 					 userMessage += "Problems while adding the specified volume. The following URL: "+ urlString +" is malformed;\n";
+                     this.getComms().response.setStatus(HttpPresentationResponse.SC_BAD_REQUEST,userMessage);
 					 userMessage += ex.getMessage();
 					 ex.printStackTrace();
 				 }	
@@ -268,6 +271,7 @@ public class AdminVolumes extends PapillonBasePO {
 				}
 				catch (java.io.IOException ex) {
 					userMessage += "Problems while adding the specified volume. The following URL: "+ urlString +" is malformed;\n";
+                    this.getComms().response.setStatus(HttpPresentationResponse.SC_BAD_REQUEST,userMessage);
 					userMessage += ex.getMessage();
 					ex.printStackTrace();
 				}	
@@ -335,6 +339,9 @@ public class AdminVolumes extends PapillonBasePO {
                 Volume volume = VolumesFactory.getVolumeByHandle(handle);
                 // generating an XNF interface description
 				GenerateTemplate.generateInterfaceTemplate(volume);
+            } else {
+                String errorMessage = "Error: Wrong arguments";
+                this.getComms().response.setStatus(HttpPresentationResponse.SC_BAD_REQUEST,errorMessage);
             }
             
             //
@@ -387,6 +394,7 @@ public class AdminVolumes extends PapillonBasePO {
             userMessage = "Problems while adding the specified volume.\n";
             userMessage += e.getMessage();
             userMessage += "\nAll changes to the database have been rolled back.";
+            this.getComms().response.setStatus(HttpPresentationResponse.SC_BAD_REQUEST,userMessage);
 			e.printStackTrace();
             try {
                 ((DBTransaction) CurrentDBTransaction.get()).rollback();

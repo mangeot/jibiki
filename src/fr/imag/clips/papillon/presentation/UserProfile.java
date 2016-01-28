@@ -75,6 +75,7 @@ package fr.imag.clips.papillon.presentation;
 // Enhydra SuperServlet imports
 import com.lutris.appserver.server.httpPresentation.HttpPresentation;
 import com.lutris.appserver.server.httpPresentation.HttpPresentationRequest;
+import com.lutris.appserver.server.httpPresentation.HttpPresentationResponse;
 import com.lutris.appserver.server.httpPresentation.HttpPresentationException;
 import com.lutris.appserver.server.httpPresentation.ClientPageRedirectException;
 
@@ -156,9 +157,8 @@ public class UserProfile extends PapillonBasePO {
                 }
                 userMessage = myUserAnswer.getMessage();
             }
-
             /* Change name and mail addresse */
-            if (null != myGetParameter(content.NAME_ChangeEmail)) {
+            else if (null != myGetParameter(content.NAME_ChangeEmail)) {
 							email = myGetParameter(content.NAME_Email);
 							name = myGetParameter(content.NAME_Name);
 
@@ -168,9 +168,8 @@ public class UserProfile extends PapillonBasePO {
                 }
                 userMessage = myUserAnswer.getMessage();
             }
-
 						/* Adding a user into a group */
-            if (null != myGetParameter(content.NAME_AddGroup)) {
+            else if (null != myGetParameter(content.NAME_AddGroup)) {
 							group = myGetParameter(content.NAME_Group);
 							groupPassword = myGetParameter(content.NAME_GroupPassword);
 
@@ -180,22 +179,25 @@ public class UserProfile extends PapillonBasePO {
 							}
 							userMessage = myUserAnswer.getMessage();
             }
-			
 						/* Deleting a user from a group */
-            if (null != myGetParameter(content.NAME_DelGroup)) {
+            else if (null != myGetParameter(content.NAME_DelGroup)) {
 							group = myGetParameter(content.NAME_Group);
 							groupPassword = myGetParameter(content.NAME_GroupPassword);
 
 						UserAnswer myUserAnswer = UsersFactory.removeUserFromGroup(this.getUser(), group, groupPassword);
 						userMessage = myUserAnswer.getMessage();
             }
-						
 						/* Deleting a user */
-            if (null != myGetParameter(content.NAME_Delete)) {
+            else if (null != myGetParameter(content.NAME_Delete)) {
 							password = myGetParameter(content.NAME_DPassword);
 								UserAnswer myUserAnswer = UsersFactory.deleteUser(this.getUser(), password);
 								userMessage = myUserAnswer.getMessage();
             }
+            else {
+                String errorMessage = "Error: Wrong arguments";
+                this.getComms().response.setStatus(HttpPresentationResponse.SC_BAD_REQUEST,errorMessage);
+            }
+
 			if (userMessage != null) {
 				this.getSessionData().writeUserMessage(userMessage);
 				PapillonLogger.writeDebugMsg(userMessage);
