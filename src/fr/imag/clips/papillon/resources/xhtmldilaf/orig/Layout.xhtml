@@ -114,17 +114,19 @@
 	</div>
 
 <!-- Piwik -->
-<script type="text/javascript" src="http://papillon.imag.fr/piwik/piwik.js"><!-- // --></script>
 <script type="text/javascript">
-<!--
-try {
-	var piwikTracker = Piwik.getTracker('http://papillon.imag.fr/piwik/piwik.php', 6);
-	piwikTracker.trackPageView();
-	piwikTracker.enableLinkTracking();
-} 
-catch( err ) {}
-// -->
-</script><noscript><p><img src="http://papillon.imag.fr/piwik/piwik.php?idsite=6" style="border:0" alt="" /></p></noscript>
-<!-- End Piwik Tag -->
+    var _paq = _paq || [];
+    _paq.push(['trackPageView']);
+    _paq.push(['enableLinkTracking']);
+    (function() {
+    var u="//totoro.imag.fr/piwik/";
+    _paq.push(['setTrackerUrl', u+'piwik.php']);
+    _paq.push(['setSiteId', 4]);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+    })();
+</script>
+<noscript><p><img src="//totoro.imag.fr/piwik/piwik.php?idsite=4" style="border:0;" alt="" /></p></noscript>
+<!-- End Piwik Code -->
   </body>
 </html>
