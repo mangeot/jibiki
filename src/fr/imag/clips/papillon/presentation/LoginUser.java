@@ -132,6 +132,14 @@ public class LoginUser extends PapillonBasePO {
        
         String userMessage = "";
         // If the page is called with parameters, take the requested action
+       /* String params = "";
+        java.util.Enumeration parameterNames = this.getComms().request.getParameterNames();
+        while (parameterNames.hasMoreElements()) {
+            String parameterName = (String) parameterNames.nextElement();
+            String value = myGetParameter(parameterName);
+            params += parameterName + "=" + value + "&";
+        }
+        PapillonLogger.writeDebugMsg("LoginUser.po with parameters: " + params);*/
         if (req.getParameterNames().hasMoreElements()) {
             if (null != myGetParameter(LOGIN_OK_MESSAGE)) {
                 content.getElementLoginOKMessage().setAttribute("style",MESSAGE_STYLE);
@@ -193,7 +201,6 @@ public class LoginUser extends PapillonBasePO {
                 String errorMessage = "Error: Wrong arguments";
                 this.getComms().response.setStatus(HttpPresentationResponse.SC_BAD_REQUEST,errorMessage);
             }
-            
             PapillonLogger.writeDebugMsg(userMessage);
         }
 

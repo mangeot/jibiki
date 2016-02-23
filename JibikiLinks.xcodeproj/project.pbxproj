@@ -2108,6 +2108,7 @@
 				A307247B0EC89B2600733910 /* xhtml */,
 				A31ED36716AD7F1600B642C7 /* xhtmldilaf */,
 				A307260C0EC89B2900733910 /* xhtmlgdef */,
+				A37BC1151C7C6E2700B6EF4B /* xhtmlibaatukaay */,
 				A3662CF71A12FC2500C423DF /* xhtmljibiki */,
 				A30726660EC89B2A00733910 /* xhtmllexalp */,
 				A31606F91C0533270069D705 /* xhtmllexinnova */,
@@ -3435,6 +3436,21 @@
 				A3662CFB1A12FC2500C423DF /* Layout.xhtml */,
 				A34F3E211B0A1AB800A548EC /* Register.xhtml */,
 				A3662CFD1A12FC2500C423DF /* options.xmlc */,
+			);
+			path = orig;
+			sourceTree = "<group>";
+		};
+		A37BC1151C7C6E2700B6EF4B /* xhtmlibaatukaay */ = {
+			isa = PBXGroup;
+			children = (
+				A37BC1161C7C6E2700B6EF4B /* orig */,
+			);
+			path = xhtmlibaatukaay;
+			sourceTree = "<group>";
+		};
+		A37BC1161C7C6E2700B6EF4B /* orig */ = {
+			isa = PBXGroup;
+			children = (
 			);
 			path = orig;
 			sourceTree = "<group>";
