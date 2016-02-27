@@ -529,8 +529,8 @@ public class IndexFactory {
 					query.getQueryBuilder().addEndClause(" OFFSET " + offset);
 				}
 				// debug
-                PapillonLogger.writeDebugMsg("getIndexEntriesVector avec key+msort debug:");
-				query.getQueryBuilder().debug();
+                //PapillonLogger.writeDebugMsg("getIndexEntriesVector avec key+msort debug:");
+				//query.getQueryBuilder().debug();
 				
 				IndexDO[] DOarray = query.getDOArray();
 				if (null != DOarray) {

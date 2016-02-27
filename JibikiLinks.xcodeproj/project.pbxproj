@@ -1456,6 +1456,8 @@
 		A3E736491BAC607C006FFFB6 /* AdminUsersTmpl.xmlc */ = {isa = PBXFileReference; lastKnownFileType = text; path = AdminUsersTmpl.xmlc; sourceTree = "<group>"; };
 		A3E7364A1BAC608C006FFFB6 /* AdminUsersTmpl.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = AdminUsersTmpl.xhtml; sourceTree = "<group>"; };
 		A3E7364B1BAC60B7006FFFB6 /* AdminUsersTmpl.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = AdminUsersTmpl.xhtml; sourceTree = "<group>"; };
+		A3E7954A1C7D17D400290B1F /* Layout.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Layout.xhtml; sourceTree = "<group>"; };
+		A3E7954B1C7D1B0900290B1F /* HomeContent.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = HomeContent.xhtml; sourceTree = "<group>"; };
 		A3E8991B1B45830800BC5C07 /* jquery.jeditable.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = jquery.jeditable.js; sourceTree = "<group>"; };
 		A3E933D51843432100B9590E /* AdvancedQueryForm.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdvancedQueryForm.xhtml; sourceTree = "<group>"; };
 		A3EC8127163FB75F00715BB7 /* AdminEntriesTmpl.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdminEntriesTmpl.xhtml; sourceTree = "<group>"; };
@@ -3451,6 +3453,8 @@
 		A37BC1161C7C6E2700B6EF4B /* orig */ = {
 			isa = PBXGroup;
 			children = (
+				A3E7954B1C7D1B0900290B1F /* HomeContent.xhtml */,
+				A3E7954A1C7D17D400290B1F /* Layout.xhtml */,
 			);
 			path = orig;
 			sourceTree = "<group>";
