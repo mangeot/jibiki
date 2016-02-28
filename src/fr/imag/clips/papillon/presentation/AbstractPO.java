@@ -114,7 +114,7 @@ public abstract class AbstractPO
      * Description of the Field
      */
     public final static String LOGIN_COOKIE = ((Papillon) Enhydra.getApplication()).getLoginCookieName();
-    protected static int PAGE_EXPIRE_TIME = ((Papillon) Enhydra.getApplication()).getPageExpireTime();
+    protected int PAGE_EXPIRE_TIME = ((Papillon) Enhydra.getApplication()).getPageExpireTime();
 
 
     /**
