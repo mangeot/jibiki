@@ -114,6 +114,7 @@ public abstract class AbstractPO
      * Description of the Field
      */
     public final static String LOGIN_COOKIE = ((Papillon) Enhydra.getApplication()).getLoginCookieName();
+    protected static int PAGE_EXPIRE_TIME = ((Papillon) Enhydra.getApplication()).getPageExpireTime();
 
 
     /**
@@ -214,7 +215,10 @@ public abstract class AbstractPO
         // because getDocument can change the content type
         this.getComms().response.setContentType("text/html");
         this.getComms().response.setHeader("Access-Control-Allow-Origin","*");
-        this.getComms().response.setHeader("Cache-Control", "s-maxage=" + (7 * 24 * 60 * 60));
+        
+        if (PAGE_EXPIRE_TIME>0) {
+            this.getComms().response.setHeader("Cache-Control", "s-maxage=" + PAGE_EXPIRE_TIME);
+        }
 
 
         try {

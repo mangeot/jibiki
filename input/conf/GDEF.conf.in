@@ -261,7 +261,7 @@ Papillon.Users.Groups.Password.validator = "@JIBIKI_VALIDATOR_PASSWORD@"
 Papillon.Presentation.PriorityPackage = "fr.imag.clips.papillon.presentation.xhtmlgdef"
 Papillon.LayoutClassName = "fr.imag.clips.papillon.presentation.PapillonLayout"
 Papillon.LoginCookieName = "GDEFLoginCookie"
-
+Papillon.Presentation.PageExpireTime=604800
 
 ###
 # Misc

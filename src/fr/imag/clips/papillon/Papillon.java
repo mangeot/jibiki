@@ -8,63 +8,7 @@
  *-----------------------------------------------
  * $Id$
  *-----------------------------------------------
- * $Log$
- * Revision 1.12  2007/04/05 12:55:54  serasset
- * Added a DBLayer Version management with an auto-update of db layer.
- *
- * Revision 1.11  2007/01/16 13:28:31  serasset
- * Added cache reinitialization when a metadata is modified.
- *
- * Revision 1.10  2007/01/05 13:57:25  serasset
- * multiple code cleanup.
- * separation of XMLServices from the Utility class
- * added an xml parser pool to allow reuse of parser in a multithreaded context
- * added a new field in the db to identify the db layer version
- * added a new system property to know which db version is known by the current app
- *
- * Revision 1.9  2006/08/10 22:17:12  fbrunet
- * - Add caches to manage Dictionaries, Volumes and Xsl sheets (improve efficiency)
- * - Add export contibutions to pdf file base on exportVolume class and, Saxon8b & FOP transformations (modify papillon.properties to specify XML to FO xsl)
- * - Bug correction : +/- in advanced search
- *
- * Revision 1.8  2006/08/10 19:03:15  mangeot
- * default charsetCVS: ----------------------------------------------------------------------
- *
- * Revision 1.7  2006/08/10 18:44:49  mangeot
- * Added local default file encoding log
- *
- * Revision 1.6  2005/07/28 13:06:47  mangeot
- * - Added the possibility to export in PDF format. The conversion into PDF is don
- * e via the fop package that has to be installed (see ToolsForPapillon)
- *
- * Revision 1.5  2005/06/16 10:42:15  mangeot
- * Added and modified files for the GDEF project
- *
- * Revision 1.4  2005/05/24 12:51:21  serasset
- * Updated many aspect of the Papillon project to handle lexalp project.
- * 1. Layout is now parametrable in the application configuration file.
- * 2. Notion of QueryResult has been defined to handle mono/bi and multi lingual dictionary requests
- * 3. Result presentation may be done by way of standard xsl or with any class implementing the appropriate interface.
- * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
- * 5. It is now possible to give a name to the cookie key in the app conf file
- * 6. Several bug fixes.
- *
- * Revision 1.3  2005/04/11 12:29:59  mangeot
- * Merge between the XPathAndMultipleKeys branch and the main trunk
- *
- * Revision 1.2.2.1  2005/03/16 13:24:31  serasset
- * Modified all boolean fields in table to CHAR(1) in order to be more db independant.
- * Suppressed ant.jar from class path, informationfiles (which rely on it) should be corrected.
- * The version of Xerces is now displayed on application init.
- *
- * Revision 1.2  2005/01/15 12:51:24  mangeot
- * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
- *
- * Revision 1.1.1.1  2004/12/06 16:38:31  serasset
- * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
- * There are still bugs in the code.
- *
- *-----------------------------------------------
+*-----------------------------------------------
  * Papillon enhydra application.
  */
 
@@ -101,11 +45,14 @@ public class Papillon extends StandardApplication {
     protected static final String PRIORITY_PACKAGE_CONFIG = "Papillon.Presentation.PriorityPackage";
     protected static final String LAYOUT_CONFIG = "Papillon.LayoutClassName";
     protected static final String COOKIE_CONFIG = "Papillon.LoginCookieName";
+    protected static final String PAGE_EXPIRE_TIME = "Papillon.LoginCookieName";
 
     protected String presentationPriorityPackage = null;
     protected String layoutClassName = "fr.imag.clips.papillon.presentation.PapillonLayout";
     protected String loginCookieName = "PapillonLoginCookie";
 	protected String applicationPrefix = "/";
+    /* Expiration du cache dans une semaine */
+    protected int pageExpireTime = 7 * 24 * 60 * 60;
 	static {
                 System.setProperty("javax.xml.parsers.DocumentBuilderFactory", 
 				"org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
@@ -176,10 +123,19 @@ public class Papillon extends StandardApplication {
         }
         
         // Get Login Cookie Name.
-        String configLoginCookieName = null; 
+        String configLoginCookieName = null;
         try {
             configLoginCookieName =  Enhydra.getApplication().getConfig().getString(COOKIE_CONFIG);
             loginCookieName = configLoginCookieName;
+        } catch (ConfigException e) {
+            // nothing... failing to default...
+        }
+
+        // Get pageExpireTime.
+        int configPageExpireTime = 0;
+        try {
+            configPageExpireTime =  Enhydra.getApplication().getConfig().getInt(PAGE_EXPIRE_TIME);
+            pageExpireTime = configPageExpireTime;
         } catch (ConfigException e) {
             // nothing... failing to default...
         }
@@ -256,6 +212,14 @@ public class Papillon extends StandardApplication {
 	public String getUrl() {
 		return defaultUrl;
 	}
+    
+    public int getPageExpireTime() {
+        return pageExpireTime;
+    }
+    
+    public void setPageExpireTime(int time) {
+        pageExpireTime = time;
+    }
     
 	public String getApplicationPrefix() {
 		return applicationPrefix;

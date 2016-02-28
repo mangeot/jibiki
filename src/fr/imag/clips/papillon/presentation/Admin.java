@@ -112,6 +112,7 @@
 package fr.imag.clips.papillon.presentation;
 
 // Enhydra SuperServlet imports
+import com.lutris.appserver.server.Enhydra;
 import com.lutris.appserver.server.httpPresentation.HttpPresentation;
 import com.lutris.appserver.server.httpPresentation.HttpPresentationRequest;
 import com.lutris.appserver.server.httpPresentation.HttpPresentationResponse;
@@ -130,6 +131,8 @@ import fr.imag.clips.papillon.business.PapillonBusinessException;
 import java.io.IOException;
 import java.util.Date;
 import java.text.DateFormat;
+
+import fr.imag.clips.papillon.Papillon;
 
 import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
@@ -222,8 +225,14 @@ public class Admin extends PapillonBasePO {
 				else {
 					fr.imag.clips.papillon.business.dictionary.VolumesFactory.volumeNameReConstructionIndex(myGetParameter(content.NAME_VOLUME));
 				}
-					// FIXME: supress    
-			} else if (null != myGetParameter(content.NAME_ModifiedStatus)) {
+            }
+            else if (null != myGetParameter(content.NAME_SetPageExpireTime)) {
+                int pageExpireTime = Integer.parseInt(myGetParameter(content.NAME_SetPageExpireTime));
+                ((Papillon) Enhydra.getApplication()).setPageExpireTime(pageExpireTime);
+                this.getSessionData().writeUserMessage("ageExpireTime is " + pageExpireTime);
+            }
+					// FIXME: supress
+			 else if (null != myGetParameter(content.NAME_ModifiedStatus)) {
 					this.getSessionData().writeUserMessage("Status modification has been desactivated...");				
                 //fr.imag.clips.papillon.business.dictionary.VolumesFactory.modifiedStatus(this.getUser());
             
