@@ -216,8 +216,11 @@ public abstract class AbstractPO
         this.getComms().response.setContentType("text/html");
         this.getComms().response.setHeader("Access-Control-Allow-Origin","*");
         
-        if (PAGE_EXPIRE_TIME>0) {
-            this.getComms().response.setHeader("Cache-Control", "s-maxage=" + PAGE_EXPIRE_TIME);
+        if (!this.loggedInUserRequired() && PAGE_EXPIRE_TIME>0) {
+            this.getComms().response.setHeader("Cache-Control", "public, s-maxage=" + PAGE_EXPIRE_TIME + ", maxage="+PAGE_EXPIRE_TIME);
+        }
+        else if (this.loggedInUserRequired()) {
+            this.getComms().response.setHeader("Cache-Control", "private, max-age=10800, pre-check=10800");
         }
 
 
