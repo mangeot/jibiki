@@ -286,6 +286,7 @@ Papillon.Users.Groups.Password.validator = "@JIBIKI_VALIDATOR_PASSWORD@"
 Papillon.Presentation.PriorityPackage = "fr.imag.clips.papillon.presentation.xhtmldilaf"
 Papillon.LayoutClassName = "fr.imag.clips.papillon.presentation.DilafLayout"
 Papillon.LoginCookieName = "DilafLoginCookie"
+Papillon.Presentation.PageExpireTime = 31536000
 
 
 ###
