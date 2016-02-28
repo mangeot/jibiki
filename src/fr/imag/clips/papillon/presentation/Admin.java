@@ -140,6 +140,8 @@ public class Admin extends PapillonBasePO {
 
 	/* by default, data is editable */
 	public static boolean EDIT_DATA = true;
+    public static int pageExpireTime = ((Papillon) Enhydra.getApplication()).getPageExpireTime();
+
 	protected static String ALL_VOLUMES = "*all*";
 	
 	protected String selectedVolume = null;
@@ -227,9 +229,9 @@ public class Admin extends PapillonBasePO {
 				}
             }
             else if (null != myGetParameter(content.NAME_SetPageExpireTime)) {
-                int pageExpireTime = Integer.parseInt(myGetParameter(content.NAME_SetPageExpireTime));
+                pageExpireTime = Integer.parseInt(myGetParameter(content.NAME_PageExpireTime));
                 ((Papillon) Enhydra.getApplication()).setPageExpireTime(pageExpireTime);
-                this.getSessionData().writeUserMessage("ageExpireTime is " + pageExpireTime);
+                this.getSessionData().writeUserMessage("PageExpireTime is " + pageExpireTime);
             }
 					// FIXME: supress
 			 else if (null != myGetParameter(content.NAME_ModifiedStatus)) {
@@ -250,13 +252,13 @@ public class Admin extends PapillonBasePO {
             }
         }
 		
-		addAdminForm(content, EDIT_DATA, selectedVolume);
+		addAdminForm(content, EDIT_DATA, pageExpireTime, selectedVolume);
 
         //On rends le contenu correct
         return content.getElementHomeContent();
     }
 	
-	protected static void addAdminForm (AdminTmplXHTML content, boolean editData, String selectedVolume) 
+	protected static void addAdminForm (AdminTmplXHTML content, boolean editData, int pageExpireTime, String selectedVolume)
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 	
 		XHTMLOptionElement volumeOptionTemplate = content.getElementVolumeOptionTemplate();
@@ -285,8 +287,11 @@ public class Admin extends PapillonBasePO {
 		//XHTMLInputElement cacheElement = content.getElementHTMLDomCaches();
 		//cacheElement.setChecked(cacheSet);
 		
-		XHTMLInputElement editDataElement = content.getElementEditData();
-		editDataElement.setChecked(editData);
+            XHTMLInputElement editDataElement = content.getElementEditData();
+            editDataElement.setChecked(editData);
+
+            XHTMLInputElement pageExpireTimeElement = content.getElementPageExpireTime();
+            pageExpireTimeElement.setValue(""+pageExpireTime);
 		
 	}
 	
