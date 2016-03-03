@@ -1428,6 +1428,7 @@
 		A3AF17CD1069FAE800E1CEB5 /* ApiContent.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ApiContent.xhtml; sourceTree = "<group>"; };
 		A3AF1808106A10C500E1CEB5 /* Kawet.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = Kawet.java; sourceTree = "<group>"; };
 		A3AF27A01B0A4473008A4654 /* ConfirmEntry.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = ConfirmEntry.xhtml; sourceTree = "<group>"; };
+		A3B05A5F1C8850CF002E19E1 /* AdminTmpl.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = AdminTmpl.xhtml; sourceTree = "<group>"; };
 		A3B4F55F1A3FD6D100FF2EDA /* ProjectTmpl.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = ProjectTmpl.xhtml; sourceTree = "<group>"; };
 		A3B4F5601A4007DD00FF2EDA /* HomeContent.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = HomeContent.xhtml; sourceTree = "<group>"; };
 		A3B4F5611A400B2D00FF2EDA /* Information.java */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.java; path = Information.java; sourceTree = "<group>"; };
@@ -3597,6 +3598,7 @@
 				A37C0302128C62DB0047A982 /* AdminEntriesTmpl.xhtml */,
 				A37C0303128C62DB0047A982 /* AdministrationMenu.xhtml */,
 				A37C0304128C62DB0047A982 /* AdministrationMenu.xmlc */,
+				A3B05A5F1C8850CF002E19E1 /* AdminTmpl.xhtml */,
 				A3E7364A1BAC608C006FFFB6 /* AdminUsersTmpl.xhtml */,
 				A3E736491BAC607C006FFFB6 /* AdminUsersTmpl.xmlc */,
 				A37C0305128C62DB0047A982 /* AdvancedQueryForm.xhtml */,
