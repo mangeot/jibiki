@@ -1301,6 +1301,10 @@
 		A386068B1A8C948E00FD081D /* ConsultPage.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = ConsultPage.xhtml; sourceTree = "<group>"; };
 		A386068C1A8C94B800FD081D /* ConsultPage.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = ConsultPage.xhtml; sourceTree = "<group>"; };
 		A386068D1A8C94F700FD081D /* ConsultPage.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = ConsultPage.xhtml; sourceTree = "<group>"; };
+		A389E6E91C88387400EE96EE /* ContactsContent.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = ContactsContent.xhtml; sourceTree = "<group>"; };
+		A389E6EA1C88388900EE96EE /* DownloadTmpl.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = DownloadTmpl.xhtml; sourceTree = "<group>"; };
+		A389E6EB1C88388F00EE96EE /* HelpContent.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = HelpContent.xhtml; sourceTree = "<group>"; };
+		A389E6EC1C88394A00EE96EE /* ibaatukaay.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = ibaatukaay.css; sourceTree = "<group>"; };
 		A38DC7D116AEE4B400CCA5B9 /* dilaf.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = dilaf.css; sourceTree = "<group>"; };
 		A38DC85116AFE3B600CCA5B9 /* lookupVolume.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = lookupVolume.js; sourceTree = "<group>"; };
 		A38FB6751B610B1100FBCA3C /* Papillon.java */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.java; path = Papillon.java; sourceTree = "<group>"; };
@@ -2130,6 +2134,7 @@
 				A38DC7D116AEE4B400CCA5B9 /* dilaf.css */,
 				A307233B0EC89B2300733910 /* dri.css */,
 				A307233C0EC89B2300733910 /* gdef-home.css */,
+				A389E6EC1C88394A00EE96EE /* ibaatukaay.css */,
 				A307233D0EC89B2300733910 /* motamot.css */,
 				A307233E0EC89B2300733910 /* lexalp_print.css */,
 				A307233F0EC89B2300733910 /* jibiki.css */,
@@ -3453,6 +3458,9 @@
 		A37BC1161C7C6E2700B6EF4B /* orig */ = {
 			isa = PBXGroup;
 			children = (
+				A389E6E91C88387400EE96EE /* ContactsContent.xhtml */,
+				A389E6EA1C88388900EE96EE /* DownloadTmpl.xhtml */,
+				A389E6EB1C88388F00EE96EE /* HelpContent.xhtml */,
 				A3E7954B1C7D1B0900290B1F /* HomeContent.xhtml */,
 				A3E7954A1C7D17D400290B1F /* Layout.xhtml */,
 			);
