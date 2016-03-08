@@ -177,6 +177,7 @@ public class LoginUser extends PapillonBasePO {
                      		throw new ClientPageRedirectException(Dest);
                         }
                         else {
+                            this.getComms().response.setHeader("Cache-Control", "private, max-age=10800, pre-check=10800");
                             content.getElementLoginOKMessage().setAttribute("style",MESSAGE_STYLE);
                         }
                     } else {
