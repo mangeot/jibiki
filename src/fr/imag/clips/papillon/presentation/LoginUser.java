@@ -142,7 +142,8 @@ public class LoginUser extends PapillonBasePO {
         PapillonLogger.writeDebugMsg("LoginUser.po with parameters: " + params);*/
         if (req.getParameterNames().hasMoreElements()) {
             if (null != myGetParameter(LOGIN_OK_MESSAGE)) {
-                content.getElementLoginOKMessage().setAttribute("style",MESSAGE_STYLE);
+                this.getComms().response.setHeader("Cache-Control", "private, max-age=10800, pre-check=10800");
+               content.getElementLoginOKMessage().setAttribute("style",MESSAGE_STYLE);
             }
             else if (null != myGetParameter(SUBMIT_PARAMETER) &&
                 null != Login && !Login.equals("") &&
