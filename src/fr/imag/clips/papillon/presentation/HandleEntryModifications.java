@@ -170,7 +170,8 @@ public class HandleEntryModifications extends EditingBasePO {
 		throws java.io.UnsupportedEncodingException, 
 		HttpPresentationException {
 			
-            //
+            this.getComms().response.setHeader("Cache-Control", "private, no-store, no-cache, must-revalidate, max-age=0, post-check=0, pre-check=0");
+           //
             if (DEBUG) PapillonLogger.writeDebugMsg ("HandleEntryModifications : getContent");   
             
 			// Management of the parameters

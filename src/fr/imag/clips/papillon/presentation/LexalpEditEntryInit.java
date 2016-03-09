@@ -183,6 +183,8 @@ public class LexalpEditEntryInit extends PapillonBasePO {
         java.io.IOException,
         fr.imag.clips.papillon.business.PapillonBusinessException {
                       
+            this.getComms().response.setHeader("Cache-Control", "private, no-store, no-cache, must-revalidate, max-age=0, post-check=0, pre-check=0");
+
             // Content creation
             content = (LexalpEditEntryInitXHTML)MultilingualXHtmlTemplateFactory.createTemplate("fr.imag.clips.papillon.presentation.xhtmllexalp", "LexalpEditEntryInitXHTML", this.getComms(), this.getSessionData());
             // On regarde d'abord les parametres qui nous sont demandes.
