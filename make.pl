@@ -41,7 +41,7 @@ foreach my $site (keys %sites)
 	$siteConf =~ s/Application\.Prefix = "\/jibiki"/Application.Prefix = "\/$sitelc"/;
 	$siteConf =~ s/"PapillonLoginCookie"/"${site}LoginCookie"/;
 	$siteConf =~ s/"fr.imag.clips.papillon.presentation.xhtml"/"fr.imag.clips.papillon.presentation.xhtml$sitelc"/;
-	$siteConf =~ s/"jdbc:postgresql:\/\/localhost\/jibiki"/"jdbc:postgresql:\/\/localhost\/$sitelc"/;
+	$siteConf =~ s/"jdbc:postgresql:.*"/"jdbc:postgresql:\/\/localhost\/$sitelc"/;
 	
 	my $filename = "output/conf/$site.confm";
 	open(my $fh, '>', $filename) or die "Could not open file '$filename' $!";
