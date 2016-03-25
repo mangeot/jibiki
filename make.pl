@@ -3,7 +3,7 @@
 use warnings;
 use strict;
 #`../toolsforjibiki/enhydra5.1/bin/ant quick`;
-`../../../toolsforjibiki/enhydra5.1/bin/ant quick`;
+`../toolsforjibiki/enhydra5.1/bin/ant quick`;
 
 local $/ = undef;
 open FILE, "output/conf/Papillon.conf" or die "Couldn't open file: $!";
@@ -38,10 +38,10 @@ foreach my $site (keys %sites)
 	my $sitelc = lc($site);
 	my $siteConf = $PapillonConf;
 	my @site = @{ $sites{$site} };
-	$siteConf =~ s/Application\.Prefix = "\/jibiki"/Application.Prefix = "\/$sitelc"/;
+	$siteConf =~ s/Application\.Prefix = "\/[^"]*"/Application.Prefix = "\/$sitelc"/;
 	$siteConf =~ s/"PapillonLoginCookie"/"${site}LoginCookie"/;
 	$siteConf =~ s/"fr.imag.clips.papillon.presentation.xhtml"/"fr.imag.clips.papillon.presentation.xhtml$sitelc"/;
-	$siteConf =~ s/"jdbc:postgresql:.*"/"jdbc:postgresql:\/\/localhost\/$sitelc"/;
+	$siteConf =~ s/"jdbc:postgresql:[^"]*"/"jdbc:postgresql:\/\/localhost\/$sitelc"/;
 	
 	my $filename = "output/conf/$site.confm";
 	open(my $fh, '>', $filename) or die "Could not open file '$filename' $!";
