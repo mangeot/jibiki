@@ -8,12 +8,19 @@
 /*<group=page layout>*/
 
 body {
-	background : #DFF9C3;
+	background : white;
 	font-size: 1.2 em;
 	font-family: 'Lucida Grande', Helvetica, Arial, sans-serif;
 	color: black;
 }
+.headerMenu
+{
+background-color:#F6F5F4;
+}
 
+.headerMenu a
+{color:white;
+}
 h1,h2,h3,h4 {
 	color: #4C1900;
 }
@@ -27,14 +34,16 @@ h1 {
 /*-------------------------*/
 
 .popupMenu {
-	font-size: 2em;
+	font-size: 1.5em;
 	width: 20%;
 	padding: 0.3em;
 	text-align: center;
 	cursor: default;
+	color:white;
+	/*
 	background-color: #FFFDDA;
 	border: 7px solid #689443;
-	border-radius: 20px;
+	border-radius: 20px;*/
 }
 
 .popupMenu:hover {
@@ -42,13 +51,15 @@ h1 {
    color:#fff;
 }
 
+
 .popupMenu  a {
    padding: 0em 0.5em 0em 0.5em ;
    text-decoration: none;
+   color: white;
 }
 
 .popupMenu  a:link {
-   color:#4C1900;
+   color:white;
 }
 
 .popupMenu  a:visited {
@@ -69,7 +80,7 @@ h1 {
 	display: none;
 	position: absolute;
 	background: #aa7;
-	color: black;
+	color: white;
 	list-style: none;
 	margin: 0em 0 0 0;
    padding: 0;
@@ -101,6 +112,9 @@ div#BannerContent {
 	display: table;
 	border-spacing: 10px;
 	width: 100%;
+	background-color:#E4E4E4;
+	color:black;
+
 }
 
 #projectTitle {
@@ -112,6 +126,7 @@ div#BannerContent {
 
 .projectName h1,.projectName h2, .projectName h3  {
 	margin: 2px;
+	text-align: center;
 }
 
 #QueryMenuHolder {
@@ -178,14 +193,15 @@ overflow-y: scroll;
 /*--------------------------------------*/
 	
 .mainColumn {
-	margin-left: 220px;
+/*	margin-left: 220px;
 	margin-right: 220px;
 	margin-top: 20px;
 	padding: 0.5em;
-	background: #FFFDDA;
+	background: rgb(255,255,255);
 	border: 7px solid #689443;
 	border-radius: 15px;
-	min-height: 500px;
+	min-height: 500px;*/
+	width: 100%;
 }
 
 .dicos {
@@ -366,6 +382,8 @@ A:hover {
 	font-size: .8em;
     margin-top: 20px;
 	margin-left: 20px;
+	width:100%;
+	text-align: center;
 }
 	
 /*</group>*/
@@ -408,7 +426,8 @@ A:hover {
 
 .fra	{
 	font-family: Arial, Helvetica, sans-serif;
-	color: #999999;
+	color: blue;
+
 	}
 
 .hun	{
