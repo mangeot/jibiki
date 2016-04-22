@@ -1454,6 +1454,22 @@
 		A3C69AC5171F550A004A6FAE /* RetrieveAccountTmpl.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = RetrieveAccountTmpl.xhtml; sourceTree = "<group>"; };
 		A3C894AB171EBFF300A9651D /* ViewQueryResult.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ViewQueryResult.xhtml; sourceTree = "<group>"; };
 		A3CFEC641844F962008F6C62 /* HelpContent.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = HelpContent.xhtml; sourceTree = "<group>"; };
+		A3D61D241CCA86F9001109E8 /* AdvancedLookup.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = AdvancedLookup.xhtml; sourceTree = "<group>"; };
+		A3D61D251CCA86F9001109E8 /* AdvancedLookup.xmlc */ = {isa = PBXFileReference; lastKnownFileType = text; path = AdvancedLookup.xmlc; sourceTree = "<group>"; };
+		A3D61D261CCA86F9001109E8 /* ConsultPage.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = ConsultPage.xhtml; sourceTree = "<group>"; };
+		A3D61D271CCA86F9001109E8 /* ConsultPage.xmlc */ = {isa = PBXFileReference; lastKnownFileType = text; path = ConsultPage.xmlc; sourceTree = "<group>"; };
+		A3D61D281CCA86F9001109E8 /* ContactsContent.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = ContactsContent.xhtml; sourceTree = "<group>"; };
+		A3D61D291CCA86F9001109E8 /* ContactsContent.xmlc */ = {isa = PBXFileReference; lastKnownFileType = text; path = ContactsContent.xmlc; sourceTree = "<group>"; };
+		A3D61D2A1CCA86F9001109E8 /* DownloadTmpl.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = DownloadTmpl.xhtml; sourceTree = "<group>"; };
+		A3D61D2B1CCA86F9001109E8 /* DownloadTmpl.xmlc */ = {isa = PBXFileReference; lastKnownFileType = text; path = DownloadTmpl.xmlc; sourceTree = "<group>"; };
+		A3D61D2C1CCA86F9001109E8 /* HelpContent.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = HelpContent.xhtml; sourceTree = "<group>"; };
+		A3D61D2D1CCA86F9001109E8 /* HelpContent.xmlc */ = {isa = PBXFileReference; lastKnownFileType = text; path = HelpContent.xmlc; sourceTree = "<group>"; };
+		A3D61D2E1CCA86F9001109E8 /* HomeContent.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = HomeContent.xhtml; sourceTree = "<group>"; };
+		A3D61D2F1CCA86F9001109E8 /* HomeContent.xmlc */ = {isa = PBXFileReference; lastKnownFileType = text; path = HomeContent.xmlc; sourceTree = "<group>"; };
+		A3D61D301CCA86F9001109E8 /* Layout.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Layout.xhtml; sourceTree = "<group>"; };
+		A3D61D311CCA86F9001109E8 /* Layout.xmlc */ = {isa = PBXFileReference; lastKnownFileType = text; path = Layout.xmlc; sourceTree = "<group>"; };
+		A3D61D321CCA870D001109E8 /* AdvancedLookup.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = AdvancedLookup.xhtml; sourceTree = "<group>"; };
+		A3D61D331CCA8712001109E8 /* ConsultPage.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = ConsultPage.xhtml; sourceTree = "<group>"; };
 		A3DD4FAF12933C6C0099E764 /* XslTransformation.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = XslTransformation.java; sourceTree = "<group>"; };
 		A3DDD0E61C4D2C6D0073EC1E /* LoginUserTmpl.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = LoginUserTmpl.xhtml; sourceTree = "<group>"; };
 		A3DDD0E71C4D2CAC0073EC1E /* LoginUserTmpl.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = LoginUserTmpl.xhtml; sourceTree = "<group>"; };
@@ -3451,6 +3467,7 @@
 		A37BC1151C7C6E2700B6EF4B /* xhtmlibaatukaay */ = {
 			isa = PBXGroup;
 			children = (
+				A3D61D231CCA86F9001109E8 /* eng */,
 				A37BC1161C7C6E2700B6EF4B /* orig */,
 			);
 			path = xhtmlibaatukaay;
@@ -3459,6 +3476,8 @@
 		A37BC1161C7C6E2700B6EF4B /* orig */ = {
 			isa = PBXGroup;
 			children = (
+				A3D61D321CCA870D001109E8 /* AdvancedLookup.xhtml */,
+				A3D61D331CCA8712001109E8 /* ConsultPage.xhtml */,
 				A389E6E91C88387400EE96EE /* ContactsContent.xhtml */,
 				A389E6EA1C88388900EE96EE /* DownloadTmpl.xhtml */,
 				A389E6EB1C88388F00EE96EE /* HelpContent.xhtml */,
@@ -3801,6 +3820,27 @@
 				A3C2A0591180862100F77173 /* Papillon.conf.in */,
 			);
 			path = conf;
+			sourceTree = "<group>";
+		};
+		A3D61D231CCA86F9001109E8 /* eng */ = {
+			isa = PBXGroup;
+			children = (
+				A3D61D241CCA86F9001109E8 /* AdvancedLookup.xhtml */,
+				A3D61D251CCA86F9001109E8 /* AdvancedLookup.xmlc */,
+				A3D61D261CCA86F9001109E8 /* ConsultPage.xhtml */,
+				A3D61D271CCA86F9001109E8 /* ConsultPage.xmlc */,
+				A3D61D281CCA86F9001109E8 /* ContactsContent.xhtml */,
+				A3D61D291CCA86F9001109E8 /* ContactsContent.xmlc */,
+				A3D61D2A1CCA86F9001109E8 /* DownloadTmpl.xhtml */,
+				A3D61D2B1CCA86F9001109E8 /* DownloadTmpl.xmlc */,
+				A3D61D2C1CCA86F9001109E8 /* HelpContent.xhtml */,
+				A3D61D2D1CCA86F9001109E8 /* HelpContent.xmlc */,
+				A3D61D2E1CCA86F9001109E8 /* HomeContent.xhtml */,
+				A3D61D2F1CCA86F9001109E8 /* HomeContent.xmlc */,
+				A3D61D301CCA86F9001109E8 /* Layout.xhtml */,
+				A3D61D311CCA86F9001109E8 /* Layout.xmlc */,
+			);
+			path = eng;
 			sourceTree = "<group>";
 		};
 		A3EC8126163FB75F00715BB7 /* rus */ = {
