@@ -87,24 +87,74 @@ h1 {
    padding: 0;
 }
 
-.popupMenu ul li {
-   display: block;
-   padding: 0.1em 0.5em 0.1em 0.5em ;
-   font-size:0.9em;
+
+.popupMenu ul.second-level-menu {
+	display: none;
+	position: absolute;
+	background: black;
+	
+	color: white;
+	list-style: none;
 }
 
-.popupMenu:hover ul {
+.popupMenu ul.second-level-menu > li {
+  position: relative;
+   padding: 0.2em .5em 0.2em .5em;
+}
+
+.popupMenu:hover ul.second-level-menu  {
+	text-align: left;
     display: block;
-    margin: 0;
-    padding: 0;
-
+   margin: 0em;
+   margin-top: 4px;
+   padding: 0em;
+   padding-top: .5em;
 }
 
-.popupMenu ul li:hover {
+.popupMenu ul.second-level-menu > li:hover {
    background: #887;
    color: #fff;
 }
 
+.popupMenu ul.second-level-menu > li:hover ul {
+	display: block;
+}
+
+.third-level-menu
+{
+    position: absolute;
+    top: 0;
+    right: -150px;
+    width: 150px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: none;
+}
+
+.third-level-menu > li
+{
+	background: black;
+	padding: .2em .5em .2em .5em;
+}
+.third-level-menu > li:hover {
+   background: #887;
+   color: #fff;
+}
+
+
+a.lang, a.lang:link, a.lang:visited {
+	color:black;
+	background-color:#D3D3D3;
+	border:1px solid black;
+	font-size:.8em;
+}
+
+a.lang:hover {
+	color:black;
+	background-color:#887;
+	
+}
 /*-----------------------------------*/
 /* Banner part of the page */
 /*-----------------------------------*/
@@ -826,3 +876,4 @@ ul.idioms {
 	font-weight: bold;
 	color: black;
 }
+
