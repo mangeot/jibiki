@@ -210,10 +210,6 @@ public class AdminDictionaries extends PapillonBasePO {
             //AJOUT DE DICO
             String userMessage = "";
             String urlString = req.getParameter(AdminDictionariesXHTML.NAME_url);
-            if (null != urlString && urlString.charAt(0) == '/') {
-                urlString = "file:" + urlString;
-            }
-            
             //
             if (null != urlString && !urlString.equals("")) {
                 // The user asked for a dictionary to be uploaded
@@ -264,10 +260,13 @@ public class AdminDictionaries extends PapillonBasePO {
     protected String handleDictionaryAddition(HttpPresentationRequest req) throws PapillonBusinessException, HttpPresentationException, java.net.MalformedURLException {
         String userMessage;
         String urlString = req.getParameter(AdminDictionariesXHTML.NAME_url);
+        if (null != urlString && urlString.charAt(0) == '/') {
+            urlString = "file:" + urlString;
+        }
 		URL myURL = null;
 		try  {
 			myURL = new URL(urlString);
-			PapillonLogger.writeDebugMsg(myURL.toString());
+//			PapillonLogger.writeDebugMsg(myURL.toString());
 			String parseVolumesString = req.getParameter(AdminDictionariesXHTML.NAME_AddVolumes);
 			boolean parseVolumes = (parseVolumesString!=null && !parseVolumesString.equals(""));
 			String parseEntriesString = req.getParameter(AdminDictionariesXHTML.NAME_AddVolumesAndEntries);
