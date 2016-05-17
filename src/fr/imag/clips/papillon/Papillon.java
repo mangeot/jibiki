@@ -52,7 +52,9 @@ public class Papillon extends StandardApplication {
     protected String loginCookieName = "PapillonLoginCookie";
 	protected String applicationPrefix = "/";
     /* Expiration du cache dans une semaine */
-    protected int pageExpireTime = 7 * 24 * 60 * 60;
+    /* protected int pageExpireTime = 7 * 24 * 60 * 60;
+    Finalement, désactivation du cache */
+    protected int pageExpireTime = 0;
 	static {
                 System.setProperty("javax.xml.parsers.DocumentBuilderFactory", 
 				"org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
