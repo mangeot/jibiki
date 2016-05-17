@@ -1220,6 +1220,40 @@
 		A37059271B68C78C00A00483 /* LexiesManagement.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = LexiesManagement.xhtml; sourceTree = "<group>"; };
 		A37059281B68C82300A00483 /* LexiesManagement.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = LexiesManagement.xhtml; sourceTree = "<group>"; };
 		A37059291B68C85800A00483 /* LexiesManagement.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = LexiesManagement.xhtml; sourceTree = "<group>"; };
+		A37820BF1CEB794F0062E53E /* AdvancedLookup.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = AdvancedLookup.xhtml; sourceTree = "<group>"; };
+		A37820C01CEB794F0062E53E /* AdvancedLookup.xmlc */ = {isa = PBXFileReference; lastKnownFileType = text; path = AdvancedLookup.xmlc; sourceTree = "<group>"; };
+		A37820C11CEB794F0062E53E /* ConsultPage.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = ConsultPage.xhtml; sourceTree = "<group>"; };
+		A37820C21CEB794F0062E53E /* ConsultPage.xmlc */ = {isa = PBXFileReference; lastKnownFileType = text; path = ConsultPage.xmlc; sourceTree = "<group>"; };
+		A37820C31CEB794F0062E53E /* ContactsContent.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = ContactsContent.xhtml; sourceTree = "<group>"; };
+		A37820C41CEB794F0062E53E /* ContactsContent.xmlc */ = {isa = PBXFileReference; lastKnownFileType = text; path = ContactsContent.xmlc; sourceTree = "<group>"; };
+		A37820C51CEB794F0062E53E /* DownloadTmpl.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = DownloadTmpl.xhtml; sourceTree = "<group>"; };
+		A37820C61CEB794F0062E53E /* DownloadTmpl.xmlc */ = {isa = PBXFileReference; lastKnownFileType = text; path = DownloadTmpl.xmlc; sourceTree = "<group>"; };
+		A37820C71CEB794F0062E53E /* HelpContent.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = HelpContent.xhtml; sourceTree = "<group>"; };
+		A37820C81CEB794F0062E53E /* HelpContent.xmlc */ = {isa = PBXFileReference; lastKnownFileType = text; path = HelpContent.xmlc; sourceTree = "<group>"; };
+		A37820C91CEB794F0062E53E /* HomeContent.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = HomeContent.xhtml; sourceTree = "<group>"; };
+		A37820CA1CEB794F0062E53E /* HomeContent.xmlc */ = {isa = PBXFileReference; lastKnownFileType = text; path = HomeContent.xmlc; sourceTree = "<group>"; };
+		A37820CB1CEB794F0062E53E /* Layout.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Layout.xhtml; sourceTree = "<group>"; };
+		A37820CC1CEB794F0062E53E /* Layout.xmlc */ = {isa = PBXFileReference; lastKnownFileType = text; path = Layout.xmlc; sourceTree = "<group>"; };
+		A37820CD1CEB794F0062E53E /* options.xmlc */ = {isa = PBXFileReference; lastKnownFileType = text; path = options.xmlc; sourceTree = "<group>"; };
+		A37820CE1CEB794F0062E53E /* UserProfile.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = UserProfile.html; sourceTree = "<group>"; };
+		A37820CF1CEB794F0062E53E /* UserProfile.xmlc */ = {isa = PBXFileReference; lastKnownFileType = text; path = UserProfile.xmlc; sourceTree = "<group>"; };
+		A37820D11CEB795E0062E53E /* AdvancedLookup.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = AdvancedLookup.xhtml; sourceTree = "<group>"; };
+		A37820D21CEB795E0062E53E /* AdvancedLookup.xmlc */ = {isa = PBXFileReference; lastKnownFileType = text; path = AdvancedLookup.xmlc; sourceTree = "<group>"; };
+		A37820D31CEB795E0062E53E /* ConsultPage.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = ConsultPage.xhtml; sourceTree = "<group>"; };
+		A37820D41CEB795E0062E53E /* ConsultPage.xmlc */ = {isa = PBXFileReference; lastKnownFileType = text; path = ConsultPage.xmlc; sourceTree = "<group>"; };
+		A37820D51CEB795E0062E53E /* ContactsContent.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = ContactsContent.xhtml; sourceTree = "<group>"; };
+		A37820D61CEB795E0062E53E /* ContactsContent.xmlc */ = {isa = PBXFileReference; lastKnownFileType = text; path = ContactsContent.xmlc; sourceTree = "<group>"; };
+		A37820D71CEB795E0062E53E /* DownloadTmpl.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = DownloadTmpl.xhtml; sourceTree = "<group>"; };
+		A37820D81CEB795E0062E53E /* DownloadTmpl.xmlc */ = {isa = PBXFileReference; lastKnownFileType = text; path = DownloadTmpl.xmlc; sourceTree = "<group>"; };
+		A37820D91CEB795E0062E53E /* HelpContent.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = HelpContent.xhtml; sourceTree = "<group>"; };
+		A37820DA1CEB795E0062E53E /* HelpContent.xmlc */ = {isa = PBXFileReference; lastKnownFileType = text; path = HelpContent.xmlc; sourceTree = "<group>"; };
+		A37820DB1CEB795E0062E53E /* HomeContent.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = HomeContent.xhtml; sourceTree = "<group>"; };
+		A37820DC1CEB795E0062E53E /* HomeContent.xmlc */ = {isa = PBXFileReference; lastKnownFileType = text; path = HomeContent.xmlc; sourceTree = "<group>"; };
+		A37820DD1CEB795E0062E53E /* Layout.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Layout.xhtml; sourceTree = "<group>"; };
+		A37820DE1CEB795E0062E53E /* Layout.xmlc */ = {isa = PBXFileReference; lastKnownFileType = text; path = Layout.xmlc; sourceTree = "<group>"; };
+		A37820DF1CEB795E0062E53E /* options.xmlc */ = {isa = PBXFileReference; lastKnownFileType = text; path = options.xmlc; sourceTree = "<group>"; };
+		A37820E01CEB795E0062E53E /* UserProfile.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = UserProfile.html; sourceTree = "<group>"; };
+		A37820E11CEB795E0062E53E /* UserProfile.xmlc */ = {isa = PBXFileReference; lastKnownFileType = text; path = UserProfile.xmlc; sourceTree = "<group>"; };
 		A37C02CE128C62BD0047A982 /* Base64Coder.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = Base64Coder.java; sourceTree = "<group>"; };
 		A37C02CF128C62BD0047A982 /* DBConnection.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = DBConnection.java; sourceTree = "<group>"; };
 		A37C02D0128C62BD0047A982 /* PivaxFormatter.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = PivaxFormatter.java; sourceTree = "<group>"; };
@@ -3464,10 +3498,60 @@
 			path = orig;
 			sourceTree = "<group>";
 		};
+		A37820BE1CEB794F0062E53E /* fra */ = {
+			isa = PBXGroup;
+			children = (
+				A37820BF1CEB794F0062E53E /* AdvancedLookup.xhtml */,
+				A37820C01CEB794F0062E53E /* AdvancedLookup.xmlc */,
+				A37820C11CEB794F0062E53E /* ConsultPage.xhtml */,
+				A37820C21CEB794F0062E53E /* ConsultPage.xmlc */,
+				A37820C31CEB794F0062E53E /* ContactsContent.xhtml */,
+				A37820C41CEB794F0062E53E /* ContactsContent.xmlc */,
+				A37820C51CEB794F0062E53E /* DownloadTmpl.xhtml */,
+				A37820C61CEB794F0062E53E /* DownloadTmpl.xmlc */,
+				A37820C71CEB794F0062E53E /* HelpContent.xhtml */,
+				A37820C81CEB794F0062E53E /* HelpContent.xmlc */,
+				A37820C91CEB794F0062E53E /* HomeContent.xhtml */,
+				A37820CA1CEB794F0062E53E /* HomeContent.xmlc */,
+				A37820CB1CEB794F0062E53E /* Layout.xhtml */,
+				A37820CC1CEB794F0062E53E /* Layout.xmlc */,
+				A37820CD1CEB794F0062E53E /* options.xmlc */,
+				A37820CE1CEB794F0062E53E /* UserProfile.html */,
+				A37820CF1CEB794F0062E53E /* UserProfile.xmlc */,
+			);
+			path = fra;
+			sourceTree = "<group>";
+		};
+		A37820D01CEB795E0062E53E /* wol */ = {
+			isa = PBXGroup;
+			children = (
+				A37820D11CEB795E0062E53E /* AdvancedLookup.xhtml */,
+				A37820D21CEB795E0062E53E /* AdvancedLookup.xmlc */,
+				A37820D31CEB795E0062E53E /* ConsultPage.xhtml */,
+				A37820D41CEB795E0062E53E /* ConsultPage.xmlc */,
+				A37820D51CEB795E0062E53E /* ContactsContent.xhtml */,
+				A37820D61CEB795E0062E53E /* ContactsContent.xmlc */,
+				A37820D71CEB795E0062E53E /* DownloadTmpl.xhtml */,
+				A37820D81CEB795E0062E53E /* DownloadTmpl.xmlc */,
+				A37820D91CEB795E0062E53E /* HelpContent.xhtml */,
+				A37820DA1CEB795E0062E53E /* HelpContent.xmlc */,
+				A37820DB1CEB795E0062E53E /* HomeContent.xhtml */,
+				A37820DC1CEB795E0062E53E /* HomeContent.xmlc */,
+				A37820DD1CEB795E0062E53E /* Layout.xhtml */,
+				A37820DE1CEB795E0062E53E /* Layout.xmlc */,
+				A37820DF1CEB795E0062E53E /* options.xmlc */,
+				A37820E01CEB795E0062E53E /* UserProfile.html */,
+				A37820E11CEB795E0062E53E /* UserProfile.xmlc */,
+			);
+			path = wol;
+			sourceTree = "<group>";
+		};
 		A37BC1151C7C6E2700B6EF4B /* xhtmlibaatukaay */ = {
 			isa = PBXGroup;
 			children = (
 				A3D61D231CCA86F9001109E8 /* eng */,
+				A37820BE1CEB794F0062E53E /* fra */,
+				A37820D01CEB795E0062E53E /* wol */,
 				A37BC1161C7C6E2700B6EF4B /* orig */,
 			);
 			path = xhtmlibaatukaay;
