@@ -545,7 +545,7 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                             if (Entries.userCanPutEntry(getUser(),dictName)) {
                                 content = Entries.putEntry(dictName, restStrings[1], restStrings[2], entryDom, this.getUser());
                                 if (content==null) {
-                                    String errorMsg = "Error: dict: " + dictName + " lang: " +  restStrings[1] + " ID: " + restStrings[2] +" does not exist!";
+                                    String errorMsg = "Error: dict: " + dictName + " lang: " +  restStrings[1] + " ENTRY ID: " + restStrings[2] +" does not exist!";
                                     content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + HttpPresentationResponse.SC_NOT_FOUND + "</h1><p>" + errorMsg + "</p></html>");
                                     theResponse.setStatus(HttpPresentationResponse.SC_NOT_FOUND,errorMsg);
                                     //PapillonLogger.writeDebugMsg(errorMsg);
@@ -601,7 +601,7 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                                 }
                             }
                             else {
-                                String errorMsg = "Error: user: " + login +" not authorized to put entry!";
+                                String errorMsg = "Error: user: " + login +" not authorized to post entry!";
                                 //PapillonLogger.writeDebugMsg(errorMsg);
                                 content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + HttpPresentationResponse.SC_UNAUTHORIZED + "</h1><p>" + errorMsg + "</p></html>");
                                 theResponse.setStatus(HttpPresentationResponse.SC_UNAUTHORIZED,errorMsg);
@@ -689,7 +689,7 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                             if (Entries.userCanEditEntry(getUser(), dictName)) {
                                 content = Entries.editEntry(dictName, restStrings[1], restStrings[2], xpathString, restStrings[3], this.getUser());
                                 if (content==null) {
-                                    String errorMsg = "Error: dict: " + dictName + " lang: " +  restStrings[1] +" ID: " + restStrings[2] + " does not exist!";
+                                    String errorMsg = "Error: dict: " + dictName + " lang: " +  restStrings[1] +" CONTRIB ID: " + restStrings[2] + " does not exist!";
                                     //PapillonLogger.writeDebugMsg(errorMsg);
                                     content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + HttpPresentationResponse.SC_NOT_FOUND + "</h1><p>" + errorMsg + "</p></html>");
                                    theResponse.setStatus(HttpPresentationResponse.SC_NOT_FOUND, errorMsg);
@@ -700,7 +700,7 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                                 }
                             }
                             else {
-                                String errorMsg = "Error: user: " + login +" not authorized to put entry!";
+                                String errorMsg = "Error: user: " + login +" not authorized to put entry part!";
                             //    PapillonLogger.writeDebugMsg(errorMsg);
                                 content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + HttpPresentationResponse.SC_UNAUTHORIZED + "</h1><p>" + errorMsg + "</p></html>");
                                 theResponse.setStatus(HttpPresentationResponse.SC_UNAUTHORIZED,errorMsg);
