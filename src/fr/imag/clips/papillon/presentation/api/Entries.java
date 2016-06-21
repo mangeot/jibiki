@@ -558,7 +558,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
                             myNode.appendChild(textNode);
                             //PapillonLogger.writeDebugMsg("Entry modified: " + value);
                         }
-                        else if (myNode.getNodeType() == org.w3c.dom.Node.ATTRIBUTE_NODE) {
+                        else if (myNode.getNodeType() == org.w3c.dom.Node.ATTRIBUTE_NODE || myNode.getNodeType() == org.w3c.dom.Node.TEXT_NODE) {
                             myNode.setNodeValue(value);
                             //PapillonLogger.writeDebugMsg("Entry modified: " + value);
                        }
