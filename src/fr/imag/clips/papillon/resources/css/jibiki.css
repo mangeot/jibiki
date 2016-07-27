@@ -609,7 +609,7 @@ article, .article {
     /*	display: block;*/
 }
 
-.nonvalidejpn, .romaji .pb, .romaji-editable .pb {
+.nonvalidejpn, .romaji .pb, .romaji-editable .pb, .editable .pb {
     background-color: orange;
 }
 
