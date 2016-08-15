@@ -94,8 +94,8 @@ a.hide {text-decoration: none}
 div#BannerContent {
     display: table;
 	width: 100%;
-    border-spacing: 10px;
-	padding-top: 50px;
+    border-spacing: 4px;
+	padding-top: 45px;
 	background: #E4E4E4;
 }
 
