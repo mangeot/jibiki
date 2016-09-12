@@ -1083,7 +1083,7 @@ public class DictionariesFactory {
 		VolumeEntry myAnswer = VolumeEntriesFactory.findEntryByHandle(volumeName, handle);
 		
         //FIXME: hack for targets array. If the array is null, it means that all targets are asked
-		if (targets !=null && targets.size() == 0) {
+		if (targets==null || (targets !=null && targets.size() == 0)) {
 			return expandResult(myAnswer, myAnswer.getVolume().getTargetLanguagesArray(), user);
 		} else {
 			return expandResult(myAnswer, Utility.ArrayIntersection(myAnswer.getVolume().getTargetLanguagesArray(),targets), user);
