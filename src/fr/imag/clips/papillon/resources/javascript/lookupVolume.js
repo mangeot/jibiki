@@ -111,18 +111,22 @@ $(document).ready(function(){ // Quand le document est complètement chargé
                   
 });
 
-
 function queryPrefixVolume(word, volume) {
+    var key='cdm-headword|cdm-headwordVariant|cdm-writing|cdm-reading';
+    if (volume=='Motamot_khm_api') {
+        volume='Motamot_khm';
+        key='cdm-pronunciation';
+        word = replace_api(word);
+    }
+    queryPrefixVolumeKey(word, volume, key);
+}
+
+
+function queryPrefixVolumeKey(word, volume, key) {
 			//On lance la fonction ajax
 			load = true;
 			$('#lookupentries').children().remove();
     var halflimit = parseInt($('#LIMIT').val(),10);
-	var key='cdm-headword|cdm-headwordVariant|cdm-writing|cdm-reading';
-	if (volume=='Motamot_khm_api') {
-		volume='Motamot_khm';
-		key='cdm-pronunciation';
-		word = replace_api(word);
-	}
 	//alert(volume+' '+ key + ' ' + word);
 			$.ajax({
  //               crossDomain: true,
