@@ -73,13 +73,6 @@ public class AdvancedLookup extends DilafBasePO {
         // Création du contenu
 		content =
 		(AdvancedLookupXHTML)MultilingualXHtmlTemplateFactory.createTemplate("AdvancedLookupXHTML", this.getComms(), this.getSessionData());
-		
-		// Retrieve parameters like AdvancedQueryForm object
-        AdvancedQueryForm qf = new AdvancedQueryForm(this.getComms(), this.getSessionData(), true, false);
-        
-        // Import query form node in advanced search page
-        XHTMLElement formHolder = content.getElementQueryMenuHolder();
-        formHolder.appendChild(content.importNode(qf.getQueryFormNode("AdvancedSearch.po"), true));
 
 		// Établissement de la requête
 			
@@ -89,7 +82,15 @@ public class AdvancedLookup extends DilafBasePO {
 			throw new ClientPageRedirectException("Home.po?" + this.getComms().request.getQueryString());
 		}
 		
-		/* initialize response */
+        
+        // Retrieve parameters like AdvancedQueryForm object
+        AdvancedQueryForm qf = new AdvancedQueryForm(this.getComms(), this.getSessionData(), true, false);
+        
+        // Import query form node in advanced search page
+        XHTMLElement formHolder = content.getElementQueryMenuHolder();
+        formHolder.appendChild(content.importNode(qf.getQueryFormNode("AdvancedSearch.po"), true));
+
+        /* initialize response */
 		java.util.Collection EntryCollection = null;
 		Volume myVolume = null;
 		org.w3c.dom.Document docResponse = XMLServices.buildDOMTree("<?xml version='1.0' encoding='UTF-8' ?><div id='entries'></div>");

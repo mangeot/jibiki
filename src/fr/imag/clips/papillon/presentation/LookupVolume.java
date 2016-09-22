@@ -129,6 +129,10 @@ public class LookupVolume extends AbstractPO {
 			String msort = myGetParameter("MSORT");
 			String action = myGetParameter("action");
 			String order = myGetParameter("DIRECTION");
+        
+        if (word==null && oneentry!=null) {
+            word=oneentry;
+        }
 
 		
 		PapillonLogger.writeDebugMsg("LookupVolume: action: " + action + " VOLUME: " + volume + " WORD: " + word + " KEY: " + key + " ORDER: " + order);

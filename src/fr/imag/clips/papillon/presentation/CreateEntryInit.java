@@ -374,16 +374,45 @@ public class CreateEntryInit extends PapillonBasePO {
 		java.io.UnsupportedEncodingException,
         java.io.IOException,
 		HttpPresentationException {
+            boolean resultsEmpty = true;
 			
-            //
             AdvancedQueryForm qf = new AdvancedQueryForm(this.getComms(), this.getSessionData(), true, false);
+           
+            // AdvancedSearch query
+            QueryRequest queryReq = qf.getQueryRequest();
+            if (!queryReq.isEmpty() && !qf.actionOnFormRequested()) {
+                
+                //PapillonLogger.writeDebugMsg("---qr advanced is not empty");
+                
+                
+                //FIXME: mettre une option sur le volume pour dire s'il est en cours d'édition ou non ?
+                if (!queryReq.isOpenRequest()) {
+                    // Add status criteria
+                    ArrayList listStatus = new ArrayList();
+                    
+                    QueryCriteria criteriaStatus = new QueryCriteria();
+                    criteriaStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);
+                    criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.CLASSIFIED_FINISHED_STATUS);
+                    criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.NOT_FINISHED_STATUS);
+                    criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.DRAFT_STATUS);
+                    criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.DELETED_STATUS);
+                    listStatus.add(criteriaStatus);
+                    
+                    queryReq.addOrCriteriaList(listStatus);
+                }
+                
+                // Perform the request
+                Collection qrset = queryReq.findLexieAndTranslation(this.getUser());
+                
+            //
             QueryParameter qp = qf.getQueryParameter();
             //qp.setTargets(new ArrayList());
-            Collection qrset = searchEntry(volume, qf, qp);
+           // Collection qrset = searchEntry(volume, qf, qp);
 
 			//
 			if (qrset != null && qrset.size()!=0) {
-
+                resultsEmpty = false;
+                PapillonLogger.writeDebugMsg("CreateEntryInit: results not empty!");
                 //
                 //addEntriesTable(qrset, qp);
                 XHTMLElement queryResultForm = content.getElementQueryCreateForm();
@@ -393,14 +422,17 @@ public class CreateEntryInit extends PapillonBasePO {
                 //
                 removeShowCreation();
                 
-            } else {
-                //
-                throw new ClientPageRedirectException(CreateEntryInitURL + "?" + 
-                                                      EditEntryInitFactory.ACTION_PARAMETER + "=showAndCreate" + 
-                                                      "&" + EditEntryInitFactory.VOLUME_ANYWAY_PARAMETER + "=" + volume.getName() + 
-                                                      "&" + EditEntryInitFactory.HEADWORD_ANYWAY_PARAMETER + "=" + myUrlEncode(headword));
-			}
-		}
+            }
+        }
+        if (resultsEmpty) {
+            PapillonLogger.writeDebugMsg("CreateEntryInit: results empty!");
+               //
+                //throw new ClientPageRedirectException(CreateEntryInitURL + "?" +
+               //                                       EditEntryInitFactory.ACTION_PARAMETER + "=showAndCreate" +
+               //                                       "&" + EditEntryInitFactory.VOLUME_ANYWAY_PARAMETER + "=" + volume.getName() +
+               //                                       "&" + EditEntryInitFactory.HEADWORD_ANYWAY_PARAMETER + "=" + myUrlEncode(headword));
+        }
+    }
 
 
 protected void removeShowCreation() {

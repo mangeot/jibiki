@@ -322,8 +322,11 @@ public class IndexFactory {
 						if (key!=null && key[2] !=null && !key[2].equals("")) {
                            /* clés multiples */
                           String[] keynames = key[0].split("\\|");
-                            // Est-ce utile ? à tester d'avantage !
-                           if (!keynames[0].equals(Volume.CDM_headword)) {
+                            // Liste des clés qui sont classées par ordre alphabétique
+                           if (!keynames[0].equals(Volume.CDM_headword)
+                               && !keynames[0].equals(Volume.CDM_headwordVariant)
+                               && !keynames[0].equals(Volume.CDM_reading)
+                               &&!keynames[0].equals(Volume.CDM_writing)) {
                                 query.getQueryBuilder().addWhere(keyColumn,Volume.CDM_headword,QueryBuilder.EQUAL);
                                 
                                 RDBTable tableIndex = new RDBTable(indexTableName);

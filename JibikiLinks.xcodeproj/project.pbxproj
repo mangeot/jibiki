@@ -1217,6 +1217,7 @@
 		A3662CFD1A12FC2500C423DF /* options.xmlc */ = {isa = PBXFileReference; lastKnownFileType = text; path = options.xmlc; sourceTree = "<group>"; };
 		A3662CFF1A13490300C423DF /* LangAndUser.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = LangAndUser.xhtml; sourceTree = "<group>"; };
 		A369D51118AD0E820023314A /* LexalpEditEntryInit.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = LexalpEditEntryInit.java; sourceTree = "<group>"; };
+		A36B12F11D91217E000AE645 /* ReviewerMenu.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = ReviewerMenu.xhtml; sourceTree = "<group>"; };
 		A37059271B68C78C00A00483 /* LexiesManagement.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = LexiesManagement.xhtml; sourceTree = "<group>"; };
 		A37059281B68C82300A00483 /* LexiesManagement.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = LexiesManagement.xhtml; sourceTree = "<group>"; };
 		A37059291B68C85800A00483 /* LexiesManagement.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = LexiesManagement.xhtml; sourceTree = "<group>"; };
@@ -3493,6 +3494,7 @@
 				A3662CFF1A13490300C423DF /* LangAndUser.xhtml */,
 				A3662CFB1A12FC2500C423DF /* Layout.xhtml */,
 				A34F3E211B0A1AB800A548EC /* Register.xhtml */,
+				A36B12F11D91217E000AE645 /* ReviewerMenu.xhtml */,
 				A3662CFD1A12FC2500C423DF /* options.xmlc */,
 			);
 			path = orig;
