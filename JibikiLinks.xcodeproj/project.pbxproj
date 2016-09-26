@@ -1488,6 +1488,7 @@
 		A3C69AB0171F5387004A6FAE /* LoginUserTmpl.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = LoginUserTmpl.xhtml; sourceTree = "<group>"; };
 		A3C69AC5171F550A004A6FAE /* RetrieveAccountTmpl.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = RetrieveAccountTmpl.xhtml; sourceTree = "<group>"; };
 		A3C894AB171EBFF300A9651D /* ViewQueryResult.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ViewQueryResult.xhtml; sourceTree = "<group>"; };
+		A3CB77891D9954E8006C3C72 /* CreateEntryInit.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = CreateEntryInit.xhtml; sourceTree = "<group>"; };
 		A3CFEC641844F962008F6C62 /* HelpContent.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = HelpContent.xhtml; sourceTree = "<group>"; };
 		A3D61D241CCA86F9001109E8 /* AdvancedLookup.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = AdvancedLookup.xhtml; sourceTree = "<group>"; };
 		A3D61D251CCA86F9001109E8 /* AdvancedLookup.xmlc */ = {isa = PBXFileReference; lastKnownFileType = text; path = AdvancedLookup.xmlc; sourceTree = "<group>"; };
@@ -3489,6 +3490,7 @@
 				A32CBB621A198C9F00B1D65C /* AdvancedQueryForm.xhtml */,
 				A303076F1AEF905F00DD22C4 /* ConfirmEntry.xhtml */,
 				A32D31291AEF644100D8EA78 /* ConsultPage.xhtml */,
+				A3CB77891D9954E8006C3C72 /* CreateEntryInit.xhtml */,
 				A30307711AEF910000DD22C4 /* EditEntry.xhtml */,
 				A32D312B1AEF7EDD00D8EA78 /* EditingLayout.xhtml */,
 				A3662CFF1A13490300C423DF /* LangAndUser.xhtml */,

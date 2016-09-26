@@ -427,10 +427,10 @@ public class CreateEntryInit extends PapillonBasePO {
         if (resultsEmpty) {
             PapillonLogger.writeDebugMsg("CreateEntryInit: results empty!");
                //
-                //throw new ClientPageRedirectException(CreateEntryInitURL + "?" +
-               //                                       EditEntryInitFactory.ACTION_PARAMETER + "=showAndCreate" +
-               //                                       "&" + EditEntryInitFactory.VOLUME_ANYWAY_PARAMETER + "=" + volume.getName() +
-               //                                       "&" + EditEntryInitFactory.HEADWORD_ANYWAY_PARAMETER + "=" + myUrlEncode(headword));
+                throw new ClientPageRedirectException(CreateEntryInitURL + "?" +
+                                                      EditEntryInitFactory.ACTION_PARAMETER + "=createAnyway" +
+                                                      "&" + EditEntryInitFactory.VOLUME_ANYWAY_PARAMETER + "=" + volume.getName() +
+                                                      "&" + EditEntryInitFactory.HEADWORD_ANYWAY_PARAMETER + "=" + myUrlEncode(headword));
         }
     }
 

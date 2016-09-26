@@ -5,8 +5,8 @@
 	<title>Edition of Papillon Lexical Database</title>
 </head>
 <body>
-    <div id="EditEntryInitContent" xml:lang="de" lang="de"> 
-        <h1 class="title"><span id="UserName">Name</span> - Erstellung neuer Eintr&auml;ge</h1>
+    <div id="EditEntryInitContent" xml:lang="fr" lang="fr">
+        <h1 class="title"><span id="UserName">Name</span> - Création d'un nouvel article</h1>
          <script id="InitJavascript" type="text/javascript">
             <!-- 
                 // Open a new interface window to create the new entry 
@@ -29,14 +29,14 @@
 
                 function create() {
                     var actionElement = document.getElementById('action');
-                    var formElement = document.getElementById('LookupForm');                    
+                    var formElement = document.getElementById('LookupForm');
                     actionElement.value='create';
                     formElement.submit()
                 }
             //-->
         </script>
         <div style="text-align:center;">
-            <span>ACHTUNG: Um Eintr&auml;ge zu erstellen, muss Ihr Browser Pop-up Fenster erlauben. !</span>
+            <span>ATTENTION: pour créer un article, votre navigateur doit accepter les fenêtres surgissantes "popup".</span>
         </div>
         
         <div id="QueryCreateForm" >
@@ -49,38 +49,40 @@
         </div>
         
          <div id="ShowCreation" style="text-align:center; width:100%; padding: 10px 0px;">
-            <h2>New entry "<span id="HEADWORD_FINAL">HeadwordFinal</span>" create in <span id="VOLUME_FINAL">VolumeFinal</span> volume.</h2>
+            <h2>Nouvel article "<span id="HEADWORD_FINAL">HeadwordFinal</span>" créé dans le volume <span id="VOLUME_FINAL">VolumeFinal</span>.</h2>
         </div>
         
         <div class="QueryForm">
             <div id="CreateAnywayForm" style="text-align:center; width:100%; padding: 10px 0px;">
-                <span>This entry exists. Would you like to create it anyway ?<br/></span>
-                <b><label for="VOLUME">Volume:</label></b> 
-                <input id="VOLUME_DISABLED" name="VOLUME_DISABLED" style="width:150px" type="text" disabled="disabled" value="" />
-                <b><label for="ValueField">Stichwort:</label></b> 
+                <span>Un article avec ce mot-vedette existe déjà, Voulez-vous en créer un nouveau ?<br/></span>
+                <b><label for="VOLUME">Volume :</label></b>
+                <input id="VOLUME_DISABLED" name="VOLUME_DISABLED" type="text" disabled="disabled" value="" />
+                <b><label for="ValueField">Mot-vedette :</label></b>
                 <input id="HEADWORD_DISABLED" name="HEADWORD_DISABLED" type="text" disabled="disabled" style="width:30%" value="" />
-                <input name="action" id="CreateAnywayButton" type="submit" style="width:110px" value="create anyway" onclick="createAnyway()" />
+                <input name="action" id="CreateAnywayButton" type="submit" style="width:110px" value="Créer quand même" onclick="createAnyway()" />
             </div>
             <form  id="LookupForm" method="get" action="CreateEntryInit.po" >
                 <div style="text-align:center; width:100%; padding: 10px 0px;">
-                    <b><label for="VOLUME">Volume:</label></b>           
+                    <b><label for="VOLUME">Volume :</label></b>
                     <select id="VOLUME" name="VOLUME">
                         <option id="VolumeOptionTemplate" value="NONE" label="NONE">NONE</option>
-                    </select>
-                    <b><label for="ValueField">Stichwort:</label></b> 
+                    </select>&nbsp;&nbsp;
+                    <strong><label for="ValueField">Mot-vedette en japonais :</label></strong>
                     <input type="hidden" id="Facet" name="FACET.0" value="cdm-headword" />
                     <input type="hidden" id="Operator" name="OPERATOR.0" value="2" />
-                    <input id="ValueField" name="FACETVALUE.0" type="text" style="width:30%" value="" />
+                    <input id="ValueField" name="FACETVALUE.0" type="text" value="" />
                     <input type="hidden" id="SourceLang" name="SOURCE.0" value="All" />
                     <input type="hidden" id="Targets" name="TARGETS" value="*All*" />
                     <input type="hidden" id="Xsl" name="XSL" value="Default" />
                     <input type="hidden" id="Limit" name="LIMIT" value="5" />
                     <input type="hidden" id="Offset" name="OFFSET" />
-                    <input type="hidden" id="action" name="action" />
-                    <input id="CreateButton" type="submit" style="width:110px" value="erstellen" onclick="create()"/>
+                    <input type="hidden" id="action" name="action" /><br/>
+                    <p>Attention, le mot-vedette doit être tel qu'il apparait dans un texte japonais. Il ne doit pas être en romaji ni en hiragana (sauf s'il apparait toujours en hiragana dans les textes).</p>
+                    <input id="CreateButton" type="submit" style="width:110px" value="Créer" onclick="create()"/>
                 </div>
             </form>
         </div>
     </div>
 </body>
 </html>
+
