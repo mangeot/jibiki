@@ -78,6 +78,9 @@ import com.lutris.appserver.server.sql.ObjectIdException;
 import com.lutris.dods.builder.generator.query.DataObjectException;
 import fr.imag.clips.papillon.CurrentDBTransaction;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
+import fr.imag.clips.papillon.business.user.Group;
+import fr.imag.clips.papillon.business.user.GroupAnswer;
+import fr.imag.clips.papillon.business.user.GroupsFactory;
 import fr.imag.clips.papillon.business.xml.XMLServices;
 import fr.imag.clips.papillon.data.DictionaryDO;
 import org.w3c.dom.Element;
@@ -396,6 +399,9 @@ public class Dictionary {
      */
     public void deleteAll() throws PapillonBusinessException {
 		
+        // delete dictionary admin group
+        String adminGroupString = Group.ADMIN_DICT_GROUP_PREFIX + this.getName();
+        GroupAnswer theAnswer = GroupsFactory.deleteGroup(adminGroupString);
         //
         for (Iterator iter =  VolumesFactory.getVolumesArray(this.getName()).iterator(); iter.hasNext();) {
             ((Volume)iter.next()).deleteAll();

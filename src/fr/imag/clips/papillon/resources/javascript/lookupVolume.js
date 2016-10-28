@@ -95,7 +95,11 @@ $(document).ready(function(){ // Quand le document est complètement chargé
 			var msort = (direction=='ASC') ? $('.lookupentry:last').attr('msort') : $('.lookupentry:first').attr('msort');
  			lastEntriesSize = $('.lookupentry').size();
 			var volume = $('#VOLUME').val();
-            var key='cdm-headword|cdm-headwordVariant|cdm-writing|cdm-reading';
+            var key = $('#lookupentries').attr('key');
+            if (key == null) {
+                key='cdm-headword|cdm-headwordVariant|cdm-writing|cdm-reading';
+            }
+             //console.log('key:'+key);
 			if (volume=='Motamot_khm_api') {
 				volume='Motamot_khm';
 				key='cdm-pronunciation';

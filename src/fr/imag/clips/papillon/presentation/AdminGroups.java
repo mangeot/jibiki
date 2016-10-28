@@ -189,15 +189,16 @@ public class AdminGroups extends PapillonBasePO {
 					groupsString += adminsArray[j] + "";
 				}
                 content.setTextGrpAdmins(groupsString);
-
-			if (tempGroup.isAdmin(this.getUser().getLogin())) {
+                // à commenter sinon les admin ne peuvent aps supprimer des groupes.
+                // je ne me souviens plus pourquoi j'avais bloqué cette fonctionnalité !
+			//if (tempGroup.isAdmin(this.getUser().getLogin())) {
                  theRemoveAnchor.setHref(this.getUrl() + "?" + REMOVE_PARAMETER +
                                         "=" + tempGroup.getHandle());
 
-				}
-				else {
-					theRemoveAnchor.setHref("");
-				}
+			//	}
+			//	else {
+			//		theRemoveAnchor.setHref("");
+			//	}
                 theRowParent.appendChild(theRow.cloneNode(true));
             }
 
