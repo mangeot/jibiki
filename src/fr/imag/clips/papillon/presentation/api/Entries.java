@@ -441,14 +441,16 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 	protected static String getIndexValues(Volume theVolume, String handle, String key) 
 	throws fr.imag.clips.papillon.business.PapillonBusinessException {
 		String sourceLang = theVolume.getSourceLanguage();
-		if (key.equals("*")) {
-			key=null;
-		}
+        if (key ==null || key.equals("*")) {
+            key="";
+        }
+        String[] KeysArray = key.split("\\|");
+        java.util.List KeysList = java.util.Arrays.asList(KeysArray);
 		java.util.Collection resultsVector = IndexFactory.getIndexVectorByEntryId(theVolume, handle);
 		StringBuffer allIndexes = new StringBuffer(160 * (resultsVector.size()+1));	
 		for (java.util.Iterator myIterator = resultsVector.iterator(); myIterator.hasNext(); ) {
 			Index myEntry = (Index) myIterator.next();
-			if (key ==null || (key !=null && myEntry.getKey().equals(key))) {
+			if (key.equals("") || KeysList.contains(myEntry.getKey())) {
 				allIndexes.append("<d:key value='");
 				allIndexes.append(myEntry.getKey());
 				allIndexes.append("'");
