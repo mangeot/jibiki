@@ -4,7 +4,7 @@
 -- select headword from gdefest order by est_sort(headword);
 -- or create an index:
 --
-CREATE LANGUAGE plpgsql;
+CREATE OR REPLACE LANGUAGE plpgsql;
 
 
 -- bam Bambara
@@ -1624,9 +1624,10 @@ $PROC$ LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
 -- jpn Japanese
 --
 -- romaji katakana hiragana kanji
--- for the moment do nothing
--- todo: maybe sort with unicode code or reading 
+-- hiragana and katakana are sorted with the gojûon order. 
 -- あいうえお かきくけこ さしすせそ たちつてと なにぬねの はひふへほ まみむめも らりるれろ やゆよ わをん
+-- A sort with 2 passes should be implemented
+-- what to do with the ー　?
 CREATE OR REPLACE FUNCTION jpn_sort( varchar ) 
  RETURNS varchar AS $PROC$
 
