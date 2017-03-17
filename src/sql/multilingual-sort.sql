@@ -1626,13 +1626,10 @@ $PROC$ LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
 -- romaji katakana hiragana kanji
 -- hiragana and katakana are sorted with the gojûon order. 
 -- あいうえお かきくけこ さしすせそ たちつてと なにぬねの はひふへほ まみむめも らりるれろ やゆよ わをん
--- Correct sort should be:
+-- This sort gives the correct sort:
 -- すす,　すず,　すすき,　すすぎ,　すずき,　すすむ,　すずむ　(susu, suzu, susuki, susugi, suzuki, susumu, suzumu)
--- This sort gives: 
--- すす, すずき, すすき, すすぎ, すすむ, すずむ, すず
--- A sort with 2 passes should be implemented
 -- what to do with the ー　?
--- select word collate "ja_JP" from test order by word asc gives 
+-- select word collate "ja_JP" from test order by word asc gives a wrong sort:
 --  すす, すすき, すすぎ, すすむ, すず, すずき, すずむ
 
 CREATE OR REPLACE FUNCTION jpn_sort( varchar ) 
@@ -1986,7 +1983,7 @@ CREATE OR REPLACE FUNCTION jpn_sort( varchar )
   	END LOOP;
   	result:= result || '00';
   	FOR i IN 1.. length LOOP
-	  tmp := SUBSTR( $1, length-i, 1 );
+	  tmp := SUBSTR( $1, length-i+1, 1 );
 	  IF tmp = 'あ'  THEN
 		result:= result || '11';
 	  ELSIF tmp = 'ア'  THEN
