@@ -1983,7 +1983,7 @@ CREATE OR REPLACE FUNCTION jpn_sort( varchar )
   	END LOOP;
   	result:= result || '00';
   	FOR i IN 1.. length LOOP
-	  tmp := SUBSTR( $1, length-i+1, 1 );
+	  tmp := SUBSTR( $1, i, 1 );
 	  IF tmp = 'あ'  THEN
 		result:= result || '11';
 	  ELSIF tmp = 'ア'  THEN
