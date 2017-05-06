@@ -10,19 +10,19 @@
 ###############################
 # Papillon jars
 ## in the following paths, replace . by the directory full path
-papillon.xalan.jar=/home/jibiki/toolsforjibiki/xalan-j_2_7_0/xalan.jar
-papillon.xerces.jar=/home/jibiki/toolsforjibiki/xalan-j_2_7_0/xercesImpl.jar
-papillon.xmlapi.jar=/home/jibiki/toolsforjibiki/xalan-j_2_7_0/xml-apis.jar
-papillon.xsltc.jar=/home/jibiki/toolsforjibiki/xalan-j_2_7_0/xsltc.jar
+papillon.xalan.jar=%TOOLSFORJIBIKI_DIR%/xalan-j_2_7_0/xalan.jar
+papillon.xerces.jar=%TOOLSFORJIBIKI_DIR%/xalan-j_2_7_0/xercesImpl.jar
+papillon.xmlapi.jar=%TOOLSFORJIBIKI_DIR%/xalan-j_2_7_0/xml-apis.jar
+papillon.xsltc.jar=%TOOLSFORJIBIKI_DIR%/xalan-j_2_7_0/xsltc.jar
 #sudo apt-get install libpg-java 
 papillon.pgsql.jar=/usr/share/java/postgresql.jar
-papillon.fop.jar=/home/jibiki/toolsforjibiki/fop-0.20.5/build/fop.jar
-papillon.avalon.jar=/home/jibiki/toolsforjibiki/fop-0.20.5/lib/avalon-framework-cvs-20020806.jar
-papillon.batik.jar=/home/jibiki/toolsforjibiki/fop-0.20.5/lib/batik.jar
-papillon.javamail.jar=/home/jibiki/toolsforjibiki/javamail-1.4/mail.jar
+papillon.fop.jar=%TOOLSFORJIBIKI_DIR%/fop-0.20.5/build/fop.jar
+papillon.avalon.jar=%TOOLSFORJIBIKI_DIR%/fop-0.20.5/lib/avalon-framework-cvs-20020806.jar
+papillon.batik.jar=%TOOLSFORJIBIKI_DIR%/fop-0.20.5/lib/batik.jar
+papillon.javamail.jar=%TOOLSFORJIBIKI_DIR%/javamail-1.4/mail.jar
 
 # Enhydra dirs
-enhydra.dir=/home/jibiki/toolsforjibiki/enhydra5.1
+enhydra.dir=%TOOLSFORJIBIKI_DIR%/enhydra5.1
 
 
 ###############################
