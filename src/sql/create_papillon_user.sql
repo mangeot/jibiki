@@ -15,4 +15,4 @@
  * This SQL creates the user papillon.
  */
 
-CREATE USER papillon WITH PASSWORD 'dbpap2' CREATEDB CREATEUSER;
+CREATE USER papillon WITH PASSWORD 'dbpap21' CREATEDB;
