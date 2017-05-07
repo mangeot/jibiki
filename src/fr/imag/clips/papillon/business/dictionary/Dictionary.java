@@ -100,6 +100,13 @@ public class Dictionary {
 	public static String PIVOT_TYPE = "pivot";
 	public static String PIVAX_TYPE = "pivax";
 	public static String DIRECT_TYPE = "direct";
+
+    public static String PUBLIC_ACCESS = "public";
+    public static String RESTRICTED_ACCESS = "restricted";
+    public static String PRIVATE_ACCESS = "private";
+
+    
+    
     /**
      * The DO of the Dictionary.
      */
@@ -260,6 +267,22 @@ public class Dictionary {
         }
     }
     
+    public String getAccess()
+    throws PapillonBusinessException {
+        try {
+            return myDO.getAccess();
+        } catch(DataObjectException ex) {
+            throw new PapillonBusinessException("Error getting Dictionary's legal", ex);
+        }
+    }
+    public void setAccess(String access)
+    throws PapillonBusinessException {
+        try {
+            myDO.setAccess(access);
+        } catch(DataObjectException ex) {
+            throw new PapillonBusinessException("Error setting Dictionary's legal", ex);
+        }
+    }
     // FIXME: change String to Collection
     // FIXME: supress getSourceLanguagesArray ? or getSourceLanguages ?
     public String getSourceLanguages() 

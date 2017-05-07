@@ -328,14 +328,20 @@ public class DictionariesFactory {
 			domain = domains.item(0).getFirstChild().getNodeValue();
 		}
 		
-		NodeList legals = dictionary.getElementsByTagNameNS(DML_URI,"legal");
-		String legal = null;
-		if ((null != legals) && (legals.getLength() > 0)) {
-			legal = legals.item(0).getFirstChild().getNodeValue();
-		}
-		
-		PapillonLogger.writeDebugMsg("Legal: " + legal);
-		
+        NodeList legals = dictionary.getElementsByTagNameNS(DML_URI,"legal");
+        String legal = null;
+        if ((null != legals) && (legals.getLength() > 0)) {
+            legal = legals.item(0).getFirstChild().getNodeValue();
+        }
+        PapillonLogger.writeDebugMsg("Legal: " + legal);
+        
+        NodeList accessNodes = dictionary.getElementsByTagNameNS(DML_URI,"access");
+        String access = null;
+        if ((null != accessNodes) && (accessNodes.getLength() > 0)) {
+            access = accessNodes.item(0).getFirstChild().getNodeValue();
+        }
+        PapillonLogger.writeDebugMsg("Access: " + access);
+        
 		NodeList sourceNodes = dictionary.getElementsByTagNameNS(DML_URI,"source-language");
 		String sources = "";
 		if ((null != sourceNodes) && (sourceNodes.getLength() > 0)) {
@@ -360,7 +366,7 @@ public class DictionariesFactory {
 		String xmlCode= XMLServices.NodeToString(dictionary);
 		
 		//
-		Dictionary newDictionary = createUniqueDictionary(name, fullname, category, type, domain, legal, sources, targets, xmlCode);
+		Dictionary newDictionary = createUniqueDictionary(name, fullname, category, type, domain, legal, access, sources, targets, xmlCode);
 		
 		// Add in cache
 		DictionaryCache.putDictionaryInCache(newDictionary.getName(), newDictionary);
@@ -381,7 +387,8 @@ public class DictionariesFactory {
 	 * @param category
 	 * @param type
 	 * @param domain
-	 * @param legal
+     * @param legal
+     * @param access
 	 * @param sources
 	 * @param targets
 	 * @param xmlCode
@@ -396,6 +403,7 @@ public class DictionariesFactory {
                                                         String type,
                                                         String domain,
                                                         String legal,
+                                                        String access,
                                                         String sources,
                                                         String targets,
                                                         String xmlCode)
@@ -413,6 +421,7 @@ public class DictionariesFactory {
                 myDictionary.setType(type);
                 myDictionary.setDomain(domain);
                 myDictionary.setLegal(legal);
+                myDictionary.setAccess(access);
                 myDictionary.setSourceLanguages(sources);
                 myDictionary.setTargetLanguages(targets);
                 myDictionary.setXmlCode(xmlCode);
@@ -470,35 +479,22 @@ public class DictionariesFactory {
 		myDict = DictionariesFactory.newDictionary(dictionary);
 		if (null != myDict) {
             
+            //readers
+            String userGroupString = Group.READER_DICT_GROUP_PREFIX + myDict.getName();
+            createUserGroup(dictionary, userGroupString,"readers");
+            
+            //specialists
+            userGroupString = Group.SPECIALIST_DICT_GROUP_PREFIX + myDict.getName();
+            createUserGroup(dictionary, userGroupString,"specialists");
+            
+            //validators
+            userGroupString = Group.VALIDATOR_DICT_GROUP_PREFIX + myDict.getName();
+            createUserGroup(dictionary,userGroupString,"validators");
+ 
             //administrators
-            String adminGroupString = Group.ADMIN_DICT_GROUP_PREFIX + myDict.getName();
-            NodeList administrators = (NodeList) dictionary.getElementsByTagNameNS(DML_URI,"administrators");
-            if ((null != administrators) && (administrators.getLength() > 0)) {
-                Element administratorsElement = (Element) administrators.item(0);
-                administrators = (NodeList) administratorsElement.getElementsByTagNameNS(DML_URI,"user-ref");
-                for (int i=0; i<administrators.getLength(); i++) {
-                    Element administrator = (Element) administrators.item(i);
-                    String adminString = administrator.getAttribute("name");
-                    User adminUser = UsersFactory.findUserByLogin(adminString);
-                    if (adminUser!= null && !adminUser.isEmpty()) {
-                        Group adminGroup = GroupsFactory.findGroupByName(adminGroupString);
-                        if (adminGroup == null || adminGroup.isEmpty()) {
-                            GroupAnswer adminGroupAnswer = GroupsFactory.createUniqueGroup(adminGroupString, adminUser.getPassword(),adminUser.getPassword(), adminUser.getLogin());
-                            if (!adminGroupAnswer.isEmpty()) {
-                                adminGroup = adminGroupAnswer.getGroup();
-				adminGroup.save();
-                            }
-                        }
-                        if (adminGroup != null && !adminGroup.isEmpty()) {
-                            adminGroup.addUser(adminUser.getLogin());
-                            adminUser.addGroup(adminGroup.getName());
-                            adminGroup.save();
-                            adminUser.save();
-                        }
-                    }
-                }
-            }
-			
+            userGroupString = Group.ADMIN_DICT_GROUP_PREFIX + myDict.getName();
+            createUserGroup(dictionary, userGroupString,"administrators");
+
 			// DONE: allow several stylesheets in metadata
 			NodeList stylesheets =(NodeList)docXml.getElementsByTagNameNS(DML_URI,XSLSHEET_REF_TAG);
 			for (int i=0; i<stylesheets.getLength(); i++) {
@@ -561,8 +557,36 @@ public class DictionariesFactory {
 		return myDict;
 	}
 	
-	
-    /** 
+    private static void createUserGroup(Element dictionary, String userGroupString, String userGroupXmlName) throws PapillonBusinessException {
+        NodeList usersNodeList = (NodeList) dictionary.getElementsByTagNameNS(DML_URI,userGroupXmlName);
+        if ((null != usersNodeList) && (usersNodeList.getLength() > 0)) {
+            Element usersElement = (Element) usersNodeList.item(0);
+            usersNodeList = (NodeList) usersElement.getElementsByTagNameNS(DML_URI,"user-ref");
+            for (int i=0; i<usersNodeList.getLength(); i++) {
+                Element userElement = (Element) usersNodeList.item(i);
+                String userString = userElement.getAttribute("name");
+                User aUser = UsersFactory.findUserByLogin(userString);
+                if (aUser!= null && !aUser.isEmpty()) {
+                    Group aGroup = GroupsFactory.findGroupByName(userGroupString);
+                    if (aGroup == null || aGroup.isEmpty()) {
+                        GroupAnswer aGroupAnswer = GroupsFactory.createUniqueGroup(userGroupString, aUser.getPassword(),aUser.getPassword(), aUser.getLogin());
+                        if (!aGroupAnswer.isEmpty()) {
+                            aGroup = aGroupAnswer.getGroup();
+                            aGroup.save();
+                        }
+                    }
+                    if (aGroup != null && !aGroup.isEmpty()) {
+                        aGroup.addUser(aUser.getLogin());
+                        aUser.addGroup(aGroup.getName());
+                        aGroup.save();
+                        aUser.save();
+                    }
+                }
+            }
+        }
+    }
+    
+    /**
 	 * The getDictionaryByName method search a dictionary by its name.
 	 *
 	 * @param dictionary name
