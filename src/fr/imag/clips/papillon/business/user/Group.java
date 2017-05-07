@@ -80,7 +80,12 @@ public class Group {
     public final static String ADMIN_GROUP = "admin";
     public final static String SPECIALIST_GROUP = "specialist";
     public final static String VALIDATOR_GROUP = "validator";
-    public final static String ADMIN_DICT_GROUP_PREFIX = "admind_";
+    public final static String READER_GROUP = "reader";
+    public final static String DICT_GROUP_PREFIX = "d_";
+    public final static String ADMIN_DICT_GROUP_PREFIX = ADMIN_GROUP + DICT_GROUP_PREFIX;
+    public final static String SPECIALIST_DICT_GROUP_PREFIX = SPECIALIST_GROUP + DICT_GROUP_PREFIX;
+    public final static String VALIDATOR_DICT_GROUP_PREFIX = VALIDATOR_GROUP + DICT_GROUP_PREFIX;
+    public final static String READER_DICT_GROUP_PREFIX = READER_GROUP + DICT_GROUP_PREFIX;
     protected final static String PASSWORD_STRING = "Papillon.Groups.Groups.Password";
     protected final static String PASSWORD_ENCODING = "US-ASCII";
     protected final static String USERS_SEPARATOR_STRING = "#";
