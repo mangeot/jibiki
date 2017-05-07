@@ -50,7 +50,7 @@ sudo -u postgres psql template1 papillon -h localhost -f src/sql/create_papillon
 sudo -u postgres psql papillon papillon -h localhost -f src/sql/multilingual-sort.sql
 sudo -u postgres psql papillon papillon -h localhost -f build/Dods_Generated_Sources/static/SQLcreate.sql
 # with postgres9.3 or superior, you may need to load twice the create script
-# because the table inforamtionfile is not created the first time.
+# because the table informationfile is not created the first time.
 # It seems that the tables are not loaded in the order they are written...
 sudo -u postgres psql papillon papillon -h localhost -f build/Dods_Generated_Sources/static/SQLcreate.sql
 cd output
