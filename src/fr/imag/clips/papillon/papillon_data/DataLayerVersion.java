@@ -227,6 +227,11 @@ public class DataLayerVersion {
                 PapillonLogger.writeDebugMsg("'modificationdate' column added in table users");
             }
             
+            if (!ManageDatabase.getColumnNames("dictionaries").contains("access")) {
+                ManageDatabase.executeSql("alter TABLE dictionaries add COLUMN access VARCHAR(255) not null;\n");
+                PapillonLogger.writeDebugMsg("'modificationdate' column added in table users");
+            }
+            
 			
 			PapillonLogger.writeDebugMsg("If columns were created or dropped, consider vacuum your database!");
             setDBVersion(currentApplicationVersion);
