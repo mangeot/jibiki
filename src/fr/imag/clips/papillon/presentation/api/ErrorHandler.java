@@ -148,7 +148,7 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
 				if (restStrings== null || restStrings.length==0) {
 					PapillonLogger.writeDebugMsg(commande + " DICTLIST;");
 					if (theRequest.getMethod().equals("GET")) {
-						content = Metadata.getDictionaryList();
+						content = Metadata.getDictionaryList(this.getUser());
 					}
 					else if (theRequest.getMethod().equals("PUT")) {
 						HttpPresentationInputStream inputStream = theRequest.getInputStream();
@@ -170,14 +170,23 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
 				}
 				if (restStrings.length==1) {
 					if (theRequest.getMethod().equals("GET")) {
+                        PapillonLogger.writeDebugMsg(commande + " DICT: " + dictName+ ";");
 						if (dictName.equals("*")) {
                             PapillonLogger.writeDebugMsg(commande + " DICTLIST;");
-							content = Metadata.getDictionaryList();
+							content = Metadata.getDictionaryList(this.getUser());
 						}
 						else {
-							PapillonLogger.writeDebugMsg(commande + " DICT: " + dictName+ ";");
-							content = Metadata.getDictionaryMetadata(dictName);
+                            content = null;
+                            Dictionary theDict  = DictionariesFactory.getDictionaryByName(dictName);
+                            PapillonLogger.writeDebugMsg(" après gdbn;");
+                           if (theDict !=null && !theDict.isEmpty()) {
+                                if (Metadata.userCanAccessMetadata(this.getUser(),theDict)) {
+                                    PapillonLogger.writeDebugMsg(commande + " DICT: " + dictName+ ";");
+                                    content = Metadata.getDictionaryMetadata(theDict);
+                                }
+                            }
 						}
+                        PapillonLogger.writeDebugMsg(" avant contentnull;");
 						if (content==null) {
 							String errorMsg = "Error: dict: " + dictName + " does not exist!";
 							PapillonLogger.writeDebugMsg(errorMsg);
@@ -340,7 +349,13 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
 				if (restStrings.length==2) {
 					PapillonLogger.writeDebugMsg(commande + " DICT: " + dictName + " LANG: " + restStrings[1]+ ";");
 					if (theRequest.getMethod().equals("GET")) {
-						content = Metadata.getVolumeMetadata(dictName, restStrings[1]);
+                        content = null;
+                        Dictionary theDict  = DictionariesFactory.getDictionaryByName(dictName);
+                        if (theDict !=null && !theDict.isEmpty()) {
+                            if (Metadata.userCanAccessMetadata(this.getUser(),theDict)) {
+                                content = Metadata.getVolumeMetadata(dictName, restStrings[1]);
+                            }
+                        }
 						if (content==null) {
 							String errorMsg = "Error: volume: " + dictName + " lang: " +  restStrings[1] + " does not exist!";
 							PapillonLogger.writeDebugMsg(errorMsg);

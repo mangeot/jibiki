@@ -23,6 +23,25 @@
  </tbody>
 </table>
 
+<p id="NoteAvailableDictionaries">Note: available dictionaries are:</p>
+    <ul>
+        <li>dictionaries with public access</li>
+        <li>dictionaries with restricted access and the user is <a href="#Authentication">logged</a></li>
+        <li>dictionaries with private access and the user is <a href="#Authentication">logged</a> and <ul>
+            <li>in the admin group or</li>
+            <li>in the dictionary admin group or</li>
+            <li>in the dictionary validator group or</li>
+            <li>in the dictionary specialist group or</li>
+            <li>in the dictionary reader group.</li>
+        </ul>
+        </li>
+    </ul>
+
+<p>Example of query:</p>
+<pre class="api">
+    curl "api/"
+</pre>
+
 <h3>Description of a dictionary</h3>
 
 <table class="api">
@@ -34,6 +53,13 @@
     <tr><td>404 Not Found</td></tr>
  </tbody>
 </table>
+
+<p>See <a href="#NoteAvailableDictionaries">the previous note</a> for available dictionaries</p>
+
+<p>Example of query:</p>
+<pre class="api">
+    curl -u user:password "api/MyDict/"
+</pre>
 
 <h3>Creating a dictionary</h3>
 
@@ -146,6 +172,14 @@
     <tr><td>404 Not Found</td></tr>
  </tbody>
 </table>
+
+<p>See <a href="#NoteAvailableDictionaries">the previous note</a> for available dictionaries</p>
+
+<p>Example of query:</p>
+<pre class="api">
+    curl -u user:password "api/MyDict/fra/"
+</pre>
+
 
 <h3>Creating a volume</h3>
 

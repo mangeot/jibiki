@@ -108,7 +108,7 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
 		   && (this.getComms().exception instanceof com.lutris.appserver.server.httpPresentation.FilePresentationException)) {
 				PapillonLogger.writeDebugMsg("REST API COMMAND: " + theRequest.getMethod() + " DICTLIST");
 					if (theRequest.getMethod().equals("GET")) {
-						content = fr.imag.clips.papillon.presentation.api.Metadata.getDictionaryList();
+						content = fr.imag.clips.papillon.presentation.api.Metadata.getDictionaryList(this.getUser());
 					}
 					else if (theRequest.getMethod().equals("PUT")) {
 						HttpPresentationInputStream inputStream = theRequest.getInputStream();

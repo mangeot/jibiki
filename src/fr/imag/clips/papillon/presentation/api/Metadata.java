@@ -49,6 +49,7 @@ import fr.imag.clips.papillon.business.dictionary.DictionariesFactory;
 import fr.imag.clips.papillon.business.dictionary.Volume;
 import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory;
+import fr.imag.clips.papillon.business.user.Group;
 import fr.imag.clips.papillon.business.user.User;
 
 import fr.imag.clips.papillon.business.xml.XMLServices;
@@ -111,19 +112,45 @@ public class Metadata extends fr.imag.clips.papillon.presentation.XmlBasePO {
 			String lang = myGetParameter(LANG_PARAMETER);
 			
 			if (dictName != null && !dictName.equals("")) {
+                Dictionary theDict  = DictionariesFactory.getDictionaryByName(dictName);
+                if (theDict !=null && !theDict.isEmpty()) {
+                    if (Metadata.userCanAccessMetadata(this.getUser(),theDict)) {
+
 				if (lang !=null && !lang.equals("")) {
 					return getVolumeMetadata(dictName, lang);
 				}
 				else {
-					return getDictionaryMetadata(dictName);
+					return getDictionaryMetadata(theDict);
 				}
+                    }
+                    else {
+                        return null;
+                    }
+                }
+                else {
+                    return null;
+                }
 			}
 			else {
-				return getDictionaryList();			
+				return getDictionaryList(this.getUser());
 			}
         }
-	
-	public static org.w3c.dom.Document getDictionaryList() 
+    
+    public static boolean userCanAccessMetadata(User theUser, Dictionary theDict)
+    throws fr.imag.clips.papillon.business.PapillonBusinessException {
+        boolean answer = false;
+        if (theDict.getAccess() == null ||
+        theDict.getAccess().equals("") ||
+        theDict.getAccess().equals(Dictionary.PUBLIC_ACCESS) ||
+        (theDict.getAccess().equals(Dictionary.RESTRICTED_ACCESS) && theUser != null) ||
+        (theDict.getAccess().equals(Dictionary.PRIVATE_ACCESS) && theUser != null && (theUser.isAdmin() || theUser.isInGroup(Group.ADMIN_DICT_GROUP_PREFIX + theDict.getName()) || theUser.isInGroup(Group.VALIDATOR_DICT_GROUP_PREFIX + theDict.getName()) || theUser.isInGroup(Group.SPECIALIST_DICT_GROUP_PREFIX + theDict.getName()) || theUser.isInGroup(Group.READER_DICT_GROUP_PREFIX + theDict.getName())))
+        ) {
+            answer=true;
+        }
+        return answer;
+    }
+
+	public static org.w3c.dom.Document getDictionaryList(User theUser)
 	throws HttpPresentationException, java.io.IOException, Exception {
 
 		org.w3c.dom.Document resultDoc = XMLServices.buildDOMTree(DICTLIST_XMLSTRING);
@@ -133,6 +160,8 @@ public class Metadata extends fr.imag.clips.papillon.presentation.XmlBasePO {
 			java.util.Iterator dictItr = dictCollection.iterator();
 			while (dictItr.hasNext()) {
 				Dictionary theDict = (Dictionary) dictItr.next();
+                if (userCanAccessMetadata(theUser,theDict)) {
+                
                 String dictFiles = "<" + DictionariesFactory.DICTIONARY_FILES_TAG + ">"
                     + XMLServices.trimXmlDeclaration(theDict.getXmlCode());
                 XslSheet defaultDictXslSheet = XslSheetFactory.getXslSheet(theDict.getName(),null,"");
@@ -143,17 +172,17 @@ public class Metadata extends fr.imag.clips.papillon.presentation.XmlBasePO {
                 org.w3c.dom.Document theDictDom = XMLServices.buildDOMTree(dictFiles);
                 org.w3c.dom.Node theDictImported = resultDoc.importNode(theDictDom.getDocumentElement(), true);
                 resultDoc.getDocumentElement().appendChild(theDictImported);
-                PapillonLogger.writeDebugMsg("Dict metadata: " + theDict.getName());
+//                PapillonLogger.writeDebugMsg("Dict metadata: " + theDict.getName());
+                }
 			}
 		}
 		return resultDoc;			
 	}
 
-    public static org.w3c.dom.Document getDictionaryMetadata(String dictName)
+    public static org.w3c.dom.Document getDictionaryMetadata( Dictionary theDict)
     throws HttpPresentationException, java.io.IOException, Exception {
         
         org.w3c.dom.Document resultDoc = null;
-        Dictionary theDict  = DictionariesFactory.getDictionaryByName(dictName);
         if (theDict !=null && !theDict.isEmpty()) {
             PapillonLogger.writeDebugMsg("Dict metadata: " + theDict.getName());
             String dictFiles = "<d:" + DictionariesFactory.DICTIONARY_FILES_TAG + " xmlns:d='http://www-clips.imag.fr/geta/services/dml'>"
