@@ -151,7 +151,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 		return resultDoc;			
 	}
 
-	public static org.w3c.dom.Document getEntries(String dictName, String lang, String criteria, String word, String key, String strategyString, String limitString, String offsetString, User theUser)
+	public static org.w3c.dom.Document getEntries(String dictName, String lang, String criteria, String word, String key, String strategyString, String limitString, String offsetString, String orderbyString, User theUser)
 	throws HttpPresentationException, java.io.IOException, Exception {
 		int limit = DEFAULT_LIMIT;
 		if (limitString!=null) {
@@ -161,6 +161,11 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 		if (offsetString!=null) {
 			offset = Integer.parseInt(offsetString);
 		}
+        String orderby = IndexFactory.ORDER_ASCENDING;
+        if (orderbyString.equalsIgnoreCase(IndexFactory.ORDER_DESCENDING)) {
+            orderby = IndexFactory.ORDER_DESCENDING;
+        }
+        
 		if (dictName.equals("*")) {
 			dictName=null;
 		}
@@ -367,7 +372,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
                         String criteriaString = "<d:criteria d:name='"+criteria+"' d:strategy='"+strategyString+"' value='"+Utility.encodeXMLEntities(oneWord)+"'>";
 						java.util.Collection resultsVector = IndexFactory.getIndexEntriesVector(theVolume.getIndexDbname(),
 																								myKeys,
-																								IndexFactory.ORDER_DESCENDING,
+																								orderby,
 																								limit,
 																								offset);
 						for (java.util.Iterator myIterator = resultsVector.iterator(); myIterator.hasNext(); ) {

@@ -73,6 +73,7 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
 	protected static String STRATEGY_PARAMETER = "strategy";
 	protected static String LIMIT_PARAMETER = "count";
     protected static String OFFSET_PARAMETER = "startIndex";
+    protected static String ORDERBY_PARAMETER = "sortBy";
     protected static String JSON_CONTENTTYPE = "text/json";
     protected static String XML_CONTENTTYPE = "text/xml";
     protected static String ENHYDRA_SESSION_COOKIE = "JSESSIONID";
@@ -674,12 +675,13 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
 					if (theRequest.getMethod().equals("GET")) {
 						String strategy = myGetParameter(STRATEGY_PARAMETER);
 						String limit = myGetParameter(LIMIT_PARAMETER);
-						String offset = myGetParameter(OFFSET_PARAMETER);
+                        String offset = myGetParameter(OFFSET_PARAMETER);
+                        String orderby = myGetParameter(ORDERBY_PARAMETER);
 						String key=null;
 						if (restStrings.length==5) {
 							key = restStrings[4];
 						}
-						content = Entries.getEntries(dictName, restStrings[1], restStrings[2], restStrings[3], key, strategy, limit, offset, getUser());
+						content = Entries.getEntries(dictName, restStrings[1], restStrings[2], restStrings[3], key, strategy, limit, offset, orderby, getUser());
 						if (content==null) {
 							String errorMsg = "Error: search: " + dictName + " lang: " +  restStrings[1] + " method: " + restStrings[2] +" does not exist!";
 						//	PapillonLogger.writeDebugMsg(errorMsg);
