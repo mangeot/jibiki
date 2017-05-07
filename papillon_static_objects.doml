@@ -494,6 +494,12 @@
  */</javadoc>
             <type dbType="VARCHAR" javaType="String" size="255"/>
           </column>
+          <column id="access" usedForQuery="true">
+              <javadoc>/**
+                  * dictionary access rights
+                  */</javadoc>
+              <type dbType="VARCHAR" javaType="String" size="255"/>
+          </column>
           <column id="sourceLanguages" usedForQuery="true">
             <javadoc>/**
  * source languages of the dictionary
