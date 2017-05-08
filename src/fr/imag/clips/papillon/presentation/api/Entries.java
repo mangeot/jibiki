@@ -162,7 +162,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 			offset = Integer.parseInt(offsetString);
 		}
         String orderby = IndexFactory.ORDER_ASCENDING;
-        if (orderbyString.equalsIgnoreCase(IndexFactory.ORDER_DESCENDING)) {
+        if (orderbyString!=null && orderbyString.equalsIgnoreCase(IndexFactory.ORDER_DESCENDING)) {
             orderby = IndexFactory.ORDER_DESCENDING;
         }
         
