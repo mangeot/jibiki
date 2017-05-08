@@ -228,8 +228,8 @@ public class DataLayerVersion {
             }
             
             if (!ManageDatabase.getColumnNames("dictionaries").contains("access")) {
-                ManageDatabase.executeSql("alter TABLE dictionaries add COLUMN access VARCHAR(255) not null;\n");
-                PapillonLogger.writeDebugMsg("'modificationdate' column added in table users");
+                ManageDatabase.executeSql("alter TABLE dictionaries add COLUMN access VARCHAR(255) not null default 'public';\n");
+                PapillonLogger.writeDebugMsg("'access' column added in table dictionaries");
             }
             
 			
