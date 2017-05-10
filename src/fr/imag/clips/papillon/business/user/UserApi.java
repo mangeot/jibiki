@@ -12,10 +12,14 @@ package fr.imag.clips.papillon.business.user;
 import com.lutris.appserver.server.httpPresentation.HttpPresentationResponse;
 
 import fr.imag.clips.papillon.business.PapillonBusinessException;
+import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.xml.XMLServices;
 
 
 public class UserApi {
+
+    protected static String JSON_CONTENTTYPE = "text/json";
+    protected static String XML_CONTENTTYPE = "text/xml";
 
     protected static final String USERLIST_XMLSTRING_HEADER = "<?xml version='1.0' encoding='UTF-8'?><d:user-list "
     + "xmlns:d='http://www-clips.imag.fr/geta/services/dml'>";
@@ -27,7 +31,7 @@ public class UserApi {
     public static java.util.Vector getUserList(User theUser)
         throws PapillonBusinessException {
         java.util.Vector responseVector = new java.util.Vector(3);
-        Integer status = new Integer(HttpPresentationResponse.SC_OK);
+        int status = HttpPresentationResponse.SC_OK;
         org.w3c.dom.Document content = null;
         String errorMsg = "";
         
@@ -40,9 +44,8 @@ public class UserApi {
         }
         
         responseVector.addElement(content);
-        responseVector.addElement(status);
+        responseVector.addElement(new Integer(status));
         responseVector.addElement(errorMsg);
-        
         return responseVector;
     }
     
@@ -79,18 +82,30 @@ public class UserApi {
         return resultDoc;
     }
     
-    public static org.w3c.dom.Document getUser(String login, User theUser)
+    public static java.util.Vector getUser(String login, User theUser)
         throws PapillonBusinessException {
 
-        org.w3c.dom.Document resultDoc = null;
+        java.util.Vector responseVector = new java.util.Vector(3);
+        int status = HttpPresentationResponse.SC_OK;
+        org.w3c.dom.Document content = null;
+        String errorMsg = "";
+
         
         if (theUser != null && (theUser.isAdmin() || theUser.getLogin().equals(login))) {
-            resultDoc = getUserForAdmin(login);
+            content = getUserForAdmin(login);
         }
         else {
-            resultDoc = getUserForPublic(login);
+            content = getUserForPublic(login);
         }
-        return resultDoc;
+        if (content == null) {
+            errorMsg = "Error: user: " + login + " does not exist!";
+            status = HttpPresentationResponse.SC_NOT_FOUND;
+            content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + status + "</h1><p>" + errorMsg + "</p></html>");
+        }
+        responseVector.addElement(content);
+        responseVector.addElement(new Integer(status));
+        responseVector.addElement(errorMsg);
+        return responseVector;
     }
     
     
@@ -117,6 +132,46 @@ public class UserApi {
             resultDoc = XMLServices.buildDOMTree(aUser.getXmlCode());
         }
         return resultDoc;
+    }
+    
+    public static java.util.Vector postUser(String authlogin, String authpassword, String login, String userString, String contentType, User theUser)
+    throws PapillonBusinessException, org.json.JSONException {
+        PapillonLogger.writeDebugMsg("POST user 10 login"+ login);
+        
+        java.util.Vector responseVector = new java.util.Vector(3);
+        int status = HttpPresentationResponse.SC_OK;
+        org.w3c.dom.Document content = null;
+        String errorMsg = "";
+                
+        if (authlogin != null && authlogin != "" && authpassword != null && authpassword != "") {
+            User aUser = UsersFactory.findUserByLogin(login);
+            if (aUser != null && !aUser.isEmpty()) {
+                errorMsg = "Error: conflict, user " + login + " already exists!";
+                status = 409;
+                content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + status + " Conflict</h1><p>" + errorMsg + "</p></html>");
+            }
+            else {
+                if (contentType.equals(JSON_CONTENTTYPE)) {
+                    org.json.JSONObject obj = new org.json.JSONObject(userString);
+                    String userName = obj.getJSONObject("user").getString("name");
+                    String email = obj.getJSONObject("user").getString("email");
+                    PapillonLogger.writeDebugMsg("POST user login: " + authlogin + " password: " + authpassword + " name: " + userName + " email: " +email);
+                   /* String email = obj.getJSONObject("pageInfo").getString("pageName");
+                    
+                    JSONArray arr = obj.getJSONArray("posts");
+                    for (int i = 0; i < arr.length(); i++)
+                    {
+                        String post_id = arr.getJSONObject(i).getString("post_id");
+                        ......
+                    }*/
+
+                }
+            }
+        }
+        responseVector.addElement(content);
+        responseVector.addElement(new Integer(status));
+        responseVector.addElement(errorMsg);
+        return responseVector;
     }
 
 }
