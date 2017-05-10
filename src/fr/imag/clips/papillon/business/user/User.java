@@ -106,9 +106,6 @@ import org.w3c.dom.NodeList;
 
 public class User implements com.lutris.appserver.server.user.User {
 	
-    public final static String ADMIN_GROUP = "admin";
-    public final static String SPECIALIST_GROUP = "specialist";
-    public final static String VALIDATOR_GROUP = "validator";
     public final static String KEY_SEP = "#";
     public final static String GROUPS_SEPARATOR_STRING = "#";
 
@@ -494,9 +491,9 @@ public class User implements com.lutris.appserver.server.user.User {
 					String tmpGroup = groups[i];
 					if (tmpGroup!=null &&
 						!tmpGroup.equals("") &&
-						!tmpGroup.equals(ADMIN_GROUP) &&
-						!tmpGroup.equals(SPECIALIST_GROUP) &&
-						!tmpGroup.equals(VALIDATOR_GROUP)) {
+						!tmpGroup.equals(Group.ADMIN_GROUP) &&
+						!tmpGroup.equals(Group.SPECIALIST_GROUP) &&
+						!tmpGroup.equals(Group.VALIDATOR_GROUP)) {
 							groupsVector.add(tmpGroup);
 					}
 				}
@@ -539,17 +536,17 @@ public class User implements com.lutris.appserver.server.user.User {
 	
 	public boolean isAdmin()
 		throws PapillonBusinessException {
-			return isInGroup(ADMIN_GROUP);
+			return isInGroup(Group.ADMIN_GROUP);
 		}
 	
 	public boolean isSpecialist()
 		throws PapillonBusinessException {
-			return isInGroup(SPECIALIST_GROUP);
+			return isInGroup(Group.SPECIALIST_GROUP);
 		}
 	
 	public boolean isValidator()
 		throws PapillonBusinessException {
-			return isInGroup(VALIDATOR_GROUP);
+			return isInGroup(Group.VALIDATOR_GROUP);
 		}
 	
 	public String getGroupPassword(String group)

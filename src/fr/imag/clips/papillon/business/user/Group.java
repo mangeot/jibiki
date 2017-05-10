@@ -207,6 +207,9 @@ public class Group {
 			String[] Users = null;
 			String users = getUsers();
 			if (null != users && !users.equals("")){
+                if (users.indexOf(USERS_SEPARATOR_STRING) ==0) {
+                    users = users.substring(USERS_SEPARATOR_STRING.length());
+                }
 				Users = users.split(USERS_SEPARATOR_STRING);
 			}
 			return Users;
@@ -302,6 +305,9 @@ public class Group {
 			if (null != users && !users.equals("")){
 				// delete the first separator in order to avoid an empty user
 				if (users.indexOf(USERS_SEPARATOR_STRING) ==0) {
+                    if (users.indexOf(USERS_SEPARATOR_STRING) ==0) {
+                        users = users.substring(USERS_SEPARATOR_STRING.length());
+                    }
 					users = users.substring(USERS_SEPARATOR_STRING.length());
 				}
 				Users = users.split(USERS_SEPARATOR_STRING);

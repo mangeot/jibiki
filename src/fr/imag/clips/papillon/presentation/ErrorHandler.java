@@ -56,6 +56,8 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
 	
 	private org.w3c.dom.Document content;
 	private ErrorXHTML XHTMLcontent;
+    private static final String API_COMMAND = "api";
+    private static final String APIUSERS_COMMAND = "apiusers";
 	
 	protected static String ERROR_PAGE = "<?xml version='1.0'?><html></html>";
 	
@@ -93,39 +95,72 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
 		
 		// special code for handling the root query (/api/)
 		// because it is not handled by the api/ErrorHandler.po
+        String command = "";
 		
         String prefix = this.getAbsoluteUrl();
 		prefix = prefix.substring(0,prefix.lastIndexOf('/') + 1);
-		prefix += "api/";
+        String apiPrefix = prefix + API_COMMAND + "/";
+        String apiUsersPrefix = prefix + APIUSERS_COMMAND + "/";
 		HttpPresentationRequest theRequest = this.getComms().request;
 		HttpPresentationResponse theResponse = this.getComms().response;
 		String theURI = theRequest.getPresentationURI();
-		if (theURI.indexOf(prefix)==0) {
-			theURI = theURI.substring(prefix.length());
-		}
+        if (theURI.indexOf(apiPrefix)==0) {
+            theURI = theURI.substring(apiPrefix.length());
+            command = API_COMMAND;
+        }
+        if (theURI.indexOf(apiUsersPrefix)==0) {
+            theURI = theURI.substring(apiUsersPrefix.length());
+            command = APIUSERS_COMMAND;
+        }
 		if ((theURI == null || theURI.equals(""))
 		   && (null != this.getComms().exception) 
 		   && (this.getComms().exception instanceof com.lutris.appserver.server.httpPresentation.FilePresentationException)) {
-				PapillonLogger.writeDebugMsg("REST API COMMAND: " + theRequest.getMethod() + " DICTLIST");
-					if (theRequest.getMethod().equals("GET")) {
-						content = fr.imag.clips.papillon.presentation.api.Metadata.getDictionaryList(this.getUser());
-					}
-					else if (theRequest.getMethod().equals("PUT")) {
-						HttpPresentationInputStream inputStream = theRequest.getInputStream();
-						String dict = convertStreamToString(inputStream);
-						PapillonLogger.writeDebugMsg("Error: put dictlist: not implemented");
-						theResponse.setStatus(HttpPresentationResponse.SC_NOT_IMPLEMENTED);
-					}
-					else if (theRequest.getMethod().equals("POST")) {
-						HttpPresentationInputStream inputStream = theRequest.getInputStream();
-						String dict = convertStreamToString(inputStream);
-						PapillonLogger.writeDebugMsg("Error: post dictlist: not implemented");
-						theResponse.setStatus(HttpPresentationResponse.SC_NOT_IMPLEMENTED);						
-					}
-					else if (theRequest.getMethod().equals("DELETE")) {
-						PapillonLogger.writeDebugMsg("Error: delete dictlist: not implemented");
-						theResponse.setStatus(HttpPresentationResponse.SC_NOT_IMPLEMENTED);
-					}
+            if (command.equals(API_COMMAND)) {
+                PapillonLogger.writeDebugMsg("REST API COMMAND: " + theRequest.getMethod() + " DICTLIST");
+                if (theRequest.getMethod().equals("GET")) {
+                    content = fr.imag.clips.papillon.presentation.api.Metadata.getDictionaryList(this.getUser());
+                }
+                else if (theRequest.getMethod().equals("PUT")) {
+                    HttpPresentationInputStream inputStream = theRequest.getInputStream();
+                    String dict = convertStreamToString(inputStream);
+                    PapillonLogger.writeDebugMsg("Error: put dictlist: not implemented");
+                    theResponse.setStatus(HttpPresentationResponse.SC_NOT_IMPLEMENTED);
+                }
+                else if (theRequest.getMethod().equals("POST")) {
+                    HttpPresentationInputStream inputStream = theRequest.getInputStream();
+                    String dict = convertStreamToString(inputStream);
+                    PapillonLogger.writeDebugMsg("Error: post dictlist: not implemented");
+                    theResponse.setStatus(HttpPresentationResponse.SC_NOT_IMPLEMENTED);
+                }
+                else if (theRequest.getMethod().equals("DELETE")) {
+                    PapillonLogger.writeDebugMsg("Error: delete dictlist: not implemented");
+                    theResponse.setStatus(HttpPresentationResponse.SC_NOT_IMPLEMENTED);
+                }
+            }
+                else if (command.equals(APIUSERS_COMMAND)) {
+                PapillonLogger.writeDebugMsg("REST APIUSERS COMMAND: " + theRequest.getMethod() + " USERSLIST;");
+                if (theRequest.getMethod().equals("GET")) {
+                    content = fr.imag.clips.papillon.presentation.apiusers.Users.getUsersList(this.getUser());
+                }
+                else if (theRequest.getMethod().equals("PUT")) {
+                    HttpPresentationInputStream inputStream = theRequest.getInputStream();
+                    String parcel = convertStreamToString(inputStream);
+                    PapillonLogger.writeDebugMsg("Error: put users list: not implemented");
+                    theResponse.setStatus(HttpPresentationResponse.SC_NOT_IMPLEMENTED);
+                }
+                else if (theRequest.getMethod().equals("POST")) {
+                    HttpPresentationInputStream inputStream = theRequest.getInputStream();
+                    String parcel = convertStreamToString(inputStream);
+                    PapillonLogger.writeDebugMsg("Error: post users list: not implemented");
+                    theResponse.setStatus(HttpPresentationResponse.SC_NOT_IMPLEMENTED);
+                    
+                }
+                else if (theRequest.getMethod().equals("DELETE")) {
+                    PapillonLogger.writeDebugMsg("Error: delete users list: not implemented");
+                    theResponse.setStatus(HttpPresentationResponse.SC_NOT_IMPLEMENTED);
+                }
+                
+                }
 			}
 			else {
 				////// Create Home page

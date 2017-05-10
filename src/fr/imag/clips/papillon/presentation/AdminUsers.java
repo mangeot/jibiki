@@ -157,7 +157,7 @@ public class AdminUsers extends PapillonBasePO {
             else if (null != myGetParameter(MAKEADMIN_PARAMETER)) {
                 User myUser = UsersFactory.findUserById(myGetParameter(MAKEADMIN_PARAMETER));
                 if (null != myUser && !myUser.isEmpty()) {
-                    myUser.addGroup(User.ADMIN_GROUP);
+                    myUser.addGroup(Group.ADMIN_GROUP);
                     myUser.save();
                     userMessage = "User "+ myUser.getName() + " is admin";
                 } else {
@@ -179,7 +179,7 @@ public class AdminUsers extends PapillonBasePO {
             else if (null != myGetParameter(MAKESPECIALIST_PARAMETER)) {
                 User myUser = UsersFactory.findUserById(myGetParameter(MAKESPECIALIST_PARAMETER));
                 if (null != myUser && !myUser.isEmpty()) {
-                    myUser.addGroup(User.SPECIALIST_GROUP);
+                    myUser.addGroup(Group.SPECIALIST_GROUP);
                     myUser.save();
                     userMessage = "User "+ myUser.getName() + " is a specialist";
                 } else {
@@ -190,7 +190,7 @@ public class AdminUsers extends PapillonBasePO {
             else if (null != myGetParameter(MAKEVALIDATOR_PARAMETER)) {
                 User myUser = UsersFactory.findUserById(myGetParameter(MAKEVALIDATOR_PARAMETER));
                 if (null != myUser && !myUser.isEmpty()) {
-                    myUser.addGroup(User.VALIDATOR_GROUP);
+                    myUser.addGroup(Group.VALIDATOR_GROUP);
                     myUser.save();
                     userMessage = "User "+ myUser.getName() + " is a validator";
                 } else {
