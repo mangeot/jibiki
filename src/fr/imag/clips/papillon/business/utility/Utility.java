@@ -541,7 +541,7 @@ public class Utility {
 	}
 
 	public static String[] deserializeStringIntoArray(String theString, String sepString) {
-		String[] resArray = null;
+		String[] resArray = new String[0];
 		if (null != theString && !theString.equals("")){
 			// delete the first separator in order to avoid an empty group
 			if (theString.indexOf(sepString) ==0) {

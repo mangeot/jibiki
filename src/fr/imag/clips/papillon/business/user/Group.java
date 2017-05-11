@@ -259,7 +259,7 @@ public class Group {
 			}
 		}
 				
-				public void removeUser(String user)
+    public void removeUser(String user)
 		throws PapillonBusinessException {
 			if (isInGroup(user)) {
 				String[] users = getAdminsArray();

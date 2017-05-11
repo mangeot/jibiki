@@ -136,7 +136,6 @@ public class UserApi {
     
     public static java.util.Vector postUser(String authlogin, String authpassword, String login, String userString, String contentType, User theUser)
     throws PapillonBusinessException, org.json.JSONException {
-        PapillonLogger.writeDebugMsg("POST user 10 login"+ login);
         
         java.util.Vector responseVector = new java.util.Vector(3);
         int status = HttpPresentationResponse.SC_OK;
@@ -155,17 +154,15 @@ public class UserApi {
                     org.json.JSONObject obj = new org.json.JSONObject(userString);
                     String userName = obj.getJSONObject("user").getString("name");
                     String email = obj.getJSONObject("user").getString("email");
-                    PapillonLogger.writeDebugMsg("POST user login: " + authlogin + " password: " + authpassword + " name: " + userName + " email: " +email);
-                   /* String email = obj.getJSONObject("pageInfo").getString("pageName");
-                    
-                    JSONArray arr = obj.getJSONArray("posts");
-                    for (int i = 0; i < arr.length(); i++)
-                    {
-                        String post_id = arr.getJSONObject(i).getString("post_id");
-                        ......
-                    }*/
-
-                }
+                    User myUser=new User();
+                    myUser.setName(userName);
+                    myUser.setLogin(authlogin);
+                    myUser.setPassword(authpassword);
+                    myUser.setEmail(email);
+                    myUser.save();
+                    String answerMessage =  "User: "+ myUser.getName() + " // login: " + myUser.getLogin() + " added";
+                    PapillonLogger.writeDebugMsg(answerMessage);
+                 }
             }
         }
         responseVector.addElement(content);
@@ -173,5 +170,51 @@ public class UserApi {
         responseVector.addElement(errorMsg);
         return responseVector;
     }
+    
+    public static java.util.Vector deleteUser(String login, User theUser)
+    throws PapillonBusinessException {
+        
+        //TODO supprimer l'utilisateur des groupes auxquels il appartient
+        // pb : pour les groupes admin dict où il est le seul utilisateur ?
+        
+        java.util.Vector responseVector = new java.util.Vector(3);
+        int status = HttpPresentationResponse.SC_OK;
+        org.w3c.dom.Document content = null;
+        String errorMsg = "";
+        
+        PapillonLogger.writeDebugMsg("ulogin:[" + theUser.getLogin() + "] login:[" + login + "]");
+        if (theUser != null && (theUser.isAdmin() || theUser.getLogin().equals(login))) {
+            User aUser = UsersFactory.findUserByLogin(login);
+            if (aUser != null && !aUser.isEmpty()) {
+                String[] Groups = aUser.getGroupsArray();
+                for(int i = 0; i < Groups.length; i++)
+                {
+                    Group theGroup = GroupsFactory.findGroupByName(Groups[i]);
+                    if (theGroup!= null && !theGroup.isEmpty()) {
+                        theGroup.removeUser(login);
+                    }
+                }
+
+                aUser.delete();
+                content = XMLServices.buildDOMTree(aUser.getXmlCode());
+            }
+            else {
+                errorMsg = "Error: user: " + login + " does not exist!";
+                status = HttpPresentationResponse.SC_NOT_FOUND;
+                content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + status + "</h1><p>" + errorMsg + "</p></html>");
+            }
+        }
+        else {
+            login = (theUser!=null && !theUser.isEmpty())?theUser.getLogin():login;
+            errorMsg = "Error: user: " + login +" not authorized to delete user!";
+            status = HttpPresentationResponse.SC_UNAUTHORIZED;
+            content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + status + "</h1><p>" + errorMsg + "</p></html>");
+        }
+        responseVector.addElement(content);
+        responseVector.addElement(new Integer(status));
+        responseVector.addElement(errorMsg);
+        return responseVector;
+    }
+
 
 }

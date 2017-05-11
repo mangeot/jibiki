@@ -199,9 +199,9 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                     }
                 }
                 else if (restStrings.length==2) {
+                    String objectName = restStrings[1];
+                    PapillonLogger.writeDebugMsg(commande + " OBJECT: " + object + " name: " + objectName +";");
                     if (theRequest.getMethod().equals("GET")) {
-                        PapillonLogger.writeDebugMsg(commande + " OBJECT: " + object + ";");
-                        String objectName = restStrings[1];
                         content = null;
                         
                         if (object.equalsIgnoreCase(USERS_OBJECT)) {
@@ -223,16 +223,33 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                         }
                     }
                     else if (theRequest.getMethod().equals("POST")) {
-                        PapillonLogger.writeDebugMsg(commande + " OBJECT: " + object + ";");
-                        String objectName = restStrings[1];
                         HttpPresentationInputStream inputStream = theRequest.getInputStream();
                         String objectBody = convertStreamToString(inputStream);
                         content = null;
                         
                         if (object.equalsIgnoreCase(USERS_OBJECT)) {
                             //TODO : comment récupérer le password crypté utilisé pour l'authentification ?
-                            PapillonLogger.writeDebugMsg("POST user 5 login:" + login);
+                            com.lutris.http.BasicAuthResult theBasicAuthResult = com.lutris.http.BasicAuth.getAuthentication(theRequest);
+                            if (theBasicAuthResult!=null) {
+                                login = theBasicAuthResult.username;
+                                password = theBasicAuthResult.password;
+                            }
                             java.util.Vector responseVector = UserApi.postUser(login, password, objectName, objectBody, contentType, this.getUser());
+                            content = (org.w3c.dom.Document) responseVector.elementAt(0);
+                            status = ((Integer)responseVector.elementAt(1)).intValue();
+                            theResponse.setStatus(status, (String) responseVector.elementAt(2));
+                        }
+                        else {
+                            String errorMsg = "Error: object: " + object + " does not exist!";
+                            PapillonLogger.writeDebugMsg(errorMsg);
+                            theResponse.setStatus(HttpPresentationResponse.SC_NOT_FOUND,errorMsg);
+                        }
+                    }
+                    else if (theRequest.getMethod().equals("DELETE")) {
+                        content = null;
+                        
+                        if (object.equalsIgnoreCase(USERS_OBJECT)) {
+                            java.util.Vector responseVector = UserApi.deleteUser(objectName, this.getUser());
                             content = (org.w3c.dom.Document) responseVector.elementAt(0);
                             status = ((Integer)responseVector.elementAt(1)).intValue();
                             theResponse.setStatus(status, (String) responseVector.elementAt(2));
