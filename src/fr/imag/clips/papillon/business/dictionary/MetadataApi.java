@@ -99,7 +99,7 @@ public class MetadataApi {
     throws PapillonBusinessException {
         
         java.util.Vector responseVector = new java.util.Vector(3);
-        int status = HttpPresentationResponse.SC_OK;
+        int status = HttpPresentationResponse.SC_CREATED;
         org.w3c.dom.Document content = null;
         String errorMsg = "";
        
@@ -144,7 +144,7 @@ public class MetadataApi {
                 }
             }
             else {
-                errorMsg = "Error: dictionary metadata: " + dictXml +" XML is malformed!";
+                errorMsg = "Error: dictionary metadata: <![CDATA["+ dictXml +"]]> XML is malformed!";
                 status = HttpPresentationResponse.SC_BAD_REQUEST;
                 content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + status + "</h1><p>" + errorMsg + "</p></html>");
             }
@@ -210,7 +210,7 @@ public class MetadataApi {
                 }
             }
             else {
-                errorMsg = "Error: dictionary metadata: " + dictXml +" XML is malformed!";
+                errorMsg = "Error: dictionary metadata: <![CDATA["+ dictXml +"]]> XML is malformed!";
                 status = HttpPresentationResponse.SC_BAD_REQUEST;
                 content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + status + "</h1><p>" + errorMsg + "</p></html>");
             }
@@ -230,7 +230,7 @@ public class MetadataApi {
     public static java.util.Vector deleteDictionary(String dictName, User theUser)
     throws PapillonBusinessException {
         java.util.Vector responseVector = new java.util.Vector(3);
-        int status = HttpPresentationResponse.SC_OK;
+        int status = HttpPresentationResponse.SC_NO_CONTENT;
         org.w3c.dom.Document content = null;
         String errorMsg = "";
 
@@ -321,7 +321,7 @@ public class MetadataApi {
     throws PapillonBusinessException {
         
         java.util.Vector responseVector = new java.util.Vector(3);
-        int status = HttpPresentationResponse.SC_OK;
+        int status = HttpPresentationResponse.SC_CREATED;
         org.w3c.dom.Document content = null;
         String errorMsg = "";
         
@@ -378,7 +378,7 @@ public class MetadataApi {
                 }
             }
             else {
-                errorMsg = "Error: volume metadata: " + volumeXml +" XML is malformed!";
+                errorMsg = "Error: volume metadata: <![CDATA["+ volumeXml +"]]> XML is malformed!";
                 status = HttpPresentationResponse.SC_BAD_REQUEST;
                 content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + status + "</h1><p>" + errorMsg + "</p></html>");
             }
@@ -460,7 +460,7 @@ public class MetadataApi {
                 }
             }
             else {
-                errorMsg = "Error: volume metadata: " + volumeXml +" XML is malformed!";
+                errorMsg = "Error: volume metadata: <![CDATA["+ volumeXml +"]]> XML is malformed!";
                 status = HttpPresentationResponse.SC_BAD_REQUEST;
                 content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + status + "</h1><p>" + errorMsg + "</p></html>");
             }
@@ -481,7 +481,7 @@ public class MetadataApi {
     public static java.util.Vector deleteVolume(String dictName, String lang, User theUser)
     throws PapillonBusinessException {
         java.util.Vector responseVector = new java.util.Vector(3);
-        int status = HttpPresentationResponse.SC_OK;
+        int status = HttpPresentationResponse.SC_NO_CONTENT;
         org.w3c.dom.Document content = null;
         String errorMsg = "";
         

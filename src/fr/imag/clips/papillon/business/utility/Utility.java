@@ -481,12 +481,12 @@ public class Utility {
 		return myRes;
 	}
 	/**
-		* returns a secure random generator
+     * returns a secure random generator
 	 *
 	 * @return random generator 
 	 * @exception PapillonBusinessException if an error occurs
 	 *   retrieving data (usually due to an underlying data layer
-						  *   error).
+	 *   error).
 	 */
 	public static java.util.Random getRandomGenerator() {
 		if (theRandomGenerator == null) {
@@ -495,12 +495,12 @@ public class Utility {
 		return theRandomGenerator;
 	}
 	/**
-		* initialize a random generator
+     * initialize a random generator
 	 *
 	 * @return a random generator 
 	 * @exception PapillonBusinessException if an error occurs
 	 *   retrieving data (usually due to an underlying data layer
-						  *   error).
+	 *   error).
 	 */
 	protected static java.util.Random initializeRandomGenerator() {
 		java.util.Random rand = null;

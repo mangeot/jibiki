@@ -590,6 +590,7 @@ public class User implements com.lutris.appserver.server.user.User {
 	 */
 	public void delete()
 		throws PapillonBusinessException {
+            UsersFactory.removeUserFromCache(this);
 			try {
 				this.myDO.delete();
 			} catch(Exception ex) {

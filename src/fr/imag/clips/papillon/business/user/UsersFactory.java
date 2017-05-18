@@ -473,6 +473,11 @@ public class UsersFactory {
          
         return theDictArray;
     }
+    
+    public static void removeUserFromCache(User theUser) throws PapillonBusinessException {
+        userCacheById.remove(theUser.getHandle());
+        userCacheByLogin.remove(theUser.getLogin());
+    }
 
 	public static String generateRandomPassword () {
 		java.util.Random rand = Utility.getRandomGenerator();

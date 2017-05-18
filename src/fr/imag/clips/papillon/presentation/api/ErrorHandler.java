@@ -313,9 +313,9 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                             }
                         }
                         else {
-                            String errorMsg = "Error: entry: " + entry +" XML is malformed!";
+                            String errorMsg = "Error: entry: <![CDATA["+ entry +"]]> XML is malformed!";
                             //PapillonLogger.writeDebugMsg(errorMsg);
-                            content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + HttpPresentationResponse.SC_BAD_REQUEST + "</h1><p>" + errorMsg + "</p></html>");
+                            content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + HttpPresentationResponse.SC_BAD_REQUEST + "</h1><p>"+errorMsg+"</p></html>");
                             theResponse.setStatus(HttpPresentationResponse.SC_BAD_REQUEST ,errorMsg);
                         }
                         }
@@ -359,7 +359,7 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                             }
                         }
                         else {
-                            String errorMsg = "Error: entry: " + entry +" XML is malformed!";
+                            String errorMsg = "Error: entry: <![CDATA["+ entry +"]]> XML is malformed!";
                             //PapillonLogger.writeDebugMsg(errorMsg);
                             content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + HttpPresentationResponse.SC_BAD_REQUEST + "</h1><p>" + errorMsg + "</p></html>");
                             theResponse.setStatus(HttpPresentationResponse.SC_BAD_REQUEST ,errorMsg);

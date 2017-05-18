@@ -33,6 +33,7 @@ import fr.imag.clips.papillon.Papillon;
 import fr.imag.clips.papillon.business.xml.XMLServices;
 
 import fr.imag.clips.papillon.business.PapillonLogger;
+import fr.imag.clips.papillon.business.user.Group;
 import fr.imag.clips.papillon.business.user.GroupApi;
 import fr.imag.clips.papillon.business.user.User;
 import fr.imag.clips.papillon.business.user.UserApi;
@@ -78,9 +79,12 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
  
     protected int PAGE_EXPIRE_TIME = ((Papillon) Enhydra.getApplication()).getPageExpireTime();
    
-    private String contentType = XML_CONTENTTYPE;
+    private String acceptContentType = XML_CONTENTTYPE;
+    private String sentContentType = XML_CONTENTTYPE;
     private String USERS_OBJECT = "users";
     private String GROUPS_OBJECT = "groups";
+    private String DICTIONARY_OBJECT = "dictionary";
+    private String DICTIONARIES_OBJECT = "dictionaries";
    
 	
 	/**
@@ -128,9 +132,14 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                 setUserFromLoginPassword(login,password);
                 
                 if (null != theRequest.getHeader("Accept") && theRequest.getHeader("Accept").equals("application/json")) {
-                    contentType = JSON_CONTENTTYPE;
+                    acceptContentType = JSON_CONTENTTYPE;
                 }
-                
+                if (null != theRequest.getHeader("Content-Type") && theRequest.getHeader("Content-Type").startsWith("application/json")) {
+                    sentContentType = JSON_CONTENTTYPE;
+                }
+                PapillonLogger.writeDebugMsg("sentContentType: " + sentContentType);
+                PapillonLogger.writeDebugMsg("acceptContentType: " + acceptContentType);
+              
                 PapillonLogger.writeDebugMsg("REST APIUSERS URI : [" + prefix + "] " + theRequest.getPresentationURI()+" Accept: "+theRequest.getHeader("Accept")+" ;");
 				String theURI = java.net.URLDecoder.decode(theRequest.getPresentationURI());
 				if (theURI.indexOf(prefix)==0) {
@@ -216,25 +225,8 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                             status = ((Integer)responseVector.elementAt(1)).intValue();
                             theResponse.setStatus(status, (String) responseVector.elementAt(2));
                         }
-                        else {
-                            String errorMsg = "Error: object: " + object + " does not exist!";
-                            PapillonLogger.writeDebugMsg(errorMsg);
-                            theResponse.setStatus(HttpPresentationResponse.SC_NOT_FOUND,errorMsg);
-                        }
-                    }
-                    else if (theRequest.getMethod().equals("POST")) {
-                        HttpPresentationInputStream inputStream = theRequest.getInputStream();
-                        String objectBody = convertStreamToString(inputStream);
-                        content = null;
-                        
-                        if (object.equalsIgnoreCase(USERS_OBJECT)) {
-                            //TODO : comment récupérer le password crypté utilisé pour l'authentification ?
-                            com.lutris.http.BasicAuthResult theBasicAuthResult = com.lutris.http.BasicAuth.getAuthentication(theRequest);
-                            if (theBasicAuthResult!=null) {
-                                login = theBasicAuthResult.username;
-                                password = theBasicAuthResult.password;
-                            }
-                            java.util.Vector responseVector = UserApi.postUser(login, password, objectName, objectBody, contentType, this.getUser());
+                        else if (object.equalsIgnoreCase(DICTIONARY_OBJECT)) {
+                            java.util.Vector responseVector = UserApi.getGroupsForDictionary(objectName, null, this.getUser());
                             content = (org.w3c.dom.Document) responseVector.elementAt(0);
                             status = ((Integer)responseVector.elementAt(1)).intValue();
                             theResponse.setStatus(status, (String) responseVector.elementAt(2));
@@ -244,6 +236,53 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                             PapillonLogger.writeDebugMsg(errorMsg);
                             theResponse.setStatus(HttpPresentationResponse.SC_NOT_FOUND,errorMsg);
                         }
+                    }
+                    // TODO : pour le PUT, trouver une solution pour changer de mot de passe !
+                    else if (theRequest.getMethod().equals("POST")) {
+                        HttpPresentationInputStream inputStream = theRequest.getInputStream();
+                        String objectBody = convertStreamToString(inputStream);
+                        content = null;
+                        
+                        if (object.equalsIgnoreCase(USERS_OBJECT)) {
+                            com.lutris.http.BasicAuthResult theBasicAuthResult = com.lutris.http.BasicAuth.getAuthentication(theRequest);
+                            if (theBasicAuthResult!=null) {
+                                login = theBasicAuthResult.username;
+                                password = theBasicAuthResult.password;
+                            }
+                            java.util.Vector responseVector = UserApi.postUser(login, password, objectName, objectBody, sentContentType, this.getUser());
+                            content = (org.w3c.dom.Document) responseVector.elementAt(0);
+                            status = ((Integer)responseVector.elementAt(1)).intValue();
+                            theResponse.setStatus(status, (String) responseVector.elementAt(2));
+                        }
+                        else {
+                            String errorMsg = "Error: object: " + object + " does not exist!";
+                            PapillonLogger.writeDebugMsg(errorMsg);
+                            theResponse.setStatus(HttpPresentationResponse.SC_NOT_FOUND,errorMsg);
+                        }
+                        theResponse.flush();
+                    }
+                    else if (theRequest.getMethod().equals("PUT")) {
+                        HttpPresentationInputStream inputStream = theRequest.getInputStream();
+                        String objectBody = convertStreamToString(inputStream);
+                        content = null;
+                        
+                        if (object.equalsIgnoreCase(USERS_OBJECT)) {
+                            com.lutris.http.BasicAuthResult theBasicAuthResult = com.lutris.http.BasicAuth.getAuthentication(theRequest);
+                            if (theBasicAuthResult!=null) {
+                                login = theBasicAuthResult.username;
+                                password = theBasicAuthResult.password;
+                            }
+                            java.util.Vector responseVector = UserApi.putUser(login, password, objectName, objectBody, sentContentType, this.getUser());
+                            content = (org.w3c.dom.Document) responseVector.elementAt(0);
+                            status = ((Integer)responseVector.elementAt(1)).intValue();
+                            theResponse.setStatus(status, (String) responseVector.elementAt(2));
+                        }
+                        else {
+                            String errorMsg = "Error: object: " + object + " does not exist!";
+                            PapillonLogger.writeDebugMsg(errorMsg);
+                            theResponse.setStatus(HttpPresentationResponse.SC_NOT_FOUND,errorMsg);
+                        }
+                        theResponse.flush();
                     }
                     else if (theRequest.getMethod().equals("DELETE")) {
                         content = null;
@@ -270,13 +309,175 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                         theResponse.setStatus(HttpPresentationResponse.SC_NOT_IMPLEMENTED, errorMsg);
                     }
                 }
+                else if (restStrings.length==3) {
+                    String objectName = restStrings[1];
+                    String attributeName = restStrings[2];
+                    PapillonLogger.writeDebugMsg(commande + " OBJECT: " + object + " name: " + objectName +", ATTRIBUTE: " + attributeName + ";");
+                    if (theRequest.getMethod().equals("GET")) {
+                        content = null;
+                        if (object.equalsIgnoreCase(USERS_OBJECT)) {
+                            java.util.Vector responseVector = UserApi.getGroupsForUser(objectName, this.getUser());
+                            content = (org.w3c.dom.Document) responseVector.elementAt(0);
+                            status = ((Integer)responseVector.elementAt(1)).intValue();
+                            theResponse.setStatus(status, (String) responseVector.elementAt(2));
+                        }
+ /*                       else if (object.equalsIgnoreCase(GROUPS_OBJECT)) {
+                            java.util.Vector responseVector = GroupApi.getGroup(objectName, this.getUser());
+                            content = (org.w3c.dom.Document) responseVector.elementAt(0);
+                            status = ((Integer)responseVector.elementAt(1)).intValue();
+                            theResponse.setStatus(status, (String) responseVector.elementAt(2));
+                        }*/
+                        else if (object.equalsIgnoreCase(DICTIONARY_OBJECT)) {
+                            java.util.Vector responseVector = UserApi.getGroupsForDictionary(objectName, attributeName, this.getUser());
+                            content = (org.w3c.dom.Document) responseVector.elementAt(0);
+                            status = ((Integer)responseVector.elementAt(1)).intValue();
+                            theResponse.setStatus(status, (String) responseVector.elementAt(2));
+                        }
+                        else {
+                            String errorMsg = "Error: object: " + object + " does not exist!";
+                            PapillonLogger.writeDebugMsg(errorMsg);
+                            theResponse.setStatus(HttpPresentationResponse.SC_NOT_FOUND,errorMsg);
+                        }
+                    }
+                    else if (theRequest.getMethod().equals("OPTIONS")) {
+                        theResponse.setHeader("Access-Control-Allow-Methods","GET, OPTIONS");
+                        theResponse.setHeader("Allow","GET, OPTIONS");
+                    }
+                    else {
+                        String errorMsg = "Error: method not implemented";
+                        content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + HttpPresentationResponse.SC_NOT_IMPLEMENTED + "</h1><p>" + errorMsg + "</p></html>");
+                        theResponse.setStatus(HttpPresentationResponse.SC_NOT_IMPLEMENTED, errorMsg);
+                    }
+                }
+                else if (restStrings.length==4) {
+                    String objectName = restStrings[1];
+                    String secondObject = restStrings[2];
+                    String secondObjectName = restStrings[3];
+                    PapillonLogger.writeDebugMsg(commande + " OBJECT: " + object + " name: " + objectName +", secondObject: " + secondObject + " second name: " + secondObjectName);
+                    if (theRequest.getMethod().equals("PUT")) {
+                        content = null;
+                        if (object.equalsIgnoreCase(USERS_OBJECT)) {
+                            if (secondObject.equalsIgnoreCase(GROUPS_OBJECT)) {
+                                java.util.Vector responseVector = UserApi.putUserInGroup(objectName, secondObjectName, this.getUser());
+                                content = (org.w3c.dom.Document) responseVector.elementAt(0);
+                                status = ((Integer)responseVector.elementAt(1)).intValue();
+                                theResponse.setStatus(status, (String) responseVector.elementAt(2));
+                            }
+                            else {
+                                String errorMsg = "Error: second object: " + secondObject + " does not exist!";
+                                PapillonLogger.writeDebugMsg(errorMsg);
+                                theResponse.setStatus(HttpPresentationResponse.SC_NOT_FOUND,errorMsg);
+                            }
+                        }
+                        else if (object.equalsIgnoreCase(GROUPS_OBJECT)) {
+                            if (secondObject.equalsIgnoreCase(USERS_OBJECT)) {
+                                java.util.Vector responseVector = UserApi.putUserInGroup(secondObjectName, objectName, this.getUser());
+                                content = (org.w3c.dom.Document) responseVector.elementAt(0);
+                                status = ((Integer)responseVector.elementAt(1)).intValue();
+                                theResponse.setStatus(status, (String) responseVector.elementAt(2));
+                            }
+                            else {
+                                String errorMsg = "Error: second object: " + secondObject + " does not exist!";
+                                PapillonLogger.writeDebugMsg(errorMsg);
+                                theResponse.setStatus(HttpPresentationResponse.SC_NOT_FOUND,errorMsg);
+                            }
+                        }
+                        else if (object.equalsIgnoreCase(DICTIONARY_OBJECT)) {
+                            if (secondObject.equalsIgnoreCase(Group.ADMIN_GROUP) ||
+                                secondObject.equalsIgnoreCase(Group.VALIDATOR_GROUP) ||
+                                secondObject.equalsIgnoreCase(Group.SPECIALIST_GROUP) ||
+                                secondObject.equalsIgnoreCase(Group.READER_GROUP)) {
+                                String groupName = secondObject + Group.DICT_GROUP_PREFIX + objectName;
+                                //if dictionary group does not exist
+                                java.util.Vector responseVector = GroupApi.getGroup(groupName, this.getUser());
+                                if (((Integer)responseVector.elementAt(1)).intValue() != HttpPresentationResponse.SC_OK) {
+                                    responseVector = GroupApi.postGroup(groupName, this.getUser());
+                                }
+                                responseVector = UserApi.putUserInGroup(secondObjectName, groupName, this.getUser());
+                                content = (org.w3c.dom.Document) responseVector.elementAt(0);
+                                status = ((Integer)responseVector.elementAt(1)).intValue();
+                                theResponse.setStatus(status, (String) responseVector.elementAt(2));
+                            }
+                            else {
+                                String errorMsg = "Error: second object: " + secondObject + " does not exist!";
+                                PapillonLogger.writeDebugMsg(errorMsg);
+                                theResponse.setStatus(HttpPresentationResponse.SC_NOT_FOUND,errorMsg);
+                            }
+                        }
+                        else {
+                            String errorMsg = "Error: object: " + object + " does not exist!";
+                            PapillonLogger.writeDebugMsg(errorMsg);
+                            theResponse.setStatus(HttpPresentationResponse.SC_NOT_FOUND,errorMsg);
+                        }
+                    }
+                    if (theRequest.getMethod().equals("DELETE")) {
+                        content = null;
+                        if (object.equalsIgnoreCase(USERS_OBJECT)) {
+                            if (secondObject.equalsIgnoreCase(GROUPS_OBJECT)) {
+                                java.util.Vector responseVector = UserApi.removeUserFromGroup(objectName, secondObjectName, this.getUser());
+                                content = (org.w3c.dom.Document) responseVector.elementAt(0);
+                                status = ((Integer)responseVector.elementAt(1)).intValue();
+                                theResponse.setStatus(status, (String) responseVector.elementAt(2));
+                            }
+                            else {
+                                String errorMsg = "Error: second object: " + secondObject + " does not exist!";
+                                PapillonLogger.writeDebugMsg(errorMsg);
+                                theResponse.setStatus(HttpPresentationResponse.SC_NOT_FOUND,errorMsg);
+                            }
+                        }
+                        else if (object.equalsIgnoreCase(GROUPS_OBJECT)) {
+                            if (secondObject.equalsIgnoreCase(USERS_OBJECT)) {
+                                java.util.Vector responseVector = UserApi.removeUserFromGroup(secondObjectName, objectName, this.getUser());
+                                content = (org.w3c.dom.Document) responseVector.elementAt(0);
+                                status = ((Integer)responseVector.elementAt(1)).intValue();
+                                theResponse.setStatus(status, (String) responseVector.elementAt(2));
+                            }
+                            else {
+                                String errorMsg = "Error: second object: " + secondObject + " does not exist!";
+                                PapillonLogger.writeDebugMsg(errorMsg);
+                                theResponse.setStatus(HttpPresentationResponse.SC_NOT_FOUND,errorMsg);
+                            }
+                        }
+                        else if (object.equalsIgnoreCase(DICTIONARY_OBJECT)) {
+                            if (secondObject.equalsIgnoreCase(Group.ADMIN_GROUP) ||
+                                secondObject.equalsIgnoreCase(Group.VALIDATOR_GROUP) ||
+                                secondObject.equalsIgnoreCase(Group.SPECIALIST_GROUP) ||
+                                secondObject.equalsIgnoreCase(Group.READER_GROUP)) {
+                                String groupName = secondObject + Group.DICT_GROUP_PREFIX + objectName;
+                                java.util.Vector responseVector = UserApi.removeUserFromGroup(secondObjectName, groupName, this.getUser());
+                                content = (org.w3c.dom.Document) responseVector.elementAt(0);
+                                status = ((Integer)responseVector.elementAt(1)).intValue();
+                                theResponse.setStatus(status, (String) responseVector.elementAt(2));
+                            }
+                            else {
+                                String errorMsg = "Error: second object: " + secondObject + " does not exist!";
+                                PapillonLogger.writeDebugMsg(errorMsg);
+                                theResponse.setStatus(HttpPresentationResponse.SC_NOT_FOUND,errorMsg);
+                            }
+                        }
+                        else {
+                            String errorMsg = "Error: object: " + object + " does not exist!";
+                            PapillonLogger.writeDebugMsg(errorMsg);
+                            theResponse.setStatus(HttpPresentationResponse.SC_NOT_FOUND,errorMsg);
+                        }
+                    }
+                    else if (theRequest.getMethod().equals("OPTIONS")) {
+                        theResponse.setHeader("Access-Control-Allow-Methods","PUT, DELETE, OPTIONS");
+                        theResponse.setHeader("Allow","PUT, DELETE, OPTIONS");
+                    }
+                    else {
+                        String errorMsg = "Error: method not implemented";
+                        content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + HttpPresentationResponse.SC_NOT_IMPLEMENTED + "</h1><p>" + errorMsg + "</p></html>");
+                        theResponse.setStatus(HttpPresentationResponse.SC_NOT_IMPLEMENTED, errorMsg);
+                    }
+                }
 				else {
                     String errorMsg = "Error: method not implemented: " + commande + " OBJECT: " + object + " name: " + restStrings[1]+ " attribute: " + restStrings[2] + ";";
                     //PapillonLogger.writeDebugMsg(errorMsg);
                     content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + HttpPresentationResponse.SC_NOT_IMPLEMENTED + "</h1><p>" + errorMsg + "</p></html>");
                     theResponse.setStatus(HttpPresentationResponse.SC_NOT_IMPLEMENTED, errorMsg);
 				}
-                if (contentType.equals(JSON_CONTENTTYPE)) {
+                if (acceptContentType.equals(JSON_CONTENTTYPE)) {
                     try {
                         String xmlString = XMLServices.NodeToString(content);
                         org.json.JSONObject xmlJSONObj = org.json.XML.toJSONObject(xmlString);
@@ -422,7 +623,7 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
         
         // setContentType before calling getDocument
         // because getDocument can change the content type
-        this.getComms().response.setContentType(contentType);
+        this.getComms().response.setContentType(acceptContentType);
         this.getComms().response.setEncoding("UTF-8");
         this.getComms().response.setHeader("Access-Control-Allow-Origin","*");
         this.getComms().response.setHeader("Access-Control-Allow-Headers","Origin,Content-Type,Accept,Authorization");
@@ -433,7 +634,7 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
             flushPresentationContext();
         }
         
-        if (contentType.equals(JSON_CONTENTTYPE)) {
+        if (acceptContentType.equals(JSON_CONTENTTYPE)) {
             buffer = jsonString.getBytes("UTF-8");
         }
         else {

@@ -275,6 +275,7 @@ public class Dictionary {
             throw new PapillonBusinessException("Error getting Dictionary's legal", ex);
         }
     }
+    
     public void setAccess(String access)
     throws PapillonBusinessException {
         try {
@@ -283,6 +284,88 @@ public class Dictionary {
             throw new PapillonBusinessException("Error setting Dictionary's legal", ex);
         }
     }
+    
+    public boolean isAdmin(String login)
+    throws PapillonBusinessException {
+        Group adminsGroup = GroupsFactory.findGroupByName(Group.ADMIN_DICT_GROUP_PREFIX + this.getName());
+        String[] admins = new String[0];
+        if (adminsGroup!=null && !adminsGroup.isEmpty()) {
+            admins = adminsGroup.getUsersArray();
+        }
+        return java.util.Arrays.asList(admins).contains(login);
+    }
+    
+    public boolean isValidator(String login)
+    throws PapillonBusinessException {
+        Group adminsGroup = GroupsFactory.findGroupByName(Group.VALIDATOR_DICT_GROUP_PREFIX + this.getName());
+        String[] admins = new String[0];
+        if (adminsGroup!=null && !adminsGroup.isEmpty()) {
+            admins = adminsGroup.getUsersArray();
+        }
+        return java.util.Arrays.asList(admins).contains(login);
+    }
+    
+    public boolean isSpecialist(String login)
+    throws PapillonBusinessException {
+        Group adminsGroup = GroupsFactory.findGroupByName(Group.SPECIALIST_DICT_GROUP_PREFIX + this.getName());
+        String[] admins = new String[0];
+        if (adminsGroup!=null && !adminsGroup.isEmpty()) {
+            admins = adminsGroup.getUsersArray();
+        }
+        return java.util.Arrays.asList(admins).contains(login);
+    }
+    
+    public boolean isReader(String login)
+    throws PapillonBusinessException {
+        Group adminsGroup = GroupsFactory.findGroupByName(Group.READER_DICT_GROUP_PREFIX + this.getName());
+        String[] admins = new String[0];
+        if (adminsGroup!=null && !adminsGroup.isEmpty()) {
+            admins = adminsGroup.getUsersArray();
+        }
+        return java.util.Arrays.asList(admins).contains(login);
+    }
+    
+    public String[] getAdminArray()
+    throws PapillonBusinessException {
+        Group adminsGroup = GroupsFactory.findGroupByName(Group.ADMIN_DICT_GROUP_PREFIX + this.getName());
+        String[] admins = new String[0];
+        if (adminsGroup!=null && !adminsGroup.isEmpty()) {
+            admins = adminsGroup.getUsersArray();
+        }
+        return admins;
+    }
+    
+    public String[] getValidatorArray()
+    throws PapillonBusinessException {
+        Group adminsGroup =  GroupsFactory.findGroupByName(Group.VALIDATOR_DICT_GROUP_PREFIX + this.getName());
+        String[] admins = new String[0];
+        if (adminsGroup!=null && !adminsGroup.isEmpty()) {
+            admins = adminsGroup.getUsersArray();
+        }
+        return admins;
+    }
+    
+    public String[] getSpecialistArray()
+    throws PapillonBusinessException {
+        Group adminsGroup =  GroupsFactory.findGroupByName(Group.SPECIALIST_DICT_GROUP_PREFIX + this.getName());
+        String[] admins = new String[0];
+        if (adminsGroup!=null && !adminsGroup.isEmpty()) {
+            admins = adminsGroup.getUsersArray();
+        }
+        return admins;
+    }
+    
+    public String[] getReaderArray()
+    throws PapillonBusinessException {
+        Group adminsGroup =  GroupsFactory.findGroupByName(Group.READER_DICT_GROUP_PREFIX + this.getName());
+        String[] admins = new String[0];
+        if (adminsGroup!=null && !adminsGroup.isEmpty()) {
+            admins = adminsGroup.getUsersArray();
+        }
+        return admins;
+    }
+    
+    
     // FIXME: change String to Collection
     // FIXME: supress getSourceLanguagesArray ? or getSourceLanguages ?
     public String getSourceLanguages() 
@@ -425,6 +508,15 @@ public class Dictionary {
         // delete dictionary admin group
         String adminGroupString = Group.ADMIN_DICT_GROUP_PREFIX + this.getName();
         GroupAnswer theAnswer = GroupsFactory.deleteGroup(adminGroupString);
+
+        String validatorsGroupString = Group.VALIDATOR_DICT_GROUP_PREFIX + this.getName();
+        theAnswer = GroupsFactory.deleteGroup(validatorsGroupString);
+
+        String reviewersGroupString = Group.SPECIALIST_DICT_GROUP_PREFIX + this.getName();
+        theAnswer = GroupsFactory.deleteGroup(reviewersGroupString);
+
+        String readersGroupString = Group.READER_DICT_GROUP_PREFIX + this.getName();
+        theAnswer = GroupsFactory.deleteGroup(readersGroupString);
         //
         for (Iterator iter =  VolumesFactory.getVolumesArray(this.getName()).iterator(); iter.hasNext();) {
             ((Volume)iter.next()).deleteAll();
