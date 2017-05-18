@@ -150,9 +150,9 @@ public class UserApi {
         String errorMsg = "";
                 
         if (authlogin != null && authlogin != "" && authpassword != null && authpassword != "") {
-            User aUser = UsersFactory.findUserByLogin(login);
+            User aUser = UsersFactory.findUserByLogin(authlogin);
             if (aUser != null && !aUser.isEmpty()) {
-                errorMsg = "Error: conflict, user " + login + " already exists!";
+                errorMsg = "Error: conflict, user " + authlogin + " already exists!";
                 status = 409;
                 content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + status + " Conflict</h1><p>" + errorMsg + "</p></html>");
             }
@@ -580,7 +580,7 @@ public class UserApi {
         }
         else {
             String login = "";
-            String responseString = "<?xml version='1.0' encoding='utf-8' ?><multistatus xmlns:D='DAV::'>";
+            String responseString = "<?xml version='1.0' encoding='utf-8' ?><multistatus xmlns='DAV::'>";
             if (contentType.equals(JSON_CONTENTTYPE)) {
                 try {
                     org.json.JSONObject usersObject = new org.json.JSONObject(usersString).getJSONObject(USERLIST_TAG);
@@ -591,7 +591,7 @@ public class UserApi {
                         login  = obj.getString("login");
                         responseString += "<"+USER_TAG+">" + login + "</"+USER_TAG+">";
                         java.util.Vector partialResponseVector = putUserInGroup(login, groupName, theUser);
-                        int partialStatus = ((Integer)responseVector.elementAt(1)).intValue();
+                        int partialStatus = ((Integer)partialResponseVector.elementAt(1)).intValue();
                         if (partialStatus != HttpPresentationResponse.SC_OK) {
                             status = 207;
                             responseString += "<status>failure</status>";

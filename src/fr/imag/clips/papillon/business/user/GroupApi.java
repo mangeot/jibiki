@@ -115,6 +115,7 @@ public class GroupApi {
                 myGroup.setPassword(theUser.getPassword());
                 myGroup.addUser(theUser.getLogin());
                 myGroup.addAdmin(theUser.getLogin());
+                myGroup.save();
                 String answerMessage =  "Group: "+ myGroup.getName() + " created";
                 PapillonLogger.writeDebugMsg(answerMessage);
             }

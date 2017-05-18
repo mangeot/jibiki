@@ -339,9 +339,45 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                             theResponse.setStatus(HttpPresentationResponse.SC_NOT_FOUND,errorMsg);
                         }
                     }
+                    else if (theRequest.getMethod().equals("PUT")) {
+                        content = null;
+                        HttpPresentationInputStream inputStream = theRequest.getInputStream();
+                        String objectBody = convertStreamToString(inputStream);
+                        /*if (object.equalsIgnoreCase(USERS_OBJECT)) {
+                            java.util.Vector responseVector = UserApi.getGroupsForUser(objectName, this.getUser());
+                            content = (org.w3c.dom.Document) responseVector.elementAt(0);
+                            status = ((Integer)responseVector.elementAt(1)).intValue();
+                            theResponse.setStatus(status, (String) responseVector.elementAt(2));
+                        }
+                        else */if (object.equalsIgnoreCase(GROUPS_OBJECT)) {
+                            if (attributeName !=null && attributeName.equals(USERS_OBJECT)) {
+                                java.util.Vector responseVector = UserApi.putUsersInGroup(objectBody, objectName, sentContentType, this.getUser());
+                                content = (org.w3c.dom.Document) responseVector.elementAt(0);
+                                status = ((Integer)responseVector.elementAt(1)).intValue();
+                                theResponse.setStatus(status, (String) responseVector.elementAt(2));
+                            }
+                            else {
+                                String errorMsg = "Error: attribute: " + attributeName + " does not exist!";
+                                PapillonLogger.writeDebugMsg(errorMsg);
+                                theResponse.setStatus(HttpPresentationResponse.SC_NOT_FOUND,errorMsg);
+                            }
+                         }/*
+                        else if (object.equalsIgnoreCase(DICTIONARY_OBJECT)) {
+                            java.util.Vector responseVector = UserApi.getGroupsForDictionary(objectName, attributeName, this.getUser());
+                            content = (org.w3c.dom.Document) responseVector.elementAt(0);
+                            status = ((Integer)responseVector.elementAt(1)).intValue();
+                            theResponse.setStatus(status, (String) responseVector.elementAt(2));
+                        }*/
+                        else {
+                            String errorMsg = "Error: object: " + object + " does not exist!";
+                            PapillonLogger.writeDebugMsg(errorMsg);
+                            theResponse.setStatus(HttpPresentationResponse.SC_NOT_FOUND,errorMsg);
+                        }
+                        theResponse.flush();
+                    }
                     else if (theRequest.getMethod().equals("OPTIONS")) {
-                        theResponse.setHeader("Access-Control-Allow-Methods","GET, OPTIONS");
-                        theResponse.setHeader("Allow","GET, OPTIONS");
+                        theResponse.setHeader("Access-Control-Allow-Methods","GET, PUT, OPTIONS");
+                        theResponse.setHeader("Allow","GET, PUT, OPTIONS");
                     }
                     else {
                         String errorMsg = "Error: method not implemented";
@@ -410,7 +446,7 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                             theResponse.setStatus(HttpPresentationResponse.SC_NOT_FOUND,errorMsg);
                         }
                     }
-                    if (theRequest.getMethod().equals("DELETE")) {
+                    else if (theRequest.getMethod().equals("DELETE")) {
                         content = null;
                         if (object.equalsIgnoreCase(USERS_OBJECT)) {
                             if (secondObject.equalsIgnoreCase(GROUPS_OBJECT)) {
