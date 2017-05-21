@@ -96,6 +96,7 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
 		// special code for handling the root query (/api/)
 		// because it is not handled by the api/ErrorHandler.po
         String command = "";
+        int status = HttpPresentationResponse.SC_OK;
 		
         String prefix = this.getAbsoluteUrl();
 		prefix = prefix.substring(0,prefix.lastIndexOf('/') + 1);
@@ -118,7 +119,10 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
             if (command.equals(API_COMMAND)) {
                 PapillonLogger.writeDebugMsg("REST API COMMAND: " + theRequest.getMethod() + " DICTLIST");
                 if (theRequest.getMethod().equals("GET")) {
-                    content = fr.imag.clips.papillon.presentation.api.Metadata.getDictionaryList(this.getUser());
+                    java.util.Vector responseVector = fr.imag.clips.papillon.business.dictionary.MetadataApi.getDictionaryList(this.getUser());
+                    content = (org.w3c.dom.Document) responseVector.elementAt(0);
+                    status = ((Integer)responseVector.elementAt(1)).intValue();
+                    theResponse.setStatus(status, (String) responseVector.elementAt(2));
                 }
                 else if (theRequest.getMethod().equals("PUT")) {
                     HttpPresentationInputStream inputStream = theRequest.getInputStream();
@@ -140,7 +144,10 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
                 else if (command.equals(APIUSERS_COMMAND)) {
                 PapillonLogger.writeDebugMsg("REST APIUSERS COMMAND: " + theRequest.getMethod() + " USERSLIST;");
                 if (theRequest.getMethod().equals("GET")) {
-                    content = fr.imag.clips.papillon.presentation.apiusers.Users.getUsersList(this.getUser());
+                    java.util.Vector responseVector = fr.imag.clips.papillon.business.user.UserApi.getUserList(this.getUser());
+                    content = (org.w3c.dom.Document) responseVector.elementAt(0);
+                    status = ((Integer)responseVector.elementAt(1)).intValue();
+                    theResponse.setStatus(status, (String) responseVector.elementAt(2));
                 }
                 else if (theRequest.getMethod().equals("PUT")) {
                     HttpPresentationInputStream inputStream = theRequest.getInputStream();
