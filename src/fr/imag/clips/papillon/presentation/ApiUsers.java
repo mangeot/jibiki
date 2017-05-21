@@ -70,7 +70,7 @@ public class ApiUsers extends PapillonBasePO {
         Node contentNode;
 
         // Création du contenu
-        ApiContentXHTML content = (ApiContentXHTML)MultilingualXHtmlTemplateFactory.createTemplate("ApiUsersContentXHTML", this.getComms(), this.getSessionData());
+        ApiUsersContentXHTML content = (ApiUsersContentXHTML)MultilingualXHtmlTemplateFactory.createTemplate("ApiUsersContentXHTML", this.getComms(), this.getSessionData());
 
         contentNode = content.getElementApiContent();
 
