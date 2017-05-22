@@ -35,6 +35,10 @@ import fr.imag.clips.papillon.business.PapillonLogger;
 
 import fr.imag.clips.papillon.presentation.xhtml.orig.*;
 
+import org.enhydra.xml.io.OutputOptions;
+import org.enhydra.xml.io.DOMFormatter;
+
+
 import java.io.*;
 /*
  import java.io.BufferedReader;
@@ -52,16 +56,25 @@ import java.util.Properties;
  * @author
  * @version
  */
-public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO {
+public class ErrorHandler extends  fr.imag.clips.papillon.presentation.AbstractPO {
 	
-	private org.w3c.dom.Document content;
-	private ErrorXHTML XHTMLcontent;
     private static final String API_COMMAND = "api";
     private static final String APIUSERS_COMMAND = "apiusers";
+    protected final static String JSON_CONTENTTYPE = "text/json";
+    protected final static String XML_CONTENTTYPE = "text/xml";
 	
-	protected static String ERROR_PAGE = "<?xml version='1.0'?><html></html>";
+	protected final static String ERROR_PAGE = "<?xml version='1.0'?><html></html>";
+    protected final static String ENHYDRA_SESSION_COOKIE = "JSESSIONID";
 	
-	/**
+    private org.w3c.dom.Document content;
+    private ErrorXHTML XHTMLcontent;
+    private String jsonString;
+    private String acceptContentType = XML_CONTENTTYPE;
+    private String sentContentType = XML_CONTENTTYPE;
+    
+
+
+    /**
      * Description of the Method
      *
      * @return Description of the Return Value
@@ -86,7 +99,7 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
      * @param HttpPresentationComms
      * @exception HttpPresentationException
      */
-    public org.w3c.dom.Document getContent()
+    public org.w3c.dom.Node getDocument()
 	throws HttpPresentationException, java.io.IOException, java.lang.Exception {
 		
 		
@@ -98,13 +111,20 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
         String command = "";
         int status = HttpPresentationResponse.SC_OK;
 		
-        String prefix = this.getAbsoluteUrl();
+         String prefix = this.getAbsoluteUrl();
 		prefix = prefix.substring(0,prefix.lastIndexOf('/') + 1);
         String apiPrefix = prefix + API_COMMAND + "/";
         String apiUsersPrefix = prefix + APIUSERS_COMMAND + "/";
 		HttpPresentationRequest theRequest = this.getComms().request;
 		HttpPresentationResponse theResponse = this.getComms().response;
-		String theURI = theRequest.getPresentationURI();
+        if (null != theRequest.getHeader("Accept") && theRequest.getHeader("Accept").equals("application/json")) {
+            acceptContentType = JSON_CONTENTTYPE;
+        }
+        if (null != theRequest.getHeader("Content-Type") && theRequest.getHeader("Content-Type").startsWith("application/json")) {
+            sentContentType = JSON_CONTENTTYPE;
+        }
+        
+        String theURI = theRequest.getPresentationURI();
         if (theURI.indexOf(apiPrefix)==0) {
             theURI = theURI.substring(apiPrefix.length());
             command = API_COMMAND;
@@ -168,6 +188,16 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
                 }
                 
                 }
+            if (acceptContentType.equals(JSON_CONTENTTYPE)) {
+                try {
+                    String xmlString = XMLServices.NodeToString(content);
+                    org.json.JSONObject xmlJSONObj = org.json.XML.toJSONObject(xmlString);
+                    jsonString = xmlJSONObj.toString(2);
+                } catch (org.json.JSONException je) {
+                    theResponse.setStatus(HttpPresentationResponse.SC_INTERNAL_SERVER_ERROR,je.toString());
+                    jsonString = je.toString();
+                }
+            }
 			}
 			else {
 				////// Create Home page
@@ -202,6 +232,102 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.XmlBasePO
 		return content;
     }
 	
+    
+    /**
+     * This implements the run method in HttpPresentation.
+     *
+     * @param comms Description of the Parameter
+     * @throws Exception
+     * @throws HttpPresentationException Description of the Exception
+     * @throws IOException               Description of the Exception
+     */
+    public void run(HttpPresentationComms comms) throws HttpPresentationException, IOException, Exception {
+        this.myComms = comms;
+        
+        if (PAGE_EXPIRE_TIME>0) {
+            this.myComms.response.setHeader("Cache-Control", "s-maxage=" + PAGE_EXPIRE_TIME);
+        }
+        
+        // code spécial pour récupérer la session active car il semble qu'il n'y ait pas de session attachée au ErrorHandler !
+        if (this.myComms != null && this.myComms.sessionData == null) {
+            javax.servlet.http.Cookie[] cookiesArray = this.myComms.request.getCookies();
+            //PapillonLogger.writeDebugMsg("Cookies:");
+            for (int i=0; i<cookiesArray.length;i++) {
+                //PapillonLogger.writeDebugMsg(cookiesArray[i].getName() + ":" + cookiesArray[i].getValue());
+                if (cookiesArray[i].getName().equals(ENHYDRA_SESSION_COOKIE)) {
+                    this.myComms.session = PapillonSessionManager.getSession(cookiesArray[i].getValue());
+                    if (this.myComms.session!=null) {
+                        //PapillonLogger.writeDebugMsg("The Session not null");
+                        this.myComms.sessionData = this.myComms.session.getSessionData();
+                        if (this.myComms.sessionData != null) {
+                            //PapillonLogger.writeDebugMsg("theSessionData not null");
+                            Object obj = this.myComms.sessionData.get(PapillonSessionData.SESSION_KEY);
+                            if (null != obj) {
+                                this.sessionData = (PapillonSessionData) obj;
+                            }
+                        }
+                        else {
+                            //PapillonLogger.writeDebugMsg("theSessionData null");
+                        }
+                    }
+                }
+            }
+        }
+        
+        initSessionData();
+        
+        // Check if the user needs to be logged in for this request.
+        if (this.loggedInUserRequired()) {
+            checkForUserLogin();                  // This will redirect the user to the login page if necessary
+        }
+        
+        // After this point, user is logged in if required...
+        
+        if (!this.userMayUseThisPO()) {
+            userIsNotAuthorized();                // This will redirect the user to the login page if necessary
+        }
+        
+        
+        HttpPresentationOutputStream out;
+        org.w3c.dom.Node document;
+        byte[] buffer;
+        
+        // setContentType before calling getDocument
+        // because getDocument can change the content type
+        this.getComms().response.setContentType(acceptContentType);
+        this.getComms().response.setEncoding("UTF-8");
+        this.getComms().response.setHeader("Access-Control-Allow-Origin","*");
+        this.getComms().response.setHeader("Access-Control-Allow-Headers","Origin,Content-Type,Accept,Authorization");
+        try {
+            initPresentationContext();
+            document = getDocument();
+        } finally {
+            flushPresentationContext();
+        }
+        
+        if (acceptContentType.equals(JSON_CONTENTTYPE)) {
+            buffer = jsonString.getBytes("UTF-8");
+        }
+        else {
+            if (null == document) {
+                this.getComms().response.sendError(HttpPresentationResponse.SC_NOT_FOUND, "Page returned a null Document");
+            }
+            // Preparation de la sortie...
+            OutputOptions options = new OutputOptions();
+            options.setDropHtmlSpanIds(true);
+            options.setXmlEncoding("UTF-8");
+            DOMFormatter fFormatter = new DOMFormatter(options);
+            buffer = fFormatter.toBytes(document);
+        }
+        
+        comms.response.setContentLength(buffer.length);
+        out = comms.response.getOutputStream();
+        out.write(buffer);
+        out.flush();
+    }
+
+    
+    
 	public static String convertStreamToString(InputStream is) {
 		/*
 		 * To convert the InputStream to String we use the BufferedReader.readLine()

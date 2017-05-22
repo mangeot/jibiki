@@ -63,29 +63,29 @@ import java.util.Properties;
  */
 public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO {
  
-	private org.w3c.dom.Document content;
-    private String jsonString = "";
-	
-	protected static String ERROR_PAGE = "<?xml version='1.0'?><html></html>";
-	protected static String LOGIN_PARAMETER = "login";
-    protected static String PASSWORD_PARAMETER = "password";
-	protected static String STRATEGY_PARAMETER = "strategy";
-	protected static String LIMIT_PARAMETER = "count";
-    protected static String OFFSET_PARAMETER = "startIndex";
-    protected static String ORDERBY_PARAMETER = "sortBy";
-    protected static String JSON_CONTENTTYPE = "text/json";
-    protected static String XML_CONTENTTYPE = "text/xml";
-    protected static String ENHYDRA_SESSION_COOKIE = "JSESSIONID";
+	protected final static String ERROR_PAGE = "<?xml version='1.0'?><html></html>";
+	protected final static String LOGIN_PARAMETER = "login";
+    protected final static String PASSWORD_PARAMETER = "password";
+	protected final static String STRATEGY_PARAMETER = "strategy";
+	protected final static String LIMIT_PARAMETER = "count";
+    protected final static String OFFSET_PARAMETER = "startIndex";
+    protected final static String ORDERBY_PARAMETER = "sortBy";
+    protected final static String JSON_CONTENTTYPE = "text/json";
+    protected final static String XML_CONTENTTYPE = "text/xml";
+    protected final static String ENHYDRA_SESSION_COOKIE = "JSESSIONID";
  
-    protected int PAGE_EXPIRE_TIME = ((Papillon) Enhydra.getApplication()).getPageExpireTime();
+    protected final static int PAGE_EXPIRE_TIME = ((Papillon) Enhydra.getApplication()).getPageExpireTime();
    
+    private final static String USERS_OBJECT = "users";
+    private final static String GROUPS_OBJECT = "groups";
+    private final static String DICTIONARY_OBJECT = "dictionary";
+    private final static String DICTIONARIES_OBJECT = "dictionaries";
+
+    private org.w3c.dom.Document content;
     private String acceptContentType = XML_CONTENTTYPE;
     private String sentContentType = XML_CONTENTTYPE;
-    private String USERS_OBJECT = "users";
-    private String GROUPS_OBJECT = "groups";
-    private String DICTIONARY_OBJECT = "dictionary";
-    private String DICTIONARIES_OBJECT = "dictionaries";
-   
+    private String jsonString = "";
+    
 	
 	/**
      * Description of the Method

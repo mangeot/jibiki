@@ -81,7 +81,8 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
  
     protected int PAGE_EXPIRE_TIME = ((Papillon) Enhydra.getApplication()).getPageExpireTime();
    
-    private String contentType = XML_CONTENTTYPE;
+    private String sentContentType = XML_CONTENTTYPE;
+    private String acceptContentType = XML_CONTENTTYPE;
    
 	
 	/**
@@ -129,7 +130,10 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                 setUserFromLoginPassword(login,password);
                 
                 if (null != theRequest.getHeader("Accept") && theRequest.getHeader("Accept").equals("application/json")) {
-                    contentType = JSON_CONTENTTYPE;
+                    acceptContentType = JSON_CONTENTTYPE;
+                }
+                if (null != theRequest.getHeader("Content-Type") && theRequest.getHeader("Content-Type").startsWith("application/json")) {
+                    sentContentType = JSON_CONTENTTYPE;
                 }
                 
                 PapillonLogger.writeDebugMsg("REST API URI : [" + prefix + "] " + theRequest.getPresentationURI()+" Accept: "+theRequest.getHeader("Accept")+" ;");
@@ -197,7 +201,7 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                         HttpPresentationInputStream inputStream = theRequest.getInputStream();
                         String dictXml = convertStreamToString(inputStream);
                         
-                        java.util.Vector responseVector = MetadataApi.putDictionary(dictName, dictXml, contentType, this.getUser());
+                        java.util.Vector responseVector = MetadataApi.putDictionary(dictName, dictXml, sentContentType, this.getUser());
                         content = (org.w3c.dom.Document) responseVector.elementAt(0);
                         status = ((Integer)responseVector.elementAt(1)).intValue();
                         theResponse.setStatus(status, (String) responseVector.elementAt(2));
@@ -207,7 +211,7 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                         HttpPresentationInputStream inputStream = theRequest.getInputStream();
                         String dictXml = convertStreamToString(inputStream);
  
-                        java.util.Vector responseVector = MetadataApi.postDictionary(dictName, dictXml, contentType, this.getUser());
+                        java.util.Vector responseVector = MetadataApi.postDictionary(dictName, dictXml, sentContentType, this.getUser());
                         content = (org.w3c.dom.Document) responseVector.elementAt(0);
                         status = ((Integer)responseVector.elementAt(1)).intValue();
                         theResponse.setStatus(status, (String) responseVector.elementAt(2));
@@ -240,7 +244,7 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
 					else if (theRequest.getMethod().equals("PUT")) {
                         HttpPresentationInputStream inputStream = theRequest.getInputStream();
                         String volXml = convertStreamToString(inputStream);
-                        java.util.Vector responseVector = MetadataApi.putVolume(dictName, lang, volXml, contentType, this.getUser());
+                        java.util.Vector responseVector = MetadataApi.putVolume(dictName, lang, volXml, sentContentType, this.getUser());
                         content = (org.w3c.dom.Document) responseVector.elementAt(0);
                         status = ((Integer)responseVector.elementAt(1)).intValue();
                         theResponse.setStatus(status, (String) responseVector.elementAt(2));
@@ -249,7 +253,7 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
 					else if (theRequest.getMethod().equals("POST")) {
                         HttpPresentationInputStream inputStream = theRequest.getInputStream();
                         String volXml = convertStreamToString(inputStream);
-                        java.util.Vector responseVector = MetadataApi.postVolume(dictName, lang, volXml, contentType, this.getUser());
+                        java.util.Vector responseVector = MetadataApi.postVolume(dictName, lang, volXml, sentContentType, this.getUser());
                         content = (org.w3c.dom.Document) responseVector.elementAt(0);
                         status = ((Integer)responseVector.elementAt(1)).intValue();
                         theResponse.setStatus(status, (String) responseVector.elementAt(2));
@@ -285,7 +289,7 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
 						String entry = convertStreamToString(inputStream);
 						//PapillonLogger.writeDebugMsg("put data: "+entry);
                         org.w3c.dom.Document entryDom = null;
-                        if (contentType.equals(XML_CONTENTTYPE)) {
+                        if (sentContentType.equals(XML_CONTENTTYPE)) {
                        try {
                             entryDom = XMLServices.buildDOMTree(entry);
                         }
@@ -331,7 +335,7 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
 						HttpPresentationInputStream inputStream = theRequest.getInputStream();
 						String entry = convertStreamToString(inputStream);
                         //PapillonLogger.writeDebugMsg("post data: "+entry);
-                        if (contentType.equals(XML_CONTENTTYPE)) {
+                        if (sentContentType.equals(XML_CONTENTTYPE)) {
                        try {
                             org.w3c.dom.Document entryDom = XMLServices.buildDOMTree(entry);
                         }
@@ -484,7 +488,7 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                     content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + HttpPresentationResponse.SC_NOT_IMPLEMENTED + "</h1><p>" + errorMsg + "</p></html>");
                     theResponse.setStatus(HttpPresentationResponse.SC_NOT_IMPLEMENTED, errorMsg);
 				}
-                if (contentType.equals(JSON_CONTENTTYPE)) {
+                if (acceptContentType.equals(JSON_CONTENTTYPE)) {
                     try {
                         String xmlString = XMLServices.NodeToString(content);
                         org.json.JSONObject xmlJSONObj = org.json.XML.toJSONObject(xmlString);
@@ -628,7 +632,7 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
         
         // setContentType before calling getDocument
         // because getDocument can change the content type
-        this.getComms().response.setContentType(contentType);
+        this.getComms().response.setContentType(acceptContentType);
         this.getComms().response.setEncoding("UTF-8");
         this.getComms().response.setHeader("Access-Control-Allow-Origin","*");
         this.getComms().response.setHeader("Access-Control-Allow-Headers","Origin,Content-Type,Accept,Authorization");
@@ -639,7 +643,7 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
             flushPresentationContext();
         }
         
-        if (contentType.equals(JSON_CONTENTTYPE)) {
+        if (acceptContentType.equals(JSON_CONTENTTYPE)) {
             buffer = jsonString.getBytes("UTF-8");
         }
         else {

@@ -486,7 +486,7 @@ public class UserApi {
         String errorMsg = "";
         
         if (theUser == null || theUser.isEmpty()) {
-            errorMsg = "Error: user: not authorized to add user  " + login +" in group " + groupName +"!";
+            errorMsg = "Error: user: not authorized to add user " + login +" in group " + groupName +"!";
             status = HttpPresentationResponse.SC_UNAUTHORIZED;
             content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + status + "</h1><p>" + errorMsg + "</p></html>");
         }
@@ -502,10 +502,17 @@ public class UserApi {
                 String refGroupPassword = aUser.getGroupPassword(groupName);
                 if (refGroupPassword!=null) {
                     if (theUser.isAdmin()) {
-                        aUser.addGroup(groupName);
-                        aUser.save();
-                        String answerMessage =  "User: " + login + " added in special group " + groupName + "; ";
-                        PapillonLogger.writeDebugMsg(answerMessage);
+                        if (aUser.isInGroup(groupName)) {
+                            errorMsg = "Error: conflict, user " + login + " already in group "+groupName+"!";
+                            status = 409;
+                            content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + status + " Conflict</h1><p>" + errorMsg + "</p></html>");
+                        }
+                        else {
+                            aUser.addGroup(groupName);
+                            aUser.save();
+                            String answerMessage =  "User: " + login + " added in special group " + groupName + "; ";
+                            PapillonLogger.writeDebugMsg(answerMessage);
+                        }
                     }
                     else {
                         errorMsg = "Error: user: not authorized to add user " + login +" in special group " + groupName +"!";
@@ -517,12 +524,19 @@ public class UserApi {
                     Group myGroup = GroupsFactory.findGroupByName(groupName);
                     if (myGroup != null && !myGroup.isEmpty()) {
                         if (theUser.isAdmin() || myGroup.isAdmin(theUser.getLogin())) {
-                            myGroup.addUser(aUser.getLogin());
-                            aUser.addGroup(groupName);
-                            myGroup.save();
-                            aUser.save();
-                            String answerMessage =  "User: " + login + " added in group " + groupName + "; ";
-                            PapillonLogger.writeDebugMsg(answerMessage);
+                            if (aUser.isInGroup(groupName)) {
+                                errorMsg = "Error: conflict, user " + login + " already in group "+groupName+"!";
+                                status = 409;
+                                content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + status + " Conflict</h1><p>" + errorMsg + "</p></html>");
+                            }
+                            else {
+                                myGroup.addUser(aUser.getLogin());
+                                aUser.addGroup(groupName);
+                                myGroup.save();
+                                aUser.save();
+                                String answerMessage =  "User: " + login + " added in group " + groupName + "; ";
+                                PapillonLogger.writeDebugMsg(answerMessage);
+                            }
                         }
                         else {
                             errorMsg = "Error: user: not authorized to add user " + login +" in special group " + groupName +"!";
@@ -668,11 +682,7 @@ public class UserApi {
         org.w3c.dom.Document content = null;
         String errorMsg = "";
         
-        if (theUser == null || theUser.isEmpty() || (!theUser.getLogin().equals(login) && !theUser.isAdmin())) {
-            login = (theUser!=null && !theUser.isEmpty())?theUser.getLogin():login;
-            errorMsg = "Error: user: not authorized to remove user " + login +" from group " + groupName +"!";
-            status = HttpPresentationResponse.SC_UNAUTHORIZED;
-            content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + status + "</h1><p>" + errorMsg + "</p></html>");
+        if (theUser != null && !theUser.isEmpty() && (theUser.getLogin().equals(login) || theUser.isAdmin())) {
             User aUser = UsersFactory.findUserByLogin(login);
             if (aUser == null || aUser.isEmpty()) {
                 errorMsg = "Error: user: " + login + " does not exist!";
