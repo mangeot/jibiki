@@ -38,12 +38,12 @@ papillon.mailhost.user=mailuser
 papillon.mailhost.password=foo
 
 # for the default groups passwords 
-papillon.admin.password=dbpap
-papillon.validator.password=butterfly
-papillon.specialist.password=farfalla
+papillon.admin.password=%ADMIN_PASSWORD%
+papillon.validator.password=%VALIDATOR_PASSWORD%
+papillon.specialist.password=%SPECIALIST_PASSWORD%
 
 # for the database
-papillondb.server.url=jdbc:postgresql://localhost/papillon
-papillondb.user=dbuser
-papillondb.password=foo
+papillondb.server.url=jdbc:postgresql://%DATABASE_NAME%
+papillondb.user=%DATABASE_USER%
+papillondb.password=%DATABASE_PASSWORD%
 
