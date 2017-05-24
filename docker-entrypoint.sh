@@ -1,15 +1,15 @@
 #!/bin/sh
 
-installdir=$(pwd)
+sed -i "s#\%ADMIN_PASSWORD\%#$ADMIN_PASSWORD#g" papillon.properties
 
-sed -i "s#\%ADMIN_PASSWORD\%#$ADMIN_PASSWORD#g" $installdir/papillon.properties
+sed -i "s#\%SPECIALIST_PASSWORD\%#$SPECIALIST_PASSWORD#g" papillon.properties
 
-sed -i "s#\%SPECIALIST_PASSWORD\%#$SPECIALIST_PASSWORD#g" $installdir/papillon.properties
+sed -i "s#\%DATABASE_HOST\%#$DATABASE_HOST#g" papillon.properties
 
-sed -i "s#\%DATABASE_NAME\%#$DATABASE_NAME#g" $installdir/papillon.properties
+sed -i "s#\%DATABASE_NAME\%#$DATABASE_NAME#g" papillon.properties
 
-sed -i "s#\%DATABASE_USER\%#$DATABASE_USER#g" $installdir/papillon.properties
+sed -i "s#\%DATABASE_USER\%#$DATABASE_USER#g" papillon.properties
 
-sed -i "s#\%DATABASE_PASSWORD\%#$DATABASE_PASSWORD#g" $installdir/papillon.properties
+sed -i "s#\%DATABASE_PASSWORD\%#$DATABASE_PASSWORD#g" papillon.properties
 
-$installdir/output/run --debug --exec
+output/run --debug --exec
