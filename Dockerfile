@@ -1,0 +1,87 @@
+############################################################
+# Dockerfile to build Jibiki lexical database server container images
+# Based on openjdk
+############################################################
+
+FROM openjdk
+
+MAINTAINER Mathieu Mangeot
+
+ARG ADMIN_PASSWORD="dbpap"
+ARG VALIDATOR_PASSWORD="butterfly"
+ARG SPECIALIST_PASSWORD="farfalla"
+ARG DATABASE_NAME="postgres/jibiki"
+ARG DATABASE_USER="jibiki"
+ARG DATABASE_PASSWORD="dbjibiki2"
+
+ENV ADMIN_PASSWORD=$ADMIN_PASSWORD
+ENV VALIDATOR_PASSWORD=VALIDATOR_PASSWORD
+ENV SPECIALIST_PASSWORD=SPECIALIST_PASSWORD
+ENV DATABASE_NAME=$DATABASE_NAME
+ENV DATABASE_USER=$DATABASE_USER
+ENV DATABASE_PASSWORD=$DATABASE_PASSWORD
+
+
+RUN apt-get update
+
+RUN apt-get install -y libpostgresql-jdbc-java
+
+WORKDIR /
+
+RUN svn checkout svn://svn.ligforge.imag.fr/var/lib/gforge/chroot/scmrepos/svn/toolsforjibiki/
+
+WORKDIR toolsforjibiki
+
+RUN for file in *.tar.gz; do tar -zxf $file; done
+
+WORKDIR enhydra5.1
+
+RUN ./configure -Djdk.dir=/usr
+
+RUN chmod 755 bin/ant
+
+RUN sed -i "s#CLASSPATH=#CLASSPATH=/toolsforjibiki/xalan-j_2_4_1/bin/xalan.jar:#" bin/ant
+
+RUN cp ../xmlc-2.2.13/lib/xmlc.jar lib/.
+
+RUN chmod -R 777 dods/build/template/standard/*
+
+RUN chmod 777 dods/build/dods.properties
+
+WORKDIR /
+
+RUN svn checkout svn://svn.ligforge.imag.fr/var/lib/gforge/chroot/scmrepos/svn/jibiki/branches/LINKS_1_0
+
+RUN mv LINKS_1_0 jibiki
+
+WORKDIR jibiki
+
+RUN cp papillon.properties.in papillon.properties
+
+RUN sed -i "s#\%TOOLSFORJIBIKI_DIR\%#/toolsforjibiki#g" papillon.properties
+
+RUN sed -i "s#\%ADMIN_PASSWORD\%#$ADMIN_PASSWORD#g" papillon.properties
+
+RUN sed -i "s#\%SPECIALIST_PASSWORD\%#$SPECIALIST_PASSWORD#g" papillon.properties
+
+RUN sed -i "s#\%DATABASE_NAME\%#$DATABASE_NAME#g" papillon.properties
+
+RUN sed -i "s#\%DATABASE_USER\%#$DATABASE_USER#g" papillon.properties
+
+RUN sed -i "s#\%DATABASE_PASSWORD\%#$DATABASE_PASSWORD#g" papillon.properties
+
+RUN chmod 755 docker-entrypoint.sh
+
+RUN export LC_ALL=en_US.UTF-8
+
+RUN /toolsforjibiki/enhydra5.1/bin/ant make
+
+##################### INSTALLATION END #####################
+
+# Expose the default port
+EXPOSE 8999
+
+# Set default container command
+#ENTRYPOINT /jibiki/output/run --debug --exec
+
+ENTRYPOINT /jibiki/docker-entrypoint.sh
