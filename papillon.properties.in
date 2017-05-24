@@ -43,7 +43,7 @@ papillon.validator.password=%VALIDATOR_PASSWORD%
 papillon.specialist.password=%SPECIALIST_PASSWORD%
 
 # for the database
-papillondb.server.url=jdbc:postgresql://%DATABASE_NAME%
+papillondb.server.url=jdbc:postgresql://%DATABASE_HOST%/%DATABASE_NAME%
 papillondb.user=%DATABASE_USER%
 papillondb.password=%DATABASE_PASSWORD%
 
