@@ -14,4 +14,4 @@ sed -i "s#\%DATABASE_USER\%#$DATABASE_USER#g" $WORKDIR/papillon.properties
 
 sed -i "s#\%DATABASE_PASSWORD\%#$DATABASE_PASSWORD#g" $WORKDIR/papillon.properties
 
-output/run --debug --exec
+$WORKDIR/output/run --debug --exec
