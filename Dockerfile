@@ -10,7 +10,8 @@ MAINTAINER Mathieu Mangeot
 ARG ADMIN_PASSWORD="dbpap"
 ARG VALIDATOR_PASSWORD="butterfly"
 ARG SPECIALIST_PASSWORD="farfalla"
-ARG DATABASE_NAME="postgres/jibiki"
+ARG DATABASE_HOST="postgres"
+ARG DATABASE_NAME="jibiki"
 ARG DATABASE_USER="jibiki"
 ARG DATABASE_PASSWORD="dbjibiki2"
 
@@ -63,6 +64,8 @@ RUN sed -i "s#\%TOOLSFORJIBIKI_DIR\%#/toolsforjibiki#g" papillon.properties
 RUN sed -i "s#\%ADMIN_PASSWORD\%#$ADMIN_PASSWORD#g" papillon.properties
 
 RUN sed -i "s#\%SPECIALIST_PASSWORD\%#$SPECIALIST_PASSWORD#g" papillon.properties
+
+RUN sed -i "s#\%DATABASE_HOST\%#$DATABASE_HOST#g" papillon.properties
 
 RUN sed -i "s#\%DATABASE_NAME\%#$DATABASE_NAME#g" papillon.properties
 
