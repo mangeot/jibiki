@@ -161,16 +161,29 @@ public class UserApi {
                 String email = "";
                 String lang = "";
                 if (contentType.equals(JSON_CONTENTTYPE)) {
+                    org.json.JSONObject userObject = null;
                     try {
-                        org.json.JSONObject userObject = new org.json.JSONObject(userString).getJSONObject("user");
-                        email = userObject.getString("email");
-                        userName = userObject.getString("name");
-                        lang = userObject.getString("lang");
+                        userObject = new org.json.JSONObject(userString).getJSONObject("user");
                     }
                     catch (org.json.JSONException jsone) {
                         errorMsg = "Error: user data: <![CDATA["+ userString +"]]> JSON is malformed! " + jsone.getMessage();
                         status = HttpPresentationResponse.SC_BAD_REQUEST;
                         content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + status + "</h1><p>" + errorMsg + "</p></html>");
+                    }
+                    try {
+                        email = userObject.getString("email");
+                    }
+                    catch (Exception e) {
+                    }
+                    try {
+                        userName = userObject.getString("name");
+                    }
+                    catch (Exception e) {
+                    }
+                    try {
+                        lang = userObject.getString("lang");
+                    }
+                    catch (Exception e) {
                     }
                }
                 else {
