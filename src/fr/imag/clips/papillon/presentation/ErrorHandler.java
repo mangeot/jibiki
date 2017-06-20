@@ -136,7 +136,11 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.AbstractP
 		if ((theURI == null || theURI.equals(""))
 		   && (null != this.getComms().exception) 
 		   && (this.getComms().exception instanceof com.lutris.appserver.server.httpPresentation.FilePresentationException)) {
-            if (command.equals(API_COMMAND)) {
+            if (this.responseStatus != HttpPresentationResponse.SC_OK) {
+                PapillonLogger.writeDebugMsg(this.responseMessage);
+                content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error: " + this.responseStatus + " Unauthorized</h1><p>" + this.responseMessage + "</p></html>");
+            }
+            else if (command.equals(API_COMMAND)) {
                 PapillonLogger.writeDebugMsg("REST API COMMAND: " + theRequest.getMethod() + " DICTLIST");
                 if (theRequest.getMethod().equals("GET")) {
                     java.util.Vector responseVector = fr.imag.clips.papillon.business.dictionary.MetadataApi.getDictionaryList(this.getUser());

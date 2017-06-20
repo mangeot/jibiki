@@ -136,6 +136,10 @@ public abstract class AbstractPO
      * Description of the Field
      */
     protected static String DESTINATION_AFTER_LOGIN_PARAMETER = "Destination";
+            
+            
+            protected int responseStatus = HttpPresentationResponse.SC_OK;
+            protected String responseMessage = "";
 
     /**
      * This is the procedure that is called when an HTML request occurs.
@@ -290,13 +294,17 @@ public abstract class AbstractPO
                         String errorMsg = "Error: Wrong password";
                         //System.out.println(errorMsg);
                         this.getComms().response.setStatus(HttpPresentationResponse.SC_UNAUTHORIZED,errorMsg);
+                        this.responseStatus = HttpPresentationResponse.SC_UNAUTHORIZED;
+                        this.responseMessage = errorMsg;
                     }
                 }
                 else {
                     String errorMsg = "Error: User unknown";
                     //System.out.println(errorMsg);
                     this.getComms().response.setStatus(HttpPresentationResponse.SC_UNAUTHORIZED,errorMsg);
-                }
+                    this.responseStatus = HttpPresentationResponse.SC_UNAUTHORIZED;
+                    this.responseMessage = errorMsg;
+              }
             }
             else {
                 if (this.getUser() == null || this.getUser().isEmpty()) {

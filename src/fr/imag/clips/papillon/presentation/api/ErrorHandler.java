@@ -112,8 +112,9 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
      */
     public org.w3c.dom.Node getDocument()
         throws HttpPresentationException, java.io.IOException, java.lang.Exception {
-        	
-			
+
+        PapillonLogger.writeDebugMsg("Status: " + this.responseStatus);
+            
 			////// Create Home page
 		content = XMLServices.buildDOMTree(ERROR_PAGE);
         int status = HttpPresentationResponse.SC_OK;
@@ -152,7 +153,11 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                     dictName = restStrings[0];
                 }
 
-				if (restStrings== null || restStrings.length==0) {
+                if (this.responseStatus != HttpPresentationResponse.SC_OK) {
+                    PapillonLogger.writeDebugMsg(this.responseMessage);
+                    content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + this.responseStatus + " Unauthorized</h1><p>" + this.responseMessage + "</p></html>");
+                }
+                else if (restStrings== null || restStrings.length==0) {
 					PapillonLogger.writeDebugMsg(commande + " DICTLIST;");
 					if (theRequest.getMethod().equals("GET")) {
                         java.util.Vector responseVector = MetadataApi.getDictionaryList(this.getUser());
@@ -552,7 +557,7 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
 		}
     
     protected void setUserFromLoginPassword(String login, String password)
-    throws fr.imag.clips.papillon.business.PapillonBusinessException, fr.imag.clips.papillon.presentation.PapillonPresentationException {
+    throws fr.imag.clips.papillon.business.PapillonBusinessException, fr.imag.clips.papillon.presentation.PapillonPresentationException, HttpPresentationException {
         User user = this.getUser();
         //PapillonLogger.writeDebugMsg("setUserFromLoginPassword: [" + login + "] [" + password + "]");
         if (user==null) {
@@ -564,6 +569,20 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                     PapillonLogger.writeDebugMsg("User has correct password!");
                    setUser(user);
                 }
+                else {
+                    String errorMsg = "Error: Wrong password";
+                    //System.out.println(errorMsg);
+                    this.getComms().response.setStatus(HttpPresentationResponse.SC_UNAUTHORIZED,errorMsg);
+                    this.responseStatus = HttpPresentationResponse.SC_UNAUTHORIZED;
+                    this.responseMessage = errorMsg;
+                }
+            }
+            else {
+                String errorMsg = "Error: User unknown";
+                //System.out.println(errorMsg);
+                this.getComms().response.setStatus(HttpPresentationResponse.SC_UNAUTHORIZED,errorMsg);
+                this.responseStatus = HttpPresentationResponse.SC_UNAUTHORIZED;
+                this.responseMessage = errorMsg;
             }
         }
         else {

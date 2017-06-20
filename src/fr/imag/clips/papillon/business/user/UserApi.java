@@ -30,7 +30,7 @@ public class UserApi {
     protected static final String USERLIST_XMLSTRING_HEADER = "<?xml version='1.0' encoding='UTF-8'?><"+USERLIST_TAG+" "
     + "xmlns='http://www-clips.imag.fr/geta/services/dml'>";
     protected static final String USERLIST_XMLSTRING_FOOTER = "</"+USERLIST_TAG+">";
-    protected static final String USER_XMLSTRING_HEADER = "<?xml version='1.0' encoding='UTF-8'?><"+USER_TAG+"user xmlns='http://www-clips.imag.fr/geta/services/dml'>";
+    protected static final String USER_XMLSTRING_HEADER = "<?xml version='1.0' encoding='UTF-8'?><"+USER_TAG+" xmlns='http://www-clips.imag.fr/geta/services/dml'>";
     protected static final String USER_XMLSTRING_FOOTER = "</"+USER_TAG+">";
    protected static final String sortByDefault = "login";
 
@@ -97,7 +97,6 @@ public class UserApi {
         org.w3c.dom.Document content = null;
         String errorMsg = "";
 
-        
         if (theUser != null && (theUser.isAdmin() || theUser.getLogin().equals(login))) {
             content = getUserForAdmin(login);
         }
