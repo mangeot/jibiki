@@ -33,8 +33,8 @@ public class UserApi {
     protected static final String USER_XMLSTRING_HEADER = "<?xml version='1.0' encoding='UTF-8'?><"+USER_TAG+" xmlns='http://www-clips.imag.fr/geta/services/dml'>";
     protected static final String USER_XMLSTRING_FOOTER = "</"+USER_TAG+">";
  
-    protected static final String ROLELIST_XMLSTRING_HEADER = "<?xml version='1.0' encoding='UTF-8'?><d:role-list xmlns:d='http://www-clips.imag.fr/geta/services/dml'>\n";
-    protected static final String ROLELIST_XMLSTRING_FOOTER = "</d:role-list>";
+    protected static final String ROLELIST_XMLSTRING_HEADER = "<?xml version='1.0' encoding='UTF-8'?><role-list xmlns='http://www-clips.imag.fr/geta/services/dml'>\n";
+    protected static final String ROLELIST_XMLSTRING_FOOTER = "</role-list>";
     
     protected static final String sortByDefault = "login";
 
@@ -395,7 +395,7 @@ public class UserApi {
                 String resultString = GroupApi.GROUPLIST_XMLSTRING_HEADER;
                 for (int i = 0; i < groupsArray.length; i++) {
                     String groupName = groupsArray[i];
-                    resultString += "<d:group><name>" + groupName + "</name>";
+                    resultString += "<"+GroupApi.GROUP_TAG+"><name>" + groupName + "</name>";
                     String dictionary = "";
                     if (groupName.startsWith(Group.ADMIN_DICT_GROUP_PREFIX)) {
                         resultString += "<role>" + Group.ADMIN_GROUP + "</role>";
@@ -413,7 +413,7 @@ public class UserApi {
                         resultString += "<role>" + Group.READER_GROUP + "</role>";
                         resultString += "<dictionary>" + groupName.substring(Group.READER_DICT_GROUP_PREFIX.length()) + "</dictionary>";
                     }
-                    resultString += "</d:group>";
+                    resultString += "</"+GroupApi.GROUP_TAG+">";
                 }
                 resultString += GroupApi.GROUPLIST_XMLSTRING_FOOTER;
                 content = XMLServices.buildDOMTree(resultString);
@@ -450,47 +450,47 @@ public class UserApi {
                 String resultString = UserApi.ROLELIST_XMLSTRING_HEADER;
                 
                 if (role == null || role.equals("") || role.equals(Group.ADMIN_GROUP)) {
-                resultString += "<d:role><name>" + Group.ADMIN_GROUP + "</name>";
+                resultString += "<role><name>" + Group.ADMIN_GROUP + "</name>";
                 resultString += "<group-name>" + Group.ADMIN_DICT_GROUP_PREFIX + dictName + "</group-name>";
                 resultString += "<members>";
                 String[] usersArray = theDict.getAdminArray();
                 for (int i = 0; i < usersArray.length; i++) {
                     resultString += "<user-ref>" + usersArray[i] + "</user-ref>\n";
                 }
-                resultString += "</members></d:role>";
+                resultString += "</members></role>";
                 }
                 
                 if (role == null || role.equals("") || role.equals(Group.VALIDATOR_GROUP)) {
-                resultString += "<d:role><name>" + Group.VALIDATOR_GROUP + "</name>";
+                resultString += "<role><name>" + Group.VALIDATOR_GROUP + "</name>";
                 resultString += "<group-name>" + Group.VALIDATOR_DICT_GROUP_PREFIX + dictName + "</group-name>";
                 resultString += "<members>";
                 String[] usersArray = theDict.getValidatorArray();
                 for (int i = 0; i < usersArray.length; i++) {
                     resultString += "<user-ref>" + usersArray[i] + "</user-ref>\n";
                 }
-                resultString += "</members></d:role>";
+                resultString += "</members></role>";
                 }
                 
                     if (role == null || role.equals("") || role.equals(Group.SPECIALIST_GROUP)) {
-                resultString += "<d:role><name>" + Group.SPECIALIST_GROUP+ "</name>";
+                resultString += "<role><name>" + Group.SPECIALIST_GROUP+ "</name>";
                 resultString += "<group-name>" + Group.SPECIALIST_DICT_GROUP_PREFIX + dictName + "</group-name>";
                 resultString += "<members>";
                 String[] usersArray = theDict.getSpecialistArray();
                 for (int i = 0; i < usersArray.length; i++) {
                     resultString += "<user-ref>" + usersArray[i] + "</user-ref>\n";
                 }
-                resultString += "</members></d:role>";
+                resultString += "</members></role>";
                     }
                 
                 if (role == null || role.equals("") || role.equals(Group.READER_GROUP)) {
-                resultString += "<d:role><name>" + Group.READER_GROUP + "</name>";
+                resultString += "<role><name>" + Group.READER_GROUP + "</name>";
                 resultString += "<group-name>" + Group.READER_DICT_GROUP_PREFIX + dictName + "</group-name>";
                 resultString += "<members>";
                 String[] usersArray = theDict.getReaderArray();
                 for (int i = 0; i < usersArray.length; i++) {
                     resultString += "<user-ref>" + usersArray[i] + "</user-ref>\n";
                 }
-                resultString += "</members></d:role>";
+                resultString += "</members></role>";
                 }
                 
                 resultString += UserApi.ROLELIST_XMLSTRING_FOOTER;

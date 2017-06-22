@@ -19,10 +19,15 @@ import fr.imag.clips.papillon.business.xml.XMLServices;
 public class GroupApi {
 
     
-    protected static final String GROUPLIST_XMLSTRING_HEADER = "<?xml version='1.0' encoding='UTF-8'?><d:group-list xmlns:d='http://www-clips.imag.fr/geta/services/dml'>\n";
-    protected static final String GROUPLIST_XMLSTRING_FOOTER = "</d:group-list>";
+    protected static final String GROUPLIST_TAG = "group-list";
+    protected static final String GROUP_TAG = "group";
+
+    protected static final String GROUPLIST_XMLSTRING_HEADER = "<?xml version='1.0' encoding='UTF-8'?><"+GROUPLIST_TAG+" xmlns='http://www-clips.imag.fr/geta/services/dml'>\n";
+    protected static final String GROUPLIST_XMLSTRING_FOOTER = "</"+GROUPLIST_TAG+">";
     
-    protected static final String GROUP_XMLSTRING_HEADER = "<?xml version='1.0' encoding='UTF-8'?><d:group xmlns:d='http://www-clips.imag.fr/geta/services/dml'>\n";
+    protected static final String GROUP_XMLSTRING_HEADER = "<?xml version='1.0' encoding='UTF-8'?><"+GROUP_TAG+" xmlns='http://www-clips.imag.fr/geta/services/dml'>\n";
+    
+    protected static final String GROUP_XMLSTRING_FOOTER = "</"+GROUP_TAG+">";
 
     public static java.util.Vector getGroupsList(User theUser)
     throws PapillonBusinessException {
@@ -38,7 +43,7 @@ public class GroupApi {
         for (int i = 0; i < groupsArray.length; i++) {
             Group  aGroup = groupsArray[i];
             
-            answer += "<d:group><name>" + aGroup.getName() + "</name></d:group>\n";
+            answer += "<"+GROUP_TAG+"><name>" + aGroup.getName() + "</name></"+GROUP_TAG+">\n";
         }
         answer += GROUPLIST_XMLSTRING_FOOTER;
         content = XMLServices.buildDOMTree(answer);
@@ -77,7 +82,7 @@ public class GroupApi {
                 }
                 answer += "</admins>";
             }
-            answer += "</d:group>";
+            answer += GROUP_XMLSTRING_FOOTER;
             content = XMLServices.buildDOMTree(answer);
         }
  /*       else if (name !=null && name.equals(Group.ADMIN_GROUP)) {
