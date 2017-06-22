@@ -112,8 +112,6 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
      */
     public org.w3c.dom.Node getDocument()
         throws HttpPresentationException, java.io.IOException, java.lang.Exception {
-
-        PapillonLogger.writeDebugMsg("Status: " + this.responseStatus);
             
 			////// Create Home page
 		content = XMLServices.buildDOMTree(ERROR_PAGE);
@@ -564,25 +562,30 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
             if (null != login && !login.equals("") &&
                 null != password && !password.equals("")) {
                 user = UsersFactory.findUserByLogin(login);
-                PapillonLogger.writeDebugMsg("User found: " + user.getLogin());
-                if (user.HasCorrectPassword(password)) {
-                    PapillonLogger.writeDebugMsg("User has correct password!");
-                   setUser(user);
+                if (user !=null && !user.isEmpty()) {
+                    PapillonLogger.writeDebugMsg("User found: " + user.getLogin());
+                    if (user.HasCorrectPassword(password)) {
+                        PapillonLogger.writeDebugMsg("User has correct password!");
+                        setUser(user);
+                    }
+                    else {
+                        String errorMsg = "Error: Wrong password";
+                        System.out.println(errorMsg);
+                        this.getComms().response.setStatus(HttpPresentationResponse.SC_UNAUTHORIZED,errorMsg);
+                        this.responseStatus = HttpPresentationResponse.SC_UNAUTHORIZED;
+                        this.responseMessage = errorMsg;
+                    }
                 }
                 else {
-                    String errorMsg = "Error: Wrong password";
-                    //System.out.println(errorMsg);
+                    String errorMsg = "Error: User unknown";
+                    System.out.println(errorMsg);
                     this.getComms().response.setStatus(HttpPresentationResponse.SC_UNAUTHORIZED,errorMsg);
                     this.responseStatus = HttpPresentationResponse.SC_UNAUTHORIZED;
                     this.responseMessage = errorMsg;
                 }
             }
             else {
-                String errorMsg = "Error: User unknown";
-                //System.out.println(errorMsg);
-                this.getComms().response.setStatus(HttpPresentationResponse.SC_UNAUTHORIZED,errorMsg);
-                this.responseStatus = HttpPresentationResponse.SC_UNAUTHORIZED;
-                this.responseMessage = errorMsg;
+                // login or password empty
             }
         }
         else {
