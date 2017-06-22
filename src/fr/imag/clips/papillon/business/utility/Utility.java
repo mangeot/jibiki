@@ -529,7 +529,7 @@ public class Utility {
 	}	
 
 	public static String serializeStringArray(String[] StringArray, String sepString) {
-		String stringRes = "";
+		String stringRes = sepString;
 		if (null != StringArray && StringArray.length >0) {
 			for (int i=0; i< StringArray.length; i++) {
 				if (StringArray[i]!=null) {

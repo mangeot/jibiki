@@ -21,7 +21,7 @@
     <li><a href="#Get_apiusers_users_login_groups"><code>GET apiusers/users/[login]/groups</code></a> Get a list of groups that include the user</li>
     <li><a href="#Put_apiusers_users_login_groups_groupname"><code>PUT apiusers/users/[login]/groups/[groupname]</code></a> Addmin a user in a group</li>
     <li><a href="#Delete_apiusers_users_login_groups_groupname"><code>DELETE apiusers/users/[login]/groups/[groupname]</code></a> Removing a user from a group</li>
-    
+
     <li><a href="#Get_apiusers_groups"><code>GET apiusers/groups/</code></a> Get a list of groups</li>
     <li><a href="#Get_apiusers_groups_groupname"><code>GET apiusers/groups/[groupname]</code></a> Get the list of users in a group</li>
     <li><a href="#Post_apiusers_groups_groupname"><code>POST apiusers/groups/[groupname]</code></a> Add a list of users in a group</li>
@@ -73,7 +73,17 @@
 
 <p>Example of query:</p>
 <pre class="api">
-    curl "apiusers/users/login"
+    curl -H 'Accept:application/json' \
+    "apiusers/users/login"
+</pre>
+
+<p>Answer:</p>
+<pre class="api">
+    {"user": {
+    "xmlns": "http://www-clips.imag.fr/geta/services/dml",
+    "name": "Mathieu Mangeot",
+    "login": "mangeot"
+    }}
 </pre>
 
 <h3 id="Post_apiusers_users_login">Creating a new user</h3>
@@ -184,7 +194,30 @@
 
 <p>Example of query:</p>
 <pre class="api">
-    curl "apiusers/users/login/groups"
+    curl \
+    -u login:password \
+    -H 'Accept:application/json' \
+    "apiusers/users/login/groups"
+</pre>
+
+<p>Answer:</p>
+<pre class="api">
+    {"d:group-list": {
+    "d:group": [
+    {"name": "admin"},
+    {
+    "role": "admin",
+    "dictionary": "Cesselin",
+    "name": "admind_Cesselin"
+    },
+    {
+    "role": "admin",
+    "dictionary": "Kanjidic",
+    "name": "admind_Kanjidic"
+    }
+    ],
+    "xmlns:d": "http://www-clips.imag.fr/geta/services/dml"
+    }}
 </pre>
 
 
@@ -235,7 +268,6 @@
 </pre>
 
 
-
 <h3 id="Get_apiusers_groups">List of available groups</h3>
 
 <table class="api">
@@ -254,6 +286,27 @@
     curl -H 'Accept: application/json' "apiusers/groups"
 </pre>
 
+<p>Answer:</p>
+
+<pre class="api">
+{"d:group-list": {
+  "d:group": [
+    {"name": "admind_Armement"},
+    {"name": "admind_Cesselin"},
+    {"name": "admind_DiLAF"},
+    {"name": "admind_Kanjidic"},
+    {"name": "admind_Maniette"},
+    {"name": "readerd_Armement"},
+    {"name": "readerd_Cesselin"},
+    {"name": "readerd_Maniette"},
+    {"name": "specialist"},
+    {"name": "validator"},
+    {"name": "admin"}
+  ],
+  "xmlns:d": "http://www-clips.imag.fr/geta/services/dml"
+}}
+</pre>
+
 <h3 id="Get_apiusers_groups_groupname">List of users members of a groups</h3>
 
 <table class="api">
@@ -268,10 +321,21 @@
 
 <p>Example of query:</p>
 <pre class="api">
-    curl -H 'Accept: application/json' "apiusers/groups/admind_Cesselin"
+    curl
+    -u login:password \
+    -H 'Accept: application/json' \
+    "apiusers/groups/admind_Cesselin"
 </pre>
 
 
+<pre class="api">
+    {"d:group": {
+      "xmlns:d": "http://www-clips.imag.fr/geta/services/dml",
+      "members": {"user-ref": "mangeot"},
+      "name": "admind_Cesselin",
+      "admins": {"user-ref": "mangeot"}
+    }}
+</pre>
 
 <h3 id="Post_apiusers_groups_groupname">Adding several users in a groups</h3>
 <table class="api">
@@ -425,7 +489,7 @@
 
 <p>Example of query:</p>
 <pre class="api">
-    curl -H 'Accept: application/json' "apiusers/groups/admind_Cesselin"
+    curl -H 'Accept: application/json' "apiusers/dictionary/Cesselin/reader"
 </pre>
 
 

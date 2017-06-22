@@ -32,7 +32,11 @@ public class UserApi {
     protected static final String USERLIST_XMLSTRING_FOOTER = "</"+USERLIST_TAG+">";
     protected static final String USER_XMLSTRING_HEADER = "<?xml version='1.0' encoding='UTF-8'?><"+USER_TAG+" xmlns='http://www-clips.imag.fr/geta/services/dml'>";
     protected static final String USER_XMLSTRING_FOOTER = "</"+USER_TAG+">";
-   protected static final String sortByDefault = "login";
+ 
+    protected static final String ROLELIST_XMLSTRING_HEADER = "<?xml version='1.0' encoding='UTF-8'?><d:role-list xmlns:d='http://www-clips.imag.fr/geta/services/dml'>\n";
+    protected static final String ROLELIST_XMLSTRING_FOOTER = "</d:role-list>";
+    
+    protected static final String sortByDefault = "login";
 
 	
     public static java.util.Vector getUserList(User theUser)
@@ -391,7 +395,25 @@ public class UserApi {
                 String resultString = GroupApi.GROUPLIST_XMLSTRING_HEADER;
                 for (int i = 0; i < groupsArray.length; i++) {
                     String groupName = groupsArray[i];
-                    resultString += "<d:group><name>" + groupName + "</name></d:group>";
+                    resultString += "<d:group><name>" + groupName + "</name>";
+                    String dictionary = "";
+                    if (groupName.startsWith(Group.ADMIN_DICT_GROUP_PREFIX)) {
+                        resultString += "<role>" + Group.ADMIN_GROUP + "</role>";
+                        resultString += "<dictionary>" + groupName.substring(Group.ADMIN_DICT_GROUP_PREFIX.length()) + "</dictionary>";
+                    }
+                    else if (groupName.startsWith(Group.VALIDATOR_DICT_GROUP_PREFIX)) {
+                        resultString += "<role>" + Group.VALIDATOR_GROUP + "</role>";
+                        resultString += "<dictionary>" + groupName.substring(Group.VALIDATOR_DICT_GROUP_PREFIX.length()) + "</dictionary>";
+                    }
+                    else if (groupName.startsWith(Group.SPECIALIST_DICT_GROUP_PREFIX)) {
+                        resultString += "<role>" + Group.SPECIALIST_GROUP + "</role>";
+                        resultString += "<dictionary>" + groupName.substring(Group.SPECIALIST_DICT_GROUP_PREFIX.length()) + "</dictionary>";
+                    }
+                    else if (groupName.startsWith(Group.READER_DICT_GROUP_PREFIX)) {
+                        resultString += "<role>" + Group.READER_GROUP + "</role>";
+                        resultString += "<dictionary>" + groupName.substring(Group.READER_DICT_GROUP_PREFIX.length()) + "</dictionary>";
+                    }
+                    resultString += "</d:group>";
                 }
                 resultString += GroupApi.GROUPLIST_XMLSTRING_FOOTER;
                 content = XMLServices.buildDOMTree(resultString);
@@ -414,7 +436,7 @@ public class UserApi {
         return responseVector;
     }
     
-    public static java.util.Vector getGroupsForDictionary(String dictName, String role, User theUser)
+    public static java.util.Vector getRolesForDictionary(String dictName, String role, User theUser)
     throws PapillonBusinessException {
         
         java.util.Vector responseVector = new java.util.Vector(3);
@@ -425,51 +447,54 @@ public class UserApi {
         Dictionary theDict = DictionariesFactory.getDictionaryByName(dictName);
         if (theDict !=null && !theDict.isEmpty()) {
             if (theUser != null && (theUser.isAdmin() || theDict.isAdmin(theUser.getLogin()))) {
-                String resultString = GroupApi.GROUPLIST_XMLSTRING_HEADER;
+                String resultString = UserApi.ROLELIST_XMLSTRING_HEADER;
                 
-                if (role == null || role.equals(Group.ADMIN_GROUP)) {
-                resultString += "<d:group><name>" + Group.ADMIN_DICT_GROUP_PREFIX + dictName + "</name>";
+                if (role == null || role.equals("") || role.equals(Group.ADMIN_GROUP)) {
+                resultString += "<d:role><name>" + Group.ADMIN_GROUP + "</name>";
+                resultString += "<group-name>" + Group.ADMIN_DICT_GROUP_PREFIX + dictName + "</group-name>";
                 resultString += "<members>";
                 String[] usersArray = theDict.getAdminArray();
                 for (int i = 0; i < usersArray.length; i++) {
                     resultString += "<user-ref>" + usersArray[i] + "</user-ref>\n";
                 }
-                resultString += "</members></d:group>";
+                resultString += "</members></d:role>";
                 }
-
-                if (role == null || role.equals(Group.VALIDATOR_GROUP)) {
-                resultString += "<d:group><name>" + Group.VALIDATOR_DICT_GROUP_PREFIX + dictName + "</name>";
+                
+                if (role == null || role.equals("") || role.equals(Group.VALIDATOR_GROUP)) {
+                resultString += "<d:role><name>" + Group.VALIDATOR_GROUP + "</name>";
+                resultString += "<group-name>" + Group.VALIDATOR_DICT_GROUP_PREFIX + dictName + "</group-name>";
                 resultString += "<members>";
                 String[] usersArray = theDict.getValidatorArray();
                 for (int i = 0; i < usersArray.length; i++) {
                     resultString += "<user-ref>" + usersArray[i] + "</user-ref>\n";
                 }
-                resultString += "</members></d:group>";
+                resultString += "</members></d:role>";
                 }
                 
-                if (role == null || role.equals(Group.SPECIALIST_GROUP)) {
-                resultString += "<d:group><name>" + Group.SPECIALIST_DICT_GROUP_PREFIX + dictName + "</name>";
+                    if (role == null || role.equals("") || role.equals(Group.SPECIALIST_GROUP)) {
+                resultString += "<d:role><name>" + Group.SPECIALIST_GROUP+ "</name>";
+                resultString += "<group-name>" + Group.SPECIALIST_DICT_GROUP_PREFIX + dictName + "</group-name>";
                 resultString += "<members>";
                 String[] usersArray = theDict.getSpecialistArray();
                 for (int i = 0; i < usersArray.length; i++) {
                     resultString += "<user-ref>" + usersArray[i] + "</user-ref>\n";
                 }
-                resultString += "</members></d:group>";
-                }
+                resultString += "</members></d:role>";
+                    }
                 
-                if (role == null || role.equals(Group.READER_GROUP)) {
-                resultString += "<d:group><name>" + Group.READER_DICT_GROUP_PREFIX + dictName + "</name>";
+                if (role == null || role.equals("") || role.equals(Group.READER_GROUP)) {
+                resultString += "<d:role><name>" + Group.READER_GROUP + "</name>";
+                resultString += "<group-name>" + Group.READER_DICT_GROUP_PREFIX + dictName + "</group-name>";
                 resultString += "<members>";
                 String[] usersArray = theDict.getReaderArray();
                 for (int i = 0; i < usersArray.length; i++) {
                     resultString += "<user-ref>" + usersArray[i] + "</user-ref>\n";
                 }
-                resultString += "</members></d:group>";
+                resultString += "</members></d:role>";
                 }
                 
-
-                resultString += GroupApi.GROUPLIST_XMLSTRING_FOOTER;
-                content = XMLServices.buildDOMTree(resultString);                
+                resultString += UserApi.ROLELIST_XMLSTRING_FOOTER;
+                content = XMLServices.buildDOMTree(resultString);
             }
             else {
                 String uname = (theUser!=null && !theUser.isEmpty())?theUser.getLogin():"";
@@ -489,6 +514,7 @@ public class UserApi {
         return responseVector;
     }
 
+    
     public static java.util.Vector putUserInGroup(String login, String groupName, User theUser)
     throws PapillonBusinessException {
         

@@ -235,10 +235,10 @@ public class Group {
 		}
 	public void setUsersArray(String[] Users)
 		throws PapillonBusinessException {
-			String users = null;
-			if (null != users && Users.length >0) {
+			String users = USERS_SEPARATOR_STRING;
+			if (null != Users && Users.length >0) {
 				for (int i=0; i< Users.length; i++) {
-					users += USERS_SEPARATOR_STRING + Users[i];
+					users += Users[i] + USERS_SEPARATOR_STRING;
 				}
 			}
 			users.trim();
@@ -247,8 +247,10 @@ public class Group {
 	protected void addNewUser(String user)
 		throws PapillonBusinessException {
 			String users = getUsers();
-			users += USERS_SEPARATOR_STRING + user;
-			users.trim();
+            if (users.equals("")) {
+                users = USERS_SEPARATOR_STRING;
+            }
+			users +=  user + USERS_SEPARATOR_STRING;
 			setUsers(users);
 		}
 	
@@ -263,18 +265,16 @@ public class Group {
 		throws PapillonBusinessException {
 			if (isInGroup(user)) {
 				String[] users = getAdminsArray();
-				String newUsers = "";
+				String newUsers = USERS_SEPARATOR_STRING;
 				for (int i=0;i< users.length;i++) {
 					String tempUser = users[i];
 					if (!tempUser.equals(user)) {
-						newUsers += USERS_SEPARATOR_STRING + tempUser;
+						newUsers += tempUser + USERS_SEPARATOR_STRING;
 					}
 				}
 				setUsers(newUsers);
 			}
 		}
-	
-	
 	
 	public boolean isInGroup(String user)
 		throws PapillonBusinessException {

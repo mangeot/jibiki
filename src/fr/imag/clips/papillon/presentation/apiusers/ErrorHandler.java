@@ -137,8 +137,8 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                 if (null != theRequest.getHeader("Content-Type") && theRequest.getHeader("Content-Type").startsWith("application/json")) {
                     sentContentType = JSON_CONTENTTYPE;
                 }
-                PapillonLogger.writeDebugMsg("sentContentType: " + sentContentType);
-                PapillonLogger.writeDebugMsg("acceptContentType: " + acceptContentType);
+                //PapillonLogger.writeDebugMsg("sentContentType: " + sentContentType);
+                //PapillonLogger.writeDebugMsg("acceptContentType: " + acceptContentType);
               
                 PapillonLogger.writeDebugMsg("REST APIUSERS URI : [" + prefix + "] " + theRequest.getPresentationURI()+" Accept: "+theRequest.getHeader("Accept")+" ;");
 				String theURI = java.net.URLDecoder.decode(theRequest.getPresentationURI());
@@ -230,7 +230,7 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                             theResponse.setStatus(status, (String) responseVector.elementAt(2));
                         }
                         else if (object.equalsIgnoreCase(DICTIONARY_OBJECT)) {
-                            java.util.Vector responseVector = UserApi.getGroupsForDictionary(objectName, null, this.getUser());
+                            java.util.Vector responseVector = UserApi.getRolesForDictionary(objectName, null, this.getUser());
                             content = (org.w3c.dom.Document) responseVector.elementAt(0);
                             status = ((Integer)responseVector.elementAt(1)).intValue();
                             theResponse.setStatus(status, (String) responseVector.elementAt(2));
@@ -332,7 +332,7 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                             theResponse.setStatus(status, (String) responseVector.elementAt(2));
                         }*/
                         else if (object.equalsIgnoreCase(DICTIONARY_OBJECT)) {
-                            java.util.Vector responseVector = UserApi.getGroupsForDictionary(objectName, attributeName, this.getUser());
+                            java.util.Vector responseVector = UserApi.getRolesForDictionary(objectName, attributeName, this.getUser());
                             content = (org.w3c.dom.Document) responseVector.elementAt(0);
                             status = ((Integer)responseVector.elementAt(1)).intValue();
                             theResponse.setStatus(status, (String) responseVector.elementAt(2));

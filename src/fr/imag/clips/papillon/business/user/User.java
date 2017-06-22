@@ -436,8 +436,10 @@ public class User implements com.lutris.appserver.server.user.User {
 	protected void addNewGroup(String group)
 		throws PapillonBusinessException {
 			String groups = getGroups();
-			groups = groups + GROUPS_SEPARATOR_STRING + group;
-			groups.trim();
+            if (groups == null || groups.equals("")) {
+                groups = GROUPS_SEPARATOR_STRING;
+            }
+			groups += group + GROUPS_SEPARATOR_STRING;
 			setGroups(groups);
 		}
 	
@@ -452,11 +454,11 @@ public class User implements com.lutris.appserver.server.user.User {
 		throws PapillonBusinessException {
 			if (isInGroup(group)) {
 				String[] groups = getGroupsArray();
-				String newGroups = "";
+				String newGroups = GROUPS_SEPARATOR_STRING;
 				for (int i=0;i< groups.length;i++) {
 					String tempGroup = groups[i];
 					if (!tempGroup.equals(group)) {
-						newGroups += GROUPS_SEPARATOR_STRING + tempGroup;
+						newGroups += tempGroup + GROUPS_SEPARATOR_STRING;
 					}
 				}
 				setGroups(newGroups);
