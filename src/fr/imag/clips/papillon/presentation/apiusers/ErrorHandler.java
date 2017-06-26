@@ -155,8 +155,8 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                 if (restStrings!= null && restStrings.length>0) {
                     object = restStrings[0];
                 }
-
-                if (this.responseStatus != HttpPresentationResponse.SC_OK) {
+                // Si l'authentificaiton a échoué et ce n'est pas la commande pour créer un nouvel utilisateur
+                if (this.responseStatus != HttpPresentationResponse.SC_OK && !(theRequest.getMethod().equals("POST") && object.equals(USERS_OBJECT) && restStrings.length==2)) {
                     PapillonLogger.writeDebugMsg(this.responseMessage);
                     content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + this.responseStatus + " Unauthorized</h1><p>" + this.responseMessage + "</p></html>");
                 }
