@@ -128,7 +128,7 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                 
                 setUserFromLoginPassword(login,password);
                 
-                if (null != theRequest.getHeader("Accept") && theRequest.getHeader("Accept").equals("application/json")) {
+                if (null != theRequest.getHeader("Accept") && theRequest.getHeader("Accept").startsWith("application/json")) {
                     acceptContentType = JSON_CONTENTTYPE;
                 }
                 if (null != theRequest.getHeader("Content-Type") && theRequest.getHeader("Content-Type").startsWith("application/json")) {
@@ -145,7 +145,7 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
 					restStrings = theURI.split("/");
 				}
 				
-				String commande = "REST API COMMAND: " + theRequest.getMethod();
+				String commande = "REST API COMMAND: " + theRequest.getMethod() + " SENT_FORMAT: " + sentContentType + " ACCEPT_FORMAT: " + acceptContentType;
                 String dictName = "";
                 if (restStrings!= null && restStrings.length>0) {
                     dictName = restStrings[0];
@@ -423,6 +423,7 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
 						if (restStrings.length==5) {
 							key = restStrings[4];
 						}
+                        PapillonLogger.writeDebugMsg("Parameters: strategy: " + strategy + " limit: " + limit + " offset: " + offset + " orderby: " + orderby + " key: " + key);
 						content = Entries.getEntries(dictName, restStrings[1], restStrings[2], restStrings[3], key, strategy, limit, offset, orderby, getUser());
 						if (content==null) {
 							String errorMsg = "Error: search: " + dictName + " lang: " +  restStrings[1] + " method: " + restStrings[2] +" does not exist!";
