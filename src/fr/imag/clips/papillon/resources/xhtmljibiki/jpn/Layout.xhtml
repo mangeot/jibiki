@@ -118,6 +118,16 @@
                                     return this.length !== 0;
                                     }
 
+                                    
+                                    function change_status_name() {
+                                    
+                                    $(".jibiki_status").each(function() {
+                                    if ($(this).text() == 'finished') {
+                                    $(this).text('Modifié');
+                                    }
+                                    })
+                                    }
+
                                     // -->
     </script>
   <script id="Script" type="text/javascript"><!-- // --></script>

@@ -116,6 +116,15 @@
                                     $.fn.exists = function () {
                                     return this.length !== 0;
                                     }
+                                    
+                                    function change_status_name() {
+                                    
+                                    $(".jibiki_status").each(function() {
+                                    if ($(this).text() == 'finished') {
+                                    $(this).text('Modifié');
+                                    }
+                                    })
+                                    }
 
                                     // -->
     </script>
