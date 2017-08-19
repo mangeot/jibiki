@@ -144,8 +144,8 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
 				if (theURI!=null &&!theURI.equals("")) {
 					restStrings = theURI.split("/");
 				}
-				
-				String commande = theRequest.getRemoteAddr() + " REST API COMMAND: " + theRequest.getMethod() + " SENT_FORMAT: " + sentContentType + " ACCEPT_FORMAT: " + acceptContentType;
+				// theRequest.getRemoteAddr() = 127.0.0.1 toujours
+				String commande = " REST API COMMAND: " + theRequest.getMethod() + " SENT_FORMAT: " + sentContentType + " ACCEPT_FORMAT: " + acceptContentType;
                 String dictName = "";
                 if (restStrings!= null && restStrings.length>0) {
                     dictName = restStrings[0];

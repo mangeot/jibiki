@@ -125,6 +125,16 @@
                                     return this.length !== 0;
                                     }
 
+                                    function change_status_name() {
+                                    
+                                    $(".jibiki_status").each(function() {
+                                    if ($(this).text() == 'finished') {
+                                    $(this).text('Modifié');
+                                    }
+                                    })
+                                    }
+
+                                    
 // -->
     </script>
     <script id="Script" type="text/javascript"><!-- // --></script>
@@ -228,8 +238,11 @@
         </script>
         <noscript><p><img src="//totoro.imag.fr/piwik/piwik.php?idsite=3" style="border:0;" alt="" /></p></noscript>
         <!-- End Piwik Code -->
-        
-
+        <script type="text/javascript">
+            <!--
+             change_status_name();
+             // -->
+        </script>
         </div>
 </body>
 </html>
