@@ -133,6 +133,7 @@ public class ErrorHandler extends  fr.imag.clips.papillon.presentation.AbstractP
             theURI = theURI.substring(apiUsersPrefix.length());
             command = APIUSERS_COMMAND;
         }
+        PapillonLogger.writeDebugMsg("ERROR HANDLER: "+ theRequest.getPresentationURI()+" Accept: "+acceptContentType+" ; command:" + command);
 		if ((theURI == null || theURI.equals(""))
 		   && (null != this.getComms().exception) 
 		   && (this.getComms().exception instanceof com.lutris.appserver.server.httpPresentation.FilePresentationException)) {
