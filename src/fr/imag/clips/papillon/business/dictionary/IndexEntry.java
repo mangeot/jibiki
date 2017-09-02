@@ -65,6 +65,56 @@ public class IndexEntry {
             }
         }
     }
+    
+    public static boolean isFinishedEntry(ArrayList indexes) throws PapillonBusinessException {
+        Iterator i = indexes.iterator();
+        boolean isFinished = true;
+        while (i.hasNext() && isFinished) {
+            IndexData id = (IndexData) i.next();
+            if (id.CdmElement.equals(Volume.CDM_contributionStatus) && !id.value.equals(VolumeEntry.FINISHED_STATUS)) {
+                isFinished = false;
+            }
+         }
+        return isFinished;
+    }
+    
+    public static void saveNotFinishedStatusContributionIdIndexes(ArrayList indexes, String volumeidx) throws PapillonBusinessException {
+        Iterator i = indexes.iterator();
+        while (i.hasNext()) {
+            IndexData id = (IndexData) i.next();
+            if (id==null) {PapillonLogger.writeDebugMsg("Index null!!! ");}
+            else if (id.CdmElement.equals(Volume.CDM_modificationAuthor)||
+                     id.CdmElement.equals(Volume.CDM_modificationDate)||
+                     id.CdmElement.equals(Volume.CDM_modificationComment)||
+                     id.CdmElement.equals(Volume.CDM_contributionAuthor)||
+                     id.CdmElement.equals(Volume.CDM_contributionCreationDate)||
+                     id.CdmElement.equals(Volume.CDM_contributionGroup)||
+                     id.CdmElement.equals(Volume.CDM_contributionGroups)||
+                     id.CdmElement.equals(Volume.CDM_contributionId)||
+                     id.CdmElement.equals(Volume.CDM_contributionFinitionDate)||
+                     id.CdmElement.equals(Volume.CDM_contributionReviewDate)||
+                     id.CdmElement.equals(Volume.CDM_contributionReviewer)||
+                     id.CdmElement.equals(Volume.CDM_contributionValidationDate)||
+                     id.CdmElement.equals(Volume.CDM_contributionValidator)||
+                     id.CdmElement.equals(Volume.CDM_contributionStatus)||
+                     id.CdmElement.equals(Volume.CDM_originalContributionId)||
+                     // FBM: Added by francis
+                     // link to previous classified finished/not-finished contribution
+                     id.CdmElement.equals(Volume.CDM_previousClassifiedFinishedContribution)||
+                     id.CdmElement.equals(Volume.CDM_previousClassifiedNotFinishedContribution)||
+                     // link to next contribution author
+                     id.CdmElement.equals(Volume.CDM_nextContributionAuthor)||
+                     // MM: Ajouté par Mathieu: simplifications !
+                     id.CdmElement.equals(Volume.CDM_previousContribution)
+                     ) {
+                Index myIndex = id.toIndex(volumeidx);
+                if (myIndex != null && !myIndex.isEmpty()) {
+                    myIndex.save();
+                }
+            }
+        }
+    }
+   
 	
     // boolean yeld = true if everything is OK
     public static boolean indexEntry(VolumeEntry myEntry)
@@ -81,11 +131,15 @@ public class IndexEntry {
 					
 				ArrayList indexes = indexEntry(CdmElementsTable, myRootElt, myEntry.getVolume().getPrefixResolver(), myEntry.getHandle());
 				String volumeidx = myEntry.getVolume().getIndexDbname();
-				saveIndexes(indexes, volumeidx);
-								
-				java.util.HashMap linksTable = myEntry.getVolume().getLinksTable();
-				ArrayList links = indexEntryLinks(linksTable, myEntry.getVolume(), myRootElt, myEntry.getHandle());
-				saveLinks(links);
+                if (isFinishedEntry(indexes)) {
+                    saveIndexes(indexes, volumeidx);
+                    java.util.HashMap linksTable = myEntry.getVolume().getLinksTable();
+                    ArrayList links = indexEntryLinks(linksTable, myEntry.getVolume(), myRootElt, myEntry.getHandle());
+                    saveLinks(links);
+                }
+                else {
+                    saveNotFinishedStatusContributionIdIndexes(indexes, volumeidx);
+                }
                 result = true;
 			}
         return result;

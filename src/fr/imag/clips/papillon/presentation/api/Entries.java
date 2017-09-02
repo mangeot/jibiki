@@ -308,15 +308,6 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 			if (criteria.equals("headword")) {
 				criteria=Volume.CDM_headword;
 			}
-            java.util.Vector myClauses = new java.util.Vector();
-            if (!criteria.contains(Volume.CDM_contributionStatus)) {
-                QueryCriteria criteriaStatus = new QueryCriteria();
-                criteriaStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);
-                criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.CLASSIFIED_FINISHED_STATUS);
-                criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.NOT_FINISHED_STATUS);
-                criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.DRAFT_STATUS);
-                myClauses.add(criteriaStatus.getFullClause());
-            }
 			java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
 		
 		if (volumesCollection !=null && volumesCollection.size()>0) {
@@ -324,7 +315,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 			allEntries.append(ENTRIES_HEAD_XMLSTRING);
 			for (java.util.Iterator iterator = volumesCollection.iterator(); iterator.hasNext(); ) {
 				theVolume = (Volume) iterator.next();
-				PapillonLogger.writeDebugMsg("Entries: volume: " + theVolume.getName());
+				//PapillonLogger.writeDebugMsg("Entries: volume: " + theVolume.getName());
 				String sourceLang = theVolume.getSourceLanguage();
 				String entryString = "\n<d:entry d:lang='"+sourceLang+"' d:dictionary='"+theVolume.getDictname()+"'>";
 				String langCriteria = null;
@@ -351,7 +342,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 																													  sourceLang,
 																													  targets,
 																													  myKeys,
-																													  myClauses,
+																													  null,
 																													  null,
 																													  theUser,
 																													  offset,
@@ -368,9 +359,9 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 						}
 					} 
 					else {
-                     //   PapillonLogger.writeDebugMsg("REST API: call IndexFactory.getIndexEntriesVector: theVolume.getIndexDbname()");
+                        //PapillonLogger.writeDebugMsg("REST API: call IndexFactory.getIndexValuesVector: theVolume.getIndexDbname()");
                         String criteriaString = "<d:criteria d:name='"+criteria+"' d:strategy='"+strategyString+"' value='"+Utility.encodeXMLEntities(oneWord)+"'>";
-						java.util.Collection resultsVector = IndexFactory.getIndexEntriesVector(theVolume.getIndexDbname(),
+						java.util.Collection resultsVector = IndexFactory.getIndexValuesVector(theVolume.getIndexDbname(),
 																								myKeys,
 																								orderby,
 																								limit,
@@ -423,7 +414,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 				allEntries.append(ENTRIES_HEAD_XMLSTRING);
 				for (java.util.Iterator myIterator = volumesCollection.iterator(); myIterator.hasNext(); ) {
 					theVolume = (Volume) myIterator.next();
-					PapillonLogger.writeDebugMsg("Entries: volume: " + theVolume.getName());
+					//PapillonLogger.writeDebugMsg("Entries: volume: " + theVolume.getName());
 					allEntries.append("\n<d:entry d:lang='");
 					allEntries.append(theVolume.getSourceLanguage());
 					allEntries.append("' d:dictionary='");

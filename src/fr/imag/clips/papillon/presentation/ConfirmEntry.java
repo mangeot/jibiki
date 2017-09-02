@@ -159,15 +159,11 @@ public class ConfirmEntry extends EditingBasePO {
                     }
                     
                     // Save draft
+                    newVolumeEntry.setHeadword();
                     newVolumeEntry.setModification(this.getUser().getLogin(), "finish");
                     newVolumeEntry.setStatus(VolumeEntry.FINISHED_STATUS);
                     newVolumeEntry.setGroups(Utility.ArrayUnion(newVolumeEntry.getGroups(),this.getUser().getGroupsArray()));
-                   
-                    // !!!!!!!!!!!! A DEPLACER EN POST PROCESS !!!!!!!!!!!!
-                    //myVolumeEntry.setFinished(this.getUser());
-                    //myVolumeEntry.setReviewed(this.getUser());
-                    //myVolumeEntry.setValidated(this.getUser());
-                    
+                                       
                     // Call PostProcessor
                     ResultPostSaveProcessor postSaveProcessor = ResultPostSaveProcessorFactory.getPostSaveProcessor(newVolumeEntry);
                     postSaveProcessor.transformation(newVolumeEntry, this.getUser());

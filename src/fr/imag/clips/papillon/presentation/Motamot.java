@@ -375,24 +375,7 @@ public class Motamot extends PapillonBasePO {
 
             // Display query result if query request have criteria
             if (!queryReq.isEmpty()) {
-  
-                 // Add status criteria
-                ArrayList listStatus = new ArrayList();
-
-                QueryCriteria criteriaFinishedStatus = new QueryCriteria();
-                criteriaFinishedStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);
-                criteriaFinishedStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.FINISHED_STATUS);
-                criteriaFinishedStatus.add("lang", QueryCriteria.EQUAL, Volume.DEFAULT_LANG);
-                listStatus.add(criteriaFinishedStatus);
-
-               QueryCriteria criteriaModifiedStatus = new QueryCriteria();
-                criteriaModifiedStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);
-                criteriaModifiedStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.MODIFIED_STATUS);
-                criteriaModifiedStatus.add("lang", QueryCriteria.EQUAL, Volume.DEFAULT_LANG);
-                listStatus.add(criteriaModifiedStatus);
- 
-				queryReq.addOrCriteriaList(listStatus);
-				
+  				
                 if (searchKind.equals(EXACT_MATCH)) {
                     //// CLASSIC SEARCH
                     // Perform the request

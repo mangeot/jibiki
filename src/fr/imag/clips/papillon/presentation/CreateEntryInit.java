@@ -386,7 +386,7 @@ public class CreateEntryInit extends PapillonBasePO {
                 
                 
                 //FIXME: mettre une option sur le volume pour dire s'il est en cours d'édition ou non ?
-                if (!queryReq.isOpenRequest()) {
+      /*          if (!queryReq.isOpenRequest()) {
                     // Add status criteria
                     ArrayList listStatus = new ArrayList();
                     
@@ -399,7 +399,7 @@ public class CreateEntryInit extends PapillonBasePO {
                     listStatus.add(criteriaStatus);
                     
                     queryReq.addOrCriteriaList(listStatus);
-                }
+                }*/
                 
                 // Perform the request
                 Collection qrset = queryReq.findLexieAndTranslation(this.getUser());

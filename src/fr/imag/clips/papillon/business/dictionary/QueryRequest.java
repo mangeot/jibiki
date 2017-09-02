@@ -730,17 +730,7 @@ import javax.swing.JOptionPane;
                     origContribId.add("value", QueryCriteria.EQUAL, qr.getSourceEntry().getOriginalContributionId());
                     
                     newQuery.addCriteria(origContribId);
-                    
-                    ArrayList listStatus = new ArrayList();
-                    
-                    QueryCriteria criteriaStatus = new QueryCriteria();
-                    criteriaStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);
-                    criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.DRAFT_STATUS);
-                    criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.NOT_FINISHED_STATUS);
-                    listStatus.add(criteriaStatus);
-                    
-                    newQuery.addOrCriteriaList(listStatus);
-                    
+                                        
                     // Perform the request
                      result = newQuery.findLexie(user);
                 } else {

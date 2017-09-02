@@ -143,23 +143,7 @@ public class LookupVolume extends AbstractPO {
 				QueryRequest queryReq = qf.getQueryRequest();
 				if (!queryReq.isEmpty() && !qf.actionOnFormRequested()) {
 					//PapillonLogger.writeDebugMsg("---qr advanced is not empty");
-					
-                    //FIXME: mettre une option sur le volume pour dire s'il est en cours d'édition ou non ?
-                    if (!queryReq.isOpenRequest()) {
-                        // Add status criteria
-                        ArrayList listStatus = new ArrayList();
-                        
-                        QueryCriteria criteriaStatus = new QueryCriteria();
-                        criteriaStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);
-                        criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.CLASSIFIED_FINISHED_STATUS);
-                        criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.NOT_FINISHED_STATUS);
-                        criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.DRAFT_STATUS);
-                        criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.DELETED_STATUS);
-                        listStatus.add(criteriaStatus);
-                        
-                        queryReq.addOrCriteriaList(listStatus);
-                    }
-					
+										
 					// Perform the request
 					Collection qrset = queryReq.findIndex(this.getUser());
 					
@@ -269,19 +253,9 @@ public class LookupVolume extends AbstractPO {
 				}
 				else if (msort != null && !msort.equals("")) {
  /* si ça prend du temps, faire une table d'index juste pour les vedettes */
-                    QueryCriteria criteriaStatus = new QueryCriteria();
-                    criteriaStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);
-                    criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.CLASSIFIED_FINISHED_STATUS);
-                    criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.NOT_FINISHED_STATUS);
-                    criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.DRAFT_STATUS);
-                    criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.DELETED_STATUS);
-                   
-                    java.util.Vector myClauses = new java.util.Vector();
-                    myClauses.add(criteriaStatus.getFullClause());
-
                     
                     //PapillonLogger.writeDebugMsg("LookupVolume: lookupvolume msort [" + myVolume.getIndexDbname() + "] lang: [" + lang + "] WORD: [" + word + "] KEY: [" + key + "] msort: [ " + msort + "] strat: [" + strategy + "] order: [" + order + "] limit: [" + limit + "]");
-                   EntryCollection = IndexFactory.getIndexEntriesVector(myVolume.getIndexDbname(), key, myClauses, msort, strategy, order,limit,0);
+                   EntryCollection = IndexFactory.getIndexEntriesVector(myVolume.getIndexDbname(), key, null, msort, strategy, order,limit,0);
 				
 				}
 				if (EntryCollection!=null) {

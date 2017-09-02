@@ -216,7 +216,7 @@ public class AdvancedSearch extends PapillonBasePO {
     		//PapillonLogger.writeDebugMsg("---qr advanced is not empty");
            
             // Add status criteria
-            ArrayList listStatus = new ArrayList();
+    /*        ArrayList listStatus = new ArrayList();
             
 			QueryCriteria criteriaStatus = new QueryCriteria();
 			criteriaStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);
@@ -226,7 +226,7 @@ public class AdvancedSearch extends PapillonBasePO {
 			criteriaStatus.add("lang", QueryCriteria.EQUAL, Volume.DEFAULT_LANG);
 			listStatus.add(criteriaStatus);
 			
-			queryReq.addOrCriteriaList(listStatus);
+			queryReq.addOrCriteriaList(listStatus);*/
             
             // Perform the request
             Collection qrset = queryReq.findLexieAndTranslation(this.getUser());

@@ -267,20 +267,7 @@ public class EditEntryInit extends PapillonBasePO {
 			// Display query result if query request have criteria
 			// Display query result if no action on form (add ou remove criteria)
 			if (!queryReq.isEmpty() && !qf.actionOnFormRequested()) {
-				
-				// Add status criteria
-				ArrayList listStatus = new ArrayList();
-				
-	/*			QueryCriteria criteriaStatus = new QueryCriteria();
-				criteriaStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);
-				criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.CLASSIFIED_FINISHED_STATUS);
-				criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.CLASSIFIED_NOT_FINISHED_STATUS);
-				criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.DELETED_STATUS);
-				criteriaStatus.add("lang", QueryCriteria.EQUAL, Volume.DEFAULT_LANG);
-				listStatus.add(criteriaStatus);
-				
-				queryReq.addOrCriteriaList(listStatus); */
-				
+								
 				// Perform the request
 				Collection qrset = queryReq.findLexieAndTranslation(this.getUser());
 				

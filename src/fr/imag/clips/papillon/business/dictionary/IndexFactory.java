@@ -441,7 +441,7 @@ public class IndexFactory {
                 }
 
 				// debug
-                // PapillonLogger.writeDebugMsg("getIndexEntriesVector query debug: ");
+                //PapillonLogger.writeDebugMsg("getIndexEntriesVector query debug: ");
 				//query.getQueryBuilder().debug();
 				
 				IndexDO[] DOarray = query.getDOArray();
@@ -449,6 +449,7 @@ public class IndexFactory {
 					for (int j=0; j < DOarray.length; j++) {
 						Index tempIndex = new Index(DOarray[j]);
 						theEntries.add(tempIndex);
+                        //PapillonLogger.writeDebugMsg("getIndexEntriesVector entryid: " + tempIndex.getEntryId());
 					}
 				}
 			}
@@ -550,6 +551,94 @@ public class IndexFactory {
 		return theEntries;
 	}
 	
+    
+    public static ArrayList getIndexValuesVector(String indexTableName, Vector Keys, String order, int limit, int offset) throws PapillonBusinessException {
+        ArrayList theEntries = new ArrayList();
+        
+        if (null != indexTableName) {
+            try {
+                com.lutris.dods.builder.generator.query.RDBColumn keyColumn = IndexDO.getKeyColumn(indexTableName);
+                com.lutris.dods.builder.generator.query.RDBColumn langColumn = IndexDO.getLangColumn(indexTableName);
+                com.lutris.dods.builder.generator.query.RDBColumn valueColumn = IndexDO.getValueColumn(indexTableName);
+                com.lutris.dods.builder.generator.query.RDBColumn entryIdColumn = IndexDO.getEntryIdColumn(indexTableName);
+                IndexQuery query = new IndexQuery(indexTableName, CurrentDBTransaction.get());
+                //fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("Index request table: " + indexTableName);
+                if (limit==0) {
+                    limit = DictionariesFactory.MaxRetrievedEntries;
+                }
+                
+                if (Keys != null) {
+                    for (java.util.Enumeration enumKeys = Keys.elements(); enumKeys.hasMoreElements();) {
+                        String[] key = (String[]) enumKeys.nextElement();
+                        //PapillonLogger.writeDebugMsg("keys: 0:" + key[0] + " 1:" + key[1]+ " 2:" + key[2]+ " 3:" + key[3]);
+                        if (key!=null && key[2] !=null && !key[2].equals("")) {
+                            /* clés multiples */
+                            String[] keynames = key[0].split("\\|");
+                            // Liste des clés qui sont classées par ordre alphabétique
+                                /* clés multiples */
+                                if (keynames.length>1) {
+                                    query.getQueryBuilder().addWhereOpenParen();
+                                    for (int i=0;i<keynames.length;i++) {
+                                        query.getQueryBuilder().addWhere(keyColumn, keynames[i], QueryBuilder.EQUAL);
+                                        if (i<keynames.length-1) {
+                                            query.getQueryBuilder().addWhereOr();
+                                        }
+                                    }
+                                    query.getQueryBuilder().addWhereCloseParen();
+                                }
+                                else {
+                                    query.getQueryBuilder().addWhere(keyColumn, keynames[0], QueryBuilder.EQUAL);
+                                }
+                                
+                                if (key[1] !=null && !key[1].equals("")) {
+                                    query.getQueryBuilder().addWhere(langColumn, key[1], QueryBuilder.EQUAL);
+                                }
+                                if ( key[3] == QueryBuilder.LESS_THAN ||
+                                    key[3] == QueryBuilder.LESS_THAN_OR_EQUAL ||
+                                    key[3] == QueryBuilder.GREATER_THAN ||
+                                    key[3] == QueryBuilder.GREATER_THAN_OR_EQUAL) {
+                                    //Replace all apostrophes with double apostrophes
+                                    java.util.regex.Matcher quoteMatcher = quotePattern.matcher(key[2]);
+                                    String newValue = quoteMatcher.replaceAll("''");
+                                    
+                                    query.getQueryBuilder().addWhere(MSORT_FIELD + key[3]+ "multilingual_sort('" + key[1] + "','" + newValue + "')");
+                                }
+                                else {
+                                    query.getQueryBuilder().addWhere(valueColumn, key[2],  key[3]);
+                                }
+                        }
+                    }
+                }
+                if (order==null || !order.equals(ORDER_DESCENDING)) {
+                    order = "";
+                }
+                query.getQueryBuilder().addOrderByColumn(MSORT_FIELD,order);
+                query.getQueryBuilder().setMaxRows(limit);
+                query.getQueryBuilder().addEndClause(" LIMIT " + limit);
+                if (offset!=0) {
+                    query.getQueryBuilder().addEndClause(" OFFSET " + offset);
+                }
+                
+                // debug
+                //PapillonLogger.writeDebugMsg("getIndexValuesVector query debug: ");
+                //query.getQueryBuilder().debug();
+                
+                IndexDO[] DOarray = query.getDOArray();
+                if (null != DOarray) {
+                    for (int j=0; j < DOarray.length; j++) {
+                        Index tempIndex = new Index(DOarray[j]);
+                        theEntries.add(tempIndex);
+                        //PapillonLogger.writeDebugMsg("getIndexValuesVector entryid: " + tempIndex.getEntryId());
+                    }
+                }
+            }
+            catch(Exception ex) {
+                throw new PapillonBusinessException("Exception in getIndexEntriesVector()", ex);
+            }
+        }
+        return theEntries;
+    }
+
 	
 	protected static void deleteIndexForEntryId(String indexDbname, String entryId) throws 	PapillonBusinessException {
 		Vector theIndex = new Vector();

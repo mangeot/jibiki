@@ -1563,27 +1563,6 @@ throws PapillonBusinessException {
         criteriaSearch.add("value", QueryCriteria.EQUAL, entryId);
         queryReq.addCriteria(criteriaSearch);
         
-        // Status : find last contribution (finished ou not finished)
-        // donc on les veut toutes ?
-        ArrayList listStatus = new ArrayList();
-       QueryCriteria criteriaFinishedStatus = new QueryCriteria();
-        criteriaFinishedStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);
-//        criteriaFinishedStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.FINISHED_STATUS);
-        criteriaFinishedStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.CLASSIFIED_FINISHED_STATUS);
-        criteriaFinishedStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.NOT_FINISHED_STATUS);
-        criteriaFinishedStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.DRAFT_STATUS);
-
-        listStatus.add(criteriaFinishedStatus);
-   /*     QueryCriteria criteriaNFStatus = new QueryCriteria();
-        criteriaNFStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);  
-        criteriaNFStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.NOT_FINISHED_STATUS);
-        listStatus.add(criteriaNFStatus);
-        QueryCriteria criteriaDeletedStatus = new QueryCriteria();
-        criteriaDeletedStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);  
-        criteriaDeletedStatus.add("value", QueryCriteria.EQUAL, VolumeEntry.DELETED_STATUS);
-        listStatus.add(criteriaDeletedStatus);*/
-        queryReq.addOrCriteriaList(listStatus);
-		
         //
         ArrayList qrset = queryReq.findLexie(user);
         
