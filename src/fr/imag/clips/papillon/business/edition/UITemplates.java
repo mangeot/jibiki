@@ -146,7 +146,7 @@ public class UITemplates {
 	
 	// protected methods
 	protected static void initInterfaceTable(Element itfElt, String volumeName) {
-		PapillonLogger.writeDebugMsg("initInterfaceTable: Element " + itfElt.toString() + " volume: " + volumeName);
+		//PapillonLogger.writeDebugMsg("initInterfaceTable: Element " + itfElt.toString() + " volume: " + volumeName);
 		if (volumeName!=null && !volumeName.equals("")) {
 			NodeList myNodeList = itfElt.getElementsByTagName("div");		
 			Hashtable typeTable = new Hashtable();

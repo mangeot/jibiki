@@ -1309,7 +1309,7 @@ public class VolumesFactory {
         if (getCdmXPathString(elementsTable, Volume.CDM_previousClassifiedFinishedContribution,
                 Volume.DEFAULT_LANG) == null) {
             addCdmElementInTable(elementsTable, Volume.CDM_previousClassifiedFinishedContribution, Volume.DEFAULT_LANG,
-                    currentXpath + "/" + dml_prefix + VolumeEntry.previousClassifiedFinishedContributionTag + "/text()", true);
+                    currentXpath + "/" + dml_prefix + VolumeEntry.previousClassifiedFinishedContributionTag + "/text()", Volume.isIndexCDMElement(Volume.CDM_previousClassifiedFinishedContribution));
         }
         // Previous classified not finished contribution
         if (getCdmXPathString(elementsTable, Volume.CDM_previousClassifiedNotFinishedContributionElement,
@@ -1322,7 +1322,7 @@ public class VolumesFactory {
                 Volume.DEFAULT_LANG) == null) {
             addCdmElementInTable(elementsTable, Volume.CDM_previousClassifiedNotFinishedContribution,
                     Volume.DEFAULT_LANG,
-                    currentXpath + "/" + dml_prefix + VolumeEntry.previousClassifiedNotFinishedContributionTag + "/text()", true);
+                    currentXpath + "/" + dml_prefix + VolumeEntry.previousClassifiedNotFinishedContributionTag + "/text()", Volume.isIndexCDMElement(Volume.CDM_previousClassifiedNotFinishedContribution));
         }
         // Next contribution author
         if (getCdmXPathString(elementsTable, Volume.CDM_nextContributionAuthorElement, Volume.DEFAULT_LANG) == null) {
@@ -1331,7 +1331,7 @@ public class VolumesFactory {
         }
         if (getCdmXPathString(elementsTable, Volume.CDM_nextContributionAuthor, Volume.DEFAULT_LANG) == null) {
             addCdmElementInTable(elementsTable, Volume.CDM_nextContributionAuthor, Volume.DEFAULT_LANG,
-                    currentXpath + "/" + dml_prefix + VolumeEntry.nextContributionAuthorTag + "/text()", true);
+                    currentXpath + "/" + dml_prefix + VolumeEntry.nextContributionAuthorTag + "/text()", Volume.isIndexCDMElement(Volume.CDM_nextContributionAuthor));
         }
 
 

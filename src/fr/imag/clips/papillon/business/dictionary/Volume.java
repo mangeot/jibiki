@@ -184,6 +184,10 @@ public class Volume {
 		CDM_contributionValidationDate,
 		CDM_contributionValidator,
 		CDM_contributionStatus,
+        CDM_previousContribution,
+        CDM_previousClassifiedFinishedContribution,
+        CDM_previousClassifiedNotFinishedContribution,
+        CDM_nextContributionAuthor,
 		
 // gdef-est elements
 		CDM_gdefEstParticule,

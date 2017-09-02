@@ -143,11 +143,11 @@ public class ConfirmEntry extends EditingBasePO {
                 }
             }
             else if (save != null && !save.equals("")) {
-                PapillonLogger.writeDebugMsg("Save contribution");
+                //PapillonLogger.writeDebugMsg("Save contribution");
 
                 if ( volumeName!=null && !volumeName.equals("") &&
                     entryHandle!=null && !entryHandle.equals("") ) {
-                    PapillonLogger.writeDebugMsg("Save contribution volumename:" + volumeName);
+                    //PapillonLogger.writeDebugMsg("Save contribution volumename:" + volumeName);
 
                     VolumeEntry newVolumeEntry = VolumeEntriesFactory.findEntryByHandle(volumeName, entryHandle);
                     VolumeEntry oldVolumeEntry = VolumeEntriesFactory.findEntryByContributionId(newVolumeEntry.getVolumeName(), newVolumeEntry.getPreviousContributionId());

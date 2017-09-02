@@ -83,7 +83,9 @@ public class IndexEntry {
         while (i.hasNext()) {
             IndexData id = (IndexData) i.next();
             if (id==null) {PapillonLogger.writeDebugMsg("Index null!!! ");}
-            else if (id.CdmElement.equals(Volume.CDM_modificationAuthor)||
+            else if (id.CdmElement.equals(Volume.CDM_history)||
+                     id.CdmElement.equals(Volume.CDM_modification)||
+                     id.CdmElement.equals(Volume.CDM_modificationAuthor)||
                      id.CdmElement.equals(Volume.CDM_modificationDate)||
                      id.CdmElement.equals(Volume.CDM_modificationComment)||
                      id.CdmElement.equals(Volume.CDM_contributionAuthor)||

@@ -87,7 +87,7 @@ import java.util.Collection;
 public class EditEntry extends EditingBasePO {
     
     //
-    private final boolean DEBUG = true; 
+    private final boolean DEBUG = false;
     
     // Public parameters
     public static String VolumeName_PARAMETER = EditEntryXHTML.NAME_VolumeName;  
