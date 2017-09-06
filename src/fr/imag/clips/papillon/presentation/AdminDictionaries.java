@@ -282,13 +282,17 @@ public class AdminDictionaries extends PapillonBasePO {
 				if (null != myDict && !myDict.isEmpty()) {
                     myDict.save();
 					userMessage = "adding " + myDict.getName() + " dictionary" + " // " + myDict.getCategory() + " // " + myDict.getType() + " // " + myDict.getDomain() + " // " + myDict.getLegal() + " // " + myDict.getSourceLanguages() + " // " + myDict.getTargetLanguages();
+                    PapillonLogger.writeDebugMsg("ad0"+userMessage);
 				} else {
 					userMessage = "Ignoring dictionary";
 				}
 				// everything was correct, commit the transaction...
 				try {
+                    PapillonLogger.writeDebugMsg("ad1"+userMessage);
 					((DBTransaction) CurrentDBTransaction.get()).commit();
+                    PapillonLogger.writeDebugMsg("ad1.5"+userMessage);
 				} catch (java.sql.SQLException sqle) {
+                    PapillonLogger.writeDebugMsg("ad1.6"+userMessage);
 					PapillonLogger.writeDebugMsg("AdminDictionaries: SQLException while commiting the transaction.");
 					sqle.printStackTrace();
 				}
@@ -296,25 +300,30 @@ public class AdminDictionaries extends PapillonBasePO {
 				userMessage = "Problems while adding the specified dictionary.\n";
 				userMessage += e.getMessage();
 				userMessage += "\nAll changes to the database have been rolled back.";
-                this.getComms().response.setStatus(HttpPresentationResponse.SC_BAD_REQUEST,userMessage);
+                PapillonLogger.writeDebugMsg("ad1.8"+userMessage);
+               this.getComms().response.setStatus(HttpPresentationResponse.SC_BAD_REQUEST,userMessage);
 				e.printStackTrace();
 				try {
 					((DBTransaction) CurrentDBTransaction.get()).rollback();
+                    PapillonLogger.writeDebugMsg("ad1.9"+userMessage);
 				} catch (java.sql.SQLException sqle) {
-					PapillonLogger.writeDebugMsg("AdminDictionaries: SQLException while rolling back failed transaction.");
+					PapillonLogger.writeDebugMsg("ad1.91:AdminDictionaries: SQLException while rolling back failed transaction.");
 					sqle.printStackTrace();
 				}
 			} finally {
 				CurrentDBTransaction.releaseCurrentDBTransaction();
 			}
 			Papillon.initializeAllCaches();
+            PapillonLogger.writeDebugMsg("ad2"+userMessage);
 		}
 		catch (java.io.IOException ex) {
 			userMessage = "Problems while adding the specified dictionary. The following URL: "+ urlString +" is malformed;\n";
+            PapillonLogger.writeDebugMsg("ad3"+userMessage);
             userMessage += ex.getMessage();
 			ex.printStackTrace();
+            PapillonLogger.writeDebugMsg("ad4"+userMessage);
 		}
-        PapillonLogger.writeDebugMsg(userMessage);
+        PapillonLogger.writeDebugMsg("ad5"+userMessage);
         return userMessage;
     }
 

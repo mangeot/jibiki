@@ -86,10 +86,11 @@ public class PapillonLogger {
 // MM: finally, I use System.out because it is not possible to specify the output encoding for 
 // the Enhydra LogChannel
 // well, I still have problems with the CGI input parameters that do not display well !
-			myOutStream.println(Enhydra.getApplication().getName() + ",DEBUG,: " + fr.imag.clips.papillon.business.utility.Utility.LogDateFormat.format(new java.util.Date()) + ":　" + msg);
+            String appName = Enhydra.getApplication().getConfig().getConfigFile().getFile().getName();
+			myOutStream.println(fr.imag.clips.papillon.business.utility.Utility.LogDateFormat.format(new java.util.Date()) + ":　" + appName + ",DEBUG,: " + msg);
             if (msg=="") {
-                myOutStream.println(Enhydra.getApplication().getName() + ",DEBUG,: " + fr.imag.clips.papillon.business.utility.Utility.LogDateFormat.format(new java.util.Date()) + ":　" +"msg null, getCallerClassName:" + getCallerClassName());
-                myOutStream.println(Enhydra.getApplication().getName() + ",DEBUG,: " + fr.imag.clips.papillon.business.utility.Utility.LogDateFormat.format(new java.util.Date()) + ":　" +"msg null, getCallerCallerClassName:" + getCallerClassName());
+                myOutStream.println(fr.imag.clips.papillon.business.utility.Utility.LogDateFormat.format(new java.util.Date()) + ":　" + appName + ",DEBUG,: " + "msg empty, getCallerClassName:" + getCallerClassName());
+                myOutStream.println(fr.imag.clips.papillon.business.utility.Utility.LogDateFormat.format(new java.util.Date()) + ":　" + appName + ",DEBUG,: " + "msg empty, getCallerCallerClassName:" + getCallerClassName());
             }
         } else {
 //            Enhydra.getLogChannel().write(Logger.DEBUG,"null");
