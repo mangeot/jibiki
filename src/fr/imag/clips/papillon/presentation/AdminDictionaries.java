@@ -213,8 +213,8 @@ public class AdminDictionaries extends PapillonBasePO {
             //
             if (null != urlString && !urlString.equals("")) {
                 // The user asked for a dictionary to be uploaded
-               // userMessage = handleDictionaryAddition(req);
-                userMessage = "The user asked for a dictionary to be uploaded";
+                PapillonLogger.writeDebugMsg("ad-1: The user asked for a dictionary to be uploaded");
+                userMessage = handleDictionaryAddition(req);
             
             //
             } else if (null != req.getParameter(SEE_PARAMETER)) {
