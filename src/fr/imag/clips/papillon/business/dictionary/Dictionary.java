@@ -78,6 +78,7 @@ import com.lutris.appserver.server.sql.ObjectIdException;
 import com.lutris.dods.builder.generator.query.DataObjectException;
 import fr.imag.clips.papillon.CurrentDBTransaction;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
+import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.user.Group;
 import fr.imag.clips.papillon.business.user.GroupAnswer;
 import fr.imag.clips.papillon.business.user.GroupsFactory;
