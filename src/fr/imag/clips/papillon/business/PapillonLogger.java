@@ -57,6 +57,8 @@
 package fr.imag.clips.papillon.business;
 
 
+import fr.imag.clips.papillon.Papillon;
+
 import com.lutris.appserver.server.Enhydra;
 import com.lutris.logging.*;
 
@@ -86,7 +88,8 @@ public class PapillonLogger {
 // MM: finally, I use System.out because it is not possible to specify the output encoding for 
 // the Enhydra LogChannel
 // well, I still have problems with the CGI input parameters that do not display well !
-            String appName = Enhydra.getApplication().getConfig().getConfigFile().getFile().getName();
+            String appName = ((Papillon)Enhydra.getApplication()).getApplicationName();
+
 			myOutStream.println(fr.imag.clips.papillon.business.utility.Utility.LogDateFormat.format(new java.util.Date()) + ":　" + appName + ",DEBUG,: " + msg);
             if (msg=="") {
                 myOutStream.println(fr.imag.clips.papillon.business.utility.Utility.LogDateFormat.format(new java.util.Date()) + ":　" + appName + ",DEBUG,: " + "msg empty, getCallerClassName:" + getCallerClassName());

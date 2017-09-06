@@ -51,6 +51,9 @@ public class Papillon extends StandardApplication {
     protected String layoutClassName = "fr.imag.clips.papillon.presentation.PapillonLayout";
     protected String loginCookieName = "PapillonLoginCookie";
 	protected String applicationPrefix = "/";
+    protected String appName = "Papillon";
+    
+        
     /* Expiration du cache dans une semaine */
     /* protected int pageExpireTime = 7 * 24 * 60 * 60;
     Finalement, désactivation du cache */
@@ -67,6 +70,11 @@ public class Papillon extends StandardApplication {
         super.startup(appConfig);
         //  Here is where you would read application-specific settings from
         //  your config file.
+        
+        appName = Enhydra.getApplication().getConfig().getConfigFile().getFile().getName();
+        if (appName.indexOf(".") > 0) {
+            appName = appName.substring(0, appName.lastIndexOf("."));
+        }
         
         // Look at the Xerces version that is currently loaded and display it...
         PapillonLogger.writeInfoMsg(org.apache.xerces.impl.Version.getVersion());
@@ -223,9 +231,13 @@ public class Papillon extends StandardApplication {
         pageExpireTime = time;
     }
     
-	public String getApplicationPrefix() {
-		return applicationPrefix;
-	}
+    public String getApplicationPrefix() {
+        return applicationPrefix;
+    }
+    
+    public String getApplicationName() {
+        return appName;
+    }
     
     public boolean requestPreprocessor(HttpPresentationComms comms)
     throws Exception {

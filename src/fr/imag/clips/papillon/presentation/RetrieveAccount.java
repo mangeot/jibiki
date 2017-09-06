@@ -174,7 +174,9 @@ public class RetrieveAccount extends PapillonBasePO {
 			   }
 			   
 			   this.getSessionData().writeUserMessage(userMessage);
-			   PapillonLogger.writeDebugMsg(userMessage);
+               if (userMessage != null && userMessage != "") {
+                   PapillonLogger.writeDebugMsg(userMessage);
+               }
 			   return content.getElementFormulaire();
 		   }	
 }

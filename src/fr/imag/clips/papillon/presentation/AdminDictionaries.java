@@ -244,7 +244,7 @@ public class AdminDictionaries extends PapillonBasePO {
             }
             
             //
-            if (userMessage != null) {
+            if (userMessage != null && userMessage != "") {
                 this.getSessionData().writeUserMessage(userMessage);
                 PapillonLogger.writeDebugMsg(userMessage);
             }
@@ -266,7 +266,7 @@ public class AdminDictionaries extends PapillonBasePO {
 		URL myURL = null;
 		try  {
 			myURL = new URL(urlString);
-//			PapillonLogger.writeDebugMsg(myURL.toString());
+			PapillonLogger.writeDebugMsg("ad-1"+myURL.toString());
 			String parseVolumesString = req.getParameter(AdminDictionariesXHTML.NAME_AddVolumes);
 			boolean parseVolumes = (parseVolumesString!=null && !parseVolumesString.equals(""));
 			String parseEntriesString = req.getParameter(AdminDictionariesXHTML.NAME_AddVolumesAndEntries);
@@ -280,7 +280,7 @@ public class AdminDictionaries extends PapillonBasePO {
 			try {
 				myDict = DictionariesFactory.parseDictionaryMetadata(myURL, parseVolumes, parseEntries, logContribs);
 				if (null != myDict && !myDict.isEmpty()) {
-                    myDict.save();
+                    //myDict.save();
 					userMessage = "adding " + myDict.getName() + " dictionary" + " // " + myDict.getCategory() + " // " + myDict.getType() + " // " + myDict.getDomain() + " // " + myDict.getLegal() + " // " + myDict.getSourceLanguages() + " // " + myDict.getTargetLanguages();
                     PapillonLogger.writeDebugMsg("ad0"+userMessage);
 				} else {

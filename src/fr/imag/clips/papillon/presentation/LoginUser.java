@@ -152,6 +152,7 @@ public class LoginUser extends PapillonBasePO {
                 if (null != myUser && !myUser.isEmpty()) { 
                     if (myUser.HasCorrectPassword(Password)) {
                         setUser(myUser);
+                        PapillonLogger.writeDebugMsg("user " + myUser.getLogin() +" logged");
                        if (RememberLogin != null && !RememberLogin.equals("")) {
                             this.setCookie(this.LOGIN_COOKIE,
                             myUser.getHandle());
@@ -203,7 +204,9 @@ public class LoginUser extends PapillonBasePO {
                 String errorMessage = "Error: Wrong arguments";
                 this.getComms().response.setStatus(HttpPresentationResponse.SC_BAD_REQUEST,errorMessage);
             }
-            PapillonLogger.writeDebugMsg(userMessage);
+            if (userMessage != null && userMessage != "") {
+                PapillonLogger.writeDebugMsg(userMessage);
+            }
         }
 
             // If the login fail, we have to send the login form with the appropriate Destination
