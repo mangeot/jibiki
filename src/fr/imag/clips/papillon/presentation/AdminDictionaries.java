@@ -314,6 +314,7 @@ public class AdminDictionaries extends PapillonBasePO {
             userMessage += ex.getMessage();
 			ex.printStackTrace();
 		}
+        PapillonLogger.writeDebugMsg(userMessage);
         return userMessage;
     }
 
