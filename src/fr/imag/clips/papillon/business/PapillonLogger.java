@@ -86,7 +86,11 @@ public class PapillonLogger {
 // MM: finally, I use System.out because it is not possible to specify the output encoding for 
 // the Enhydra LogChannel
 // well, I still have problems with the CGI input parameters that do not display well !
-			myOutStream.println(fr.imag.clips.papillon.business.utility.Utility.LogDateFormat.format(new java.util.Date()) + ":　" + msg);
+			myOutStream.println(Enhydra.getApplication().getName() + ",DEBUG,: " + fr.imag.clips.papillon.business.utility.Utility.LogDateFormat.format(new java.util.Date()) + ":　" + msg);
+            if (msg=="") {
+                myOutStream.println(Enhydra.getApplication().getName() + ",DEBUG,: " + fr.imag.clips.papillon.business.utility.Utility.LogDateFormat.format(new java.util.Date()) + ":　" +"msg null, getCallerClassName:" + getCallerClassName());
+                myOutStream.println(Enhydra.getApplication().getName() + ",DEBUG,: " + fr.imag.clips.papillon.business.utility.Utility.LogDateFormat.format(new java.util.Date()) + ":　" +"msg null, getCallerCallerClassName:" + getCallerClassName());
+            }
         } else {
 //            Enhydra.getLogChannel().write(Logger.DEBUG,"null");
 //            Enhydra.getLogChannel().write(Logger.WARNING,"null");
@@ -105,6 +109,30 @@ public class PapillonLogger {
         }
     }
 //import java.io.UnsupportedEncodingException;
-
+    public static String getCallerClassName() {
+        StackTraceElement[] stElements = Thread.currentThread().getStackTrace();
+        for (int i=1; i<stElements.length; i++) {
+            StackTraceElement ste = stElements[i];
+            if (!ste.getClassName().equals(PapillonLogger.class.getName()) && ste.getClassName().indexOf("java.lang.Thread")!=0) {
+                return ste.getClassName();
+            }
+        }
+        return null;
+    }
+    public static String getCallerCallerClassName() {
+        StackTraceElement[] stElements = Thread.currentThread().getStackTrace();
+        String callerClassName = null;
+        for (int i=1; i<stElements.length; i++) {
+            StackTraceElement ste = stElements[i];
+            if (!ste.getClassName().equals(PapillonLogger.class.getName())&& ste.getClassName().indexOf("java.lang.Thread")!=0) {
+                if (callerClassName==null) {
+                    callerClassName = ste.getClassName();
+                } else if (!callerClassName.equals(ste.getClassName())) {
+                    return ste.getClassName();
+                }
+            }
+        }
+        return null;
+    }
 
 }
