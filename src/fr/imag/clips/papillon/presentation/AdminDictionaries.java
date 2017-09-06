@@ -281,7 +281,7 @@ public class AdminDictionaries extends PapillonBasePO {
 			try {
 				myDict = DictionariesFactory.parseDictionaryMetadata(myURL, parseVolumes, parseEntries, logContribs);
 				if (null != myDict && !myDict.isEmpty()) {
-                    //myDict.save();
+                    myDict.save();
 					userMessage = "adding " + myDict.getName() + " dictionary" + " // " + myDict.getCategory() + " // " + myDict.getType() + " // " + myDict.getDomain() + " // " + myDict.getLegal() + " // " + myDict.getSourceLanguages() + " // " + myDict.getTargetLanguages();
                     PapillonLogger.writeDebugMsg("ad0"+userMessage);
 				} else {
@@ -294,7 +294,9 @@ public class AdminDictionaries extends PapillonBasePO {
                     PapillonLogger.writeDebugMsg("ad1.5"+userMessage);
 				} catch (java.sql.SQLException sqle) {
                     PapillonLogger.writeDebugMsg("ad1.6"+userMessage);
-					PapillonLogger.writeDebugMsg("AdminDictionaries: SQLException while commiting the transaction.");
+                    userMessage = "AdminDictionaries: SQLException while commiting the transaction.\n";
+                    userMessage += sqle.getMessage();
+					PapillonLogger.writeDebugMsg(userMessage);
 					sqle.printStackTrace();
 				}
 			} catch (PapillonBusinessException e) {
