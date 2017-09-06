@@ -213,7 +213,6 @@ public class AdminDictionaries extends PapillonBasePO {
             //
             if (null != urlString && !urlString.equals("")) {
                 // The user asked for a dictionary to be uploaded
-                PapillonLogger.writeDebugMsg("ad-1: The user asked for a dictionary to be uploaded");
                 userMessage = handleDictionaryAddition(req);
             
             //
@@ -267,7 +266,6 @@ public class AdminDictionaries extends PapillonBasePO {
 		URL myURL = null;
 		try  {
 			myURL = new URL(urlString);
-			PapillonLogger.writeDebugMsg("ad-1"+myURL.toString());
 			String parseVolumesString = req.getParameter(AdminDictionariesXHTML.NAME_AddVolumes);
 			boolean parseVolumes = (parseVolumesString!=null && !parseVolumesString.equals(""));
 			String parseEntriesString = req.getParameter(AdminDictionariesXHTML.NAME_AddVolumesAndEntries);
@@ -276,57 +274,48 @@ public class AdminDictionaries extends PapillonBasePO {
 			boolean logContribs = (logContribsString!=null && !logContribsString.equals(""));
 			
 			// Create and Register the transaction
-			CurrentDBTransaction.registerNewDBTransaction();
+            // je supprime la transaction car cela m'empêche d'ajouter plusieurs administrateurs dans le groupe des admins du dictionnaire.
+			//CurrentDBTransaction.registerNewDBTransaction();
 			Dictionary myDict = null;
 			try {
 				myDict = DictionariesFactory.parseDictionaryMetadata(myURL, parseVolumes, parseEntries, logContribs);
 				if (null != myDict && !myDict.isEmpty()) {
                     myDict.save();
 					userMessage = "adding " + myDict.getName() + " dictionary" + " // " + myDict.getCategory() + " // " + myDict.getType() + " // " + myDict.getDomain() + " // " + myDict.getLegal() + " // " + myDict.getSourceLanguages() + " // " + myDict.getTargetLanguages();
-                    PapillonLogger.writeDebugMsg("ad0"+userMessage);
 				} else {
 					userMessage = "Ignoring dictionary";
 				}
 				// everything was correct, commit the transaction...
-				try {
-                    PapillonLogger.writeDebugMsg("ad1"+userMessage);
+				/*try {
 					((DBTransaction) CurrentDBTransaction.get()).commit();
-                    PapillonLogger.writeDebugMsg("ad1.5"+userMessage);
 				} catch (java.sql.SQLException sqle) {
-                    PapillonLogger.writeDebugMsg("ad1.6"+userMessage);
                     userMessage = "AdminDictionaries: SQLException while commiting the transaction.\n";
                     userMessage += sqle.getMessage();
 					PapillonLogger.writeDebugMsg(userMessage);
 					sqle.printStackTrace();
-				}
+				}*/
 			} catch (PapillonBusinessException e) {
 				userMessage = "Problems while adding the specified dictionary.\n";
 				userMessage += e.getMessage();
 				userMessage += "\nAll changes to the database have been rolled back.";
-                PapillonLogger.writeDebugMsg("ad1.8"+userMessage);
                this.getComms().response.setStatus(HttpPresentationResponse.SC_BAD_REQUEST,userMessage);
 				e.printStackTrace();
-				try {
+				/*try {
 					((DBTransaction) CurrentDBTransaction.get()).rollback();
-                    PapillonLogger.writeDebugMsg("ad1.9"+userMessage);
 				} catch (java.sql.SQLException sqle) {
 					PapillonLogger.writeDebugMsg("ad1.91:AdminDictionaries: SQLException while rolling back failed transaction.");
 					sqle.printStackTrace();
-				}
-			} finally {
+				}*/
+			}/* finally {
 				CurrentDBTransaction.releaseCurrentDBTransaction();
-			}
+			}*/
 			Papillon.initializeAllCaches();
-            PapillonLogger.writeDebugMsg("ad2"+userMessage);
 		}
 		catch (java.io.IOException ex) {
 			userMessage = "Problems while adding the specified dictionary. The following URL: "+ urlString +" is malformed;\n";
-            PapillonLogger.writeDebugMsg("ad3"+userMessage);
             userMessage += ex.getMessage();
 			ex.printStackTrace();
-            PapillonLogger.writeDebugMsg("ad4"+userMessage);
 		}
-        PapillonLogger.writeDebugMsg("ad5"+userMessage);
         return userMessage;
     }
 
