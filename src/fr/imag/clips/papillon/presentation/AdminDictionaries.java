@@ -213,7 +213,8 @@ public class AdminDictionaries extends PapillonBasePO {
             //
             if (null != urlString && !urlString.equals("")) {
                 // The user asked for a dictionary to be uploaded
-                userMessage = handleDictionaryAddition(req);
+               // userMessage = handleDictionaryAddition(req);
+                userMessage = "The user asked for a dictionary to be uploaded";
             
             //
             } else if (null != req.getParameter(SEE_PARAMETER)) {
@@ -221,7 +222,7 @@ public class AdminDictionaries extends PapillonBasePO {
                 Dictionary dict = DictionariesFactory.getDictionaryByHandle(name);
                 //adding an XML file
                 addXml(content, dict.getXmlCode());
-
+                userMessage = "Viewing Dictionary " + dict.getName() + " XML metadata";
             //
             } else if (null != req.getParameter(REMOVE_PARAMETER)) {
                 String name = req.getParameter(REMOVE_PARAMETER);
@@ -245,8 +246,8 @@ public class AdminDictionaries extends PapillonBasePO {
             
             //
             if (userMessage != null && userMessage != "") {
-                this.getSessionData().writeUserMessage(userMessage);
                 PapillonLogger.writeDebugMsg(userMessage);
+                this.getSessionData().writeUserMessage(userMessage);
             }
         }
 
