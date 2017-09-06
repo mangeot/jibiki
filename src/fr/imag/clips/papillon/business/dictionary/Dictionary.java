@@ -492,6 +492,8 @@ public class Dictionary {
         try {
             this.myDO.commit();
         } catch(Exception ex) {
+            PapillonLogger.writeDebugMsg("Dictionary.save error:" + ex.getMessage());
+            ex.printStackTrace();
             throw new PapillonBusinessException("Error saving Dictionary", ex);
         }
     }

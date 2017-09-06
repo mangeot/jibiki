@@ -280,8 +280,8 @@ public class AdminDictionaries extends PapillonBasePO {
 			try {
 				myDict = DictionariesFactory.parseDictionaryMetadata(myURL, parseVolumes, parseEntries, logContribs);
 				if (null != myDict && !myDict.isEmpty()) {
+                    myDict.save();
 					userMessage = "adding " + myDict.getName() + " dictionary" + " // " + myDict.getCategory() + " // " + myDict.getType() + " // " + myDict.getDomain() + " // " + myDict.getLegal() + " // " + myDict.getSourceLanguages() + " // " + myDict.getTargetLanguages();
-					myDict.save();
 				} else {
 					userMessage = "Ignoring dictionary";
 				}
@@ -313,7 +313,7 @@ public class AdminDictionaries extends PapillonBasePO {
 			userMessage = "Problems while adding the specified dictionary. The following URL: "+ urlString +" is malformed;\n";
             userMessage += ex.getMessage();
 			ex.printStackTrace();
-		}		
+		}
         return userMessage;
     }
 
