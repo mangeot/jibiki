@@ -186,7 +186,14 @@ public class ParseVolume {
     protected static final String XMLHEADER = "<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>";
     protected static final String XMLDECLSTART = "<?xml ";
     protected static final int MAX_TRY = 5;
+    public static final String UTF8_BOM = "\uFEFF";
     
+    private static String removeUTF8BOM(String s) {
+        if (s.startsWith(UTF8_BOM)) {
+            s = s.substring(1);
+        }
+        return s;
+    }
 
     public static int parseFoksVolume(String url)
             throws PapillonBusinessException {
@@ -294,9 +301,10 @@ public class ParseVolume {
                 str = buffer.readLine();
                 countTry++;
                 if (str.indexOf(XMLDECLSTART) >= 0) {
-                    res = str;
+                    res = str.substring(str.indexOf(XMLDECLSTART));
                     break;
                 }
+
                 if (    (str.indexOf("<" + CDM_entry + " ") >= 0) ||
                         (str.indexOf("<" + CDM_entry + "\t") >= 0) ||
                         (str.indexOf("<" + CDM_entry) + 1 + CDM_entry.length() == str.length()) ||
@@ -465,6 +473,9 @@ public class ParseVolume {
 					}
                 }*/
 				else {
+                    if (bufferLine.startsWith(UTF8_BOM)) {
+                        bufferLine = bufferLine.substring(1);
+                    }
                     xmlHeaderBuffer.append(bufferLine);
 					xmlHeaderBuffer.append("\n");
                 }
