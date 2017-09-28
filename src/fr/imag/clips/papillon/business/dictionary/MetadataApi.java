@@ -112,12 +112,12 @@ public class MetadataApi {
                 dictXml = "";
             }
             if (dictXml != null && !dictXml.equals("")) {
-                Dictionary theDict = DictionariesFactory.parseDictionaryMetadata(dictDom, null, false, false, false);
-                if (userCanHandleMetadata(theUser,theDict)) {
+                Dictionary existDict = DictionariesFactory.getDictionaryByName(dictName);
+                if (existDict ==null || existDict.isEmpty()) {
+                    Dictionary theDict = DictionariesFactory.parseDictionaryMetadata(dictDom, null, false, false, false);
                     if (theDict !=null && !theDict.isEmpty()) {
-                        
-                        Dictionary existDict = DictionariesFactory.getDictionaryByName(dictName);
-                        if (existDict ==null || existDict.isEmpty()) {
+                        if (userCanHandleMetadata(theUser,theDict)) {
+                    
                             String userMessage = "adding " + theDict.getName() + " dictionary" + " // " + theDict.getCategory() + " // " + theDict.getType() + " // " + theDict.getDomain() + " // " + theDict.getLegal() + " // " + theDict.getSourceLanguages() + " // " + theDict.getTargetLanguages();
                             PapillonLogger.writeDebugMsg(userMessage);
                             theDict.save();
@@ -125,9 +125,16 @@ public class MetadataApi {
                             status = HttpPresentationResponse.SC_CREATED;
                         }
                         else {
-                            errorMsg = "Error: conflict, dict: " + dictName + " already exists. Try to choose another name!";
-                            status = 409;
-                            content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + status + " Conflict</h1><p>" + errorMsg + "</p></html>");
+                            // Il faut supprimer les groupes
+                            theDict.deleteUserGroups();
+                            // il faut supprimer les feuilles de style
+                            theDict.deleteDefaultXslSheet();
+                            // Il faut vider le cache
+                            DictionariesFactory.initializeDictionaryCache();
+                            String login = (theUser!=null && !theUser.isEmpty())?theUser.getLogin():"";
+                            errorMsg = "Error: user: " + login +" not authorized to post dict!";
+                            status = HttpPresentationResponse.SC_UNAUTHORIZED;
+                            content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + status + "</h1><p>" + errorMsg + "</p></html>");
                         }
                     }
                     else {
@@ -137,10 +144,9 @@ public class MetadataApi {
                     }
                  }
                 else {
-                    String login = (theUser!=null && !theUser.isEmpty())?theUser.getLogin():"";
-                    errorMsg = "Error: user: " + login +" not authorized to post dict!";
-                    status = HttpPresentationResponse.SC_UNAUTHORIZED;
-                    content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + status + "</h1><p>" + errorMsg + "</p></html>");
+                    errorMsg = "Error: conflict, dict: " + dictName + " already exists. Try to choose another name!";
+                    status = 409;
+                    content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + status + " Conflict</h1><p>" + errorMsg + "</p></html>");
                 }
             }
             else {

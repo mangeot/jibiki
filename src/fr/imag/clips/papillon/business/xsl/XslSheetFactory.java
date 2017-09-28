@@ -370,7 +370,7 @@ public class XslSheetFactory {
             return XslSheetCache.getXslSheetInCache(dictionaryName, volumeName, Name);
 
         }
-    
+
 	
     /** 
         * Return the xsl sheet corresponding to the 'handle' (database object id)
@@ -487,9 +487,21 @@ public class XslSheetFactory {
 			}
         }
     
+    public static void removeXslSheet(String name, String dictionaryName, String volumeName)
+    throws fr.imag.clips.papillon.business.PapillonBusinessException {
+        XslSheet Existe = XslSheetFactory.getXslSheet(dictionaryName, volumeName, name);
+        
+        //
+        if ((Existe != null) && (!Existe.isEmpty())) {
+            PapillonLogger.writeDebugMsg("Delete " + Existe.getName() + " xsl");
+            Existe.delete();
+            initializeXslSheetCache();
+        }
+    }
+
     
-    /** 
-        * 
+    /**
+        *
         *
         * @param String
         *     

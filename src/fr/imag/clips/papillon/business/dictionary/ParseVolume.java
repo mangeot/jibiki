@@ -473,7 +473,7 @@ public class ParseVolume {
 					}
                 }*/
 				else {
-                    if (bufferLine.startsWith(UTF8_BOM)) {
+                    if (bufferLine.startsWith(UTF8_BOM) && encoding.equalsIgnoreCase(DEFAULT_ENCODING)) {
                         bufferLine = bufferLine.substring(1);
                     }
                     xmlHeaderBuffer.append(bufferLine);

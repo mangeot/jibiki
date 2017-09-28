@@ -151,7 +151,6 @@ public class XslSheetCache {
         throws PapillonBusinessException {
             
             try {
-                
                 //
                 return (XslSheet)xslSheetCacheByHandle.get(handle);
                 

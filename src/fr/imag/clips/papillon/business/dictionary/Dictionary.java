@@ -83,6 +83,7 @@ import fr.imag.clips.papillon.business.user.Group;
 import fr.imag.clips.papillon.business.user.GroupAnswer;
 import fr.imag.clips.papillon.business.user.GroupsFactory;
 import fr.imag.clips.papillon.business.xml.XMLServices;
+import fr.imag.clips.papillon.business.xsl.XslSheetFactory;
 import fr.imag.clips.papillon.data.DictionaryDO;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -487,8 +488,50 @@ public class Dictionary {
         }
         return classname;
 	}
+    
+    public void createUserGroups() throws PapillonBusinessException {
+        
+        org.w3c.dom.Element docXml = XMLServices.buildDOMTree(this.getXmlCode()).getDocumentElement();
+    
+        //readers
+        String userGroupString = Group.READER_DICT_GROUP_PREFIX + this.getName();
+        DictionariesFactory.createUserGroup(docXml, userGroupString,"readers");
+        
+        //specialists
+        userGroupString = Group.SPECIALIST_DICT_GROUP_PREFIX + this.getName();
+        DictionariesFactory.createUserGroup(docXml, userGroupString,"specialists");
+        
+        //validators
+        userGroupString = Group.VALIDATOR_DICT_GROUP_PREFIX + this.getName();
+        DictionariesFactory.createUserGroup(docXml,userGroupString,"validators");
+        
+        //administrators
+        userGroupString = Group.ADMIN_DICT_GROUP_PREFIX + this.getName();
+        DictionariesFactory.createUserGroup(docXml, userGroupString,"administrators");
+    }
+    
+    public void deleteUserGroups() throws PapillonBusinessException {
+        
+        // delete dictionary admin group
+        String adminGroupString = Group.ADMIN_DICT_GROUP_PREFIX + this.getName();
+        GroupAnswer theAnswer = GroupsFactory.deleteGroup(adminGroupString);
+        
+        String validatorsGroupString = Group.VALIDATOR_DICT_GROUP_PREFIX + this.getName();
+        theAnswer = GroupsFactory.deleteGroup(validatorsGroupString);
+        
+        String reviewersGroupString = Group.SPECIALIST_DICT_GROUP_PREFIX + this.getName();
+        theAnswer = GroupsFactory.deleteGroup(reviewersGroupString);
+        
+        String readersGroupString = Group.READER_DICT_GROUP_PREFIX + this.getName();
+        theAnswer = GroupsFactory.deleteGroup(readersGroupString);
+    }
+    
+    
+    public void deleteDefaultXslSheet() throws PapillonBusinessException {
+        XslSheetFactory.removeXslSheet("",this.getName(),"");
+    }
    
-    public void save() 
+    public void save()
         throws PapillonBusinessException {
         try {
             this.myDO.commit();
@@ -508,18 +551,7 @@ public class Dictionary {
      */
     public void deleteAll() throws PapillonBusinessException {
 		
-        // delete dictionary admin group
-        String adminGroupString = Group.ADMIN_DICT_GROUP_PREFIX + this.getName();
-        GroupAnswer theAnswer = GroupsFactory.deleteGroup(adminGroupString);
-
-        String validatorsGroupString = Group.VALIDATOR_DICT_GROUP_PREFIX + this.getName();
-        theAnswer = GroupsFactory.deleteGroup(validatorsGroupString);
-
-        String reviewersGroupString = Group.SPECIALIST_DICT_GROUP_PREFIX + this.getName();
-        theAnswer = GroupsFactory.deleteGroup(reviewersGroupString);
-
-        String readersGroupString = Group.READER_DICT_GROUP_PREFIX + this.getName();
-        theAnswer = GroupsFactory.deleteGroup(readersGroupString);
+        this.deleteUserGroups();
         //
         for (Iterator iter =  VolumesFactory.getVolumesArray(this.getName()).iterator(); iter.hasNext();) {
             ((Volume)iter.next()).deleteAll();

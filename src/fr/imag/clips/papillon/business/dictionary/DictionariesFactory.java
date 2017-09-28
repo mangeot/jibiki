@@ -479,22 +479,6 @@ public class DictionariesFactory {
 		myDict = DictionariesFactory.newDictionary(dictionary);
 		if (null != myDict) {
             
-            //readers
-            String userGroupString = Group.READER_DICT_GROUP_PREFIX + myDict.getName();
-            createUserGroup(dictionary, userGroupString,"readers");
-            
-            //specialists
-            userGroupString = Group.SPECIALIST_DICT_GROUP_PREFIX + myDict.getName();
-            createUserGroup(dictionary, userGroupString,"specialists");
-            
-            //validators
-            userGroupString = Group.VALIDATOR_DICT_GROUP_PREFIX + myDict.getName();
-            createUserGroup(dictionary,userGroupString,"validators");
- 
-            //administrators
-            userGroupString = Group.ADMIN_DICT_GROUP_PREFIX + myDict.getName();
-            createUserGroup(dictionary, userGroupString,"administrators");
-
 			// DONE: allow several stylesheets in metadata
 			NodeList stylesheets =(NodeList)docXml.getElementsByTagNameNS(DML_URI,XSLSHEET_REF_TAG);
 			for (int i=0; i<stylesheets.getLength(); i++) {
@@ -557,7 +541,7 @@ public class DictionariesFactory {
 		return myDict;
 	}
 	
-    private static void createUserGroup(Element dictionary, String userGroupString, String userGroupXmlName) throws PapillonBusinessException {
+    public static void createUserGroup(Element dictionary, String userGroupString, String userGroupXmlName) throws PapillonBusinessException {
         NodeList usersNodeList = (NodeList) dictionary.getElementsByTagNameNS(DML_URI,userGroupXmlName);
         if ((null != usersNodeList) && (usersNodeList.getLength() > 0)) {
             Element usersElement = (Element) usersNodeList.item(0);
