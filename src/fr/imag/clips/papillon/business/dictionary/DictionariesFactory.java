@@ -478,7 +478,7 @@ public class DictionariesFactory {
 		// ajout du dico ds la table.
 		myDict = DictionariesFactory.newDictionary(dictionary);
 		if (null != myDict) {
-            
+            myDict.createUserGroups();
 			// DONE: allow several stylesheets in metadata
 			NodeList stylesheets =(NodeList)docXml.getElementsByTagNameNS(DML_URI,XSLSHEET_REF_TAG);
 			for (int i=0; i<stylesheets.getLength(); i++) {
