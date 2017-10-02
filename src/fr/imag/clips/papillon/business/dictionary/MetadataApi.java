@@ -330,6 +330,7 @@ public class MetadataApi {
         int status = HttpPresentationResponse.SC_CREATED;
         org.w3c.dom.Document content = null;
         String errorMsg = "";
+        String exceptionMessage = "";
         
         org.w3c.dom.Document volDom = null;
         if (contentType.equals(XML_CONTENTTYPE)) {
@@ -342,22 +343,36 @@ public class MetadataApi {
             if (volumeXml != null && !volumeXml.equals("")) {
                 Dictionary theDict = DictionariesFactory.getDictionaryByName(dictName);
                 if (theDict !=null && !theDict.isEmpty()) {
-                Volume theVolume = VolumesFactory.parseVolumeMetadata(theDict, volDom, null, false, false);
-                if (theVolume !=null && !theVolume.isEmpty()) {
                     if (userCanHandleMetadata(theUser, theDict)) {
                         java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
                         if (volumesCollection ==null || volumesCollection.size()==0) {
-                             theVolume.save();
-                            fr.imag.clips.papillon.business.edition.UITemplates.resetCache();
-                            VolumeEntriesFactory.resetCountCache(theVolume.getName());
-                            theVolume.getCount();
-                            Papillon.initializeAllCaches();
-                            String userMessage = "Adding " + theVolume.getName() + " volume: " + theVolume.getDictname() + " // "  + theVolume.getDbname() + " // " + theVolume.getSourceLanguage() + " // " + theVolume.getTargetLanguages() + " // " + theVolume.getVolumeRef();
-                            PapillonLogger.writeDebugMsg(userMessage);
-                            
-                            content = XMLServices.buildDOMTree(theVolume.getXmlCode());
-                            status = HttpPresentationResponse.SC_NO_CONTENT;
-                        }
+                            Volume theVolume = null;
+                            try {
+                                theVolume = VolumesFactory.parseVolumeMetadata(theDict, volDom, null, false, false);
+                            }
+                            catch (Error e) {
+                            // XML is not semantically correct.
+                                if (e.getMessage() != null) {
+                                    exceptionMessage = e.getMessage();
+                                }
+                            }
+                            if (theVolume !=null && !theVolume.isEmpty()) {
+                                fr.imag.clips.papillon.business.edition.UITemplates.resetCache();
+                                VolumeEntriesFactory.resetCountCache(theVolume.getName());
+                                theVolume.getCount();
+                                Papillon.initializeAllCaches();
+                                String userMessage = "Adding " + theVolume.getName() + " volume: " + theVolume.getDictname() + " // "  + theVolume.getDbname() + " // " + theVolume.getSourceLanguage() + " // " + theVolume.getTargetLanguages() + " // " + theVolume.getVolumeRef();
+                                PapillonLogger.writeDebugMsg(userMessage);
+                                
+                                content = XMLServices.buildDOMTree(theVolume.getXmlCode());
+                                status = HttpPresentationResponse.SC_CREATED;
+                            }
+                            else {
+                                errorMsg = "Error: volume metadata for volume: " + dictName + " lang: " + lang + " is not semantically correct! " + exceptionMessage;
+                                status = 422;
+                                content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + status + " Unprocessable entity</h1><p>" + errorMsg + "</p></html>");
+                            }
+                       }
                         else {
                             errorMsg = "Error: conflict, volume in dict: " + dictName + " lang: "+lang+" already exists!";
                             status = 409;
@@ -370,12 +385,6 @@ public class MetadataApi {
                         status = HttpPresentationResponse.SC_UNAUTHORIZED;
                         content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + status + "</h1><p>" + errorMsg + "</p></html>");
                     }
-                }
-                else {
-                    errorMsg = "Error: volume metadata for volume: " + dictName + " lang: " + lang + " is not semantically correct!";
-                    status = 422;
-                    content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + status + " Unprocessable entity</h1><p>" + errorMsg + "</p></html>");
-                }
                 }
                 else {
                     errorMsg = "Error: dictionary " + dictName + " for volume " + lang + " does not exist!";

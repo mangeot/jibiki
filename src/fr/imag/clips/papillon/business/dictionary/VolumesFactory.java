@@ -524,8 +524,8 @@ public class VolumesFactory {
         Volume resVolume = null;
 
         try {
-//            PapillonLogger.writeDebugMsg("The xml code:");
-//            PapillonLogger.writeDebugMsg(XMLServices.xmlCodePrettyPrinted(docXml));
+            //PapillonLogger.writeDebugMsg("The xml code:");
+            //PapillonLogger.writeDebugMsg(XMLServices.xmlCodePrettyPrinted(docXml));
 
             //on recupere le volume
             Element volume;
@@ -546,9 +546,9 @@ public class VolumesFactory {
             if (schemaElement != null) {
                 schemaString = XMLServices.NodeToString(schemaElement);
             }
-            String tmplEntryString = "";
+           String tmplEntryString = "";
             if (tmplEntryElement != null) {
-                tmplEntryString = XMLServices.NodeToString(tmplEntryElement.getFirstChild());
+                tmplEntryString = XMLServices.NodeToString(getFirstElement(tmplEntryElement));
             }
             String tmplInterfaceString = "";
             if (tmplInterfaceElement != null) {
@@ -1985,6 +1985,15 @@ public class VolumesFactory {
 				}
 			}
         }
+    }
+    
+    public static Element getFirstElement(Element parent)
+    {
+        for(Node child = parent.getFirstChild(); child != null; child = child.getNextSibling())
+        {
+            if (child instanceof Element) return (Element) child;
+        }
+        return null;
     }
 
 }
