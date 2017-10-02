@@ -120,7 +120,6 @@ public class MetadataApi {
                     
                             String userMessage = "adding " + theDict.getName() + " dictionary" + " // " + theDict.getCategory() + " // " + theDict.getType() + " // " + theDict.getDomain() + " // " + theDict.getLegal() + " // " + theDict.getSourceLanguages() + " // " + theDict.getTargetLanguages();
                             PapillonLogger.writeDebugMsg(userMessage);
-                            theDict.save();
                            content = XMLServices.buildDOMTree(theDict.getXmlCode());
                             status = HttpPresentationResponse.SC_CREATED;
                         }

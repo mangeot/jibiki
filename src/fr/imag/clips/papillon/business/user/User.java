@@ -569,6 +569,7 @@ public class User implements com.lutris.appserver.server.user.User {
 	
 	public void save()
 		throws PapillonBusinessException {
+            // on supprime la sérialisation car elle pose des pbs de synchro de BD
             //String xml = this.serializeXml();
 			// PapillonLogger.writeDebugMsg("User.save" + xml);
             //this.setXmlCode(this.serializeXml());
