@@ -556,14 +556,15 @@ public class DictionariesFactory {
                         GroupAnswer aGroupAnswer = GroupsFactory.createUniqueGroup(userGroupString, aUser.getPassword(),aUser.getPassword(), aUser.getLogin());
                         if (!aGroupAnswer.isEmpty()) {
                             aGroup = aGroupAnswer.getGroup();
-                            aGroup.save();
                         }
                     }
                     if (aGroup != null && !aGroup.isEmpty()) {
                         aGroup.addUser(aUser.getLogin());
+                        PapillonLogger.writeDebugMsg("Group " + aGroup.getName() + " add user " + aUser.getLogin());
                         aGroup.save();
                         aUser.addGroup(aGroup.getName());
-                        aUser.save();
+                        PapillonLogger.writeDebugMsg("User " + aUser.getLogin() + " add group " + aGroup.getName());
+                       aUser.save();
                     }
                 }
             }

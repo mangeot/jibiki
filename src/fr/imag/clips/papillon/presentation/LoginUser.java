@@ -142,7 +142,7 @@ public class LoginUser extends PapillonBasePO {
         PapillonLogger.writeDebugMsg("LoginUser.po with parameters: " + params);*/
         if (req.getParameterNames().hasMoreElements()) {
             if (null != myGetParameter(LOGIN_OK_MESSAGE)) {
-                this.getComms().response.setHeader("Cache-Control", "private, max-age=10800, pre-check=10800");
+         /*       this.getComms().response.setHeader("Cache-Control", "private, max-age=10800, pre-check=10800"); */
                content.getElementLoginOKMessage().setAttribute("style",MESSAGE_STYLE);
             }
             else if (null != myGetParameter(SUBMIT_PARAMETER) &&
@@ -179,7 +179,7 @@ public class LoginUser extends PapillonBasePO {
                      		throw new ClientPageRedirectException(Dest);
                         }
                         else {
-                            this.getComms().response.setHeader("Cache-Control", "private, max-age=10800, pre-check=10800");
+                          /*  this.getComms().response.setHeader("Cache-Control", "private, max-age=10800, pre-check=10800"); */
                             content.getElementLoginOKMessage().setAttribute("style",MESSAGE_STYLE);
                         }
                     } else {

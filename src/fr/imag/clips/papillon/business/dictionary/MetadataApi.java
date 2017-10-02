@@ -117,7 +117,7 @@ public class MetadataApi {
                     Dictionary theDict = DictionariesFactory.parseDictionaryMetadata(dictDom, null, false, false, false);
                     if (theDict !=null && !theDict.isEmpty()) {
                         if (userCanHandleMetadata(theUser,theDict)) {
-                    
+                            theDict.save();
                             String userMessage = "adding " + theDict.getName() + " dictionary" + " // " + theDict.getCategory() + " // " + theDict.getType() + " // " + theDict.getDomain() + " // " + theDict.getLegal() + " // " + theDict.getSourceLanguages() + " // " + theDict.getTargetLanguages();
                             PapillonLogger.writeDebugMsg(userMessage);
                            content = XMLServices.buildDOMTree(theDict.getXmlCode());
@@ -125,7 +125,9 @@ public class MetadataApi {
                         }
                         else {
                             // il faut tout supprimer
-                            theDict.deleteAll();
+                            theDict.deleteUserGroups();
+                            theDict.deleteDefaultXslSheet();
+                            
                             // Il faut vider le cache
                             DictionariesFactory.initializeDictionaryCache();
                             String login = (theUser!=null && !theUser.isEmpty())?theUser.getLogin():"";
@@ -551,6 +553,7 @@ public class MetadataApi {
     public static boolean userCanHandleMetadata(User myUser, Dictionary theDict)
     throws fr.imag.clips.papillon.business.PapillonBusinessException {
         boolean answer = false;
+        PapillonLogger.writeDebugMsg("userCanHandleMetadata: user: " + myUser.getLogin() + " dict: " + theDict.getName());
         if (null != myUser && !myUser.isEmpty() && (myUser.isAdmin() || myUser.isInGroup(Group.ADMIN_DICT_GROUP_PREFIX + theDict.getName()))) {
             answer=true;
         }

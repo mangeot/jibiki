@@ -632,9 +632,9 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
     public void run(HttpPresentationComms comms) throws HttpPresentationException, IOException, Exception {
         this.myComms = comms;
         
-        if (PAGE_EXPIRE_TIME>0) {
+    /*    if (PAGE_EXPIRE_TIME>0) {
             this.myComms.response.setHeader("Cache-Control", "s-maxage=" + PAGE_EXPIRE_TIME);
-        }
+        } */
 
         // code spécial pour récupérer la session active car il semble qu'il n'y ait pas de session attachée au ErrorHandler !
         if (this.myComms != null && this.myComms.sessionData == null) {
