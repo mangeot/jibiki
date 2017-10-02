@@ -565,6 +565,7 @@ public class DictionariesFactory {
                         aUser.addGroup(aGroup.getName());
                         PapillonLogger.writeDebugMsg("User " + aUser.getLogin() + " add group " + aGroup.getName());
                        aUser.save();
+                        PapillonLogger.writeDebugMsg("User " + aUser.getLogin() " saved.");
                     }
                 }
             }
