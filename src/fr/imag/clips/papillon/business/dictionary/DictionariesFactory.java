@@ -561,8 +561,8 @@ public class DictionariesFactory {
                     }
                     if (aGroup != null && !aGroup.isEmpty()) {
                         aGroup.addUser(aUser.getLogin());
-                        aUser.addGroup(aGroup.getName());
                         aGroup.save();
+                        aUser.addGroup(aGroup.getName());
                         aUser.save();
                     }
                 }

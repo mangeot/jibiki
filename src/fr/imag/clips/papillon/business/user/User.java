@@ -569,9 +569,9 @@ public class User implements com.lutris.appserver.server.user.User {
 	
 	public void save()
 		throws PapillonBusinessException {
-            String xml = this.serializeXml();
+            //String xml = this.serializeXml();
 			// PapillonLogger.writeDebugMsg("User.save" + xml);
-            this.setXmlCode(this.serializeXml());
+            //this.setXmlCode(this.serializeXml());
 			try {
                 if (null == this.getCreationDate()) {
                     this.myDO.setCreationDate(new java.sql.Date(new java.util.Date().getTime()));

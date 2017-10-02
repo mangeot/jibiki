@@ -1212,6 +1212,10 @@ public class Volume {
 		}
 	}	
 	
+    public void deleteDefaultXslSheet() throws PapillonBusinessException {
+        XslSheetFactory.removeXslSheet("",this.getDictname(),this.getName());
+    }
+
     /**
 	 * Saves the Volume into the database.
      *
@@ -1258,6 +1262,7 @@ public class Volume {
     public void deleteAll() 
         throws PapillonBusinessException {
 			try {
+                deleteDefaultXslSheet();
 				if (this.getLocation().equals(LOCAL_LOCATION)) {
 					VolumeEntriesFactory.dropVolumeTables(this);
 				}

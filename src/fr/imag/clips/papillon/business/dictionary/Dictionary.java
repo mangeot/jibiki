@@ -550,7 +550,9 @@ public class Dictionary {
      *   error).
      */
     public void deleteAll() throws PapillonBusinessException {
-		
+        
+        this.deleteDefaultXslSheet();
+
         this.deleteUserGroups();
         //
         for (Iterator iter =  VolumesFactory.getVolumesArray(this.getName()).iterator(); iter.hasNext();) {

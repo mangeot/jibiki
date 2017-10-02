@@ -125,10 +125,8 @@ public class MetadataApi {
                             status = HttpPresentationResponse.SC_CREATED;
                         }
                         else {
-                            // Il faut supprimer les groupes
-                            theDict.deleteUserGroups();
-                            // il faut supprimer les feuilles de style
-                            theDict.deleteDefaultXslSheet();
+                            // il faut tout supprimer
+                            theDict.deleteAll();
                             // Il faut vider le cache
                             DictionariesFactory.initializeDictionaryCache();
                             String login = (theUser!=null && !theUser.isEmpty())?theUser.getLogin():"";
