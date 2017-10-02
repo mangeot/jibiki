@@ -22,6 +22,7 @@ import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.user.User;
 import fr.imag.clips.papillon.business.utility.Utility;
 import fr.imag.clips.papillon.business.xml.XMLServices;
+import fr.imag.clips.papillon.business.xsl.XslSheetFactory;
 import fr.imag.clips.papillon.data.VolumeDO;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
