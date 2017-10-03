@@ -465,8 +465,8 @@ public class DictionariesFactory {
 	(Document docXml, URL fileURL, boolean loadVolumes, boolean loadEntries, boolean logContribs)
 	throws fr.imag.clips.papillon.business.PapillonBusinessException {
 		Dictionary myDict = null;
-		PapillonLogger.writeDebugMsg("The xml");
-		PapillonLogger.writeDebugMsg(XMLServices.xmlCode(docXml));
+		//PapillonLogger.writeDebugMsg("The xml");
+		//PapillonLogger.writeDebugMsg(XMLServices.xmlCode(docXml));
 		
 		// on recupere l'element dictionary
 		Element dictionary = (Element)docXml.getElementsByTagNameNS(DML_URI,DICTIONARY_TAG).item(0);
@@ -560,12 +560,12 @@ public class DictionariesFactory {
                     }
                     if (aGroup != null && !aGroup.isEmpty()) {
                         aGroup.addUser(aUser.getLogin());
-                        PapillonLogger.writeDebugMsg("Group " + aGroup.getName() + " add user " + aUser.getLogin());
+                        //PapillonLogger.writeDebugMsg("Group " + aGroup.getName() + " add user " + aUser.getLogin());
                         aGroup.save();
                         aUser.addGroup(aGroup.getName());
-                        PapillonLogger.writeDebugMsg("User " + aUser.getLogin() + " add group " + aGroup.getName());
+                        //PapillonLogger.writeDebugMsg("User " + aUser.getLogin() + " add group " + aGroup.getName());
                        aUser.save();
-                        PapillonLogger.writeDebugMsg("User " + aUser.getLogin() + " saved.");
+                        //PapillonLogger.writeDebugMsg("User " + aUser.getLogin() + " saved.");
                     }
                 }
             }

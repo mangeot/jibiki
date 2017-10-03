@@ -228,6 +228,7 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
 					}
                     else if (theRequest.getMethod().equals("OPTIONS")) {
                         // System.out.println("OPTIONS");
+                        theResponse.setHeader("Access-Control-Allow-Methods","GET, PUT, POST, DELETE, OPTIONS");
                         theResponse.setHeader("Allow","GET, POST, PUT, DELETE, OPTIONS");
                     }
                     else {
@@ -270,6 +271,7 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
 					}
                     else if (theRequest.getMethod().equals("OPTIONS")) {
                         // System.out.println("OPTIONS");
+                        theResponse.setHeader("Access-Control-Allow-Methods","GET, PUT, POST, DELETE, OPTIONS");
                         theResponse.setHeader("Allow","GET, POST, PUT, DELETE, OPTIONS");
                     }
                     else {

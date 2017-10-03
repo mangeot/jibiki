@@ -67,8 +67,8 @@
 <p>Answer:</p>
 <pre class="api">
 &lt;?xml version="1.0" encoding="UTF-8"?&gt;
-&lt;d:dictionary-metadata-list xmlns:d="http://www-clips.imag.fr/geta/services/dml">
-    &lt;dictionary-metadata-files>
+&lt;d:dictionary-metadata-list xmlns:d="http://www-clips.imag.fr/geta/services/dml"&gt;
+    &lt;d:dictionary-metadata-files xmlns:d="http://www-clips.imag.fr/geta/services/dml"&gt;
         &lt;dictionary-metadata xmlns="http://www-clips.imag.fr/geta/services/dml"
             xmlns:d="http://www-clips.imag.fr/geta/services/dml"
             xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -83,8 +83,8 @@
             xsi:schemaLocation="http://www-clips.imag.fr/geta/services/dml http://www-clips.imag.fr/geta/services/dml/dml.xsd">
         [...]
         &lt;/dictionary-metadata>
-    &lt;/dictionary-metadata-files>
-    &lt;dictionary-metadata-files>
+    &lt;/d:dictionary-metadata-files>
+    &lt;d:dictionary-metadata-files xmlns:d="http://www-clips.imag.fr/geta/services/dml"&gt;
     &lt;dictionary-metadata
        xmlns="http://www-clips.imag.fr/geta/services/dml"
        xmlns:d="http://www-clips.imag.fr/geta/services/dml"
@@ -100,7 +100,7 @@
        xsi:schemaLocation="http://www-clips.imag.fr/geta/services/dml http://www-clips.imag.fr/geta/services/dml/dml.xsd"&gt;
     [...]
     &lt;/dictionary-metadata>
-    &lt;/dictionary-metadata-files>
+    &lt;/d:dictionary-metadata-files>
 &lt;/d:dictionary-metadata-list&gt;
 </pre>
 
@@ -127,7 +127,7 @@
 <p>Answer:</p>
 <pre class="api">
 &lt;?xml version="1.0" encoding="UTF-8"?&gt;
-    &lt;dictionary-metadata-files xmlns:d="http://www-clips.imag.fr/geta/services/dml"&gt;
+    &lt;d:dictionary-metadata-files xmlns:d="http://www-clips.imag.fr/geta/services/dml"&gt;
         &lt;dictionary-metadata
             xmlns="http://www-clips.imag.fr/geta/services/dml"
             xmlns:d="http://www-clips.imag.fr/geta/services/dml"
@@ -163,7 +163,7 @@
             &lt;/volumes>
             &lt;xsl-stylesheet name="Armement" xlink:href="Armement-view.xsl"/>
         &lt;/dictionary-metadata>
-    &lt;/dictionary-metadata-files&gt;
+    &lt;/d:dictionary-metadata-files&gt;
 </pre>
 
 
@@ -193,7 +193,7 @@
     -H "Accept: application/xml" \
     -H "Content-Type: application/xml;charset=UTF-8" \
     -d '&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-    &lt;dictionary-metadata-files&gt;
+    &lt;d:dictionary-metadata-files xmlns:d="http://www-clips.imag.fr/geta/services/dml"&gt;
     &lt;dictionary-metadata
        xmlns="http://www-clips.imag.fr/geta/services/dml"
        xmlns:d="http://www-clips.imag.fr/geta/services/dml"
@@ -213,7 +213,10 @@
     &lt;xsl:stylesheet&gt;
     [...]
     &lt;/xsl:stylesheet&gt;
-    &lt;/dictionary-metadata-files&gt;
+    &lt;xsl:stylesheet&gt;
+    [...]
+    &lt;/xsl:stylesheet&gt;
+    &lt;/d:dictionary-metadata-files&gt;
     '\
     "api/Cesselin"
 </pre>
@@ -247,7 +250,7 @@
     -H "Accept: application/xml" \
     -H "Content-Type: application/xml;charset=UTF-8" \
     -d '&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-    &lt;dictionary-metadata-files&gt;
+    &lt;d:dictionary-metadata-files xmlns:d="http://www-clips.imag.fr/geta/services/dml"&gt;
     &lt;dictionary-metadata
         xmlns="http://www-clips.imag.fr/geta/services/dml"
         xmlns:d="http://www-clips.imag.fr/geta/services/dml"
@@ -267,7 +270,7 @@
     &lt;xsl:stylesheet>
     [...]
     &lt;/xsl:stylesheet>
-    &lt;/dictionary-metadata-files&gt;
+    &lt;/d:dictionary-metadata-files&gt;
     '\
     "api/Cesselin"
 </pre>
@@ -324,7 +327,7 @@
     -H "Accept: application/xml" \
     -H "Content-Type: application/xml;charset=UTF-8" \
     -d '&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-    &lt;volume-metadata-files>
+    &lt;d:volume-metadata-files xmlns:d="http://www-clips.imag.fr/geta/services/dml"&gt;
     &lt;volume-metadata xmlns="http://www-clips.imag.fr/geta/services/dml"
         xmlns:d="http://www-clips.imag.fr/geta/services/dml"
         xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -346,13 +349,13 @@
     &lt;d:template-interface>
     [...]
     &lt;/d:template-interface>
-    &lt;xs:schema>
+    &lt;xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema"&gt;
     [...]
     &lt;/xs:schema>
     &lt;xsl:stylesheet>
     [...]
     &lt;/xsl:stylesheet>
-    &lt;/volume-metadata-files>
+    &lt;/d:volume-metadata-files>
     '\
     "api/Cesselin/jpn"
 </pre>
@@ -385,14 +388,23 @@
     -H "Accept: application/xml" \
     -H "Content-Type: application/xml;charset=UTF-8" \
     -d '&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-    &lt;volume-metadata-files>
+    &lt;d:volume-metadata-files xmlns:d="http://www-clips.imag.fr/geta/services/dml"&gt;
     &lt;volume-metadata xmlns="http://www-clips.imag.fr/geta/services/dml" xmlns:d="http://www-clips.imag.fr/geta/services/dml" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" category="bilingual" creation-date="2015-05-14T07:44:55+02:00" fullname="Dictionnaire japonais-français par Gustave Cesselin" installation-date="2015-05-14T07:44:55+02:00" last-modification-date="2015-05-14T07:45:53+02:00" name="Cesselin" owner="mangeot" type="monodirectional" xsi:schemaLocation="http://www-clips.imag.fr/geta/services/dml http://www-clips.imag.fr/geta/services/dml/dml.xsd">
     [...]
     &lt;/volume-metadata>
+    &lt;d:template-entry>
+    [...]
+    &lt;/d:template-entry>
+    &lt;d:template-interface>
+    [...]
+    &lt;/d:template-interface>
+    &lt;xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema"&gt;
+    [...]
+    &lt;/xs:schema>
     &lt;xsl:stylesheet>
     [...]
     &lt;/xsl:stylesheet>
-    &lt;/volume-metadata-files>
+    &lt;/d:volume-metadata-files>
     '\
     "api/Cesselin/jpn"
 </pre>
@@ -425,14 +437,23 @@
     -H "Accept: application/xml" \
     -H "Content-Type: application/xml;charset=UTF-8" \
     -d '&lt;?xml version="1.0" encoding="UTF-8"?>
-    &lt;volume-metadata-files>
+    &lt;d:volume-metadata-files xmlns:d="http://www-clips.imag.fr/geta/services/dml"&gt;
     &lt;volume-metadata xmlns="http://www-clips.imag.fr/geta/services/dml" xmlns:d="http://www-clips.imag.fr/geta/services/dml" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" category="bilingual" creation-date="2015-05-14T07:44:55+02:00" fullname="Dictionnaire japonais-français par Gustave Cesselin" installation-date="2015-05-14T07:44:55+02:00" last-modification-date="2015-05-14T07:45:53+02:00" name="Cesselin" owner="mangeot" type="monodirectional" xsi:schemaLocation="http://www-clips.imag.fr/geta/services/dml http://www-clips.imag.fr/geta/services/dml/dml.xsd">
     [...]
     &lt;/volume-metadata>
+    &lt;d:template-entry>
+    [...]
+    &lt;/d:template-entry>
+    &lt;d:template-interface>
+    [...]
+    &lt;/d:template-interface>
+    &lt;xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema"&gt;
+    [...]
+    &lt;/xs:schema>
     &lt;xsl:stylesheet>
     [...]
     &lt;/xsl:stylesheet>
-    &lt;/volume-metadata-files>
+    &lt;/d:volume-metadata-files>
     '\
     "api/Cesselin/jpn"
 </pre>
