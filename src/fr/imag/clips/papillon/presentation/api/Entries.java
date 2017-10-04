@@ -602,7 +602,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 		return answer;
 	}
 
-	public static org.w3c.dom.Document postEntries(String dictName, String lang, String headword, String docXml, User theUser)
+	public static org.w3c.dom.Document postEntries(String dictName, String lang, String entryid, String docXml, User theUser)
 	throws HttpPresentationException, java.io.IOException, Exception {
 		
 		Dictionary theDict = null;
@@ -614,15 +614,17 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 			java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
 			if (volumesCollection !=null && volumesCollection.size()>0) {
 				theVolume = (Volume) volumesCollection.iterator().next();
-				PapillonLogger.writeDebugMsg("postEntry: headword: " + headword + " volume: " + theVolume.getName());
+				PapillonLogger.writeDebugMsg("postEntry: entryid: " + entryid + " volume: " + theVolume.getName());
                 String message = "";
                 
                 try {
                     message = ParseVolume.parseVolume(theDict, theVolume, docXml, VolumeEntry.FINISHED_STATUS,
                                             0, 50,
                                             false, true);
+                    PapillonLogger.writeDebugMsg("parseVolume: " + message);
                 }
                 catch (Exception e) {
+                    e.printStackTrace();
                     resultDoc = null;
                 }
                 if (message.indexOf(ParseVolume.ENTRIES_ADDED)>=0) {

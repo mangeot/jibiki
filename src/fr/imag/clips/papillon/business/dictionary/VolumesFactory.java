@@ -604,7 +604,6 @@ public class VolumesFactory {
                     }
                 }
 
-
                 if (resVolume.getLocation().equals(Volume.LOCAL_LOCATION) && !virtual) {
                     VolumeEntriesFactory.createVolumeTables(resVolume);
                     if (parseEntries) {

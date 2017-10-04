@@ -8,6 +8,7 @@
 package fr.imag.clips.papillon.business.dictionary;
 
 import com.lutris.appserver.server.httpPresentation.HttpPresentationResponse;
+import com.lutris.appserver.server.sql.DBTransaction;
 
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.PapillonLogger;
@@ -16,6 +17,7 @@ import fr.imag.clips.papillon.business.user.User;
 import fr.imag.clips.papillon.business.xsl.XslSheet;
 import fr.imag.clips.papillon.business.xsl.XslSheetFactory;
 import fr.imag.clips.papillon.business.xml.XMLServices;
+import fr.imag.clips.papillon.CurrentDBTransaction;
 import fr.imag.clips.papillon.Papillon;
 
 
@@ -345,31 +347,56 @@ public class MetadataApi {
                     if (userCanHandleMetadata(theUser, theDict)) {
                         java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
                         if (volumesCollection ==null || volumesCollection.size()==0) {
+                            
+                            // Create and Register the transaction
+                            CurrentDBTransaction.registerNewDBTransaction();
                             Volume theVolume = null;
                             try {
                                 theVolume = VolumesFactory.parseVolumeMetadata(theDict, volDom, null, false, false);
-                            }
-                            catch (Error e) {
-                            // XML is not semantically correct.
-                                if (e.getMessage() != null) {
-                                    exceptionMessage = e.getMessage();
-                                }
-                            }
-                            if (theVolume !=null && !theVolume.isEmpty()) {
-                                fr.imag.clips.papillon.business.edition.UITemplates.resetCache();
-                                VolumeEntriesFactory.resetCountCache(theVolume.getName());
-                                theVolume.getCount();
-                                Papillon.initializeAllCaches();
-                                String userMessage = "Adding " + theVolume.getName() + " volume: " + theVolume.getDictname() + " // "  + theVolume.getDbname() + " // " + theVolume.getSourceLanguage() + " // " + theVolume.getTargetLanguages() + " // " + theVolume.getVolumeRef();
-                                PapillonLogger.writeDebugMsg(userMessage);
                                 
-                                content = XMLServices.buildDOMTree(theVolume.getXmlCode());
-                                status = HttpPresentationResponse.SC_CREATED;
-                            }
-                            else {
-                                errorMsg = "Error: volume metadata for volume: " + dictName + " lang: " + lang + " is not semantically correct! " + exceptionMessage;
+                                if (theVolume !=null && !theVolume.isEmpty()) {
+                                    fr.imag.clips.papillon.business.edition.UITemplates.resetCache();
+                                    VolumeEntriesFactory.resetCountCache(theVolume.getName());
+                                    theVolume.getCount();
+                                    Papillon.initializeAllCaches();
+                                    String userMessage = "Adding " + theVolume.getName() + " volume: " + theVolume.getDictname() + " // "  + theVolume.getDbname() + " // " + theVolume.getSourceLanguage() + " // " + theVolume.getTargetLanguages() + " // " + theVolume.getVolumeRef();
+                                    PapillonLogger.writeDebugMsg(userMessage);
+                                    
+                                }
+                                else {
+                                    errorMsg = "Error: volume metadata for volume: " + dictName + " lang: " + lang + " is not semantically correct! ";
+                                    status = 422;
+                                    content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + status + " Unprocessable entity</h1><p>" + errorMsg + "</p></html>");
+                                }
+                                // everything was correct, commit the transaction...
+                                try {
+                                    ((DBTransaction) CurrentDBTransaction.get()).commit();
+                                } catch (java.sql.SQLException sqle) {
+                                    PapillonLogger.writeDebugMsg("AdminVolumes: SQLException while commiting transaction.");
+                                    sqle.printStackTrace();
+                                    errorMsg = "Error: volume metadata for volume: " + dictName + " lang: " + lang + " is not semantically correct! " + sqle.getMessage();
+                                    status = 422;
+                                    content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + status + " Unprocessable entity</h1><p>" + errorMsg + "</p></html>");
+                                }
+                            } catch (PapillonBusinessException e) {
+                                e.printStackTrace();
+                                errorMsg = "Error: volume metadata for volume: " + dictName + " lang: " + lang + " is not semantically correct! " + e.getMessage();
                                 status = 422;
                                 content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + status + " Unprocessable entity</h1><p>" + errorMsg + "</p></html>");
+                                try {
+                                    ((DBTransaction) CurrentDBTransaction.get()).rollback();
+                                } catch (java.sql.SQLException sqle) {
+                                    PapillonLogger.writeDebugMsg("AdminVolumes: SQLException while rolling back failed transaction.");
+                                    sqle.printStackTrace();
+                                    errorMsg = "Error: volume metadata for volume: " + dictName + " lang: " + lang + " is not semantically correct! " + sqle.getMessage();
+                                    status = 422;
+                                    content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + status + " Unprocessable entity</h1><p>" + errorMsg + "</p></html>");
+
+                                }
+                            } finally {
+                                CurrentDBTransaction.releaseCurrentDBTransaction();
+                                content = XMLServices.buildDOMTree(theVolume.getXmlCode());
+                                status = HttpPresentationResponse.SC_CREATED;
                             }
                        }
                         else {
