@@ -75,14 +75,12 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
 	protected static String LIMIT_PARAMETER = "count";
     protected static String OFFSET_PARAMETER = "startIndex";
     protected static String ORDERBY_PARAMETER = "sortBy";
-    protected static String JSON_CONTENTTYPE = "text/json";
-    protected static String XML_CONTENTTYPE = "text/xml";
     protected static String ENHYDRA_SESSION_COOKIE = "JSESSIONID";
  
     protected int PAGE_EXPIRE_TIME = ((Papillon) Enhydra.getApplication()).getPageExpireTime();
    
-    private String sentContentType = XML_CONTENTTYPE;
-    private String acceptContentType = XML_CONTENTTYPE;
+    private String sentContentType = MetadataApi.XML_CONTENTTYPE;
+    private String acceptContentType = MetadataApi.XML_CONTENTTYPE;
    
 	
 	/**
@@ -129,10 +127,10 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                 setUserFromLoginPassword(login,password);
                 
                 if (null != theRequest.getHeader("Accept") && theRequest.getHeader("Accept").startsWith("application/json")) {
-                    acceptContentType = JSON_CONTENTTYPE;
+                    acceptContentType = MetadataApi.JSON_CONTENTTYPE;
                 }
                 if (null != theRequest.getHeader("Content-Type") && theRequest.getHeader("Content-Type").startsWith("application/json")) {
-                    sentContentType = JSON_CONTENTTYPE;
+                    sentContentType = MetadataApi.JSON_CONTENTTYPE;
                 }
                 
                 PapillonLogger.writeDebugMsg("REST API URI : [" + prefix + "] " + theRequest.getPresentationURI()+" Accept: "+theRequest.getHeader("Accept")+" ;");
@@ -294,7 +292,7 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
 						String entry = convertStreamToString(inputStream);
 						//PapillonLogger.writeDebugMsg("put data: "+entry);
                         org.w3c.dom.Document entryDom = null;
-                        if (sentContentType.equals(XML_CONTENTTYPE)) {
+                        if (sentContentType.equals(MetadataApi.XML_CONTENTTYPE)) {
                        try {
                             entryDom = XMLServices.buildDOMTree(entry);
                         }
@@ -340,47 +338,11 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
 						HttpPresentationInputStream inputStream = theRequest.getInputStream();
 						String entry = convertStreamToString(inputStream);
                         //PapillonLogger.writeDebugMsg("post data: "+entry);
-                        if (sentContentType.equals(XML_CONTENTTYPE)) {
-                       try {
-                            org.w3c.dom.Document entryDom = XMLServices.buildDOMTree(entry);
-                        }
-                        catch (Exception e) {
-                            entry = "";
-                        }
-                        if (entry != null && !entry.equals("")) {
-                            if (Entries.userCanPostEntry(getUser(), dictName)) {
-                                content = Entries.postEntries(dictName, restStrings[1], restStrings[2], entry, this.getUser());
-                                if (content==null) {
-                                    String errorMsg = "Error: conflict with dict: " + dictName + " lang: " +  restStrings[1] +" headword: " + restStrings[2] + " !";
-                                    PapillonLogger.writeDebugMsg(errorMsg);
-                                    content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + 409 + " Conflict</h1><p>" + errorMsg + "</p></html>");
-                                    theResponse.setStatus(409, errorMsg);
-                                }
-                                else {
-                                    theResponse.setStatus(HttpPresentationResponse.SC_CREATED);
-                                }
-                            }
-                            else {
-                                String errorMsg = "Error: user: " + login +" not authorized to post entry!";
-                                //PapillonLogger.writeDebugMsg(errorMsg);
-                                content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + HttpPresentationResponse.SC_UNAUTHORIZED + "</h1><p>" + errorMsg + "</p></html>");
-                                theResponse.setStatus(HttpPresentationResponse.SC_UNAUTHORIZED,errorMsg);
-                            }
-                        }
-                        else {
-                            String errorMsg = "Error: entry: <![CDATA["+ entry +"]]> XML is malformed!";
-                            //PapillonLogger.writeDebugMsg(errorMsg);
-                            content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + HttpPresentationResponse.SC_BAD_REQUEST + "</h1><p>" + errorMsg + "</p></html>");
-                            theResponse.setStatus(HttpPresentationResponse.SC_BAD_REQUEST ,errorMsg);
-                        }
-                        }
-                        else {
-                            String errorMsg = "Error: only XML content type allowed!";
-                            //PapillonLogger.writeDebugMsg(errorMsg);
-                            content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + 415 + " Unsupported Media Type</h1><p>" + errorMsg + "</p></html>");
-                            theResponse.setStatus(415 ,errorMsg);
-                        }
-                       theResponse.flush();
+                        java.util.Vector responseVector = Entries.postEntries(dictName, restStrings[1], restStrings[2], entry, sentContentType, this.getUser());
+                        content = (org.w3c.dom.Document) responseVector.elementAt(0);
+                        status = ((Integer)responseVector.elementAt(1)).intValue();
+                        theResponse.setStatus(status, (String) responseVector.elementAt(2));
+                        theResponse.flush();
 					}
 					else if (theRequest.getMethod().equals("DELETE")) {
 						if (Entries.userCanDeleteEntry(getUser(),dictName)) {
@@ -494,7 +456,7 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                     content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + HttpPresentationResponse.SC_NOT_IMPLEMENTED + "</h1><p>" + errorMsg + "</p></html>");
                     theResponse.setStatus(HttpPresentationResponse.SC_NOT_IMPLEMENTED, errorMsg);
 				}
-                if (acceptContentType.equals(JSON_CONTENTTYPE)) {
+                if (acceptContentType.equals(MetadataApi.JSON_CONTENTTYPE)) {
                     try {
                         String xmlString = XMLServices.NodeToString(content);
                         org.json.JSONObject xmlJSONObj = org.json.XML.toJSONObject(xmlString);
@@ -668,7 +630,7 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
             flushPresentationContext();
         }
         
-        if (acceptContentType.equals(JSON_CONTENTTYPE)) {
+        if (acceptContentType.equals(MetadataApi.JSON_CONTENTTYPE)) {
             buffer = jsonString.getBytes("UTF-8");
         }
         else {

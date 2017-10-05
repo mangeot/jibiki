@@ -27,8 +27,8 @@ public class MetadataApi {
     + "xmlns:d='http://www-clips.imag.fr/geta/services/dml'>"
     + "</d:dictionary-metadata-list>";
 
-    protected static String JSON_CONTENTTYPE = "text/json";
-    protected static String XML_CONTENTTYPE = "text/xml";
+    public static String JSON_CONTENTTYPE = "text/json";
+    public static String XML_CONTENTTYPE = "text/xml";
     
     public static java.util.Vector getDictionaryList(User theUser)
     throws PapillonBusinessException {

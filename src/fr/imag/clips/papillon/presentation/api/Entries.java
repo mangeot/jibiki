@@ -46,6 +46,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import com.lutris.appserver.server.httpPresentation.HttpPresentationException;
+import com.lutris.appserver.server.httpPresentation.HttpPresentationResponse;
 import com.lutris.dods.builder.generator.query.QueryBuilder;
 
 import fr.imag.clips.papillon.business.PapillonLogger;
@@ -55,6 +56,7 @@ import fr.imag.clips.papillon.business.dictionary.DictionariesFactory;
 import fr.imag.clips.papillon.business.dictionary.Index;
 import fr.imag.clips.papillon.business.dictionary.IndexEntry;
 import fr.imag.clips.papillon.business.dictionary.IndexFactory;
+import fr.imag.clips.papillon.business.dictionary.MetadataApi;
 import fr.imag.clips.papillon.business.dictionary.ParseVolume;
 import fr.imag.clips.papillon.business.dictionary.QueryCriteria;
 import fr.imag.clips.papillon.business.dictionary.QueryRequest;
@@ -602,12 +604,17 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 		return answer;
 	}
 
-	public static org.w3c.dom.Document postEntries(String dictName, String lang, String entryid, String docXml, User theUser)
+	public static java.util.Vector postEntries(String dictName, String lang, String entryid, String docXml, String contentType, User theUser)
 	throws HttpPresentationException, java.io.IOException, Exception {
 		
-		Dictionary theDict = null;
+        java.util.Vector responseVector = new java.util.Vector(3);
+        int status = HttpPresentationResponse.SC_CREATED;
+        org.w3c.dom.Document resultDoc = null;
+        String errorMsg = "";
+        String exceptionMessage = "";
+
+        Dictionary theDict = null;
 		Volume theVolume = null;
-		org.w3c.dom.Document resultDoc = null;
 
 		theDict = DictionariesFactory.getDictionaryByName(dictName);
 		if (theDict !=null) {
@@ -616,15 +623,22 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 				theVolume = (Volume) volumesCollection.iterator().next();
 				PapillonLogger.writeDebugMsg("postEntry: entryid: " + entryid + " volume: " + theVolume.getName());
                 String message = "";
-                
+                if (userCanPutEntry(theUser,dictName)) {
+                if (contentType.equals(MetadataApi.XML_CONTENTTYPE)) {
+                    try {
+                        resultDoc = XMLServices.buildDOMTree(docXml);
+                    }
+                    catch (Exception e) {
+                        resultDoc = null;
+                    }
+                    if (resultDoc != null) {
                 try {
-                    message = ParseVolume.parseVolume(theDict, theVolume, docXml, VolumeEntry.FINISHED_STATUS,
-                                            0, 50,
-                                            false, true);
+                    message = ParseVolume.parseVolume(theDict, theVolume, docXml, VolumeEntry.FINISHED_STATUS, 0, 50, false, true);
                     PapillonLogger.writeDebugMsg("parseVolume: " + message);
                 }
                 catch (Exception e) {
                     e.printStackTrace();
+                    errorMsg = "Error: volume metadata for volume: " + dictName + " lang: " + lang + " is not semantically correct! " + e.getMessage();
                     resultDoc = null;
                 }
                 if (message.indexOf(ParseVolume.ENTRIES_ADDED)>=0) {
@@ -648,16 +662,53 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
                         resultDoc = XMLServices.buildDOMTree(resultString);
                     }
                     else {
+                        // TODO: test and message: no entries added?
                         resultDoc = null;
                     }
                 }
                 else {
+                    // TODO: test and message: no entries added?
                     resultDoc = null;
                 }
-			}
+                if (errorMsg != null) {
+                    status = 422;
+                    resultDoc = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + status + " Unprocessable entity</h1><p>" + errorMsg + "</p></html>");
+                }
+            }
+            else {
+                errorMsg = "Error: dictionary metadata: <![CDATA["+ docXml +"]]> XML is malformed!";
+                status = HttpPresentationResponse.SC_BAD_REQUEST;
+                resultDoc = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + status + "</h1><p>" + errorMsg + "</p></html>");
+            }
 		}
- 
-		return resultDoc;			
+        else {
+            errorMsg = "Error: only XML content type allowed!";
+            status = 415;
+            resultDoc = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + status + " Unsupported Media Type</h1><p>" + errorMsg + "</p></html>");
+            }
+        }
+        else {
+            errorMsg = "Error: user: " + theUser.getLogin() +" not authorized to put entry!";
+            //PapillonLogger.writeDebugMsg(errorMsg);
+            status = HttpPresentationResponse.SC_UNAUTHORIZED;
+            resultDoc = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + HttpPresentationResponse.SC_UNAUTHORIZED + "</h1><p>" + errorMsg + "</p></html>");
+        }
+        }
+        else {
+            errorMsg = "Error: volume " + lang + " for dictionary " + dictName + " does not exist!";
+            status = HttpPresentationResponse.SC_NOT_FOUND;
+            resultDoc = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + status + "</h1><p>" + errorMsg + "</p></html>");
+        }
+        }
+        else {
+            errorMsg = "Error: dictionary " + dictName + " does not exist!";
+            status = HttpPresentationResponse.SC_NOT_FOUND;
+            resultDoc = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + status + "</h1><p>" + errorMsg + "</p></html>");
+        }
+        responseVector.addElement(resultDoc);
+        responseVector.addElement(new Integer(status));
+        responseVector.addElement(errorMsg);
+        return responseVector;
 	}
 	
 	public static boolean userCanDeleteEntry(User myUser, String dictName)
