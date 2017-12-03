@@ -613,6 +613,10 @@ article, .article {
     background-color: orange;
 }
 
+.nonverifiejpn {
+    background-color: #98E698;
+}
+
 .nonvalidefra, .sens .pb, .fra .pb, .texte-sens-editable .pb, .texte-sous-sens-editable .pb {
     background-color: yellow;
     margin-left:5px;
