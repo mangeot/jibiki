@@ -584,6 +584,10 @@ pre.api {
     font-weight: bold;
 }
 
+.archaisme {
+    color: #BC002D;
+}
+
 .vr, .vj {
     /*	color: black; */
     font-weight: bold;
