@@ -52,9 +52,7 @@ RUN chmod 777 dods/build/dods.properties
 
 WORKDIR /
 
-RUN svn checkout svn://svn.ligforge.imag.fr/var/lib/gforge/chroot/scmrepos/svn/jibiki/branches/LINKS_1_0
-
-RUN mv LINKS_1_0 jibiki
+RUN git clone https://github.com/mangeot/jibiki.git
 
 WORKDIR jibiki
 
