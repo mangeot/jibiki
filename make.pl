@@ -1,5 +1,12 @@
 #!/usr/bin/env perl
 
+###################################################
+#
+# This script is used for running several instances of Jibiki on the same server.
+# It is undocumented. Use at your own risks
+#
+##################################################
+
 use warnings;
 use strict;
 #`../toolsforjibiki/enhydra5.1/bin/ant quick`;
