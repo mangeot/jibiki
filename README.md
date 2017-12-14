@@ -3,6 +3,7 @@ Description
 
 Jibiki is a generic platform for managing lexical resources online.
 Any resource in XML format can be imported and then queried and edited online.
+The platform uses the Enhydra object web framework and Postgres database for the data layer.
 
 For running examples, see:
 - http://www.estfra.ee/
