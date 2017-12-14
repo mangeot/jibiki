@@ -1,20 +1,20 @@
-INSTALLING POSTGRESQL
----------------------
+Description
+=============
 
-- Install postgresql 8.x
+Jibiki is a generic platform for managing lexical resources online.
+Any resource in XML format can be imported and then queried and edited online.
+The platform uses the Enhydra object web framework and Postgres database for the data layer.
 
-DATABASE PREPARATION
-- createdb with owner lexalp (pass specified in conf). ENCODING=UNICODE
-- Create database by evaluating SQLcreate.sql of dods_static generated files.
-- createlang -L /usr/local/pgsql/lib -d lexalp plpgsql
-- add multilingual sort functions by evaluating file src/sql/multilingual-sort.sql
+For running examples, see:
+- http://www.estfra.ee/
+- http://papillon.imag.fr/
+- http://jibiki.fr/
 
-CREATING LEXALP ADMIN USER
-- launch lexalp server locally (./run --exec --debug)
-- goto: http://localhost:8999/Register.po and identify  yourself
-- open User Profile, add user to group admin, using group password specified in conf file.
+There is also a REST API for remote programming. See
+http://papillon.imag.fr/Api.po
 
-SETTING UP LEXALP SERVER
-- add XML stylesheet into the database (using xsl sheets page)
-  (file is found in src/fr/imag/clips/papillon/resources/xsl/)
-  [THIS IS NOT THE DEFAULT XSL...]
+Installation
+=============
+
+The easiest way to install is to use the dockerfile :
+See https://hub.docker.com/r/mangeot/jibiki/
