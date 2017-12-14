@@ -4,6 +4,7 @@
 #
 # This script is used for running several instances of Jibiki on the same server.
 # It is undocumented. Use at your own risks
+# It is used with the sites.conf.in file.
 #
 ##################################################
 
