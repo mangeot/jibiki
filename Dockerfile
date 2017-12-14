@@ -30,7 +30,7 @@ RUN apt-get install -y libpostgresql-jdbc-java
 
 WORKDIR /
 
-RUN svn checkout svn://svn.ligforge.imag.fr/var/lib/gforge/chroot/scmrepos/svn/toolsforjibiki/
+RUN git clone https://gricad-gitlab.univ-grenoble-alpes.fr/mmang/toolsforjibiki.git
 
 WORKDIR toolsforjibiki
 
