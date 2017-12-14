@@ -1333,6 +1333,7 @@
 		A37C032B128C62DB0047A982 /* UserLanguageSelect.xmlc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UserLanguageSelect.xmlc; sourceTree = "<group>"; };
 		A37C032C128C62DB0047A982 /* UserProfile.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = UserProfile.xhtml; sourceTree = "<group>"; };
 		A37C032E128C62DB0047A982 /* ViewQueryResult.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ViewQueryResult.xhtml; sourceTree = "<group>"; };
+		A3859EE51FE328D9005FEF13 /* HomeContent.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = HomeContent.xhtml; sourceTree = "<group>"; };
 		A386068B1A8C948E00FD081D /* ConsultPage.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = ConsultPage.xhtml; sourceTree = "<group>"; };
 		A386068C1A8C94B800FD081D /* ConsultPage.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = ConsultPage.xhtml; sourceTree = "<group>"; };
 		A386068D1A8C94F700FD081D /* ConsultPage.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = ConsultPage.xhtml; sourceTree = "<group>"; };
@@ -3257,6 +3258,7 @@
 				A39A47210FF922110090E5C0 /* engvieContent.xhtml */,
 				A39A472E0FF922610090E5C0 /* FrajpnContent.xhtml */,
 				A3A1E2BE171CC04000559C1F /* HelpContent.xhtml */,
+				A3859EE51FE328D9005FEF13 /* HomeContent.xhtml */,
 				A307273F0EC89B2C00733910 /* HomeContent.xmlc */,
 				A30727400EC89B2C00733910 /* HTMLPalette.xhtml */,
 				A30727410EC89B2C00733910 /* HTMLPalette.xmlc */,
@@ -4010,7 +4012,7 @@
 			isa = PBXProject;
 			attributes = {
 			};
-			buildConfigurationList = A348B7070E7EFB50003F6712 /* Build configuration list for PBXProject "JibikiLinks" */;
+			buildConfigurationList = A348B7070E7EFB50003F6712 /* Build configuration list for PBXProject "Jibiki" */;
 			compatibilityVersion = "Xcode 3.1";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -4073,7 +4075,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A348B7070E7EFB50003F6712 /* Build configuration list for PBXProject "JibikiLinks" */ = {
+		A348B7070E7EFB50003F6712 /* Build configuration list for PBXProject "Jibiki" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A348B7050E7EFB50003F6712 /* Debug */,
