@@ -52,9 +52,9 @@ RUN chmod 777 dods/build/dods.properties
 
 WORKDIR /
 
-RUN git clone https://github.com/mangeot/jibiki.git
+#RUN git clone https://github.com/mangeot/jibiki.git
 
-WORKDIR jibiki
+#WORKDIR jibiki
 
 RUN cp papillon.properties.in papillon.properties
 
@@ -86,4 +86,6 @@ EXPOSE 8999
 # Set default container command
 #ENTRYPOINT /jibiki/output/run --debug --exec
 
-ENTRYPOINT /jibiki/docker-entrypoint.sh
+#ENTRYPOINT /jibiki/docker-entrypoint.sh
+ENTRYPOINT /docker-entrypoint.sh
+
