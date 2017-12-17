@@ -87,3 +87,5 @@ EXPOSE 8999
 #ENTRYPOINT /jibiki/output/run --debug --exec
 
 ENTRYPOINT /jibiki/docker-entrypoint.sh
+#ENTRYPOINT /docker-entrypoint.sh
+
