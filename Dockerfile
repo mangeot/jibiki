@@ -19,12 +19,14 @@ ARG DATABASE_USER="jibiki"
 ARG DATABASE_PASSWORD="dbjibiki2"
 
 ENV ADMIN_PASSWORD=$ADMIN_PASSWORD
-ENV VALIDATOR_PASSWORD=VALIDATOR_PASSWORD
-ENV SPECIALIST_PASSWORD=SPECIALIST_PASSWORD
+ENV VALIDATOR_PASSWORD=$VALIDATOR_PASSWORD
+ENV SPECIALIST_PASSWORD=$SPECIALIST_PASSWORD
 ENV DATABASE_HOST=$DATABASE_HOST
 ENV DATABASE_NAME=$DATABASE_NAME
 ENV DATABASE_USER=$DATABASE_USER
 ENV DATABASE_PASSWORD=$DATABASE_PASSWORD
+
+ENV LC_ALL C.UTF-8
 
 
 RUN apt-get update && apt-get install -y libpostgresql-jdbc-java
@@ -49,11 +51,6 @@ RUN cp ../xmlc-2.2.13/lib/xmlc.jar lib/.
 
 RUN chmod -R 777 dods/build/template/standard/* && chmod 777 dods/build/dods.properties
 
-# WORKDIR /
-# RUN mkdir jibiki
-# COPY . jibiki/
-# WORKDIR /jibiki
-
 WORKDIR /jibiki
 
 COPY . .
@@ -62,13 +59,12 @@ RUN cp papillon.properties.in papillon.properties
 
 RUN sed -i "s#\%TOOLSFORJIBIKI_DIR\%#/toolsforjibiki#g" papillon.properties \
    && sed -i "s#\%ADMIN_PASSWORD\%#$ADMIN_PASSWORD#g" papillon.properties \ 
+   && sed -i "s#\%VALIDATOR_PASSWORD\%#$VALIDATOR_PASSWORD#g" papillon.properties \
    && sed -i "s#\%SPECIALIST_PASSWORD\%#$SPECIALIST_PASSWORD#g" papillon.properties \
    && sed -i "s#\%DATABASE_HOST\%#$DATABASE_HOST#g" papillon.properties \
    && sed -i "s#\%DATABASE_NAME\%#$DATABASE_NAME#g" papillon.properties \
    && sed -i "s#\%DATABASE_USER\%#$DATABASE_USER#g" papillon.properties \
    && sed -i "s#\%DATABASE_PASSWORD\%#$DATABASE_PASSWORD#g" papillon.properties
-
-RUN export LC_ALL=en_US.UTF-8
 
 RUN /toolsforjibiki/enhydra5.1/bin/ant make
 
@@ -76,27 +72,32 @@ RUN /toolsforjibiki/enhydra5.1/bin/ant make
 #
 # Run part
 #
-
 FROM openjdk:8-jre-alpine
 
+ENV LC_ALL C.UTF-8
+
 WORKDIR /toolsforjibiki
-RUN mkdir -p enhydra5.1/dods
 
-COPY --from=build /toolsforjibiki/enhydra5.1/lib enhydra5.1/
-COPY --from=build /toolsforjibiki/enhydra5.1/dods/lib enhydra5.1/dods/
+COPY --from=build /toolsforjibiki/enhydra5.1/lib enhydra5.1/lib
+COPY --from=build /toolsforjibiki/enhydra5.1/dods/lib enhydra5.1/dods/lib
+COPY --from=build /toolsforjibiki/enhydra5.1/dods/build enhydra5.1/dods/build
 
-COPY --from=build /toolsforjibiki/xalan-j_2_7_0 .
-COPY --from=build /toolsforjibiki/fop-0.20.5 .
-COPY --from=build /toolsforjibiki/javamail-1.4 .
+COPY --from=build /toolsforjibiki/xalan-j_2_7_0 xalan-j_2_7_0
+COPY --from=build /toolsforjibiki/fop-0.20.5 fop-0.20.5
+COPY --from=build /toolsforjibiki/javamail-1.4 javamail-1.4
 
 WORKDIR /jibiki
 
-COPY --from=build /jibiki/output .
+COPY --from=build /jibiki/papillon.properties .
+COPY --from=build /jibiki/output output
+RUN sed -i 's#JAVA="/usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java"#JAVA=/usr/bin/java#' output/run
+
+WORKDIR /
+COPY --from=build /usr/share/java/postgresql.jar /usr/share/java/postgresql.jar
 COPY --from=build /jibiki/docker-entrypoint.sh .
+COPY --from=build /jibiki/docker-entrypoint.d/* /docker-entrypoint.d/ 
+ONBUILD COPY /jibiki/docker-entrypoint.d/* /docker-entrypoint.d/
 
-RUN chmod 755 docker-entrypoint.sh
-
-RUN export LC_ALL=en_US.UTF-8
 
 ##################### INSTALLATION END #####################
 
@@ -105,5 +106,7 @@ EXPOSE 8999
 
 # Set default container command
 #ENTRYPOINT /jibiki/output/run --debug --exec
+#ENTRYPOINT /jibiki/docker-entrypoint.sh
 
-ENTRYPOINT /jibiki/docker-entrypoint.sh
+ENTRYPOINT ["/docker-entrypoint.sh", "/jibiki/output/run"]
+CMD ["--debug" "--exec"]
