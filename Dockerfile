@@ -3,7 +3,7 @@
 # Based on openjdk
 ############################################################
 
-FROM openjdk
+FROM openjdk:8
 
 LABEL maintainer="Mathieu.Mangeot@imag.fr"
 
