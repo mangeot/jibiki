@@ -52,7 +52,11 @@ RUN chmod 777 dods/build/dods.properties
 
 WORKDIR /
 
-RUN git clone https://github.com/mangeot/jibiki.git
+#RUN git clone https://github.com/mangeot/jibiki.git
+
+RUN mkdir jibiki
+
+COPY . jibiki/
 
 WORKDIR jibiki
 
