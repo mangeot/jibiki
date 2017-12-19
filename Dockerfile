@@ -1,7 +1,10 @@
-############################################################
-# Dockerfile to build Jibiki lexical database server container images
+##############################################################################
+# Dockerfile to build and run Jibiki lexical database server container images
 # Based on openjdk
-############################################################
+#############################################################################
+#
+# Build part
+#
 
 FROM openjdk:8 as build
 
@@ -69,7 +72,11 @@ RUN export LC_ALL=en_US.UTF-8
 
 RUN /toolsforjibiki/enhydra5.1/bin/ant make
 
-#############
+#############################################################################
+#
+# Run part
+#
+
 FROM openjdk:8-jre-alpine
 
 WORKDIR /toolsforjibiki
