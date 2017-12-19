@@ -109,4 +109,4 @@ EXPOSE 8999
 #ENTRYPOINT /jibiki/docker-entrypoint.sh
 
 ENTRYPOINT ["/docker-entrypoint.sh", "/jibiki/output/run"]
-CMD ["--debug" "--exec"]
+CMD ["--debug","--exec"]
