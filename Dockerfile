@@ -85,6 +85,7 @@ COPY --from=build /toolsforjibiki/javamail-1.4 .
 WORKDIR /jibiki
 
 COPY --from=build /jibiki/output .
+COPY --from=build /jibiki/docker-entrypoint.sh .
 
 RUN chmod 755 docker-entrypoint.sh
 
