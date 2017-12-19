@@ -73,7 +73,7 @@ RUN /toolsforjibiki/enhydra5.1/bin/ant make
 FROM openjdk:8-jre-alpine
 
 WORKDIR /toolsforjibiki
-RUN mkdir enhydra5.1/dods
+RUN mkdir -p enhydra5.1/dods
 
 COPY --from=build /toolsforjibiki/enhydra5.1/lib enhydra5.1/
 COPY --from=build /toolsforjibiki/enhydra5.1/dods/lib enhydra5.1/dods/
