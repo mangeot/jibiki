@@ -3,7 +3,7 @@
 # Based on openjdk
 ############################################################
 
-FROM openjdk:8
+FROM openjdk:8 as build
 
 LABEL maintainer="Mathieu.Mangeot@imag.fr"
 
@@ -48,6 +48,8 @@ RUN chmod -R 777 dods/build/template/standard/* && chmod 777 dods/build/dods.pro
 
 WORKDIR /
 
+# WORKDIR /jibiki
+# COPY . .
 RUN mkdir jibiki
 
 COPY . jibiki/
@@ -69,6 +71,10 @@ RUN chmod 755 docker-entrypoint.sh
 RUN export LC_ALL=en_US.UTF-8
 
 RUN /toolsforjibiki/enhydra5.1/bin/ant make
+
+#############
+# FROM openjdk:8-jre-alpine
+# WORKDIR toolsforjibiki
 
 ##################### INSTALLATION END #####################
 
