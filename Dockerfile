@@ -46,15 +46,14 @@ RUN cp ../xmlc-2.2.13/lib/xmlc.jar lib/.
 
 RUN chmod -R 777 dods/build/template/standard/* && chmod 777 dods/build/dods.properties
 
-WORKDIR /
-
+# WORKDIR /
+# RUN mkdir jibiki
+# COPY . jibiki/
 # WORKDIR /jibiki
-# COPY . .
-RUN mkdir jibiki
 
-COPY . jibiki/
+WORKDIR /jibiki
 
-WORKDIR jibiki
+COPY . .
 
 RUN cp papillon.properties.in papillon.properties
 
@@ -66,15 +65,30 @@ RUN sed -i "s#\%TOOLSFORJIBIKI_DIR\%#/toolsforjibiki#g" papillon.properties \
    && sed -i "s#\%DATABASE_USER\%#$DATABASE_USER#g" papillon.properties \
    && sed -i "s#\%DATABASE_PASSWORD\%#$DATABASE_PASSWORD#g" papillon.properties
 
-RUN chmod 755 docker-entrypoint.sh
-
 RUN export LC_ALL=en_US.UTF-8
 
 RUN /toolsforjibiki/enhydra5.1/bin/ant make
 
 #############
-# FROM openjdk:8-jre-alpine
-# WORKDIR toolsforjibiki
+FROM openjdk:8-jre-alpine
+
+WORKDIR /toolsforjibiki
+RUN mkdir enhydra5.1/dods
+
+COPY --from=build /toolsforjibiki/enhydra5.1/lib enhydra5.1/
+COPY --from=build /toolsforjibiki/enhydra5.1/dods/lib enhydra5.1/dods/
+
+COPY --from=build /toolsforjibiki/xalan-j_2_7_0 .
+COPY --from=build /toolsforjibiki/fop-0.20.5 .
+COPY --from=build /toolsforjibiki/javamail-1.4 .
+
+WORKDIR /jibiki
+
+COPY --from=build /jibiki/output .
+
+RUN chmod 755 docker-entrypoint.sh
+
+RUN export LC_ALL=en_US.UTF-8
 
 ##################### INSTALLATION END #####################
 
