@@ -29,7 +29,7 @@ ENV DATABASE_PASSWORD=$DATABASE_PASSWORD
 ENV LC_ALL C.UTF-8
 
 
-RUN apt-get update && apt-get install -y libpostgresql-jdbc-java git
+RUN apt-get update && apt-get install -y libpostgresql-jdbc-java
 
 WORKDIR /
 
