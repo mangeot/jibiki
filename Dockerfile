@@ -29,11 +29,11 @@ ENV DATABASE_PASSWORD=$DATABASE_PASSWORD
 ENV LC_ALL C.UTF-8
 
 
-RUN apt-get update && apt-get install -y libpostgresql-jdbc-java
+RUN apt-get update && apt-get install -y libpostgresql-jdbc-java git
 
 WORKDIR /
 
-RUN git clone https://gricad-gitlab.univ-grenoble-alpes.fr/mmang/toolsforjibiki.git
+RUN git clone "https://gricad-gitlab.univ-grenoble-alpes.fr/mmang/toolsforjibiki.git"
 
 WORKDIR toolsforjibiki
 
