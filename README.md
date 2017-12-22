@@ -41,6 +41,20 @@ Or building from the git repos
 
 Running the docker images
 -------------
+Create a directory on your machine for storing ipolex and postgres data
+
+    mkdir -p /Users/mangeot/docker/ipolex
+    mkdir -p /Users/mangeot/docker/postgresData
+    
+Launch the 3 containers
+    
     docker run --name ipolex -p 8888:80 --volume /Users/mangeot/docker/ipolex:/var/www/html/Dicos -d mangeot/ipolex 
     docker run --name jibiki-database --volume /Users/mangeot/docker/postgresData:/var/lib/postgresql/data -d mangeot/postgres4jibiki postgres
     docker run --name jibiki -p 8999:8999 --link jibiki-database:postgres --volume /Users/mangeot/docker/ipolex:/ipolex -d mangeot/jibiki
+    
+Using the apps
+-------------
+
+    open http://localhost:8888
+    open http://localhost:8999
+
