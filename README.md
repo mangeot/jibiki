@@ -55,6 +55,7 @@ Launch the 3 containers
 Using the apps
 -------------
 
-    open http://localhost:8888
-    open http://localhost:8999
+For iPolex, open http://localhost:8888 in your favorite browser;
+
+For jibiki, open http://localhost:8999 in your favorite browser.
 
