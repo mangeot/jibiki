@@ -39,4 +39,4 @@ Running the docker images
 -------------
     docker run --name ipolex -p 8888:80 --volume /Users/mangeot/docker/ipolex:/var/www/html/Dicos -d mangeot/ipolex 
     docker run --name jibiki-database --volume /Users/mangeot/docker/postgresData:/var/lib/postgresql/data -d mangeot/postgres4jibiki postgres
-    docker run --name myjibiki -p 8999:8999 --link jibiki-database:postgres --volume /Users/mangeot/docker/ipolex:/ipolex mangeot/jibiki -d mangeot/jibiki
+    docker run --name myjibiki -p 8999:8999 --link jibiki-database:postgres --volume /Users/mangeot/docker/ipolex:/ipolex -d mangeot/jibiki
