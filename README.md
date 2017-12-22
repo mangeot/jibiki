@@ -9,6 +9,7 @@ For running examples, see:
 - http://www.estfra.ee/
 - http://papillon.imag.fr/
 - http://jibiki.fr/
+- http://motamot.imag.fr/
 
 There is also a REST API for remote programming. See
 http://papillon.imag.fr/Api.po
@@ -18,10 +19,13 @@ Installation
 
 The easiest way to install is to use the dockerfiles.
 
-The jibiki dockerfile is built upon openjdk 8 official image: https://hub.docker.com/_/openjdk/
+The jibiki docker image is built from openjdk official image: https://hub.docker.com/_/openjdk/
 
-The postgres4jibiki dockerfile is built upon postgresql latest official image.
-See https://hub.docker.com/r/mangeot/postgres4jibiki/
+The postgres4jibiki docker image is built from postgresql latest official image.
+See https://github.com/mangeot/postgres4jibiki/ for more information.
+
+The ipolex docker image is built from php latest official image.
+See https://github.com/mangeot/ipolex/ for more information.
 
 Getting the latest docker images
 -------------
