@@ -198,6 +198,46 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 				}
 			}
 		}
+        else if (criteria !=null && criteria.equals(Volume.CDM_entryId)) {
+            if (key==null) {
+                java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
+                if (volumesCollection !=null && volumesCollection.size()>0) {
+                    java.util.Iterator iterator = volumesCollection.iterator();
+                    while (resultDoc==null && iterator.hasNext()) {
+                        theVolume = (Volume) iterator.next();
+                        PapillonLogger.writeDebugMsg("Entries: id: " + word + " volume: " + theVolume.getName());
+                        VolumeEntry myEntry = VolumeEntriesFactory.findEntryByEntryId(theVolume.getName(), word);
+                        if (myEntry != null && !myEntry.isEmpty()) {
+                            PapillonLogger.writeDebugMsg("Entry: headword: " + myEntry.getHeadword());
+                            resultDoc = myEntry.getDom();
+                        }
+                        else {
+                            PapillonLogger.writeDebugMsg("Entry null: " + word);
+                        }
+                    }
+                }
+            }
+        }
+        else if (criteria !=null && criteria.equals(Volume.CDM_contributionId)) {
+            if (key==null) {
+                java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
+                if (volumesCollection !=null && volumesCollection.size()>0) {
+                    java.util.Iterator iterator = volumesCollection.iterator();
+                    while (resultDoc==null && iterator.hasNext()) {
+                        theVolume = (Volume) iterator.next();
+                        PapillonLogger.writeDebugMsg("Entries: id: " + word + " volume: " + theVolume.getName());
+                        VolumeEntry myEntry = VolumeEntriesFactory.findEntryByContributionId(theVolume.getName(), word);
+                        if (myEntry != null && !myEntry.isEmpty()) {
+                            PapillonLogger.writeDebugMsg("Entry: headword: " + myEntry.getHeadword());
+                            resultDoc = myEntry.getDom();
+                        }
+                        else {
+                            PapillonLogger.writeDebugMsg("Entry null: " + word);
+                        }
+                    }
+                }
+            }
+        }
 		else if (criteria !=null && criteria.equals("previous")) {
 			if (key==null) {
 				java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
