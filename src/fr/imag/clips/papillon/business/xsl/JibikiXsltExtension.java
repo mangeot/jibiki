@@ -75,7 +75,7 @@ public class JibikiXsltExtension {
     public static String getEntryVolume(String dictionary, String entryId) throws PapillonBusinessException {
         String volumeName = "";
         try {
-            VolumeEntry theEntry = VolumeEntriesFactory.findEntryByDictionaryNameAndEntryId(dictionary, entryId);
+            VolumeEntry theEntry = VolumeEntriesFactory.findEntryByDictionaryNameAndContributionId(dictionary, entryId);
             if (theEntry!=null &&!theEntry.isEmpty()) {
                 volumeName =theEntry.getVolumeName();
             }
@@ -89,7 +89,7 @@ public class JibikiXsltExtension {
 
     public static String getEntryStatus(String volume, String entryid) throws PapillonBusinessException {
         try {
-            VolumeEntry ve = VolumeEntriesFactory.findEntryByEntryId(volume,entryid);
+            VolumeEntry ve = VolumeEntriesFactory.findEntryByContributionId(volume,entryid);
 			
             return ve.getStatus();
         } catch (NullPointerException e) {
@@ -99,7 +99,7 @@ public class JibikiXsltExtension {
 	
 	public static String getEntryGroups(String volume,String entryid) throws PapillonBusinessException {
         try {
-               VolumeEntry ve = VolumeEntriesFactory.findEntryByEntryId(volume,entryid);
+               VolumeEntry ve = VolumeEntriesFactory.findEntryByContributionId(volume,entryid);
             return  Utility.getStars(ve.getGroups());
         } catch (NullPointerException e) {
             return "";
@@ -119,7 +119,7 @@ public class JibikiXsltExtension {
 	
 	public static String getEntryHeadword(String volume, String entryid) throws PapillonBusinessException {
         try {
-            VolumeEntry ve = VolumeEntriesFactory.findEntryByEntryId(volume,entryid);
+            VolumeEntry ve = VolumeEntriesFactory.findEntryByContributionId(volume,entryid);
 			
             return ve.getHeadword();
         } catch (NullPointerException e) {
@@ -130,7 +130,7 @@ public class JibikiXsltExtension {
     public static String getEntryModificationAuthor(String volume, String entryid) throws PapillonBusinessException {
         String author = "vide";
         try {
-            VolumeEntry ve = VolumeEntriesFactory.findEntryByEntryId(volume,entryid);
+            VolumeEntry ve = VolumeEntriesFactory.findEntryByContributionId(volume,entryid);
             if (ve.getLastModificationAuthor() != null) {
                 author = ve.getLastModificationAuthor();
            }

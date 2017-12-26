@@ -1372,7 +1372,7 @@ public class VolumeEntriesFactory {
      *
      *
      */
-    public static VolumeEntry findEntryByDictionaryNameAndEntryId(String dictName, String entryId)
+    public static VolumeEntry findEntryByDictionaryNameAndContributionId(String dictName, String entryId)
     throws PapillonBusinessException {
         Dictionary dict = null;
         Volume volume = null;
@@ -1388,7 +1388,7 @@ public class VolumeEntriesFactory {
       Iterator iterator = volumesCollection.iterator();
         while ((resEntry == null || resEntry.isEmpty()) && iterator.hasNext()) {
             volume = (Volume) iterator.next();
-            VolumeEntry tempEntry = findEntryByEntryId(dict, volume, entryId);
+            VolumeEntry tempEntry = findEntryByContributionId(dict, volume, entryId);
             if (tempEntry!=null && !tempEntry.isEmpty()) {
                 resEntry = tempEntry;
             }
