@@ -8,44 +8,6 @@
  *-----------------------------------------------
  * $Id$
  *-----------------------------------------------
- * $Log$
- * Revision 1.6  2007/01/05 13:57:25  serasset
- * multiple code cleanup.
- * separation of XMLServices from the Utility class
- * added an xml parser pool to allow reuse of parser in a multithreaded context
- * added a new field in the db to identify the db layer version
- * added a new system property to know which db version is known by the current app
- *
- * Revision 1.5  2006/02/26 19:21:38  mangeot
- * Work on BrowseVolume
- *
- * Revision 1.4  2005/05/24 12:51:21  serasset
- * Updated many aspect of the Papillon project to handle lexalp project.
- * 1. Layout is now parametrable in the application configuration file.
- * 2. Notion of QueryResult has been defined to handle mono/bi and multi lingual dictionary requests
- * 3. Result presentation may be done by way of standard xsl or with any class implementing the appropriate interface.
- * 4. Enhanced dictionary edition management. The template interfaces has to be revised to be compatible.
- * 5. It is now possible to give a name to the cookie key in the app conf file
- * 6. Several bug fixes.
- *
- * Revision 1.3  2005/04/11 12:29:59  mangeot
- * Merge between the XPathAndMultipleKeys branch and the main trunk
- *
- * Revision 1.2.2.2  2005/03/29 09:41:32  serasset
- * Added transaction support. Use CurrentDBTransaction class to define a transaction
- * context in which all db commands will be executed.
- *
- * Revision 1.2.2.1  2005/01/25 13:54:54  mangeot
- * changed the volume volumeEntry and index objects. Does not compile but need a backup...
- *
- * Revision 1.2  2005/01/15 12:51:24  mangeot
- * Deleting old cvs comments + bug fixes with xhtml and enhydra5.1
- *
- * Revision 1.1.1.1  2004/12/06 16:38:31  serasset
- * Papillon for enhydra 5.1. This version compiles and starts with enhydra 5.1.
- * There are still bugs in the code.
- *
- *-----------------------------------------------
  * 
  */
 

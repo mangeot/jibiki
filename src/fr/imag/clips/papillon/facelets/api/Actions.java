@@ -27,7 +27,7 @@ public interface Actions {
     /**
      * returns the menu that contains the internal status/action menus for a specific entry.
      */
-    public Node getActions(String entryid) throws PapillonBusinessException;
+    public Node getActions(String volume, String entryid) throws PapillonBusinessException;
     
     
     

@@ -91,7 +91,7 @@ public class MergeEntries extends EditingBasePO {
            
             // Verification 
             if ( !(volumeEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS) 
-                   && volumeEntry.getModificationAuthor().equals(this.getUser().getLogin())) ) {
+                   && volumeEntry.getLastModificationAuthor().equals(this.getUser().getLogin())) ) {
                 
                 // Error page
                 throw new ClientPageRedirectException(EditingError.EditingErrorURL);

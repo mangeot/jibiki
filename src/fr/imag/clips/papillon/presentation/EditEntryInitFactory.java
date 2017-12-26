@@ -169,44 +169,6 @@ public class EditEntryInitFactory {
         throw new ClientPageRedirectException(EditEntryURL + "?" + 
                                               EditEntry.VolumeName_PARAMETER + "=" + myEntry.getVolumeName() + 
                                               "&" + EditEntry.EntryHandle_PARAMETER + "=" + myEntry.getHandle());
-         /*   
-        // Edit contribution finished
-        if ( myEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS) ) {
-            
-            // Create new contribution with NOT_FINISHED_STATUS
-            VolumeEntry newEntry = VolumeEntriesFactory.newEntryFromExisting(myEntry);
-            newEntry.setClassifiedFinishedContribution(myEntry);
-            newEntry.setModification(user.getLogin(), "edit");
-            newEntry.setStatus(VolumeEntry.NOT_FINISHED_STATUS);
-            newEntry.save();
-            
-            // Old entry modification
-            myEntry.setStatus(VolumeEntry.MODIFIED_STATUS);
-            myEntry.setNextContributionAuthor(user.getLogin());
-            myEntry.save();
-            
-            //
-            throw new ClientPageRedirectException(EditEntryURL + "?" + 
-                                                  EditEntry.VolumeName_PARAMETER + "=" + newEntry.getVolumeName() + 
-                                                  "&" + EditEntry.EntryHandle_PARAMETER + "=" + newEntry.getHandle());
-            
-        // Edit contribtion not-finished
-        } else if ( myEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS) 
-                    && 
-                       (myEntry.getModificationAuthor().equals(user.getLogin()) 
-                        || user.isInGroup(Group.ADMIN_GROUP))) {
-            
-            // Nothing to do
-            throw new ClientPageRedirectException(EditEntryURL + "?" + 
-                                                  EditEntry.VolumeName_PARAMETER + "=" + myEntry.getVolumeName() + 
-                                                  "&" + EditEntry.EntryHandle_PARAMETER + "=" + myEntry.getHandle());
-            
-        }  else {
-            
-            // Error page
-            throw new ClientPageRedirectException(EditingErrorURL);
-        }
-            */
     }
     
     
@@ -225,10 +187,8 @@ public class EditEntryInitFactory {
             
             // Create contribution base on myEntry, history not copied !
             VolumeEntry newEntry = VolumeEntriesFactory.newEntryFromExisting(myEntry);
-            newEntry.setEntryId();
             newEntry.setAuthor(user.getLogin());
             newEntry.setGroups(user.getGroupsArray());
-            newEntry.setContributionId();
             newEntry.setOriginalContributionId(myEntry.getContributionId());
             newEntry.setStatus(VolumeEntry.NOT_FINISHED_STATUS);
             newEntry.setModification(user.getLogin(), "duplicate");
@@ -261,9 +221,9 @@ public class EditEntryInitFactory {
         throws fr.imag.clips.papillon.business.PapillonBusinessException {
         
         //
-		PapillonLogger.writeDebugMsg("deleteEntry status: " + myEntry.getStatus() + " modifauthor: " + myEntry.getModificationAuthor());
+		PapillonLogger.writeDebugMsg("deleteEntry status: " + myEntry.getStatus() + " modifauthor: " + myEntry.getLastModificationAuthor());
         if ( myEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS) ||
-             (myEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS) && myEntry.getModificationAuthor().equals(user.getLogin())) ) {
+             (myEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS) && myEntry.getLastModificationAuthor().equals(user.getLogin())) ) {
              
             // Create contribution based on myEntry with status Delete !
             VolumeEntry newEntry = VolumeEntriesFactory.newEntryFromExisting(myEntry);

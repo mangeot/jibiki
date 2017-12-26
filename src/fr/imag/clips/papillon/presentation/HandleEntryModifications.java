@@ -5,71 +5,7 @@
  * 
  * © Francis Brunet-Manquat, Mathieu Mangeot & Gilles Sérasset - GETA CLIPS IMAG
  *-----------------------------------------------
- * $Id$
- *-----------------------------------------------
- * $Log$
- * Revision 1.19  2007/02/28 09:27:07  fbrunet
- * Added ajax method to AdvancedQueryForm page
- *
- * Revision 1.18  2007/02/09 08:49:10  fbrunet
- * *** empty log message ***
- *
- * Revision 1.17  2007/02/07 13:58:57  fbrunet
- * added message before axies are merged and undo process if the merge is not correct.
- *
- * Revision 1.16  2007/01/12 13:08:51  fbrunet
- * Bug correction : undo error in HandleEntryModifications class
- *
- * Revision 1.15  2007/01/09 17:31:04  fbrunet
- * Bug correction : error in user verification in HandleEntryModifications class (induce wrong redirection)
- *
- * Revision 1.14  2007/01/08 15:13:42  fbrunet
- * Correction of th xml attribut bug in ContributionHeader (VolumeEntry class)
- *
- * Revision 1.13  2007/01/05 12:57:49  fbrunet
- * Add undo draft method (bug in EditEntry.java : undo after last finish contribution)
- * Modify transformation method
- *
- * Revision 1.12  2006/12/14 20:03:26  fbrunet
- * Add method to normalize value into XML structure.
- *
- * Revision 1.11  2006/12/13 09:32:00  fbrunet
- * *** empty log message ***
- *
- * Revision 1.10  2006/11/09 09:04:42  fbrunet
- * *** empty log message ***
- *
- * Revision 1.9  2006/05/23 07:57:51  fbrunet
- * Modify edit management : When an user edit a lexie, this lexie doesn't change until an upgrade/finish action (then a new contibution is created link to lexie with a not-finished status).
- *
- * Revision 1.8  2006/05/22 22:45:54  fbrunet
- * LexALP: add merge method in post-save processing (merge axies with same referenced lexies)
- *
- * Revision 1.7  2006/05/05 02:08:23  fbrunet
- * bug correction : url utf8 transfert (in createEntryInit)
- *
- * Revision 1.6  2006/04/24 13:43:29  fbrunet
- * Add new class ViewQueryResult : allow to use one class to create result display in advancedSearch and EditEntryInit (like advancedQueryForm)
- * Improve result display : view n results per page
- *
- * Revision 1.5  2006/04/18 14:30:24  fbrunet
- * Authorize admin to edit all entries
- *
- * Revision 1.4  2006/04/06 15:06:39  fbrunet
- * New class 'creationEditInit' : create new entry
- * Modify LexALPEditEntry : only edit entry
- *
- * Revision 1.3  2006/03/13 08:48:00  fbrunet
- * bug corrections before merge
- *
- * Revision 1.2  2006/03/01 15:47:08  mangeot
- * syntax bug fixes
- *
- * Revision 1.1  2006/03/01 15:12:31  mangeot
- * Merge between maintrunk and LEXALP_1_1 branch
- *
- *-----------------------------------------------
- * Jibiki plate-form: handles entry modifications and redirect to the approriate page.
+ * Jibiki plateform: handles entry modifications and redirect to the appropriate page.
  */
 
 package fr.imag.clips.papillon.presentation;

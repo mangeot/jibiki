@@ -29,8 +29,10 @@ import fr.imag.clips.papillon.facelets.xhtml.Actions;
 import fr.imag.clips.papillon.facelets.util.JibikiContext;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory;
+import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
 import fr.imag.clips.papillon.business.dictionary.ParseVolume;
 import fr.imag.clips.papillon.business.dictionary.Volume;
+import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
 import fr.imag.clips.papillon.business.utility.Utility;
 import fr.imag.clips.papillon.business.PapillonLogger;
 import fr.imag.clips.papillon.business.PapillonBusinessException;
@@ -45,9 +47,9 @@ public class JibikiXsltExtension {
     public JibikiXsltExtension() {
     }
 
-    public static Node editingCommands(String entryid) throws PapillonBusinessException {
+    public static Node editingCommands(String volume, String entryid) throws PapillonBusinessException {
         Actions act = new Actions();
-        return act.getActions(entryid);
+        return act.getActions(volume, entryid);
     }
 
     public static Node editingCommands(VolumeEntry entry) throws PapillonBusinessException {
@@ -55,9 +57,9 @@ public class JibikiXsltExtension {
         return act.getActions(entry);
     }
 
-    public static Node linkCommands(String linkId) throws PapillonBusinessException {
+    public static Node linkCommands(String volume, String linkId) throws PapillonBusinessException {
         Actions act = new Actions();
-        return act.getLinkActions(linkId);
+        return act.getLinkActions(volume,linkId);
     }
 
     public static String getUserLogin() throws PapillonBusinessException {
@@ -70,10 +72,24 @@ public class JibikiXsltExtension {
         }
     }
 
-    public static String getEntryStatus(String entryid) throws PapillonBusinessException {
+    public static String getEntryVolume(String dictionary, String entryId) throws PapillonBusinessException {
+        String volumeName = "";
         try {
-            JibikiContext context = CurrentRequestContext.get();
-            VolumeEntry ve = VolumeEntriesFactory.findEntryByContributionId(((PapillonSessionData) context.get("sessionData")).getUser(),entryid);
+            VolumeEntry theEntry = VolumeEntriesFactory.findEntryByDictionaryNameAndEntryId(dictionary, entryId);
+            if (theEntry!=null &&!theEntry.isEmpty()) {
+                volumeName =theEntry.getVolumeName();
+            }
+        } catch (NullPointerException e) {
+            volumeName = "";
+        }
+
+        return volumeName;
+    }
+    
+
+    public static String getEntryStatus(String volume, String entryid) throws PapillonBusinessException {
+        try {
+            VolumeEntry ve = VolumeEntriesFactory.findEntryByEntryId(volume,entryid);
 			
             return ve.getStatus();
         } catch (NullPointerException e) {
@@ -81,10 +97,9 @@ public class JibikiXsltExtension {
         }
     }
 	
-	public static String getEntryGroups(String entryid) throws PapillonBusinessException {
+	public static String getEntryGroups(String volume,String entryid) throws PapillonBusinessException {
         try {
-            JibikiContext context = CurrentRequestContext.get();
-               VolumeEntry ve = VolumeEntriesFactory.findEntryByContributionId(((PapillonSessionData) context.get("sessionData")).getUser(),entryid);
+               VolumeEntry ve = VolumeEntriesFactory.findEntryByEntryId(volume,entryid);
             return  Utility.getStars(ve.getGroups());
         } catch (NullPointerException e) {
             return "";
@@ -92,21 +107,19 @@ public class JibikiXsltExtension {
     }
 	
 	
-	public static String getEntrySourceLanguage(String entryid) throws PapillonBusinessException {
+	public static String getVolumeSourceLanguage(String volume) throws PapillonBusinessException {
         try {
-            JibikiContext context = CurrentRequestContext.get();
-            VolumeEntry ve = VolumeEntriesFactory.findEntryByContributionId(((PapillonSessionData) context.get("sessionData")).getUser(),entryid);
+            Volume theVolume = VolumesFactory.getVolumeByName(volume);
 			
-            return ve.getSourceLanguage();
+            return theVolume.getSourceLanguage();
         } catch (NullPointerException e) {
             return "";
         }
     }
 	
-	public static String getEntryHeadword(String entryid) throws PapillonBusinessException {
+	public static String getEntryHeadword(String volume, String entryid) throws PapillonBusinessException {
         try {
-            JibikiContext context = CurrentRequestContext.get();
-                     VolumeEntry ve = VolumeEntriesFactory.findEntryByContributionId(((PapillonSessionData) context.get("sessionData")).getUser(),entryid);
+            VolumeEntry ve = VolumeEntriesFactory.findEntryByEntryId(volume,entryid);
 			
             return ve.getHeadword();
         } catch (NullPointerException e) {
@@ -114,25 +127,16 @@ public class JibikiXsltExtension {
         }
     }
 	
-	public static String getEntryVolume(String entryid) throws PapillonBusinessException {
+    public static String getEntryModificationAuthor(String volume, String entryid) throws PapillonBusinessException {
+        String author = "vide";
         try {
-            JibikiContext context = CurrentRequestContext.get();
-            VolumeEntry ve = VolumeEntriesFactory.findEntryByContributionId(((PapillonSessionData) context.get("sessionData")).getUser(),entryid);
-			
-            return ve.getVolumeName();
+            VolumeEntry ve = VolumeEntriesFactory.findEntryByEntryId(volume,entryid);
+            if (ve.getLastModificationAuthor() != null) {
+                author = ve.getLastModificationAuthor();
+           }
         } catch (NullPointerException e) {
-            return "";
+            author= "unknown " + volume + " " + entryid;
         }
-    }
-	
-    public static String getEntryModificationAuthor(String entryid) throws PapillonBusinessException {
-        try {
-            JibikiContext context = CurrentRequestContext.get();
-            VolumeEntry ve = VolumeEntriesFactory.findEntryByContributionId(((PapillonSessionData) context.get("sessionData")).getUser(),entryid);
-
-            return ve.getModificationAuthor();
-        } catch (NullPointerException e) {
-            return "unknown";
-        }
+        return author;
     }
 }
