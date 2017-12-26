@@ -1660,7 +1660,12 @@ throws PapillonBusinessException {
 
 public static VolumeEntry findEntryByContributionId(Dictionary myDict, Volume myVolume, String entryId)
 throws PapillonBusinessException {
-    return findEntryByKey(myDict, myVolume, Volume.CDM_contributionId, Volume.DEFAULT_LANG, entryId);
+    VolumeEntry resultEntry = (VolumeEntry) CurrentRequestContext.get().get(entryId);
+    
+    if (null == resultEntry && entryId != null && !entryId.equals("")) {
+        resultEntry = findEntryByKey(myDict, myVolume, Volume.CDM_contributionId, Volume.DEFAULT_LANG, entryId);
+    }
+    return resultEntry;
 }
     
     /**
