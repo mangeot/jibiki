@@ -220,7 +220,7 @@ public class ConfirmEntry extends EditingBasePO {
                     
                     // Verification 
                     if ( !(myVolumeEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS)
-                           && myVolumeEntry.getModificationAuthor().equals(this.getUser().getLogin())) ) {
+                           && myVolumeEntry.getLastModificationAuthor().equals(this.getUser().getLogin())) ) {
                         
                         // Error page
                         throw new ClientPageRedirectException(EditingErrorURL);

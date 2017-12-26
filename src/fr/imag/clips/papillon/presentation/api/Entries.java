@@ -495,9 +495,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
                 docDom = addContributionHeadersIfNotPresent(docDom, theVolume);
                 VolumeEntry newVolumeEntry = VolumeEntriesFactory.newEntryFromExisting(myEntry);
                 newVolumeEntry.setDom(docDom);
-                newVolumeEntry.setHeadword();
-                newVolumeEntry.setContributionId();
-                newVolumeEntry.setStatusIfNotNull(VolumeEntry.FINISHED_STATUS);
+                newVolumeEntry.setStatus(VolumeEntry.FINISHED_STATUS);
                 newVolumeEntry.addClassifiedFinishedContribution(myEntry);
                 newVolumeEntry.setPreviousContributionId(myEntry.getContributionId());
                 newVolumeEntry.setModification(theUser.getLogin(), "finish");
@@ -568,9 +566,6 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
                         }
                         if (docDom != null) {
                             VolumeEntry newVolumeEntry = VolumeEntriesFactory.newEntryFromExisting(myEntry);
-                            newVolumeEntry.setDom(docDom);
-                            newVolumeEntry.setHeadword();
-                            newVolumeEntry.setContributionId();
                             newVolumeEntry.addClassifiedFinishedContribution(myEntry);
                             newVolumeEntry.setPreviousContributionId(myEntry.getContributionId());
                             newVolumeEntry.setModification(theUser.getLogin(), "finish");
@@ -737,7 +732,6 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 			if (myEntry != null && !myEntry.isEmpty()) {
 				PapillonLogger.writeDebugMsg("Delete entry, found headword: " + myEntry.getHeadword());
                 VolumeEntry newVolumeEntry = VolumeEntriesFactory.newEntryFromExisting(myEntry);
-                newVolumeEntry.setContributionId();
                 newVolumeEntry.setAuthor(theUser.getLogin());
 //                newVolumeEntry.setGroups(Utility.ArrayUnion(newVolumeEntry.getGroups(),theUser.getGroupsArray()));
                 newVolumeEntry.setStatus(VolumeEntry.DELETED_STATUS);

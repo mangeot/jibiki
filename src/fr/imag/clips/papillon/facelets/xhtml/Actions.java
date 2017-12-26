@@ -63,12 +63,10 @@ public class Actions implements fr.imag.clips.papillon.facelets.api.Actions {
         
     }
     
-    public Node getActions(String entryid) throws PapillonBusinessException {
+    public Node getActions(String volume, String entryid) throws PapillonBusinessException {
         JibikiContext context = CurrentRequestContext.get();
         
-        // BUG279: This will be long enough... We really need to work on caching and multiple volume handling (maybe an explicit id...)
-  //      VolumeEntry ve = VolumeEntriesFactory.findEntryByEntryId(((PapillonSessionData) context.get("sessionData")).getUser(),entryid);
-        VolumeEntry ve = VolumeEntriesFactory.findEntryByContributionId(((PapillonSessionData) context.get("sessionData")).getUser(),entryid);
+         VolumeEntry ve = VolumeEntriesFactory.findEntryByContributionId(volume,entryid);
 		return this.getActions(ve);
     }
     
@@ -96,9 +94,13 @@ public class Actions implements fr.imag.clips.papillon.facelets.api.Actions {
 		// (action.equals("AUTHOR"))
 					XHTMLSpanElement entryAuthor = content.getElementEntryAuthor();
 					entryAuthor.removeAttribute("id");
-					Text textAuthor = content.createTextNode("unknown");
-					textAuthor.setNodeValue(myEntry.getModificationAuthor());
-					entryAuthor.appendChild(textAuthor);
+                    String author = "";
+                    String tmpAuthor = myEntry.getLastModificationAuthor();
+                    if (tmpAuthor !=null) {
+                        author=tmpAuthor;
+                    }
+					Text textAuthor = content.createTextNode(author);
+                    entryAuthor.appendChild(textAuthor);
 				
 		//action.equals("AXIE"))
 					XHTMLAnchorElement viewAxieAnchor = content.getElementViewAxieAnchor();
@@ -147,7 +149,7 @@ public class Actions implements fr.imag.clips.papillon.facelets.api.Actions {
 						
 					} else if (myEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS)) {
 						
-						if (myEntry.getModificationAuthor().equals(user.getLogin())) {
+						if (myEntry.getLastModificationAuthor().equals(user.getLogin())) {
 							textStatus.setNodeValue("proceed edition");
 							//                entryNode.setAttribute("class", "myNotFinishedEntry");
 						} else {
@@ -210,7 +212,7 @@ public class Actions implements fr.imag.clips.papillon.facelets.api.Actions {
              && (!myEntry.getStatus().equals(VolumeEntry.MODIFIED_STATUS)))
             
             || (myEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS)
-                && (myEntry.getModificationAuthor().equals(user.getLogin())
+                && (myEntry.getLastModificationAuthor().equals(user.getLogin())
                     || user.isInGroup(Group.ADMIN_GROUP)))
             ) 
         {
@@ -278,11 +280,11 @@ public class Actions implements fr.imag.clips.papillon.facelets.api.Actions {
         }		
 	} 
 	
-	public Node getLinkActions(String entryid) throws PapillonBusinessException {
+	public Node getLinkActions(String volume, String entryid) throws PapillonBusinessException {
         JibikiContext context = CurrentRequestContext.get();
         
         // BUG279: This will be long enough... We really need to work on caching and multiple volume handling (maybe an explicit id...)
-		VolumeEntry ve = VolumeEntriesFactory.findEntryByContributionId(((PapillonSessionData) context.get("sessionData")).getUser(),entryid);
+		VolumeEntry ve = VolumeEntriesFactory.findEntryByContributionId(volume,entryid);
 		return this.getLinkActions(ve);
     }
     

@@ -1291,100 +1291,112 @@ public class VolumeEntriesFactory {
     //
 	protected static VolumeEntry findEntryByEntryId(Dictionary myDict, Volume myVolume, String entryId)
         throws PapillonBusinessException {
-        // FIXME: should use queries as used in findEntryByEntryId(User user, String entryid)
-        // FIXME: Moreover, this is duplicate code...
-        //PapillonLogger.writeDebugMsg("Looking for " + entryId + " in volume " + myVolume.getName());
-
 
         VolumeEntry resultEntry = (VolumeEntry) CurrentRequestContext.get().get(entryId);
         if (null == resultEntry && null != entryId && !entryId.equals("")) {
-
-
-            Vector answersVector = null;
-
-            Vector myKeys = new Vector();
-            /*			String[] statusReplaced = new String[4];
-                   statusReplaced[0] = Volume.CDM_contributionStatus;
-                   statusReplaced[1] = Volume.DEFAULT_LANG;
-                   statusReplaced[2] = VolumeEntry.REPLACED_STATUS;
-                   statusReplaced[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_NOT_EQUAL+1];
-                   myKeys.add(statusReplaced);
-
-                   String[] statusDeleted = new String[4];
-                   statusDeleted[0] = Volume.CDM_contributionStatus;
-                   statusDeleted[1] = Volume.DEFAULT_LANG;
-                   statusDeleted[2] = VolumeEntry.DELETED_STATUS;
-                   statusDeleted[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_NOT_EQUAL+1];
-                   myKeys.add(statusDeleted); */
-
-            String[] entryIdArray = new String[4];
-            entryIdArray[0] = Volume.CDM_entryId;
-            entryIdArray[1] = Volume.DEFAULT_LANG;
-            entryIdArray[2] = entryId;
-            entryIdArray[3] = IQuery.QueryBuilderStrategy[IQuery.STRATEGY_EXACT + 1];
-            myKeys.add(entryIdArray);
-
-            answersVector = getDbTableEntriesVector(myDict, myVolume, myKeys, null, null, 0, 0);
-
-            if (answersVector.size() > 0) {
-                if (answersVector.size() == 1) {
-                    resultEntry = (VolumeEntry) answersVector.firstElement();
-                } else if (answersVector.size() > 1) {
-                    VolumeEntry tempEntry = null;
-                    VolumeEntry reviewedEntry = null;
-                    VolumeEntry finishedEntry = null;
-                    VolumeEntry notFinishedEntry = null;
-                    VolumeEntry modifiedEntry = null;
-                    for (java.util.Enumeration enumEntries = answersVector.elements(); enumEntries.hasMoreElements();) {
-                        tempEntry = (VolumeEntry) enumEntries.nextElement();
-                        if (tempEntry.getStatus().equals(VolumeEntry.VALIDATED_STATUS)) {
-                            resultEntry = tempEntry;
-                        }
-                        if (tempEntry.getStatus().equals(VolumeEntry.REVIEWED_STATUS)) {
-                            reviewedEntry = tempEntry;
-                        }
-                        if (tempEntry.getStatus().equals(VolumeEntry.FINISHED_STATUS)) {
-                            finishedEntry = tempEntry;
-                        }
-                        // add by Francis to use correctly expandResult !
-                        if (tempEntry.getStatus().equals(VolumeEntry.MODIFIED_STATUS)) {
-                            modifiedEntry = tempEntry;
-                        }
-                        if (tempEntry.getStatus().equals(VolumeEntry.NOT_FINISHED_STATUS)) {
-                            notFinishedEntry = tempEntry;
-                        }
+                VolumeEntryDO theVolumeEntryDO = null;
+                
+                try {
+                    VolumeEntryQuery query = new VolumeEntryQuery(myVolume.getDbname(), CurrentDBTransaction.get());
+                    //set query
+                    query.setQueryEntryId(entryId);
+                    query.setQueryStatus(VolumeEntry.FINISHED_STATUS);
+                    // Throw an exception if more than one message is found
+                    //query.requireUniqueInstance();
+                    theVolumeEntryDO = query.getNextDO();
+                    if (theVolumeEntryDO!= null) {
+                    resultEntry = new VolumeEntry(myDict, myVolume,theVolumeEntryDO);
+                    // Put entry in cache
+                    // Add the volume entry in the request context.
+                    CurrentRequestContext.get().set(resultEntry.getEntryId(), resultEntry);
+                    CurrentRequestContext.get().set(resultEntry.getContributionId(), resultEntry);
                     }
-                    if (resultEntry == null) {
-                        if (reviewedEntry != null) {
-                            resultEntry = reviewedEntry;
-                        } else if (finishedEntry != null) {
-                            resultEntry = finishedEntry;
-                        } else if (modifiedEntry != null) {
-                            resultEntry = modifiedEntry;
-                        } else if (notFinishedEntry != null) {
-                            resultEntry = notFinishedEntry;
-                        }
-                    }
+                } catch(Exception ex) {
+                    throw new PapillonBusinessException("Exception in findEntryByEntryId()", ex);
                 }
             }
-    //        CurrentRequestContext.get().set(entryId, resultEntry);
-            if (resultEntry!=null) {
-                CurrentRequestContext.get().set(resultEntry.getContributionId(), resultEntry);
- //               PapillonLogger.writeDebugMsg("findEntryByEntryId: " + resultEntry.getXmlCode());
-            }
-            else {
- //               PapillonLogger.writeDebugMsg("findEntryByEntryId: resultentry null");
-            }
-        } else {
-            //PapillonLogger.writeDebugMsg("Found it in request context.");
-        }
-
-        //if (resultEntry != null) {
-        //	PapillonLogger.writeDebugMsg("findEntryByEntryId selected entry: " + resultEntry.getHeadword() + " status: " + resultEntry.getStatus());
-        //}
         return resultEntry;
     }
-
+    
+    /**
+     * The findEntryByContributionId method performs a database query to
+     * return a VolumeEntry
+     *
+     * @param id, the object id of the entries table.
+     * @return the corresponding VolumeEntry
+     * @exception PapillonBusinessException
+     *    if there is a problem retrieving message.
+     */
+    public static VolumeEntry findEntryByContributionId(String volumeName, String entryId)
+    throws PapillonBusinessException {
+        Volume volume;
+        Dictionary dict;
+        try {
+            volume = VolumesFactory.getVolumeByName(volumeName);
+            dict = DictionariesFactory.getDictionaryByName(volume.getDictname());
+        }
+        catch(Exception ex) {
+            return null;
+        }
+        return findEntryByContributionId(dict, volume, entryId);
+    }
+    
+    public static VolumeEntry findEntryByContributionId(Dictionary myDict, Volume myVolume, String entryId)
+    throws PapillonBusinessException {
+        VolumeEntry resultEntry = (VolumeEntry) CurrentRequestContext.get().get(entryId);
+        
+        if (null == resultEntry && entryId != null && !entryId.equals("")) {
+            VolumeEntryDO theVolumeEntryDO = null;
+            try {
+                VolumeEntryQuery query = new VolumeEntryQuery(myVolume.getDbname(), CurrentDBTransaction.get());
+                //set query
+                query.setQueryContributionId(entryId);
+                // Throw an exception if more than one message is found
+                //query.requireUniqueInstance();
+                theVolumeEntryDO = query.getNextDO();
+                if (theVolumeEntryDO!= null) {
+                    resultEntry = new VolumeEntry(myDict, myVolume,theVolumeEntryDO);
+                    // Add the volume entry in the request context.
+                    CurrentRequestContext.get().set(resultEntry.getEntryId(), resultEntry);
+                    CurrentRequestContext.get().set(resultEntry.getContributionId(), resultEntry);
+                }
+            } catch(Exception ex) {
+                throw new PapillonBusinessException("Exception in findEntryByContributionId()", ex);
+            }
+        }
+        return resultEntry;
+    }
+    
+    /**
+     * Find Entry by contribution Id
+     *
+     *
+     */
+    public static VolumeEntry findEntryByDictionaryNameAndEntryId(String dictName, String entryId)
+    throws PapillonBusinessException {
+        Dictionary dict = null;
+        Volume volume = null;
+        //System.out.println("dictname:"+dictName + " eid:" + entryId);
+        try {
+            dict = DictionariesFactory.getDictionaryByName(dictName);
+        }
+        catch(Exception ex) {
+        throw new PapillonBusinessException("Exception in findEntryByDictionaryNameAndEntryId()", ex);
+        }
+        Collection volumesCollection = VolumeCache.getVolumesInCacheByDictionaryName(dictName);
+        VolumeEntry resEntry = null;
+      Iterator iterator = volumesCollection.iterator();
+        while ((resEntry == null || resEntry.isEmpty()) && iterator.hasNext()) {
+            volume = (Volume) iterator.next();
+            VolumeEntry tempEntry = findEntryByEntryId(dict, volume, entryId);
+            if (tempEntry!=null && !tempEntry.isEmpty()) {
+                resEntry = tempEntry;
+            }
+        }
+        return resEntry;
+    }
+   
+    
 	/**
 	 * The findPreviousEntryByHeadword method performs a database query to
      * return a VolumeEntry
@@ -1519,154 +1531,7 @@ public class VolumeEntriesFactory {
 			
 	
 	
-/**
-* Find Entry by entry Id
- *
- *
- */
-public static VolumeEntry findEntryByEntryId(User user, String entryId) 
-throws PapillonBusinessException {
-    return findEntryByEntryId(user, VolumesFactory.getVolumesArray(), entryId);
-}
 
-/**
-* Find Entry by entry Id
- *
- *
- */
-public static VolumeEntry findEntryByEntryId(User user, Volume volume, String entryId) 
-throws PapillonBusinessException {
-    ArrayList volumes = new ArrayList();
-    volumes.add(volume);
-    return findEntryByEntryId(user, volumes, entryId);
-}
-
-/**
-* Find Entry by entry Id
- *
- *
- */
-public static VolumeEntry findEntryByEntryId(User user, Collection volumes, String entryId)
-throws PapillonBusinessException {
-    //PapillonLogger.writeDebugMsg("Looking for " + entryId + " in " + volumes.size() + " volumes for user " + user );
-    //FIXME: an entry id may not be unique externally to a dictionary so the dict must be specified
-    VolumeEntry resultEntry = (VolumeEntry) CurrentRequestContext.get().get(entryId);
-
-    if (null == resultEntry && entryId != null && !entryId.equals("")) {
-		
-        // FIXME ... Add dictionary in QueryRequest class
-        QueryRequest queryReq = new QueryRequest(volumes);
-        
-        // Entry Id
-        QueryCriteria criteriaSearch = new QueryCriteria();
-        criteriaSearch.add("key", QueryCriteria.EQUAL, Volume.CDM_entryId);  
-        criteriaSearch.add("value", QueryCriteria.EQUAL, entryId);
-        queryReq.addCriteria(criteriaSearch);
-        
-        //
-        ArrayList qrset = queryReq.findLexie(user);
-        
-        //
-        if (qrset.size() == 1) {
-            resultEntry = ((QueryResult) qrset.get(0)).getSourceEntry();
-        } else if (qrset.size() < 1) {
-            PapillonLogger.writeDebugMsg("Error, 0 entry found: " + entryId);
-        } else if (qrset.size() > 1) {
-            resultEntry = ((QueryResult) qrset.get(0)).getSourceEntry();
-            PapillonLogger.writeDebugMsg("Error, too many entries found: " + entryId);
-        }
-
-        CurrentRequestContext.get().set(entryId, resultEntry);            
-    } else {
-        //PapillonLogger.writeDebugMsg("Found it in request context.");
-    }
-    
-    //FIXME: exception when Qrest < 1 or > 1
-    
-    return resultEntry;
-}
-
-    /**
-     * Find Entry by contribution Id
-     *
-     *
-     */
-    public static VolumeEntry findEntryByContributionId(User user, String entryId)
-    throws PapillonBusinessException {
-        return findEntryByContributionId(user, VolumesFactory.getVolumesArray(), entryId);
-    }
-
-    protected static VolumeEntry findEntryByContributionId(User user, Collection volumes, String entryId)
-    throws PapillonBusinessException {
-        //PapillonLogger.writeDebugMsg("findEntryByContributionId " + entryId + " in " + volumes.size() + " volumes");
-        //FIXME: an entry id may not be unique externally to a dictionary so the dict must be specified
-        VolumeEntry resultEntry = (VolumeEntry) CurrentRequestContext.get().get(entryId);
-        
-        if (null == resultEntry && entryId != null && !entryId.equals("")) {
-            
-            // FIXME ... Add dictionary in QueryRequest class
-            QueryRequest queryReq = new QueryRequest(volumes);
-            
-            // Entry Id
-            QueryCriteria criteriaSearch = new QueryCriteria();
-            criteriaSearch.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionId);
-            criteriaSearch.add("value", QueryCriteria.EQUAL, entryId);
-            queryReq.addCriteria(criteriaSearch);
-            
-            //
-            ArrayList qrset = queryReq.findLexie(user);
-            
-            //
-            if (qrset.size() == 1) {
-                resultEntry = ((QueryResult) qrset.get(0)).getSourceEntry();
-            } else if (qrset.size() < 1) {
-                PapillonLogger.writeDebugMsg("Error, 0 entry found: " + entryId);
-            } else if (qrset.size() > 1) {
-                resultEntry = ((QueryResult) qrset.get(0)).getSourceEntry();
-                PapillonLogger.writeDebugMsg("Error, too many entries found: " + entryId);
-            }
-            
-            CurrentRequestContext.get().set(entryId, resultEntry);
-        } else {
-          //  PapillonLogger.writeDebugMsg("Found it in request context.");
-        }
-        return resultEntry;
-    }
-
-
-
-/**
-* The findEntryByContributionId method performs a database query to
- * return a VolumeEntry
- *
- * @param id, the object id of the entries table.
- * @return the corresponding VolumeEntry
- * @exception PapillonBusinessException
- *    if there is a problem retrieving message.
- */
-public static VolumeEntry findEntryByContributionId(String volumeName, String entryId)
-throws PapillonBusinessException {
-    Volume volume;
-    Dictionary dict;
-    try {
-        volume = VolumesFactory.getVolumeByName(volumeName);
-        dict = DictionariesFactory.getDictionaryByName(volume.getDictname());
-    }
-    catch(Exception ex) {
-        return null;
-    }
-    return findEntryByContributionId(dict, volume, entryId);
-}
-
-public static VolumeEntry findEntryByContributionId(Dictionary myDict, Volume myVolume, String entryId)
-throws PapillonBusinessException {
-    VolumeEntry resultEntry = (VolumeEntry) CurrentRequestContext.get().get(entryId);
-    
-    if (null == resultEntry && entryId != null && !entryId.equals("")) {
-        resultEntry = findEntryByKey(myDict, myVolume, Volume.CDM_contributionId, Volume.DEFAULT_LANG, entryId);
-    }
-    return resultEntry;
-}
     
     /**
      * The findEntriesByOriginalContributionId method performs a database query to
@@ -1712,9 +1577,11 @@ throws fr.imag.clips.papillon.business.PapillonBusinessException {
     //headword
     resEntry.setHeadword(existingEntry.getHeadword());
     
-    resEntry.setEntryIdIfNull();
-    // FIXME: add by Francis
+    resEntry.setEntryId();
     resEntry.setContributionId();
+    resEntry.setOriginalContributionId();
+    resEntry.setAuthor();
+    resEntry.setStatus();
     
     return resEntry;
 }

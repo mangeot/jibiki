@@ -153,13 +153,13 @@ public class History extends PapillonBasePO {
             
             // 
             content.getElementModificationAuthor().removeAttribute("id");
-            content.setTextModificationAuthor(ve.getModificationAuthor());
+            content.setTextModificationAuthor(ve.getLastModificationAuthor());
             content.getElementModificationDate().removeAttribute("id");
-            content.setTextModificationDate(ve.getModificationDate());
-            if ( (ve.getModificationComment() != null) 
-                && (!ve.getModificationComment().equals("")) ) {
+            content.setTextModificationDate(Utility.PapillonCDMDateFormat.format(ve.getLastModificationDate()));
+            if ( (ve.getLastModificationComment() != null)
+                && (!ve.getLastModificationComment().equals("")) ) {
                 content.getElementModificationComment().removeAttribute("id");
-                content.setTextModificationComment(ve.getModificationComment());
+                content.setTextModificationComment(ve.getLastModificationComment());
             } else {
                 Utility.removeElement(content.getElementModificationComment());
             }

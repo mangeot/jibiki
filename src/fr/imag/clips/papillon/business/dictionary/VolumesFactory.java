@@ -1686,7 +1686,7 @@ public class VolumesFactory {
 
                             if (finishedVe.getStatus().equals(VolumeEntry.CLASSIFIED_FINISHED_STATUS)) {
                                 finishedVe.setStatus(VolumeEntry.MODIFIED_STATUS);
-                                finishedVe.setNextContributionAuthor(ve.getModificationAuthor());
+                                finishedVe.setNextContributionAuthor(ve.getLastModificationAuthor());
                                 finishedVe.save();
                             }
                         }

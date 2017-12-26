@@ -136,7 +136,16 @@ public class ManageDatabase implements Query {
     
     
     protected static final String createVolumeTableParamsSql = " (" +
-        "headword TEXT DEFAULT '\'''\''    ," +
+    "headword VARCHAR(255) DEFAULT '\'''\''    ," +
+    "entryId VARCHAR(255) DEFAULT '\'''\''    ," +
+    "contributionId VARCHAR(255) DEFAULT '\'''\''    ," +
+    "previousContributionId VARCHAR(255) DEFAULT '\'''\''    ," +
+    "originalContributionId VARCHAR(255) DEFAULT '\'''\''    ," +
+    "author VARCHAR(255) DEFAULT '\'''\''    ," +
+    "status VARCHAR(255) DEFAULT '\'''\''    ," +
+    "creationDate TIMESTAMP," +
+    "lastModificationAuthor VARCHAR(255) DEFAULT '\'''\''    ," +
+    "lastModificationDate TIMESTAMP," +
 		//"dom BYTEA NOT NULL   ," +
 		//"htmldom BYTEA NOT NULL   ," +
         "xmlCode TEXT DEFAULT '\'''\'' NOT NULL   ," +
@@ -171,7 +180,16 @@ public class ManageDatabase implements Query {
     private static String createVolumeTableSql(String table, String lang) throws  PapillonBusinessException {
         String createVolumeQuery = createTableSql + table + createVolumeTableParamsSql;
         String sortIndexQuery = createIndexSql + table + "_msort_idx" + " ON " + table + " (multilingual_sort( '" + lang + "',headword ));";
-            return  createVolumeQuery + sortIndexQuery;
+        String entryidIndexQuery = createIndexSql + table + "_entryid_idx" + " ON " + table + " ( entryId );";
+        String contributionidIndexQuery = createIndexSql + table + "_contributionid_idx" + " ON " + table + " ( contributionId );";
+        String originalContributionidIndexQuery = createIndexSql + table + "_originalcontributionid_idx" + " ON " + table + " ( originalContributionId );";
+        String previousContributionidIndexQuery = createIndexSql + table + "_previouscontributionid_idx" + " ON " + table + " ( previousContributionId );";
+        String authorIndexQuery = createIndexSql + table + "_author_idx" + " ON " + table + " ( author );";
+        String statusIndexQuery = createIndexSql + table + "_status_idx" + " ON " + table + " ( status );";
+        String creationDateIndexQuery = createIndexSql + table + "_creationdate_idx" + " ON " + table + " ( creationDate );";
+        String lastModificationDateIndexQuery = createIndexSql + table + "_lastmodificationdate_idx" + " ON " + table + " ( lastModificationDate );";
+        String lastModificationAuthorIndexQuery = createIndexSql + table + "_lastmodificationauthor_idx" + " ON " + table + " ( lastModificationAuthor );";
+            return  createVolumeQuery + sortIndexQuery + entryidIndexQuery + contributionidIndexQuery + originalContributionidIndexQuery + previousContributionidIndexQuery + authorIndexQuery + statusIndexQuery + creationDateIndexQuery + lastModificationDateIndexQuery + lastModificationAuthorIndexQuery;
         }
     
     private static String createIndexTableSql(String indexTable) throws  PapillonBusinessException {

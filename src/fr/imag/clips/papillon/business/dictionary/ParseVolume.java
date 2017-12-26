@@ -581,7 +581,10 @@ public class ParseVolume {
             newEntry.setAuthor();
             newEntry.setCreationDate();
             newEntry.setHeadword();
-            newEntry.setStatusIfNotNull(defaultStatus);
+            newEntry.setStatus();
+            if (newEntry.getStatus()==null || newEntry.getStatus().equals("")) {
+                newEntry.setStatus(defaultStatus);
+            }
             String entryId = "";
             if (isContributionVolume) {
                 entryId = newEntry.getContributionId();

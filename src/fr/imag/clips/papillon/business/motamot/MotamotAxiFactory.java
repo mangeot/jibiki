@@ -224,7 +224,7 @@ public class MotamotAxiFactory {
 		
 		if (targetVolumes != null && targetVolumes.size()==1) {
 			Volume targetVolume = (Volume) targetVolumes.iterator().next();
-			VolumeEntry myEntry = VolumeEntriesFactory.findEntryByEntryId(user, targetVolume, entryId);
+			VolumeEntry myEntry = VolumeEntriesFactory.findEntryByEntryId( targetVolume.getName(), entryId);
 			Document theDom = myEntry.getDom();
 			// getElementById does not work unless validating is on
 			//Node theSense = theDom.getElementById(reflexie);
@@ -282,7 +282,7 @@ public class MotamotAxiFactory {
 	protected static String updateAxie(Volume axieVolume, String refaxie, String lang, String refEntry, String refLexie, User user) 
 	throws fr.imag.clips.papillon.business.PapillonBusinessException {
 		PapillonLogger.writeDebugMsg("updateAxie: axi: " + refaxie + " lang: " + lang + " e1: " + refEntry + "." + refLexie);
-		VolumeEntry myAxie = VolumeEntriesFactory.findEntryByEntryId(user, axieVolume,refaxie);
+		VolumeEntry myAxie = VolumeEntriesFactory.findEntryByEntryId(axieVolume.getName(),refaxie);
 		org.w3c.dom.Document theDom = myAxie.getDom();
 		Element reflexies = (Element)theDom.getElementsByTagName(REFLEXIES_TAG).item(0);
 		Element reflexie = theDom.createElement(REFLEXIE_TAG);
@@ -301,8 +301,8 @@ public class MotamotAxiFactory {
 	
 	protected static void mergeAxies(Volume axieVolume, String refaxie1, String refaxie2, User user) 
 	throws fr.imag.clips.papillon.business.PapillonBusinessException {
-		VolumeEntry myAxie1 = VolumeEntriesFactory.findEntryByEntryId(user, axieVolume,refaxie1);
-		VolumeEntry myAxie2 = VolumeEntriesFactory.findEntryByEntryId(user, axieVolume,refaxie2);
+		VolumeEntry myAxie1 = VolumeEntriesFactory.findEntryByEntryId(axieVolume.getName(),refaxie1);
+		VolumeEntry myAxie2 = VolumeEntriesFactory.findEntryByEntryId( axieVolume.getName(),refaxie2);
 		if (myAxie1 != null && myAxie2 != null) {
 			org.w3c.dom.Document theDom1 = myAxie1.getDom();
 			Element reflexies1 = (Element)theDom1.getElementsByTagName(REFLEXIES_TAG).item(0);
@@ -326,7 +326,7 @@ public class MotamotAxiFactory {
 				String[] lexies = myAxie2.getTranslationsLexieIds(lang);
 				if (lexies != null && lexies.length >0) {
 					for (int i=0;i< lexies.length;i++) {
-						VolumeEntry myEntry = VolumeEntriesFactory.findEntryByEntryId(user, theVolume, lexies[i]);
+						VolumeEntry myEntry = VolumeEntriesFactory.findEntryByEntryId(theVolume.getName(), lexies[i]);
 						updateTranslationLinks(myEntry, "axi", refaxie2, refaxie1, user);
 					}
 				}

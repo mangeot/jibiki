@@ -57,6 +57,7 @@ import fr.imag.clips.papillon.business.dictionary.QueryRequest;
 import fr.imag.clips.papillon.business.dictionary.QueryResult;
 import fr.imag.clips.papillon.business.dictionary.Volume;
 import fr.imag.clips.papillon.business.dictionary.VolumeEntry;
+import fr.imag.clips.papillon.business.dictionary.VolumeEntriesFactory;
 import fr.imag.clips.papillon.business.dictionary.VolumesFactory;
 import fr.imag.clips.papillon.business.transformation.ResultFormatter;
 import fr.imag.clips.papillon.business.transformation.ResultFormatterFactory;
@@ -133,8 +134,6 @@ public class LookupVolume extends AbstractPO {
         if (word==null && oneentry!=null) {
             word=oneentry;
         }
-
-		
 		PapillonLogger.writeDebugMsg("LookupVolume: action: " + action + " VOLUME: " + volume + " WORD: " + word + " KEY: " + key + " ORDER: " + order);
 		// advanced lookup
 			if (action!=null && action.equals("advancedLookup")) {
@@ -218,7 +217,7 @@ public class LookupVolume extends AbstractPO {
 				if (order.equals(IndexFactory.ORDER_DESCENDING)) {
 					strategy = QueryBuilder.LESS_THAN;
 				}
-				//PapillonLogger.writeDebugMsg("LookupVolume: " + volume + " WORD: " + word + " KEY: " + key + " Order: " + order + " Strategy: " + strategy);
+				PapillonLogger.writeDebugMsg("LookupVolume: " + volume + " WORD: " + word + " KEY: " + key + " Order: " + order + " Strategy: " + strategy);
 				if (lang==null || lang.equals("")) {
 					lang = myVolume.getSourceLanguage();
 				}
@@ -236,20 +235,9 @@ public class LookupVolume extends AbstractPO {
 					Headword[3] = strategy;
 					myKeys.add(Headword);
                     
-                    /* si ça prend du temps, faire une table d'index juste pour les vedettes */
-                   QueryCriteria criteriaStatus = new QueryCriteria();
-                    criteriaStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);
-                    criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.CLASSIFIED_FINISHED_STATUS);
-                    criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.NOT_FINISHED_STATUS);
-                    criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.DRAFT_STATUS);
-                    criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.DELETED_STATUS);
-
-                    java.util.Vector myClauses = new java.util.Vector();
-                    myClauses.add(criteriaStatus.getFullClause());
-                    
                     
 					// PapillonLogger.writeDebugMsg("LookupVolume: lookupvolume [" + myVolume.getIndexDbname() + "] lang: [" + lang + "] WORD: [" + word + "] KEY: [" + key + "] strat: [" + strategy + "] order: [" + order + "] limit: [" + limit + "]");
-					EntryCollection = IndexFactory.getIndexEntriesVector(myVolume.getIndexDbname(), myKeys, myClauses, order,limit, 0);
+					EntryCollection = IndexFactory.getIndexEntriesVector(myVolume.getIndexDbname(), myKeys, null, order,limit, 0);
 				}
 				else if (msort != null && !msort.equals("")) {
  /* si ça prend du temps, faire une table d'index juste pour les vedettes */
@@ -316,29 +304,19 @@ public class LookupVolume extends AbstractPO {
 				
 				java.util.Vector myKeys = new java.util.Vector();
 				String[] Headword = new String[4];
-				//PapillonLogger.writeDebugMsg("LookupVolume queryOneEntry: " + oneentry + " key: " + key);
+				PapillonLogger.writeDebugMsg("LookupVolume queryOneEntry: " + oneentry + " key: " + key);
 				Headword[0] = key;
 				Headword[1] = lang;
 				Headword[2] = oneentry;
 				Headword[3] = QueryBuilder.CASE_INSENSITIVE_EQUAL;
 				myKeys.add(Headword);
                 
-                QueryCriteria criteriaStatus = new QueryCriteria();
-                criteriaStatus.add("key", QueryCriteria.EQUAL, Volume.CDM_contributionStatus);
-                criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.CLASSIFIED_FINISHED_STATUS);
-                criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.NOT_FINISHED_STATUS);
-                criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.DRAFT_STATUS);
-                criteriaStatus.add("value", QueryCriteria.NOT_EQUAL, VolumeEntry.DELETED_STATUS);
-               
-                java.util.Vector myClauses = new java.util.Vector();
-                myClauses.add(criteriaStatus.getFullClause());
-
 
 				EntryCollection = DictionariesFactory.getDictionaryNameEntriesCollection(myVolume.getDictname(),
 																			source,
 																			targets,
 																			myKeys,
-																			myClauses,
+																			null,
 																			null,
 																			this.getUser(),
 																						 0, MAX_HOMOGRAPHS);
@@ -353,7 +331,7 @@ public class LookupVolume extends AbstractPO {
                                                                                                  source,
                                                                                                  targets,
                                                                                                  myKeys,
-                                                                                                 myClauses,
+                                                                                                 null,
                                                                                                  null,
                                                                                                  this.getUser(),
                                                                                                  0, 1);
@@ -370,14 +348,18 @@ public class LookupVolume extends AbstractPO {
                        org.w3c.dom.Element rootElement = docResponse.getDocumentElement();
                         for (myIterator = EntryCollection.iterator(); myIterator.hasNext(); ) {
 						QueryResult myQueryResult = (QueryResult) myIterator.next();
+                          //  PapillonLogger.writeDebugMsg("call getFormatter");
 						ResultFormatter myResultFormater = ResultFormatterFactory.getFormatter(myQueryResult, null, ResultFormatterFactory.XHTML_DIALECT,null);
+                          //  PapillonLogger.writeDebugMsg("call getFormattedResult");
+
 						org.w3c.dom.Element newEntry = (org.w3c.dom.Element)myResultFormater.getFormattedResult(myQueryResult, this.getUser());
+                            //PapillonLogger.writeDebugMsg("appendChild");
 						rootElement.appendChild(docResponse.importNode(newEntry, true));
                         }
                         if (prefixLookupElement != null) {
                             rootElement.appendChild(docResponse.importNode(prefixLookupElement, true));
                         }
-                        // PapillonLogger.writeDebugMsg("Fin LookupVolume queryOneEntry");
+                       // PapillonLogger.writeDebugMsg("Fin LookupVolume queryOneEntry");
                     }
                     else {
                         //PapillonLogger.writeDebugMsg("Pas de réponse!");
@@ -389,7 +371,7 @@ public class LookupVolume extends AbstractPO {
 			else if (action != null && !action.equals("")) {
 						 throw new ClientPageRedirectException("Home.po?" + this.getComms().request.getQueryString());
 			}
-					 
-			return docResponse;			
+        //PapillonLogger.writeDebugMsg("getDocument: return docResponse");
+			return docResponse;
         }
 }

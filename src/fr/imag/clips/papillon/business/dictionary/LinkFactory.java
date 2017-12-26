@@ -206,15 +206,12 @@ public class LinkFactory {
 						&& !theAxies.contains(targetId)) {
 						VolumeEntry linkedEntry = (VolumeEntry) theLinks.get(targetId);
 						if (linkedEntry == null ||linkedEntry.isEmpty()) {
-							Volume myVolume = VolumesFactory.getVolumeByName(tempLink.getVolumeTarget());
-							if (myVolume !=null && !myVolume.isEmpty()) {
 								//PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: call findEntryByEntryId "+ myVolume.getName() + " " + targetId);
-								linkedEntry = VolumeEntriesFactory.findEntryByEntryId(user, myVolume, targetId);
+								linkedEntry = VolumeEntriesFactory.findEntryByEntryId(tempLink.getVolumeTarget(), targetId);
 								if (linkedEntry != null && !linkedEntry.isEmpty() &&!theLinks.containsKey(targetId)) {
 									//PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: linkedEntry not null: " + targetId);
 									theLinks.put(targetId,linkedEntry);
 								}
-							}
 						}
 						if (linkedEntry != null && !linkedEntry.isEmpty()) {
 							//PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: linkedEntry not null type: " + type);
@@ -258,15 +255,12 @@ public class LinkFactory {
 						&& !theAxies.contains(targetId)) {
 						VolumeEntry linkedEntry = (VolumeEntry) theLinks.get(targetId);
 						if (linkedEntry == null ||linkedEntry.isEmpty()) {
-							Volume myVolume = VolumesFactory.getVolumeByName(tempLink.getVolumeTarget());
-							if (myVolume !=null && !myVolume.isEmpty()) {
 								//PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: call findEntryByEntryId "+ myVolume.getName() + " " + targetId);
-								linkedEntry = VolumeEntriesFactory.findEntryByEntryId(user, myVolume, targetId);
+								linkedEntry = VolumeEntriesFactory.findEntryByEntryId(tempLink.getVolumeTarget(), targetId);
 								if (linkedEntry != null && !linkedEntry.isEmpty() &&!theLinks.containsKey(targetId)) {
 //									PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: linkedEntry not null: " + targetId+" type = "+type+" dirction = "+direction);
 									if(type.equals(Link.FINAL_TYPE)&&direction.equals(Link.DIRECTION_DOWN)) theLinks.put(targetId,linkedEntry);
 								}
-							}
 						}
 						if (linkedEntry != null && !linkedEntry.isEmpty()) {
 							//PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: linkedEntry not null type: " + type);
@@ -306,14 +300,11 @@ public class LinkFactory {
 				if (linkType ==null || !linkType.equals(Link.AXIE_TYPE)) {
 					VolumeEntry linkedEntry = (VolumeEntry) allLinks.get(targetId);
 					if (linkedEntry==null || linkedEntry.isEmpty()) {
-						Volume myVolume = VolumesFactory.getVolumeByName(tempLink.getVolumeTarget());
-						if (myVolume !=null && !myVolume.isEmpty()) {
 							// PapillonLogger.writeDebugMsg("getLinkedEntriesByAxie: find volume "+ tempLink.getVolumeTarget() + " TargetId: " + tempLink.getTargetId());
-							linkedEntry = VolumeEntriesFactory.findEntryByEntryId(user, myVolume, tempLink.getTargetId());
+							linkedEntry = VolumeEntriesFactory.findEntryByEntryId(tempLink.getVolumeTarget(), tempLink.getTargetId());
 							if (linkedEntry != null && !linkedEntry.isEmpty()) {
 								allLinks.put(targetId,linkedEntry);
 							}
-						}
 					}
 					else {
 						// PapillonLogger.writeDebugMsg("getLinkedEntriesByAxie: linkedEntry already in "+ tempLink.getVolumeTarget() + " TargetId: " + tempLink.getTargetId());
@@ -346,10 +337,7 @@ public class LinkFactory {
 				if (!theAxies.containsKey(targetId)) {
 				VolumeEntry linkedEntry = (VolumeEntry) theLinks.get(targetId);
 				if (linkedEntry==null || linkedEntry.isEmpty()) {
-					Volume myVolume = VolumesFactory.getVolumeByName(tempLink.getVolumeTarget());
-					if (myVolume !=null && !myVolume.isEmpty()) {
-						linkedEntry = VolumeEntriesFactory.findEntryByEntryId(user, myVolume, tempLink.getTargetId());
-					}
+						linkedEntry = VolumeEntriesFactory.findEntryByEntryId(tempLink.getVolumeTarget(), tempLink.getTargetId());
 				}
 				if (linkedEntry != null && !linkedEntry.isEmpty()) {
 					if (tempLink.getType() != null && tempLink.getType().equals(Link.AXIE_TYPE)) {
