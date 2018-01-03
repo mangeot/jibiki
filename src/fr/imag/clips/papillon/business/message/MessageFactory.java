@@ -251,7 +251,7 @@ public class MessageFactory {
             conn.release();
             return result;
         }catch(Exception ex) {
-            throw new PapillonBusinessException("Exception in findMessageByID()", ex);
+            throw new PapillonBusinessException("Exception in numberOfMessagesWithThread()", ex);
         }
     }
 

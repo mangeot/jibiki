@@ -1230,39 +1230,6 @@ public class VolumeEntriesFactory {
             }
         }
 	
-    /**
-		* The findEntryByKey method performs a database query to
-     * return a VolumeEntry
-     *
-     * @param Dictionary, Volume, key, lang, value
-     * @return the corresponding VolumeEntry
-     * @exception PapillonBusinessException
-     *    if there is a problem retrieving message.
-     */
-    // FIXME: Shouldn't we use: getDbTableEntriesVector ?
-	protected static VolumeEntry findEntryByKey(Dictionary myDict, Volume myVolume, String key, String lang, String value) throws PapillonBusinessException {
-		VolumeEntry resEntry = null;
-		if (value != null && !value.equals("")) {
-			try {
-				IndexQuery query = new IndexQuery(myVolume.getIndexDbname(), CurrentDBTransaction.get());
-				query.getQueryBuilder().addWhereClause("key", key, QueryBuilder.EQUAL);
-				if (lang != null) {
-					query.getQueryBuilder().addWhereClause("lang", lang, QueryBuilder.EQUAL);
-				}
-				query.getQueryBuilder().addWhereClause("value", value, QueryBuilder.EQUAL);
-				query.getQueryBuilder().setMaxRows(1);
-				IndexDO[] DOarray = query.getDOArray();
-				if (null != DOarray && DOarray.length>0) {
-					Index myIndex = new Index(DOarray[0]);
-					resEntry = findEntryByHandle(myDict, myVolume, ""+myIndex.getEntryId());
-				}
-			}
-			catch(Exception ex) {
-				throw new PapillonBusinessException("Exception in findEntryByKey()", ex);
-			}
-		}
-		return resEntry;
-	}
 	
     /**
 		* The findEntryByEntryId method performs a database query to
@@ -1327,7 +1294,7 @@ public class VolumeEntriesFactory {
      * @exception PapillonBusinessException
      *    if there is a problem retrieving message.
      */
-    public static Vector findEntriesByEntryId(String volumeName, String entryId)
+    public static Vector findEntriesByEntryId(String volumeName, String entryId, int offset, int limit)
     throws PapillonBusinessException {
         Volume volume;
         Dictionary dict;
@@ -1338,18 +1305,23 @@ public class VolumeEntriesFactory {
         catch(Exception ex) {
             return null;
         }
-        return findEntriesByEntryId(dict, volume, entryId);
+        return findEntriesByEntryId(dict, volume, entryId, offset, limit);
     }
     
     //
-    protected static Vector findEntriesByEntryId(Dictionary myDict, Volume myVolume, String entryId)
+    protected static Vector findEntriesByEntryId(Dictionary myDict, Volume myVolume, String entryId, int offset, int limit)
     throws PapillonBusinessException {
         Vector theEntries = new Vector();
             try {
                 VolumeEntryQuery query = new VolumeEntryQuery(myVolume.getDbname(), CurrentDBTransaction.get());
                 //set query
                 query.setQueryEntryId(entryId);
-                
+                query.getQueryBuilder().setMaxRows(limit);
+                query.getQueryBuilder().addEndClause(" LIMIT " + limit);
+                if (offset!=0) {
+                    query.getQueryBuilder().addEndClause(" OFFSET " + offset);
+                }
+
                 VolumeEntryDO[] DOarray = query.getDOArray();
                 if (null != DOarray) {
                     for (int j=0; j < DOarray.length; j++) {
@@ -1372,7 +1344,7 @@ public class VolumeEntriesFactory {
      * @exception PapillonBusinessException
      *    if there is a problem retrieving message.
      */
-    public static Vector findEntriesByOriginalContributionId(String volumeName, String entryId)
+    public static Vector findEntriesByOriginalContributionId(String volumeName, String entryId, int offset, int limit)
     throws PapillonBusinessException {
         Volume volume;
         Dictionary dict;
@@ -1383,18 +1355,23 @@ public class VolumeEntriesFactory {
         catch(Exception ex) {
             return null;
         }
-        return findEntriesByOriginalContributionId(dict, volume, entryId);
+        return findEntriesByOriginalContributionId(dict, volume, entryId, offset, limit);
     }
     
     //
-    protected static Vector findEntriesByOriginalContributionId(Dictionary myDict, Volume myVolume, String entryId)
+    protected static Vector findEntriesByOriginalContributionId(Dictionary myDict, Volume myVolume, String entryId, int offset, int limit)
     throws PapillonBusinessException {
         Vector theEntries = theEntries = new Vector();
         try {
             VolumeEntryQuery query = new VolumeEntryQuery(myVolume.getDbname(), CurrentDBTransaction.get());
             //set query
             query.setQueryOriginalContributionId(entryId);
-            
+            query.getQueryBuilder().setMaxRows(limit);
+            query.getQueryBuilder().addEndClause(" LIMIT " + limit);
+            if (offset!=0) {
+                query.getQueryBuilder().addEndClause(" OFFSET " + offset);
+            }
+
             VolumeEntryDO[] DOarray = query.getDOArray();
             if (null != DOarray) {
                 for (int j=0; j < DOarray.length; j++) {
@@ -1537,7 +1514,7 @@ public class VolumeEntriesFactory {
      * @exception PapillonBusinessException
      *    if there is a problem retrieving message.
      */
-    public static Vector findEntriesByStatus(String volumeName, String entryId)
+    public static Vector findEntriesByStatus(String volumeName, String entryId, int offset, int limit)
     throws PapillonBusinessException {
         Volume volume;
         Dictionary dict;
@@ -1548,17 +1525,22 @@ public class VolumeEntriesFactory {
         catch(Exception ex) {
             return null;
         }
-        return findEntriesByStatus(dict, volume, entryId);
+        return findEntriesByStatus(dict, volume, entryId, offset, limit);
     }
     
     //
-    protected static Vector findEntriesByStatus(Dictionary myDict, Volume myVolume, String entryId)
+    protected static Vector findEntriesByStatus(Dictionary myDict, Volume myVolume, String entryId, int offset, int limit)
     throws PapillonBusinessException {
         Vector theEntries = new Vector();
         try {
             VolumeEntryQuery query = new VolumeEntryQuery(myVolume.getDbname(), CurrentDBTransaction.get());
             //set query
             query.setQueryStatus(entryId);
+            query.getQueryBuilder().setMaxRows(limit);
+            query.getQueryBuilder().addEndClause(" LIMIT " + limit);
+            if (offset!=0) {
+                query.getQueryBuilder().addEndClause(" OFFSET " + offset);
+            }
             
             VolumeEntryDO[] DOarray = query.getDOArray();
             if (null != DOarray) {
@@ -1577,12 +1559,12 @@ public class VolumeEntriesFactory {
      * The findEntriesByAuthor method performs a database query to
      * return a Vector of VolumeEntry
      *
-     * @param id, the object id of the entries table.
-     * @return the corresponding VolumeEntry
+     * @param volumeName, author of the entries.
+     * @return a Vector of VolumeEntry
      * @exception PapillonBusinessException
      *    if there is a problem retrieving message.
      */
-    public static Vector findEntriesByAuthor(String volumeName, String entryId)
+    public static Vector findEntriesByAuthor(String volumeName, String author, int offset, int limit)
     throws PapillonBusinessException {
         Volume volume;
         Dictionary dict;
@@ -1593,17 +1575,22 @@ public class VolumeEntriesFactory {
         catch(Exception ex) {
             return null;
         }
-        return findEntriesByAuthor(dict, volume, entryId);
+        return findEntriesByAuthor(dict, volume, author, offset, limit);
     }
     
     //
-    protected static Vector findEntriesByAuthor(Dictionary myDict, Volume myVolume, String entryId)
+    protected static Vector findEntriesByAuthor(Dictionary myDict, Volume myVolume, String author, int offset, int limit)
     throws PapillonBusinessException {
         Vector theEntries = new Vector();
         try {
             VolumeEntryQuery query = new VolumeEntryQuery(myVolume.getDbname(), CurrentDBTransaction.get());
             //set query
-            query.setQueryAuthor(entryId);
+            query.setQueryAuthor(author);
+            query.getQueryBuilder().setMaxRows(limit);
+            query.getQueryBuilder().addEndClause(" LIMIT " + limit);
+            if (offset!=0) {
+                query.getQueryBuilder().addEndClause(" OFFSET " + offset);
+            }
             
             VolumeEntryDO[] DOarray = query.getDOArray();
             if (null != DOarray) {
@@ -1614,6 +1601,160 @@ public class VolumeEntriesFactory {
             }
         } catch(Exception ex) {
             throw new PapillonBusinessException("Exception in findEntryByEntryId()", ex);
+        }
+        return theEntries;
+    }
+
+    /**
+     * The findEntriesByLastModificationAuthor method performs a database query to
+     * return a Vector of VolumeEntry
+     *
+     * @param volumeName, author of the entries.
+     * @return a Vector of VolumeEntry
+     * @exception PapillonBusinessException
+     *    if there is a problem retrieving message.
+     */
+    public static Vector findEntriesByLastModificationAuthor(String volumeName, String author, int offset, int limit)
+    throws PapillonBusinessException {
+        Volume volume;
+        Dictionary dict;
+        try {
+            volume = VolumesFactory.getVolumeByName(volumeName);
+            dict = DictionariesFactory.getDictionaryByName(volume.getDictname());
+        }
+        catch(Exception ex) {
+            return null;
+        }
+        return findEntriesByLastModificationAuthor(dict, volume, author, offset, limit);
+    }
+    
+    //
+    protected static Vector findEntriesByLastModificationAuthor(Dictionary myDict, Volume myVolume, String author, int offset, int limit)
+    throws PapillonBusinessException {
+        Vector theEntries = new Vector();
+        try {
+            VolumeEntryQuery query = new VolumeEntryQuery(myVolume.getDbname(), CurrentDBTransaction.get());
+            //set query
+            query.setQueryLastModificationAuthor(author);
+            query.getQueryBuilder().setMaxRows(limit);
+            query.getQueryBuilder().addEndClause(" LIMIT " + limit);
+            if (offset!=0) {
+                query.getQueryBuilder().addEndClause(" OFFSET " + offset);
+            }
+            
+            VolumeEntryDO[] DOarray = query.getDOArray();
+            if (null != DOarray) {
+                for (int j=0; j < DOarray.length; j++) {
+                    VolumeEntry tempEntry = new VolumeEntry(myDict, myVolume, DOarray[j]);
+                    theEntries.add(tempEntry);
+                }
+            }
+        } catch(Exception ex) {
+            throw new PapillonBusinessException("Exception in findEntryByEntryId()", ex);
+        }
+        return theEntries;
+    }
+
+    /**
+     * The findEntriesByCreationDate method performs a database query to
+     * return a Vector of VolumeEntry
+     *
+     * @param volumeName, date, strategy, offset, limit
+     * @return a Vector of VolumeEntry
+     * @exception PapillonBusinessException
+     *    if there is a problem retrieving message.
+     */
+    // FIXME: Shouldn't we use: getDbTableEntriesVector ?
+    public static Vector findEntriesByCreationDate(String volumeName, String date, String strategy, int offset, int limit)
+    throws PapillonBusinessException {
+        Volume volume;
+        Dictionary dict;
+        try {
+            volume = VolumesFactory.getVolumeByName(volumeName);
+            dict = DictionariesFactory.getDictionaryByName(volume.getDictname());
+        }
+        catch(Exception ex) {
+            return null;
+        }
+        return findEntriesByCreationDate(dict, volume, date, strategy, offset, limit);
+    }
+    
+    protected static Vector findEntriesByCreationDate(Dictionary myDict, Volume myVolume, String date, String strategy, int offset, int limit) throws PapillonBusinessException {
+        Vector theEntries = new Vector();
+        if (date != null && !date.equals("")) {
+            try {
+                com.lutris.dods.builder.generator.query.RDBColumn dateColumn = VolumeEntryDO.getCreationDateColumn(myVolume.getDbname());
+                VolumeEntryQuery query = new VolumeEntryQuery(myVolume.getDbname(), CurrentDBTransaction.get());
+                query.getQueryBuilder().addWhere(dateColumn, date, QueryBuilder.EQUAL);
+                query.getQueryBuilder().setMaxRows(limit);
+                query.getQueryBuilder().addEndClause(" LIMIT " + limit);
+                if (offset!=0) {
+                    query.getQueryBuilder().addEndClause(" OFFSET " + offset);
+                }
+                
+                VolumeEntryDO[] DOarray = query.getDOArray();
+                if (null != DOarray) {
+                    for (int j=0; j < DOarray.length; j++) {
+                        VolumeEntry tempEntry = new VolumeEntry(myDict, myVolume, DOarray[j]);
+                        theEntries.add(tempEntry);
+                    }
+                }
+            }
+            catch(Exception ex) {
+                throw new PapillonBusinessException("Exception in findEntryByKey()", ex);
+            }
+        }
+        return theEntries;
+    }
+
+    /**
+     * The findEntriesByLastModificationDate method performs a database query to
+     * return a Vector of VolumeEntry
+     *
+     * @param volumeName, date, strategy, offset, limit
+     * @return a Vector of VolumeEntry
+     * @exception PapillonBusinessException
+     *    if there is a problem retrieving message.
+     */
+    // FIXME: Shouldn't we use: getDbTableEntriesVector ?
+    public static Vector findEntriesByLastModificationDate(String volumeName, String date, String strategy, int offset, int limit)
+    throws PapillonBusinessException {
+        Volume volume;
+        Dictionary dict;
+        try {
+            volume = VolumesFactory.getVolumeByName(volumeName);
+            dict = DictionariesFactory.getDictionaryByName(volume.getDictname());
+        }
+        catch(Exception ex) {
+            return null;
+        }
+        return findEntriesByLastModificationDate(dict, volume, date, strategy, offset, limit);
+    }
+    
+    protected static Vector findEntriesByLastModificationDate(Dictionary myDict, Volume myVolume, String date, String strategy, int offset, int limit) throws PapillonBusinessException {
+        Vector theEntries = new Vector();
+        if (date != null && !date.equals("")) {
+            try {
+                com.lutris.dods.builder.generator.query.RDBColumn dateColumn = VolumeEntryDO.getLastModificationDateColumn(myVolume.getDbname());
+                VolumeEntryQuery query = new VolumeEntryQuery(myVolume.getDbname(), CurrentDBTransaction.get());
+                query.getQueryBuilder().addWhere(dateColumn, date, QueryBuilder.EQUAL);
+                query.getQueryBuilder().setMaxRows(limit);
+                query.getQueryBuilder().addEndClause(" LIMIT " + limit);
+                if (offset!=0) {
+                    query.getQueryBuilder().addEndClause(" OFFSET " + offset);
+                }
+                
+                VolumeEntryDO[] DOarray = query.getDOArray();
+                if (null != DOarray) {
+                    for (int j=0; j < DOarray.length; j++) {
+                        VolumeEntry tempEntry = new VolumeEntry(myDict, myVolume, DOarray[j]);
+                        theEntries.add(tempEntry);
+                    }
+                }
+            }
+            catch(Exception ex) {
+                throw new PapillonBusinessException("Exception in findEntryByKey()", ex);
+            }
         }
         return theEntries;
     }
