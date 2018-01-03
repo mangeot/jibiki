@@ -835,8 +835,7 @@ It is also possible to do the same for the [lang] and [key] part of the URL.</p>
 For example, searching an entry with <i>api/*/eng/cdm-headword/trial|essay/</i> will give a list of
 handles for entries with headwords matching "trial" or "essay".</p>
 
-<p>The <b>handle</b>, <b>cdm-entry-id</b> and <b>cdm-contribution-id</b> criteria are special as they does not give a list of entry handles but the full entry XML
- content.</p>
+<p>The criteria only listed below are special as they does not give a list of entry handles but the full entry body.</p>
 
 <p>Example of query:</p>
 <pre class="api">
@@ -941,20 +940,25 @@ curl -X GET \
 <p>Criteria only are one of the following:</p>
 
 <table class="api">
- <tbody>
-    <tr><td>handle</td><td>unique entry handle specific to the server database</td></tr>
-    <tr><td>previous</td><td>previous entry following the volume lexicographic order</td></tr>
-    <tr><td>next</td><td>previous entry following the volume lexicographic order</td></tr>
- </tbody>
+    <tbody>
+        <tr><td>cdm-entry-id</td><td>entry id</td></tr>
+        <tr><td>cdm-contribution-id</td><td>contribution id</td></tr>
+        <tr><td>cdm-original-contribution-id</td><td>original contribution id</td></tr>
+        <tr><td>cdm-previous-contribution</td><td>previous contribution id</td></tr>
+        <tr><td>cdm-contribution-author</td><td>contribution author</td></tr>
+        <tr><td>cdm-contribution-status</td><td>contribution status</td></tr>
+        <tr><td>handle</td><td>yelds the corresponding entry, given a handle specific to the database</td></tr>
+        <tr><td>previous</td><td>yelds the previous entry following the volume lexicographic order, given a handle specific to the database</td></tr>
+        <tr><td>next</td><td>yelds the next entry following the volume lexicographic order, given a handle specific to the database</td></tr>
+    </tbody>
 </table>
 
-<p>For the above criteria, the string must be an entry handle.</p>
-
+<p>All the above criteria will yeld the full entries code. If specified, the keys are not taken into account.</p>
+    
 <p>Criteria and keys are one of the following:</p>
 
 <table class="api">
  <tbody>
-    <tr><td>cdm-entry-id</td><td>entry id</td></tr>
     <tr><td>cdm-headword</td><td>entry headword</td></tr>
     <tr><td>cdm-headword-variant</td><td>entry headword variant</td></tr>
     <tr><td>cdm-reading</td><td>entry headword reading (ex: japanese kana)</td></tr>
@@ -964,11 +968,8 @@ curl -X GET \
     <tr><td>cdm-translation</td><td>entry headword translation in another language</td></tr>
     <tr><td>cdm-example</td><td>entry examples</td></tr>
     <tr><td>cdm-idiom</td><td>entry idioms</td></tr>
-    <tr><td>cdm-contribution-id</td><td>contribution id</td></tr>
-    <tr><td>cdm-contribution-author</td><td>contribution author</td></tr>
     <tr><td>cdm-contribution-creation-date</td><td>contribution creation date</td></tr>
     <tr><td>cdm-contribution-finition-date</td><td>contribution finition date</td></tr>
-    <tr><td>cdm-contribution-status</td><td>contribution status</td></tr>
  </tbody>
 </table>
 

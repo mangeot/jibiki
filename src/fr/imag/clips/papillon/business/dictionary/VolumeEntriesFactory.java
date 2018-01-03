@@ -525,7 +525,7 @@ public class VolumeEntriesFactory {
 	}
 	
     protected static Vector getDbTableEntriesVector(Dictionary dict, Volume volume, Vector Keys, Vector Clauses, String any, String order, int offset, int limit) throws PapillonBusinessException {
-        Vector theEntries = theEntries = new Vector();
+        Vector theEntries = new Vector();
 		
 		String sourceLanguage = volume.getSourceLanguage();
 		String volumeTableName = volume.getDbname();
@@ -1317,6 +1317,96 @@ public class VolumeEntriesFactory {
             }
         return resultEntry;
     }
+
+    /**
+     * The findEntriesByEntryId method performs a database query to
+     * return a VolumeEntry
+     *
+     * @param id, the object id of the entries table.
+     * @return the corresponding VolumeEntry
+     * @exception PapillonBusinessException
+     *    if there is a problem retrieving message.
+     */
+    public static Vector findEntriesByEntryId(String volumeName, String entryId)
+    throws PapillonBusinessException {
+        Volume volume;
+        Dictionary dict;
+        try {
+            volume = VolumesFactory.getVolumeByName(volumeName);
+            dict = DictionariesFactory.getDictionaryByName(volume.getDictname());
+        }
+        catch(Exception ex) {
+            return null;
+        }
+        return findEntriesByEntryId(dict, volume, entryId);
+    }
+    
+    //
+    protected static Vector findEntriesByEntryId(Dictionary myDict, Volume myVolume, String entryId)
+    throws PapillonBusinessException {
+        Vector theEntries = new Vector();
+            try {
+                VolumeEntryQuery query = new VolumeEntryQuery(myVolume.getDbname(), CurrentDBTransaction.get());
+                //set query
+                query.setQueryEntryId(entryId);
+                
+                VolumeEntryDO[] DOarray = query.getDOArray();
+                if (null != DOarray) {
+                    for (int j=0; j < DOarray.length; j++) {
+                        VolumeEntry tempEntry = new VolumeEntry(myDict, myVolume, DOarray[j]);
+                        theEntries.add(tempEntry);
+                    }
+                }
+            } catch(Exception ex) {
+                throw new PapillonBusinessException("Exception in findEntryByEntryId()", ex);
+            }
+        return theEntries;
+    }
+
+    /**
+     * The findEntriesByOriginalContributionId method performs a database query to
+     * return a Vector of VolumeEntry
+     *
+     * @param id, the object id of the entries table.
+     * @return the corresponding VolumeEntry
+     * @exception PapillonBusinessException
+     *    if there is a problem retrieving message.
+     */
+    public static Vector findEntriesByOriginalContributionId(String volumeName, String entryId)
+    throws PapillonBusinessException {
+        Volume volume;
+        Dictionary dict;
+        try {
+            volume = VolumesFactory.getVolumeByName(volumeName);
+            dict = DictionariesFactory.getDictionaryByName(volume.getDictname());
+        }
+        catch(Exception ex) {
+            return null;
+        }
+        return findEntriesByOriginalContributionId(dict, volume, entryId);
+    }
+    
+    //
+    protected static Vector findEntriesByOriginalContributionId(Dictionary myDict, Volume myVolume, String entryId)
+    throws PapillonBusinessException {
+        Vector theEntries = theEntries = new Vector();
+        try {
+            VolumeEntryQuery query = new VolumeEntryQuery(myVolume.getDbname(), CurrentDBTransaction.get());
+            //set query
+            query.setQueryOriginalContributionId(entryId);
+            
+            VolumeEntryDO[] DOarray = query.getDOArray();
+            if (null != DOarray) {
+                for (int j=0; j < DOarray.length; j++) {
+                    VolumeEntry tempEntry = new VolumeEntry(myDict, myVolume, DOarray[j]);
+                    theEntries.add(tempEntry);
+                }
+            }
+        } catch(Exception ex) {
+            throw new PapillonBusinessException("Exception in findEntryByEntryId()", ex);
+        }
+        return theEntries;
+    }
     
     /**
      * The findEntryByContributionId method performs a database query to
@@ -1396,8 +1486,139 @@ public class VolumeEntriesFactory {
         return resEntry;
     }
    
+    /**
+     * The findEntryByPreviousContributionId method performs a database query to
+     * return a VolumeEntry
+     *
+     * @param id, the object id of the entries table.
+     * @return the corresponding VolumeEntry
+     * @exception PapillonBusinessException
+     *    if there is a problem retrieving message.
+     */
+    public static VolumeEntry findEntryByPreviousContributionId(String volumeName, String entryId)
+    throws PapillonBusinessException {
+        Volume volume;
+        Dictionary dict;
+        try {
+            volume = VolumesFactory.getVolumeByName(volumeName);
+            dict = DictionariesFactory.getDictionaryByName(volume.getDictname());
+        }
+        catch(Exception ex) {
+            return null;
+        }
+        return findEntryByPreviousContributionId(dict, volume, entryId);
+    }
     
-	/**
+    public static VolumeEntry findEntryByPreviousContributionId(Dictionary myDict, Volume myVolume, String entryId)
+    throws PapillonBusinessException {
+        VolumeEntry resultEntry = null;
+        try {
+            VolumeEntryQuery query = new VolumeEntryQuery(myVolume.getDbname(), CurrentDBTransaction.get());
+            //set query
+            query.setQueryPreviousContributionId(entryId);
+            // Throw an exception if more than one message is found
+            //query.requireUniqueInstance();
+            VolumeEntryDO theVolumeEntryDO = query.getNextDO();
+            if (theVolumeEntryDO!= null) {
+                resultEntry = new VolumeEntry(myDict, myVolume,theVolumeEntryDO);
+            }
+        } catch(Exception ex) {
+            throw new PapillonBusinessException("Exception in findEntryByPreviousContributionId()", ex);
+        }
+        return resultEntry;
+    }
+
+    /**
+     * The findEntriesByStatus method performs a database query to
+     * return a Vector of VolumeEntry
+     *
+     * @param id, the object id of the entries table.
+     * @return the corresponding VolumeEntry
+     * @exception PapillonBusinessException
+     *    if there is a problem retrieving message.
+     */
+    public static Vector findEntriesByStatus(String volumeName, String entryId)
+    throws PapillonBusinessException {
+        Volume volume;
+        Dictionary dict;
+        try {
+            volume = VolumesFactory.getVolumeByName(volumeName);
+            dict = DictionariesFactory.getDictionaryByName(volume.getDictname());
+        }
+        catch(Exception ex) {
+            return null;
+        }
+        return findEntriesByStatus(dict, volume, entryId);
+    }
+    
+    //
+    protected static Vector findEntriesByStatus(Dictionary myDict, Volume myVolume, String entryId)
+    throws PapillonBusinessException {
+        Vector theEntries = new Vector();
+        try {
+            VolumeEntryQuery query = new VolumeEntryQuery(myVolume.getDbname(), CurrentDBTransaction.get());
+            //set query
+            query.setQueryStatus(entryId);
+            
+            VolumeEntryDO[] DOarray = query.getDOArray();
+            if (null != DOarray) {
+                for (int j=0; j < DOarray.length; j++) {
+                    VolumeEntry tempEntry = new VolumeEntry(myDict, myVolume, DOarray[j]);
+                    theEntries.add(tempEntry);
+                }
+            }
+        } catch(Exception ex) {
+            throw new PapillonBusinessException("Exception in findEntryByEntryId()", ex);
+        }
+        return theEntries;
+    }
+    
+    /**
+     * The findEntriesByAuthor method performs a database query to
+     * return a Vector of VolumeEntry
+     *
+     * @param id, the object id of the entries table.
+     * @return the corresponding VolumeEntry
+     * @exception PapillonBusinessException
+     *    if there is a problem retrieving message.
+     */
+    public static Vector findEntriesByAuthor(String volumeName, String entryId)
+    throws PapillonBusinessException {
+        Volume volume;
+        Dictionary dict;
+        try {
+            volume = VolumesFactory.getVolumeByName(volumeName);
+            dict = DictionariesFactory.getDictionaryByName(volume.getDictname());
+        }
+        catch(Exception ex) {
+            return null;
+        }
+        return findEntriesByAuthor(dict, volume, entryId);
+    }
+    
+    //
+    protected static Vector findEntriesByAuthor(Dictionary myDict, Volume myVolume, String entryId)
+    throws PapillonBusinessException {
+        Vector theEntries = new Vector();
+        try {
+            VolumeEntryQuery query = new VolumeEntryQuery(myVolume.getDbname(), CurrentDBTransaction.get());
+            //set query
+            query.setQueryAuthor(entryId);
+            
+            VolumeEntryDO[] DOarray = query.getDOArray();
+            if (null != DOarray) {
+                for (int j=0; j < DOarray.length; j++) {
+                    VolumeEntry tempEntry = new VolumeEntry(myDict, myVolume, DOarray[j]);
+                    theEntries.add(tempEntry);
+                }
+            }
+        } catch(Exception ex) {
+            throw new PapillonBusinessException("Exception in findEntryByEntryId()", ex);
+        }
+        return theEntries;
+    }
+
+    /**
 	 * The findPreviousEntryByHeadword method performs a database query to
      * return a VolumeEntry
      *
@@ -1407,7 +1628,7 @@ public class VolumeEntriesFactory {
      *    if there is a problem retrieving message.
      */
 	//select value from idxdelafra where key='cdm-headword' and msort<multilingual_sort('fra','essai') order by msort desc limit 2;
-	
+
     public static VolumeEntry findPreviousEntryByHeadword(String volumeName, String headword)
 	throws PapillonBusinessException {
 		Volume volume;
@@ -1528,46 +1749,7 @@ public class VolumeEntriesFactory {
 			}
 			return theEntries;
 		}
-			
-	
-	
-
     
-    /**
-     * The findEntriesByOriginalContributionId method performs a database query to
-     * return a collection of VolumeEntries
-     *
-     * @param id, the object id of the entries table.
-     * @return the corresponding VolumeEntry
-     * @exception PapillonBusinessException
-     *    if there is a problem retrieving message.
-     */
-
-
-public static java.util.Vector findEntriesByOriginalContributionId(VolumeEntry existingEntry)
-throws fr.imag.clips.papillon.business.PapillonBusinessException {
-    
-    java.util.Vector myKeys = new java.util.Vector();
-    String[] origContribId = new String[4];
-    origContribId[0] = Volume.CDM_originalContributionId;
-    origContribId[1] = Volume.DEFAULT_LANG;
-    origContribId[2] = existingEntry.getOriginalContributionId();
-    origContribId[3] = QueryBuilder.EQUAL;
-    myKeys.add(origContribId);
-    
-    String[] StatusNotFinished = new String[4];
-    StatusNotFinished[0] = Volume.CDM_contributionStatus;
-    StatusNotFinished[1] = Volume.DEFAULT_LANG;
-    StatusNotFinished[2] = VolumeEntry.NOT_FINISHED_STATUS;
-    StatusNotFinished[3] = QueryBuilder.NOT_EQUAL;
-    myKeys.add(StatusNotFinished);
-    String[] StatusDraft = (String[]) StatusNotFinished.clone();
-    StatusDraft[2] = VolumeEntry.DRAFT_STATUS;
-    myKeys.add(StatusDraft);
-    
-    return getDbTableEntriesVector(existingEntry.getDictionary(), existingEntry.getVolume(), myKeys, null, "", "", 0, 0);
-    
-  }
   
   public static VolumeEntry newEntryFromExisting(VolumeEntry existingEntry) 
 throws fr.imag.clips.papillon.business.PapillonBusinessException {

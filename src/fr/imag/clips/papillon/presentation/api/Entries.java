@@ -203,18 +203,50 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
                 java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
                 if (volumesCollection !=null && volumesCollection.size()>0) {
                     java.util.Iterator iterator = volumesCollection.iterator();
-                    while (resultDoc==null && iterator.hasNext()) {
+                    StringBuffer allEntries = new StringBuffer(120 * (limit+1) * volumesCollection.size());
+                    allEntries.append(ENTRIES_HEAD_XMLSTRING);
+                   while (iterator.hasNext()) {
                         theVolume = (Volume) iterator.next();
                         PapillonLogger.writeDebugMsg("Entries: id: " + word + " volume: " + theVolume.getName());
-                        VolumeEntry myEntry = VolumeEntriesFactory.findEntryByEntryId(theVolume.getName(), word);
-                        if (myEntry != null && !myEntry.isEmpty()) {
-                            PapillonLogger.writeDebugMsg("Entry: headword: " + myEntry.getHeadword());
-                            resultDoc = myEntry.getDom();
-                        }
-                        else {
-                            PapillonLogger.writeDebugMsg("Entry null: " + word);
+                       String sourceLang = theVolume.getSourceLanguage();
+                       String entryString = "\n<d:entry d:lang='"+sourceLang+"' d:dictionary='"+theVolume.getDictname()+"'>";
+                        Collection myEntries = VolumeEntriesFactory.findEntriesByEntryId(theVolume.getName(), word);
+                       for (java.util.Iterator myIterator = myEntries.iterator(); myIterator.hasNext(); ) {
+                           VolumeEntry myEntry = (VolumeEntry) myIterator.next();
+                           allEntries.append(entryString);
+                           allEntries.append(myEntry.getXmlCode());
+                           allEntries.append("</d:entry>");
+                       }						
+                    }
+                    allEntries.append(ENTRIES_TAIL_XMLSTRING);
+                    //PapillonLogger.writeDebugMsg(allEntries.toString());
+                    resultDoc = XMLServices.buildDOMTree(allEntries.toString());
+                }
+            }
+        }
+        else if (criteria !=null && criteria.equals(Volume.CDM_originalContributionId)) {
+            if (key==null) {
+                java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
+                if (volumesCollection !=null && volumesCollection.size()>0) {
+                    java.util.Iterator iterator = volumesCollection.iterator();
+                    StringBuffer allEntries = new StringBuffer(120 * (limit+1) * volumesCollection.size());
+                    allEntries.append(ENTRIES_HEAD_XMLSTRING);
+                    while (iterator.hasNext()) {
+                        theVolume = (Volume) iterator.next();
+                        PapillonLogger.writeDebugMsg("Entries: id: " + word + " volume: " + theVolume.getName());
+                        String sourceLang = theVolume.getSourceLanguage();
+                        String entryString = "\n<d:entry d:lang='"+sourceLang+"' d:dictionary='"+theVolume.getDictname()+"'>";
+                        Collection myEntries = VolumeEntriesFactory.findEntriesByOriginalContributionId(theVolume.getName(), word);
+                        for (java.util.Iterator myIterator = myEntries.iterator(); myIterator.hasNext(); ) {
+                            VolumeEntry myEntry = (VolumeEntry) myIterator.next();
+                            allEntries.append(entryString);
+                            allEntries.append(myEntry.getXmlCode());
+                            allEntries.append("</d:entry>");
                         }
                     }
+                    allEntries.append(ENTRIES_TAIL_XMLSTRING);
+                    //PapillonLogger.writeDebugMsg(allEntries.toString());
+                    resultDoc = XMLServices.buildDOMTree(allEntries.toString());
                 }
             }
         }
@@ -227,6 +259,26 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
                         theVolume = (Volume) iterator.next();
                         PapillonLogger.writeDebugMsg("Entries: id: " + word + " volume: " + theVolume.getName());
                         VolumeEntry myEntry = VolumeEntriesFactory.findEntryByContributionId(theVolume.getName(), word);
+                        if (myEntry != null && !myEntry.isEmpty()) {
+                            PapillonLogger.writeDebugMsg("Entry: headword: " + myEntry.getHeadword());
+                            resultDoc = myEntry.getDom();
+                        }
+                        else {
+                            PapillonLogger.writeDebugMsg("Entry null: " + word);
+                        }
+                    }
+                }
+            }
+        }
+        else if (criteria !=null && criteria.equals(Volume.CDM_previousContribution)) {
+            if (key==null) {
+                java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
+                if (volumesCollection !=null && volumesCollection.size()>0) {
+                    java.util.Iterator iterator = volumesCollection.iterator();
+                    while (resultDoc==null && iterator.hasNext()) {
+                        theVolume = (Volume) iterator.next();
+                        PapillonLogger.writeDebugMsg("Entries: id: " + word + " volume: " + theVolume.getName());
+                        VolumeEntry myEntry = VolumeEntriesFactory.findEntryByPreviousContributionId(theVolume.getName(), word);
                         if (myEntry != null && !myEntry.isEmpty()) {
                             PapillonLogger.writeDebugMsg("Entry: headword: " + myEntry.getHeadword());
                             resultDoc = myEntry.getDom();
@@ -278,6 +330,58 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 				}
 			}
 		}
+        else if (criteria !=null && criteria.equals(Volume.CDM_contributionAuthor)) {
+            if (key==null) {
+                java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
+                if (volumesCollection !=null && volumesCollection.size()>0) {
+                    java.util.Iterator iterator = volumesCollection.iterator();
+                    StringBuffer allEntries = new StringBuffer(120 * (limit+1) * volumesCollection.size());
+                    allEntries.append(ENTRIES_HEAD_XMLSTRING);
+                    while (iterator.hasNext()) {
+                        theVolume = (Volume) iterator.next();
+                        PapillonLogger.writeDebugMsg("Entries: id: " + word + " volume: " + theVolume.getName());
+                        String sourceLang = theVolume.getSourceLanguage();
+                        String entryString = "\n<d:entry d:lang='"+sourceLang+"' d:dictionary='"+theVolume.getDictname()+"'>";
+                        Collection myEntries = VolumeEntriesFactory.findEntriesByAuthor(theVolume.getName(), word);
+                        for (java.util.Iterator myIterator = myEntries.iterator(); myIterator.hasNext(); ) {
+                            VolumeEntry myEntry = (VolumeEntry) myIterator.next();
+                            allEntries.append(entryString);
+                            allEntries.append(myEntry.getXmlCode());
+                            allEntries.append("</d:entry>");
+                        }
+                    }
+                    allEntries.append(ENTRIES_TAIL_XMLSTRING);
+                    //PapillonLogger.writeDebugMsg(allEntries.toString());
+                    resultDoc = XMLServices.buildDOMTree(allEntries.toString());
+                }
+            }
+        }
+        else if (criteria !=null && criteria.equals(Volume.CDM_contributionStatus)) {
+            if (key==null) {
+                java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
+                if (volumesCollection !=null && volumesCollection.size()>0) {
+                    java.util.Iterator iterator = volumesCollection.iterator();
+                    StringBuffer allEntries = new StringBuffer(120 * (limit+1) * volumesCollection.size());
+                    allEntries.append(ENTRIES_HEAD_XMLSTRING);
+                    while (iterator.hasNext()) {
+                        theVolume = (Volume) iterator.next();
+                        PapillonLogger.writeDebugMsg("Entries: id: " + word + " volume: " + theVolume.getName());
+                        String sourceLang = theVolume.getSourceLanguage();
+                        String entryString = "\n<d:entry d:lang='"+sourceLang+"' d:dictionary='"+theVolume.getDictname()+"'>";
+                        Collection myEntries = VolumeEntriesFactory.findEntriesByStatus(theVolume.getName(), word);
+                        for (java.util.Iterator myIterator = myEntries.iterator(); myIterator.hasNext(); ) {
+                            VolumeEntry myEntry = (VolumeEntry) myIterator.next();
+                            allEntries.append(entryString);
+                            allEntries.append(myEntry.getXmlCode());
+                            allEntries.append("</d:entry>");
+                        }
+                    }
+                    allEntries.append(ENTRIES_TAIL_XMLSTRING);
+                    //PapillonLogger.writeDebugMsg(allEntries.toString());
+                    resultDoc = XMLServices.buildDOMTree(allEntries.toString());
+                }
+            }
+        }
 		else if (criteria !=null && criteria.equals("pivax")) {
 			java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
 			if (volumesCollection !=null && volumesCollection.size()>0) {
