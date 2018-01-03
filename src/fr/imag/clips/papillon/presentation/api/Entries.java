@@ -210,7 +210,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
                         PapillonLogger.writeDebugMsg("Entries: id: " + word + " volume: " + theVolume.getName());
                        String sourceLang = theVolume.getSourceLanguage();
                        String entryString = "\n<d:entry d:lang='"+sourceLang+"' d:dictionary='"+theVolume.getDictname()+"'>";
-                        Collection myEntries = VolumeEntriesFactory.findEntriesByEntryId(theVolume.getName(), word);
+                        Collection myEntries = VolumeEntriesFactory.findEntriesByEntryId(theVolume.getName(), word, offset, limit);
                        for (java.util.Iterator myIterator = myEntries.iterator(); myIterator.hasNext(); ) {
                            VolumeEntry myEntry = (VolumeEntry) myIterator.next();
                            allEntries.append(entryString);
@@ -236,7 +236,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
                         PapillonLogger.writeDebugMsg("Entries: id: " + word + " volume: " + theVolume.getName());
                         String sourceLang = theVolume.getSourceLanguage();
                         String entryString = "\n<d:entry d:lang='"+sourceLang+"' d:dictionary='"+theVolume.getDictname()+"'>";
-                        Collection myEntries = VolumeEntriesFactory.findEntriesByOriginalContributionId(theVolume.getName(), word);
+                        Collection myEntries = VolumeEntriesFactory.findEntriesByOriginalContributionId(theVolume.getName(), word, limit,offset);
                         for (java.util.Iterator myIterator = myEntries.iterator(); myIterator.hasNext(); ) {
                             VolumeEntry myEntry = (VolumeEntry) myIterator.next();
                             allEntries.append(entryString);
@@ -335,14 +335,40 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
                 java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
                 if (volumesCollection !=null && volumesCollection.size()>0) {
                     java.util.Iterator iterator = volumesCollection.iterator();
-                    StringBuffer allEntries = new StringBuffer(120 * (limit+1) * volumesCollection.size());
+                    StringBuffer allEntries = new StringBuffer();
                     allEntries.append(ENTRIES_HEAD_XMLSTRING);
                     while (iterator.hasNext()) {
                         theVolume = (Volume) iterator.next();
                         PapillonLogger.writeDebugMsg("Entries: id: " + word + " volume: " + theVolume.getName());
                         String sourceLang = theVolume.getSourceLanguage();
                         String entryString = "\n<d:entry d:lang='"+sourceLang+"' d:dictionary='"+theVolume.getDictname()+"'>";
-                        Collection myEntries = VolumeEntriesFactory.findEntriesByAuthor(theVolume.getName(), word);
+                        Collection myEntries = VolumeEntriesFactory.findEntriesByAuthor(theVolume.getName(), word, offset, limit);
+                        for (java.util.Iterator myIterator = myEntries.iterator(); myIterator.hasNext(); ) {
+                            VolumeEntry myEntry = (VolumeEntry) myIterator.next();
+                            allEntries.append(entryString);
+                            allEntries.append(myEntry.getXmlCode());
+                            allEntries.append("</d:entry>");
+                        }
+                    }
+                    allEntries.append(ENTRIES_TAIL_XMLSTRING);
+                    //PapillonLogger.writeDebugMsg(allEntries.toString());
+                    resultDoc = XMLServices.buildDOMTree(allEntries.toString());
+                }
+            }
+        }
+        else if (criteria !=null && criteria.equals(Volume.CDM_contributionCreationDate)) {
+            if (key==null) {
+                java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
+                if (volumesCollection !=null && volumesCollection.size()>0) {
+                    java.util.Iterator iterator = volumesCollection.iterator();
+                    StringBuffer allEntries = new StringBuffer();
+                    allEntries.append(ENTRIES_HEAD_XMLSTRING);
+                    while (iterator.hasNext()) {
+                        theVolume = (Volume) iterator.next();
+                        PapillonLogger.writeDebugMsg("Entries: id: " + word + " volume: " + theVolume.getName());
+                        String sourceLang = theVolume.getSourceLanguage();
+                        String entryString = "\n<d:entry d:lang='"+sourceLang+"' d:dictionary='"+theVolume.getDictname()+"'>";
+                        Collection myEntries = VolumeEntriesFactory.findEntriesByCreationDate(theVolume.getName(), word, strategy, offset, limit);
                         for (java.util.Iterator myIterator = myEntries.iterator(); myIterator.hasNext(); ) {
                             VolumeEntry myEntry = (VolumeEntry) myIterator.next();
                             allEntries.append(entryString);
@@ -361,14 +387,66 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
                 java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
                 if (volumesCollection !=null && volumesCollection.size()>0) {
                     java.util.Iterator iterator = volumesCollection.iterator();
-                    StringBuffer allEntries = new StringBuffer(120 * (limit+1) * volumesCollection.size());
+                    StringBuffer allEntries = new StringBuffer();
                     allEntries.append(ENTRIES_HEAD_XMLSTRING);
                     while (iterator.hasNext()) {
                         theVolume = (Volume) iterator.next();
                         PapillonLogger.writeDebugMsg("Entries: id: " + word + " volume: " + theVolume.getName());
                         String sourceLang = theVolume.getSourceLanguage();
                         String entryString = "\n<d:entry d:lang='"+sourceLang+"' d:dictionary='"+theVolume.getDictname()+"'>";
-                        Collection myEntries = VolumeEntriesFactory.findEntriesByStatus(theVolume.getName(), word);
+                        Collection myEntries = VolumeEntriesFactory.findEntriesByStatus(theVolume.getName(), word, offset, limit);
+                        for (java.util.Iterator myIterator = myEntries.iterator(); myIterator.hasNext(); ) {
+                            VolumeEntry myEntry = (VolumeEntry) myIterator.next();
+                            allEntries.append(entryString);
+                            allEntries.append(myEntry.getXmlCode());
+                            allEntries.append("</d:entry>");
+                        }
+                    }
+                    allEntries.append(ENTRIES_TAIL_XMLSTRING);
+                    //PapillonLogger.writeDebugMsg(allEntries.toString());
+                    resultDoc = XMLServices.buildDOMTree(allEntries.toString());
+                }
+            }
+        }
+        else if (criteria !=null && criteria.equals(Volume.CDM_modificationDate)) {
+            if (key==null) {
+                java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
+                if (volumesCollection !=null && volumesCollection.size()>0) {
+                    java.util.Iterator iterator = volumesCollection.iterator();
+                    StringBuffer allEntries = new StringBuffer();
+                    allEntries.append(ENTRIES_HEAD_XMLSTRING);
+                    while (iterator.hasNext()) {
+                        theVolume = (Volume) iterator.next();
+                        PapillonLogger.writeDebugMsg("Entries: id: " + word + " volume: " + theVolume.getName());
+                        String sourceLang = theVolume.getSourceLanguage();
+                        String entryString = "\n<d:entry d:lang='"+sourceLang+"' d:dictionary='"+theVolume.getDictname()+"'>";
+                        Collection myEntries = VolumeEntriesFactory.findEntriesByLastModificationDate(theVolume.getName(), word, strategy, offset, limit);
+                        for (java.util.Iterator myIterator = myEntries.iterator(); myIterator.hasNext(); ) {
+                            VolumeEntry myEntry = (VolumeEntry) myIterator.next();
+                            allEntries.append(entryString);
+                            allEntries.append(myEntry.getXmlCode());
+                            allEntries.append("</d:entry>");
+                        }
+                    }
+                    allEntries.append(ENTRIES_TAIL_XMLSTRING);
+                    //PapillonLogger.writeDebugMsg(allEntries.toString());
+                    resultDoc = XMLServices.buildDOMTree(allEntries.toString());
+                }
+            }
+        }
+        else if (criteria !=null && criteria.equals(Volume.CDM_modificationAuthor)) {
+            if (key==null) {
+                java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
+                if (volumesCollection !=null && volumesCollection.size()>0) {
+                    java.util.Iterator iterator = volumesCollection.iterator();
+                    StringBuffer allEntries = new StringBuffer();
+                    allEntries.append(ENTRIES_HEAD_XMLSTRING);
+                    while (iterator.hasNext()) {
+                        theVolume = (Volume) iterator.next();
+                        PapillonLogger.writeDebugMsg("Entries: id: " + word + " volume: " + theVolume.getName());
+                        String sourceLang = theVolume.getSourceLanguage();
+                        String entryString = "\n<d:entry d:lang='"+sourceLang+"' d:dictionary='"+theVolume.getDictname()+"'>";
+                        Collection myEntries = VolumeEntriesFactory.findEntriesByLastModificationAuthor(theVolume.getName(), word, offset, limit);
                         for (java.util.Iterator myIterator = myEntries.iterator(); myIterator.hasNext(); ) {
                             VolumeEntry myEntry = (VolumeEntry) myIterator.next();
                             allEntries.append(entryString);
