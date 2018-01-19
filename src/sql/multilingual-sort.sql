@@ -2538,6 +2538,707 @@ CREATE OR REPLACE FUNCTION msa_sort( varchar )
 $PROC$ LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
 
 
+-- nru Yongning Na
+-- [ɑ, ɑ̃, æ, æ̃, b, ɕ, d, dz, dʑ, ɖ, ɖʐ, e, ɤ, ɤ̃, ə, f, g, ɣ, h, i, ĩ, j, jæ, jɤ, je, jo, ʝ, k, kʰ, l, ɭ, ɬ, m, n, ɳ, ɲ, ŋ, o, õ, p, pʰ, q, qʰ, ɻ, ɻ̍, ɻ ̍̃, ʁ, s, ʂ, t, tʰ, tɕ, tɕʰ, ts, tsʰ, ʈ, ʈʰ, ʈʂ, ʈʂʰ, u, ɯ, v̩, [ṽ̩, ṽ̩], w, wɑ, wæ, wɤ, wo, wɤ̃, w̃, w̃æ, z, ʐ, ʑ, x, [˥, ˥₁, ˥₂, ˥₃, ˧, ˧₁, ˧₂, ˧₃, ˩, ˩₁, ˩₂, ˩₃, ˧˥, ˧˥₁, ˧˥₂, ˧˥₃, ˩˥, ˩˥₁, ˩˥₂, ˩˥₃, ˩˧, ˩˧₁, ˩˧₂, ˩˧₃]]
+-- 10 ɑ, ɑ̃, æ, æ̃, b, ɕ, d, dz, dʑ, ɖ,
+-- 20 ɖʐ, e, ɤ, ɤ̃, ə, f, g, ɣ, h, i,
+-- 30 ĩ, j, jæ, jɤ, je, jo, ʝ, k, kʰ, l,
+-- 40 ɭ, ɬ, m, n, ɳ, ɲ, ŋ, o, õ, p,
+-- 50 pʰ, q, qʰ, ɻ, ɻ̍, ɻ ̍̃, ʁ, s, ʂ, t,
+-- 60 tʰ, tɕ, tɕʰ, ts, tsʰ, ʈ, ʈʰ, ʈʂ, ʈʂʰ, u,
+-- 70 ɯ, v̩, ṽ̩, w, wɑ, wæ, wɤ, wo, wɤ̃, w̃,
+-- 80 w̃æ, z, ʐ, ʑ, x
+
+-- ˥ ˧ ˩ ˧˥ ˩˥ ˩˧
+-- 01 ˥, ˥₁, ˥₂, ˥₃,
+-- 02 ˧, ˧₁, ˧₂, ˧₃, 
+-- 03 ˩, ˩₁, ˩₂, ˩₃, 
+-- 04 ˧˥, ˧˥₁, ˧˥₂, ˧˥₃, 
+-- 05 ˩˥, ˩˥₁, ˩˥₂, ˩˥₃, 
+-- 06 ˩˧, ˩˧₁, ˩˧₂, ˩˧₃
+
+
+
+CREATE OR REPLACE FUNCTION nru_sort( varchar ) 
+ RETURNS varchar AS $PROC$ 
+
+ DECLARE
+  i		integer := 1;
+  tmp		char;
+  tmp2		char = SUBSTR( $1, 1, 1 );
+  tmp3		char = SUBSTR( $1, 2, 1 );
+  tmp4		char;
+  result	varchar := '';
+  length	integer;
+ BEGIN
+ 	length := char_length($1);
+  	WHILE i <= length LOOP
+		tmp := tmp2;
+		tmp2 := tmp3;
+		tmp3 := SUBSTR( $1, i+2, 1 );
+		tmp4 := SUBSTR( $1, i+3, 1 );
+  IF tmp = 'ɑ'  THEN
+	IF tmp2 = '̃' THEN
+		tmp2 := tmp3;
+		tmp3 := tmp4;
+		i := i+1;
+		result:= result || '11';
+	ELSE
+		result:= result || '10';
+	END IF;
+  ELSIF tmp = 'æ'  THEN
+	IF tmp2 = '̃' THEN
+		tmp2 := tmp3;
+		tmp3 := tmp4;
+		i := i+1;
+		result:= result || '13';
+	ELSE
+		result:= result || '12';
+	END IF;
+  ELSIF tmp = 'b' THEN
+    result:= result || '14';
+  ELSIF tmp = 'ɕ' THEN
+    result:= result || '15';
+  ELSIF tmp = 'd'  THEN
+	IF tmp2 = 'z' THEN
+		tmp2 := tmp3;
+		tmp3 := tmp4;
+		i := i+1;
+		result:= result || '17';
+	ELSIF tmp2 = 'ʑ' THEN
+		tmp2 := tmp3;
+		tmp3 := tmp4;
+		i := i+1;
+		result:= result || '18';
+	ELSE
+		result:= result || '16';
+	END IF;
+  ELSIF tmp = 'ɖ'  THEN
+	IF tmp2 = 'ʐ' THEN
+		tmp2 := tmp3;
+		tmp3 := tmp4;
+		i := i+1;
+		result:= result || '20';
+	ELSE
+		result:= result || '19';
+	END IF;
+  ELSIF tmp = 'e' THEN
+    result:= result || '21';
+  ELSIF tmp = 'ɤ'  THEN
+	IF tmp2 = '̃' THEN
+		tmp2 := tmp3;
+		tmp3 := tmp4;
+		i := i+1;
+		result:= result || '23';
+	ELSE
+		result:= result || '22';
+	END IF;
+  ELSIF tmp = 'ə' THEN
+    result:= result || '24';
+  ELSIF tmp = 'f' THEN
+    result:= result || '25';
+  ELSIF tmp = 'g' THEN
+    result:= result || '26';
+  ELSIF tmp = 'ɣ' THEN
+    result:= result || '27';
+  ELSIF tmp = 'h' THEN
+    result:= result || '28';
+  ELSIF tmp = 'i' THEN
+    result:= result || '29';
+  ELSIF tmp = 'ĩ' THEN
+    result:= result || '30';
+  ELSIF tmp = 'j'  THEN
+	IF tmp2 = 'æ' THEN
+		tmp2 := tmp3;
+		tmp3 := tmp4;
+		i := i+1;
+		result:= result || '32';
+	ELSIF tmp2 = 'ɤ' THEN
+		tmp2 := tmp3;
+		tmp3 := tmp4;
+		i := i+1;
+		result:= result || '33';
+	ELSIF tmp2 = 'e' THEN
+		tmp2 := tmp3;
+		tmp3 := tmp4;
+		i := i+1;
+		result:= result || '34';
+	ELSIF tmp2 = 'o' THEN
+		tmp2 := tmp3;
+		tmp3 := tmp4;
+		i := i+1;
+		result:= result || '35';
+	ELSE
+		result:= result || '31';
+	END IF;
+  ELSIF tmp = 'ʝ' THEN
+    result:= result || '36';
+  ELSIF tmp = 'k' THEN
+	IF tmp2 = 'ʰ' THEN
+		tmp2 := tmp3;
+		tmp3 := tmp4;
+		i := i+1;
+		result:= result || '38';
+	ELSE
+		result:= result || '37';
+	END IF;
+  ELSIF tmp = 'l' THEN
+    result:= result || '39';
+  ELSIF tmp = 'ɭ' THEN
+    result:= result || '40';
+  ELSIF tmp = 'ɬ' THEN
+    result:= result || '41';
+  ELSIF tmp = 'm' THEN
+    result:= result || '42';
+  ELSIF tmp = 'n' THEN
+    result:= result || '43';
+  ELSIF tmp = 'ɳ' THEN
+    result:= result || '44';
+  ELSIF tmp = 'ɲ' THEN
+    result:= result || '45';
+  ELSIF tmp = 'ŋ' THEN
+    result:= result || '46';
+  ELSIF tmp = 'o' THEN
+    result:= result || '47';
+  ELSIF tmp = 'õ' THEN
+    result:= result || '48';
+  ELSIF tmp = 'p' THEN
+	IF tmp2 = 'ʰ' THEN
+		tmp2 := tmp3;
+		tmp3 := tmp4;
+		i := i+1;
+		result:= result || '50';
+	ELSE
+		result:= result || '49';
+	END IF;
+  ELSIF tmp = 'q' THEN
+	IF tmp2 = 'ʰ' THEN
+		tmp2 := tmp3;
+		tmp3 := tmp4;
+		i := i+1;
+		result:= result || '52';
+	ELSE
+		result:= result || '51';
+	END IF;
+  ELSIF tmp = 'ɻ' THEN
+	IF tmp2 = '̍' THEN
+		IF tmp3 = '̃' THEN
+			tmp2 := tmp3;
+			tmp3 := tmp4;
+			i := i+2;
+			result:= result || '55';
+		ELSE
+			tmp2 := tmp3;
+			tmp3 := tmp4;
+			i := i+1;
+			result:= result || '54';
+		END IF;
+	ELSE
+		result:= result || '53';
+	END IF;
+  ELSIF tmp = 'ʁ' THEN
+    result:= result || '56';
+  ELSIF tmp = 's' THEN
+    result:= result || '57';
+  ELSIF tmp = 'ʂ' THEN
+    result:= result || '58';
+  ELSIF tmp = 't' THEN
+	IF tmp2 = 'ʰ' THEN
+		tmp2 := tmp3;
+		tmp3 := tmp4;
+		i := i+1;
+		result:= result || '60';
+	ELSIF tmp2 = 'ɕ' THEN
+		IF tmp3 = 'ʰ' THEN
+			tmp2 := tmp3;
+			tmp3 := tmp4;
+			i := i+2;
+			result:= result || '62';
+		ELSE
+			tmp2 := tmp3;
+			tmp3 := tmp4;
+			i := i+1;
+			result:= result || '61';
+		END IF;
+	ELSIF tmp2 = 's' THEN
+		IF tmp3 = 'ʰ' THEN
+			tmp2 := tmp3;
+			tmp3 := tmp4;
+			i := i+2;
+			result:= result || '64';
+		ELSE
+			tmp2 := tmp3;
+			tmp3 := tmp4;
+			i := i+1;
+			result:= result || '63';
+		END IF;
+	ELSE
+		result:= result || '59';
+	END IF;
+  ELSIF tmp = 'ʈ' THEN
+	IF tmp2 = 'ʰ' THEN
+		tmp2 := tmp3;
+		tmp3 := tmp4;
+		i := i+1;
+		result:= result || '66';
+	ELSIF tmp2 = 'ʂ' THEN
+		IF tmp3 = 'ʰ' THEN
+			tmp2 := tmp3;
+			tmp3 := tmp4;
+			i := i+2;
+			result:= result || '68';
+		ELSE
+			tmp2 := tmp3;
+			tmp3 := tmp4;
+			i := i+1;
+			result:= result || '67';
+		END IF;
+	ELSE
+		result:= result || '65';
+	END IF;
+  ELSIF tmp = 'u' THEN
+    result:= result || '69';
+  ELSIF tmp = 'ɯ' THEN
+    result:= result || '70';
+  ELSIF tmp = 'v' THEN
+    result:= result || '71';
+  ELSIF tmp = 'ṽ' THEN
+    result:= result || '72';
+  ELSIF tmp = '̩' THEN
+    result:= result;
+  ELSIF tmp = 'w' THEN
+	IF tmp2 = 'ɑ' THEN
+		tmp2 := tmp3;
+		tmp3 := tmp4;
+		i := i+1;
+		result:= result || '74';
+	ELSIF tmp2 = 'æ' THEN
+		tmp2 := tmp3;
+		tmp3 := tmp4;
+		i := i+1;
+		result:= result || '75';
+	ELSIF tmp2 = 'o' THEN
+		tmp2 := tmp3;
+		tmp3 := tmp4;
+		i := i+1;
+		result:= result || '77';
+	ELSIF tmp2 = 'ɤ' THEN
+		IF tmp3 = '̃' THEN
+			tmp2 := tmp3;
+			tmp3 := tmp4;
+			i := i+2;
+			result:= result || '78';
+		ELSE
+			tmp2 := tmp3;
+			tmp3 := tmp4;
+			i := i+1;
+			result:= result || '76';
+		END IF;
+	ELSIF tmp2 = '̃' THEN
+		IF tmp3 = 'æ' THEN
+			tmp2 := tmp3;
+			tmp3 := tmp4;
+			i := i+2;
+			result:= result || '80';
+		ELSE
+			tmp2 := tmp3;
+			tmp3 := tmp4;
+			i := i+1;
+			result:= result || '79';
+		END IF;
+	ELSE
+		result:= result || '73';
+	END IF;
+  ELSIF tmp = 'z' THEN
+    result:= result || '81';
+  ELSIF tmp = 'ʐ' THEN
+    result:= result || '82';
+  ELSIF tmp = 'ʑ' THEN
+    result:= result || '83';
+  ELSIF tmp = 'x' THEN
+    result:= result || '84';
+	
+-- les tons
+  ELSIF tmp = '˥' THEN
+    result:= result;
+  ELSIF tmp = '˧' THEN
+    result:= result;
+  ELSIF tmp = '˩' THEN
+    result:= result;
+  ELSIF tmp = '₁' THEN
+    result:= result;
+  ELSIF tmp = '₂' THEN
+    result:= result;
+  ELSIF tmp = '₃' THEN
+    result:= result;
+  ELSIF tmp = 'α' THEN
+    result:= result;
+  ELSIF tmp = 'β' THEN
+    result:= result;
+  ELSIF tmp = 'γ' THEN
+    result:= result;
+
+-- fin	
+  ELSIF tmp = ' ' THEN
+    result:= result;
+  ELSIF tmp = '-' THEN
+    result:= result;
+  ELSIF tmp = '+' THEN
+    result:= result;
+  ELSIF tmp = '#' THEN
+    result:= result;
+  ELSE
+    result:= result || '99';
+  END IF;
+  i:=i+1;
+  END LOOP;
+  result:= result || '00';
+  i:=1;
+  WHILE i <= length LOOP
+		tmp := tmp2;
+		tmp2 := SUBSTR( $1, i+1, 1 );
+		tmp3 := SUBSTR( $1, i+2, 1 );
+		tmp4 := SUBSTR( $1, i+3, 1 );
+  IF tmp = 'ɑ'  THEN
+	IF tmp2 = '̃' THEN
+		tmp2 := tmp3;
+		tmp3 := tmp4;
+		i := i+1;
+		result:= result || '11';
+	ELSE
+		result:= result || '10';
+	END IF;
+  ELSIF tmp = 'æ'  THEN
+	IF tmp2 = '̃' THEN
+		tmp2 := tmp3;
+		tmp3 := tmp4;
+		i := i+1;
+		result:= result || '13';
+	ELSE
+		result:= result || '12';
+	END IF;
+  ELSIF tmp = 'b' THEN
+    result:= result || '14';
+  ELSIF tmp = 'ɕ' THEN
+    result:= result || '15';
+  ELSIF tmp = 'd'  THEN
+	IF tmp2 = 'z' THEN
+		tmp2 := tmp3;
+		tmp3 := tmp4;
+		i := i+1;
+		result:= result || '17';
+	ELSIF tmp2 = 'ʑ' THEN
+		tmp2 := tmp3;
+		tmp3 := tmp4;
+		i := i+1;
+		result:= result || '18';
+	ELSE
+		result:= result || '16';
+	END IF;
+  ELSIF tmp = 'ɖ'  THEN
+	IF tmp2 = 'ʐ' THEN
+		tmp2 := tmp3;
+		tmp3 := tmp4;
+		i := i+1;
+		result:= result || '20';
+	ELSE
+		result:= result || '19';
+	END IF;
+  ELSIF tmp = 'e' THEN
+    result:= result || '21';
+  ELSIF tmp = 'ɤ'  THEN
+	IF tmp2 = '̃' THEN
+		tmp2 := tmp3;
+		tmp3 := tmp4;
+		i := i+1;
+		result:= result || '23';
+	ELSE
+		result:= result || '22';
+	END IF;
+  ELSIF tmp = 'ə' THEN
+    result:= result || '24';
+  ELSIF tmp = 'f' THEN
+    result:= result || '25';
+  ELSIF tmp = 'g' THEN
+    result:= result || '26';
+  ELSIF tmp = 'ɣ' THEN
+    result:= result || '27';
+  ELSIF tmp = 'h' THEN
+    result:= result || '28';
+  ELSIF tmp = 'i' THEN
+    result:= result || '29';
+  ELSIF tmp = 'ĩ' THEN
+    result:= result || '30';
+  ELSIF tmp = 'j'  THEN
+	IF tmp2 = 'æ' THEN
+		tmp2 := tmp3;
+		tmp3 := tmp4;
+		i := i+1;
+		result:= result || '32';
+	ELSIF tmp2 = 'ɤ' THEN
+		tmp2 := tmp3;
+		tmp3 := tmp4;
+		i := i+1;
+		result:= result || '33';
+	ELSIF tmp2 = 'e' THEN
+		tmp2 := tmp3;
+		tmp3 := tmp4;
+		i := i+1;
+		result:= result || '34';
+	ELSIF tmp2 = 'o' THEN
+		tmp2 := tmp3;
+		tmp3 := tmp4;
+		i := i+1;
+		result:= result || '35';
+	ELSE
+		result:= result || '31';
+	END IF;
+  ELSIF tmp = 'ʝ' THEN
+    result:= result || '36';
+  ELSIF tmp = 'k' THEN
+	IF tmp2 = 'ʰ' THEN
+		tmp2 := tmp3;
+		tmp3 := tmp4;
+		i := i+1;
+		result:= result || '38';
+	ELSE
+		result:= result || '37';
+	END IF;
+  ELSIF tmp = 'l' THEN
+    result:= result || '39';
+  ELSIF tmp = 'ɭ' THEN
+    result:= result || '40';
+  ELSIF tmp = 'ɬ' THEN
+    result:= result || '41';
+  ELSIF tmp = 'm' THEN
+    result:= result || '42';
+  ELSIF tmp = 'n' THEN
+    result:= result || '43';
+  ELSIF tmp = 'ɳ' THEN
+    result:= result || '44';
+  ELSIF tmp = 'ɲ' THEN
+    result:= result || '45';
+  ELSIF tmp = 'ŋ' THEN
+    result:= result || '46';
+  ELSIF tmp = 'o' THEN
+    result:= result || '47';
+  ELSIF tmp = 'õ' THEN
+    result:= result || '48';
+  ELSIF tmp = 'p' THEN
+	IF tmp2 = 'ʰ' THEN
+		tmp2 := tmp3;
+		tmp3 := tmp4;
+		i := i+1;
+		result:= result || '50';
+	ELSE
+		result:= result || '49';
+	END IF;
+  ELSIF tmp = 'q' THEN
+	IF tmp2 = 'ʰ' THEN
+		tmp2 := tmp3;
+		tmp3 := tmp4;
+		i := i+1;
+		result:= result || '52';
+	ELSE
+		result:= result || '51';
+	END IF;
+  ELSIF tmp = 'ɻ' THEN
+	IF tmp2 = '̍' THEN
+		IF tmp3 = '̃' THEN
+			tmp2 := tmp3;
+			tmp3 := tmp4;
+			i := i+2;
+			result:= result || '55';
+		ELSE
+			tmp2 := tmp3;
+			tmp3 := tmp4;
+			i := i+1;
+			result:= result || '54';
+		END IF;
+	ELSE
+		result:= result || '53';
+	END IF;
+  ELSIF tmp = 'ʁ' THEN
+    result:= result || '56';
+  ELSIF tmp = 's' THEN
+    result:= result || '57';
+  ELSIF tmp = 'ʂ' THEN
+    result:= result || '58';
+  ELSIF tmp = 't' THEN
+	IF tmp2 = 'ʰ' THEN
+		tmp2 := tmp3;
+		tmp3 := tmp4;
+		i := i+1;
+		result:= result || '60';
+	ELSIF tmp2 = 'ɕ' THEN
+		IF tmp3 = 'ʰ' THEN
+			tmp2 := tmp3;
+			tmp3 := tmp4;
+			i := i+2;
+			result:= result || '62';
+		ELSE
+			tmp2 := tmp3;
+			tmp3 := tmp4;
+			i := i+1;
+			result:= result || '61';
+		END IF;
+	ELSIF tmp2 = 's' THEN
+		IF tmp3 = 'ʰ' THEN
+			tmp2 := tmp3;
+			tmp3 := tmp4;
+			i := i+2;
+			result:= result || '64';
+		ELSE
+			tmp2 := tmp3;
+			tmp3 := tmp4;
+			i := i+1;
+			result:= result || '63';
+		END IF;
+	ELSE
+		result:= result || '59';
+	END IF;
+  ELSIF tmp = 'ʈ' THEN
+	IF tmp2 = 'ʰ' THEN
+		tmp2 := tmp3;
+		tmp3 := tmp4;
+		i := i+1;
+		result:= result || '66';
+	ELSIF tmp2 = 'ʂ' THEN
+		IF tmp3 = 'ʰ' THEN
+			tmp2 := tmp3;
+			tmp3 := tmp4;
+			i := i+2;
+			result:= result || '68';
+		ELSE
+			tmp2 := tmp3;
+			tmp3 := tmp4;
+			i := i+1;
+			result:= result || '67';
+		END IF;
+	ELSE
+		result:= result || '65';
+	END IF;
+  ELSIF tmp = 'u' THEN
+    result:= result || '69';
+  ELSIF tmp = 'ɯ' THEN
+    result:= result || '70';
+  ELSIF tmp = 'v' THEN
+    result:= result || '71';
+  ELSIF tmp = 'ṽ' THEN
+    result:= result || '72';
+  ELSIF tmp = '̩' THEN
+    result:= result;
+  ELSIF tmp = 'w' THEN
+	IF tmp2 = 'ɑ' THEN
+		tmp2 := tmp3;
+		tmp3 := tmp4;
+		i := i+1;
+		result:= result || '74';
+	ELSIF tmp2 = 'æ' THEN
+		tmp2 := tmp3;
+		tmp3 := tmp4;
+		i := i+1;
+		result:= result || '75';
+	ELSIF tmp2 = 'o' THEN
+		tmp2 := tmp3;
+		tmp3 := tmp4;
+		i := i+1;
+		result:= result || '77';
+	ELSIF tmp2 = 'ɤ' THEN
+		IF tmp3 = '̃' THEN
+			tmp2 := tmp3;
+			tmp3 := tmp4;
+			i := i+2;
+			result:= result || '78';
+		ELSE
+			tmp2 := tmp3;
+			tmp3 := tmp4;
+			i := i+1;
+			result:= result || '76';
+		END IF;
+	ELSIF tmp2 = '̃' THEN
+		IF tmp3 = 'æ' THEN
+			tmp2 := tmp3;
+			tmp3 := tmp4;
+			i := i+2;
+			result:= result || '80';
+		ELSE
+			tmp2 := tmp3;
+			tmp3 := tmp4;
+			i := i+1;
+			result:= result || '79';
+		END IF;
+	ELSE
+		result:= result || '73';
+	END IF;
+  ELSIF tmp = 'z' THEN
+    result:= result || '81';
+  ELSIF tmp = 'ʐ' THEN
+    result:= result || '82';
+  ELSIF tmp = 'ʑ' THEN
+    result:= result || '83';
+  ELSIF tmp = 'x' THEN
+    result:= result || '84';
+	
+-- les tons
+  ELSIF tmp = '˥' THEN
+	result:= result || '01';
+  ELSIF tmp = '˧' THEN
+	IF tmp2 = '˥' THEN
+		tmp2 := tmp3;
+		tmp3 := tmp4;
+		i := i+1;
+		result:= result || '04';
+	ELSE
+		result:= result || '02';
+	END IF;
+  ELSIF tmp = '˩' THEN
+	IF tmp2 = '˥' THEN
+		tmp2 := tmp3;
+		tmp3 := tmp4;
+		i := i+1;
+		result:= result || '05';
+	ELSIF tmp2 = '˧' THEN
+		tmp2 := tmp3;
+		tmp3 := tmp4;
+		i := i+1;
+		result:= result || '06';
+	ELSE
+		result:= result || '03';
+	END IF;
+  ELSIF tmp = '₁' THEN
+    result:= result;
+  ELSIF tmp = '₂' THEN
+    result:= result;
+  ELSIF tmp = '₃' THEN
+    result:= result;
+  ELSIF tmp = 'α' THEN
+    result:= result;
+  ELSIF tmp = 'β' THEN
+    result:= result;
+  ELSIF tmp = 'γ' THEN
+    result:= result;
+
+-- fin	
+  ELSIF tmp = ' ' THEN
+    result:= result;
+  ELSIF tmp = '-' THEN
+    result:= result;
+  ELSIF tmp = '+' THEN
+    result:= result;
+  ELSIF tmp = '#' THEN
+    result:= result;
+  ELSE
+    result:= result || '99';
+  END IF;
+  i:=i+1;
+	END LOOP;
+  return( result );
+ END;
+$PROC$ LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
+
+
+
 
 -- slo Slovak
 --
