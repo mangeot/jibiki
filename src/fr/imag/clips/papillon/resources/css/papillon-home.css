@@ -875,7 +875,12 @@ h4.blockTitle {
 	font-family: sans-serif;
 	color: #009900;
 	}
-        
+
+.nru {
+    font-family: sans-serif;
+    color: #292D78;
+}
+
 .rus	{
 	font-family: sans-serif;
 	color: #CC0000;
@@ -900,7 +905,7 @@ h4.blockTitle {
 	color: #CC9900;
 	}
 	
-.zho	{
+.zho, .cmn	{
 	font-family: PMingLiU,MingLiU, serif;
 	color: #000080;
 	}
