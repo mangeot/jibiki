@@ -305,6 +305,11 @@ A:hover {
 	font-family: sans-serif;
 	color: #009900;
 	}
+
+.nru {
+    font-family: sans-serif;
+    color: #292D78;
+}
         
 .rus	{
 	font-family: sans-serif;
@@ -321,7 +326,7 @@ A:hover {
 	color: #CC9900;
 	}
 	
-.zho	{
+.zho, .cnm	{
 	font-family: PMingLiU,MingLiU, serif;
 	color: #000080;
 	}
