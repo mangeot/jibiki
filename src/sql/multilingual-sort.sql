@@ -2894,14 +2894,12 @@ CREATE OR REPLACE FUNCTION nru_sort( varchar )
   END LOOP;
   result:= result || '00';
   i:=1;
-  tmp2 = SUBSTR( $1, 1, 1 );
-  tmp3 = SUBSTR( $1, 2, 1 );
   WHILE i <= length LOOP
 		tmp := tmp2;
-		tmp2 := tmp3;
+		tmp2 := SUBSTR( $1, i+1, 1 );
 		tmp3 := SUBSTR( $1, i+2, 1 );
 		tmp4 := SUBSTR( $1, i+3, 1 );
-	IF tmp = 'ɑ'  THEN
+  IF tmp = 'ɑ'  THEN
 	IF tmp2 = '̃' THEN
 		tmp2 := tmp3;
 		tmp3 := tmp4;
