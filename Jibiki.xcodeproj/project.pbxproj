@@ -1129,7 +1129,6 @@
 		A32CBB5D1A198C8400B1D65C /* AdvancedQueryForm.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdvancedQueryForm.xhtml; sourceTree = "<group>"; };
 		A32CBB601A198C9300B1D65C /* AdvancedQueryForm.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdvancedQueryForm.xhtml; sourceTree = "<group>"; };
 		A32CBB621A198C9F00B1D65C /* AdvancedQueryForm.xhtml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AdvancedQueryForm.xhtml; sourceTree = "<group>"; };
-		A32CC7432012A9D500C84114 /* papillon-home.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = "papillon-home.css"; sourceTree = "<group>"; };
 		A32D31291AEF644100D8EA78 /* ConsultPage.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = ConsultPage.xhtml; sourceTree = "<group>"; };
 		A32D312B1AEF7EDD00D8EA78 /* EditingLayout.xhtml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = EditingLayout.xhtml; sourceTree = "<group>"; };
 		A32D5F4A1AAFC2E5003C9E7A /* jquery-1.8.0.min.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "jquery-1.8.0.min.js"; sourceTree = "<group>"; };
@@ -2193,7 +2192,6 @@
 				A307233E0EC89B2300733910 /* lexalp_print.css */,
 				A307233F0EC89B2300733910 /* jibiki.css */,
 				A30723400EC89B2300733910 /* papillon.css */,
-				A32CC7432012A9D500C84114 /* papillon-home.css */,
 				A30723410EC89B2300733910 /* schemas_xml.css */,
 				A30723420EC89B2300733910 /* xml.css */,
 			);
