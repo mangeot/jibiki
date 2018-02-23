@@ -23,7 +23,7 @@
     <li><a href="#Put_api_volume"><code>PUT api/[dictionary]/[lang]</code></a> Modify an existing volume</li>
     <li><a href="#Delete_api_volume"><code>DELETE api/[dictionary]/[lang]</code></a> Delete an existing volume</li>
     <li><a href="#Get_api_contribution"><code>GET api/[dictionary]/[lang]/[contribid]</code></a> Get a contribution</li>
-    <li><a href="#Post_api_contribution"><code>POST api/[dictionary]/[lang]/[contribid]</code></a> Create a new contribution</li>
+    <li><a href="#Post_api_contribution"><code>POST api/[dictionary]/[lang]/[entryid]</code></a> Create a new entry</li>
     <li><a href="#Put_api_contribution"><code>PUT api/[dictionary]/[lang]/[contribid]</code></a> Modify an entire contribution</li>
     <li><a href="#Put_api_contribution_part"><code>PUT api/[dictionary]/[lang]/[contribid]</code></a> Modify part of an existing contribution</li>
     <li><a href="#Delete_api_contribution"><code>DELETE api/[dictionary]/[lang]/[contribid]</code></a> Delete an existing contribution</li>
@@ -691,11 +691,12 @@ curl -X PUT \
     <tr><td>URL</td><td>api/[dictionary]/[lang]/[entryId]</td></tr>
     <tr><td>Method</td><td>POST</td></tr>
     <tr><td>ContentType</td><td>application/xml</td></tr>
-    <tr><td rowspan="5">Returns</td><td>201 Created &amp; XML (contribution)</td></tr>
+    <tr><td rowspan="6">Returns</td><td>201 Created &amp; XML (contribution)</td></tr>
     <tr><td>400 Bad Request (XML not valid)</td></tr>
     <tr><td>401 Unauthorized</td></tr>
     <tr><td>409 Conflict (entry already existing)</td></tr>
-    <tr><td>415 Unsupported Media Type (content-type not XML)</td></tr>
+    <tr><td>415 Unsupported Media Type (content-type not XML)</td>
+    <tr><td>422 Unprocessable entity (XML not semantically correct)</td></tr>
  </tbody>
 </table>
 
@@ -735,7 +736,7 @@ curl -X POST \
     -u user:password \
     -H "Accept: application/xml" \
     -H "Content-Type: application/xml;charset=UTF-8" \
-    -d '@myfilename.xml'\
+    -d "@myfilename.xml"\
     "api/Cesselin/jpn/jpn.ケース.14723001.e"
 </pre>
 <p>Note: filename.xml is an XML file containing the entry.</p>

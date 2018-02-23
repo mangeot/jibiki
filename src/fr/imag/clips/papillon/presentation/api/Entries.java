@@ -887,7 +887,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
                     // TODO: test and message: no entries added?
                     resultDoc = null;
                 }
-                if (errorMsg != null) {
+                if (errorMsg != null && !errorMsg.equals("")) {
                     status = 422;
                     resultDoc = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + status + " Unprocessable entity</h1><p>" + errorMsg + "</p></html>");
                 }

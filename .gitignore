@@ -3,6 +3,8 @@ Jibiki.xcodeproj/xcuserdata/
 build/
 output/
 papillon.properties
+papillon.properties.motamot
+papillon.properties.papillon
 sites.conf
 src/fr/imag/clips/papillon/resources/xsl/DEFAULT-view.xsl.uptodate
 src/fr/imag/clips/papillon/resources/xsl/FormatingObject-view.xsl.uptodate
