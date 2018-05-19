@@ -279,6 +279,8 @@ public class IndexFactory {
 			try {
 				IndexQuery query = new IndexQuery(volume.getIndexDbname(), CurrentDBTransaction.get());
 				query.setQueryEntryId(intId);
+                // Order by objectId
+                query.getQueryBuilder().addOrderByColumn("objectId","");
 				IndexDO[] DOarray = query.getDOArray();
 				if (null != DOarray) {
 					for (int j=0; j < DOarray.length; j++) {
