@@ -268,11 +268,11 @@ function queryOneEntry (entry, volume) {
 }
 
 function replace_api(string) {
-	string = string.replace('a'+'̄','ā');
-	string = string.replace('e'+'̄','ē');
-	string = string.replace('i'+'̄','ī');
-	string = string.replace('o'+'̄','ō');
-	string = string.replace('u'+'̄','ū');
+	string = replaceAll('a'+'̄','ā');
+	string = replaceAll('e'+'̄','ē');
+	string = replaceAll('i'+'̄','ī');
+	string = replaceAll('o'+'̄','ō');
+	string = replaceAll('u'+'̄','ū');
 	return string;
 }
 
@@ -290,5 +290,14 @@ function addLoadEvent(func) {
     }
 }
 
+function replaceAll(str, find, replace) {
+    return str.replace(new RegExp(find, 'g'), replace);
+}
+function escapeRegExp(str) {
+    return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+}
+function replaceAll(str, find, replace) {
+    return str.replace(new RegExp(escapeRegExp(find), 'g'), replace);
+}
 
 // -->
