@@ -411,7 +411,6 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                         }
                         if (xpathString != null && !xpathString.equals("")) {
                             if (Entries.userCanEditEntry(getUser(), dictName)) {
-                                //TODO : messages d'erreur plus précis si editEntry rate !
                                 Message theMessage = new Message();
                                 content = Entries.editEntry(dictName, restStrings[1], restStrings[2], xpathString, restStrings[3], this.getUser(), theMessage);
                                 if (content==null) {
