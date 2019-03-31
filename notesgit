@@ -1,3 +1,15 @@
+
+Mode d'emploi :
+- faire les modifs sur le master
+git commit
+git push
+git log
+- appliquer les changements sur la branche
+git fetch
+git cherry-pick numéro du commit sur le git log du master
+
+Dans l'idéal, j'aurais voulu faire ce qui suit mais j'y suis jamais arrivé !
+
 Assume the following history exists and the current branch is "topic":
 
           A---B---C topic
