@@ -1,0 +1,49 @@
+# papillon.properties
+# -------------------
+#
+# This file contains the properties that are used when compiling/running the 
+# papillon application
+# Modify it according to your environment.
+
+###############################
+## typical values for LINUX
+###############################
+# Papillon jars
+## in the following paths, replace . by the directory full path
+papillon.xalan.jar=/Projets/toolsforjibiki/xalan-j_2_7_0/xalan.jar
+papillon.xerces.jar=/Projets/toolsforjibiki/xalan-j_2_7_0/xercesImpl.jar
+papillon.xmlapi.jar=/Projets/toolsforjibiki/xalan-j_2_7_0/xml-apis.jar
+papillon.xsltc.jar=/Projets/toolsforjibiki/xalan-j_2_7_0/xsltc.jar
+#sudo apt-get install libpg-java 
+papillon.pgsql.jar=/Projets/toolsforjibiki/postgresql-42.0.0.jar
+papillon.fop.jar=/Projets/toolsforjibiki/fop-0.20.5/build/fop.jar
+papillon.avalon.jar=/Projets/toolsforjibiki/fop-0.20.5/lib/avalon-framework-cvs-20020806.jar
+papillon.batik.jar=/Projets/toolsforjibiki/fop-0.20.5/lib/batik.jar
+papillon.javamail.jar=/Projets/toolsforjibiki/javamail-1.4/mail.jar
+
+# Enhydra dirs
+enhydra.dir=/Projets/toolsforjibiki/enhydra5.1
+
+
+###############################
+## deployment setup
+###############################
+application.name=Jibiki
+application.prefix=/jibiki
+
+# for sending emails
+papillon.truststore.password=foo
+papillon.mailhost.address=mailhost.domain.tld
+papillon.mailhost.user=mailuser
+papillon.mailhost.password=foo
+
+# for the default groups passwords 
+papillon.admin.password=dbpap2
+papillon.validator.password=butterfly
+papillon.specialist.password=farfalla
+
+# for the database
+papillondb.server.url=jdbc:postgresql://localhost/jibiki
+papillondb.user=papillon
+papillondb.password=dbpap2
+
