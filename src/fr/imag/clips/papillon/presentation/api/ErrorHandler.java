@@ -303,7 +303,7 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                         }
                         if (entry != null && !entry.equals("")) {
     						String mode = myGetParameter(MODE_PARAMETER);
-    						if (mode.equals(REPLACE_MODE_PARAMETER)) {
+    						if (mode != null && mode.equals(REPLACE_MODE_PARAMETER)) {
                                 if (Entries.userCanReplaceEntry(getUser(),dictName)) {
                                     content = Entries.replaceEntry(dictName, restStrings[1], restStrings[2], entryDom, this.getUser());
                                     if (content==null) {

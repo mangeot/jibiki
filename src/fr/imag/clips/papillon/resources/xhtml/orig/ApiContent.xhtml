@@ -24,7 +24,7 @@
     <li><a href="#Delete_api_volume"><code>DELETE api/[dictionary]/[lang]</code></a> Delete an existing volume</li>
     <li><a href="#Get_api_contribution"><code>GET api/[dictionary]/[lang]/[contribid]</code></a> Get a contribution</li>
     <li><a href="#Post_api_contribution"><code>POST api/[dictionary]/[lang]/[contribid]</code></a> Create a new contribution</li>
-    <li><a href="#Put_api_contribution"><code>PUT api/[dictionary]/[lang]/[entry]</code></a> Modify an entire contribution</li>
+    <li><a href="#Put_api_contribution"><code>PUT api/[dictionary]/[lang]/[entryid]</code></a> Modify an entire contribution</li>
     <li><a href="#Put_api_contribution_part"><code>PUT api/[dictionary]/[lang]/[contribid]/[string]</code></a> Modify part of an existing contribution</li>
     <li><a href="#Delete_api_contribution"><code>DELETE api/[dictionary]/[lang]/[contribid]</code></a> Delete an existing contribution</li>
     <li><a href="#Get_api_entry"><code>GET api/[dictionary]/[lang]/[criteria]/[string]</code></a> Get entries</li>
@@ -599,6 +599,7 @@ curl -X PUT \
 <p>Answer:</p>
 <pre class="api">
 &lt;?xml version="1.0" encoding="UTF-8"?>
+&lt;volume langue-cible="fra" langue-source="jpn" nom="Cesselin_jpn_fra"&gt;
 &lt;d:contribution
     xmlns:d="http://www-clips.imag.fr/geta/services/dml"
     d:contribid="jpn.ケース.14723001.c"
@@ -628,6 +629,7 @@ curl -X PUT \
     &lt;/article>
   &lt;/d:data>
 &lt;/d:contribution>
+&lt;/volume&gt;
 </pre>
 
 
