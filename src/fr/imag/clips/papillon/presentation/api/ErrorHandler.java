@@ -72,6 +72,8 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
 	protected static String LOGIN_PARAMETER = "login";
     protected static String PASSWORD_PARAMETER = "password";
 	protected static String STRATEGY_PARAMETER = "strategy";
+	protected static String MODE_PARAMETER = "mode";
+	protected static String REPLACE_MODE_PARAMETER = "replace";
 	protected static String LIMIT_PARAMETER = "count";
     protected static String OFFSET_PARAMETER = "startIndex";
     protected static String ORDERBY_PARAMETER = "sortBy";
@@ -300,6 +302,29 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                             entry = "";
                         }
                         if (entry != null && !entry.equals("")) {
+    						String mode = myGetParameter(MODE_PARAMETER);
+    						if (mode.equals(REPLACE_MODE_PARAMETER)) {
+                                if (Entries.userCanReplaceEntry(getUser(),dictName)) {
+                                    content = Entries.replaceEntry(dictName, restStrings[1], restStrings[2], entryDom, this.getUser());
+                                    if (content==null) {
+                                        String errorMsg = "Error: dict: " + dictName + " lang: " +  restStrings[1] + " ENTRY ID: " + restStrings[2] +" does not exist!";
+                                        content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + HttpPresentationResponse.SC_NOT_FOUND + "</h1><p>" + errorMsg + "</p></html>");
+                                        theResponse.setStatus(HttpPresentationResponse.SC_NOT_FOUND,errorMsg);
+                                        //PapillonLogger.writeDebugMsg(errorMsg);
+                                    }
+                                    else {
+                                        theResponse.setStatus(HttpPresentationResponse.SC_CREATED);
+                                    }
+                                }
+                                else {
+                                    String errorMsg = "Error: user: " + login +" not authorized to put entry with replace mode!";
+                                    //PapillonLogger.writeDebugMsg(errorMsg);
+                                    content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + HttpPresentationResponse.SC_NOT_FOUND + "</h1><p>" + errorMsg + "</p></html>");
+                                    theResponse.setStatus(HttpPresentationResponse.SC_UNAUTHORIZED,errorMsg);
+                                }
+    						}
+                        	
+    						else {
                             if (Entries.userCanPutEntry(getUser(),dictName)) {
                                 content = Entries.putEntry(dictName, restStrings[1], restStrings[2], entryDom, this.getUser());
                                 if (content==null) {
@@ -318,6 +343,7 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                                 content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + HttpPresentationResponse.SC_NOT_FOUND + "</h1><p>" + errorMsg + "</p></html>");
                                 theResponse.setStatus(HttpPresentationResponse.SC_UNAUTHORIZED,errorMsg);
                             }
+    						}
                         }
                         else {
                             String errorMsg = "Error: entry: <![CDATA["+ entry +"]]> XML is malformed!";

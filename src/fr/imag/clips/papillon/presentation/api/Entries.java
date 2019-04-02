@@ -469,15 +469,25 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 	}
 	
 	public static boolean userCanPutEntry(User myUser, String dictName)
-		throws fr.imag.clips.papillon.business.PapillonBusinessException {
-		boolean answer = false;
-            String dictGroup = Group.ADMIN_DICT_GROUP_PREFIX + dictName;
-        if (null != myUser && !myUser.isEmpty() && (myUser.isAdmin() || myUser.isValidator() || myUser.isSpecialist() || myUser.isInGroup(dictGroup))) {
-            answer=true;
-        }
-		return answer;
-	}
-	
+			throws fr.imag.clips.papillon.business.PapillonBusinessException {
+			boolean answer = false;
+	            String dictGroup = Group.ADMIN_DICT_GROUP_PREFIX + dictName;
+	        if (null != myUser && !myUser.isEmpty() && (myUser.isAdmin() || myUser.isValidator() || myUser.isSpecialist() || myUser.isInGroup(dictGroup))) {
+	            answer=true;
+	        }
+			return answer;
+		}
+		
+	public static boolean userCanReplaceEntry(User myUser, String dictName)
+			throws fr.imag.clips.papillon.business.PapillonBusinessException {
+			boolean answer = false;
+	            String dictGroup = Group.ADMIN_DICT_GROUP_PREFIX + dictName;
+	        if (null != myUser && !myUser.isEmpty() && (myUser.isAdmin() || myUser.isInGroup(dictGroup))) {
+	            answer=true;
+	        }
+			return answer;
+		}
+		
 	public static org.w3c.dom.Document putEntry(String dictName, String lang, String entryId, org.w3c.dom.Document docDom, User theUser)
 	throws HttpPresentationException, java.io.IOException, Exception {
 		
@@ -514,6 +524,33 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 		return resultDoc;			
 	}
 
+	public static org.w3c.dom.Document replaceEntry(String dictName, String lang, String entryId, org.w3c.dom.Document docDom, User theUser)
+	throws HttpPresentationException, java.io.IOException, Exception {
+		
+		Volume theVolume = null;
+		org.w3c.dom.Document resultDoc = null;
+		
+		java.util.Collection volumesCollection = VolumesFactory.getVolumesArray(dictName,lang,null);
+		
+		if (volumesCollection !=null && volumesCollection.size()>0) {
+			theVolume = (Volume) volumesCollection.iterator().next();
+			//PapillonLogger.writeDebugMsg("Entry: id: " + entryId + " volume: " + theVolume.getName());
+			VolumeEntry myEntry = VolumeEntriesFactory.findEntryByEntryId(theVolume.getName(), entryId);
+			if (myEntry != null && !myEntry.isEmpty()) {
+				//PapillonLogger.writeDebugMsg("Entry: id: " + entryId + " headword: " + myEntry.getHeadword()+ " volume: " + theVolume.getName());
+                myEntry.setDom(docDom);
+                myEntry.setHeadword();
+                myEntry.save();
+                resultDoc = myEntry.getDom();
+			}
+			else {
+				PapillonLogger.writeDebugMsg("Entry null: " + entryId);
+			}
+		}
+		return resultDoc;			
+	}
+
+	
     public static boolean userCanEditEntry(User myUser, String dictName)
     throws fr.imag.clips.papillon.business.PapillonBusinessException {
         boolean answer = false;

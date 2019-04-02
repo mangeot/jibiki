@@ -6,7 +6,7 @@
 #- postgresql-jdbc
 # see below for apt-get install
 #- toolsforjibiki
-svn checkout svn://svn.ligforge.imag.fr/var/lib/gforge/chroot/scmrepos/svn/toolsforjibiki/
+git clone https://gricad-gitlab.univ-grenoble-alpes.fr/mmang/toolsforjibiki.git
 
 ## for a longer version, see toolsforjibiki/INSTALL_Tools_For_Jibiki.html
 ## for jdk1.5 version or newer:

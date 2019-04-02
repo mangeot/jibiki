@@ -24,8 +24,8 @@
     <li><a href="#Delete_api_volume"><code>DELETE api/[dictionary]/[lang]</code></a> Delete an existing volume</li>
     <li><a href="#Get_api_contribution"><code>GET api/[dictionary]/[lang]/[contribid]</code></a> Get a contribution</li>
     <li><a href="#Post_api_contribution"><code>POST api/[dictionary]/[lang]/[contribid]</code></a> Create a new contribution</li>
-    <li><a href="#Put_api_contribution"><code>PUT api/[dictionary]/[lang]/[contribid]</code></a> Modify an entire contribution</li>
-    <li><a href="#Put_api_contribution_part"><code>PUT api/[dictionary]/[lang]/[contribid]</code></a> Modify part of an existing contribution</li>
+    <li><a href="#Put_api_contribution"><code>PUT api/[dictionary]/[lang]/[entry]</code></a> Modify an entire contribution</li>
+    <li><a href="#Put_api_contribution_part"><code>PUT api/[dictionary]/[lang]/[contribid]/[string]</code></a> Modify part of an existing contribution</li>
     <li><a href="#Delete_api_contribution"><code>DELETE api/[dictionary]/[lang]/[contribid]</code></a> Delete an existing contribution</li>
     <li><a href="#Get_api_entry"><code>GET api/[dictionary]/[lang]/[criteria]/[string]</code></a> Get entries</li>
     <li><a href="#Get_api_entry"><code>GET api/[dictionary]/[lang]/[criteria]/[string]/[key]</code></a> Get entries</li>
@@ -547,6 +547,7 @@ can have multiple values depending of its status.</p>
     <tr><td>URL</td><td>api/[dictionary]/[lang]/[entryId]</td></tr>
     <tr><td>Method</td><td>PUT</td></tr>
     <tr><td>ContentType</td><td>application/xml</td></tr>
+    <tr><td>Querystring</td><td>mode=</td><td>standard</td></tr>
     <tr><td rowspan="5">Returns</td><td>201 Created &amp; XML (contribution)</td></tr>
     <tr><td>400 Bad Request (XML not valid)</td></tr>
     <tr><td>401 Unauthorized</td></tr>
@@ -556,9 +557,19 @@ can have multiple values depending of its status.</p>
 </table>
 
 <p>The data to be sent with the PUT command is the XML of the contribution (volume + metadata + entry) or
-    the entry only (see the example).</p>
+    the entry only (see the example). The server will create a new contribution with the data sent and will
+    change the status of the existing contribution as "classified".</p>
 <p>Note 1: the entry XML code must be complete with volume and contribution tags.</p>
 <p>Note 2: the user has to be <a href="#Authentication">logged</a> and in the specialist group.</p>
+<p>Note 3: A Mode parameter can be used to avoid replace the XML code of the existing contribution instead of creating a new one.
+Proceed with care because it can be very dangerous. The user has to be <a href="#Authentication">logged</a> and in the admin group. </p>
+
+<table class="Mode">
+ <tbody>
+    <tr><td>standard</td><td>creates a new contribution (default mode)</td></tr>
+    <tr><td>replace</td><td>replace the xml code of the existing contribution</td></tr>
+ </tbody>
+</table>
 
 <p>Example of query:</p>
 <pre class="api">
