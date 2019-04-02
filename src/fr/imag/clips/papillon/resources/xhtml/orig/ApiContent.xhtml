@@ -973,20 +973,24 @@ curl -X GET \
     <tr><td>cdm-writing</td><td>entry headword transcription (ex: pinyin for Chinese)</td></tr>
     <tr><td>cdm-pronunciation</td><td>entry headword pronunciation (Usually in IPA but it depends on the resource)</td></tr>
     <tr><td>cdm-pos</td><td>entry part-of-speech (can be "n", "noun", etc. It depends on the resource)</td></tr>
-    <tr><td>cdm-translation</td><td>entry headword translation in another language</td></tr>
+    <tr><td>cdm-definition</td><td>entry definition</td></tr>
+    <tr><td>cdm-domain</td><td>entry domains</td></tr>
+    <tr><td>cdm-translation</td><td>entry headword translations in another language</td></tr>
     <tr><td>cdm-example</td><td>entry examples</td></tr>
     <tr><td>cdm-idiom</td><td>entry idioms</td></tr>
     <tr><td>cdm-contribution-id</td><td>contribution id</td></tr>
+    <tr><td>cdm-previous-classified-finished-contribution</td><td>previous contribution id</td></tr>
     <tr><td>cdm-contribution-author</td><td>contribution author</td></tr>
-    <tr><td>cdm-contribution-creation-date</td><td>contribution creation date</td></tr>
-    <tr><td>cdm-contribution-finition-date</td><td>contribution finition date</td></tr>
+    <tr><td>cdm-contribution-creation-date</td><td>contribution creation date (<code>yyyy/mm/dd HH:mm:ss</code>)</td></tr>
+    <tr><td>cdm-contribution-finition-date</td><td>contribution finition date (<code>yyyy/mm/dd HH:mm:ss</code>)</td></tr>
+    <tr><td>cdm-modification-author</td><td>modification author</td></tr>
+    <tr><td>cdm-modification-date</td><td>modification date (<code>yyyy/mm/dd HH:mm:ss</code>)</td></tr>
     <tr><td>cdm-contribution-status</td><td>contribution status</td></tr>
  </tbody>
 </table>
 
 <p>Note: criteria and keys depend on the resource. A criteria or a key might not be available for one specific resource.
 Other criteria and keys not in the list may exist only for one specific resource.</p>
-
 <p>cdm stands for Common Dictionary Markup</p>
 
 <p>Keys only are one of the following:</p>
@@ -1025,6 +1029,8 @@ Other criteria and keys not in the list may exist only for one specific resource
 	<li>All the answers are in XML and encoded in UTF-8.</li>
 	<li><em>lang</em> is the ISO 639-2/T 3 letter code of the language (eg: 'eng' for English,'esp' for Spanish,'fra' for French, etc.)</li>
 	<li>All parameters are case sensitive (dictionary, contributionId, string, etc.)</li>
+    <li>Dates are in the following format: <code>yyyy/mm/dd HH:mm:ss</code></li>
+    <li>It is possible to use the SQL '%' metacharacter in queries.</li>
 </ul>
  
  <h3>Querying entries using link (for pivax data)</h3>

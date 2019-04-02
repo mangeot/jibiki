@@ -595,10 +595,11 @@ public class IndexFactory {
                                 if (key[1] !=null && !key[1].equals("")) {
                                     query.getQueryBuilder().addWhere(langColumn, key[1], QueryBuilder.EQUAL);
                                 }
-                                if ( key[3] == QueryBuilder.LESS_THAN ||
+                                if (key[1] !=null && !key[1].equals("") && !key[1].equals(Volume.DEFAULT_LANG) && (
+				    key[3] == QueryBuilder.LESS_THAN ||
                                     key[3] == QueryBuilder.LESS_THAN_OR_EQUAL ||
                                     key[3] == QueryBuilder.GREATER_THAN ||
-                                    key[3] == QueryBuilder.GREATER_THAN_OR_EQUAL) {
+                                    key[3] == QueryBuilder.GREATER_THAN_OR_EQUAL)) {
                                     //Replace all apostrophes with double apostrophes
                                     java.util.regex.Matcher quoteMatcher = quotePattern.matcher(key[2]);
                                     String newValue = quoteMatcher.replaceAll("''");

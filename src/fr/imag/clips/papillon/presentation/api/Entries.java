@@ -129,7 +129,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 		
 			return getEntry(dictName, lang, entryId);			
         }
-	
+	    
 	public static org.w3c.dom.Document getEntry(String dictName, String lang, String entryId) 
 	throws HttpPresentationException, java.io.IOException, Exception {
 
@@ -563,7 +563,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
         return answer;
     }
     
-   public static org.w3c.dom.Document editEntry(String dictName, String lang, String entryId, String xpathString, String value, User theUser)
+   public static org.w3c.dom.Document editEntry(String dictName, String lang, String entryId, String xpathString, String value, User theUser, Message errorMessage)
     throws HttpPresentationException, java.io.IOException, Exception {
         
         Volume theVolume = null;
@@ -601,6 +601,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
                        }
                         else {
                             PapillonLogger.writeDebugMsg("Entry not modified: Node type: " + myNode.getNodeType());
+                            errorMessage.message = "Entry: " + entryId + " not modified: Node type != element or attribute or text " + myNode.getNodeType();
                             docDom = null;
                         }
                         if (docDom != null) {
@@ -621,12 +622,32 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
                     }
                     else {
                         PapillonLogger.writeDebugMsg("Entry not modified: node list size != 1: " + resNodeList.getLength());
+                        errorMessage.message = "Entry: " + entryId + " not modified: xpath: " + xpathString + " node list size != 1: " + resNodeList.getLength();
                     }
+                }
+                else {
+                    PapillonLogger.writeDebugMsg("Entry dom null: " + entryId);
+                    errorMessage.message = "Entry dom null: " + entryId;
                 }
             }
             else {
-                PapillonLogger.writeDebugMsg("Entry null: " + entryId);
+                if (myEntry == null) {
+                    PapillonLogger.writeDebugMsg("Entry null: " + entryId);
+                    errorMessage.message = "Entry null: " + entryId;
+                }
+                else if (myEntry.isEmpty()) {
+                    PapillonLogger.writeDebugMsg("Entry empty: " + entryId);
+                    errorMessage.message = "Entry empty: " + entryId;
+                }
+                else {
+                    PapillonLogger.writeDebugMsg("Entry: " + entryId + " status not finished: " + myEntry.getStatus());
+                    errorMessage.message = "Entry: " + entryId + " status not finished: " + myEntry.getStatus();
+                }
             }
+        }
+        else {
+            PapillonLogger.writeDebugMsg("Volumes collection is null!");
+            errorMessage.message = "Volumes collection is null!";
         }
         return resultDoc;			
     }

@@ -437,10 +437,10 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                         }
                         if (xpathString != null && !xpathString.equals("")) {
                             if (Entries.userCanEditEntry(getUser(), dictName)) {
-                                //TODO : messages d'erreur plus précis si editEntry rate !
-                                content = Entries.editEntry(dictName, restStrings[1], restStrings[2], xpathString, restStrings[3], this.getUser());
+                                Message theMessage = new Message();
+                                content = Entries.editEntry(dictName, restStrings[1], restStrings[2], xpathString, restStrings[3], this.getUser(), theMessage);
                                 if (content==null) {
-                                    String errorMsg = "Error: dict: " + dictName + " lang: " +  restStrings[1] +" CONTRIB ID: " + restStrings[2] + " does not exist!";
+                                    String errorMsg = "Error: dict: " + dictName + " lang: " +  restStrings[1] +" CONTRIB ID: " + restStrings[2] + " message: " + theMessage.message;
                                     //PapillonLogger.writeDebugMsg(errorMsg);
                                     content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + HttpPresentationResponse.SC_NOT_FOUND + "</h1><p>" + errorMsg + "</p></html>");
                                    theResponse.setStatus(HttpPresentationResponse.SC_NOT_FOUND, errorMsg);
