@@ -136,7 +136,7 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                 }
                 
                 PapillonLogger.writeDebugMsg("REST API URI : [" + prefix + "] " + theRequest.getPresentationURI()+" Accept: "+theRequest.getHeader("Accept")+" ;");
-				String theURI = java.net.URLDecoder.decode(theRequest.getPresentationURI());
+                String theURI = theRequest.getPresentationURI();
 				if (theURI.indexOf(prefix)==0) {
 					theURI = theURI.substring(prefix.length());
 				}
@@ -144,6 +144,11 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
 				if (theURI!=null &&!theURI.equals("")) {
 					restStrings = theURI.split("/");
 				}
+				for(int i = 0; i< restStrings.length; i++){
+
+					restStrings[i] = java.net.URLDecoder.decode(restStrings[i]);
+
+					}
 				// theRequest.getRemoteAddr() = 127.0.0.1 toujours
 				String commande = " REST API COMMAND: " + theRequest.getMethod() + " SENT_FORMAT: " + sentContentType + " ACCEPT_FORMAT: " + acceptContentType;
                 String dictName = "";

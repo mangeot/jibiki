@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:gvs="org.ejen.ext.GlobalVariables" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0" extension-element-prefixes="gvs" exclude-result-prefixes="gvs">
 
-<xsl:import href="/Projects/jibiki/branches/LINKS_1_0/dods/templates/papillon_dynamic/DataStruct/writeFileHeaderDataStruct.xsl"/>
-<xsl:import href="/Projects/jibiki/branches/LINKS_1_0/dods/templates/papillon_dynamic/DataStruct/writeMemberStuffDataStruct.xsl"/>
-<xsl:import href="/Projects/jibiki/branches/LINKS_1_0/dods/templates/papillon_dynamic/DataStruct/writeBeginCompareCondDS.xsl"/>
-<xsl:import href="/Projects/jibiki/branches/LINKS_1_0/dods/templates/papillon_dynamic/DataStruct/writeCompareCondDS.xsl"/>
-<xsl:import href="/Projects/jibiki/branches/LINKS_1_0/dods/templates/papillon_dynamic/DataStruct/writeEndCompareCondDS.xsl"/>
-<xsl:import href="/Projects/jibiki/branches/LINKS_1_0/dods/templates/papillon_dynamic/DataStruct/writeFileFooterDataStructBegin.xsl"/>
-<xsl:import href="/Projects/jibiki/branches/LINKS_1_0/dods/templates/papillon_dynamic/DataStruct/cloningDataStruct.xsl"/>
-<xsl:import href="/Projects/jibiki/branches/LINKS_1_0/dods/templates/papillon_dynamic/DataStruct/writeFileFooterDataStructEnd.xsl"/> 
+<xsl:import href="/home/mangeot/Projets/jibiki/dods/templates/papillon_dynamic/DataStruct/writeFileHeaderDataStruct.xsl"/>
+<xsl:import href="/home/mangeot/Projets/jibiki/dods/templates/papillon_dynamic/DataStruct/writeMemberStuffDataStruct.xsl"/>
+<xsl:import href="/home/mangeot/Projets/jibiki/dods/templates/papillon_dynamic/DataStruct/writeBeginCompareCondDS.xsl"/>
+<xsl:import href="/home/mangeot/Projets/jibiki/dods/templates/papillon_dynamic/DataStruct/writeCompareCondDS.xsl"/>
+<xsl:import href="/home/mangeot/Projets/jibiki/dods/templates/papillon_dynamic/DataStruct/writeEndCompareCondDS.xsl"/>
+<xsl:import href="/home/mangeot/Projets/jibiki/dods/templates/papillon_dynamic/DataStruct/writeFileFooterDataStructBegin.xsl"/>
+<xsl:import href="/home/mangeot/Projets/jibiki/dods/templates/papillon_dynamic/DataStruct/cloningDataStruct.xsl"/>
+<xsl:import href="/home/mangeot/Projets/jibiki/dods/templates/papillon_dynamic/DataStruct/writeFileFooterDataStructEnd.xsl"/> 
                     
 <xsl:output omit-xml-declaration="yes"/>
 
