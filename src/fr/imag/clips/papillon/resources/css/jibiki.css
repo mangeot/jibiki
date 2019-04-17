@@ -571,7 +571,7 @@ pre.api {
 /*--------------------------------------*/
 
 
-.vedette-hiragana, .vedette-jpn, .vedette-jpn-editable, .jpn, .jpn-editable {
+.vedette-hiragana, .hiragana, .vedette-jpn, .vedette-jpn-editable, .jpn, .jpn-editable {
     color: #BC002D;
 }
 
@@ -676,6 +676,10 @@ ul {
 
 .exemple {
     padding: 5px;
+}
+
+a:target, .exemple:target, .sous-entrée:target {
+   padding-top: 50px;
 }
 
 .romaji {

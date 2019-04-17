@@ -1,0 +1,835 @@
+From: <Saved by WebKit>
+Subject: r?gles du classement aphab?tique en langue fran?aise
+Date: Thu, 17 Apr 2019 14:45:38 +0200
+MIME-Version: 1.0
+Content-Type: multipart/related;
+	type="text/html";
+	boundary="----=_NextPart_000_F3AB_727EC176.1E6DDBD5"
+
+------=_NextPart_000_F3AB_727EC176.1E6DDBD5
+Content-Type: text/html
+Content-Transfer-Encoding: quoted-printable
+Content-Location: http://www-clips.imag.fr/geta/gilles.serasset/tri-du-francais.html#regles
+
+<html><head><meta charset=3D"windows-1252">
+	<title> r=E8gles du classement aphab=E9tique en langue fran=E7aise </title=
+>
+<!-- 	Mise en forme HTML par Gilles S&eacute;rasset (Gilles.Serasset@imag.f=
+r) -->
+</head>
+
+<body>
+
+<h1> R=C8GLES DU CLASSEMENT ALPHAB=C9TIQUE EN LANGUE FRAN=C7AISE ET PROC=C9=
+DURE INFORMATIS=C9E POUR LE TRI</h1>
+
+<address>
+Alain LaBont=E9<br>
+informaticien-conseil<br>
+Secr=E9tariat du Conseil du tr=E9sor<br>
+Gouvernement  du Qu=E9bec</address>
+
+<p>Version revue et corrig=E9e de l'original par l'auteur en janvier 1996</=
+p>
+
+<p> Mise en forme HTML par <a href=3D"http://clips.imag.fr/geta/gilles.sera=
+sset">Gilles.S=E9rasset</a>,=20
+voir les <a href=3D"http://www-clips.imag.fr/geta/gilles.serasset/commentai=
+res-tris.html">commentaires</a> sur cette mise en forme.</p>
+
+<p>=A9 Minist=E8re des Communications du Qu=E9bec - 1987, 1988 <br>
+            =A9 Secr=E9tariat du Conseil du tr=E9sor du Qu=E9bec - 1996</p>
+
+<p> Reproduction et traduction autoris=E9es, =E0 condition que la source
+soit cit=E9e et que l'auteur en soit avis=E9.</p>
+
+<p> Contacter&nbsp;: <a href=3D"mailto:alb@sct.gouv.qc.ca">Alain LaBont=E9 =
+&lt;alb@sct.gouv.qc.ca&gt;</a></p>
+<hr>
+<h2> Table des mati=E8res</h2>
+<ol>
+<li><a href=3D"http://www-clips.imag.fr/geta/gilles.serasset/tri-du-francai=
+s.html#intro">Introduction</a>
+</li><li><a href=3D"http://www-clips.imag.fr/geta/gilles.serasset/tri-du-fr=
+ancais.html#regles">R=E8gles de classement alphab=E9tique</a>
+</li><li><a href=3D"http://www-clips.imag.fr/geta/gilles.serasset/tri-du-fr=
+ancais.html#exemples">Exemples illustrant ces r=E8gles</a>
+</li><li><a href=3D"http://www-clips.imag.fr/geta/gilles.serasset/tri-du-fr=
+ancais.html#algo">Algorithme de confection des champs de tri</a>
+</li><li><a href=3D"http://www-clips.imag.fr/geta/gilles.serasset/tri-du-fr=
+ancais.html#annexe">Annexe</a>
+</li><li><a href=3D"http://www-clips.imag.fr/geta/gilles.serasset/tri-du-fr=
+ancais.html#reference">R=E9f=E9rence bibliographique de l'=E9dition origina=
+le sur papier</a>
+</li></ol>
+<hr>
+
+<h2><a name=3D"intro">1. Introduction</a></h2>
+
+<p> Il existe des r=E8gles non =E9crites chez les =E9diteurs de dictionnair=
+es de
+langue fran=E7aise pour le tri alphab=E9tique. =C0 l'automne 1986, il nous =
+a=20
+=E9t=E9 possible d'obtenir ces r=E8gles aupr=E8s des =E9diteurs Robert et L=
+arousse, les
+deux plus grands =E9diteurs de dictionnaires de la francophonie, par
+l'interm=E9diaire de Madame Marie-=C9va de Villers, alors terminologue =E0
+l'Office de la langue fran=E7aise du Qu=E9bec, et de Monsieur Jean-Claude
+Corbeil, auteur du <i>Dictionnaire th=E9matique visuel</i>, publi=E9 chez
+Qu=E9bec-Am=E9rique (aussi publi=E9 en anglais sous le titre <i>Facts on Fi=
+le=20
+Visual
+Dictionary</i>).</p>
+
+<p>Pour assurer la pr=E9visibilit=E9 absolue des tris informatiques, nous=
+=20
+avons pr=E9vu, pour des cl=E9s =E9quivalentes selon les r=E8gles du diction=
+naire, de=20
+les discriminer. La pr=E9visibilit=E9 absolue d'un tri informatique est=20
+essentielle si on doit comparer deux fichiers tri=E9s&nbsp;: les tris doive=
+nt toujours=20
+donner le m=EAme r=E9sultat, quel que soit l'ordre des cl=E9s de la liste i=
+nitiale =E0
+trier. Si deux cl=E9s ne diff=E9raient qu'=E0 cause du nombre d'espaces ou =
+de=20
+la position de ces espaces, par exemple, il y aurait danger de r=E9sultats
+variables, ce dont nous voulons r=E9duire le risque pratiquement =E0 z=E9ro=
+.</p>
+
+<p>Le pr=E9sent document a =E9t=E9 r=E9alis=E9 en plusieurs phases subs=E9q=
+uentes =E0
+l'obtention des r=E8gles par l'interm=E9diaire des deux sp=E9cialistes en
+linguistique mentionn=E9s pr=E9c=E9demment.  En plus de ces deux personnes,=
+=20
+nous tenons particuli=E8rement =E0 remercier les intervenants cit=E9s dans =
+le court
+historique qui suit. Ceux-ci repr=E9sentent respectivement un =E9diteur, un=
+e
+utilisatrice, un producteur de fichiers sp=E9cialis=E9s et un grand=20
+constructeur informatique. L'ordre d'intervention de ces personnes est=20
+chronologiquement exact, mais tout =E0 fait fortuit ; cependant ce  =AB has=
+ard  =BB qui fait si=20
+bien les choses m=E9rite d'=EAtre soulign=E9.</p>
+
+<p>=C0 la toute fin de 1986, nous avons consult=E9 l'informaticien=20
+responsable de l'=E9laboration de l'index du <i>Dictionnaire th=E9matique v=
+isuel</i>, monsieur
+Andr=E9 Goulet, de Logidec. Celui-ci nous a expliqu=E9 les probl=E8mes=20
+pratiques qu'il a fallu r=E9soudre pour confectionner l'index de ce diction=
+naire, qui=20
+ne comporte toutefois pas d'homographes, =E9tant donn=E9 que le vocabulaire=
+ y
+est restreint =E0 certains th=E8mes. Par la suite, un premier document fut
+produit et distribu=E9 publiquement.  Madame France Chartrand, du Centre de
+traduction de Canadien Pacifique =E0 Montr=E9al, a alors soulev=E9 des=20
+questions pertinentes quant =E0 la fa=E7on de traiter les signes de ponctua=
+tion. Pour
+respecter l'ordre du dictionnaire, il fallait =E9liminer les tirets et=20
+autres signes sp=E9ciaux. Mais ceci a aliment=E9 notre r=E9flexion sur l'im=
+pact=20
+potentiel de cette =E9limination sur la pr=E9visibilit=E9 du tri. Et notre =
+mod=E8le fut =E0
+nouveau am=E9lior=E9.</p>
+
+<p>=C0 la fin de 1987, monsieur John Chandioux, de Montr=E9al, producteur d=
+e
+ =AB dictionnaires =E9lectroniques  =BB pour diff=E9rents logiciels de trai=
+tement=20
+de textes, a voulu tester concr=E8tement notre m=E9thode en triant par ce m=
+oyen=20
+son fichier de base et en le comparant avec la nouvelle =E9dition du=20
+dictionnaire Robert, comme il doit le faire chaque ann=E9e =E0 cause de l'i=
+ntroduction de
+nouveaux mots. Notre m=E9thode a fonctionn=E9 avec succ=E8s de A =E0 Z, alo=
+rs que
+les tris informatiques r=E9alis=E9s pr=E9c=E9demment rendaient cet exercice=
+ tr=E8s
+p=E9nible parce que l'ordre obtenu =E9tait toujours syst=E9matiquement=20
+diff=E9rent.</p>
+
+<p>Finalement, monsieur Denis Garneau, du Centre technique de soutien=20
+des langues nationales d'IBM, =E0 Toronto, a soulev=E9 des probl=E8mes th=
+=E9oriques=20
+et pratiques avec certains cas limites, qui nous ont convaincus de la
+n=E9cessit=E9 de confectionner deux cl=E9s diff=E9rentes pour une discrimin=
+ation
+coh=E9rente en fonction de la priorit=E9 des signes diacritiques et de la
+hauteur de casse. Auparavant nous croyions qu'une seule et m=EAme cl=E9 =E9=
+tait
+n=E9cessaire pour =E9tablir un ordre de priorit=E9 tenant compte =E0 la foi=
+s des
+signes diacritiques et de la hauteur de casse, ce qui ne se v=E9rifie pas=
+=20
+avec certains cas tr=E8s particuliers, mais quand m=EAme r=E9els.</p>
+
+<p>Ce travail a =E9t=E9 amorc=E9 en vue de l'=E9laboration d'une norme=20
+canadienne de classement informatique. Il a soulev=E9 un int=E9r=EAt si gra=
+nd que l'on a=20
+jug=E9 bon d'en faire le pr=E9sent document, qui est complet en soi.</p>
+
+<p>Nous avons d=E9couvert r=E9cemment que la confection de cl=E9s multiples
+d=E9composant l'information textuelle selon ses propri=E9t=E9s hi=E9rarchiq=
+ues
+essentielles (lettres de l'alphabet latin classique, signes diacritiques,
+hauteurs de casse et symboles sp=E9ciaux) aux fins de classement entra=EEne=
+=20
+des effets secondaires importants&nbsp;: cela pourrait en effet r=E9soudre =
+de vieux
+probl=E8mes touchant beaucoup d'autres applications, comme par exemple la
+constitution de cl=E9s permanentes (ordonn=E9es malgr=E9 la pr=E9sence d'ac=
+cents=20
+ou de minuscules, de majuscules et de signes sp=E9ciaux) servant au rep=E9r=
+age
+d'enregistements dans les fichiers informatis=E9s =E0 l'aide des m=E9canism=
+es
+traditionnels d'indexation, ou encore la comparaison de donn=E9es=20
+accentu=E9es avec des donn=E9es analogues non accentu=E9es (comme la compar=
+aison directe=20
+de la racine  =AB CLE  =BB avec les mots  =AB clef  =BB ou  =AB cl=E9  =BB =
+[l'un avec, l'autre
+sans accent]) ou vice-versa.  Qui plus est, la structure des cl=E9s est=20
+telle que l'on peut reconstituer textuellement l'information d'origine sans=
+=20
+avoir =E0 conserver celle-ci en double, ce qui est un facteur d'=E9conomie=
+=20
+compensant la complexit=E9 apparente de la d=E9composition.</p>
+
+<p>Pour ceux de nos lecteurs que le classement int=E9resse plus
+particuli=E8rement, nous nous devons de les informer qu'il existe une norme=
+=20
+de classement alphab=E9tique en France (AFNOR Z.44-001), s'appliquant au
+classement des noms et d=E9nominations des personnes physiques et morales,
+figurant dans les annuaires, les r=E9pertoires de clients ou de=20
+fournisseurs. Cette norme est complexe et non intuitive&nbsp;: on doit savo=
+ir d'avance si ce
+que l'on cherche est un nom de personne physique ou morale, les r=E8gles=20
+de classement =E9tant diff=E9rentes dans les deux cas. Il existe aussi une =
+telle
+norme en Allemagne (DIN 5007), tout aussi complexe, et probablement
+d'autres ailleurs.</p>
+
+<p>Il serait avantageux de revoir ces normes pour les rendre plus
+conviviales, plus intuitivement utilisables par le commun des mortels.=20
+Quant au dictionnaire, les r=E8gles =E9tablies sont passablement naturelles=
+ =E0
+utiliser, une fois les subtilit=E9s r=E9solues sans que l'utilisateur ait =
+=E0=20
+s'en pr=E9occuper. Nous sommes convaincus que le classement du dictionnaire=
+=20
+devrait =EAtre la base minimale sur laquelle devraient =EAtre fond=E9s tous=
+ les tris
+informatiques impliquant des donn=E9es textuelles. La confection de cl=E9s
+sp=E9cialis=E9es en fonction d'applications pr=E9cises (comme les r=E9perto=
+ires
+t=E9l=E9phoniques) pourrait =EAtre combin=E9e avec la m=E9thode d=E9crite i=
+ci pour
+produire un tri rationnel, pr=E9visible et en harmonie avec les r=E8gles
+traditionnelles, que nous ne faisons, en d=E9finitive, que syst=E9matiser.<=
+/p>
+
+<p> Il est possible que cette m=E9thode soit encore am=E9lior=E9e comme
+ce fut le cas dans le pass=E9, mais telle quelle, elle est le fruit
+de plus de deux ans de r=E9flexion et d'essais pratiques.</p>
+
+
+<h2><a name=3D"regles">2. R=E8gles de classement alphab=E9tique</a></h2>
+
+<p>Voici donc les r=E8gles de classement alphab=E9tique conformes aux
+dictionnaires en usage dans la francophonie, augment=E9es des dispositions
+requises pour assurer la <b>pr=E9visibilit=E9 absolue</b> du classement&nbs=
+p;:</p>
+
+<ol>
+
+<li> Pour les besoins du tri en fran=E7ais, on ne tient pas compte des  sig=
+nes diacritiques ni de la hauteur de casse (majuscules ou minuscules),
+        sauf pour les homographes (voir r=E8gle suivante), et le classement=
+ s'effectue alors dans une s=E9quence respectant l'ordre habituel=20
+        des vingt-six lettres de l'alphabet latin (de  =AB a  =BB =E0  =AB =
+z  =BB).
+
+</li><li> Pour les homographes, c'est-=E0-dire pour les mots qui s'=E9crive=
+nt exactement de la m=EAme fa=E7on, si on ignore les signes=20
+        diacritiques pour les besoins de la cause, l'ordre de pr=E9s=E9ance=
+ des signes d'origine est respect=E9, avant m=EAme de=20
+        donner priorit=E9 aux minuscules sur les majuscules [Dans les dicti=
+onnaires fran=E7ais, on n'utilise que des capitales pour les rubriques&nbsp=
+;:=20
+        aucune r=E8gle n'y est donc n=E9cessaire en ce qui concerne l'ordre=
+ de pr=E9s=E9ance des minuscules et des majuscules. <br>
+        Dans les encyclop=E9dies de langue fran=E7aise, aucune r=E8gle ne s=
+emble =EAtre suivie strictement, bien que l'on note une=20
+        l=E9g=E8re tendance =E0 accorder priorit=E9 aux majuscules (avec de=
+ nombreuses exceptions). =C9tant donn=E9=20
+        qu'il semble plus naturel de donner priorit=E9 aux minuscules, nous=
+ avons choisi cet ordre de pr=E9s=E9ance, suivi tr=E8s=20
+        strictement dans les dictionnaires d'autres origines linguistiques =
+(notamment anglo-saxons).]. La discrimination s'effectue cependant =E0=20
+        rebours, <i>en partant de la fin du mot et en reculant</i>.<br>
+
+    L'ordre de priorit=E9 des lettres accentu=E9es du fran=E7ais peut facil=
+ement
+    =EAtre d=E9duit =E0 partir des principaux dictionnaires ; tous les
+    dictionnaires consult=E9s respectent l'ordre suivant&nbsp;:<br>
+
+                        aA    =E0=C0 =E2=E0 <br>
+                        cC             =E7=C7 <br>
+                        eE =E9=C9 =E8=C8 =EA=CA =EB=CB  <br>
+                        iI       =EE=CE =EF=CF <br>
+                        oO       =F4=D4 <br>
+                        uU    =F9=D9 =FB=DB =FC=DC      <br>
+                        yY          =FF<img src=3D"http://www-clips.imag.fr=
+/geta/gilles.serasset/Yuml.gif" alt=3D"=9F">  <br>
+
+<b>Note&nbsp;:</b> la lettre  =AB =FF  =BB est exceptionnellement utilis=E9=
+e en fran=E7ais=20
+ex.&nbsp;:  =AB L'Ha=FF-les-Roses  =BB, nom d'une localit=E9 du sud de Pari=
+s).
+
+</li><li> Les digrammes soud=E9s (ligatures) comme  =AB =E6  =BB et  =AB <i=
+mg src=3D"http://www-clips.imag.fr/geta/gilles.serasset/oelig.gif" alt=3D"=
+=9C"> =BB sont class=E9s
+    avec les lettres doubles correspondantes, en les discriminant toutefois
+    par un indice de priorit=E9 particulier, pour assurer la <b>pr=E9visibi=
+lit=E9
+    absolue</b> du classement.
+
+</li><li> Tous les signes sp=E9ciaux, comme les tirets, espaces et apostrop=
+hes,
+    sont =E9limin=E9s du corps du champ temporaire de tri mais sont renvoy=
+=E9s =E0
+    la fin du champ et pr=E9c=E9d=E9s d'un indicateur de position, pour ass=
+urer
+    la <b>pr=E9visibilit=E9 absolue</b> du classement.
+   =20
+ </li></ol>
+
+<h2><a name=3D"exemples">3. Exemples illustrant ces r=E8gles</a></h2>
+
+<ul>
+
+<li>    Pour la 1=E8re r=E8gle&nbsp;:
+
+<dir>
+<li>                  sur=E9l=E9vation
+</li><li>                  s=FBrement
+</li><li>                  sur=E9minent
+</li><li>                  s=FBret=E9
+</li></dir>
+<p>
+</p></li><li>    Pour la 2e r=E8gle&nbsp;:
+
+<dir>
+<li>                  cote=20
+</li><li>                  c=F4te          =20
+</li><li>                  C=F4te           =20
+</li><li>                  cot=E9          =20
+</li><li>                  Cot=E9          =20
+</li><li>                  c=F4t=E9          =20
+</li><li>                  C=F4t=E9          =20
+</li><li>                  coter
+</li></dir>
+<b>Note&nbsp;:</b> La discrimination se fait ici d'abord sur le  =AB e  =BB=
+, ensuite sur le =AB o  =BB, ensuite sur la hauteur de
+         casse (minuscules avant les majuscules). Le cas  =AB COTE  =BB est=
+ un des exemples les plus subtils d'homographes=20
+         dans les dictionnaires fran=E7ais.
+ <p>       =20
+</p><dir>
+<li>                  =E9l=E8ve
+</li><li>                  =E9lev=E9
+</li></dir>
+<p>
+</p><dir>
+<li>                  g=E8ne
+</li><li>                  g=EAne
+</li></dir>
+<p>
+</p><dir>
+<li>                  M=C2CON
+</li><li>                  ma=E7on
+</li></dir>
+<p>
+</p><dir>
+<li>                  p=E8che
+</li><li>                  P=C8CHE
+</li><li>                  p=EAche
+</li><li>                  P=CACHE
+</li><li>                  p=E9ch=E9
+</li><li>                  P=C9CH=C9
+</li><li>                  p=E9cher
+</li><li>                  p=EAcher
+</li></dir>
+<p>
+</p><dir>
+<li>                  rel=E8ve
+</li><li>                  relev=E9
+</li><li>                  r=E9v=E8le
+</li><li>                  r=E9v=E9l=E9
+</li></dir>
+<p>
+</p></li><li>    Pour la 3e r=E8gle&nbsp;:
+
+<dir>
+<li>                  cadurcien
+</li><li>                  c=E6cum
+</li><li>                  caennais
+</li><li>                  c=E6sium
+</li><li>                  cafard
+</li><li>                  coercitif
+</li><li>                  c<img src=3D"http://www-clips.imag.fr/geta/gille=
+s.serasset/oelig.gif" alt=3D"=9C">ur
+</li></dir>
+<p>
+</p></li><li>    Pour la 4e r=E8gle&nbsp;:
+
+<dir>
+<li>                  vice-consul
+</li><li>                  vicennal
+</li><li>                  vice-pr=E9sident
+</li><li>                  vice-roi
+</li><li>                  vic=E9simal
+</li><li>                  vice versa
+</li><li>                  vice-versa
+</li></dir>
+</li></ul>
+
+<h2><a name=3D"algo">4. Algorithme de confection des champs de tri</a></h2>
+=20
+<p>    Pour le classement informatis=E9 de texte fran=E7ais, la proc=E9dure
+ suivante est propos=E9e (les tables sont en annexe)&nbsp;:</p>
+
+
+<dl>
+<dt>I.  Pour chacune des cha=EEnes de caract=E8res =E0 trier&nbsp;:
+
+</dt><dd>  <b>-1.</b> Initialiser la longueur de la cl=E9 de premier ordre =
+(CPO), de second
+       ordre (CSO) et de troisi=E8me ordre (CTO) =E0 0.
+       Initialiser la cl=E9 de quatri=E8me ordre (CQO) avec une cha=EEne co=
+ntenant
+       le caract=E8re correspondant au nombre binaire 0.<br>
+
+    <b>0. </b>En balayant la cha=EEne de la gauche vers la droite, obtenir =
+le
+       prochain caract=E8re.<br>
+
+    <b>1. </b>S'il s'agit d'un symbole qui n'est pas dans la table I (index=
+),
+       ajouter ce caract=E8re =E0 la suite de la cl=E9 de quatri=E8me ordre=
+ (CQO),
+       en ayant soin de faire pr=E9c=E9der le caract=E8re d'un code binaire=
+ de
+       longueur fixe indiquant sa position dans le champ d'origine.
+       Reprendre imm=E9diatement la proc=E9dure =E0 0.<br>
+
+    <b>2. </b>En indexant la table A avec le caract=E8re d'origine, obtenir=
+ un ou
+       deux (dans le cas des digrammes soud=E9s ou ligatures) caract=E8res =
+de
+       remplacement et les ajouter <b>=E0 la suite</b> de la cl=E9 de premi=
+er ordre
+       (CPO).<br>
+
+    <b>3. </b>En indexant la table B avec le m=EAme caract=E8re d'origine, =
+obtenir un
+       ou deux caract=E8res, constituant l'indice de priorit=E9 des signes
+       diacritiques, et les ajouter <b>devant</b> la cl=E9 de second ordre =
+(CSO),
+       qui joue alors le r=F4le d'une pile (l'ordre de confection est inver=
+s=E9
+       et pour retrouver la correspondance avec l'information originale, il
+       faut lire la cha=EEne =E0 rebours).<br>
+
+    <b>4. </b>En indexant la table C toujours avec le m=EAme caract=E8re d'=
+origine,
+       obtenir un ou deux caract=E8res, constituant l'indice de hauteur de
+       casse, et les ajouter <b>=E0 la suite</b> de la cl=E9 de troisi=E8me=
+ ordre
+       (CTO).<br>
+
+    <b>5. </b>Tant que la cha=EEne-source n'est pas =E9puis=E9e, reprendre =
+la proc=E9dure =E0
+       0.<br>
+
+    <b>6. </b>Concat=E9ner les cl=E9s de premier ordre (CPO), de deuxi=E8me=
+ ordre (CDO),
+       de troisi=E8me ordre (CTO) et de quatri=E8me ordre (CQO) pour consti=
+tuer
+       la cl=E9 compl=E8te de tri.<br>
+
+</dd><dt> II. Une fois effectu=E9e la conversion de toutes les cha=EEnes de=
+ la liste
+     =E0 trier, classer selon l'ordre binaire (croissant ou d=E9croissant)
+     du champ temporaire de tri de chacun des =E9l=E9ments de la liste.
+
+</dt><dd>Exemple&nbsp;:<br>
+<pre>       LISTE =C0 CLASSER	LISTE CONVERTIE POUR LE TRI
+      (d=E9j=E0 dans l'ordre)
+
+           c=E6cal         *caecal*&lt;16&gt;&lt;16&gt;&lt;16&gt;&lt;22&gt;=
+&lt;22&gt;&lt;16&gt;*
+                                *&lt;08&gt;&lt;08&gt;&lt;08&gt;&lt;08&gt;&l=
+t;08&gt;&lt;08&gt;*&lt;00&gt;*
+           caennais      *caennais*&lt;16&gt;&lt;16&gt;&lt;16&gt;&lt;16&gt;=
+&lt;16&gt;&lt;16&gt;&lt;16&gt;&lt;16&gt;*
+                                  *&lt;08&gt;&lt;08&gt;&lt;08&gt;&lt;08&gt;=
+&lt;08&gt;&lt;08&gt;&lt;08&gt;&lt;08&gt;*&lt;00&gt;*
+           C.A.F.        *caf*&lt;16&gt;&lt;16&gt;&lt;16&gt;*&lt;09&gt;&lt;=
+09&gt;&lt;09&gt;*&lt;00&gt;&lt;01&gt;.&lt;03&gt;.&lt;05&gt;.*
+           c'est-=E0-dire  *cestadire&lt;16&gt;&lt;16&gt;&lt;16&gt;&lt;16&g=
+t;&lt;18&gt;&lt;16&gt;&lt;16&gt;&lt;16&gt;&lt;16&gt;*
+                                  *&lt;08&gt;&lt;08&gt;&lt;08&gt;&lt;08&gt;=
+&lt;08&gt;&lt;08&gt;&lt;08&gt;&lt;08&gt;&lt;08&gt;*
+                                  *&lt;00&gt;&lt;01&gt;'&lt;05&gt;-&lt;07&g=
+t;-*
+           j=E9sus         *jesus*&lt;16&gt;&lt;16&gt;&lt;16&gt;&lt;17&gt;&=
+lt;16&gt;*
+                               *&lt;08&gt;&lt;08&gt;&lt;08&gt;&lt;08&gt;&lt=
+;08&gt;*&lt;00&gt;*
+           J=E9sus         *jesus*&lt;16&gt;&lt;16&gt;&lt;16&gt;&lt;17&gt;&=
+lt;16&gt;*
+                               *&lt;09&gt;&lt;08&gt;&lt;08&gt;&lt;08&gt;&lt=
+;08&gt;*&lt;00&gt;*
+           p=EAche         *peche*&lt;16&gt;&lt;16&gt;&lt;16&gt;&lt;19&gt;&=
+lt;16&gt;*
+                               *&lt;08&gt;&lt;08&gt;&lt;08&gt;&lt;08&gt;&lt=
+;08&gt;*&lt;00&gt;*
+           P=CACHE         *peche*&lt;16&gt;&lt;16&gt;&lt;16&gt;&lt;19&gt;&=
+lt;16&gt;*
+                               *&lt;09&gt;&lt;09&gt;&lt;09&gt;&lt;09&gt;&lt=
+;09&gt;*&lt;00&gt;*
+           p=E9ch=E9         *peche*&lt;17&gt;&lt;16&gt;&lt;16&gt;&lt;17&gt=
+;&lt;16&gt;*
+                               *&lt;08&gt;&lt;08&gt;&lt;08&gt;&lt;08&gt;&lt=
+;08&gt;*&lt;00&gt;*
+           P=C9CH=C9         *peche*&lt;17&gt;&lt;16&gt;&lt;16&gt;&lt;17&gt=
+;&lt;16&gt;*
+                               *&lt;09&gt;&lt;09&gt;&lt;09&gt;&lt;09&gt;&lt=
+;09&gt;*&lt;00&gt;*
+           pech=E8re       *pechere*&lt;16&gt;&lt;16&gt;&lt;18&gt;&lt;16&gt=
+;&lt;16&gt;&lt;16&gt;&lt;16&gt;*
+                                 *&lt;08&gt;&lt;08&gt;&lt;08&gt;&lt;08&gt;&=
+lt;08&gt;&lt;08&gt;&lt;08&gt;*&lt;00&gt;*
+           p=E9ch=E8re       *pechere*&lt;16&gt;&lt;16&gt;&lt;18&gt;&lt;16&=
+gt;&lt;16&gt;&lt;17&gt;&lt;16&gt;*
+                                 *&lt;08&gt;&lt;08&gt;&lt;08&gt;&lt;08&gt;&=
+lt;08&gt;&lt;08&gt;&lt;08&gt;*&lt;00&gt;*
+           vice-l=E9gat    *vicelegat*&lt;16&gt;&lt;16&gt;&lt;16&gt;&lt;17&=
+gt;&lt;16&gt;&lt;16&gt;&lt;16&gt;&lt;16&gt;&lt;16&gt;*
+                                   *&lt;08&gt;&lt;08&gt;&lt;08&gt;&lt;08&gt=
+;&lt;08&gt;&lt;08&gt;&lt;08&gt;&lt;08&gt;&lt;08&gt;*
+                                   *&lt;00&gt;&lt;04&gt;-*
+           vice versa    *viceversa*&lt;16&gt;&lt;16&gt;&lt;16&gt;&lt;16&gt=
+;&lt;16&gt;&lt;16&gt;&lt;16&gt;&lt;16&gt;&lt;16&gt;*
+                                   *&lt;08&gt;&lt;08&gt;&lt;08&gt;&lt;08&gt=
+;&lt;08&gt;&lt;08&gt;&lt;08&gt;&lt;08&gt;&lt;08&gt;*
+                                   *&lt;00&gt;&lt;04&gt; *
+           vice  versa   *viceversa*&lt;16&gt;&lt;16&gt;&lt;16&gt;&lt;16&gt=
+;&lt;16&gt;&lt;16&gt;&lt;16&gt;&lt;16&gt;&lt;16&gt;*
+                                   *&lt;08&gt;&lt;08&gt;&lt;08&gt;&lt;08&gt=
+;&lt;08&gt;&lt;08&gt;&lt;08&gt;&lt;08&gt;&lt;08&gt;*
+                                   *&lt;00&gt;&lt;04&gt; &lt;05&gt; *
+           vice-versa    *viceversa*&lt;16&gt;&lt;16&gt;&lt;16&gt;&lt;16&gt=
+;&lt;16&gt;&lt;16&gt;&lt;16&gt;&lt;16&gt;&lt;16&gt;*
+                                   *&lt;08&gt;&lt;08&gt;&lt;08&gt;&lt;08&gt=
+;&lt;08&gt;&lt;08&gt;&lt;08&gt;&lt;08&gt;&lt;08&gt;*
+                                   *&lt;00&gt;&lt;04&gt;-*
+</pre>
+
+ <p> <b>Note&nbsp;: </b>L'ast=E9risque (*) n'est pas utilis=E9 pour compose=
+r la cha=EEne de tri
+        mais d=E9limite seulement celle-ci pour montrer la pr=E9sence d'esp=
+aces
+        =E0 l'int=E9rieur du champ =E0 trier et s=E9parer les quatre ordres=
+ de
+        cl=E9s.</p>
+       =20
+<h2> <a name=3D"annexe">Annexe</a></h2>
+<pre>                 TABLE A          TABLE B          TABLE C
+                 -------          -------          -------
+
+              Caract=E8res de       Indices de       Indice de
+ Caract=E8res   remplacement        priorit=E9 des     hauteur de
+ d'origine    non accentu=E9s       diacritiques     casse
+
+  0                0               &lt;16&gt;              &lt;08&gt;
+  1                1               &lt;16&gt;              &lt;08&gt;
+  2                2               &lt;16&gt;              &lt;08&gt;
+  3                3               &lt;16&gt;              &lt;08&gt;
+  4                4               &lt;16&gt;              &lt;08&gt;
+  5                5               &lt;16&gt;              &lt;08&gt;
+  6                6               &lt;16&gt;              &lt;08&gt;
+  7                7               &lt;16&gt;              &lt;08&gt;
+  8                8               &lt;16&gt;              &lt;08&gt;
+  9                9               &lt;16&gt;              &lt;08&gt;
+
+  a                a               &lt;16&gt;              &lt;08&gt;
+  A                a               &lt;16&gt;              &lt;09&gt;
+  =E0                a               &lt;18&gt;              &lt;08&gt;
+  =C0                a               &lt;18&gt;              &lt;09&gt;
+  =E2                a               &lt;19&gt;              &lt;08&gt;
+  =E0                a               &lt;19&gt;              &lt;09&gt;
+
+  b                b               &lt;16&gt;              &lt;08&gt;
+  B                b               &lt;16&gt;              &lt;09&gt;
+
+  c                c               &lt;16&gt;              &lt;08&gt;
+  C                c               &lt;16&gt;              &lt;09&gt;
+  =E7                c               &lt;21&gt;              &lt;08&gt;
+  =C7                c               &lt;21&gt;              &lt;09&gt;
+
+  d                d               &lt;16&gt;              &lt;08&gt;
+  D                d               &lt;16&gt;              &lt;09&gt;
+
+  e                e               &lt;16&gt;              &lt;08&gt;
+  E                e               &lt;16&gt;              &lt;09&gt;
+  =E9                e               &lt;17&gt;              &lt;08&gt;
+  =C9                e               &lt;17&gt;              &lt;09&gt;
+  =E8                e               &lt;18&gt;              &lt;08&gt;
+  =C8                e               &lt;18&gt;              &lt;09&gt;
+  =EA                e               &lt;19&gt;              &lt;08&gt;
+  =CA                e               &lt;19&gt;              &lt;09&gt;
+  =EB                e               &lt;20&gt;              &lt;08&gt;
+  =CB                e               &lt;20&gt;              &lt;09&gt;
+
+  f                f               &lt;16&gt;              &lt;08&gt;
+  F                f               &lt;16&gt;              &lt;09&gt;
+  g                g               &lt;16&gt;              &lt;08&gt;
+  G                g               &lt;16&gt;              &lt;09&gt;
+  h                h               &lt;16&gt;              &lt;08&gt;
+  H                h               &lt;16&gt;              &lt;09&gt;
+
+  i                i               &lt;16&gt;              &lt;08&gt;
+  I                i               &lt;16&gt;              &lt;09&gt;
+  =EE                i               &lt;19&gt;              &lt;08&gt;
+  =CE                i               &lt;19&gt;              &lt;09&gt;
+  =EF                i               &lt;20&gt;              &lt;08&gt;
+  =CF                i               &lt;20&gt;              &lt;09&gt;
+
+  j                j               &lt;16&gt;              &lt;08&gt;
+  J                j               &lt;16&gt;              &lt;09&gt;
+  k                k               &lt;16&gt;              &lt;08&gt;
+  K                k               &lt;16&gt;              &lt;09&gt;
+  l                l               &lt;16&gt;              &lt;08&gt;
+  L                l               &lt;16&gt;              &lt;09&gt;
+  m                m               &lt;16&gt;              &lt;08&gt;
+  M                m               &lt;16&gt;              &lt;09&gt;
+  n                n               &lt;16&gt;              &lt;08&gt;
+  N                n               &lt;16&gt;              &lt;09&gt;
+
+  o                o               &lt;16&gt;              &lt;08&gt;
+  O                o               &lt;16&gt;              &lt;09&gt;
+  =F4                o               &lt;19&gt;              &lt;08&gt;
+  =D4                o               &lt;19&gt;              &lt;09&gt;
+
+  p                p               &lt;16&gt;              &lt;08&gt;
+  P                p               &lt;16&gt;              &lt;09&gt;
+  q                q               &lt;16&gt;              &lt;08&gt;
+  Q                q               &lt;16&gt;              &lt;09&gt;
+  r                r               &lt;16&gt;              &lt;08&gt;
+  R                r               &lt;16&gt;              &lt;09&gt;
+  s                s               &lt;16&gt;              &lt;08&gt;
+  S                s               &lt;16&gt;              &lt;09&gt;
+  t                t               &lt;16&gt;              &lt;08&gt;
+  T                t               &lt;16&gt;              &lt;09&gt;
+
+  u                u               &lt;16&gt;              &lt;08&gt;
+  U                u               &lt;16&gt;              &lt;09&gt;
+  =F9                u               &lt;18&gt;              &lt;08&gt;
+  =D9                u               &lt;18&gt;              &lt;09&gt;
+  =FB                u               &lt;19&gt;              &lt;08&gt;
+  =DB                u               &lt;19&gt;              &lt;09&gt;
+  =FC                u               &lt;20&gt;              &lt;08&gt;
+  =DC                u               &lt;20&gt;              &lt;09&gt;
+
+  v                v               &lt;16&gt;              &lt;08&gt;
+  V                v               &lt;16&gt;              &lt;09&gt;
+  w                w               &lt;16&gt;              &lt;08&gt;
+  W                w               &lt;16&gt;              &lt;09&gt;
+  x                x               &lt;16&gt;              &lt;08&gt;
+  X                x               &lt;16&gt;              &lt;09&gt;
+
+  y                y               &lt;16&gt;              &lt;08&gt;
+  Y                y               &lt;16&gt;              &lt;09&gt;
+  =FF                y               &lt;20&gt;              &lt;08&gt;
+  <img src=3D"http://www-clips.imag.fr/geta/gilles.serasset/Yuml.gif" alt=
+=3D"=9F">               y               &lt;20&gt;              &lt;09&gt;
+
+  z                z               &lt;16&gt;              &lt;08&gt;
+  Z                z               &lt;16&gt;              &lt;09&gt;
+  =E6                ae              &lt;22&gt;&lt;22&gt;          &lt;08&g=
+t;&lt;08&gt;
+  =C6                ae              &lt;22&gt;&lt;22&gt;          &lt;09&g=
+t;&lt;09&gt;
+  <img src=3D"http://www-clips.imag.fr/geta/gilles.serasset/oelig.gif" alt=
+=3D"=9C">                oe              &lt;22&gt;&lt;22&gt;          &lt;=
+08&gt;&lt;08&gt;
+  <img src=3D"http://www-clips.imag.fr/geta/gilles.serasset/capital-OElig.g=
+if" alt=3D"=8C">               oe              &lt;22&gt;&lt;22&gt;        =
+  &lt;09&gt;&lt;09&gt;
+
+  &lt;NBSP&gt;          &lt;espace&gt;         &lt;16&gt;              &lt;=
+08&gt;
+
+</pre>
+
+<p><b>Notes&nbsp;:</b>
+
+</p><ol>
+<li>Le caract=E8re NBSP (espace ins=E9cable) est d=E9fini dans la norme ISO=
+/CEI
+      8859-1 ; l'espace ins=E9cable est essentiel si on veut vraiment
+      s=E9parer, par exemple, les noms des pr=E9noms, dans une liste
+      informatique&nbsp;: il est plus naturel de classer  =AB Dion Zacharie=
+  =BB avant
+       =AB Dionne Herm=E9n=E9gilde  =BB, ce qui ne serait pas le cas si on =
+=E9liminait
+      l'espace. Les espaces ins=E9cables sont n=E9cessaires pour les distin=
+guer
+      des espaces non significatifs, comme dans les noms de famille =E9crit=
+s
+      en plusieurs mots (voir celui de l'auteur), espaces qui, dans ces
+      cas, doivent =EAtre d=E9plac=E9s pour le tri.
+
+</li><li> Forc=E9ment, les indices devront =EAtre cod=E9s en binaire dans u=
+ne
+      application informatique. On prendra grand soin =E0 ce que l'ensemble
+      de codes utilis=E9s pour repr=E9senter les indices n'ait pas
+      d'intersection avec l'ensemble des codes utilis=E9s pour les caract=
+=E8res
+      de remplacement non accentu=E9s, ce qui pourrait nuire =E0 l'ordre de
+      classement de champs de longueurs variables, comme dans l'exemple
+      suivant&nbsp;:<br>
+<pre>                   Champ =E0 trier    Cl=E9 interm=E9diaire
+
+                     A1               a1&lt;16&gt;&lt;16&gt;&lt;09&gt;&lt;0=
+8&gt;&lt;00&gt;
+                     =E0                a&lt;18&gt;&lt;08&gt;&lt;00&gt;
+</pre>
+      Si, dans cet exemple, <code>&lt;18&gt;</code> avait par hasard un cod=
+e correspondant au
+      caract=E8re  =AB 4  =BB, il y aurait intersection avec l'ensemble des
+      caract=E8res de remplacement et le classement serait erronn=E9, puisq=
+ue
+      la cha=EEne  =AB =E0  =BB, de taille plus petite, devrait se retrouve=
+r en
+      premier. L'ensemble servant =E0 confectionner les indices doit
+      comprendre les nombres binaires les plus petits. <br>
+
+      Dans le m=EAme ordre d'id=E9es, on recommande de r=E9server les codes=
+ <code>&lt;01&gt;</code>
+      =E0 <code>&lt;15&gt;</code> pour les indices de hauteur de casse (m=
+=EAme si on n'en utilise
+      ici que deux) et <code>&lt;16&gt;</code> =E0 <code>&lt;31&gt;</code> =
+pour les indices de priorit=E9 des
+      diacritiques, ceux-ci devant =EAtre plus grands que les premiers, si =
+on
+      utilise des champs de longueurs variables. Les codes inutilis=E9s
+      pourraient =EAtre utiles pour g=E9n=E9raliser la m=E9thode avec d'aut=
+res
+      langues que le fran=E7ais. Le code <code>&lt;00&gt;</code> doit =EAtr=
+e r=E9serv=E9 pour
+      d=E9limiter la cl=E9 de quatri=E8me ordre si on utilise des champs de
+      longueurs variables.
+     =20
+</li></ol>
+<hr>
+
+<p>Ces r=E8gles ont =E9t=E9 publi=E9es pr=E9c=E9demment sur papier en 1988 =
+sous le m=EAme
+titre. R=E9f=E9rence bibliographique&nbsp;: ISBN 2-550-19046-7 (d=E9pot l=
+=E9gal -
+quatri=E8me trimestre 1988 - Biblioth=E8que nationale du Qu=E9bec)</p>
+
+<p>Elles ont donn=E9 lieu =E0 une norme pr=E9liminaire canadienne r=E9dig=
+=E9e
+par l'auteur du pr=E9sent texte et publi=E9e en 1992, confirm=E9e comme nor=
+me
+nationale du Canada en 1996 (norme CAN-CSA Z243.4.1-1996). Cette derni=E8re
+pr=E9cise aussi les indices de classement attribu=E9s =E0 un certain nombre=
+ de
+caract=E8res sp=E9ciaux, et elle compl=E8te les tables de classement pour t=
+ous
+les autres caract=E8res latins utilis=E9s dans les langues europ=E9ennes, e=
+n
+fonction d'un ordre qui reprend rigoureusement les r=E8gles =E9nonc=E9es ic=
+i.
+Ces r=E8gles ont =E9t=E9 initialement con=E7ues pour harmoniser l'ordre de
+classement des langues suivantes (sans en exclure d'autres)&nbsp;: fran=E7a=
+is,
+anglais, allemand, portugais, italien et n=E9erlandais. L'espagnol a un ord=
+re
+l=E9g=E8rement diff=E9rent et une adaptation des tables serait n=E9cessaire=
+ dans ce
+cas, comme dans le cas des langues scandinaves ou d'autres langues
+europ=E9ennes. La m=E9thode resterait toutefois la m=EAme.</p>
+
+<p>Pour compl=E9menter cette m=E9thode, les outils de programmation FRANCIS=
+ ont
+fait au Qu=E9bec l'objet d'une commercialisation publique. Ces outils
+permettent d'une part d'accentuer automatiquement et correctement des
+donn=E9es nominatives et toponymiques (noms connus au Qu=E9bec ; adaptation=
+s
+requises pour d'autres environnements) comportant ou ne comportant pas d=E9=
+j=E0
+d'accents, du micro-ordinateur =E0 l'ordinateur de grande puissance.</p>
+
+<p>Ces outils permettent d'autre part de trier correctement les donn=E9es
+alphab=E9tiques, de les comparer, de d=E9terminer des =E9quivalences de
+recherche et plus g=E9n=E9ralement de les manipuler de diff=E9rentes mani=
+=E8res en
+fonction des propri=E9t=E9s multiples de la m=E9thode d=E9crite ici, en con=
+formit=E9
+avec la norme canadienne.</p>
+
+<p>Au moment o=F9 ces r=E8gles sont r=E9=E9dit=E9es pour le r=E9seau Intern=
+et, l'auteur
+est =E0 r=E9diger un projet de norme internationale de classement (projet
+ISO/CEI 14651) pour l'ensemble des caract=E8res du jeu universel de
+caract=E8res cod=E9s sur plusieurs octets (norme ISO/CEI 10646-1:1993,
+correspondant au standard UNICODE). Il s'agit d'une extension des concepts
+qui sont pr=E9sent=E9s ici.</p>
+
+<hr>
+
+<h2><a name=3D"reference">R=E9f=E9rence bibliographique de l'=E9dition orig=
+inale sur papier&nbsp;:</a></h2>
+
+<p>Gouvernement du Qu=E9bec <br>
+D=E9p=F4t l=E9gal -- 4e trimestre 1988<br>
+Biblioth=E8que nationale du Qu=E9bec<br>
+ISBN 2-550-19046-7</p>
+
+
+
+
+
+
+
+
+
+
+</dd></dl></body></html>
+------=_NextPart_000_F3AB_727EC176.1E6DDBD5
+Content-Type: image/gif
+Content-Transfer-Encoding: base64
+Content-Location: http://www-clips.imag.fr/geta/gilles.serasset/Yuml.gif
+
+R0lGODlhCwALAIAAAP///wAAACH5BAEAAAAALAAAAAALAAsAAAIUhBF4yxt/XjIzslqdapRbv3ES
+2BQAOw==
+------=_NextPart_000_F3AB_727EC176.1E6DDBD5
+Content-Type: image/gif
+Content-Transfer-Encoding: base64
+Content-Location: http://www-clips.imag.fr/geta/gilles.serasset/oelig.gif
+
+R0lGODlhDAAKAIAAAP///wAAACH5BAEAAAAALAAAAAAMAAoAAAIVhI+pyxcPIArO0GrftTjtu2WU
+1CAFADs=
+------=_NextPart_000_F3AB_727EC176.1E6DDBD5
+Content-Type: image/gif
+Content-Transfer-Encoding: base64
+Content-Location: http://www-clips.imag.fr/geta/gilles.serasset/capital-OElig.gif
+
+R0lGODlhDQALAIAAAP///wAAACH5BAEAAAAALAAAAAANAAsAAAIahI8Jwd3HTEBTQrXotdBtnn2V
+EoXg4niYUgAAOw==
+------=_NextPart_000_F3AB_727EC176.1E6DDBD5--

@@ -544,15 +544,16 @@ can have multiple values depending of its status.</p>
 
 <table class="api">
  <tbody>
-    <tr><td>URL</td><td>api/[dictionary]/[lang]/[entryId]</td></tr>
-    <tr><td>Method</td><td>PUT</td></tr>
-    <tr><td>ContentType</td><td>application/xml</td></tr>
-    <tr><td>Querystring</td><td>mode=</td><td>standard</td></tr>
-    <tr><td rowspan="5">Returns</td><td>201 Created &amp; XML (contribution)</td></tr>
-    <tr><td>400 Bad Request (XML not valid)</td></tr>
-    <tr><td>401 Unauthorized</td></tr>
-    <tr><td>404 Not Found</td></tr>
-    <tr><td>415 Unsupported Media Type (content-type not XML)</td></tr>
+    <tr><td>URL</td><td colspan="2">api/[dictionary]/[lang]/[entryId]</td></tr>
+    <tr><td>Method</td><td colspan="2">PUT</td></tr>
+    <tr><td>ContentType</td><td colspan="2">application/xml</td></tr>
+    <tr><td rowspan="2">Querystring</td><td rowspan="2">mode=</td><td>standard</td></tr>
+    <tr><td>replace</td></tr>
+    <tr><td rowspan="5">Returns</td><td colspan="2">201 Created &amp; XML (contribution)</td></tr>
+    <tr><td colspan="2">400 Bad Request (XML not valid)</td></tr>
+    <tr><td colspan="2">401 Unauthorized</td></tr>
+    <tr><td colspan="2">404 Not Found</td></tr>
+    <tr><td colspan="2">415 Unsupported Media Type (content-type not XML)</td></tr>
  </tbody>
 </table>
 
