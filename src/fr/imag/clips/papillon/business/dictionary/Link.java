@@ -228,7 +228,7 @@ public class Link {
 	 */
 	public void setWeight(String weight)
 	throws PapillonBusinessException {
-		setWeight(Double.parseDouble(weight));
+		setWeight(weight != null ? Double.parseDouble(weight) : 0);
 	}
 
 	public void setWeight(double weight)
