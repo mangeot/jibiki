@@ -780,6 +780,7 @@ public class DictionariesFactory {
                                                             int offset,
 															int limit)
 	throws PapillonBusinessException {
+    	// PapillonLogger.writeDebugMsg("getDictionaryEntriesCollection: "+ dict.getName());
         //	Collection qrset = new HashSet();				
         Collection qrset = new Vector();
         if ((null != dict)
@@ -792,6 +793,7 @@ public class DictionariesFactory {
                 Volume myVolume = (Volume) iter.next();
 				
                 // FIXME: get the limit argument
+            	// PapillonLogger.writeDebugMsg("getDictionaryEntriesCollection: call VolumeEntriesFactory.getVolumeEntriesVector");
                 Vector entriesVector = VolumeEntriesFactory.getVolumeEntriesVector(dict, myVolume, Keys1, Keys2, anyContains, offset, limit);
 				
 				//System.out.println("entriesVector.size: " + entriesVector.size());
@@ -803,6 +805,7 @@ public class DictionariesFactory {
                 for (Iterator iter2 = entriesVector.iterator(); iter2.hasNext();) {
                     //
                     VolumeEntry ve = (VolumeEntry) iter2.next();
+                	// PapillonLogger.writeDebugMsg("getDictionaryEntriesCollection: call expandResult " + ve.getEntryId());
                     qrset.addAll(expandResult(ve, targets, user));
                 }
             }
@@ -1128,7 +1131,7 @@ public class DictionariesFactory {
 		String direction = Link.DIRECTION_DOWN;
  
 		VolumeEntry ve = theQR.getSourceEntry();
-        //PapillonLogger.writeDebugMsg("expandResult: " + ve.getHeadword());
+        // PapillonLogger.writeDebugMsg("expandResult: " + ve.getHeadword());
 		Collection realTargets = Utility.ArrayIntersection(ve.getDictionary().getTargetLanguagesArray(), targets);
 		String type = ve.getDictionary().getType();
             
@@ -1140,6 +1143,7 @@ public class DictionariesFactory {
 			realTargets.remove(ve.getSourceLanguage());
 		}
 		ArrayList axieLinks = new ArrayList();
+        // PapillonLogger.writeDebugMsg("expandResult: call LinkFactory.getLinkedEntriesByEntry: " + ve.getHeadword() + direction);
 		LinkFactory.getLinkedEntriesByEntry(ve, axieLinks, allLinks, realTargets, direction, user);
 		theQR.setLexiesHashMap(allLinks);
 		myArrayList.add(theQR);

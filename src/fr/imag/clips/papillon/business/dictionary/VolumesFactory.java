@@ -65,6 +65,10 @@ public class VolumesFactory {
     protected final static String XPATH_ATTRIBUTE = "xpath";
     protected final static String NAME_ATTRIBUTE = "name";
     protected final static String DEFAULT_ATTRIBUTE = "default";
+    protected final static String DEFAULT_TYPE_ATTRIBUTE = "default-type";
+    protected final static String DEFAULT_LABEL_ATTRIBUTE = "default-label";
+    protected final static String DEFAULT_WEIGHT_ATTRIBUTE = "default-weight";
+    protected final static String DEFAULT_VOLUME_ATTRIBUTE = "default-volume";
     protected final static String EXTERNAL_ATTRIBUTE = "external";
 	
 	public final static String XMLNAMESPACE = "xmlns";
@@ -299,7 +303,11 @@ public class VolumesFactory {
             java.util.HashMap tmpTable = (java.util.HashMap) linksTable.get(name);
             for (Iterator keys = tmpTable.keySet().iterator(); keys.hasNext();) {
                 String element = (String) keys.next();
-				if (!element.equals(Volume.LINK_STRING_LANG_TYPE)) {
+				if (!element.equals(Volume.LINK_STRING_LANG_TYPE) 
+						&& !element.equals(Volume.LINK_DEFAULT_TYPE) 
+						&& !element.equals(Volume.LINK_DEFAULT_LABEL)
+						&& !element.equals(Volume.LINK_DEFAULT_WEIGHT)
+						&& !element.equals(Volume.LINK_DEFAULT_VOLUME)) {
                 ArrayList eltArrayList = (ArrayList) tmpTable.get(element);
                 if (eltArrayList != null && eltArrayList.size() == 1) {
                     String xpathString = (String) eltArrayList.get(0);
@@ -1054,6 +1062,38 @@ public class VolumesFactory {
 								}
 								//PapillonLogger.writeDebugMsg("addLinkInTable: " + name + " xpath: " + lang);
 								linkTable.put(Volume.LINK_STRING_LANG_TYPE,lang);
+
+								String type = null;
+								Attr defaultTypeAttr = linkElt.getAttributeNode(DEFAULT_TYPE_ATTRIBUTE);
+								if (defaultTypeAttr != null) {
+									type = defaultTypeAttr.getValue();
+									linkTable.put(Volume.LINK_DEFAULT_TYPE,type);
+									//PapillonLogger.writeDebugMsg("addLinkInTable: "+Volume.LINK_DEFAULT_TYPE+" value: " + type);
+								}
+
+								String label = null;
+								Attr defaultLabelAttr = linkElt.getAttributeNode(DEFAULT_LABEL_ATTRIBUTE);
+								if (defaultLabelAttr != null) {
+									type = defaultLabelAttr.getValue();
+									linkTable.put(Volume.LINK_DEFAULT_LABEL,label);
+									//PapillonLogger.writeDebugMsg("addLinkInTable: "+Volume.LINK_DEFAULT_TYPE+" value: " + type);
+								}
+							
+								String weight = null;
+								Attr defaultWeightAttr = linkElt.getAttributeNode(DEFAULT_WEIGHT_ATTRIBUTE);
+								if (defaultWeightAttr != null) {
+									type = defaultWeightAttr.getValue();
+									linkTable.put(Volume.LINK_DEFAULT_WEIGHT,weight);
+									//PapillonLogger.writeDebugMsg("addLinkInTable: "+Volume.LINK_DEFAULT_TYPE+" value: " + type);
+								}
+								
+								String volume = null;
+								Attr defaultVolumeAttr = linkElt.getAttributeNode(DEFAULT_VOLUME_ATTRIBUTE);
+								if (defaultVolumeAttr != null) {
+									volume = defaultVolumeAttr.getValue();
+									linkTable.put(Volume.LINK_DEFAULT_VOLUME,volume);
+									//PapillonLogger.writeDebugMsg("addLinkInTable: "+Volume.LINK_DEFAULT_TYPE+" value: " + type);
+								}
 								
 								NodeList cdmLinkChilds = linkElt.getChildNodes();
 								for (int k = 0; k < cdmLinkChilds.getLength(); k++) {

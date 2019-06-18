@@ -411,6 +411,8 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
 					PapillonLogger.writeDebugMsg(commande + " DICT: " + dictName + " LANG: " + restStrings[1]+ " MODE: " + restStrings[2]+ " STRING: " + restStrings[3]+ ";");
 					if (theRequest.getMethod().equals("GET")) {
 						String strategy = myGetParameter(STRATEGY_PARAMETER);
+						if (strategy==null) {strategy= myGetParameter("Strategy");}
+						if (strategy==null) {strategy= myGetParameter("STRATEGY");}
 						String limit = myGetParameter(LIMIT_PARAMETER);
                         String offset = myGetParameter(OFFSET_PARAMETER);
                         String orderby = myGetParameter(ORDERBY_PARAMETER);

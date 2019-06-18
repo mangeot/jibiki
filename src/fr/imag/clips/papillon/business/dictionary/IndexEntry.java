@@ -235,16 +235,30 @@ public class IndexEntry {
 			if (newLang != null && !newLang.equals("")) {
 				theLang = newLang;
 			}
+			String defaultType = (String) linkTable.get(Volume.LINK_DEFAULT_TYPE);
+			String defaultLabel = (String) linkTable.get(Volume.LINK_DEFAULT_LABEL);
+			String defaultWeight = (String) linkTable.get(Volume.LINK_DEFAULT_WEIGHT);
+			String defaultVolume = (String) linkTable.get(Volume.LINK_DEFAULT_VOLUME);
+			
 
 			if (resNodeList != null) {
 				for (int i = 0; i < resNodeList.getLength(); i++) {
 					org.w3c.dom.Node myNode = resNodeList.item(i);
 					//PapillonLogger.writeDebugMsg("Index entry link, Node " + myNode.getNodeName());
 					Link myLink = LinkFactory.newLink(linkDbtableName, linkName, theLang, theHandle);
+					myLink.setWeight(defaultWeight);
+					myLink.setType(defaultType);
+					myLink.setLabel(defaultLabel);
+
 					
 					for (Iterator linkKeys = linkTable.keySet().iterator(); linkKeys.hasNext();) {
 						String linkType = (String) linkKeys.next();
-						if (linkType != Volume.LINK_STRING_LANG_TYPE && linkType != Volume.LINK_STRING_LANG_TYPE) {
+						if (linkType != Volume.LINK_STRING_LANG_TYPE 
+								&& linkType != Volume.LINK_DEFAULT_TYPE
+								&& linkType != Volume.LINK_DEFAULT_LABEL
+								&& linkType != Volume.LINK_DEFAULT_WEIGHT
+								&& linkType != Volume.LINK_DEFAULT_VOLUME
+								) {
 						ArrayList linkArrayList = (ArrayList) linkTable.get(linkType);
 						org.apache.xpath.XPath linkXPath = (org.apache.xpath.XPath) linkArrayList.get(1);
 						org.w3c.dom.NodeList linkNodeList = null;
@@ -291,8 +305,13 @@ public class IndexEntry {
 					}
 					}
 					if (myLink.getVolumeTarget() == null || myLink.getVolumeTarget().equals("")) {
-						String targetVolumeName = theVolume.getDefaultTargetVolumeName(myLink.getLang());
-						myLink.setVolumeTarget(targetVolumeName);
+						if (defaultVolume != null && ! defaultVolume.contentEquals("")) {
+							myLink.setVolumeTarget(defaultVolume);
+						} 
+						else {
+							String targetVolumeName = theVolume.getDefaultTargetVolumeName(myLink.getLang());
+							myLink.setVolumeTarget(targetVolumeName);
+						}
 					}	
 					/* Attention! des fois le lien peut être vide et non final! */
 					/*if (myLink.getType() == null || myLink.getType().equals("")) {

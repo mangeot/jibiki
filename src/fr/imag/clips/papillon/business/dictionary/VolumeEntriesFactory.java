@@ -1548,7 +1548,7 @@ throws PapillonBusinessException {
  */
 public static VolumeEntry findEntryByEntryId(User user, Collection volumes, String entryId)
 throws PapillonBusinessException {
-    //PapillonLogger.writeDebugMsg("Looking for " + entryId + " in " + volumes.size() + " volumes for user " + user );
+    // PapillonLogger.writeDebugMsg("findEntryByEntryId: " + entryId + " in " + volumes.size() + " volumes for user " + user );
     //FIXME: an entry id may not be unique externally to a dictionary so the dict must be specified
     VolumeEntry resultEntry = (VolumeEntry) CurrentRequestContext.get().get(entryId);
 
@@ -1598,7 +1598,7 @@ throws PapillonBusinessException {
 
     protected static VolumeEntry findEntryByContributionId(User user, Collection volumes, String entryId)
     throws PapillonBusinessException {
-        //PapillonLogger.writeDebugMsg("findEntryByContributionId " + entryId + " in " + volumes.size() + " volumes");
+        // PapillonLogger.writeDebugMsg("findEntryByContributionId " + entryId + " in " + volumes.size() + " volumes");
         //FIXME: an entry id may not be unique externally to a dictionary so the dict must be specified
         VolumeEntry resultEntry = (VolumeEntry) CurrentRequestContext.get().get(entryId);
         

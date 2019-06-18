@@ -517,6 +517,9 @@ public class ParseVolume {
                                 isContributionVolume, replaceExistingEntries, replaceExistingContributions, logContribs,
                                        indexEntry, ParsedEntries, DiscardedEntries)) {
                             countEntries++;
+                            if (countEntries % 1000 ==0) {
+                                PapillonLogger.writeDebugMsg("\n" + countEntries + " added so far!\n");
+                            }
                         }
                         entryBuffer = new StringBuffer();
                         entryBuffer.append(xmlHeaderBuffer);
@@ -533,9 +536,6 @@ public class ParseVolume {
                 }
                 entryBuffer.append(bufferLine);
                 bufferLine = buffer.readLine() + "\n";
-                if (countEntries % 1000 ==0) {
-                    PapillonLogger.writeDebugMsg("\n" + countEntries + " added so far!\n");
-                }
             }
             buffer.close();
             inStream.close();

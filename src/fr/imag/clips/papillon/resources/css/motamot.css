@@ -115,7 +115,7 @@ div#BannerContent {
     margin: 2px;
 }
 
-#caseRecherche  {
+#caseRecherche, #cellVolumeLookup  {
     display: table-cell;
     padding: 0.3em;
     /*background-color: #FFFDDA;
@@ -123,7 +123,7 @@ div#BannerContent {
     border-radius: 20px;*/
 }
 
-#caseRechercheAvancee  {
+#caseRechercheAvancee, #cellAdvancedLookup  {
     display: table-cell;
     padding: 0.3em;
     /*background-color: #FFFDDA;

@@ -85,6 +85,10 @@ public class Volume {
 	// For linksTable
 	public final static String LINK_ELEMENT_TYPE = "element";
 	public final static String LINK_STRING_LANG_TYPE = "langString";
+	public final static String LINK_DEFAULT_TYPE = "defaultType";
+	public final static String LINK_DEFAULT_LABEL = "defaultLabel";
+	public final static String LINK_DEFAULT_WEIGHT = "defaultWeight";
+	public final static String LINK_DEFAULT_VOLUME = "defaultVolume";
 	
 	
 	// xpaths calculated from previous ones
@@ -531,9 +535,6 @@ public class Volume {
 		}
 		return volumeName;
 	}
-
-
-
 
 	
     /**
