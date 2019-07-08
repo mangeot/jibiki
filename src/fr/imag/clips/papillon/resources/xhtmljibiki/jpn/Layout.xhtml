@@ -194,10 +194,10 @@
 	<div id="footer">
         <p>
         <!-- pied de page -->
-        変更：２０１５年０５月１８日
-        ソフトウェア： © 2001-2015, GETA-CLIPS, GETALP-LIG. LGPL license.
+        変更：２０１９年０７月０８日
+        ソフトウェア： © 2001-2019, GETA-CLIPS, GETALP-LIG. LGPL license.
         データー：  <a rel="license"
-            href="http://creativecommons.org/publicdomain/zero/1.0/">
+            href="https://creativecommons.org/publicdomain/zero/1.0/">
             <img src="/jibiki/media/logo-CC0.png" style="border-style: none; width: 60px;" alt="CC0" />
         </a>
         Creative Commons CC0 License (public domain).
@@ -215,23 +215,21 @@
              }
              // -->
         </script>
-        <!-- Piwik -->
-        <script type="text/javascript">
-            <!--
-            var _paq = _paq || [];
-            _paq.push(['trackPageView']);
-            _paq.push(['enableLinkTracking']);
-            (function() {
-            var u="//totoro.imag.fr/piwik/";
-            _paq.push(['setTrackerUrl', u+'piwik.php']);
-            _paq.push(['setSiteId', 3]);
-            var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-            g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
-            })();
-             // -->
-        </script>
-        <noscript><p><img src="//totoro.imag.fr/piwik/piwik.php?idsite=3" style="border:0;" alt="" /></p></noscript>
-        <!-- End Piwik Code -->
+ <!-- Matomo -->
+<script type="text/javascript">
+  var _paq = window._paq || [];
+  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="https://totoro.imag.fr/piwik/";
+    _paq.push(['setTrackerUrl', u+'matomo.php']);
+    _paq.push(['setSiteId', '3']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<!-- End Matomo Code -->
         
         </div>
 </body>

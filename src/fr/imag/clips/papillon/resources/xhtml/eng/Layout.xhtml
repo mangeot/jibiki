@@ -87,22 +87,25 @@
     <div class="copyright">
         Last update: 13 feb. 2014. 
         Platform: © 2001-2014, GETA-CLIPS, GETALP-LIG. LGPL license. 
-        Data: <a rel="licence" href="http://creativecommons.org/licenses/by-sa/2.0/">
-		<img alt="Creative Commons License" style="border-width:0" src="http://creativecommons.org/images/public/somerights20.png" />
+        Data: <a rel="licence" href="https://creativecommons.org/licenses/by-sa/2.0/">
+		<img alt="Creative Commons License" style="border-width:0" src="https://creativecommons.org/images/public/somerights20.png" />
 		Creative Commons licence (Attribution-Share Alike 2.0 France)</a> 2014.
 		</div>
-<!-- Piwik -->
-<script type="text/javascript" src="http://papillon.imag.fr/piwik/piwik.js"></script>
+<!-- Matomo -->
 <script type="text/javascript">
-<!--
-try {
-	var piwikTracker = Piwik.getTracker('http://papillon.imag.fr/piwik/piwik.php', 1);
-	piwikTracker.trackPageView();
-	piwikTracker.enableLinkTracking();
-} 
-catch( err ) {}
-// -->
-</script><noscript><p><img src="http://papillon.imag.fr/piwik/piwik.php?idsite=1" style="border:0" alt="" /></p></noscript>
-<!-- End Piwik Tag -->
-  </body>
+  var _paq = window._paq || [];
+  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+  _paq.push(["setCookieDomain", "*.papillon.imag.fr"]);
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="https://totoro.imag.fr/piwik/";
+    _paq.push(['setTrackerUrl', u+'matomo.php']);
+    _paq.push(['setSiteId', '9']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<noscript><p><img src="https://totoro.imag.fr/piwik/matomo.php?idsite=9&amp;rec=1" style="border:0;" alt="" /></p></noscript>
+<!-- End Matomo Code -->  </body>
 </html>
