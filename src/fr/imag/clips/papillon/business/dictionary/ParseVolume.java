@@ -573,7 +573,13 @@ public class ParseVolume {
         boolean result = false;
 				org.w3c.dom.Document myDoc = null;
 				try {
-					myDoc = XMLServices.buildDOMTree(entryBuffer.toString());
+					String entryString = entryBuffer.toString();
+		        	// TODO: Pour le default namespace, il faudrait le garder et lui rajouter un préfixe
+		        	// sauf que ça cause des problèmes pour parser les entrées existantes !
+		        	// pour le moment, je le supprime.
+					entryString = entryString.replaceAll("xmlns=.*?(\"|\').*?(\"|\')", "");
+	                // PapillonLogger.writeDebugMsg("parseEntry " + entryString);
+					myDoc = XMLServices.buildDOMTree(entryString);
 				}
 				catch (Exception e) {
                     myDoc = null;

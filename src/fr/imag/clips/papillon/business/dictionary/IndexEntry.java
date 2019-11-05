@@ -371,7 +371,7 @@ public class IndexEntry {
                                                       HashMap CdmElementsTable, org.apache.xml.utils.PrefixResolver thePrefixResolver)
             throws PapillonBusinessException {
         org.w3c.dom.NodeList resNodeList = null;
-        //fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getCdmElements: " + CdmElement + " " + lang);
+        //fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getCdmElements: " + CdmElement + " lang:" + lang);
         if (lang != null && !lang.equals("") && CdmElementsTable != null) {
             java.util.HashMap tmpTable = (java.util.HashMap) CdmElementsTable.get(lang);
             if (tmpTable != null) {
@@ -379,6 +379,7 @@ public class IndexEntry {
                 org.apache.xpath.XPath myXPath = null;
                 if (myArrayList != null && myArrayList.size() == 3) {
                     myXPath = (org.apache.xpath.XPath) myArrayList.get(2);
+                    // fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("call getNodeListFromXPath: " + (String) myArrayList.get(0));
 					resNodeList = getNodeListFromXPath(myEntryDOM.getDocumentElement(), myXPath, thePrefixResolver);
                  } else {
                     fr.imag.clips.papillon.business.PapillonLogger.writeDebugMsg("getCdmElements: ArrayList: null for CdmElement: " + CdmElement + " lang: " + lang);
@@ -398,7 +399,8 @@ public class IndexEntry {
 		
 		if (myXPath != null && myEntryDOM != null) {
 			try {
-				//PapillonLogger.writeDebugMsg("executexPath: 0" + myArrayList.get(0) + " 1"+ myArrayList.get(1));
+				//PapillonLogger.writeDebugMsg("executexPath: XML:" + XMLServices.xmlCode(myEntryDOM.getOwnerDocument()));
+				//PapillonLogger.writeDebugMsg("default prefix: " + tmpPrefixResolver.getNamespaceForPrefix(""));				
 				org.apache.xpath.objects.XObject myXObject = myXPath.execute(new org.apache.xpath.XPathContext(), myEntryDOM,tmpPrefixResolver);
 				resNodeList = myXObject.nodelist();
 			} catch (javax.xml.transform.TransformerException e) {

@@ -1136,7 +1136,6 @@ public class Volume {
             String xmlFooter = "</" + this.getCdmVolume() + ">";
 			
 			String templateEntry = this.getTemplateEntry();
-			
 			org.w3c.dom.Document templateDoc = XMLServices.buildDOMTree(templateEntry);
 			org.w3c.dom.NodeList volumeNodes = IndexEntry.getCdmElements(templateDoc, Volume.CDM_volume, Volume.DEFAULT_LANG, this.getCdmElements(), this.getPrefixResolver()); 
 

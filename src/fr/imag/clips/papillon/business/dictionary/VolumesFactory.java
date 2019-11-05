@@ -1076,7 +1076,7 @@ public class VolumesFactory {
 								if (defaultLabelAttr != null) {
 									type = defaultLabelAttr.getValue();
 									linkTable.put(Volume.LINK_DEFAULT_LABEL,label);
-									//PapillonLogger.writeDebugMsg("addLinkInTable: "+Volume.LINK_DEFAULT_TYPE+" value: " + type);
+									//PapillonLogger.writeDebugMsg("addLinkInTable: "+Volume.LINK_DEFAULT_LABEL+" value: " + type);
 								}
 							
 								String weight = null;
@@ -1084,7 +1084,7 @@ public class VolumesFactory {
 								if (defaultWeightAttr != null) {
 									type = defaultWeightAttr.getValue();
 									linkTable.put(Volume.LINK_DEFAULT_WEIGHT,weight);
-									//PapillonLogger.writeDebugMsg("addLinkInTable: "+Volume.LINK_DEFAULT_TYPE+" value: " + type);
+									//PapillonLogger.writeDebugMsg("addLinkInTable: "+Volume.LINK_DEFAULT_WEIGHT+" value: " + type);
 								}
 								
 								String volume = null;
@@ -1092,7 +1092,7 @@ public class VolumesFactory {
 								if (defaultVolumeAttr != null) {
 									volume = defaultVolumeAttr.getValue();
 									linkTable.put(Volume.LINK_DEFAULT_VOLUME,volume);
-									//PapillonLogger.writeDebugMsg("addLinkInTable: "+Volume.LINK_DEFAULT_TYPE+" value: " + type);
+									//PapillonLogger.writeDebugMsg("addLinkInTable: "+Volume.LINK_DEFAULT_VOLUME+" value: " + type);
 								}
 								
 								NodeList cdmLinkChilds = linkElt.getChildNodes();
@@ -1448,6 +1448,10 @@ public class VolumesFactory {
             throws fr.imag.clips.papillon.business.PapillonBusinessException {
         if (tmplEntry != null && !tmplEntry.equals("")) {
             //PapillonLogger.writeDebugMsg("updateTemplateEntry: " + tmplEntry);
+        	// TODO: Pour le default namespace, il faudrait le garder et lui rajouter un préfixe
+        	// sauf que ça cause des problèmes pour parser les entrées existantes !
+        	// pour le moment, je le supprime.
+        	tmplEntry = tmplEntry.replaceAll("xmlns=.*?(\"|\').*?(\"|\')", "");
             org.w3c.dom.Document templateDoc = XMLServices.buildDOMTree(tmplEntry);			
 			org.apache.xml.utils.PrefixResolver tmplPrefixResolver = new org.apache.xml.utils.PrefixResolverDefault(templateDoc);
 
