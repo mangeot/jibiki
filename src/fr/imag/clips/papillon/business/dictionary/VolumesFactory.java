@@ -254,7 +254,7 @@ public class VolumesFactory {
     }
 	
 	
-	protected static HashMap createCdmElementsTable(Element volume, String source, String tmplEntry) 
+	public static HashMap createCdmElementsTable(Element volume, String source, String tmplEntry) 
 	throws fr.imag.clips.papillon.business.PapillonBusinessException {
 		HashMap cdmElements = null;
 		
@@ -1483,7 +1483,7 @@ public class VolumesFactory {
         return tmplEntry;
     }
 	
-    protected static String addDmlUrlInTemplateEntry(String tmplEntry)
+    public static String addDmlUrlInTemplateEntry(String tmplEntry)
 	throws fr.imag.clips.papillon.business.PapillonBusinessException {
 		String result = null;
         if (tmplEntry != null && !tmplEntry.equals("")) {
