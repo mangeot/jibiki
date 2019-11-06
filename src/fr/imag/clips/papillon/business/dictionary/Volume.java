@@ -824,9 +824,9 @@ public class Volume {
      */
 	public void setCdmElements() 
         throws PapillonBusinessException {
-			org.w3c.dom.Document myDoc = XMLServices.buildDOMTree(this.getTemplateEntry());
-			String dml_prefix = VolumesFactory.getDmlPrefix(myDoc.getDocumentElement());
-			this.CDM_elements = VolumesFactory.buildCdmElementsTable(this.getXmlCode(), this.getSourceLanguage(), this.getPrefixResolver(), dml_prefix);
+		org.w3c.dom.Element volumeElement = XMLServices.buildDOMTree(this.getXmlCode()).getDocumentElement();
+		java.util.HashMap cdmElements = VolumesFactory.createCdmElementsTable(volumeElement, this.getSourceLanguage(), this.getTemplateEntry());
+		this.CDM_elements = cdmElements;
 	}
 	
 	/**

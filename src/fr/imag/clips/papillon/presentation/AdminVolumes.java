@@ -605,13 +605,10 @@ public class AdminVolumes extends PapillonBasePO {
 				}
 				else if (object.equals(Object_Template)) {
 					objectResult = VolumesFactory.addDmlUrlInTemplateEntry(objectResult);
-					org.w3c.dom.Document myDoc = XMLServices.buildDOMTree(myVolume.getXmlCode());
-					org.w3c.dom.Element volumeElement = myDoc.getDocumentElement();
-					java.util.HashMap cdmElements = VolumesFactory.createCdmElementsTable(volumeElement, myVolume.getSourceLanguage(), objectResult);
-
-	                myVolume.setCdmElements(cdmElements);
+					myVolume.setTemplateEntry(objectResult);
+	                myVolume.setCdmElements();
 					myVolume.setLinksTable();
-					objectResult = VolumesFactory.updateTemplateEntry(objectResult, myVolume.getCdmElements());
+					objectResult = VolumesFactory.embedTemplateEntryIntoContributionElement(objectResult, myVolume.getCdmElements());
 					PapillonLogger.writeDebugMsg("uploadObject objectResult: " + objectResult);
 					myVolume.setTemplateEntry(objectResult);
 				}

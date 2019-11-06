@@ -124,6 +124,8 @@ public class VolumesFactory {
     public static Volume newVolume(String dictname, Element volume, URL fileURL, String schema, String tmplEntry, String tmplInterface)
             throws fr.imag.clips.papillon.business.PapillonBusinessException {
 
+    			convertCdmTranslationRefToLink(volume.getOwnerDocument());
+
 				String name = volume.getAttribute("name");
 				if (name == null || name.equals("")) {
 					throw new PapillonBusinessException("Exception in newVolume: there is no volume name, there is no 'name' attribute  for the 'volume-metadata' element or it is empty!");
@@ -166,17 +168,16 @@ public class VolumesFactory {
 		else {
 			tmplEntry = addDmlUrlInTemplateEntry(tmplEntry);
 		}
-		upgradeCdmLinkElement(volume.getOwnerDocument());
 		
       //  PapillonLogger.writeDebugMsg("Call createCdmElementsTable for volume " + name);
-                HashMap cdmElements = createCdmElementsTable(volume, source, tmplEntry);
+        HashMap cdmElements = createCdmElementsTable(volume, source, tmplEntry);
 				
-				HashMap linksTable = createLinksTable(volume, tmplEntry, cdmElements);
+		HashMap linksTable = createLinksTable(volume, tmplEntry, cdmElements);
 				
 		PapillonLogger.writeDebugMsg("The CDM elements and links hashtables for volume " + name + " have been created");
 				
         // Embedding the entry into a contribution element
-        tmplEntry = updateTemplateEntry(tmplEntry, cdmElements);
+        tmplEntry = embedTemplateEntryIntoContributionElement(tmplEntry, cdmElements);
 		PapillonLogger.writeDebugMsg("The template entry has been updated");
 
         String xmlCode = XMLServices.NodeToString(volume);
@@ -1119,7 +1120,7 @@ public class VolumesFactory {
         return linksTable;
     }
 
-	protected static void upgradeCdmLinkElement(Document docXml ) {
+	protected static void convertCdmTranslationRefToLink(Document docXml ) {
 
         NodeList cdmElts = docXml.getElementsByTagName(CDM_ELEMENTS_TAG);
         if (null != cdmElts && cdmElts.getLength() > 0) {
@@ -1444,7 +1445,7 @@ public class VolumesFactory {
      * @throws PapillonBusinessException
      */
     // embeds the template entry into a contribution element
-    public static String updateTemplateEntry(String tmplEntry, HashMap cdmElements)
+    public static String embedTemplateEntryIntoContributionElement(String tmplEntry, HashMap cdmElements)
             throws fr.imag.clips.papillon.business.PapillonBusinessException {
         if (tmplEntry != null && !tmplEntry.equals("")) {
             //PapillonLogger.writeDebugMsg("updateTemplateEntry: " + tmplEntry);
