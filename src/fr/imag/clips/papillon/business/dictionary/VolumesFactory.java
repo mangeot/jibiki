@@ -219,11 +219,15 @@ public class VolumesFactory {
 	throws PapillonBusinessException {
         javax.xml.transform.SourceLocator mySourceLocator = new org.apache.xml.utils.SAXSourceLocator();
         org.apache.xpath.XPath myXPath = null;
-        try {
-            myXPath = new org.apache.xpath.XPath(xpathString, mySourceLocator, aPrefixResolver,
-												 org.apache.xpath.XPath.SELECT);
-        } catch (javax.xml.transform.TransformerException e) {
-            throw new PapillonBusinessException("javax.xml.transform.TransformerException with XPath "+xpathString+" : ", e);
+        if (xpathString.equals("")) {
+        	PapillonLogger.writeDebugMsg("compileXPath: xpathString is empty!");
+        } else {
+            try {
+                myXPath = new org.apache.xpath.XPath(xpathString, mySourceLocator, aPrefixResolver,
+    												 org.apache.xpath.XPath.SELECT);
+            } catch (javax.xml.transform.TransformerException e) {
+                throw new PapillonBusinessException("javax.xml.transform.TransformerException with XPath "+xpathString+" : ", e);
+            }
         }
         return myXPath;
     }
@@ -312,13 +316,18 @@ public class VolumesFactory {
                 ArrayList eltArrayList = (ArrayList) tmpTable.get(element);
                 if (eltArrayList != null && eltArrayList.size() == 1) {
                     String xpathString = (String) eltArrayList.get(0);
-                    org.apache.xpath.XPath myXPath = compileXPath(xpathString, aPrefixResolver);
-                    if (myXPath != null) {
-						 //PapillonLogger.writeDebugMsg("compileLinksXPathTable: CDM element: " + element + " xpath not null: " + xpathString);
-                        eltArrayList.add(myXPath);
-                        result = true;
-                    } else {
-						//PapillonLogger.writeDebugMsg("compileXPathTable: CDM element: " + element + " xpath null: " + xpathString);
+                    if (xpathString == null || xpathString.equals("")) {
+   					 	PapillonLogger.writeDebugMsg("compileLinksXPathTable: xpathString null for element: " + element);
+                    }
+                    else {
+                        org.apache.xpath.XPath myXPath = compileXPath(xpathString, aPrefixResolver);
+                        if (myXPath != null) {
+    						 //PapillonLogger.writeDebugMsg("compileLinksXPathTable: CDM element: " + element + " xpath not null: " + xpathString);
+                            eltArrayList.add(myXPath);
+                            result = true;
+                        } else {
+    						PapillonLogger.writeDebugMsg("compileXPathTable: CDM element: " + element + " xpath null: " + xpathString);
+                        }
                     }
                 }
 				}

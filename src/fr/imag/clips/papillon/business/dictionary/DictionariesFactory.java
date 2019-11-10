@@ -780,7 +780,7 @@ public class DictionariesFactory {
                                                             int offset,
 															int limit)
 	throws PapillonBusinessException {
-    	// PapillonLogger.writeDebugMsg("getDictionaryEntriesCollection: "+ dict.getName());
+    	 PapillonLogger.writeDebugMsg("getDictionaryEntriesCollection: "+ dict.getName() + " source: " + source + " targets: " + targets.toString());
         //	Collection qrset = new HashSet();				
         Collection qrset = new Vector();
         if ((null != dict)
@@ -805,7 +805,7 @@ public class DictionariesFactory {
                 for (Iterator iter2 = entriesVector.iterator(); iter2.hasNext();) {
                     //
                     VolumeEntry ve = (VolumeEntry) iter2.next();
-                	// PapillonLogger.writeDebugMsg("getDictionaryEntriesCollection: call expandResult " + ve.getEntryId());
+                	PapillonLogger.writeDebugMsg("getDictionaryEntriesCollection: call expandResult " + ve.getEntryId() + " targets: " + targets.toString());
                     qrset.addAll(expandResult(ve, targets, user));
                 }
             }
@@ -1094,6 +1094,7 @@ public class DictionariesFactory {
         
         // FIXME: should be VolumeEntry...
 		VolumeEntry myAnswer = VolumeEntriesFactory.findEntryByHandle(volumeName, handle);
+		// PapillonLogger.writeDebugMsg("findAnswerAndTranslations: " + volumeName + " targets: " + targets.toString());
 		
         //FIXME: hack for targets array. If the array is null, it means that all targets are asked
 		if (targets==null || (targets !=null && targets.size() == 0)) {
@@ -1106,6 +1107,8 @@ public class DictionariesFactory {
 	
     public static Collection expandResult(VolumeEntry ve, Collection targets, User user) 
 		throws PapillonBusinessException {
+		// PapillonLogger.writeDebugMsg("ExpandResult: hw: " + ve.getHeadword() + " targets: " + targets.toString());
+
 			QueryResult myQR = new QueryResult();
 			myQR.addSourceEntry(ve);
 			return expandResult(myQR, targets, user);
@@ -1131,8 +1134,9 @@ public class DictionariesFactory {
 		String direction = Link.DIRECTION_DOWN;
  
 		VolumeEntry ve = theQR.getSourceEntry();
-        // PapillonLogger.writeDebugMsg("expandResult: " + ve.getHeadword());
+        // PapillonLogger.writeDebugMsg("expandResult: " + ve.getHeadword() + " targets: " + targets.toString());
 		Collection realTargets = Utility.ArrayIntersection(ve.getDictionary().getTargetLanguagesArray(), targets);
+        // PapillonLogger.writeDebugMsg("expandResult: " + ve.getHeadword() + " realTargets: " + realTargets.toString());
 		String type = ve.getDictionary().getType();
             
 		if (type.equals(Dictionary.PIVOT_TYPE)) {
@@ -1143,7 +1147,7 @@ public class DictionariesFactory {
 			realTargets.remove(ve.getSourceLanguage());
 		}
 		ArrayList axieLinks = new ArrayList();
-        // PapillonLogger.writeDebugMsg("expandResult: call LinkFactory.getLinkedEntriesByEntry: " + ve.getHeadword() + direction);
+        // PapillonLogger.writeDebugMsg("expandResult: call LinkFactory.getLinkedEntriesByEntry: " + ve.getHeadword() + " targets: " + realTargets.toString() + " direction: " + direction);
 		LinkFactory.getLinkedEntriesByEntry(ve, axieLinks, allLinks, realTargets, direction, user);
 		theQR.setLexiesHashMap(allLinks);
 		myArrayList.add(theQR);
@@ -1166,6 +1170,7 @@ public class DictionariesFactory {
 	public static Collection expandResults(Collection ves, Collection targets, User user, boolean mergeAxies) 
 	throws PapillonBusinessException {
 		Collection resultsList = new ArrayList();
+		// PapillonLogger.writeDebugMsg("ExpandResults : " + " targets: " + targets.toString());
 		// Add axies and remove duplicates entries
 		//Collection resultsWithAxies = addAxiesAndTranslations(ves, targets, user, mergeAxies);
 		Iterator itve = ves.iterator();

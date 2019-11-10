@@ -190,7 +190,7 @@ public class LinkFactory {
      */
 	public static void getLinkedEntriesByEntry(VolumeEntry theEntry, ArrayList theAxies, HashMap theLinks, Collection targets, String direction, User user) throws PapillonBusinessException {
 		try {
-			// PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: start "+ theEntry.getEntryId() + " direction: " + direction);
+			 // PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: start "+ theEntry.getEntryId() + " direction: " + direction);
 				LinkQuery qr = new LinkQuery(theEntry.getVolume().getLinkDbname(),CurrentDBTransaction.get());
 				qr.setQueryEntryId(Integer.parseInt(theEntry.getHandle()));
 //				qr.setQueryLang(lang);
@@ -199,19 +199,21 @@ public class LinkFactory {
 					Link tempLink = new Link(DOarray[i]);
 					String targetId = tempLink.getTargetId();
 					String type = tempLink.getType();
-					// PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: targetId "+ targetId + " type: " + type);
+					 // PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: targetId "+ targetId + " direction: " + direction + " type: " + type + " volume: " + tempLink.getVolumeTarget() + " lang: " + tempLink.getLang());
+					 // PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: targets: " + targets.toString());
 					if (((direction.equals(Link.DIRECTION_UP) && (type == null || type.equals(Link.AXEME_TYPE) || type.equals(Link.AXIE_TYPE)))
 						|| (direction.equals(Link.DIRECTION_DOWN) && ((type == null || type.equals(Link.AXEME_TYPE)) || 
 																		(type.equals(Link.FINAL_TYPE) && targets.contains(tempLink.getLang())))))
 						&& !theAxies.contains(targetId)) {
+						// PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: find linkedEntry in theLinks " + targetId);
 						VolumeEntry linkedEntry = (VolumeEntry) theLinks.get(targetId);
 						if (linkedEntry == null ||linkedEntry.isEmpty()) {
 							Volume myVolume = VolumesFactory.getVolumeByName(tempLink.getVolumeTarget());
 							if (myVolume !=null && !myVolume.isEmpty()) {
-								// PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: call findEntryByEntryId "+ myVolume.getName() + " " + targetId);
+							//	 PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: call findEntryByEntryId "+ myVolume.getName() + " " + targetId);
 								linkedEntry = VolumeEntriesFactory.findEntryByEntryId(user, myVolume, targetId);
 								if (linkedEntry != null && !linkedEntry.isEmpty() &&!theLinks.containsKey(targetId)) {
-									// PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: linkedEntry not null: " + targetId);
+								//	 PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: linkedEntry not null: " + targetId);
 									theLinks.put(targetId,linkedEntry);
 								}
 							}

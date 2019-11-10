@@ -344,11 +344,12 @@ public class AdvancedQueryForm {
         
         if (t != null) {
             result = Arrays.asList(t);
+           // PapillonLogger.writeDebugMsg("AdvancedQueryForm.getRequestedTargetLanguages: first value: " + result.toString());
 			if (result.contains(ALL_TARGETS)) {
 				result = AvailableLanguages.getTargetLanguagesArray();
 			}
 		}
-         //
+        // PapillonLogger.writeDebugMsg("AdvancedQueryForm.getRequestedTargetLanguages: result: " + result.toString());
         return result;
     }
     

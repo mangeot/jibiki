@@ -599,6 +599,7 @@ import javax.swing.JOptionPane;
          */
         public Collection findLexieAndTranslation(User user)  throws PapillonBusinessException {
             try {
+                // PapillonLogger.writeDebugMsg("findLexieAndTranslation: targets: " + this.getTargets().toString());
                 Collection lexies = findLexie(user);
                 // If no target languages, do not merge axies.
                 return DictionariesFactory.expandResults(lexies, this.getTargets(), user, this.getTargets().size() > 0);

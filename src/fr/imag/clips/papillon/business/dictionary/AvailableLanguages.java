@@ -47,6 +47,8 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import fr.imag.clips.papillon.business.PapillonLogger;
+
 public class AvailableLanguages {
 
     protected static TreeMap MapLanguages = null;
@@ -154,6 +156,7 @@ public class AvailableLanguages {
 				TreeSet mySet = new TreeSet();
                 for (Iterator iter = DictsArray.iterator(); iter.hasNext();) {
                     Dictionary dict = (Dictionary)iter.next();
+                    // PapillonLogger.writeDebugMsg("AvailableLanguages.getTargetLanguagesArray: dict: " + dict.getName() + " targets: " + dict.getTargetLanguagesArray().toString());
 					mySet.addAll(dict.getTargetLanguagesArray());
 				}
 				// FIXME: Do not remove "axi" any more for the Motamot project

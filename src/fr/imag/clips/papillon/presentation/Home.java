@@ -523,7 +523,8 @@ public class Home
 
             // Create query request
             QueryRequest queryReq = qf.getQueryRequest();
-            if(queryReq.isEmpty()){PapillonLogger.writeDebugMsg("---qr is empty");}
+			// PapillonLogger.writeDebugMsg("QueryRequest: targets "+ queryReq.getTargets().toString());
+           if(queryReq.isEmpty()){PapillonLogger.writeDebugMsg("---qr is empty");}
             // Display query result if query request have criteria
             if (!queryReq.isEmpty()) {
 
