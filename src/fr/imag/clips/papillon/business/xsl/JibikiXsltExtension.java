@@ -70,6 +70,16 @@ public class JibikiXsltExtension {
         }
     }
 
+    public static String getUserLang() throws PapillonBusinessException {
+        try {
+            JibikiContext context = CurrentRequestContext.get();
+            User currentUser = ((PapillonSessionData) context.get("sessionData")).getUser();
+            return currentUser.getLang();
+        } catch (NullPointerException e) {
+            return Volume.DEFAULT_LANG;
+        }
+    }
+
     public static String getEntryStatus(String entryid) throws PapillonBusinessException {
         try {
             JibikiContext context = CurrentRequestContext.get();
@@ -77,7 +87,7 @@ public class JibikiXsltExtension {
 			
             return ve.getStatus();
         } catch (NullPointerException e) {
-            return "finished";
+            return VolumeEntry.FINISHED_STATUS;
         }
     }
 	
