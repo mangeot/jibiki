@@ -1135,16 +1135,13 @@ public class DictionariesFactory {
  
 		VolumeEntry ve = theQR.getSourceEntry();
         // PapillonLogger.writeDebugMsg("expandResult: " + ve.getHeadword() + " targets: " + targets.toString());
-		Collection realTargets = Utility.ArrayIntersection(ve.getDictionary().getTargetLanguagesArray(), targets);
+		Collection realTargets = Utility.ArrayIntersection(ve.getVolume().getTargetLanguagesArray(), targets);
         // PapillonLogger.writeDebugMsg("expandResult: " + ve.getHeadword() + " realTargets: " + realTargets.toString());
 		String type = ve.getDictionary().getType();
             
 		if (type.equals(Dictionary.PIVOT_TYPE)) {
 			allLinks.put(ve.getEntryId(),ve);
 			direction = Link.DIRECTION_UP;
-		}
-		else {
-			realTargets.remove(ve.getSourceLanguage());
 		}
 		ArrayList axieLinks = new ArrayList();
         // PapillonLogger.writeDebugMsg("expandResult: call LinkFactory.getLinkedEntriesByEntry: " + ve.getHeadword() + " targets: " + realTargets.toString() + " direction: " + direction);
