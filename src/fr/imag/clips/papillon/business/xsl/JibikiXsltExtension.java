@@ -73,8 +73,7 @@ public class JibikiXsltExtension {
     public static String getUserLang() throws PapillonBusinessException {
         try {
             JibikiContext context = CurrentRequestContext.get();
-            User currentUser = ((PapillonSessionData) context.get("sessionData")).getUser();
-            return currentUser.getLang();
+            return ((PapillonSessionData) context.get("sessionData")).getUserPreferredLanguage();
         } catch (NullPointerException e) {
             return Volume.DEFAULT_LANG;
         }
