@@ -103,6 +103,7 @@ package fr.imag.clips.papillon.business.transformation;
 
 import fr.imag.clips.papillon.business.PapillonBusinessException;
 import fr.imag.clips.papillon.business.PapillonLogger;
+import fr.imag.clips.papillon.business.dictionary.AvailableLanguages;
 import fr.imag.clips.papillon.business.dictionary.Dictionary;
 import fr.imag.clips.papillon.business.dictionary.IAnswer;
 import fr.imag.clips.papillon.business.dictionary.LinkFactory;
@@ -326,7 +327,7 @@ public class XslTransformation implements ResultFormatter {
         res.appendChild(rootdiv);
 		VolumeEntry myAnswer = qr.getSourceEntry();
 		String direction = Link.DIRECTION_DOWN;
-		if (myAnswer.getDictionary().getType().equals(Dictionary.PIVOT_TYPE)) {
+		if (myAnswer.getDictionary().getType().equals(Dictionary.PIVOT_TYPE) && !myAnswer.getSourceLanguage().contentEquals(AvailableLanguages.axiLang)) {
 			direction = Link.DIRECTION_UP;
 		}
 		java.util.HashMap linkedEntries = qr.getLexiesHashMap();

@@ -190,7 +190,7 @@ public class LinkFactory {
      */
 	public static void getLinkedEntriesByEntry(VolumeEntry theEntry, ArrayList theAxies, HashMap theLinks, Collection targets, String direction, User user) throws PapillonBusinessException {
 		try {
-			 // PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: start "+ theEntry.getEntryId() + " direction: " + direction);
+			//  PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: start "+ theEntry.getEntryId() + " direction: " + direction);
 				LinkQuery qr = new LinkQuery(theEntry.getVolume().getLinkDbname(),CurrentDBTransaction.get());
 				qr.setQueryEntryId(Integer.parseInt(theEntry.getHandle()));
 //				qr.setQueryLang(lang);
@@ -199,8 +199,8 @@ public class LinkFactory {
 					Link tempLink = new Link(DOarray[i]);
 					String targetId = tempLink.getTargetId();
 					String type = tempLink.getType();
-					 // PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: targetId "+ targetId + " direction: " + direction + " type: " + type + " volume: " + tempLink.getVolumeTarget() + " lang: " + tempLink.getLang());
-					 // PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: targets: " + targets.toString());
+				//	  PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: targetId "+ targetId + " direction: " + direction + " type: " + type + " volume: " + tempLink.getVolumeTarget() + " lang: " + tempLink.getLang());
+					//  PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: targets: " + targets.toString());
 					if (((direction.equals(Link.DIRECTION_UP) && (type == null || type.equals(Link.AXEME_TYPE) || type.equals(Link.AXIE_TYPE)))
 						|| (direction.equals(Link.DIRECTION_DOWN) && ((type == null || type.equals(Link.AXEME_TYPE)) || 
 																		(type.equals(Link.FINAL_TYPE) && targets.contains(tempLink.getLang())))))
@@ -219,7 +219,7 @@ public class LinkFactory {
 							}
 						}
 						if (linkedEntry != null && !linkedEntry.isEmpty()) {
-							// PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: linkedEntry not null type: " + type);
+							 //PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: linkedEntry not null type: " + type);
 							//if (type == null || type.equals(Link.AXIE_TYPE) || type.equals(Link.AXEME_TYPE) || type.equals(Link.EQU_TYPE) || type.equals(Link.CNT_TYPE)) {
 							if (type == null || type.equals(Link.AXIE_TYPE) || type.equals(Link.AXEME_TYPE)) {
 								String newDir = direction;
@@ -229,7 +229,7 @@ public class LinkFactory {
 										newDir = Link.DIRECTION_DOWN;
 									}
 								}
-								// PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: call getLinkedEntriesByEntry "+ linkedEntry.getEntryId()  + " lang: " + tempLink.getLang() + " type: " + tempLink.getType());
+							//	 PapillonLogger.writeDebugMsg("getLinkedEntriesByEntry: call getLinkedEntriesByEntry "+ linkedEntry.getEntryId()  + " lang: " + tempLink.getLang() + " type: " + tempLink.getType());
 								getLinkedEntriesByEntry(linkedEntry, theAxies, theLinks, targets, newDir, user);
 							}
 						}

@@ -780,7 +780,7 @@ public class DictionariesFactory {
                                                             int offset,
 															int limit)
 	throws PapillonBusinessException {
-    	 PapillonLogger.writeDebugMsg("getDictionaryEntriesCollection: "+ dict.getName() + " source: " + source + " targets: " + targets.toString());
+   // 	 PapillonLogger.writeDebugMsg("getDictionaryEntriesCollection: "+ dict.getName() + " source: " + source + " targets: " + targets.toString());
         //	Collection qrset = new HashSet();				
         Collection qrset = new Vector();
         if ((null != dict)
@@ -805,7 +805,7 @@ public class DictionariesFactory {
                 for (Iterator iter2 = entriesVector.iterator(); iter2.hasNext();) {
                     //
                     VolumeEntry ve = (VolumeEntry) iter2.next();
-                	PapillonLogger.writeDebugMsg("getDictionaryEntriesCollection: call expandResult " + ve.getEntryId() + " targets: " + targets.toString());
+         //       	PapillonLogger.writeDebugMsg("getDictionaryEntriesCollection: call expandResult " + ve.getEntryId() + " targets: " + targets.toString());
                     qrset.addAll(expandResult(ve, targets, user));
                 }
             }
@@ -1438,7 +1438,7 @@ public class DictionariesFactory {
 			Collection realTargets = Utility.ArrayIntersection(ve.getDictionary().getTargetLanguagesArray(), targets);
 			String type = ve.getDictionary().getType();
 	            
-			if (type.equals(Dictionary.PIVOT_TYPE)) {
+			if (type.equals(Dictionary.PIVOT_TYPE) && !ve.getSourceLanguage().equals(AvailableLanguages.axiLang)) {
 				allLinks.put(ve.getEntryId(),ve);
 				direction = Link.DIRECTION_UP;
 			}
