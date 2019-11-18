@@ -1139,7 +1139,7 @@ public class DictionariesFactory {
         // PapillonLogger.writeDebugMsg("expandResult: " + ve.getHeadword() + " realTargets: " + realTargets.toString());
 		String type = ve.getDictionary().getType();
             
-		if (type.equals(Dictionary.PIVOT_TYPE)) {
+		if (type.equals(Dictionary.PIVOT_TYPE) && !ve.getSourceLanguage().contentEquals(AvailableLanguages.axiLang)) {
 			allLinks.put(ve.getEntryId(),ve);
 			direction = Link.DIRECTION_UP;
 		}
@@ -1194,7 +1194,6 @@ public class DictionariesFactory {
 		String dictName = qr.getSourceEntry().getDictionaryName();
 		String sourceLang = qr.getSourceEntry().getSourceLanguage();
 		String sourceAxemeLang = sourceLang.toUpperCase();
-		String axiLang = "axi";
 		
 		HashMap resLexies = new HashMap();
 		
@@ -1221,7 +1220,7 @@ public class DictionariesFactory {
 				for (java.util.Iterator myIterator2 = axemesResultVector.iterator(); myIterator2.hasNext(); ) {
 					Index axemeResultEntry = (Index) myIterator2.next();
 					if (axemeResultEntry.getKey().equals(Volume.CDM_entryId)) {
-						java.util.Collection axiesVolumesCollection = VolumesFactory.getVolumesArray(dictName,axiLang,null);
+						java.util.Collection axiesVolumesCollection = VolumesFactory.getVolumesArray(dictName,AvailableLanguages.axiLang,null);
 						if (axiesVolumesCollection !=null && axiesVolumesCollection.size()>0) {
 							Volume axieVolume = ((Volume)axiesVolumesCollection.iterator().next());
 							//PapillonLogger.writeDebugMsg("Pivax entries: volume axie: " + axieVolume.getName() + " axeme: " + axemeResultEntry.getValue());
@@ -1377,11 +1376,11 @@ public class DictionariesFactory {
 								PapillonLogger.writeDebugMsg("getDirectResults: target id: " + myEntry.getEntryId());
 								
 								// pivot volume
-								if (target.equals("axi")) {
+								if (target.equals(AvailableLanguages.axiLang)) {
 									for (Iterator iter1 = targets.iterator(); iter1.hasNext();) {
 										String target1 = (String)iter1.next();
 										
-										if (target1 != source && !target1.equals("axi")) {
+										if (target1 != source && !target1.equals(AvailableLanguages.axiLang)) {
 											// get all cdm elements pointing to target entries.
 											String[] transIds1 = myEntry.getTranslationsLexieIds(target1);
 											

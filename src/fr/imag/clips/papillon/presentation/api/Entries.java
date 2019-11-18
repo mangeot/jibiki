@@ -870,7 +870,6 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 		String dictName = lexieVolume.getDictname();
 		String sourceLang = lexieVolume.getSourceLanguage();
 		String axemeLang = sourceLang.toUpperCase();
-		String axiLang = "axi";
 		String unlAxemeLang = "UNL";
 		String unlLang = "unl";
 		java.util.Vector myKeys = new java.util.Vector();
@@ -915,7 +914,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
 					for (java.util.Iterator myIterator4 = axemesResultVector.iterator(); myIterator.hasNext(); ) {
 						Index axemeResultEntry = (Index) myIterator4.next();
 						if (axemeResultEntry.getKey().equals(Volume.CDM_entryId)) {
-					java.util.Collection axiesVolumesCollection = VolumesFactory.getVolumesArray(dictName,axiLang,null);
+					java.util.Collection axiesVolumesCollection = VolumesFactory.getVolumesArray(dictName,fr.imag.clips.papillon.business.dictionary.AvailableLanguages.axiLang,null);
 					if (axiesVolumesCollection !=null && axiesVolumesCollection.size()>0) {
 						Volume axieVolume = ((Volume)axiesVolumesCollection.iterator().next());
 						//PapillonLogger.writeDebugMsg("Pivax entries: volume axie: " + axieVolume.getName() + " axemeValue: " + axemeResultEntry.getValue());

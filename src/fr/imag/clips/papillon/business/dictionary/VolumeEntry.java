@@ -1615,7 +1615,7 @@ public class VolumeEntry
 	public Volume getAxieVolume() 
 		throws fr.imag.clips.papillon.business.PapillonBusinessException {
 		Volume resVolume = null;
-		java.util.Collection axiVolCol = VolumesFactory.getVolumesArray(this.getDictionary().getName(),"axi",null);
+		java.util.Collection axiVolCol = VolumesFactory.getVolumesArray(this.getDictionary().getName(),AvailableLanguages.axiLang,null);
 		if (axiVolCol.iterator().hasNext()) {
 			resVolume = (Volume) axiVolCol.iterator().next();
 		}

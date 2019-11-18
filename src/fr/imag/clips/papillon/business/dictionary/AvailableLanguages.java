@@ -57,6 +57,8 @@ public class AvailableLanguages {
     protected static Collection AllLanguagesArray = null;
 	
 	protected static Set CdmElementsWithDefaultLanguage = null;
+	
+	public static String axiLang = "axi";
 
 
 	/**
@@ -76,7 +78,7 @@ public class AvailableLanguages {
                     //
                     for (Iterator iter2 = dict.getSourceLanguagesArray().iterator(); iter2.hasNext();) {
                         String source = (String)iter2.next();
-                        if (null != source && !source.equals("") && !source.equals("axi")) {
+                        if (null != source && !source.equals("") && !source.equals(axiLang)) {
                             if (MapLanguages.containsKey(source)) {
                                 targetSet=(TreeSet) MapLanguages.get(source);
                             } else {
@@ -87,7 +89,7 @@ public class AvailableLanguages {
                             for (Iterator iter3 = dict.getTargetLanguagesArray().iterator(); iter3.hasNext();) {
                                 String target = (String)iter3.next();
                                 
-                                if (null != target && !target.equals("") && !target.equals("axi") && !target.equals(source)) {
+                                if (null != target && !target.equals("") && !target.equals(axiLang) && !target.equals(source)) {
                                     targetSet.add(target);
                                 }
                             }
