@@ -71,7 +71,8 @@ public class IndexEntry {
         boolean isFinished = true;
         while (i.hasNext() && isFinished) {
             IndexData id = (IndexData) i.next();
-            if (id.CdmElement.equals(Volume.CDM_contributionStatus) && !id.value.equals(VolumeEntry.FINISHED_STATUS)) {
+            if (id.CdmElement.equals(Volume.CDM_contributionStatus) && !(id.value.equals(VolumeEntry.FINISHED_STATUS)
+		|| id.value.equals(VolumeEntry.FINISHED_STATUS) || id.value.equals(VolumeEntry.FINISHED_STATUS))) {
                 isFinished = false;
             }
          }
@@ -167,7 +168,7 @@ public class IndexEntry {
 						if (isIndex) {
 							myXPath = (org.apache.xpath.XPath) myArrayList.get(2);
  							
-							//PapillonLogger.writeDebugMsg("Index entry: lang: "+ lang +" /key: " + CdmElement + " /xpath: " + (String) myArrayList.elementAt(0));
+							//PapillonLogger.writeDebugMsg("Index entry: lang: "+ lang +" /key: " + CdmElement + " /xpath: " + (String) myArrayList.get(0));
 							indexes.addAll(createIndexData (CdmElement, myXPath, 
 										  lang, handle,
 										  myRootElt,myPrefixResolver
