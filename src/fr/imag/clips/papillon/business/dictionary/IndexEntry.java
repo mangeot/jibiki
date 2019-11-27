@@ -72,7 +72,7 @@ public class IndexEntry {
         while (i.hasNext() && isFinished) {
             IndexData id = (IndexData) i.next();
             if (id.CdmElement.equals(Volume.CDM_contributionStatus) && !(id.value.equals(VolumeEntry.FINISHED_STATUS)
-		|| id.value.equals(VolumeEntry.FINISHED_STATUS) || id.value.equals(VolumeEntry.FINISHED_STATUS))) {
+		|| id.value.equals(VolumeEntry.REVIEWED_STATUS) || id.value.equals(VolumeEntry.VALIDATED_STATUS))) {
                 isFinished = false;
             }
          }
