@@ -3,10 +3,20 @@
 # Based on openjdk
 #############################################################################
 #
+# To debug, remove latest lines and launch the following commands:
+# docker build -t jibikibuild .
+# docker run --rm -it jibikibuild bash
+#
+#############################################################################
+#
 # Build part
 #
 
 FROM openjdk:8 as build
+#FROM openjdk:15-slim-buster as build
+#BUILD FAILED
+#file:/jibiki/build.xml:333: org.enhydra.dods.generator.DODSGenerateException: java.lang.reflect.InvocationTargetException
+
 
 LABEL maintainer="Mathieu.Mangeot@imag.fr"
 
@@ -29,7 +39,8 @@ ENV DATABASE_PASSWORD=$DATABASE_PASSWORD
 ENV LC_ALL C.UTF-8
 
 
-RUN apt-get update && apt-get install -y libpostgresql-jdbc-java
+#RUN apt-get update && apt-get install -y libpostgresql-jdbc-java
+RUN apt-get update && apt-get install -y libpostgresql-jdbc-java git
 
 WORKDIR /
 
@@ -41,7 +52,8 @@ RUN for file in *.tar.gz; do tar -zxf $file; done
 
 WORKDIR enhydra5.1
 
-RUN ./configure -Djdk.dir=/usr
+#RUN ./configure -Djdk.dir=/usr/local/openjdk-8
+ RUN ./configure -Djdk.dir=`which java | sed 's#/bin/java##'`
 
 RUN chmod 755 bin/ant
 
@@ -74,14 +86,6 @@ RUN /toolsforjibiki/enhydra5.1/bin/ant make
 #
 FROM openjdk:8-jre-alpine
 
-#FROM openjdk:15-slim-buster as build
-# erreur : 
-#Setting up openjdk-11-jre-headless:amd64 (11.0.6+10-1~deb10u1) ...
-#update-alternatives: using /usr/lib/jvm/java-11-openjdk-amd64/bin/rmid to provide /usr/bin/rmid (rmid) in auto mode
-#update-alternatives: error: error creating symbolic link '/usr/share/man/man1/rmid.1.gz.dpkg-tmp': No such file or directory
-#dpkg: error processing package openjdk-11-jre-headless:amd64 (--configure):
-# installed openjdk-11-jre-headless:amd64 package post-installation script subprocess returned error exit status 2
-
 ARG IPOLEX_DIR="/ipolex"
 ENV IPOLEX_DIR=$IPOLEX_DIR
 
@@ -103,7 +107,11 @@ WORKDIR /jibiki
 
 COPY --from=build /jibiki/papillon.properties .
 COPY --from=build /jibiki/output output
-RUN sed -i 's#JAVA="/usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java"#JAVA=/usr/bin/java#' output/run
+
+#RUN echo `ls /usr/bin/java`
+
+RUN java=`which java`; sed -i "s#JAVA=\"/usr/.*bin/java\"#JAVA=$java#" output/run
+#RUN sed -i 's#JAVA="/usr/.*bin/java"#JAVA=/usr/bin/java#' output/run
 
 WORKDIR /
 COPY --from=build /usr/share/java/postgresql.jar /usr/share/java/postgresql.jar
