@@ -29,7 +29,7 @@ ENV DATABASE_PASSWORD=$DATABASE_PASSWORD
 ENV LC_ALL C.UTF-8
 
 
-RUN apt-get update && apt-get install -y libpostgresql-jdbc-java
+RUN apt-get update && apt-get install -y libpostgresql-jdbc-java && apt-get install ant
 
 WORKDIR /
 
@@ -67,6 +67,8 @@ RUN sed -i "s#\%TOOLSFORJIBIKI_DIR\%#/toolsforjibiki#g" papillon.properties \
    && sed -i "s#\%DATABASE_PASSWORD\%#$DATABASE_PASSWORD#g" papillon.properties
 
 RUN /toolsforjibiki/enhydra5.1/bin/ant make
+
+RUN /usr/bin/ant quick
 
 #############################################################################
 #
