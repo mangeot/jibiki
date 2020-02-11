@@ -66,7 +66,7 @@ RUN sed -i "s#\%TOOLSFORJIBIKI_DIR\%#/toolsforjibiki#g" papillon.properties \
    && sed -i "s#\%DATABASE_USER\%#$DATABASE_USER#g" papillon.properties \
    && sed -i "s#\%DATABASE_PASSWORD\%#$DATABASE_PASSWORD#g" papillon.properties
 
-RUN /toolsforjibiki/enhydra5.1/bin/ant make
+RUN /toolsforjibiki/enhydra5.1/bin/ant dods
 
 RUN /usr/bin/ant quick
 
