@@ -29,7 +29,7 @@ ENV DATABASE_PASSWORD=$DATABASE_PASSWORD
 ENV LC_ALL C.UTF-8
 
 
-RUN apt-get update && apt-get install -y libpostgresql-jdbc-java && apt-get install ant
+RUN apt-get update && apt-get install -y libpostgresql-jdbc-java
 
 WORKDIR /
 
@@ -66,15 +66,21 @@ RUN sed -i "s#\%TOOLSFORJIBIKI_DIR\%#/toolsforjibiki#g" papillon.properties \
    && sed -i "s#\%DATABASE_USER\%#$DATABASE_USER#g" papillon.properties \
    && sed -i "s#\%DATABASE_PASSWORD\%#$DATABASE_PASSWORD#g" papillon.properties
 
-RUN /toolsforjibiki/enhydra5.1/bin/ant dods
-
-RUN /usr/bin/ant quick
+RUN /toolsforjibiki/enhydra5.1/bin/ant make
 
 #############################################################################
 #
 # Run part
 #
 FROM openjdk:8-jre-alpine
+
+#FROM openjdk:15-slim-buster as build
+# erreur : 
+#Setting up openjdk-11-jre-headless:amd64 (11.0.6+10-1~deb10u1) ...
+#update-alternatives: using /usr/lib/jvm/java-11-openjdk-amd64/bin/rmid to provide /usr/bin/rmid (rmid) in auto mode
+#update-alternatives: error: error creating symbolic link '/usr/share/man/man1/rmid.1.gz.dpkg-tmp': No such file or directory
+#dpkg: error processing package openjdk-11-jre-headless:amd64 (--configure):
+# installed openjdk-11-jre-headless:amd64 package post-installation script subprocess returned error exit status 2
 
 ARG IPOLEX_DIR="/ipolex"
 ENV IPOLEX_DIR=$IPOLEX_DIR
