@@ -112,7 +112,7 @@
 
                                     function loadFraEditable () {
                                     if (document.cookie.indexOf("JibikiLoginCookie") >= 0 || document.cookie.indexOf("USER_LOGIN") >=0) {
-                                    $('.editable').editable(function(value, settings) {
+                                    $('.fra-editable').editable(function(value, settings) {
                                     xpath = $(this).attr('xpath');
                                     encodedValue = encodeURIComponent(value);
                                     divcontrib = $(this).closest("div.contribution");
