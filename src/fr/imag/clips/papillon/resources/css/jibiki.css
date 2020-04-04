@@ -583,7 +583,7 @@ pre.api {
   display: inline-block;
   vertical-align: top;
   margin-top: 0px;
-  font-size: 120%;
+/*  font-size: 120%;*/
 }
 
 .segment rt {
