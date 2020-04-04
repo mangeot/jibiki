@@ -1,13 +1,13 @@
 /*
- * Stylesheet for Jibiki Web site 
+ * Stylesheet for Jibiki Web site
  *
  * Style sheet for the xhtml Papillon pages
  * $Id: jibiki.css 1523 2014-11-09 05:43:14Z mangeot $
  * ---------------------------------------------------
  *
  */
- 
-@media aural { 
+
+@media aural {
 	span.accesskey { pitch : high; }
 	code.markup-example { speak-punctuation : code; }
 	h1 { stress: 25; richness: 90; }
@@ -28,7 +28,7 @@
 }
 
 html, body { height: 100%;}
-  
+
 body {
 	margin: 0;
     font-family: Helvetica, Arial, sans-serif;
@@ -76,19 +76,19 @@ pre {
 
 /* Links general */
 a:link {
-	text-decoration: none; 
+	text-decoration: none;
 	color: blue;
 	}
 a:visited {
-	text-decoration: none; 
+	text-decoration: none;
 	color: blue;
 	}
 a:active {
-	text-decoration: none; 
+	text-decoration: none;
 	color: blue;
 	}
 a:hover {
-	text-decoration: underline; 
+	text-decoration: underline;
 	color: blue;
 	}
 
@@ -146,15 +146,15 @@ form.cellVolumeLookup {
 }
 
 input {
-  	padding: 8px 10px 7px; 
-  	border: 1px solid rgba(0, 0, 0, 0.1); 
+  	padding: 8px 10px 7px;
+  	border: 1px solid rgba(0, 0, 0, 0.1);
   	border-radius: 2px;
   	margin:0px;
   	font-size: 1.1em;
 }
 input#submit {
-  	background-color: grey; 
-  	color: white; 
+  	background-color: grey;
+  	color: white;
   	padding: 8px 20px 7px;
 }
 
@@ -199,8 +199,8 @@ input#submit {
 
 .popupMenuEnd {
 	border-right: 1px solid black;
-	background-color: grey; 
-	padding-left: 5px; 
+	background-color: grey;
+	padding-left: 5px;
 	padding-right: 5px;
 }
 
@@ -236,7 +236,7 @@ input#submit {
 	display: none;
 	position: absolute;
 	background: black;
-	
+
 	color: white;
 	list-style: none;
 }
@@ -297,7 +297,7 @@ a.lang, a.lang:link, a.lang:visited {
 a.lang:hover {
 	color:black;
 	background-color:#887;
-	
+
 }
 
 /*--------------------------------------*/
@@ -314,7 +314,7 @@ article input {
     font-size: .9em;
     padding: 0px;
 }
-  
+
 #MenuColumn {
   	display:table-cell;
   	padding: 10px;
@@ -327,8 +327,8 @@ article input {
   	width:200px;
 }
 
-#lookupentries:hover, #entriesList:hover { 
-	overflow-y:auto; 
+#lookupentries:hover, #entriesList:hover {
+	overflow-y:auto;
 }
 
 
@@ -377,7 +377,7 @@ footer, #footer {
 	clear:both;
 	text-align:center;
 	background: #E4E4E4;
-	font-size: .8em;		
+	font-size: .8em;
 	padding: 5px;
 	width:100%;
 	position: fixed;
@@ -465,10 +465,10 @@ pre.api {
 }
 
 .level {
-	background-color: yellow; 
-	color: #DD390E; 
-	font-size:small; 
-	padding-top: 2px; 
+	background-color: yellow;
+	color: #DD390E;
+	font-size:small;
+	padding-top: 2px;
 	border-top: 1px solid #898989;
 	border-right: 1px solid #898989;
 	border-bottom: 1px solid #898989;
@@ -577,9 +577,25 @@ pre.api {
 }
 
 /*--------------------------------------*/
-/* éléments du Cesselin */
+/* éléments du Cesselin et du Raguet-Martin*/
 /*--------------------------------------*/
+.segments, .sensnb {
+  display: inline-block;
+  vertical-align: top;
+  margin-top: 0px;
+  font-size: 120%;
+}
 
+.segment rt {
+  font-size: 90%;
+}
+
+.vedette-fra {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #002395;
+  padding: 5px;
+}
 
 .vedette-hiragana, .hiragana, .vedette-jpn, .vedette-jpn-editable, .jpn, .jpn-editable {
     color: #BC002D;
@@ -598,7 +614,7 @@ pre.api {
     color: #BC002D;
 }
 
-.vr, .vj {
+.vr, .vj, .mv, .tv {
     /*	color: black; */
     font-weight: bold;
 }
@@ -696,11 +712,11 @@ a:target, .exemple:target, .sous-entrée:target {
     padding-right: 5px;
 }
 
-.jpn {
+.jpn, .fra {
     padding-right: 5px;
 }
 
-	
+
 /*--------------------------------------*/
 /* CDM elements */
 /*--------------------------------------*/
@@ -776,7 +792,7 @@ tr.sense {
 
 .separator {
 	font-weight : bold;
-	color : #69FF69; 
+	color : #69FF69;
 
 }
 .comment {
@@ -798,7 +814,7 @@ td.block {
 }
 
 .blockTitle {
-	text-align: center; 
+	text-align: center;
 	color:blue;
 }
 
@@ -814,7 +830,7 @@ td.block {
 }
 
 table.center {
-    margin-left:auto; 
+    margin-left:auto;
     margin-right:auto;
 }
 
@@ -827,13 +843,13 @@ table.center {
 :lang(ar)       {font-family: "Traditional Arabic", serif;font-size:1.1em;}
 :lang(zh-Hant)  {font-family: PMingLiU,MingLiU, serif;}
 :lang(zh-Hans)  {font-family: SimSum-18030,SimHei, serif;}
-:lang(din)      {font-family: "Doulos SIL", serif;} 
+:lang(din)      {font-family: "Doulos SIL", serif;}
 
 /* The lang attribute with lang|= selector */
 *[lang|="ar"]   {font-family: "Traditional Arabic", serif;font-size:1.1em;}
 *[lang|="zh-Hant"]      {font-family: PMingLiU,MingLiU, serif;}
 *[lang|="zh-Hans"]      {font-family: SimSum-18030,SimHei, serif;}
-*[lang|="din"]  {font-family: "Doulos SIL", serif;} 
+*[lang|="din"]  {font-family: "Doulos SIL", serif;}
 
 /* The ISO-639-2/T 3 letter codes */
 
@@ -889,7 +905,7 @@ table.center {
 .msa	{
 	color: #009900;
 	}
-        
+
 .rus	{
 	color: #CC0000;
 	}
@@ -910,12 +926,12 @@ table.center {
 .vie	{
 	color: #CC9900;
 	}
-	
+
 .zho, .cmn	{
 	font-family: PMingLiU,MingLiU, serif;
 	color: #000080;
 	}
-	
+
 .meta	{
 	color: gray;
 	}
@@ -929,7 +945,7 @@ table.center {
 	}
 .xmlcar {
 	color: blue;
-	}	
+	}
 .xmlcomment {
 	color: gray;
 	}
@@ -941,19 +957,16 @@ table.center {
 	}
 .xmlnsprefix {
 	font-weight: bold;
-	color:#CC9966;					
+	color:#CC9966;
         }
 .xmlnsuri {
-	color:#CC9966;					
+	color:#CC9966;
         }
 .xmltext {
 	color: black;
 	font-weight: bold;
-	}	
+	}
 .xmlvalue {
 	font-weight: bold;
 	color: black;
 	}
-	
-
-	
