@@ -16,7 +16,7 @@
     <script src="/jibiki/javascript/jquery.xdomainrequest.min.js" type="text/javascript"><!-- // --></script>
     <script src="/jibiki/javascript/jquery.jeditable.js" type="text/javascript"><!-- // --></script>
     <script type="text/javascript"><!--
-    /* fonction pour les editable*/
+                                    /* fonction pour les editable*/
                                     function loadVedetteJpnEditable () {
                                     if (document.cookie.indexOf("JibikiLoginCookie") >= 0 || document.cookie.indexOf("USER_LOGIN") >=0) {
                                     $('.vedette-jpn-editable').editable(function(value, settings) {
@@ -88,15 +88,55 @@
 
                                     },
                                     error: function (xhr, ajaxOptions, thrownError) {
-                                    alert('erreur call vedette-jpn-editable 1, status: ' + xhr.status + ' error: ' + thrownError);
+                                    alert('erreur call editable 1, status: ' + xhr.status + ' error: ' + thrownError);
                                     }
                                     });
                                     return(value);
                                     }, {
                                     data: function(value, settings) {
                                     /* Remove <span class="pb">, <ruby> & <rt> tags. */
-                                    /* Bug in Firefox: remove also <rb>, <rbc> and <rtc> tags. */
-                                    /* or replace < by &lt; > by &gt; */
+                                    var retval = value.replace(/<\/?span[^>]*>/gi, '');
+                                    retval = retval.replace(/<rt[^>]*>[^<]*<\/rt>/gi, '');
+                                    retval = retval.replace(/<\/?rtc[^>]*>/gi, '');
+                                    retval = retval.replace(/<\/?rb[^>]*>/gi, '');
+                                    retval = retval.replace(/<\/?ruby[^>]*>/gi, '');
+                                    return retval;
+                                    },
+                                    submit  : 'ok',
+                                    tooltip   : 'Cliquer pour éditer...',
+                                    style   : 'display: inline;',
+                                    });
+                                    }
+                                    return 'ok';
+                                    }
+
+                                    function loadFraEditable () {
+                                    if (document.cookie.indexOf("JibikiLoginCookie") >= 0 || document.cookie.indexOf("USER_LOGIN") >=0) {
+                                    $('.editable').editable(function(value, settings) {
+                                    xpath = $(this).attr('xpath');
+                                    encodedValue = encodeURIComponent(value);
+                                    divcontrib = $(this).closest("div.contribution");
+                                    origcontribid = encodeURIComponent(divcontrib.attr("id"));
+
+                                    // première requête AJAX pour modifier le texte
+                                    $.ajax({
+                                    url: scriptStartUrl + 'api/RaguetMartin/fra/'+origcontribid+'/' + encodedValue,
+                                    type: 'PUT',
+                                    data: xpath,
+                                    success: function(result) {
+                                    var contribution = $(result).find('d\\:contribution, contribution')[ 0 ];
+                                    var contribid = contribution.getAttributeNS(DMLNamespace,'contribid');
+                                    divcontrib.attr('id',contribid);
+
+                                    },
+                                    error: function (xhr, ajaxOptions, thrownError) {
+                                    alert('erreur call editable 1, status: ' + xhr.status + ' error: ' + thrownError);
+                                    }
+                                    });
+                                    return(value);
+                                    }, {
+                                    data: function(value, settings) {
+                                    /* Remove <span class="pb">, <ruby> & <rt> tags. */
                                     var retval = value.replace(/<\/?span[^>]*>/gi, '');
                                     retval = retval.replace(/<rt[^>]*>[^<]*<\/rt>/gi, '');
                                     retval = retval.replace(/<\/?rtc[^>]*>/gi, '');
@@ -123,7 +163,7 @@
 
                                     // première requête AJAX pour modifier le texte
                                     $.ajax({
-                                    url: scriptStartUrl + 'api/Cesselin/jpn/'+origcontribid+'/' + encodedValue,
+                                    url: scriptStartUrl + 'api/RaguetMartin/fra/'+origcontribid+'/' + encodedValue,
                                     type: 'PUT',
                                     data: xpath,
                                     success: function(result) {
@@ -161,16 +201,9 @@
 
                                     /* fonction pour les cookies de PHP */
                                     function createCookie(name, value, days) {
-                                        document.cookie = encodeURIComponent(name) + "=" + encodeURIComponent(value) + "; path=/";
+                                    document.cookie = encodeURIComponent(name) + "=" + encodeURIComponent(value) + "; path=/";
                                     }
-                                    function read_cookie(k){
-                                        if ($match = document.cookie.match('(^|; )'+k+'=([^;]*)')) {
-                                            return $match[2];
-                                        }
-                                        else {
-                                            return false;
-                                        }
-                                    }
+                                    function read_cookie(k){return(document.cookie.match('(^|; )'+k+'=([^;]*)')||0)[2]}
                                     $.fn.exists = function () {
                                     return this.length !== 0;
                                     }
@@ -184,8 +217,7 @@
                                     })
                                     }
 
-
-// -->
+                                    // -->
     </script>
     <script id="Script" type="text/javascript"><!-- // --></script>
     </head>

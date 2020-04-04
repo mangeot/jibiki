@@ -77,7 +77,6 @@
                                     origcontribid = encodeURIComponent(divcontrib.attr("id"));
 
                                     // première requête AJAX pour modifier le texte
-                                    alert('ajax encoded value: ' + scriptStartUrl + 'api/Cesselin/jpn/'+origcontribid+'/' + encodedValue);
                                     $.ajax({
                                     url: scriptStartUrl + 'api/Cesselin/jpn/'+origcontribid+'/' + encodedValue,
                                     type: 'PUT',
@@ -89,7 +88,49 @@
 
                                     },
                                     error: function (xhr, ajaxOptions, thrownError) {
-                                    alert('erreur call vedette-jpn-editable 1, status: ' + xhr.status + ' error: ' + thrownError);
+                                    alert('erreur call editable 1, status: ' + xhr.status + ' error: ' + thrownError);
+                                    }
+                                    });
+                                    return(value);
+                                    }, {
+                                    data: function(value, settings) {
+                                    /* Remove <span class="pb">, <ruby> & <rt> tags. */
+                                    var retval = value.replace(/<\/?span[^>]*>/gi, '');
+                                    retval = retval.replace(/<rt[^>]*>[^<]*<\/rt>/gi, '');
+                                    retval = retval.replace(/<\/?rtc[^>]*>/gi, '');
+                                    retval = retval.replace(/<\/?rb[^>]*>/gi, '');
+                                    retval = retval.replace(/<\/?ruby[^>]*>/gi, '');
+                                    return retval;
+                                    },
+                                    submit  : 'ok',
+                                    tooltip   : 'Cliquer pour éditer...',
+                                    style   : 'display: inline;',
+                                    });
+                                    }
+                                    return 'ok';
+                                    }
+
+                                    function loadFraEditable () {
+                                    if (document.cookie.indexOf("JibikiLoginCookie") >= 0 || document.cookie.indexOf("USER_LOGIN") >=0) {
+                                    $('.editable').editable(function(value, settings) {
+                                    xpath = $(this).attr('xpath');
+                                    encodedValue = encodeURIComponent(value);
+                                    divcontrib = $(this).closest("div.contribution");
+                                    origcontribid = encodeURIComponent(divcontrib.attr("id"));
+
+                                    // première requête AJAX pour modifier le texte
+                                    $.ajax({
+                                    url: scriptStartUrl + 'api/RaguetMartin/fra/'+origcontribid+'/' + encodedValue,
+                                    type: 'PUT',
+                                    data: xpath,
+                                    success: function(result) {
+                                    var contribution = $(result).find('d\\:contribution, contribution')[ 0 ];
+                                    var contribid = contribution.getAttributeNS(DMLNamespace,'contribid');
+                                    divcontrib.attr('id',contribid);
+
+                                    },
+                                    error: function (xhr, ajaxOptions, thrownError) {
+                                    alert('erreur call editable 1, status: ' + xhr.status + ' error: ' + thrownError);
                                     }
                                     });
                                     return(value);
@@ -122,7 +163,7 @@
 
                                     // première requête AJAX pour modifier le texte
                                     $.ajax({
-                                    url: scriptStartUrl + 'api/Cesselin/jpn/'+origcontribid+'/' + encodedValue,
+                                    url: scriptStartUrl + 'api/RaguetMartin/fra/'+origcontribid+'/' + encodedValue,
                                     type: 'PUT',
                                     data: xpath,
                                     success: function(result) {
@@ -166,7 +207,6 @@
                                     $.fn.exists = function () {
                                     return this.length !== 0;
                                     }
-
 
                                     function change_status_name() {
 
