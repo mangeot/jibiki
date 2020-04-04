@@ -25,7 +25,7 @@
                                     encodedValue = encodeURIComponent(value);
                                     divcontrib = $(this).closest("div.contribution");
                                     origcontribid = encodeURIComponent(divcontrib.attr("id"));
-                                    
+
                                     // première requête AJAX pour modifier le texte
                                     $.ajax({
                                     url: scriptStartUrl + 'api/Cesselin/jpn/'+origcontribid+'/' + encodedValue,
@@ -35,7 +35,7 @@
                                     var contribution = $(result).find('d\\:contribution, contribution')[ 0 ];
                                     var contribid = contribution.getAttributeNS(DMLNamespace,'contribid');
                                     contribid = encodeURIComponent(contribid);
-                                    
+
                                     // deuxième requête AJAX pour modifier l'attribut
                                     $.ajax({
                                     url: scriptStartUrl + 'api/Cesselin/jpn/'+contribid+'/Manuel',
@@ -50,7 +50,7 @@
                                     alert('erreur call vedette-jpn-editable 2, status: ' + xhr.status + ' error: ' + thrownError);
                                     }
                                     });
-                                    
+
                                     },
                                     error: function (xhr, ajaxOptions, thrownError) {
                                     alert('erreur call vedette-jpn-editable 1, status: ' + xhr.status + ' error: ' + thrownError);
@@ -63,11 +63,11 @@
                                     style   : 'display: inline;',
                                     });
                                     }
-                                    
+
                                     return 'ok';
                                     }
-                                    
-                                    
+
+
                                     function loadEditable () {
                                     if (document.cookie.indexOf("JibikiLoginCookie") >= 0 || document.cookie.indexOf("USER_LOGIN") >=0) {
                                     $('.editable').editable(function(value, settings) {
@@ -75,7 +75,7 @@
                                     encodedValue = encodeURIComponent(value);
                                     divcontrib = $(this).closest("div.contribution");
                                     origcontribid = encodeURIComponent(divcontrib.attr("id"));
-                                    
+
                                     // première requête AJAX pour modifier le texte
                                     alert('ajax encoded value: ' + scriptStartUrl + 'api/Cesselin/jpn/'+origcontribid+'/' + encodedValue);
                                     $.ajax({
@@ -86,7 +86,7 @@
                                     var contribution = $(result).find('d\\:contribution, contribution')[ 0 ];
                                     var contribid = contribution.getAttributeNS(DMLNamespace,'contribid');
                                     divcontrib.attr('id',contribid);
-                                    
+
                                     },
                                     error: function (xhr, ajaxOptions, thrownError) {
                                     alert('erreur call vedette-jpn-editable 1, status: ' + xhr.status + ' error: ' + thrownError);
@@ -110,7 +110,54 @@
                                     }
                                     return 'ok';
                                     }
-                                    
+
+                                    function loadRubyEditable () {
+                                    if (document.cookie.indexOf("JibikiLoginCookie") >= 0 || document.cookie.indexOf("USER_LOGIN") >=0) {
+                                    $('.ruby-editable').editable(function(value, settings) {
+                                    xpath = $(this).attr('xpath');
+                                    value = value.replace(/\{([^\|]+)\|([^\}]+)\}/g, '<ruby>$1<rt>$2</rt></ruby>');
+                                    encodedValue = encodeURIComponent(value);
+                                    divcontrib = $(this).closest("div.contribution");
+                                    origcontribid = encodeURIComponent(divcontrib.attr("id"));
+
+                                    // première requête AJAX pour modifier le texte
+                                    $.ajax({
+                                    url: scriptStartUrl + 'api/Cesselin/jpn/'+origcontribid+'/' + encodedValue,
+                                    type: 'PUT',
+                                    data: xpath,
+                                    success: function(result) {
+                                    var contribution = $(result).find('d\\:contribution, contribution')[ 0 ];
+                                    var contribid = contribution.getAttributeNS(DMLNamespace,'contribid');
+                                    divcontrib.attr('id',contribid);
+
+                                    },
+                                    error: function (xhr, ajaxOptions, thrownError) {
+                                    alert('erreur call ruby-editable 1, status: ' + xhr.status + ' error: ' + thrownError);
+                                    }
+                                    });
+                                    return(value);
+                                    }, {
+                                    data: function(value, settings) {
+                                    /* Remove <span class="pb">, <ruby> & <rt> tags. */
+                                    /* Bug in Firefox: remove also <rb>, <rbc> and <rtc> tags. */
+                                    /* or replace < by &lt; > by &gt; */
+                                    var retval = value.replace(/<\/?span[^>]*>/gi, '');
+                                    retval = retval.replace(/<ruby[^>]*>/gi, '{');
+                                    retval = retval.replace(/<\/ruby[^>]*>/gi, '}');
+                                    retval = retval.replace(/<rt[^>]*>/gi, '|');
+                                    retval = retval.replace(/<\/rt[^>]*>/gi, '');
+                                    retval = retval.replace(/<\/?rtc[^>]*>/gi, '');
+                                    retval = retval.replace(/<\/?rb[^>]*>/gi, '');
+                                    return retval;
+                                    },
+                                    submit  : 'ok',
+                                    tooltip   : 'Cliquer pour éditer...',
+                                    style   : 'display: inline;',
+                                    });
+                                    }
+                                    return 'ok';
+                                    }
+
                                     /* fonction pour les cookies de PHP */
                                     function createCookie(name, value, days) {
                                     document.cookie = encodeURIComponent(name) + "=" + encodeURIComponent(value) + "; path=/";
@@ -120,9 +167,9 @@
                                     return this.length !== 0;
                                     }
 
-                                    
+
                                     function change_status_name() {
-                                    
+
                                     $(".jibiki_status").each(function() {
                                     if ($(this).text() == 'finished') {
                                     $(this).text('Modifié');
@@ -156,7 +203,7 @@
        <a  class="lang" href="?lang=fra">français</a>
        <a  class="lang" href="?lang=eng">English</a>
    </td>
-   
+
    </tr></tbody></table>
     </div>
 
@@ -185,7 +232,7 @@
 		</div>
 	</div>
     </div>
-    
+
     <div id="sectionPrincipale">
     <div id="MenuColumn"><!-- // --></div>
     <div id="MainColumn" class="mainColumn"></div>
@@ -230,7 +277,7 @@
   })();
 </script>
 <!-- End Matomo Code -->
-        
+
         </div>
 </body>
 </html>
