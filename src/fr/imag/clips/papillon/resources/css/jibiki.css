@@ -105,7 +105,7 @@ div#BannerContent {
     display: table;
 	width: 100%;
     border-spacing: 4px;
-	padding-top: 45px;
+	padding-top: 43px;
 	background: #E4E4E4;
 }
 
@@ -157,6 +157,11 @@ input#submit {
   	color: white;
   	padding: 8px 20px 7px;
 }
+
+.inputbutton {
+	 margin: 2px;
+	 height: 23px;
+ }
 
 #cellAdvancedLookup,.cellAdvancedLookup {
     display: table-cell;
