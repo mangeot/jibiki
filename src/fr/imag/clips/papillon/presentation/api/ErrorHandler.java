@@ -407,7 +407,7 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                         theResponse.setStatus(HttpPresentationResponse.SC_NOT_IMPLEMENTED, errorMsg);
                     }
 				}
-				else if (restStrings.length==4 || restStrings.length==5) {
+				else if (restStrings.length>=4) {
 					PapillonLogger.writeDebugMsg(commande + " DICT: " + dictName + " LANG: " + restStrings[1]+ " MODE: " + restStrings[2]+ " STRING: " + restStrings[3]+ ";");
 					if (theRequest.getMethod().equals("GET")) {
 						String strategy = myGetParameter(STRATEGY_PARAMETER);
@@ -445,7 +445,11 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
                         if (xpathString != null && !xpathString.equals("")) {
                             if (Entries.userCanEditEntry(getUser(), dictName)) {
                                 Message theMessage = new Message();
-                                content = Entries.editEntry(dictName, restStrings[1], restStrings[2], xpathString, restStrings[3], this.getUser(), theMessage);
+				String textedit = restStrings[3];
+				for (int i=4;i<restStrings.length;i++) {
+					textedit += "/" + restStrings[i];
+				}
+                                content = Entries.editEntry(dictName, restStrings[1], restStrings[2], xpathString, textedit, this.getUser(), theMessage);
                                 if (content==null) {
                                     String errorMsg = "Error: dict: " + dictName + " lang: " +  restStrings[1] +" CONTRIB ID: " + restStrings[2] + " message: " + theMessage.message;
                                     //PapillonLogger.writeDebugMsg(errorMsg);
@@ -484,8 +488,8 @@ public class ErrorHandler extends fr.imag.clips.papillon.presentation.AbstractPO
 					}
 				}
 				else {
-                    String errorMsg = "Error: method not implemented: " + commande + " DICT: " + dictName + " LANG: " + restStrings[1]+ " MODE: " + restStrings[2]+ " STRING: " + restStrings[3]+ ";";
-                    //PapillonLogger.writeDebugMsg(errorMsg);
+                    String errorMsg = "Error: method not implemented: " + commande + " DICT: " + java.net.URLEncoder.encode(dictName, "UTF-8") + " LANG: " + java.net.URLEncoder.encode(restStrings[1], "UTF-8")+ " MODE: " + java.net.URLEncoder.encode(restStrings[2], "UTF-8")+ " STRING: " + java.net.URLEncoder.encode(restStrings[3], "UTF-8")+ ";";
+                    PapillonLogger.writeDebugMsg(errorMsg);
                     content = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + HttpPresentationResponse.SC_NOT_IMPLEMENTED + "</h1><p>" + errorMsg + "</p></html>");
                     theResponse.setStatus(HttpPresentationResponse.SC_NOT_IMPLEMENTED, errorMsg);
 				}

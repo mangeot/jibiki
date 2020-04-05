@@ -591,8 +591,27 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
                             while (myNode.hasChildNodes()) {
                                 myNode.removeChild(myNode.getFirstChild());
                             }
-                            org.w3c.dom.Node textNode = myNode.getOwnerDocument().createTextNode(value);
-                            myNode.appendChild(textNode);
+			    org.w3c.dom.Document valueDoc = null; 
+			    try {
+			    	valueDoc = XMLServices.buildDOMTree("<?xml version='1.0'?><root>" + value + "</root>");
+			    }
+			    catch (Exception e) {
+                            	PapillonLogger.writeDebugMsg("Entry not modified: value not valid XML: " + "<?xml version='1.0'?><root>" + value + "</root>");
+                            	errorMessage.message = "Entry: " + entryId + " not modified: value not valid XML: " + java.net.URLEncoder.encode(value, "UTF-8");
+                            	docDom = null;
+			    }
+			    if (valueDoc != null) {
+			    org.w3c.dom.Node tempNode = valueDoc.getDocumentElement();
+			    //org.w3c.dom.ElementNode tempNode = docDom.importNode((org.w3c.dom.Node) valueDoc.getDocumentElement(), true);
+                            //org.w3c.dom.Node textNode = myNode.getOwnerDocument().createTextNode(value);
+                            if (tempNode.hasChildNodes()) {
+				org.w3c.dom.NodeList nl = tempNode.getChildNodes();
+				for (int i = 0; i < nl.getLength(); i++) {
+                            		PapillonLogger.writeDebugMsg("Append child: " + i);
+                            		myNode.appendChild(docDom.importNode((org.w3c.dom.Node)nl.item(i),true));
+				}
+                            }
+			    }
                             //PapillonLogger.writeDebugMsg("Entry modified: " + value);
                         }
                         else if (myNode.getNodeType() == org.w3c.dom.Node.ATTRIBUTE_NODE || myNode.getNodeType() == org.w3c.dom.Node.TEXT_NODE) {

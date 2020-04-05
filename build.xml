@@ -370,7 +370,7 @@ For Lexalp, call ant using -Dapplication.name=Lexalp
    <javac srcdir="${dir.xmlc}"
           destdir="${dir.classes}"
           excludes="**/StartServer.java"
-				  classpathref="javac.classpath"
+	  classpathref="javac.classpath"
           debug="${debug}">
      </javac>
   </target>
