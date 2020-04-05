@@ -183,7 +183,7 @@
                             selectFacetValue.setAttribute('style', '');
                             selectFacetValue.title = selvalue;
                             selectFacetValue.value = textbox.value;
-                
+
                             var parent = textbox.parentNode;
                             parent.insertBefore(selectFacetValue,textbox);
                         }
@@ -211,7 +211,7 @@
                       <option value="cdm-pos">la catégorie</option>
                       <option value="cdm-domain">le domaine</option>
                       <option value="cdm-translation">la traduction</option>
-                      <option value="cdm-example">un exemple (japonais)</option>
+                      <option value="cdm-example">un exemple</option>
                       <option value="cesselin-example-hiragana">un exemple (hiragana)</option>
                       <option value="cesselin-example-romaji">un exemple (romaji)</option>
                       <option value="cesselin-example-translation">la traduction de l&rsquo;exemple</option>
@@ -221,8 +221,9 @@
                       <option value="cdm-contribution-status">le statut de la contribution</option>
                      <option value="cdm-modification-author">le contributeur</option>
                       <option value="cdm-modification-date">la date de contribution</option>
-                      <option value="cesselin-page">la page (Cesselin)</option>
-                      <option value="cesselin-relecture">la relecture (Cesselin)</option>
+                      <option value="cdm-page">la page</option>
+                      <option value="cdm-origin">la provenance</option>
+                      <option value="cdm-review-note">les notes de relecture</option>
                     </select>
                     <select id="Operator" name="OPERATOR" >
                       <option value="0">est</option>
@@ -298,7 +299,7 @@
          }
          return true;
          }
-         
+
          addLoadEvent(adjustAllAdvancedSearchForm);
          // -->
     </script>

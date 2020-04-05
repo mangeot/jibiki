@@ -5,7 +5,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <title>Menu</title>
     <script type="text/javascript">
-    
+
         //
         function addOrRemoveCriterion(caller, action) {
             document.getElementById('Action').value = action + caller;
@@ -152,7 +152,7 @@
                      var selvalue = select.value;
                      var operator = document.getElementById('Operator'+criteriaNumber);
                      var textbox = document.getElementById('ValueField'+criteriaNumber);
-                     
+
                      var select2 = null;
                      //   operator.options.length = 0;
                      if (selvalue == 'cdm-translation' || selvalue == 'cdm-example' || selvalue == 'cesselin-example-romaji' || selvalue == 'cesselin-example-hiragana') {
@@ -185,7 +185,7 @@
                      selectFacetValue.setAttribute('style', '');
                      selectFacetValue.title = selvalue;
                      selectFacetValue.value = textbox.value;
-                     
+
                      var parent = textbox.parentNode;
                      parent.insertBefore(selectFacetValue,textbox);
                      }
@@ -218,13 +218,14 @@
                       <option value="cesselin-example-romaji">例のローマ字</option>
                       <option value="cesselin-example-translation">例の翻訳</option>
                       <option value="cdm-entry-id">エントリのID</option>
-                      <option value="cdm-entry-id">contribution ID</option>
-                      <option value="cdm-entry-id">original contribution ID</option>
+                      <option value="cdm-contibution-id">contribution ID</option>
+                      <option value="cdm-original-contribution-id">original contribution ID</option>
                       <option value="cdm-contribution-status">contribution status</option>
                       <option value="cdm-modification-author">contributor</option>
                        <option value="cdm-modification-date">contribution date</option>
-                       <option value="cesselin-page">ページ (Cesselin)</option>
-                       <option value="cesselin-relecture">relecture (Cesselin)</option>
+                       <option value="cdm-page">ページ</option>
+                       <option value="cdm-origin">provenance</option>
+                       <option value="cdm-review-note">relecture</option>
                     </select>
                     <select id="Operator" name="OPERATOR" >
                       <option value="0">＝</option>
@@ -299,7 +300,7 @@
            }
            return true;
            }
-           
+
            addLoadEvent(adjustAllAdvancedSearchForm);
            // -->
       </script>
