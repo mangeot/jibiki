@@ -513,17 +513,17 @@ can have multiple values depending of its status.</p>
 &lt;volume name="FeM_fra" source-language="fra" target-languages="eng msa"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="http://www-clips.imag.fr/geta/services/dml/fem.xsd">
-&lt;d:contribution 
-	d:contribid="fra.abandonner.8814938.c" 
-	d:originalcontribid="" 
-	xmlns:d="http://www-clips.imag.fr/geta/services/dml" 
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xsi:schemaLocation="http://www-clips.imag.fr/geta/services/dml  
+&lt;d:contribution
+	d:contribid="fra.abandonner.8814938.c"
+	d:originalcontribid=""
+	xmlns:d="http://www-clips.imag.fr/geta/services/dml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www-clips.imag.fr/geta/services/dml
 	http://www-clips.imag.fr/geta/services/dml/dml.xsd">
 	&lt;d:metadata>
 		&lt;d:author>automatic&lt;/d:author>&lt;
 		&lt;d:creation-date>2009/05/07 13:59:57&lt;/d:creation-date>
-	...	
+	...
 	&lt;d:data>
 		&lt;entry id="fra.abandonner.8814938.e">
 			&lt;headword>abandonner&lt;/headword>&lt;hom/>
@@ -576,7 +576,6 @@ Proceed with care because it can be very dangerous. The user has to be <a href="
 <pre class="api">
 curl -X PUT \
     -u user:password \
-    -H "Accept: application/xml" \
     -H "Content-Type: application/xml;charset=UTF-8" \
     -d '&lt;?xml version="1.0" encoding="UTF-8"?>
 &lt;article id="jpn.ケース.14723001.e">
@@ -597,6 +596,15 @@ curl -X PUT \
 '\
     "api/Cesselin/jpn/jpn.ケース.14723001.e"
 </pre>
+<pre class="api">
+    curl -X PUT \
+    -u user:password \
+    -H "Content-Type: application/xml;charset=UTF-8" \
+    -d "@myfilename.xml"\
+    "api/Cesselin/jpn/jpn.ケース.14723001.e"
+</pre>
+<p>Note: filename.xml is an XML file containing the entry.</p>
+
 <p>Answer:</p>
 <pre class="api">
 &lt;?xml version="1.0" encoding="UTF-8"?>
@@ -750,7 +758,7 @@ curl -X POST \
     -u user:password \
     -H "Accept: application/xml" \
     -H "Content-Type: application/xml;charset=UTF-8" \
-    -d '@myfilename.xml'\
+    -d "@myfilename.xml"\
     "api/Cesselin/jpn/jpn.ケース.14723001.e"
 </pre>
 <p>Note: filename.xml is an XML file containing the entry.</p>
@@ -836,7 +844,7 @@ curl -X DELETE \
 </table>
 
 <p>The searches with the [key] part give the value of the key for the corresponding entries.
-For example, searching an entry with <i>api/*/eng/cdm-headword/trial/cdm-pos</i> will give a list of 
+For example, searching an entry with <i>api/*/eng/cdm-headword/trial/cdm-pos</i> will give a list of
 parts-of-speech for the "trial" entry.</p>
 
 <p>Several keys can be used at once. They have to be separated with the "|" pipe symbol.
@@ -900,17 +908,17 @@ curl -X GET \
 &lt;volume name="FeM_fra" source-language="fra" target-languages="eng msa"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="http://www-clips.imag.fr/geta/services/dml/fem.xsd">
-&lt;d:contribution 
-	d:contribid="fra.abandonner.8814938.c" 
-	d:originalcontribid="" 
-	xmlns:d="http://www-clips.imag.fr/geta/services/dml" 
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xsi:schemaLocation="http://www-clips.imag.fr/geta/services/dml  
+&lt;d:contribution
+	d:contribid="fra.abandonner.8814938.c"
+	d:originalcontribid=""
+	xmlns:d="http://www-clips.imag.fr/geta/services/dml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www-clips.imag.fr/geta/services/dml
 	http://www-clips.imag.fr/geta/services/dml/dml.xsd">
 	&lt;d:metadata>
 		&lt;d:author>automatic&lt;/d:author>&lt;
 		&lt;d:creation-date>2009/05/07 13:59:57&lt;/d:creation-date>
-	...	
+	...
 	&lt;d:data>
 		&lt;entry id="fra.abandonner.8814938.e">
 			&lt;headword>abandonner&lt;/headword>&lt;hom/>
@@ -1035,7 +1043,7 @@ Other criteria and keys not in the list may exist only for one specific resource
     <li>Dates are in the following format: <code>yyyy/mm/dd HH:mm:ss</code></li>
     <li>It is possible to use the SQL '%' metacharacter in queries.</li>
 </ul>
- 
+
  <h3>Querying entries using link (for pivax data)</h3>
 
 <table class="api">
