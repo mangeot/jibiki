@@ -557,13 +557,12 @@ can have multiple values depending of its status.</p>
  </tbody>
 </table>
 
-<p>The data to be sent with the PUT command is the XML of the contribution (volume + metadata + entry) or
-    the entry only (see the example). The server will create a new contribution with the data sent and will
+<p>The data to be sent with the PUT command is the XML of the contribution (volume + metadata + entry) for "replace" and "standard" modes or
+    the entry only for "standard" mode (see the example). The server will create a new contribution with the data sent and will
     change the status of the existing contribution as "classified".</p>
-<p>Note 1: the entry XML code must be complete with volume and contribution tags.</p>
-<p>Note 2: the user has to be <a href="#Authentication">logged</a> and in the specialist group.</p>
-<p>Note 3: A Mode parameter can be used to avoid replace the XML code of the existing contribution instead of creating a new one.
-Proceed with care because it can be very dangerous. The user has to be <a href="#Authentication">logged</a> and in the admin group. </p>
+<p>Note 1: the user has to be <a href="#Authentication">logged</a> and in the specialist group.</p>
+<p>Note 2: A Mode parameter can be used to avoid replace the XML code of the existing contribution instead of creating a new one.
+Proceed with care because it can be very dangerous. The XML must be complete with volume + metadata + entry tags. The user has to be <a href="#Authentication">logged</a> and in the admin group. </p>
 
 <table class="api">
  <tbody>
@@ -572,7 +571,7 @@ Proceed with care because it can be very dangerous. The user has to be <a href="
  </tbody>
 </table>
 
-<p>Example of query:</p>
+<p>Examples of query:</p>
 <pre class="api">
 curl -X PUT \
     -u user:password \
@@ -604,6 +603,46 @@ curl -X PUT \
     "api/Cesselin/jpn/jpn.ケース.14723001.e"
 </pre>
 <p>Note: filename.xml is an XML file containing the entry.</p>
+
+<pre class="api">
+curl -X PUT \
+    -u user:password \
+    -H "Content-Type: application/xml;charset=UTF-8" \
+    -d '&lt;?xml version="1.0" encoding="UTF-8"?>
+&lt;volume langue-cible="fra" langue-source="jpn" nom="Cesselin_jpn_fra"&gt;
+  &lt;d:contribution
+      xmlns:d="http://www-clips.imag.fr/geta/services/dml"
+      d:contribid="jpn.ケース.14723001.c"
+      d:originalcontribid="jpn.ケース.14723001.c">
+    &lt;d:metadata>
+      &lt;d:author>automatic&lt;/d:author>
+      &lt;d:groups/>
+      &lt;d:creation-date>2015/07/15 23:16:14&lt;/d:creation-date>
+      &lt;d:status>finished&lt;/d:status>
+      &lt;d:previous-classified-finished-contribution/>
+    &lt;/d:metadata>
+    &lt;d:data>
+      &lt;article id="jpn.ケース.14723001.e">
+        &lt;forme>
+          &lt;vedette>
+            &lt;vedette-romaji>kēsu&lt;/vedette-romaji>
+            &lt;vedette-hiragana>けえす&lt;/vedette-hiragana>
+            &lt;vedette-jpn>ケース&lt;/vedette-jpn>
+          &lt;/vedette>
+          &lt;cat-gram>名&lt;/cat-gram>
+        &lt;/forme>
+        &lt;sémantique>
+           &lt;sens>
+            &lt;texte-sens>boite, cas, ciasse&lt;/texte-sens>
+          &lt;/sens>
+        &lt;/sémantique>
+      &lt;/article>
+    &lt;/d:data>
+  &lt;/d:contribution>
+&lt;/volume&gt;
+'\
+    "api/Cesselin/jpn/jpn.ケース.14723001.e/?mode=replace"
+</pre>
 
 <p>Answer:</p>
 <pre class="api">
