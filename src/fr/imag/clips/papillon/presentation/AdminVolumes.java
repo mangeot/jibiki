@@ -424,6 +424,7 @@ public class AdminVolumes extends PapillonBasePO {
         HTMLElement theName = content.getElementName();
         HTMLElement theDbname = content.getElementDbname();
         HTMLElement theSource = content.getElementSource();
+        HTMLElement theTargets = content.getElementTargets();
         HTMLElement theEntries = content.getElementEntries();
         HTMLAnchorElement theSeeMetadataAnchor = content.getElementSeeMetadataAnchor();
         HTMLAnchorElement theSeeSchemaAnchor = content.getElementSeeSchemaAnchor();
@@ -440,6 +441,7 @@ public class AdminVolumes extends PapillonBasePO {
         theName.removeAttribute("id");
         theDbname.removeAttribute("id");
         theSource.removeAttribute("id");
+        theTargets.removeAttribute("id");
         theEntries.removeAttribute("id");
         theSeeMetadataAnchor.removeAttribute("id");
 				
@@ -463,6 +465,7 @@ public class AdminVolumes extends PapillonBasePO {
         content.setTextName(volume.getName());
         content.setTextDbname(volume.getDbname());
         content.setTextSource(volume.getSourceLanguage());
+        content.setTextTargets(volume.getTargetLanguages());
         content.setTextEntries("" + volume.getCount());
         
         // Get handle
