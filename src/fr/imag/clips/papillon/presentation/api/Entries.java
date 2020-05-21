@@ -1027,7 +1027,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
     
     protected static org.w3c.dom.Document addContributionHeadersIfNotPresent(org.w3c.dom.Document docDom, Volume theVolume) throws fr.imag.clips.papillon.business.PapillonBusinessException {
         String CDM_Contribution = theVolume.getCdmContribution();
-        String theEntryString = XMLServices.NodeToString(docDom, false);
+        String theEntryString = XMLServices.xmlCode(docDom);
         
         if (!theEntryString.matches("<" + CDM_Contribution + "[\\s>]")) {
             String[] xmlHeaderFooter = theVolume.getXmlHeaderAndFooter();
