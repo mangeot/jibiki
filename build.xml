@@ -420,7 +420,7 @@ For Lexalp, call ant using -Dapplication.name=Lexalp
      <!-- compile XMLC generated java -->
      <javac  srcdir="${dir.src}"
             destdir="${dir.classes}"
-            source="1.4"
+            source="1.6"
             excludes="**/StartServer.java"
             encoding="UTF-8"
             classpathref="javac.classpath"
