@@ -182,7 +182,7 @@ public class DictionaryIndexBrowser extends PapillonBasePO {
             tocAnchorLast.setAttribute("href", "#" + lang + "_NA");
             keyToc.appendChild(content.importNode(tocAnchorLast.cloneNode(true), true));
         } else {
-            tocAnchorLast.setAttribute("href", MessageFormat.format(LANG_INDEX_URL, new String[]{lang}));
+            tocAnchorLast.setAttribute("href", MessageFormat.format(LANG_INDEX_URL, (Object[]) new String[]{lang}));
             content.setTextLastTocAnchorText("...");
             keyToc.appendChild(content.importNode(tocAnchorLast.cloneNode(true), true));
         }
@@ -286,12 +286,12 @@ public class DictionaryIndexBrowser extends PapillonBasePO {
                 String hw = (String) it.next();
                 if (limit > 0 & nb > limit) {
                     content.setTextHeadwordText("...");
-                    anchor.setHref(MessageFormat.format(KEY_INDEX_URL, new String[]{myUrlEncode(key), language}));
+                    anchor.setHref(MessageFormat.format(KEY_INDEX_URL, (Object[])new String[]{myUrlEncode(key), language}));
                     // li.setAttribute("class", "alt_li" + nb%2);
                     ul.appendChild(content.importNode(li.cloneNode(true), true));
                 } else {
                     content.setTextHeadwordText(hw);
-                    anchor.setHref(MessageFormat.format(ENTRY_URL, new String[]{myUrlEncode(hw), language}));
+                    anchor.setHref(MessageFormat.format(ENTRY_URL, (Object[]) new String[]{myUrlEncode(hw), language}));
                     // li.setAttribute("class", "alt_li" + nb%2);
                     ul.appendChild(content.importNode(li.cloneNode(true), true));
                 }
@@ -316,7 +316,7 @@ public class DictionaryIndexBrowser extends PapillonBasePO {
         Node newSection = null;
 
         content.setTextKeyTitle("...");
-        sectionAnchor.setHref(MessageFormat.format(LANG_INDEX_URL, new String[]{language}));
+        sectionAnchor.setHref(MessageFormat.format(LANG_INDEX_URL, (Object[]) new String[]{language}));
 
 
         newSection = content.importNode(indexKey.cloneNode(true), true);
