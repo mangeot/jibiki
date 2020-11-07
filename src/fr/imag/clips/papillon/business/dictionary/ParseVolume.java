@@ -167,7 +167,7 @@ public class ParseVolume {
     public static final int ReplaceExistingContribution_ReplaceAnyway = 51;
     public static final int ReplaceExistingContribution_ReplaceIfSameStatus = 52;
     public static final int ReplaceExistingContribution_ReplaceIfFinished = 53;
-    
+
     public static final String ENTRIES_ADDED = " Entries added: ";
     public static final String ENTRIES_DISCARDED = " Entries discarded: ";
 
@@ -187,7 +187,7 @@ public class ParseVolume {
     protected static final String XMLDECLSTART = "<?xml ";
     protected static final int MAX_TRY = 5;
     public static final String UTF8_BOM = "\uFEFF";
-    
+
     private static String removeUTF8BOM(String s) {
         if (s.startsWith(UTF8_BOM)) {
             s = s.substring(1);
@@ -274,7 +274,7 @@ public class ParseVolume {
         return parseEntries(myDict, myVolume, is, encoding, defaultStatus, replaceExistingEntries,
                             replaceExistingContributions, logContribs, indexEntries);
     }
-    
+
     public static String parseVolume(Dictionary myDict, Volume myVolume, String volumeString, String defaultStatus,
                                         int replaceExistingEntries, int replaceExistingContributions,
                                         boolean logContribs, boolean indexEntries)
@@ -284,7 +284,7 @@ public class ParseVolume {
         return parseEntries(myDict, myVolume, is, encoding, defaultStatus, replaceExistingEntries,
                             replaceExistingContributions, logContribs, indexEntries);
     }
-    
+
     protected static String getXMLHeader(java.net.URL myUrl, String CDM_entry)
             throws PapillonBusinessException {
         String res = XMLHEADER;
@@ -347,13 +347,13 @@ public class ParseVolume {
 
         /*
 	 parseEntries split the input stream into entries. Allows to discard malformed entries
-	 
+
 	 Rebuilds the XML header until the entry tag
-	 
-	 TODO: 
+
+	 TODO:
 	 - does not work if the entry tag is inside two comments on the same line
 	 - does not work if an entry tag is in a CDATA section.
-	 
+
 	 */
     protected static String parseEntries(Dictionary myDict, Volume myVolume, java.io.InputStream inStream, String encoding,
                                          String defaultStatus, int replaceExistingEntries,
@@ -504,7 +504,7 @@ public class ParseVolume {
                     }
                 }
                 entryIndex = (entryIndex<0) ? bufferLine.indexOf("<" + CDM_Entry + ">") : entryIndex;
-                
+
                 while (entryIndex >= 0) {
                     if (entryIndex > 0) {
                         entryBuffer.append(bufferLine.substring(0, entryIndex));
@@ -515,7 +515,7 @@ public class ParseVolume {
                         // PapillonLogger.writeDebugMsg("Middle call: parseEntry " + entryBuffer.toString());
                        if (parseEntry(myDict, myVolume, entryBuffer.append(xmlFooterBuffer), defaultStatus,
                                 isContributionVolume, replaceExistingEntries, replaceExistingContributions, logContribs,
-                                       indexEntry, ParsedEntries, DiscardedEntries)) {
+                                       indexEntry, ParsedEntries, DiscardedEntries,countEntries)) {
                             countEntries++;
                             if (countEntries % 1000 ==0) {
                                 PapillonLogger.writeDebugMsg("\n" + countEntries + " added so far!\n");
@@ -545,7 +545,7 @@ public class ParseVolume {
             }
            // PapillonLogger.writeDebugMsg("Final call: parseEntry " + entryBuffer.toString());
             if (parseEntry(myDict, myVolume, entryBuffer.append(xmlFooterBuffer), defaultStatus, isContributionVolume,
-                    replaceExistingEntries, replaceExistingContributions, logContribs, indexEntry, ParsedEntries, DiscardedEntries)) {
+                    replaceExistingEntries, replaceExistingContributions, logContribs, indexEntry, ParsedEntries, DiscardedEntries,countEntries)) {
                 countEntries++;
             }
             message = "volume parsed, " + countEntries + " entries added. ";
@@ -561,14 +561,14 @@ public class ParseVolume {
 
         } catch (java.io.IOException exp) {
             throw new PapillonBusinessException("ParseVolume.parseEntries, error IOException", exp);
-        } 
+        }
         return message;
     }
 
     protected static boolean parseEntry(Dictionary myDict, Volume myVolume, StringBuffer entryBuffer,
                                         String defaultStatus, boolean isContributionVolume, int replaceExistingEntries,
                                         int replaceExistingContributions, boolean logContribs, boolean indexEntry,
-                                        java.util.Vector ParsedEntries, java.util.Vector DiscardedEntries)
+                                        java.util.Vector ParsedEntries, java.util.Vector DiscardedEntries, int countEntries)
              throws PapillonBusinessException {
         boolean result = false;
 				org.w3c.dom.Document myDoc = null;
@@ -687,13 +687,13 @@ public class ParseVolume {
                 if (logContribs) {
                     ContributionsFactory.createContributionLogsFromExistingEntry(newEntry);
                 }
-                PapillonLogger.writeDebugMsg("Adding entry " + newEntry.getHeadword() + " // " + newEntry.getId());
+                PapillonLogger.writeDebugMsg("Adding "+(countEntries+1)+" entry " + newEntry.getHeadword() + " // " + newEntry.getId());
                 if (indexEntry) {
                     if (ParsedEntries.size() < MAX_DISCARDED_ENTRIES_LOGGED) {
                         ParsedEntries.add(newEntry.getContributionId());
                     }
                 }
-                
+
             } else {
                 PapillonLogger.writeDebugMsg("Discarding entry " + newEntry.getHeadword() + " // " + newEntry.getId());
                 if (DiscardedEntries.size() < MAX_DISCARDED_ENTRIES_LOGGED) {
@@ -705,5 +705,5 @@ public class ParseVolume {
         }
         return result;
     }
-    
+
 }
