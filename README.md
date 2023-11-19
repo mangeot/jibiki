@@ -27,6 +27,11 @@ See https://github.com/mangeot/postgres4jibiki/ for more information.
 The ipolex docker image is built from php latest official image.
 See https://github.com/mangeot/ipolex/ for more information.
 
+The simple way
+-------------
+    docker compose up
+
+Or step by step:
 Getting the latest docker images
 -------------
     docker pull mangeot/ipolex
