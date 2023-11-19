@@ -6,5 +6,4 @@ if [[ -d "$DIR" ]]
 then
   /bin/run-parts "$DIR"
 fi
-
 exec "$@"

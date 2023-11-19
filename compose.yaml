@@ -4,11 +4,14 @@ services:
   postgres:
     image: mangeot/postgres4jibiki
     environment:
-      POSTGRES_USER: postgres
+      - POSTGRES_USER=postgres
+      - DATABASE_HOST=postgres
+      - DATABASE_NAME=jibikidb
+      - DATABASE_USER=jibikiuser
+      - DATABASE_PASSWORD=dbjibiki3
     volumes:
       - postgresql:/var/lib/postgresql/data
     healthcheck:
-      #      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER}"]
       interval: 1s
       timeout: 5s
@@ -16,6 +19,7 @@ services:
 
   ipolex:
     image: mangeot/ipolex
+
     volumes:
       - ipolex:/var/www/html/Dicos
     restart: always
@@ -24,6 +28,14 @@ services:
 
   jibiki:
     image: mangeot/jibiki
+    environment:
+      - ADMIN_PASSWORD=dbpap
+      - VALIDATOR_PASSWORD=butterfly
+      - SPECIALIST_PASSWORD=farfalla
+      - DATABASE_HOST=postgres
+      - DATABASE_NAME=jibikidb
+      - DATABASE_USER=jibikiuser
+      - DATABASE_PASSWORD=dbjibiki
     volumes:
       - ipolex:/ipolex
     restart: always

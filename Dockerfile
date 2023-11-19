@@ -105,7 +105,7 @@ COPY --from=build /toolsforjibiki/javamail-1.4 javamail-1.4
 
 WORKDIR /jibiki
 
-COPY --from=build /jibiki/papillon.properties .
+COPY --from=build /jibiki/papillon.properties.in papillon.properties
 COPY --from=build /jibiki/output output
 
 #RUN echo `ls /usr/bin/java`
@@ -119,6 +119,7 @@ COPY --from=build /jibiki/docker-entrypoint.sh .
 COPY --from=build /jibiki/docker-entrypoint.d/* /docker-entrypoint.d/ 
 ONBUILD COPY /jibiki/docker-entrypoint.d/* /docker-entrypoint.d/
 
+RUN chmod -R 777 /docker-entrypoint.d/
 
 ##################### INSTALLATION END #####################
 
