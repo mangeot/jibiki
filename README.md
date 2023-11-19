@@ -27,11 +27,6 @@ See https://github.com/mangeot/postgres4jibiki/ for more information.
 The ipolex docker image is built from php latest official image.
 See https://github.com/mangeot/ipolex/ for more information.
 
-The simple way
--------------
-    docker compose up
-
-Or step by step:
 Getting the latest docker images
 -------------
     docker pull mangeot/ipolex
@@ -44,7 +39,53 @@ Or building from the git repos
     docker build -t mangeot/postgres4jibiki github.com/mangeot/postgres4jibiki
     docker build -t mangeot/jibiki github.com/mangeot/jibiki
 
-Running the docker images
+Running the docker images with a compose.yml file
+-------------
+
+```yaml
+services:
+  postgres:
+    image: mangeot/postgres4jibiki
+    environment:
+      POSTGRES_USER: postgres
+    volumes:
+      - postgresql:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER}"]
+      interval: 1s
+      timeout: 5s
+      retries: 10
+
+  ipolex:
+    image: mangeot/ipolex
+    volumes:
+      - ipolex:/var/www/html/Dicos
+    restart: always
+    ports:
+      - 8888:80
+
+  jibiki:
+    image: mangeot/jibiki
+    volumes:
+      - ipolex:/ipolex
+    restart: always
+    ports:
+      - 8999:8999
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  ipolex:
+  postgresql:
+```
+
+And then: 
+
+    docker compose up
+
+
+Running the docker images step by step
 -------------
 Create a directory on your machine for storing ipolex and postgres data
 
