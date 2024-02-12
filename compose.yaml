@@ -19,7 +19,6 @@ services:
 
   ipolex:
     image: mangeot/ipolex
-
     volumes:
       - ipolex:/var/www/html/Dicos
     restart: always
@@ -29,6 +28,7 @@ services:
   jibiki:
     image: mangeot/jibiki
     environment:
+      - SITE_NAME=Papillon
       - ADMIN_PASSWORD=dbpap
       - VALIDATOR_PASSWORD=butterfly
       - SPECIALIST_PASSWORD=farfalla
