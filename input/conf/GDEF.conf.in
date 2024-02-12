@@ -188,7 +188,7 @@ Papillon.Informations.fileExtensionHandler.xsl     = "fr.imag.clips.papillon.bus
 # Absolute path to the temporary directory (where files are expanded and processed, then discarded)
 Papillon.Informations.tmpDir = "/tmp/"
 # Absolute path to the information section base dir.
-Papillon.Informations.baseDir = "/home/gdef/www/"
+Papillon.Informations.baseDir = "/data/gdef/"
 Papillon.Informations.relativeDir = "~gdef/"
 # Relative path to the media directory (the directory that contains gifs, jpgs, etc. that are added 
 # while importing a file). This directory is relative to the server's information section base Dir. 
@@ -296,23 +296,23 @@ Dictd.Timeout = 500000
 #                   PAPILLON's Database Manager Configuration
 #-----------------------------------------------------------------------------
 
-DatabaseManager.Databases[] = "gdef"
-DatabaseManager.DefaultDatabase = "gdef"
+DatabaseManager.Databases[] = "papillon"
+DatabaseManager.DefaultDatabase = "papillon"
 DatabaseManager.Debug = "false"
-DatabaseManager.DB.gdef.ClassType = "PostgreSQL"
-DatabaseManager.DB.gdef.JdbcDriver = "org.postgresql.Driver"
-DatabaseManager.DB.gdef.Connection.Url = "@PGSQL_SERVER_URL@"
+DatabaseManager.DB.papillon.ClassType = "PostgreSQL"
+DatabaseManager.DB.papillon.JdbcDriver = "org.postgresql.Driver"
+DatabaseManager.DB.papillon.Connection.Url = "@PGSQL_SERVER_URL@"
 
-DatabaseManager.DB.gdef.Connection.User = "@DB_USER@"
-DatabaseManager.DB.gdef.Connection.Password = "@DB_PASSWD@"
+DatabaseManager.DB.papillon.Connection.User = "@DB_USER@"
+DatabaseManager.DB.papillon.Connection.Password = "@DB_PASSWD@"
 
-DatabaseManager.DB.gdef.Connection.MaxPoolSize = 30
-DatabaseManager.DB.gdef.Connection.AllocationTimeout = 10000
+DatabaseManager.DB.papillon.Connection.MaxPoolSize = 30
+DatabaseManager.DB.papillon.Connection.AllocationTimeout = 10000
 
-DatabaseManager.DB.gdef.Connection.Logging = false
+DatabaseManager.DB.papillon.Connection.Logging = false
 
-DatabaseManager.DB.gdef.ObjectId.CacheSize = 20
-DatabaseManager.DB.gdef.ObjectId.MinValue = 1000000
+DatabaseManager.DB.papillon.ObjectId.CacheSize = 20
+DatabaseManager.DB.papillon.ObjectId.MinValue = 1000000
 
 # ???? c'est pas moi qui ai mis ca ? GS
 #DatabaseManager.DB.papillon.DbCharSet = "UTF-8"
