@@ -1,0 +1,50 @@
+version: "3"
+
+services:
+  postgres:
+    image: mangeot/postgres4jibiki
+    environment:
+      - POSTGRES_USER=postgres
+      - DATABASE_HOST=postgres
+      - DATABASE_NAME=jibikidb
+      - DATABASE_USER=jibikiuser
+      - DATABASE_PASSWORD=dbjibiki
+    volumes:
+      - postgresql:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER}"]
+      interval: 1s
+      timeout: 5s
+      retries: 10
+
+  ipolex:
+    image: mangeot/ipolex
+    volumes:
+      - ipolex:/var/www/html/Dicos
+    restart: always
+    ports:
+      - 8888:80
+
+  jibiki:
+    image: mangeot/jibiki
+    environment:
+      - SITE_NAME=Papillon
+      - ADMIN_PASSWORD=dbpap
+      - VALIDATOR_PASSWORD=butterfly
+      - SPECIALIST_PASSWORD=farfalla
+      - DATABASE_HOST=postgres
+      - DATABASE_NAME=jibikidb
+      - DATABASE_USER=jibikiuser
+      - DATABASE_PASSWORD=dbjibiki
+    volumes:
+      - ipolex:/ipolex
+    restart: always
+    ports:
+      - 8999:8999
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  ipolex:
+  postgresql:
