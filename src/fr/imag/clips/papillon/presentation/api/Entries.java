@@ -783,7 +783,7 @@ public class Entries extends fr.imag.clips.papillon.presentation.XmlBasePO {
             resultDoc = XMLServices.buildDOMTree("<?xml version='1.0'?><html><h1>Error : " + status + "</h1><p>" + errorMsg + "</p></html>");
         }
         responseVector.addElement(resultDoc);
-        responseVector.addElement(new Integer(status));
+        responseVector.addElement(Integer.valueOf(status));
         responseVector.addElement(errorMsg);
         return responseVector;
 	}
