@@ -153,7 +153,7 @@ CREATE OR REPLACE FUNCTION bam_sort( varchar )
 	END LOOP;
   return( result );
  END;
-$PROC$ LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
+$PROC$ LANGUAGE 'plpgsql';
 
 
 
@@ -352,7 +352,7 @@ CREATE OR REPLACE FUNCTION deu_sort( varchar )
 	END LOOP;
   return( result );
  END;
-$PROC$ LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
+$PROC$ LANGUAGE 'plpgsql';
 
 -- dje Soŋay-zarma
 -- a, b, c, d, e, f, g, h, i, j, k, l, m, n, Ɲ ɲ, ŋ, o, p, r, s, Š š, t, u, w, y, z, Ž ž
@@ -501,7 +501,7 @@ CREATE OR REPLACE FUNCTION dje_sort( varchar )
 	END LOOP;
   return( result );
  END;
-$PROC$ LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
+$PROC$ LANGUAGE 'plpgsql';
 
 
 -- eng English
@@ -517,7 +517,7 @@ CREATE OR REPLACE FUNCTION eng_sort( varchar )
  BEGIN
   return( $1 );
  END;
-$PROC$ LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
+$PROC$ LANGUAGE 'plpgsql';
 
 
 -- est Estonian
@@ -707,7 +707,7 @@ CREATE OR REPLACE FUNCTION est_sort( varchar )
   END IF;
   return( result );
  END;
-$PROC$ LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
+$PROC$ LANGUAGE 'plpgsql';
 
 
 
@@ -904,7 +904,7 @@ CREATE OR REPLACE FUNCTION fra_sort( varchar )
 	END LOOP;
   return( result );
  END;
-$PROC$ LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
+$PROC$ LANGUAGE 'plpgsql';
 
 
 
@@ -1119,7 +1119,7 @@ CREATE OR REPLACE FUNCTION ful_sort( varchar )
 	END LOOP;
   return( result );
  END;
-$PROC$ LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
+$PROC$ LANGUAGE 'plpgsql';
 
 
 -- hau Hausa
@@ -1398,7 +1398,7 @@ CREATE OR REPLACE FUNCTION hau_sort( varchar )
 	END LOOP;
   return( result );
  END;
-$PROC$ LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
+$PROC$ LANGUAGE 'plpgsql';
 
 
 -- ita Italian
@@ -1618,7 +1618,7 @@ CREATE OR REPLACE FUNCTION ita_sort( varchar )
 	END LOOP;
   return( result );
  END;
-$PROC$ LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
+$PROC$ LANGUAGE 'plpgsql';
 
 
 -- jpn Japanese
@@ -2324,7 +2324,7 @@ CREATE OR REPLACE FUNCTION jpn_sort( varchar )
   	END LOOP;
   return( result );
  END;
-$PROC$ LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
+$PROC$ LANGUAGE 'plpgsql';
 
 
 
@@ -2501,7 +2501,7 @@ CREATE OR REPLACE FUNCTION kau_sort( varchar )
 	END LOOP;
   return( result );
  END;
-$PROC$ LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
+$PROC$ LANGUAGE 'plpgsql';
 
 
 -- kor Korean
@@ -2518,7 +2518,7 @@ CREATE OR REPLACE FUNCTION kor_sort( varchar )
  BEGIN
   return( $1 );
  END;
-$PROC$ LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
+$PROC$ LANGUAGE 'plpgsql';
 
 
 
@@ -2535,7 +2535,7 @@ CREATE OR REPLACE FUNCTION msa_sort( varchar )
  BEGIN
   return( $1 );
  END;
-$PROC$ LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
+$PROC$ LANGUAGE 'plpgsql';
 
 
 -- nru Yongning Na
@@ -3237,7 +3237,7 @@ CREATE OR REPLACE FUNCTION nru_sort( varchar )
 	END LOOP;
   return( result );
  END;
-$PROC$ LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
+$PROC$ LANGUAGE 'plpgsql';
 
 
 
@@ -3256,7 +3256,7 @@ CREATE OR REPLACE FUNCTION slo_sort( varchar )
  BEGIN
   return( $1 );
  END;
-$PROC$  LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
+$PROC$  LANGUAGE 'plpgsql';
 
 -- slv Slovene
 --
@@ -3386,7 +3386,7 @@ CREATE OR REPLACE FUNCTION slv_sort( varchar )
 	END LOOP;
   return( result );
    END;
-$PROC$ LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
+$PROC$ LANGUAGE 'plpgsql';
 
 
 -- tha Thai
@@ -3403,7 +3403,7 @@ CREATE OR REPLACE FUNCTION tha_sort( varchar )
  BEGIN
   return( $1 );
  END;
-$PROC$ LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
+$PROC$ LANGUAGE 'plpgsql';
 
 -- tmh Tamajaq
 -- a ǎ b c d ḍ e ə f g ğ h i j ǰ ɣ k x l ḷ m n ŋ o q r s ṣ š t ṭ u w y z ẓ
@@ -3590,7 +3590,7 @@ CREATE OR REPLACE FUNCTION tmh_sort( varchar )
 	END LOOP;
   return( result );
    END;
-$PROC$ LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
+$PROC$ LANGUAGE 'plpgsql';
 
 
 -- vie Vietnamese
@@ -3607,7 +3607,7 @@ CREATE OR REPLACE FUNCTION vie_sort( varchar )
  BEGIN
   return( $1 );
  END;
-$PROC$ LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
+$PROC$ LANGUAGE 'plpgsql';
 
 
 
@@ -3624,7 +3624,7 @@ CREATE OR REPLACE FUNCTION zho_sort( varchar )
  BEGIN
   return( $1 );
  END;
-$PROC$ LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
+$PROC$ LANGUAGE 'plpgsql';
 
 -- multilingual sort
 CREATE OR REPLACE FUNCTION multilingual_sort( varchar,varchar ) 
@@ -3679,7 +3679,7 @@ CREATE OR REPLACE FUNCTION multilingual_sort( varchar,varchar )
   result := lang || result;
   return( result );
  END;
-$PROC$ LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
+$PROC$ LANGUAGE 'plpgsql';
 
 CREATE OR REPLACE FUNCTION complete_numbers( varchar ) 
  RETURNS varchar AS $PROC$
@@ -3704,4 +3704,4 @@ CREATE OR REPLACE FUNCTION complete_numbers( varchar )
   	END IF; 
   	return( result );
  END;
-$PROC$ LANGUAGE 'plpgsql' WITH ( ISCACHABLE );
+$PROC$ LANGUAGE 'plpgsql';
