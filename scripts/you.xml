@@ -1,0 +1,488 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<article    id="jpn.酔う.3779131.e"    page="2300"    provenance="Cesselin"    relecture="">
+        <notes-relecture/>
+        <forme>
+          <vedette>
+            <vedette-romaji    affiche="">you</vedette-romaji>
+            <vedette-hiragana>よう</vedette-hiragana>
+            <vedette-jpn    match="Manuel">酔う</vedette-jpn>
+          </vedette>
+        </forme>
+        <sémantique>
+          <bloc-gram>
+            <étiquettes>
+              <domaine/>
+              <gram>動 verbe intransitif</gram>
+            </étiquettes>
+            <sens    n="1">
+              <étiquettes-sens>
+                <domaine/>
+              </étiquettes-sens>
+              <texte-sens>Être ivre, s'enivrer, se griser, se saoûler.</texte-sens>
+            </sens>
+            <sens    n="2">
+              <étiquettes-sens>
+                <domaine/>
+              </étiquettes-sens>
+              <texte-sens>Avoir le mal de mer, se sentir indisposé par les secousses d’un véhicule.</texte-sens>
+            </sens>
+            <sens    n="3">
+              <étiquettes-sens>
+                <domaine/>
+              </étiquettes-sens>
+              <texte-sens>Être enorgueilli par les honneurs, le succès ou la prospérité.</texte-sens>
+            </sens>
+          </bloc-gram>
+          <exemples>
+            <exemple>
+              <romaji>Yoite mo honji wasure zu</romaji>
+              <romajidx>yoitemohonjiwasurezu</romajidx>
+              <hiragana>もほんちわすれず</hiragana>
+              <kanji>も本地忘れず</kanji>
+              <jpn>酔ても本地忘れず</jpn>
+              <français>
+                <sous-bloc-gram>
+                  <étiquettes-français>
+                    <domaine/>
+                    <gram/>
+                  </étiquettes-français>
+                  <sous-sens>
+                    <étiquettes-sous-sens>
+                      <domaine/>
+                      <gram/>
+                    </étiquettes-sous-sens>
+                    <texte-sous-sens>Ne pas oublier son pays d'origine tout en étant ivre.</texte-sous-sens>
+                  </sous-sens>
+                </sous-bloc-gram>
+              </français>
+            </exemple>
+            <exemple>
+              <romaji>Yoi tsubureru</romaji>
+              <romajidx/>
+              <hiragana>つぶれる</hiragana>
+              <kanji>潰れる</kanji>
+              <jpn>酔い潰れる</jpn>
+              <français>
+                <sous-bloc-gram>
+                  <étiquettes-français>
+                    <domaine/>
+                    <gram/>
+                  </étiquettes-français>
+                  <sous-sens>
+                    <étiquettes-sous-sens>
+                      <domaine/>
+                      <gram/>
+                    </étiquettes-sous-sens>
+                    <texte-sous-sens>Être ivre mort</texte-sous-sens>
+                  </sous-sens>
+                </sous-bloc-gram>
+              </français>
+            </exemple>
+            <exemple>
+              <romaji>Yō te honshō arawasu</romaji>
+              <romajidx>yōtekonshōarawasu</romajidx>
+              <hiragana>ほんしょうあらわす</hiragana>
+              <kanji>本性顕す</kanji>
+              <jpn>酔うて本性顕す</jpn>
+              <français>
+                <sous-bloc-gram>
+                  <étiquettes-français>
+                    <domaine/>
+                    <gram/>
+                  </étiquettes-français>
+                  <sous-sens>
+                    <étiquettes-sous-sens>
+                      <domaine/>
+                      <gram/>
+                    </étiquettes-sous-sens>
+                    <texte-sous-sens>L’ivresse révèle le naturel.</texte-sous-sens>
+                  </sous-sens>
+                </sous-bloc-gram>
+              </français>
+            </exemple>
+            <exemple>
+              <romaji>Yô te iru</romaji>
+              <romajidx/>
+              <hiragana/>
+              <kanji/>
+              <jpn>酔うて居る</jpn>
+              <français>
+                <sous-bloc-gram>
+                  <étiquettes-français>
+                    <littéralement/>
+                    <étymologie    lang=""/>
+                    <domaine/>
+                    <gram/>
+                    <registre/>
+                    <non-reconnu/>
+                  </étiquettes-français>
+                  <sous-sens>
+                    <étiquettes-sous-sens>
+                      <littéralement/>
+                      <étymologie    lang=""/>
+                      <domaine/>
+                      <gram/>
+                      <registre/>
+                      <non-reconnu/>
+                    </étiquettes-sous-sens>
+                    <texte-sous-sens>Être ivre.</texte-sous-sens>
+                  </sous-sens>
+                </sous-bloc-gram>
+              </français>
+            </exemple>
+            <exemple>
+              <romaji>Yô te kudamakya nao kawaii</romaji>
+              <romajidx/>
+              <hiragana/>
+              <kanji/>
+              <jpn>酔うて管まきゃ尚可愛い</jpn>
+              <français>
+                <sous-bloc-gram>
+                  <étiquettes-français>
+                    <littéralement/>
+                    <étymologie    lang=""/>
+                    <domaine/>
+                    <gram/>
+                    <registre/>
+                    <non-reconnu/>
+                  </étiquettes-français>
+                  <sous-sens>
+                    <étiquettes-sous-sens>
+                      <littéralement/>
+                      <étymologie    lang=""/>
+                      <domaine/>
+                      <gram/>
+                      <registre/>
+                      <non-reconnu/>
+                    </étiquettes-sous-sens>
+                    <texte-sous-sens>L'ivresse a certain charme quand elle s'agrémente de bavardages.</texte-sous-sens>
+                  </sous-sens>
+                </sous-bloc-gram>
+              </français>
+            </exemple>
+            <exemple>
+              <romaji>Yo eru</romaji>
+              <romajidx/>
+              <hiragana/>
+              <kanji/>
+              <jpn>酔える</jpn>
+              <français>
+                <sous-bloc-gram>
+                  <étiquettes-français>
+                    <littéralement/>
+                    <étymologie    lang=""/>
+                    <domaine/>
+                    <gram/>
+                    <registre/>
+                    <non-reconnu/>
+                  </étiquettes-français>
+                  <sous-sens>
+                    <étiquettes-sous-sens>
+                      <littéralement/>
+                      <étymologie    lang=""/>
+                      <domaine/>
+                      <gram/>
+                      <registre/>
+                      <non-reconnu/>
+                    </étiquettes-sous-sens>
+                    <texte-sous-sens>lntoxiqué, grisé.</texte-sous-sens>
+                  </sous-sens>
+                </sous-bloc-gram>
+              </français>
+            </exemple>
+            <exemple>
+              <romaji>Yô te no machinai same te no fumbetsu</romaji>
+              <romajidx/>
+              <hiragana/>
+              <kanji/>
+              <jpn>酔うての間違い醒めての分別</jpn>
+              <français>
+                <sous-bloc-gram>
+                  <étiquettes-français>
+                    <littéralement/>
+                    <étymologie    lang=""/>
+                    <domaine/>
+                    <gram/>
+                    <registre/>
+                    <non-reconnu/>
+                  </étiquettes-français>
+                  <sous-sens>
+                    <étiquettes-sous-sens>
+                      <littéralement/>
+                      <étymologie    lang=""/>
+                      <domaine/>
+                      <gram/>
+                      <registre/>
+                      <non-reconnu/>
+                    </étiquettes-sous-sens>
+                    <texte-sous-sens>L'ivresse est source d'erreurs et le désenivrement ramène le bon sens.</texte-sous-sens>
+                  </sous-sens>
+                </sous-bloc-gram>
+              </français>
+            </exemple>
+            <exemple>
+              <romaji>Yô te magire ni</romaji>
+              <romajidx>yottemagireni</romajidx>
+              <hiragana>ふんれに</hiragana>
+              <kanji>扮れに</kanji>
+              <jpn>
+                <ruby>扮
+                  <rt>ふん</rt>
+                </ruby>れに
+              </jpn>
+              <français>
+                <sous-bloc-gram>
+                  <étiquettes-français>
+                    <domaine/>
+                    <gram/>
+                  </étiquettes-français>
+                  <sous-sens>
+                    <étiquettes-sous-sens>
+                      <domaine/>
+                      <gram/>
+                    </étiquettes-sous-sens>
+                    <texte-sous-sens>Sous l’influence de la boisson.</texte-sous-sens>
+                  </sous-sens>
+                </sous-bloc-gram>
+              </français>
+            </exemple>
+            <exemple>
+              <romaji>
+                <pb>You to itsu mo shō</pb>tai ga nai
+              </romaji>
+              <romajidx>youtoitsumoshōtaiganai</romajidx>
+              <hiragana>といつもせいはなれがない</hiragana>
+              <kanji>と何時も正離が無い</kanji>
+              <jpn>と
+                <ruby>何時
+                  <rt>いつ</rt>
+                </ruby>も
+                <ruby>正
+                  <rt>せい</rt>
+                </ruby>
+                <ruby>離
+                  <rt>はなれ</rt>
+                </ruby>が
+                <ruby>無
+                  <rt>な</rt>
+                </ruby>い
+              </jpn>
+              <français>
+                <sous-bloc-gram>
+                  <étiquettes-français>
+                    <domaine/>
+                    <gram/>
+                  </étiquettes-français>
+                  <sous-sens>
+                    <étiquettes-sous-sens>
+                      <domaine/>
+                      <gram/>
+                    </étiquettes-sous-sens>
+                    <texte-sous-sens>Il s’oublie dès qu’il est pris de boisson.</texte-sous-sens>
+                  </sous-sens>
+                </sous-bloc-gram>
+              </français>
+            </exemple>
+            <exemple>
+              <romaji>
+                <pb>Yowanu nomimono</pb>
+              </romaji>
+              <romajidx>yowanunomimono</romajidx>
+              <hiragana>のみもの</hiragana>
+              <kanji>飲物</kanji>
+              <jpn>
+                <ruby>飲物
+                  <rt>のみもの</rt>
+                </ruby>
+              </jpn>
+              <français>
+                <sous-bloc-gram>
+                  <étiquettes-français>
+                    <domaine/>
+                    <gram/>
+                  </étiquettes-français>
+                  <sous-sens>
+                    <étiquettes-sous-sens>
+                      <domaine/>
+                      <gram/>
+                    </étiquettes-sous-sens>
+                    <texte-sous-sens>Une boisson douce.</texte-sous-sens>
+                  </sous-sens>
+                </sous-bloc-gram>
+              </français>
+            </exemple>
+            <exemple>
+              <romaji>
+                <pb>Yowashite ki</pb>kitai kqto ga aru
+              </romaji>
+              <romajidx>yowashitekikitaikqtogaaru</romajidx>
+              <hiragana>ききどいごとがある</hiragana>
+              <kanji>聞き度い事がある</kanji>
+              <jpn>
+                <ruby>聞
+                  <rt>き</rt>
+                </ruby>き
+                <ruby>度
+                  <rt>ど</rt>
+                </ruby>い
+                <ruby>事
+                  <rt>ごと</rt>
+                </ruby>がある
+              </jpn>
+              <français>
+                <sous-bloc-gram>
+                  <étiquettes-français>
+                    <domaine/>
+                    <gram/>
+                  </étiquettes-français>
+                  <sous-sens>
+                    <étiquettes-sous-sens>
+                      <domaine/>
+                      <gram/>
+                    </étiquettes-sous-sens>
+                    <texte-sous-sens>Il y a des choses que je voudrais apprendre de lui tout en le grisant.</texte-sous-sens>
+                  </sous-sens>
+                </sous-bloc-gram>
+              </français>
+            </exemple>
+            <exemple>
+              <romaji>Fune ni ―</romaji>
+              <romajidx>funeni―</romajidx>
+              <hiragana>ふねに--</hiragana>
+              <kanji>船に--</kanji>
+              <jpn>
+                <ruby>船
+                  <rt>ふね</rt>
+                </ruby>に--
+              </jpn>
+              <français>
+                <sous-bloc-gram>
+                  <étiquettes-français>
+                    <domaine/>
+                    <gram/>
+                  </étiquettes-français>
+                  <sous-sens>
+                    <étiquettes-sous-sens>
+                      <domaine/>
+                      <gram/>
+                    </étiquettes-sous-sens>
+                    <texte-sous-sens>Avoir le mal de mer.</texte-sous-sens>
+                  </sous-sens>
+                </sous-bloc-gram>
+              </français>
+            </exemple>
+            <exemple>
+              <romaji>Hito ni ―</romaji>
+              <romajidx>hitoni―</romajidx>
+              <hiragana>ひとに--</hiragana>
+              <kanji>人に--</kanji>
+              <jpn>
+                <ruby>人
+                  <rt>ひと</rt>
+                </ruby>に--
+              </jpn>
+              <français>
+                <sous-bloc-gram>
+                  <étiquettes-français>
+                    <domaine/>
+                    <gram/>
+                  </étiquettes-français>
+                  <sous-sens>
+                    <étiquettes-sous-sens>
+                      <domaine/>
+                      <gram/>
+                    </étiquettes-sous-sens>
+                    <texte-sous-sens>Se trouver mal d’être pressé au milieu d’une foule.</texte-sous-sens>
+                  </sous-sens>
+                </sous-bloc-gram>
+              </français>
+            </exemple>
+            <exemple>
+              <romaji>Jinsei no kanki ni ―</romaji>
+              <romajidx>jinseinokankini―</romajidx>
+              <hiragana>じんせいのかんきに--</hiragana>
+              <kanji>人生の歓喜に--</kanji>
+              <jpn>
+                <ruby>人生
+                  <rt>じんせい</rt>
+                </ruby>の
+                <ruby>歓喜
+                  <rt>かんき</rt>
+                </ruby>に--
+              </jpn>
+              <français>
+                <sous-bloc-gram>
+                  <étiquettes-français>
+                    <domaine/>
+                    <gram/>
+                  </étiquettes-français>
+                  <sous-sens>
+                    <étiquettes-sous-sens>
+                      <domaine/>
+                      <gram/>
+                    </étiquettes-sous-sens>
+                    <texte-sous-sens>Être ivre de la joie de vivre.</texte-sous-sens>
+                  </sous-sens>
+                </sous-bloc-gram>
+              </français>
+            </exemple>
+            <exemple>
+              <romaji>Seikō ni ―</romaji>
+              <romajidx>seikōni―</romajidx>
+              <hiragana>せいこうに--</hiragana>
+              <kanji>成功に--</kanji>
+              <jpn>
+                <ruby>成功
+                  <rt>せいこう</rt>
+                </ruby>に--
+              </jpn>
+              <français>
+                <sous-bloc-gram>
+                  <étiquettes-français>
+                    <domaine/>
+                    <gram/>
+                  </étiquettes-français>
+                  <sous-sens>
+                    <étiquettes-sous-sens>
+                      <domaine/>
+                      <gram/>
+                    </étiquettes-sous-sens>
+                    <texte-sous-sens>Se griser de ses succès.</texte-sous-sens>
+                  </sous-sens>
+                </sous-bloc-gram>
+              </français>
+            </exemple>
+            <exemple>
+              <romaji>Tabako ni ―</romaji>
+              <romajidx>tabakoni―</romajidx>
+              <hiragana>たばこにいち</hiragana>
+              <kanji>煙草に一</kanji>
+              <jpn>
+                <ruby>煙草
+                  <rt>たばこ</rt>
+                </ruby>に
+                <pb>
+                  <ruby>一
+                    <rt>いち</rt>
+                  </ruby>
+                </pb>
+              </jpn>
+              <français>
+                <sous-bloc-gram>
+                  <étiquettes-français>
+                    <domaine/>
+                    <gram/>
+                  </étiquettes-français>
+                  <sous-sens>
+                    <étiquettes-sous-sens>
+                      <domaine/>
+                      <gram/>
+                    </étiquettes-sous-sens>
+                    <texte-sous-sens>Se trouver indisposé par le tabac.</texte-sous-sens>
+                  </sous-sens>
+                </sous-bloc-gram>
+              </français>
+            </exemple>
+          </exemples>
+        </sémantique>
+      </article>

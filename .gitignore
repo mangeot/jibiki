@@ -9,3 +9,4 @@ src/fr/imag/clips/papillon/resources/xsl/FormatingObject-view.xsl.uptodate
 src/fr/imag/clips/papillon/resources/xsl/TEXT-view.xsl.uptodate
 src/fr/imag/clips/papillon/resources/xsl/UNL-TEXT-view.xsl.uptodate
 src/fr/imag/clips/papillon/resources/xsl/XML-view.xsl.uptodate
+.env

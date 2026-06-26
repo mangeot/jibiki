@@ -4,11 +4,11 @@ services:
   postgres:
     image: mangeot/postgres4jibiki
     environment:
-      - POSTGRES_USER=postgres
-      - DATABASE_HOST=postgres
-      - DATABASE_NAME=jibikidb
-      - DATABASE_USER=jibikiuser
-      - DATABASE_PASSWORD=dbjibiki
+      - POSTGRES_USER=${POSTGRES_USER}
+      - DATABASE_HOST=${DATABASE_HOST}
+      - DATABASE_NAME=${DATABASE_NAME}
+      - DATABASE_USER=${DATABASE_USER}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
     volumes:
       - postgresql:/var/lib/postgresql/data
     healthcheck:
@@ -23,27 +23,43 @@ services:
       - ipolex:/var/www/html/Dicos
     restart: always
     ports:
-      - 8888:80
+      - ${IPOLEX_PORT}:80
 
   jibiki:
     image: mangeot/jibiki
     environment:
-      - SITE_NAME=Papillon
-      - ADMIN_PASSWORD=dbpap
-      - VALIDATOR_PASSWORD=butterfly
-      - SPECIALIST_PASSWORD=farfalla
-      - DATABASE_HOST=postgres
-      - DATABASE_NAME=jibikidb
-      - DATABASE_USER=jibikiuser
-      - DATABASE_PASSWORD=dbjibiki
+      - SITE_NAME=${SITE_NAME}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - VALIDATOR_PASSWORD=${VALIDATOR_PASSWORD}
+      - SPECIALIST_PASSWORD=${SPECIALIST_PASSWORD}
+      - DATABASE_HOST=${DATABASE_HOST}
+      - DATABASE_NAME=${DATABASE_NAME}
+      - DATABASE_USER=${DATABASE_USER}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
     volumes:
       - ipolex:/ipolex
+      - ./Cesselin_fra-jpn:/Cesselin_fra-jpn
     restart: always
     ports:
-      - 8999:8999
+      - ${JIBIKI_PORT}:8999
     depends_on:
       postgres:
         condition: service_healthy
+
+  jibikirest:
+    image: mangeot/jibikirest
+    environment:
+      - DATABASE_HOST=${DATABASE_HOST}
+      - DATABASE_NAME=${DATABASE_NAME}
+      - DATABASE_USER=${DATABASE_USER}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+    restart: always
+    ports:
+      - ${API_PORT}:80
+    depends_on:
+      postgres:
+        condition: service_healthy
+
 
 volumes:
   ipolex:
